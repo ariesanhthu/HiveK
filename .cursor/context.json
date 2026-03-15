@@ -1,0 +1,29 @@
+{
+  "providers": [
+    {
+      "id": "local",
+      "name": "Local Project Files",
+      "type": "fs",
+      "roots": [
+        "src/components/ui",
+        "src/app",
+        "src/lib"
+      ]
+    }
+  ],
+  "context": {
+    "include": [
+      "src/tailwind.config.ts",
+      "src/postcss.config.mjs",
+      "src/components/ui/**/*.{ts,tsx}",
+      "src/app/**/*.{ts,tsx}",
+      "src/lib/**/*.{ts,tsx}"
+    ],
+    "hints": [
+      "Use the local shadcn/ui component structure located in src/components/ui.",
+      "Follow Tailwind CSS classes defined in src/tailwind.config.ts.",
+      "Use the cva() pattern for component variants.",
+      "Keep consistent with existing UI component style and naming."
+    ]
+  }
+}

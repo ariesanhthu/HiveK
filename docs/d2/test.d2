@@ -1,0 +1,13 @@
+user: User {
+    shape: person
+  }
+  
+  web: Web App
+  api: API Server
+  db: Postgres {
+    shape: cylinder
+  }
+  
+  user -> web
+  web -> api
+  api -> db
