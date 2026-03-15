@@ -6,12 +6,6 @@
         "X-Goog-Api-Key": "AQ.Ab8RN6LB6UeysL26paY_8kuVSXN2jiHpYU3YqIN5kM5rFWDf-g"
       }
     },
-    "TalkToFigma": {
-      "command": "bunx",
-      "args": [
-        "cursor-talk-to-figma-mcp@latest"
-      ]
-    },
     "shadcn": {
       "command": "npx",
       "args": [
