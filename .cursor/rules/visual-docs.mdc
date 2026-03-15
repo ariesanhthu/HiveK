@@ -1,0 +1,21 @@
+---
+description: write docs in /docs folder, create visualize for this docs
+alwaysApply: false
+---
+Always keep these in sync:
+- docs markdown
+- each folder’s `structure.md`
+- `docs/visual/graph.json`
+- React Flow UI in `docs/visual/`
+read .cursor\skills\react-flow.md, a guide how to create react-flow for visualize
+Rules:
+- Always read `structure.md` before modifying a folder.
+- Every folder must have a `structure.md`.
+- If a folder or file is created, deleted, renamed, moved, or reorganized, update affected docs and `structure.md`.
+- Build the graph primarily as: feature -> workflow -> file.
+- React Flow must load from and save to `docs/visual/graph.json`.
+- Graph edits may add/delete nodes and edges, update labels, update doc links, and edit markdown content.
+- When docs change, update the graph.
+- When graph changes, update docs.
+- If docs and graph conflict, prefer docs unless the graph edit is clearly newer and intentional.
+- Never leave docs, graph, and UI inconsistent.

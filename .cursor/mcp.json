@@ -1,5 +1,11 @@
 {
   "mcpServers": {
+    "stitch": {
+      "url": "https://stitch.googleapis.com/mcp",
+      "headers": {
+        "X-Goog-Api-Key": "AQ.Ab8RN6LB6UeysL26paY_8kuVSXN2jiHpYU3YqIN5kM5rFWDf-g"
+      }
+    },
     "TalkToFigma": {
       "command": "bunx",
       "args": [
@@ -12,9 +18,6 @@
         "shadcn@latest",
         "mcp"
       ]
-    },
-    "supabase": {
-        "url": "https://mcp.supabase.com/mcp?project_ref=fbmcswqfiyecoyczgruc"
-      }
+    }
   }
 }

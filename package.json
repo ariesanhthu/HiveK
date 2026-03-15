@@ -1,17 +1,30 @@
 {
   "name": "hivek",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "directories": {
-    "doc": "docs"
-  },
+  "private": true,
+  "type": "commonjs",
+
+  "workspaces": [
+    "apps/client",
+    "apps/server"
+  ],
+
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "concurrently \"npm run dev:client\" \"npm run dev:server\" \"npm run dev:ai\"",
+
+    "dev:client": "npm run dev -w apps/client",
+    "dev:server": "npm run start:dev -w apps/server",
+
+    "dev:ai": "cd apps/server-ai && uvicorn main:app --reload --port 8001",
+
+    "build": "npm run build -w apps/client && npm run build -w apps/server",
+
+    "install:ai": "cd apps/server-ai && pip install -r requirements.txt",
+
     "d2": "d2 --watch docs/d2/*.d2 docs/d2/*.png"
-},
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "type": "commonjs"
+  },
+
+  "devDependencies": {
+    "concurrently": "^9.0.0"
+  }
 }
