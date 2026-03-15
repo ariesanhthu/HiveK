@@ -38,3 +38,4 @@ coverage
 .cache
 *.tsbuildinfo
 
+package-lock.json
