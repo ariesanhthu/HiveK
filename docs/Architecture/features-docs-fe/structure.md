@@ -67,6 +67,10 @@ features/
       landing-page.tsx    # Compose các section global thành landing page
     hooks/                # (placeholder) hooks đặc thù landing
     server/               # (placeholder) server-side fetch / actions cho landing
+  kol-ranking/
+    components/           # Page-level UI cho bảng xếp hạng (table/filter/pagination)
+    hooks/                # Realtime hooks (SSE/reconnect)
+    server/               # Data adapter + filter parser + ranking source
 ```
 
 Nguyên tắc:
@@ -75,9 +79,9 @@ Nguyên tắc:
 - `hooks/`: hooks đặc thù cho feature (data + UI state).
 - `server/`: hàm server-side / data fetching riêng cho feature (ví dụ: `getTopKols()`, `getFeaturedCampaigns()`).
 
-Hiện tại mới có feature `landing` làm mẫu cho:
-- `/` (homepage, public)
-- mapping với các section: `HeroSection`, `PlatformBenefitsSection`, `TopPerformersSection`, `ActiveCampaignsSection`, `CallToActionSection`.
+Hiện tại có 2 feature public:
+- `landing` cho `/` (homepage, public), mapping với các section: `HeroSection`, `PlatformBenefitsSection`, `TopPerformersSection`, `ActiveCampaignsSection`, `CallToActionSection`.
+- `kol-ranking` cho `/kol-ranking`, hỗ trợ filter + pagination + realtime stream để hiển thị bảng xếp hạng KOL.
 
 ### `styles/`
 

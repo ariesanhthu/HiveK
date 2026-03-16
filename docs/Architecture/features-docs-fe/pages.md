@@ -63,7 +63,8 @@ Cho người dùng xem bảng xếp hạng KOL.
 ### URL
 
 ```
-/ranking/kols
+/kol-ranking
+(legacy spec: /ranking/kols)
 ```
 
 ### UI
