@@ -1,6 +1,10 @@
+"use client";
+
+import { useMemo, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { type KolCandidate } from "@/features/kol-matching/types";
+import { cn } from "@/lib/utils";
 
 type KolComparisonTableProps = {
   candidates: KolCandidate[];
@@ -12,8 +16,10 @@ const METRIC_LABEL_CELL_CLASS = "px-4 py-3 text-sm text-foreground-muted";
 const METRIC_VALUE_CELL_CLASS = "border-l border-primary-soft px-4 py-3 align-middle text-center";
 const METRIC_VALUE_TEXT_CLASS = "text-[2rem] leading-none font-bold text-primary";
 const METRIC_NUMBER_TEXT_CLASS = "text-[2rem] leading-none font-bold text-foreground";
-const METRIC_SUBTEXT_CLASS = "mt-0.5 text-xs leading-4 text-foreground-muted";
 const METRIC_BADGE_CLASS = "text-xs font-semibold leading-4";
+
+const EXCLUDED_COLUMN_CLASS =
+  "bg-muted/40 opacity-[0.38] grayscale transition-[opacity,filter,background-color] duration-200 ease-out";
 
 function formatFollowers(value: number): string {
   if (value >= 1_000_000) return `${(value / 1_000_000).toFixed(1)}M`;
@@ -66,11 +72,33 @@ export function KolComparisonTable({
   onBack,
   onRestart,
 }: KolComparisonTableProps) {
-  const highestFitScore = Math.max(...candidates.map((candidate) => candidate.fitScore));
-  const lowestFee = Math.min(...candidates.map((candidate) => candidate.estimatedCostPerPostUsd));
-  const highestFitCount = candidates.filter(
-    (candidate) => candidate.fitScore === highestFitScore
-  ).length;
+  const [excludedCandidateIds, setExcludedCandidateIds] = useState<string[]>([]);
+
+  const activeCandidates = useMemo(
+    () => candidates.filter((c) => !excludedCandidateIds.includes(c.id)),
+    [candidates, excludedCandidateIds]
+  );
+
+  const highestFitScore =
+    activeCandidates.length > 0 ? Math.max(...activeCandidates.map((c) => c.fitScore)) : 0;
+  const lowestFee =
+    activeCandidates.length > 0
+      ? Math.min(...activeCandidates.map((c) => c.estimatedCostPerPostUsd))
+      : 0;
+  const highestFitCount = activeCandidates.filter((c) => c.fitScore === highestFitScore).length;
+
+  const excludedCount = excludedCandidateIds.length;
+  const activeCount = candidates.length - excludedCount;
+
+  function toggleColumnExcluded(candidateId: string): void {
+    setExcludedCandidateIds((previous) =>
+      previous.includes(candidateId) ? previous.filter((id) => id !== candidateId) : [...previous, candidateId]
+    );
+  }
+
+  function isColumnExcluded(candidateId: string): boolean {
+    return excludedCandidateIds.includes(candidateId);
+  }
 
   return (
     <section className="w-full space-y-4">
@@ -83,59 +111,119 @@ export function KolComparisonTable({
                   <th className="w-52 px-4 py-4 text-left text-xs font-bold uppercase tracking-wide text-foreground-muted">
                     Campaign Metrics
                   </th>
-                  {candidates.map((candidate, index) => (
-                    <th
-                      key={candidate.id}
-                      className={`border-l border-primary-soft px-4 py-4 text-left align-middle ${
-                        index === candidates.length - 1 ? "pr-5" : ""
-                      }`}
-                    >
-                      <div className="flex items-center gap-2">
-                        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-muted text-sm font-bold text-primary">
-                          {candidate.name
-                            .split(" ")
-                            .slice(0, 2)
-                            .map((part) => part[0])
-                            .join("")}
+                  {candidates.map((candidate, index) => {
+                    const excluded = isColumnExcluded(candidate.id);
+                    return (
+                      <th
+                        key={candidate.id}
+                        className={cn(
+                          "border-l border-primary-soft px-4 py-4 text-left align-top",
+                          index === candidates.length - 1 ? "pr-5" : "",
+                          excluded && EXCLUDED_COLUMN_CLASS
+                        )}
+                      >
+                        <div className="flex items-start justify-between gap-2">
+                          <div className="flex min-w-0 flex-1 items-center gap-2">
+                            <div
+                              className={cn(
+                                "flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-muted text-sm font-bold text-primary",
+                                excluded && "bg-muted/80 text-foreground-muted"
+                              )}
+                            >
+                              {candidate.name
+                                .split(" ")
+                                .slice(0, 2)
+                                .map((part) => part[0])
+                                .join("")}
+                            </div>
+                            <div className="min-w-0">
+                              <p
+                                className={cn(
+                                  "truncate text-base font-bold text-foreground",
+                                  excluded && "text-foreground-muted"
+                                )}
+                              >
+                                {candidate.name}
+                              </p>
+                              <p
+                                className={cn("text-xs text-primary", excluded && "text-foreground-muted")}
+                              >
+                                {getHandle(candidate.name)}
+                              </p>
+                            </div>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => toggleColumnExcluded(candidate.id)}
+                            className={cn(
+                              "shrink-0 rounded-full p-1.5 transition-colors",
+                              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+                              excluded
+                                ? "text-primary hover:bg-primary-soft"
+                                : "text-foreground-muted hover:bg-muted hover:text-foreground"
+                            )}
+                            aria-label={
+                              excluded ? "Restore this creator in the comparison" : "Hide this column (dimmed)"
+                            }
+                            aria-pressed={excluded}
+                          >
+                            <span className="material-symbols-outlined text-[1.125rem] leading-none" aria-hidden>
+                              {excluded ? "undo" : "close"}
+                            </span>
+                          </button>
                         </div>
-                        <div className="min-w-0">
-                          <p className="truncate text-base font-bold text-foreground">{candidate.name}</p>
-                          <p className="text-xs text-primary">{getHandle(candidate.name)}</p>
-                        </div>
-                      </div>
-                    </th>
-                  ))}
+                      </th>
+                    );
+                  })}
                 </tr>
               </thead>
 
-              <tbody className="[&_tr>td]:transition-colors [&_tr:hover>td]:bg-primary-soft">
+              <tbody className="[&_tr>td]:transition-colors [&_tr:hover>td:not([data-excluded])]:bg-primary-soft">
                 <tr className="odd:bg-card even:bg-muted/60">
                   <td className={`${METRIC_LABEL_CELL_CLASS} font-semibold text-foreground`}>Match Score</td>
-                  {candidates.map((candidate) => (
-                    <td
-                      key={`${candidate.id}-score`}
-                      className={`${METRIC_VALUE_CELL_CLASS} py-4 ${
-                        candidate.fitScore === highestFitScore ? "bg-primary-soft/70" : ""
-                      }`}
-                    >
-                      <p className={METRIC_VALUE_TEXT_CLASS}>{candidate.fitScore}%</p>
-                      {candidate.fitScore === highestFitScore ? (
-                        <p className="text-[10px] font-bold uppercase tracking-wide text-primary">
-                          {highestFitCount > 1 ? "Top Score" : "Highest Match"}
-                        </p>
-                      ) : (
-                        <p className="invisible text-[10px] font-bold uppercase tracking-wide">
-                          Highest Match
-                        </p>
-                      )}
-                    </td>
-                  ))}
+                  {candidates.map((candidate) => {
+                    const excluded = isColumnExcluded(candidate.id);
+                    const isTop =
+                      !excluded &&
+                      activeCandidates.length > 0 &&
+                      candidate.fitScore === highestFitScore;
+                    return (
+                      <td
+                        key={`${candidate.id}-score`}
+                        data-excluded={excluded ? "" : undefined}
+                        className={cn(
+                          METRIC_VALUE_CELL_CLASS,
+                          "py-4",
+                          isTop ? "bg-primary-soft/70" : "",
+                          excluded && EXCLUDED_COLUMN_CLASS
+                        )}
+                      >
+                        <p className={METRIC_VALUE_TEXT_CLASS}>{candidate.fitScore}%</p>
+                        {isTop ? (
+                          <p className="text-[10px] font-bold uppercase tracking-wide text-primary">
+                            {highestFitCount > 1 ? "Top Score" : "Highest Match"}
+                          </p>
+                        ) : (
+                          <p className="invisible text-[10px] font-bold uppercase tracking-wide">
+                            Highest Match
+                          </p>
+                        )}
+                      </td>
+                    );
+                  })}
                 </tr>
 
                 <tr className="odd:bg-card even:bg-muted/60">
                   <td className={METRIC_LABEL_CELL_CLASS}>Followers</td>
                   {candidates.map((candidate) => (
-                    <td key={`${candidate.id}-followers`} className={METRIC_VALUE_CELL_CLASS}>
+                    <td
+                      key={`${candidate.id}-followers`}
+                      data-excluded={isColumnExcluded(candidate.id) ? "" : undefined}
+                      className={cn(
+                        METRIC_VALUE_CELL_CLASS,
+                        isColumnExcluded(candidate.id) && EXCLUDED_COLUMN_CLASS
+                      )}
+                    >
                       <p className={METRIC_NUMBER_TEXT_CLASS}>{formatFollowers(candidate.followers)}</p>
                     </td>
                   ))}
@@ -144,7 +232,14 @@ export function KolComparisonTable({
                 <tr className="odd:bg-card even:bg-muted/60">
                   <td className={METRIC_LABEL_CELL_CLASS}>Engagement</td>
                   {candidates.map((candidate) => (
-                    <td key={`${candidate.id}-engagement`} className={METRIC_VALUE_CELL_CLASS}>
+                    <td
+                      key={`${candidate.id}-engagement`}
+                      data-excluded={isColumnExcluded(candidate.id) ? "" : undefined}
+                      className={cn(
+                        METRIC_VALUE_CELL_CLASS,
+                        isColumnExcluded(candidate.id) && EXCLUDED_COLUMN_CLASS
+                      )}
+                    >
                       <p className={METRIC_VALUE_TEXT_CLASS}>{candidate.engagementRate.toFixed(1)}%</p>
                     </td>
                   ))}
@@ -153,7 +248,14 @@ export function KolComparisonTable({
                 <tr className="odd:bg-card even:bg-muted/60">
                   <td className={METRIC_LABEL_CELL_CLASS}>Rating</td>
                   {candidates.map((candidate) => (
-                    <td key={`${candidate.id}-rating`} className={METRIC_VALUE_CELL_CLASS}>
+                    <td
+                      key={`${candidate.id}-rating`}
+                      data-excluded={isColumnExcluded(candidate.id) ? "" : undefined}
+                      className={cn(
+                        METRIC_VALUE_CELL_CLASS,
+                        isColumnExcluded(candidate.id) && EXCLUDED_COLUMN_CLASS
+                      )}
+                    >
                       {renderStars(candidate.avgRoi)}
                     </td>
                   ))}
@@ -162,7 +264,14 @@ export function KolComparisonTable({
                 <tr className="odd:bg-card even:bg-muted/60">
                   <td className={METRIC_LABEL_CELL_CLASS}>Completion Rate</td>
                   {candidates.map((candidate) => (
-                    <td key={`${candidate.id}-completion`} className={METRIC_VALUE_CELL_CLASS}>
+                    <td
+                      key={`${candidate.id}-completion`}
+                      data-excluded={isColumnExcluded(candidate.id) ? "" : undefined}
+                      className={cn(
+                        METRIC_VALUE_CELL_CLASS,
+                        isColumnExcluded(candidate.id) && EXCLUDED_COLUMN_CLASS
+                      )}
+                    >
                       <p className={METRIC_VALUE_TEXT_CLASS}>{getCompletionRate(candidate)}%</p>
                     </td>
                   ))}
@@ -170,24 +279,39 @@ export function KolComparisonTable({
 
                 <tr className="odd:bg-card even:bg-muted/60">
                   <td className={METRIC_LABEL_CELL_CLASS}>Estimated Fee</td>
-                  {candidates.map((candidate) => (
-                    <td
-                      key={`${candidate.id}-fee`}
-                      className={`${METRIC_VALUE_CELL_CLASS} ${
-                        candidate.estimatedCostPerPostUsd === lowestFee ? "bg-primary-soft/70 text-primary" : ""
-                      }`}
-                    >
-                      <p className={METRIC_NUMBER_TEXT_CLASS}>{formatMoney(candidate.estimatedCostPerPostUsd)}</p>
-                    </td>
-                  ))}
+                  {candidates.map((candidate) => {
+                    const excluded = isColumnExcluded(candidate.id);
+                    const isLowest =
+                      !excluded &&
+                      activeCandidates.length > 0 &&
+                      candidate.estimatedCostPerPostUsd === lowestFee;
+                    return (
+                      <td
+                        key={`${candidate.id}-fee`}
+                        data-excluded={excluded ? "" : undefined}
+                        className={cn(
+                          METRIC_VALUE_CELL_CLASS,
+                          isLowest ? "bg-primary-soft/70 text-primary" : "",
+                          excluded && EXCLUDED_COLUMN_CLASS
+                        )}
+                      >
+                        <p className={METRIC_NUMBER_TEXT_CLASS}>{formatMoney(candidate.estimatedCostPerPostUsd)}</p>
+                      </td>
+                    );
+                  })}
                 </tr>
 
                 <tr className="odd:bg-card even:bg-muted/60">
                   <td className={METRIC_LABEL_CELL_CLASS}>Audience Fit</td>
                   {candidates.map((candidate) => {
                     const audienceFit = getAudienceFitBadge(candidate.fitScore);
+                    const excluded = isColumnExcluded(candidate.id);
                     return (
-                      <td key={`${candidate.id}-audience-fit`} className={METRIC_VALUE_CELL_CLASS}>
+                      <td
+                        key={`${candidate.id}-audience-fit`}
+                        data-excluded={excluded ? "" : undefined}
+                        className={cn(METRIC_VALUE_CELL_CLASS, excluded && EXCLUDED_COLUMN_CLASS)}
+                      >
                         <Badge variant={audienceFit.variant} className={METRIC_BADGE_CLASS}>
                           {audienceFit.text}
                         </Badge>
@@ -200,8 +324,13 @@ export function KolComparisonTable({
                   <td className={METRIC_LABEL_CELL_CLASS}>Risk Level</td>
                   {candidates.map((candidate) => {
                     const riskLevel = getRiskLevel(candidate.estimatedCpaUsd);
+                    const excluded = isColumnExcluded(candidate.id);
                     return (
-                      <td key={`${candidate.id}-risk`} className={METRIC_VALUE_CELL_CLASS}>
+                      <td
+                        key={`${candidate.id}-risk`}
+                        data-excluded={excluded ? "" : undefined}
+                        className={cn(METRIC_VALUE_CELL_CLASS, excluded && EXCLUDED_COLUMN_CLASS)}
+                      >
                         <Badge variant={riskLevel.variant} className={METRIC_BADGE_CLASS}>
                           {riskLevel.text}
                         </Badge>
@@ -219,25 +348,36 @@ export function KolComparisonTable({
         <CardContent className="flex min-h-20 flex-wrap items-center justify-between gap-4 px-4 py-4 md:min-h-0 md:px-5 md:py-4 md:pt-4">
           <div className="flex items-center gap-3 self-center">
             <div className="flex -space-x-2">
-              {candidates.map((candidate) => (
-                <div
-                  key={`avatar-${candidate.id}`}
-                  className="flex h-9 w-9 items-center justify-center rounded-full border-2 border-card bg-muted text-xs font-bold text-primary"
-                >
-                  {candidate.name
-                    .split(" ")
-                    .slice(0, 2)
-                    .map((part) => part[0])
-                    .join("")}
-                </div>
-              ))}
+              {candidates.map((candidate) => {
+                const excluded = isColumnExcluded(candidate.id);
+                return (
+                  <div
+                    key={`avatar-${candidate.id}`}
+                    className={cn(
+                      "flex h-9 w-9 items-center justify-center rounded-full border-2 border-card bg-muted text-xs font-bold text-primary transition-opacity duration-200",
+                      excluded && "opacity-40 grayscale"
+                    )}
+                    title={excluded ? `${candidate.name} — hidden in table` : candidate.name}
+                  >
+                    {candidate.name
+                      .split(" ")
+                      .slice(0, 2)
+                      .map((part) => part[0])
+                      .join("")}
+                  </div>
+                );
+              })}
             </div>
             <div>
               <p className="text-sm font-bold text-foreground">
-                {candidates.length} KOLs selected for review
+                {excludedCount === 0
+                  ? `${candidates.length} KOLs selected for review`
+                  : `${activeCount} of ${candidates.length} KOLs in active comparison`}
               </p>
               <p className="text-xs text-foreground-muted">
-                Shortlisting these creators will add them to your campaign workspace.
+                {excludedCount > 0
+                  ? `${excludedCount} hidden (dimmed). Use undo on the column header to restore.`
+                  : "Shortlisting these creators will add them to your campaign workspace."}
               </p>
             </div>
           </div>

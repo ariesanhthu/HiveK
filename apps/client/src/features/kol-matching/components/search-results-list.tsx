@@ -11,8 +11,6 @@ type SearchResultsListProps = {
   candidates: KolCandidate[];
   selectedCandidateIds: string[];
   onToggleCandidate: (candidateId: string) => void;
-  onCompare: () => void;
-  onRestart: () => void;
   onInviteSelected: () => void;
 };
 
@@ -43,8 +41,6 @@ export function SearchResultsList({
   candidates: sourceCandidates,
   selectedCandidateIds,
   onToggleCandidate,
-  onCompare,
-  onRestart,
   onInviteSelected,
 }: SearchResultsListProps) {
   const {
@@ -188,23 +184,6 @@ export function SearchResultsList({
                 Selected: {selectedCount} / 3 • Showing {filteredCandidates.length} of{" "}
                 {sourceCandidates.length}
               </p>
-              <div className="flex items-center gap-2">
-                <button
-                  type="button"
-                  onClick={onRestart}
-                  className="rounded-lg border border-primary-soft px-3 py-1.5 text-xs font-semibold text-foreground hover:bg-primary-soft"
-                >
-                  New search
-                </button>
-                <button
-                  type="button"
-                  onClick={onCompare}
-                  disabled={selectedCount < 2}
-                  className="rounded-lg bg-primary px-3 py-1.5 text-xs font-semibold text-background-dark disabled:cursor-not-allowed disabled:opacity-50"
-                >
-                  Compare selected
-                </button>
-              </div>
             </div>
           </CardContent>
         </Card>
