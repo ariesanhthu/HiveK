@@ -36,9 +36,11 @@ Next.js 16 frontend (App Router).
   - `types.ts` – Typed contracts cho nav, metrics, trend chart, activities
   - `index.ts` – Public entry export `BusinessDashboardPage`
 - **`src/features/kol-matching/`** – Feature KOL/KOC matching theo step:
-  - `components/` – Stepper + step views (entry form, agent processing, search results, comparison)
-  - `hooks/use-kol-matching-flow.ts` – Orchestrate state machine của flow
+  - `components/` – Stepper + step views (entry form, agent processing, `search-results-list`, `kol-search-filters-panel`, comparison)
+  - `hooks/use-kol-matching-flow.ts` – Orchestrate state machine của flow (gồm `inviteSelected` stub)
+  - `hooks/use-kol-search-filters.ts` – State filter + `filteredCandidates` cho bước search results
   - `services/kol-matching-service.ts` – Search/scoring pipeline (mock service, ready để cắm MCP/API)
+  - `services/kol-search-filter.ts` – Pure filter (platform, niche groups, followers, engagement)
   - `types.ts` – Typed contracts cho entry, stages, candidates, comparison metrics
   - `index.ts` – Public entry export `KolMatchingPage`
 - **`src/lib/utils.ts`** – `cn()` helper

@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import {
   getAgentStages,
   processAgentStages,
@@ -95,6 +95,12 @@ export function useKolMatchingFlow() {
     setErrorMessage(null);
   }
 
+  const inviteSelected = useCallback((): void => {
+    if (selectedCandidateIds.length === 0) return;
+    // Wire: POST invite / open modal — placeholder for product flow
+    console.info("[kol-matching] inviteSelected", { candidateIds: selectedCandidateIds });
+  }, [selectedCandidateIds]);
+
   return {
     step,
     entry,
@@ -110,5 +116,6 @@ export function useKolMatchingFlow() {
     goToComparison,
     backToResults,
     restartFlow,
+    inviteSelected,
   };
 }

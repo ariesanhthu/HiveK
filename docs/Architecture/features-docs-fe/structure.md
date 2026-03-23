@@ -76,9 +76,9 @@ features/
     hooks/                # Hook state + mapping data theo period (weekly/monthly)
     types.ts              # Typed contracts cho metrics/trend/activity
   kol-matching/
-    components/           # Flow UI theo step: intake, processing, shortlist, comparison
-    hooks/                # Orchestrate state machine cho matching flow
-    services/             # Matching/search/scoring service layer
+    components/           # Flow UI theo step: intake, processing, shortlist (filters panel + results), comparison
+    hooks/                # `use-kol-matching-flow` + `use-kol-search-filters` (filter state + derived list)
+    services/             # `kol-matching-service` (mock search) + `kol-search-filter` (pure filter helpers)
     types.ts              # Typed contracts cho entry, stages, candidates
 ```
 
@@ -92,7 +92,7 @@ Hiện tại có 4 feature frontend:
 - `landing` cho `/` (homepage, public), mapping với các section: `HeroSection`, `PlatformBenefitsSection`, `TopPerformersSection`, `ActiveCampaignsSection`, `CallToActionSection`.
 - `kol-ranking` cho `/kol-ranking`, hỗ trợ filter + pagination + realtime stream để hiển thị bảng xếp hạng KOL.
 - `business-dashboard` cho `/dashboard` (group `(business)`), tách dashboard thành nhiều layer UI để dễ maintain và mở rộng dữ liệu thật.
-- `kol-matching` cho `/kol-matching` (group `(business)`), flow 4 bước: entry, agent processing, shortlist results, candidate comparison.
+- `kol-matching` cho `/kol-matching` (group `(business)`), flow 4 bước: entry, agent processing, shortlist results (click card để chọn, filter sidebar + `Invite selected` trên header), candidate comparison.
 
 ### `styles/`
 

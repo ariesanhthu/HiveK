@@ -8,6 +8,13 @@ type KolComparisonTableProps = {
   onRestart: () => void;
 };
 
+const METRIC_LABEL_CELL_CLASS = "px-4 py-3 text-sm text-foreground-muted";
+const METRIC_VALUE_CELL_CLASS = "border-l border-primary-soft px-4 py-3 align-middle text-center";
+const METRIC_VALUE_TEXT_CLASS = "text-[2rem] leading-none font-bold text-primary";
+const METRIC_NUMBER_TEXT_CLASS = "text-[2rem] leading-none font-bold text-foreground";
+const METRIC_SUBTEXT_CLASS = "mt-0.5 text-xs leading-4 text-foreground-muted";
+const METRIC_BADGE_CLASS = "text-xs font-semibold leading-4";
+
 function formatFollowers(value: number): string {
   if (value >= 1_000_000) return `${(value / 1_000_000).toFixed(1)}M`;
   if (value >= 1_000) return `${Math.round(value / 1_000)}K`;
@@ -21,12 +28,17 @@ function getHandle(name: string): string {
 function renderStars(score: number) {
   const fullStars = Math.round(score);
   return (
-    <div className="flex items-center gap-0.5 text-primary">
-      {Array.from({ length: 5 }).map((_, index) => (
-        <span key={`star-${score}-${index}`} className="material-symbols-outlined text-sm">
-          {index < fullStars ? "star" : "star_outline"}
-        </span>
-      ))}
+    <div className="mx-auto inline-flex items-center gap-2 rounded-full border border-primary-soft bg-primary-soft px-2.5 py-1">
+      <div className="flex items-center gap-0.5 text-primary">
+        {Array.from({ length: 5 }).map((_, index) => (
+          <span key={`star-${score}-${index}`} className="material-symbols-outlined text-sm leading-none">
+            {index < fullStars ? "star" : "star_outline"}
+          </span>
+        ))}
+      </div>
+      <span className="min-w-8 text-right text-xs font-semibold leading-none text-foreground">
+        {score.toFixed(1)}
+      </span>
     </div>
   );
 }
@@ -45,6 +57,10 @@ function getRiskLevel(estimatedCpaUsd: number): { text: string; variant: "defaul
   return { text: "Medium", variant: "warning" };
 }
 
+function formatMoney(value: number): string {
+  return `$${value.toLocaleString()}`;
+}
+
 export function KolComparisonTable({
   candidates,
   onBack,
@@ -52,6 +68,9 @@ export function KolComparisonTable({
 }: KolComparisonTableProps) {
   const highestFitScore = Math.max(...candidates.map((candidate) => candidate.fitScore));
   const lowestFee = Math.min(...candidates.map((candidate) => candidate.estimatedCostPerPostUsd));
+  const highestFitCount = candidates.filter(
+    (candidate) => candidate.fitScore === highestFitScore
+  ).length;
 
   return (
     <section className="w-full space-y-4">
@@ -61,14 +80,14 @@ export function KolComparisonTable({
             <table className="w-full min-w-[760px] table-fixed border-collapse">
               <thead>
                 <tr>
-                  <th className="w-52 rounded-tl-3xl bg-primary-soft px-4 py-3 text-left text-xs font-bold uppercase tracking-wide text-foreground-muted">
+                  <th className="w-52 px-4 py-4 text-left text-xs font-bold uppercase tracking-wide text-foreground-muted">
                     Campaign Metrics
                   </th>
                   {candidates.map((candidate, index) => (
                     <th
                       key={candidate.id}
-                      className={`border-l border-primary-soft bg-primary-soft px-4 py-3 text-left align-top ${
-                        index === candidates.length - 1 ? "rounded-tr-3xl" : ""
+                      className={`border-l border-primary-soft px-4 py-4 text-left align-middle ${
+                        index === candidates.length - 1 ? "pr-5" : ""
                       }`}
                     >
                       <div className="flex items-center gap-2">
@@ -89,94 +108,103 @@ export function KolComparisonTable({
                 </tr>
               </thead>
 
-              <tbody>
+              <tbody className="[&_tr>td]:transition-colors [&_tr:hover>td]:bg-primary-soft">
                 <tr className="odd:bg-card even:bg-muted/60">
-                  <td className="px-4 py-4 text-sm font-semibold text-foreground">Match Score</td>
+                  <td className={`${METRIC_LABEL_CELL_CLASS} font-semibold text-foreground`}>Match Score</td>
                   {candidates.map((candidate) => (
                     <td
                       key={`${candidate.id}-score`}
-                      className={`border-l border-primary-soft px-4 py-4 ${
+                      className={`${METRIC_VALUE_CELL_CLASS} py-4 ${
                         candidate.fitScore === highestFitScore ? "bg-primary-soft/70" : ""
                       }`}
                     >
-                      <p className="text-4xl font-bold text-primary">{candidate.fitScore}%</p>
+                      <p className={METRIC_VALUE_TEXT_CLASS}>{candidate.fitScore}%</p>
                       {candidate.fitScore === highestFitScore ? (
-                        <p className="text-[10px] font-bold uppercase text-primary">Highest Match</p>
-                      ) : null}
+                        <p className="text-[10px] font-bold uppercase tracking-wide text-primary">
+                          {highestFitCount > 1 ? "Top Score" : "Highest Match"}
+                        </p>
+                      ) : (
+                        <p className="invisible text-[10px] font-bold uppercase tracking-wide">
+                          Highest Match
+                        </p>
+                      )}
                     </td>
                   ))}
                 </tr>
 
                 <tr className="odd:bg-card even:bg-muted/60">
-                  <td className="px-4 py-3 text-sm text-foreground-muted">Followers</td>
+                  <td className={METRIC_LABEL_CELL_CLASS}>Followers</td>
                   {candidates.map((candidate) => (
-                    <td key={`${candidate.id}-followers`} className="border-l border-primary-soft px-4 py-3 text-lg font-semibold text-foreground">
-                      {formatFollowers(candidate.followers)}
+                    <td key={`${candidate.id}-followers`} className={METRIC_VALUE_CELL_CLASS}>
+                      <p className={METRIC_NUMBER_TEXT_CLASS}>{formatFollowers(candidate.followers)}</p>
                     </td>
                   ))}
                 </tr>
 
                 <tr className="odd:bg-card even:bg-muted/60">
-                  <td className="px-4 py-3 text-sm text-foreground-muted">Engagement</td>
+                  <td className={METRIC_LABEL_CELL_CLASS}>Engagement</td>
                   {candidates.map((candidate) => (
-                    <td key={`${candidate.id}-engagement`} className="border-l border-primary-soft px-4 py-3 text-lg font-semibold text-primary">
-                      {candidate.engagementRate.toFixed(1)}%
+                    <td key={`${candidate.id}-engagement`} className={METRIC_VALUE_CELL_CLASS}>
+                      <p className={METRIC_VALUE_TEXT_CLASS}>{candidate.engagementRate.toFixed(1)}%</p>
                     </td>
                   ))}
                 </tr>
 
                 <tr className="odd:bg-card even:bg-muted/60">
-                  <td className="px-4 py-3 text-sm text-foreground-muted">Rating</td>
+                  <td className={METRIC_LABEL_CELL_CLASS}>Rating</td>
                   {candidates.map((candidate) => (
-                    <td key={`${candidate.id}-rating`} className="border-l border-primary-soft px-4 py-3">
+                    <td key={`${candidate.id}-rating`} className={METRIC_VALUE_CELL_CLASS}>
                       {renderStars(candidate.avgRoi)}
-                      <p className="text-xs text-foreground-muted">{candidate.avgRoi.toFixed(1)}</p>
                     </td>
                   ))}
                 </tr>
 
                 <tr className="odd:bg-card even:bg-muted/60">
-                  <td className="px-4 py-3 text-sm text-foreground-muted">Completion Rate</td>
+                  <td className={METRIC_LABEL_CELL_CLASS}>Completion Rate</td>
                   {candidates.map((candidate) => (
-                    <td key={`${candidate.id}-completion`} className="border-l border-primary-soft px-4 py-3 text-lg font-semibold text-primary">
-                      {getCompletionRate(candidate)}%
+                    <td key={`${candidate.id}-completion`} className={METRIC_VALUE_CELL_CLASS}>
+                      <p className={METRIC_VALUE_TEXT_CLASS}>{getCompletionRate(candidate)}%</p>
                     </td>
                   ))}
                 </tr>
 
                 <tr className="odd:bg-card even:bg-muted/60">
-                  <td className="px-4 py-3 text-sm text-foreground-muted">Estimated Fee</td>
+                  <td className={METRIC_LABEL_CELL_CLASS}>Estimated Fee</td>
                   {candidates.map((candidate) => (
                     <td
                       key={`${candidate.id}-fee`}
-                      className={`border-l border-primary-soft px-4 py-3 text-xl font-bold text-foreground ${
+                      className={`${METRIC_VALUE_CELL_CLASS} ${
                         candidate.estimatedCostPerPostUsd === lowestFee ? "bg-primary-soft/70 text-primary" : ""
                       }`}
                     >
-                      ${candidate.estimatedCostPerPostUsd.toLocaleString()}
+                      <p className={METRIC_NUMBER_TEXT_CLASS}>{formatMoney(candidate.estimatedCostPerPostUsd)}</p>
                     </td>
                   ))}
                 </tr>
 
                 <tr className="odd:bg-card even:bg-muted/60">
-                  <td className="px-4 py-3 text-sm text-foreground-muted">Audience Fit</td>
+                  <td className={METRIC_LABEL_CELL_CLASS}>Audience Fit</td>
                   {candidates.map((candidate) => {
                     const audienceFit = getAudienceFitBadge(candidate.fitScore);
                     return (
-                      <td key={`${candidate.id}-audience-fit`} className="border-l border-primary-soft px-4 py-3">
-                        <Badge variant={audienceFit.variant}>{audienceFit.text}</Badge>
+                      <td key={`${candidate.id}-audience-fit`} className={METRIC_VALUE_CELL_CLASS}>
+                        <Badge variant={audienceFit.variant} className={METRIC_BADGE_CLASS}>
+                          {audienceFit.text}
+                        </Badge>
                       </td>
                     );
                   })}
                 </tr>
 
                 <tr className="odd:bg-card even:bg-muted/60">
-                  <td className="px-4 py-3 text-sm text-foreground-muted">Risk Level</td>
+                  <td className={METRIC_LABEL_CELL_CLASS}>Risk Level</td>
                   {candidates.map((candidate) => {
                     const riskLevel = getRiskLevel(candidate.estimatedCpaUsd);
                     return (
-                      <td key={`${candidate.id}-risk`} className="border-l border-primary-soft px-4 py-3">
-                        <Badge variant={riskLevel.variant}>{riskLevel.text}</Badge>
+                      <td key={`${candidate.id}-risk`} className={METRIC_VALUE_CELL_CLASS}>
+                        <Badge variant={riskLevel.variant} className={METRIC_BADGE_CLASS}>
+                          {riskLevel.text}
+                        </Badge>
                       </td>
                     );
                   })}

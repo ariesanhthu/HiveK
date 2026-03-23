@@ -1,5 +1,10 @@
+"use client";
+
+import { type KeyboardEvent } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { KolSearchFiltersPanel } from "@/features/kol-matching/components/kol-search-filters-panel";
+import { useKolSearchFilters } from "@/features/kol-matching/hooks/use-kol-search-filters";
 import { type KolCandidate } from "@/features/kol-matching/types";
 
 type SearchResultsListProps = {
@@ -8,6 +13,7 @@ type SearchResultsListProps = {
   onToggleCandidate: (candidateId: string) => void;
   onCompare: () => void;
   onRestart: () => void;
+  onInviteSelected: () => void;
 };
 
 function formatFollowers(value: number): string {
@@ -22,89 +28,93 @@ function toDisplayPlatform(platform: KolCandidate["platform"]): string {
   return "YouTube";
 }
 
+function handleCardKeyDown(
+  event: KeyboardEvent<HTMLElement>,
+  candidateId: string,
+  onToggle: (id: string) => void
+): void {
+  if (event.key === "Enter" || event.key === " ") {
+    event.preventDefault();
+    onToggle(candidateId);
+  }
+}
+
 export function SearchResultsList({
   candidates,
   selectedCandidateIds,
   onToggleCandidate,
   onCompare,
   onRestart,
+  onInviteSelected,
 }: SearchResultsListProps) {
+  const {
+    filters,
+    filteredCandidates,
+    followerSliderValue,
+    togglePlatform,
+    toggleNicheGroup,
+    setFollowerSlider,
+    setMinEngagementPercent,
+    clearFilters,
+  } = useKolSearchFilters(candidates);
+
+  const selectedCount = selectedCandidateIds.length;
+  const canInvite = selectedCount > 0;
+
   return (
     <section className="grid gap-4 lg:grid-cols-[240px_1fr]">
-      <Card className="h-fit">
-        <CardHeader className="pb-3">
-          <div className="flex items-center justify-between">
-            <CardTitle className="text-base">Filters</CardTitle>
-            <button type="button" className="text-xs font-semibold text-primary hover:underline">
-              Clear all
-            </button>
-          </div>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="space-y-2">
-            <p className="text-[11px] font-bold uppercase tracking-wide text-foreground-muted">
-              Platform
-            </p>
-            <div className="flex flex-wrap gap-2">
-              <button type="button" className="rounded-full bg-primary px-2.5 py-1 text-[11px] font-semibold text-background-dark">
-                Instagram
-              </button>
-              <button type="button" className="rounded-full bg-muted px-2.5 py-1 text-[11px] font-semibold text-foreground-muted">
-                TikTok
-              </button>
-              <button type="button" className="rounded-full bg-muted px-2.5 py-1 text-[11px] font-semibold text-foreground-muted">
-                YouTube
-              </button>
-            </div>
-          </div>
-
-          <div className="space-y-2">
-            <p className="text-[11px] font-bold uppercase tracking-wide text-foreground-muted">
-              Niche
-            </p>
-            <div className="space-y-1.5 text-xs text-foreground-muted">
-              <p className="font-semibold text-foreground">Beauty & Lifestyle</p>
-              <p>Tech & Gadgets</p>
-              <p>Fitness</p>
-            </div>
-          </div>
-
-          <div className="space-y-2">
-            <p className="text-[11px] font-bold uppercase tracking-wide text-foreground-muted">
-              Followers
-            </p>
-            <input type="range" className="h-2 w-full cursor-pointer appearance-none rounded-lg bg-primary-soft accent-primary" />
-          </div>
-
-          <div className="space-y-2">
-            <p className="text-[11px] font-bold uppercase tracking-wide text-foreground-muted">
-              Engagement Rate
-            </p>
-            <div className="rounded-lg border border-primary-soft bg-muted px-3 py-2 text-xs font-semibold text-foreground">
-              Above 3%
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+      <KolSearchFiltersPanel
+        filters={filters}
+        followerSliderValue={followerSliderValue}
+        onTogglePlatform={togglePlatform}
+        onToggleNicheGroup={toggleNicheGroup}
+        onFollowerSliderChange={setFollowerSlider}
+        onEngagementChange={setMinEngagementPercent}
+        onClearAll={clearFilters}
+      />
 
       <div className="space-y-3">
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle>KOL Search Results</CardTitle>
-            <CardDescription>
-              Chọn tối thiểu 2 creators để đi vào bước so sánh chi tiết.
-            </CardDescription>
+            <div className="flex flex-wrap items-start justify-between gap-3">
+              <div>
+                <CardTitle>KOL Search Results</CardTitle>
+                <CardDescription>
+                  Click a card to select (max 3). Chọn tối thiểu 2 creators để so sánh.
+                </CardDescription>
+              </div>
+              <button
+                type="button"
+                disabled={!canInvite}
+                onClick={onInviteSelected}
+                className="shrink-0 rounded-xl bg-primary px-4 py-2 text-sm font-bold text-background-dark transition-opacity disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                Invite selected
+              </button>
+            </div>
           </CardHeader>
           <CardContent className="space-y-3">
-            {candidates.map((candidate) => {
+            {filteredCandidates.length === 0 ? (
+              <p className="rounded-xl border border-primary-soft bg-muted px-4 py-6 text-center text-sm text-foreground-muted">
+                No creators match these filters. Try clearing filters or widening ranges.
+              </p>
+            ) : null}
+
+            {filteredCandidates.map((candidate) => {
               const isSelected = selectedCandidateIds.includes(candidate.id);
 
               return (
                 <article
                   key={candidate.id}
-                  className={`rounded-2xl border p-3 transition-colors ${
+                  role="button"
+                  tabIndex={0}
+                  aria-pressed={isSelected}
+                  aria-label={`${candidate.name}, ${isSelected ? "selected" : "not selected"}. Click to toggle.`}
+                  onClick={() => onToggleCandidate(candidate.id)}
+                  onKeyDown={(event) => handleCardKeyDown(event, candidate.id, onToggleCandidate)}
+                  className={`cursor-pointer rounded-2xl border p-3 outline-none transition-colors focus-visible:ring-2 focus-visible:ring-primary ${
                     isSelected
-                      ? "border-primary bg-primary-soft"
+                      ? "border-primary bg-primary-soft ring-2 ring-primary/30"
                       : "border-primary-soft bg-card hover:bg-primary-soft"
                   }`}
                 >
@@ -124,6 +134,9 @@ export function SearchResultsList({
                           <Badge variant={candidate.type === "KOL" ? "warning" : "secondary"}>
                             {candidate.type}
                           </Badge>
+                          {isSelected ? (
+                            <Badge variant="success">Selected</Badge>
+                          ) : null}
                         </div>
                         <p className="mt-0.5 text-xs text-foreground-muted">
                           {toDisplayPlatform(candidate.platform)} • {candidate.niche}
@@ -132,13 +145,20 @@ export function SearchResultsList({
                         <div className="mt-2 flex flex-wrap items-center gap-2">
                           <Badge variant="success">{candidate.fitScore}% Match</Badge>
                           <span className="text-xs text-foreground-muted">
-                            Followers <strong className="text-foreground">{formatFollowers(candidate.followers)}</strong>
+                            Followers{" "}
+                            <strong className="text-foreground">
+                              {formatFollowers(candidate.followers)}
+                            </strong>
                           </span>
                           <span className="text-xs text-foreground-muted">
-                            Engagement <strong className="text-foreground">{candidate.engagementRate.toFixed(1)}%</strong>
+                            Engagement{" "}
+                            <strong className="text-foreground">
+                              {candidate.engagementRate.toFixed(1)}%
+                            </strong>
                           </span>
                           <span className="text-xs text-foreground-muted">
-                            Rating <strong className="text-foreground">{candidate.avgRoi.toFixed(1)}</strong>
+                            Rating{" "}
+                            <strong className="text-foreground">{candidate.avgRoi.toFixed(1)}</strong>
                           </span>
                         </div>
 
@@ -155,38 +175,22 @@ export function SearchResultsList({
                       </div>
                     </div>
 
-                    <div className="ml-auto flex items-center gap-2">
-                      <button
-                        type="button"
-                        onClick={() => onToggleCandidate(candidate.id)}
-                        className={`rounded-lg px-3 py-2 text-xs font-semibold ${
-                          isSelected
-                            ? "bg-primary text-background-dark"
-                            : "border border-primary-soft bg-card text-foreground hover:bg-primary-soft"
-                        }`}
-                      >
-                        {isSelected ? "Selected" : "Select"}
-                      </button>
-                      <button
-                        type="button"
-                        className="rounded-lg bg-primary px-4 py-2 text-xs font-semibold text-background-dark"
-                      >
-                        Invite
-                      </button>
-                      <button
-                        type="button"
-                        className="rounded-lg border border-primary-soft bg-card px-3 py-2 text-xs font-semibold text-foreground hover:bg-primary-soft"
-                      >
-                        View Profile
-                      </button>
-                    </div>
+                    <button
+                      type="button"
+                      onClick={(event) => event.stopPropagation()}
+                      className="rounded-lg border border-primary-soft bg-card px-3 py-2 text-xs font-semibold text-foreground hover:bg-primary-soft"
+                    >
+                      View Profile
+                    </button>
                   </div>
                 </article>
               );
             })}
 
             <div className="flex flex-wrap items-center justify-between gap-3 border-t border-primary-soft pt-3">
-              <p className="text-xs text-foreground-muted">Selected: {selectedCandidateIds.length} / 3</p>
+              <p className="text-xs text-foreground-muted">
+                Selected: {selectedCount} / 3 • Showing {filteredCandidates.length} of {candidates.length}
+              </p>
               <div className="flex items-center gap-2">
                 <button
                   type="button"
@@ -198,28 +202,12 @@ export function SearchResultsList({
                 <button
                   type="button"
                   onClick={onCompare}
-                  disabled={selectedCandidateIds.length < 2}
+                  disabled={selectedCount < 2}
                   className="rounded-lg bg-primary px-3 py-1.5 text-xs font-semibold text-background-dark disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   Compare selected
                 </button>
               </div>
-            </div>
-
-            <div className="flex items-center justify-center gap-2 pt-1">
-              <button type="button" className="h-7 w-7 rounded-full border border-primary-soft text-xs text-foreground-muted">
-                {"<"}
-              </button>
-              <button type="button" className="h-7 w-7 rounded-full bg-primary text-xs font-semibold text-background-dark">
-                1
-              </button>
-              <span className="text-xs text-foreground-muted">2</span>
-              <span className="text-xs text-foreground-muted">3</span>
-              <span className="text-xs text-foreground-muted">...</span>
-              <span className="text-xs text-foreground-muted">12</span>
-              <button type="button" className="h-7 w-7 rounded-full border border-primary-soft text-xs text-foreground-muted">
-                {">"}
-              </button>
             </div>
           </CardContent>
         </Card>

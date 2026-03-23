@@ -23,6 +23,7 @@ export function KolMatchingPage() {
     goToComparison,
     backToResults,
     restartFlow,
+    inviteSelected,
   } = useKolMatchingFlow();
 
   return (
@@ -74,6 +75,7 @@ export function KolMatchingPage() {
           onToggleCandidate={toggleCandidate}
           onCompare={goToComparison}
           onRestart={restartFlow}
+          onInviteSelected={inviteSelected}
         />
       ) : null}
 
