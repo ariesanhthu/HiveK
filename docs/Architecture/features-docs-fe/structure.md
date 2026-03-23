@@ -75,6 +75,11 @@ features/
     components/           # Dashboard shell theo layers: sidebar, topbar, KPI, performance, activities
     hooks/                # Hook state + mapping data theo period (weekly/monthly)
     types.ts              # Typed contracts cho metrics/trend/activity
+  kol-matching/
+    components/           # Flow UI theo step: intake, processing, shortlist, comparison
+    hooks/                # Orchestrate state machine cho matching flow
+    services/             # Matching/search/scoring service layer
+    types.ts              # Typed contracts cho entry, stages, candidates
 ```
 
 Nguyên tắc:
@@ -83,10 +88,11 @@ Nguyên tắc:
 - `hooks/`: hooks đặc thù cho feature (data + UI state).
 - `server/`: hàm server-side / data fetching riêng cho feature (ví dụ: `getTopKols()`, `getFeaturedCampaigns()`).
 
-Hiện tại có 3 feature frontend:
+Hiện tại có 4 feature frontend:
 - `landing` cho `/` (homepage, public), mapping với các section: `HeroSection`, `PlatformBenefitsSection`, `TopPerformersSection`, `ActiveCampaignsSection`, `CallToActionSection`.
 - `kol-ranking` cho `/kol-ranking`, hỗ trợ filter + pagination + realtime stream để hiển thị bảng xếp hạng KOL.
 - `business-dashboard` cho `/dashboard` (group `(business)`), tách dashboard thành nhiều layer UI để dễ maintain và mở rộng dữ liệu thật.
+- `kol-matching` cho `/kol-matching` (group `(business)`), flow 4 bước: entry, agent processing, shortlist results, candidate comparison.
 
 ### `styles/`
 
