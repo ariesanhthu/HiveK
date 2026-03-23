@@ -1,7 +1,3 @@
----
-description: write docs in /docs folder, create visualize for this docs
-alwaysApply: false
----
 Always keep these in sync:
 - docs markdown
 - each folder’s `structure.md`
