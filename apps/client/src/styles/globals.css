@@ -1,0 +1,125 @@
+@import "tailwindcss";
+
+:root {
+  --color-primary: #f59e0b;
+  --color-secondary: #fb923c;
+  --color-tech-blue: #3b82f6;
+  --color-creator-purple: #8b5cf6;
+  --color-background-light: #f9fafb;
+  --color-background-dark: #111827;
+  /* Semantic: text & surfaces - light mode */
+  --color-foreground: #0f172a;
+  --color-foreground-muted: #64748b;
+  --color-card: #ffffff;
+  --color-muted: #f1f5f9;
+  --color-muted-foreground: #94a3b8;
+  --color-on-dark: #f8fafc;
+  --color-on-dark-muted: #94a3b8;
+  --color-primary-shadow: rgba(245, 158, 11, 0.3);
+  --color-success: #22c55e;
+  --color-overlay-light: rgba(255, 255, 255, 0.05);
+}
+
+/* Dark theme chi khi html co class .dark (theme toggle). Khong dung prefers-color-scheme. */
+.dark {
+  --color-foreground: #f1f5f9;
+  --color-foreground-muted: #94a3b8;
+  --color-card: var(--color-background-dark);
+  --color-muted: #1e293b;
+  --color-muted-foreground: #94a3b8;
+  --color-on-dark: #f8fafc;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  font-family: var(--font-inter), system-ui, -apple-system, BlinkMacSystemFont,
+    "Segoe UI", sans-serif;
+  color: var(--color-foreground);
+}
+
+@layer utilities {
+  .bg-background-light {
+    background-color: var(--color-background-light);
+  }
+
+  .bg-background-dark {
+    background-color: var(--color-background-dark);
+  }
+
+  .text-primary {
+    color: var(--color-primary);
+  }
+
+  .bg-primary {
+    background-color: var(--color-primary);
+  }
+
+  .bg-primary-soft {
+    background-color: color-mix(in srgb, var(--color-primary) 5%, transparent);
+  }
+
+  .border-primary-soft {
+    border-color: color-mix(in srgb, var(--color-primary) 15%, transparent);
+  }
+
+  .text-foreground {
+    color: var(--color-foreground);
+  }
+
+  .text-foreground-muted {
+    color: var(--color-foreground-muted);
+  }
+
+  .text-muted {
+    color: var(--color-muted-foreground);
+  }
+
+  .bg-card {
+    background-color: var(--color-card);
+  }
+
+  .bg-muted {
+    background-color: var(--color-muted);
+  }
+
+  .text-on-dark {
+    color: var(--color-on-dark);
+  }
+
+  .text-on-dark-muted {
+    color: var(--color-on-dark-muted);
+  }
+
+  .bg-on-dark-10 {
+    background-color: color-mix(in srgb, var(--color-on-dark) 10%, transparent);
+  }
+
+  .border-on-dark-10 {
+    border-color: color-mix(in srgb, var(--color-on-dark) 10%, transparent);
+  }
+
+  .bg-on-dark-5 {
+    background-color: color-mix(in srgb, var(--color-on-dark) 5%, transparent);
+  }
+
+  .hover\:bg-on-dark-20:hover {
+    background-color: color-mix(in srgb, var(--color-on-dark) 20%, transparent);
+  }
+
+  .shadow-primary {
+    box-shadow: 0 10px 15px -3px var(--color-primary-shadow),
+      0 4px 6px -4px var(--color-primary-shadow);
+  }
+
+  .text-success {
+    color: var(--color-success);
+  }
+
+  .bg-overlay-light {
+    background-color: var(--color-overlay-light);
+  }
+}
