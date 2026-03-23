@@ -1,10 +1,10 @@
 "use client";
 
-import { type KeyboardEvent } from "react";
+import type { KeyboardEvent } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { KolSearchFiltersPanel } from "@/features/kol-matching/components/kol-search-filters-panel";
-import { useKolSearchFilters } from "@/features/kol-matching/hooks/use-kol-search-filters";
+import { SearchResultsFiltersPanel } from "@/features/kol-matching/components/search-results-filters-panel";
+import { useSearchResultsFilters } from "@/features/kol-matching/hooks/use-search-results-filters";
 import { type KolCandidate } from "@/features/kol-matching/types";
 
 type SearchResultsListProps = {
@@ -40,7 +40,7 @@ function handleCardKeyDown(
 }
 
 export function SearchResultsList({
-  candidates,
+  candidates: sourceCandidates,
   selectedCandidateIds,
   onToggleCandidate,
   onCompare,
@@ -50,48 +50,44 @@ export function SearchResultsList({
   const {
     filters,
     filteredCandidates,
-    followerSliderValue,
-    togglePlatform,
-    toggleNicheGroup,
-    setFollowerSlider,
-    setMinEngagementPercent,
     clearFilters,
-  } = useKolSearchFilters(candidates);
+    togglePlatform,
+    toggleNiche,
+    setFollowerMinK,
+    setEngagementMinPercent,
+  } = useSearchResultsFilters(sourceCandidates);
 
   const selectedCount = selectedCandidateIds.length;
   const canInvite = selectedCount > 0;
 
   return (
     <section className="grid gap-4 lg:grid-cols-[240px_1fr]">
-      <KolSearchFiltersPanel
+      <SearchResultsFiltersPanel
         filters={filters}
-        followerSliderValue={followerSliderValue}
-        onTogglePlatform={togglePlatform}
-        onToggleNicheGroup={toggleNicheGroup}
-        onFollowerSliderChange={setFollowerSlider}
-        onEngagementChange={setMinEngagementPercent}
         onClearAll={clearFilters}
+        onTogglePlatform={togglePlatform}
+        onToggleNiche={toggleNiche}
+        onFollowerMinKChange={setFollowerMinK}
+        onEngagementMinChange={setEngagementMinPercent}
       />
 
       <div className="space-y-3">
         <Card>
-          <CardHeader className="pb-2">
-            <div className="flex flex-wrap items-start justify-between gap-3">
-              <div>
-                <CardTitle>KOL Search Results</CardTitle>
-                <CardDescription>
-                  Click a card to select (max 3). Chọn tối thiểu 2 creators để so sánh.
-                </CardDescription>
-              </div>
-              <button
-                type="button"
-                disabled={!canInvite}
-                onClick={onInviteSelected}
-                className="shrink-0 rounded-xl bg-primary px-4 py-2 text-sm font-bold text-background-dark transition-opacity disabled:cursor-not-allowed disabled:opacity-50"
-              >
-                Invite selected
-              </button>
+          <CardHeader className="flex flex-row flex-wrap items-start justify-between gap-3 pb-2">
+            <div className="min-w-0 flex-1">
+              <CardTitle>KOL Search Results</CardTitle>
+              <CardDescription>
+                Click a card to select (max 3). Choose at least 2 creators to compare.
+              </CardDescription>
             </div>
+            <button
+              type="button"
+              onClick={onInviteSelected}
+              disabled={!canInvite}
+              className="shrink-0 rounded-xl bg-primary px-4 py-2 text-sm font-bold text-background-dark transition-opacity disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              Invite selected
+            </button>
           </CardHeader>
           <CardContent className="space-y-3">
             {filteredCandidates.length === 0 ? (
@@ -189,7 +185,8 @@ export function SearchResultsList({
 
             <div className="flex flex-wrap items-center justify-between gap-3 border-t border-primary-soft pt-3">
               <p className="text-xs text-foreground-muted">
-                Selected: {selectedCount} / 3 • Showing {filteredCandidates.length} of {candidates.length}
+                Selected: {selectedCount} / 3 • Showing {filteredCandidates.length} of{" "}
+                {sourceCandidates.length}
               </p>
               <div className="flex items-center gap-2">
                 <button

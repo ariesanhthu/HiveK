@@ -52,3 +52,15 @@ export type KolComparisonMetric = {
   unit?: string;
   getValue: (candidate: KolCandidate) => number | string;
 };
+
+/** Client-side filters for step 3 (search results). */
+export type SearchResultsFilterState = {
+  /** Empty = all platforms */
+  platforms: SocialPlatform[];
+  /** Niche category ids from `SEARCH_NICHE_FILTER_OPTIONS` */
+  nicheIds: string[];
+  /** Minimum followers in thousands (slider) */
+  followerMinK: number;
+  /** Minimum engagement rate % (0 = no filter) */
+  engagementMinPercent: number;
+};

@@ -76,9 +76,9 @@ features/
     hooks/                # Hook state + mapping data theo period (weekly/monthly)
     types.ts              # Typed contracts cho metrics/trend/activity
   kol-matching/
-    components/           # Flow UI theo step: intake, processing, shortlist (filters panel + results), comparison
-    hooks/                # `use-kol-matching-flow` + `use-kol-search-filters` (filter state + derived list)
-    services/             # `kol-matching-service` (mock search) + `kol-search-filter` (pure filter helpers)
+    components/           # Flow UI theo step: intake, processing, shortlist (`search-results-filters-panel` + results), comparison
+    hooks/                # `use-kol-matching-flow` + `use-search-results-filters` (filter state + derived list)
+    services/             # `kol-matching-service` (mock search) + `search-results-filter-service` (pure filter helpers)
     types.ts              # Typed contracts cho entry, stages, candidates
 ```
 

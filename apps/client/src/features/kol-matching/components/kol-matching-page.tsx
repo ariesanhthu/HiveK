@@ -39,7 +39,6 @@ export function KolMatchingPage() {
             <h1 className="text-3xl font-extrabold tracking-tight text-foreground">
               Discover Creators
             </h1>
-          
           </>
         ) : (
           <>
