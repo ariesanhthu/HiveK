@@ -4,6 +4,8 @@ import { cn } from "@/lib/utils";
 import {
   Bot,
   Check,
+  ChevronLeft,
+  ChevronRight,
   ListFilter,
   type LucideIcon,
   Search,
@@ -26,71 +28,155 @@ const FLOW_STEPS: FlowStep[] = [
 type FlowStepperProps = {
   currentStep: KolMatchingStep;
   className?: string;
+  /** When set with `onToggleCollapse`, shows rail collapse control and hides labels when `true`. */
+  isCollapsed?: boolean;
+  onToggleCollapse?: () => void;
 };
 
-export function FlowStepper({ currentStep, className }: FlowStepperProps) {
+export function FlowStepper({
+  currentStep,
+  className,
+  isCollapsed = false,
+  onToggleCollapse,
+}: FlowStepperProps) {
   const activeIndex = FLOW_STEPS.findIndex((step) => step.id === currentStep);
+  const isCollapsible = Boolean(onToggleCollapse);
 
   return (
-    <Card className={cn("rounded-2xl bg-primary", className)}>
-      <CardHeader className="pb-2">
-        <CardTitle className="text-base">Flow Progress</CardTitle>
+    <Card
+      className={cn(
+        "rounded-2xl border border-primary-soft bg-card text-foreground shadow-sm",
+        className
+      )}
+    >
+      <CardHeader
+        className={cn(
+          "pb-2",
+          isCollapsed && isCollapsible && "border-b border-primary-soft/30 px-3 py-3"
+        )}
+      >
+        {isCollapsible ? (
+          <div
+            className={cn(
+              "flex items-center gap-2",
+              isCollapsed ? "justify-center" : "justify-between"
+            )}
+          >
+            {!isCollapsed ? (
+              <CardTitle className="text-base">Flow Progress</CardTitle>
+            ) : null}
+            <button
+              type="button"
+              onClick={onToggleCollapse}
+              aria-expanded={!isCollapsed}
+              aria-label={isCollapsed ? "Expand flow panel" : "Collapse flow panel"}
+              className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-primary-soft bg-card text-foreground transition-colors hover:bg-primary-soft"
+            >
+              {isCollapsed ? (
+                <ChevronLeft className="h-4 w-4" aria-hidden />
+              ) : (
+                <ChevronRight className="h-4 w-4" aria-hidden />
+              )}
+            </button>
+          </div>
+        ) : (
+          <CardTitle className="text-base">Flow Progress</CardTitle>
+        )}
       </CardHeader>
-      <CardContent className="pt-1">
-        <ol className="flex flex-col gap-3">
-          {FLOW_STEPS.map((step, index) => {
-            const isActive = index === activeIndex;
-            const isCompleted = index < activeIndex;
-            const StepIcon = step.icon;
+      <CardContent className={cn("pt-1", isCollapsed && isCollapsible && "px-2 pb-3 pt-2")}>
+        {isCollapsed && isCollapsible ? (
+          <ol className="flex flex-col items-center gap-1">
+            {FLOW_STEPS.map((step, index) => {
+              const isActive = index === activeIndex;
+              const isCompleted = index < activeIndex;
+              const StepIcon = step.icon;
 
-            return (
-              <li key={step.id} className="relative flex items-start gap-3">
-                {index < FLOW_STEPS.length - 1 ? (
-                  <span
-                    aria-hidden
+              return (
+                <li key={step.id} className="relative flex flex-col items-center">
+                  {index < FLOW_STEPS.length - 1 ? (
+                    <span
+                      aria-hidden
+                      className={cn(
+                        "absolute top-10 h-3 w-px",
+                        isCompleted ? "bg-primary/70" : "bg-primary-soft"
+                      )}
+                    />
+                  ) : null}
+                  <div
+                    title={step.label}
                     className={cn(
-                      "absolute left-5 top-10 h-10 w-px",
-                      isCompleted ? "bg-primary/70" : "bg-primary-soft"
-                    )}
-                  />
-                ) : null}
-
-                <div
-                  className={cn(
-                    "z-10 flex h-10 w-10 shrink-0 items-center justify-center rounded-full border transition-colors",
-                    isActive
-                      ? "border-primary bg-primary text-background-dark"
-                      : isCompleted
-                        ? "border-primary bg-primary/15 text-primary"
-                        : "border-primary-soft bg-card text-foreground-muted"
-                  )}
-                >
-                  {isCompleted ? (
-                    <Check className="h-4 w-4" aria-hidden />
-                  ) : (
-                    <StepIcon className="h-4 w-4" aria-hidden />
-                  )}
-                </div>
-
-                <div className="pt-1">
-                  <p
-                    className={cn(
-                      "text-sm font-semibold transition-colors",
-                      isActive || isCompleted
-                        ? "text-foreground"
-                        : "text-foreground-muted"
+                      "relative z-10 flex h-10 w-10 items-center justify-center rounded-full border transition-colors",
+                      isActive
+                        ? "border-primary bg-primary text-background-dark"
+                        : isCompleted
+                          ? "border-primary bg-primary/15 text-primary"
+                          : "border-primary-soft bg-muted/60 text-foreground-muted"
                     )}
                   >
-                    {step.label}
-                  </p>
-                  <p className="text-xs text-foreground-muted">
-                    Step {index + 1}
-                  </p>
-                </div>
-              </li>
-            );
-          })}
-        </ol>
+                    {isCompleted ? (
+                      <Check className="h-4 w-4" aria-hidden />
+                    ) : (
+                      <StepIcon className="h-4 w-4" aria-hidden />
+                    )}
+                  </div>
+                </li>
+              );
+            })}
+          </ol>
+        ) : (
+          <ol className="flex flex-col gap-3">
+            {FLOW_STEPS.map((step, index) => {
+              const isActive = index === activeIndex;
+              const isCompleted = index < activeIndex;
+              const StepIcon = step.icon;
+
+              return (
+                <li key={step.id} className="relative flex items-start gap-3">
+                  {index < FLOW_STEPS.length - 1 ? (
+                    <span
+                      aria-hidden
+                      className={cn(
+                        "absolute left-5 top-10 h-10 w-px",
+                        isCompleted ? "bg-primary/70" : "bg-primary-soft"
+                      )}
+                    />
+                  ) : null}
+
+                  <div
+                    className={cn(
+                      "z-10 flex h-10 w-10 shrink-0 items-center justify-center rounded-full border transition-colors",
+                      isActive
+                        ? "border-primary bg-primary text-background-dark"
+                        : isCompleted
+                          ? "border-primary bg-primary/15 text-primary"
+                          : "border-primary-soft bg-muted/60 text-foreground-muted"
+                    )}
+                  >
+                    {isCompleted ? (
+                      <Check className="h-4 w-4" aria-hidden />
+                    ) : (
+                      <StepIcon className="h-4 w-4" aria-hidden />
+                    )}
+                  </div>
+
+                  <div className="min-w-0 pt-1">
+                    <p
+                      className={cn(
+                        "text-sm font-semibold transition-colors",
+                        isActive || isCompleted
+                          ? "text-foreground"
+                          : "text-foreground-muted"
+                      )}
+                    >
+                      {step.label}
+                    </p>
+                    <p className="text-xs text-foreground-muted">Step {index + 1}</p>
+                  </div>
+                </li>
+              );
+            })}
+          </ol>
+        )}
       </CardContent>
     </Card>
   );

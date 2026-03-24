@@ -7,17 +7,9 @@ import {
   type DashboardData,
   type DashboardLinePoint,
   type DashboardMetric,
-  type DashboardNavItem,
   type DashboardPeriod,
 } from "@/features/business-dashboard/types";
-
-const NAV_ITEMS: DashboardNavItem[] = [
-  { id: "dashboard", label: "Dashboard", icon: "dashboard", href: "/dashboard", isActive: true },
-  { id: "campaigns", label: "Campaigns", icon: "campaign", href: "#", isActive: false },
-  { id: "discovery", label: "KOL Discovery", icon: "travel_explore", href: "#", isActive: false },
-  { id: "analytics", label: "Analytics", icon: "bar_chart", href: "#", isActive: false },
-  { id: "settings", label: "Settings", icon: "settings", href: "#", isActive: false },
-];
+import { useBusinessNavItems } from "@/features/business-dashboard/hooks/use-business-nav-items";
 
 const METRICS: DashboardMetric[] = [
   {
@@ -125,6 +117,7 @@ export function useBusinessDashboardData(): DashboardData & {
   setPeriod: (period: DashboardPeriod) => void;
 } {
   const [period, setPeriod] = useState<DashboardPeriod>("weekly");
+  const navItems = useBusinessNavItems();
 
   const campaignTrend = useMemo(
     () => (period === "weekly" ? CAMPAIGN_TREND_WEEKLY : CAMPAIGN_TREND_MONTHLY),
@@ -138,7 +131,7 @@ export function useBusinessDashboardData(): DashboardData & {
   return {
     period,
     setPeriod,
-    navItems: NAV_ITEMS,
+    navItems,
     metrics: METRICS,
     campaignTrend,
     conversionTrend,

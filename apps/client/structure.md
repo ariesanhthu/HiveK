@@ -32,11 +32,12 @@ Next.js 16 frontend (App Router).
   - `types.ts` – Typed contracts cho ranking
 - **`src/features/business-dashboard/`** – Feature dashboard cho business workspace:
   - `components/` – Dashboard shell layers (sidebar, topbar, KPI cards, performance, activities)
+  - `hooks/use-business-nav-items.ts` – Nav sidebar theo `usePathname` (Dashboard, KOL Discovery → `/kol-matching`, …)
   - `hooks/use-business-dashboard-data.ts` – State period (weekly/monthly) + data mapper
   - `types.ts` – Typed contracts cho nav, metrics, trend chart, activities
   - `index.ts` – Public entry export `BusinessDashboardPage`
 - **`src/features/kol-matching/`** – Feature KOL/KOC matching theo step:
-  - `components/` – Stepper + step views (entry form, agent processing, `flow-page-header`, `search-results-list`, `search-results-filters-panel`, comparison)
+  - `components/` – Stepper + step views (entry form, agent processing, `flow-page-header`, `flow-stepper` rail có collapse, `search-results-list`, `search-results-filters-panel`, comparison); page bọc `DashboardSidebar` + nội dung `flex-1`; bước `kol-comparison` full-width trong vùng content + flow rail phải sticky
   - `hooks/use-kol-matching-flow.ts` – Orchestrate state machine của flow (gồm `inviteSelected` stub)
   - `hooks/use-search-results-filters.ts` – State + derived list cho filter step 3
   - `services/kol-matching-service.ts` – Search/scoring pipeline (mock service, ready để cắm MCP/API)

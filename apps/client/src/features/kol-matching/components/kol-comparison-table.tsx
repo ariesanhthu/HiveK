@@ -104,8 +104,8 @@ export function KolComparisonTable({
     <section className="w-full space-y-4">
       <Card className="overflow-hidden rounded-3xl">
         <CardContent className="p-0">
-          <div className="overflow-x-auto">
-            <table className="w-full min-w-[760px] table-fixed border-collapse">
+          <div className="min-w-0 overflow-x-auto">
+            <table className="w-full min-w-[760px] table-fixed border-collapse lg:min-w-0">
               <thead>
                 <tr>
                   <th className="w-52 px-4 py-4 text-left text-xs font-bold uppercase tracking-wide text-foreground-muted">
