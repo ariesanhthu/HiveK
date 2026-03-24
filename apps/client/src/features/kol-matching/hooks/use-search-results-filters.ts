@@ -12,7 +12,9 @@ import {
 } from "@/features/kol-matching/types";
 
 export function useSearchResultsFilters(sourceCandidates: KolCandidate[]) {
-  const [filters, setFilters] = useState<SearchResultsFilterState>(getDefaultSearchResultsFilterState);
+  const [filters, setFilters] = useState<SearchResultsFilterState>(() =>
+    getDefaultSearchResultsFilterState()
+  );
 
   const filteredCandidates = useMemo(
     () => filterKolCandidatesBySearchFilters(sourceCandidates, filters),
