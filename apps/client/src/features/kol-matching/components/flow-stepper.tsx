@@ -52,7 +52,7 @@ export function FlowStepper({
       <CardHeader
         className={cn(
           "pb-2",
-          isCollapsed && isCollapsible && "border-b border-primary-soft/30 px-3 py-3"
+          isCollapsed && isCollapsible && "border-primary-soft/30 px-3 py-3"
         )}
       >
         {isCollapsible ? (
