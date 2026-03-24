@@ -44,27 +44,6 @@ export function KolMatchingPage() {
             {step === "find-entry" ? "Discover Creators" : "KOL/KOC Matching"}
           </h1>
         }
-        actions={
-          step === "search-results" ? (
-            <div className="flex items-center gap-2">
-              <button
-                type="button"
-                onClick={restartFlow}
-                className="rounded-lg border border-primary-soft px-3 py-1.5 text-xs font-semibold text-foreground hover:bg-primary-soft"
-              >
-                New search
-              </button>
-              <button
-                type="button"
-                onClick={goToComparison}
-                disabled={selectedCandidateIds.length < 2}
-                className="rounded-lg bg-primary px-3 py-1.5 text-xs font-semibold text-background-dark disabled:cursor-not-allowed disabled:opacity-50"
-              >
-                Compare selected
-              </button>
-            </div>
-          ) : null
-        }
       />
 
       <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_290px] lg:items-start">
@@ -103,8 +82,27 @@ export function KolMatchingPage() {
           ) : null}
         </section>
 
-        <aside className="order-1 lg:order-2 lg:sticky lg:top-6">
+        <aside className="order-1 flex flex-col gap-3 lg:order-2 lg:sticky lg:top-6">
           <FlowStepper currentStep={step} />
+          {step === "search-results" ? (
+            <div className="flex flex-wrap items-center justify-end gap-2">
+              <button
+                type="button"
+                onClick={restartFlow}
+                className="rounded-xl border border-primary-soft px-3 py-2 text-xs font-semibold text-foreground transition-colors hover:bg-primary-soft"
+              >
+                New search
+              </button>
+              <button
+                type="button"
+                onClick={goToComparison}
+                disabled={selectedCandidateIds.length < 2}
+                className="rounded-xl bg-primary px-3 py-2 text-xs font-semibold text-background-dark transition-opacity disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                Compare selected
+              </button>
+            </div>
+          ) : null}
         </aside>
       </div>
     </main>

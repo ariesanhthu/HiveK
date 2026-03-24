@@ -57,6 +57,10 @@ export function FindEntryForm({
 
   return (
     <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
+      
+      <div className="lg:col-span-4">
+        <FindEntryHelperPanel />
+      </div>
       <Card className="lg:col-span-8">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
@@ -233,9 +237,6 @@ export function FindEntryForm({
         </CardContent>
       </Card>
 
-      <div className="lg:col-span-4">
-        <FindEntryHelperPanel />
-      </div>
     </div>
   );
 }

@@ -32,7 +32,7 @@ export function FlowStepper({ currentStep, className }: FlowStepperProps) {
   const activeIndex = FLOW_STEPS.findIndex((step) => step.id === currentStep);
 
   return (
-    <Card className={cn("rounded-2xl", className)}>
+    <Card className={cn("rounded-2xl bg-primary", className)}>
       <CardHeader className="pb-2">
         <CardTitle className="text-base">Flow Progress</CardTitle>
       </CardHeader>
