@@ -26,13 +26,13 @@ export function FindEntryHelperPanel() {
             <span className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-background-dark">
               <span className="material-symbols-outlined text-base">lightbulb</span>
             </span>
-            Quick Start Guide
+            Hướng dẫn Nhanh
           </CardTitle>
         </CardHeader>
         <CardContent>
           <p className="text-sm text-foreground-muted">
-            To get accurate matches, define clear audience intent and brand voice.
-            Matching agent ưu tiên creators có engagement thật thay vì follower ảo.
+            Để có kết quả chính xác, hãy xác định rõ đối tượng mục tiêu và tiếng nói thương hiệu.
+            AI ưu tiên creator có tương tác thật thay vì người theo dõi ảo.
           </p>
         </CardContent>
       </Card>
@@ -43,7 +43,7 @@ export function FindEntryHelperPanel() {
             <span className="material-symbols-outlined text-base text-foreground-muted">
               history_edu
             </span>
-            Prompt Templates
+            Mẫu Gợi ý (Prompt)
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">
@@ -66,7 +66,7 @@ export function FindEntryHelperPanel() {
             <span className="material-symbols-outlined text-base text-foreground-muted">
               history
             </span>
-            Recent Searches
+            Tìm kiếm Gần đây
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">
@@ -83,7 +83,7 @@ export function FindEntryHelperPanel() {
           ))}
 
           <button type="button" className="w-full text-sm font-medium text-primary hover:underline">
-            View All History
+            Xem Toàn bộ Lịch sử
           </button>
         </CardContent>
       </Card>

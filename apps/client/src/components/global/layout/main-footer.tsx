@@ -15,90 +15,52 @@ export const MainFooter: React.FC = () => {
               </h2>
             </div>
             <p className="max-w-xs text-sm leading-relaxed text-muted">
-              The world&apos;s leading platform for data-driven influencer
-              marketing and creator monetization.
+              Nền tảng hàng đầu về marketing kết hợp KOL dựa trên dữ liệu,
+              giúp các nhãn hàng và người sáng tạo kết nối hiệu quả.
             </p>
           </div>
 
-          <div>
+          <div className="col-span-2 md:col-span-1 lg:col-span-2">
             <h4 className="mb-6 text-sm font-bold uppercase text-foreground">
-              Platform
+              Nền tảng
             </h4>
             <ul className="space-y-4 text-sm text-muted">
               <li>
                 <a className="transition-colors hover:text-primary" href="#">
-                  Influencers
+                  KOLs & Creator
                 </a>
               </li>
               <li>
                 <a className="transition-colors hover:text-primary" href="#">
-                  Brands
+                  Nhãn hàng & Doanh nghiệp
                 </a>
               </li>
               <li>
-                <a className="transition-colors hover:text-primary" href="#">
-                  Case Studies
-                </a>
-              </li>
-              <li>
-                <a className="transition-colors hover:text-primary" href="#">
-                  Pricing
+                <a className="transition-colors hover:text-primary" href="/kol-ranking">
+                  Bảng xếp hạng KOL
                 </a>
               </li>
             </ul>
           </div>
 
-          <div>
+          <div className="col-span-2 md:col-span-1 lg:col-span-2">
             <h4 className="mb-6 text-sm font-bold uppercase text-foreground">
-              Resources
+              Hỗ trợ
             </h4>
             <ul className="space-y-4 text-sm text-muted">
               <li>
                 <a className="transition-colors hover:text-primary" href="#">
-                  Blog
+                  Trung tâm trợ giúp
                 </a>
               </li>
               <li>
                 <a className="transition-colors hover:text-primary" href="#">
-                  Guides
+                  Điều khoản dịch vụ
                 </a>
               </li>
               <li>
                 <a className="transition-colors hover:text-primary" href="#">
-                  Community
-                </a>
-              </li>
-              <li>
-                <a className="transition-colors hover:text-primary" href="#">
-                  Help Center
-                </a>
-              </li>
-            </ul>
-          </div>
-
-          <div>
-            <h4 className="mb-6 text-sm font-bold uppercase text-foreground">
-              Company
-            </h4>
-            <ul className="space-y-4 text-sm text-muted">
-              <li>
-                <a className="transition-colors hover:text-primary" href="#">
-                  About Us
-                </a>
-              </li>
-              <li>
-                <a className="transition-colors hover:text-primary" href="#">
-                  Careers
-                </a>
-              </li>
-              <li>
-                <a className="transition-colors hover:text-primary" href="#">
-                  Legal
-                </a>
-              </li>
-              <li>
-                <a className="transition-colors hover:text-primary" href="#">
-                  Contact
+                  Liên hệ
                 </a>
               </li>
             </ul>
@@ -107,7 +69,7 @@ export const MainFooter: React.FC = () => {
 
         <div className="mt-12 flex flex-col items-center justify-between border-t border-primary-soft pt-8 md:flex-row">
           <p className="text-sm text-muted">
-            © 2024 KOLConnect. All rights reserved.
+            © 2024 KOLConnect. Đã đăng ký bản quyền.
           </p>
           <div className="mt-4 flex items-center gap-6 md:mt-0">
             <a

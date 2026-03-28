@@ -33,7 +33,7 @@ export function RankingPagination({
   return (
     <div className="flex items-center justify-between gap-4 rounded-2xl border border-primary-soft bg-card px-4 py-3">
       <p className="text-sm text-foreground-muted">
-        Page <span className="font-semibold text-foreground">{page}</span> /{" "}
+        Trang <span className="font-semibold text-foreground">{page}</span> /{" "}
         {totalPages}
       </p>
 
@@ -43,7 +43,7 @@ export function RankingPagination({
           disabled={isDisabled || page === 1}
           className="rounded-xl border border-primary-soft px-3 py-1.5 text-sm font-semibold text-foreground transition hover:bg-primary-soft disabled:cursor-not-allowed disabled:opacity-50"
         >
-          Prev
+          Trước
         </button>
 
         {pages.map((pageNumber) => (
@@ -66,7 +66,7 @@ export function RankingPagination({
           disabled={isDisabled || page === totalPages}
           className="rounded-xl border border-primary-soft px-3 py-1.5 text-sm font-semibold text-foreground transition hover:bg-primary-soft disabled:cursor-not-allowed disabled:opacity-50"
         >
-          Next
+          Sau
         </button>
       </div>
     </div>

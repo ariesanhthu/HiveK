@@ -18,7 +18,7 @@ export function BusinessDashboardPage() {
     activities,
   } = useBusinessDashboardData();
 
-  const periodLabel = period === "weekly" ? "Weekly Overview" : "Monthly Overview";
+  const periodLabel = period === "weekly" ? "Tổng quan Hàng tuần" : "Tổng quan Hàng tháng";
 
   return (
     <main className="flex min-h-screen w-full bg-background-light">
@@ -30,10 +30,10 @@ export function BusinessDashboardPage() {
         <section className="mx-auto flex w-full max-w-6xl flex-col gap-4 px-4 py-6 md:px-6">
           <header>
             <h1 className="text-3xl font-extrabold tracking-tight text-foreground">
-              Business Dashboard
+              Bảng điều khiển Doanh nghiệp
             </h1>
             <p className="mt-1 text-sm text-foreground-muted">
-              Manage your creator partnerships and track campaign ROI in real-time.
+              Quản lý đối tác sáng tạo và theo dõi ROI chiến dịch theo thời gian thực.
             </p>
           </header>
 

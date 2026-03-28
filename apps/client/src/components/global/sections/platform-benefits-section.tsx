@@ -6,14 +6,13 @@ export const PlatformBenefitsSection: React.FC = () => {
       <div className="mx-auto max-w-7xl px-6">
         <div className="mb-16 flex flex-col items-center text-center">
           <h2 className="text-sm font-bold uppercase tracking-widest text-primary">
-            How it works
+            Cách thức hoạt động
           </h2>
           <h3 className="mt-4 text-4xl font-black text-foreground">
-            Unlock Your Full Potential
+            Khai phá tiềm năng của bạn
           </h3>
           <p className="mt-4 max-w-2xl text-foreground-muted">
-            Our platform simplifies the connection between influencers and
-            high-impact brands, focusing on growth and authentic engagement.
+            Chúng tôi đơn giản hóa việc kết nối giữa KOL và các thương hiệu hàng đầu, tập trung vào tăng trưởng và tương tác thực chất.
           </p>
         </div>
 
@@ -25,11 +24,10 @@ export const PlatformBenefitsSection: React.FC = () => {
               </span>
             </div>
             <h4 className="mb-3 text-xl font-bold text-foreground">
-              Smart Matching
+              Ghép đôi thông minh
             </h4>
             <p className="text-foreground-muted">
-              AI-driven brand discovery that aligns your unique audience with
-              the perfect campaign partners.
+              AI gợi ý thương hiệu phù hợp với tệp khán giả riêng của bạn để tạo nên các chiến dịch hoàn hảo.
             </p>
           </div>
 
@@ -40,11 +38,10 @@ export const PlatformBenefitsSection: React.FC = () => {
               </span>
             </div>
             <h4 className="mb-3 text-xl font-bold text-foreground">
-              Real-time Analytics
+              Phân tích thời gian thực
             </h4>
             <p className="text-foreground-muted">
-              Comprehensive dashboard to track your engagement, audience
-              growth, and campaign ROI instantly.
+              Bảng điều khiển toàn diện giúp theo dõi lượng tương tác, sự phát triển khán giả và ROI chiến dịch ngay lập tức.
             </p>
           </div>
 
@@ -55,11 +52,10 @@ export const PlatformBenefitsSection: React.FC = () => {
               </span>
             </div>
             <h4 className="mb-3 text-xl font-bold text-foreground">
-              Secure Payments
+              Thanh toán an toàn
             </h4>
             <p className="text-foreground-muted">
-              Escrow-backed payments ensure you get paid on time, every time,
-              as soon as milestones are met.
+              Hệ thống thanh toán đảm bảo (escrow) giúp bạn nhận tiền đúng hạn ngay khi đạt đủ mốc yêu cầu của chiến dịch.
             </p>
           </div>
         </div>

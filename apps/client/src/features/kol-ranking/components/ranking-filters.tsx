@@ -22,19 +22,19 @@ export function RankingFilters({ filters, onChange }: RankingFiltersProps) {
       <div className="grid grid-cols-1 gap-3 md:grid-cols-4">
         <label className="flex flex-col gap-2">
           <span className="text-xs font-semibold uppercase tracking-wide text-foreground-muted">
-            Search
+            Tìm kiếm
           </span>
           <input
             value={filters.search}
             onChange={(event) => onChange({ search: event.target.value })}
-            placeholder="Search KOL name..."
+            placeholder="Tìm kiếm tên KOL..."
             className="rounded-xl border border-primary-soft bg-muted px-3 py-2 text-sm text-foreground outline-none transition focus:border-primary"
           />
         </label>
 
         <label className="flex flex-col gap-2">
           <span className="text-xs font-semibold uppercase tracking-wide text-foreground-muted">
-            Niche
+            Lĩnh vực
           </span>
           <select
             value={filters.niche}
@@ -43,7 +43,7 @@ export function RankingFilters({ filters, onChange }: RankingFiltersProps) {
             }
             className="rounded-xl border border-primary-soft bg-muted px-3 py-2 text-sm text-foreground outline-none transition focus:border-primary"
           >
-            <option value="all">All niches</option>
+            <option value="all">Tất cả lĩnh vực</option>
             {KOL_NICHES.map((niche) => (
               <option key={niche} value={niche}>
                 {niche}
@@ -54,7 +54,7 @@ export function RankingFilters({ filters, onChange }: RankingFiltersProps) {
 
         <label className="flex flex-col gap-2">
           <span className="text-xs font-semibold uppercase tracking-wide text-foreground-muted">
-            Platform
+            Nền tảng
           </span>
           <select
             value={filters.platform}
@@ -63,7 +63,7 @@ export function RankingFilters({ filters, onChange }: RankingFiltersProps) {
             }
             className="rounded-xl border border-primary-soft bg-muted px-3 py-2 text-sm text-foreground outline-none transition focus:border-primary"
           >
-            <option value="all">All platforms</option>
+            <option value="all">Tất cả nền tảng</option>
             {KOL_PLATFORMS.map((platform) => (
               <option key={platform} value={platform}>
                 {platform}
@@ -74,7 +74,7 @@ export function RankingFilters({ filters, onChange }: RankingFiltersProps) {
 
         <label className="flex flex-col gap-2">
           <span className="text-xs font-semibold uppercase tracking-wide text-foreground-muted">
-            Followers
+            Người theo dõi
           </span>
           <select
             value={filters.followerRange}
@@ -87,7 +87,7 @@ export function RankingFilters({ filters, onChange }: RankingFiltersProps) {
           >
             {FOLLOWER_RANGE_OPTIONS.map((range) => (
               <option key={range} value={range}>
-                {range === "all" ? "All ranges" : range}
+                {range === "all" ? "Tất cả khoảng" : range}
               </option>
             ))}
           </select>

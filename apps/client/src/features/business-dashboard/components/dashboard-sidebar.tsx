@@ -12,11 +12,11 @@ export function DashboardSidebar({ items }: DashboardSidebarProps) {
         <div className="flex h-7 w-7 items-center justify-center rounded-full bg-primary text-background-dark">
           <span className="material-symbols-outlined text-sm">hub</span>
         </div>
-        <p className="text-base font-bold text-foreground">KOL Analytics</p>
+        <p className="text-base font-bold text-foreground">Phân tích KOL</p>
       </div>
 
       <p className="mb-3 text-[11px] font-semibold uppercase tracking-wide text-foreground-muted">
-        Main menu
+        Menu chính
       </p>
       <nav className="space-y-1.5">
         {items.map((item) => (

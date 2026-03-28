@@ -29,14 +29,14 @@ export function AgentProcessingPanel({
           <span className="flex h-11 w-11 items-center justify-center rounded-full bg-primary-soft text-primary">
             <span className="material-symbols-outlined text-lg">tips_and_updates</span>
           </span>
-          <CardTitle>Analyzing your brief</CardTitle>
+          <CardTitle>Đang phân tích yêu cầu</CardTitle>
           <CardDescription>
-            Our AI agent is processing your requirements to find the best matches.
+            AI của chúng tôi đang xử lý yêu cầu để tìm ra những ứng viên phù hợp nhất.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="flex items-center justify-between text-xs font-semibold text-primary">
-            <span>Processing Algorithms</span>
+            <span>Thuật toán Xử lý</span>
             <span>{Math.round(progress)}%</span>
           </div>
           <div className="h-2 rounded-full bg-primary-soft">
@@ -76,7 +76,7 @@ export function AgentProcessingPanel({
                       {stage.label}
                     </p>
                     <p className="text-xs text-foreground-muted">
-                      {isCompleted ? "Completed" : isActive ? "Active - identifying influencers..." : "Pending"}
+                      {isCompleted ? "Hoàn thành" : isActive ? "Đang xử lý - tìm kiếm influencer..." : "Đang chờ"}
                     </p>
                   </div>
                 </li>
@@ -87,8 +87,7 @@ export function AgentProcessingPanel({
           <div className="rounded-xl border border-primary-soft bg-muted px-3 py-2 text-xs text-foreground-muted">
             <p className="flex items-start gap-2">
               <span className="material-symbols-outlined text-sm text-primary">lightbulb</span>
-              We prioritize niche fit, performance history, rating, and budget compatibility
-              to ensure the best ROI.
+              Chúng tôi ưu tiên sự phù hợp về lĩnh vực, lịch sử hiệu suất, đánh giá và ngân sách để đảm bảo ROI tốt nhất.
             </p>
           </div>
         </CardContent>
@@ -96,15 +95,15 @@ export function AgentProcessingPanel({
 
       <Card>
         <CardHeader>
-          <CardTitle className="text-base">Current Output (Log)</CardTitle>
+          <CardTitle className="text-base">Nhật ký Xử lý</CardTitle>
           <CardDescription>
-            Real-time execution logs từ matching agent.
+            Nhật ký thực thi theo thời gian thực từ AI ghép đôi.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-3">
           <div className="rounded-lg border border-primary-soft bg-muted px-3 py-2">
-            <p className="text-xs font-semibold text-foreground">Current stage</p>
-            <p className="text-sm font-medium text-primary">{activeStage?.label ?? "Initializing..."}</p>
+            <p className="text-xs font-semibold text-foreground">Giai đoạn hiện tại</p>
+            <p className="text-sm font-medium text-primary">{activeStage?.label ?? "Đang khởi tạo..."}</p>
             <p className="mt-1 text-xs text-foreground-muted">{activeStage?.detail}</p>
           </div>
 
@@ -129,7 +128,7 @@ export function AgentProcessingPanel({
           </div>
 
           <p className="text-[11px] text-foreground-muted">
-            Streaming logs will continue until shortlist generation is completed.
+            Nhật ký sẽ tiếp tục cập nhật cho đến khi danh sách rút gọn được tạo xong.
           </p>
         </CardContent>
       </Card>

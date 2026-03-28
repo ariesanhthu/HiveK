@@ -38,18 +38,18 @@ export function KolRankingPage({
       <header className="space-y-2">
         <div className="flex flex-wrap items-center gap-2">
           <h1 className="text-2xl font-extrabold tracking-tight text-foreground md:text-3xl">
-            KOL Ranking
+            Bảng xếp hạng KOL
           </h1>
           <Badge variant={status === "live" ? "success" : "secondary"}>
-            {status === "live" ? "Live" : status === "error" ? "Reconnecting" : "Syncing"}
+            {status === "live" ? "Trực tiếp" : status === "error" ? "Đang kết nối lại" : "Đang đồng bộ"}
           </Badge>
         </div>
         <p className="text-sm text-foreground-muted md:text-base">
-          Bảng xếp hạng real-time cho creators. Data update tự động mỗi vài giây
-          và có thể mở rộng sang Kafka/Redis stream khi backend production.
+          Bảng xếp hạng theo thời gian thực cho creators. Dữ liệu tự động cập nhật mỗi vài giây
+          và có thể mở rộng sang luồng Kafka/Redis khi backend hoạt động thực tế.
         </p>
         <p className="text-xs text-foreground-muted">
-          Last update: {formatTimestamp(data.generatedAt)} • Total: {data.totalItems}
+          Cập nhật lần cuối: {formatTimestamp(data.generatedAt)} • Tổng cộng: {data.totalItems}
         </p>
       </header>
 

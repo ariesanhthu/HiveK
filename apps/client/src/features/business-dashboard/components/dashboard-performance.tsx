@@ -25,11 +25,11 @@ type ConversionBarDatum = DashboardBarPoint & { conversion: number };
 
 const chartConfig = {
   campaign: {
-    label: "Campaign score",
+    label: "Điểm chiến dịch",
     color: "var(--color-primary)",
   },
   conversion: {
-    label: "Conversion",
+    label: "Chuyển đổi",
     color: "var(--color-secondary)",
   },
 } satisfies ChartConfig;
@@ -54,8 +54,8 @@ export function DashboardPerformance({
       <Card>
         <CardHeader className="flex-row items-start justify-between gap-3">
           <div>
-            <CardTitle>Campaign Performance</CardTitle>
-            <CardDescription>Efficiency rating vs Engagement</CardDescription>
+            <CardTitle>Hiệu suất Chiến dịch</CardTitle>
+            <CardDescription>Đánh giá hiệu quả và Tương tác</CardDescription>
           </div>
           <Badge variant="success">+12%</Badge>
         </CardHeader>
@@ -82,8 +82,8 @@ export function DashboardPerformance({
       <Card>
         <CardHeader className="flex-row items-start justify-between gap-3">
           <div>
-            <CardTitle>Conversion Trend</CardTitle>
-            <CardDescription>Weekly conversion metrics</CardDescription>
+            <CardTitle>Xu hướng Chuyển đổi</CardTitle>
+            <CardDescription>Chỉ số chuyển đổi</CardDescription>
           </div>
           <div className="flex items-center gap-1 rounded-xl border border-primary-soft bg-muted p-1">
             <button
@@ -95,7 +95,7 @@ export function DashboardPerformance({
                   : "text-foreground-muted hover:bg-primary-soft hover:text-foreground"
               }`}
             >
-              W
+              Tuần
             </button>
             <button
               type="button"
@@ -106,7 +106,7 @@ export function DashboardPerformance({
                   : "text-foreground-muted hover:bg-primary-soft hover:text-foreground"
               }`}
             >
-              M
+              Tháng
             </button>
           </div>
         </CardHeader>

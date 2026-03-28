@@ -31,20 +31,20 @@ export function SearchResultsFiltersPanel({
     <Card className="h-fit">
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-base">Filters</CardTitle>
+          <CardTitle className="text-base">Bộ lọc</CardTitle>
           <button
             type="button"
             onClick={onClearAll}
             className="text-xs font-semibold text-primary hover:underline"
           >
-            Clear all
+            Xóa tất cả
           </button>
         </div>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="space-y-2">
           <p className="text-[11px] font-bold uppercase tracking-wide text-foreground-muted">
-            Platform
+            Nền tảng
           </p>
           <div className="flex flex-wrap gap-2">
             {SEARCH_PLATFORM_OPTIONS.map(({ id, label }) => {
@@ -65,12 +65,12 @@ export function SearchResultsFiltersPanel({
               );
             })}
           </div>
-          <p className="text-[10px] text-foreground-muted">Empty = all platforms</p>
+          <p className="text-[10px] text-foreground-muted">Trống = tất cả nền tảng</p>
         </div>
 
         <div className="space-y-2">
           <p className="text-[11px] font-bold uppercase tracking-wide text-foreground-muted">
-            Niche
+            Lĩnh vực
           </p>
           <div className="space-y-1.5">
             {SEARCH_NICHE_FILTER_OPTIONS.map((option) => {
@@ -96,10 +96,10 @@ export function SearchResultsFiltersPanel({
         <div className="space-y-2">
           <div className="flex items-center justify-between">
             <p className="text-[11px] font-bold uppercase tracking-wide text-foreground-muted">
-              Min. followers
+              Người theo dõi (tối thiểu)
             </p>
             <span className="text-xs font-semibold text-primary">
-              {filters.followerMinK === 0 ? "Any" : `${filters.followerMinK}k+`}
+              {filters.followerMinK === 0 ? "Bất kỳ" : `${filters.followerMinK}k+`}
             </span>
           </div>
           <input
@@ -115,7 +115,7 @@ export function SearchResultsFiltersPanel({
 
         <div className="space-y-2">
           <p className="text-[11px] font-bold uppercase tracking-wide text-foreground-muted">
-            Engagement rate
+            Tỷ lệ tương tác
           </p>
           <select
             value={filters.engagementMinPercent}

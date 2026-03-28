@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import React from "react";
 import { Badge } from "@/components/ui/badge";
 import { type KolBadge, type KolRankingItem } from "@/features/kol-ranking/types";
@@ -23,7 +24,7 @@ function badgeVariantFromType(badge: KolBadge): "success" | "warning" | "default
 function RankDelta({ rank, previousRank }: { rank: number; previousRank: number }) {
   const delta = previousRank - rank;
   if (delta === 0) {
-    return <span className="text-xs text-foreground-muted">No change</span>;
+    return <span className="text-xs text-foreground-muted">Không đổi</span>;
   }
 
   return (
@@ -39,9 +40,9 @@ export function KolRankingTable({ items }: KolRankingTableProps) {
   if (items.length === 0) {
     return (
       <section className="rounded-2xl border border-primary-soft bg-card p-8 text-center">
-        <h3 className="text-lg font-semibold text-foreground">No creators found</h3>
+        <h3 className="text-lg font-semibold text-foreground">Không tìm thấy creator nào</h3>
         <p className="mt-2 text-sm text-foreground-muted">
-          Thử đổi filter để mở rộng kết quả.
+          Thử thay đổi bộ lọc để xem thêm kết quả.
         </p>
       </section>
     );
@@ -53,14 +54,14 @@ export function KolRankingTable({ items }: KolRankingTableProps) {
         <table className="min-w-full divide-y divide-primary-soft">
           <thead className="bg-primary-soft">
             <tr className="text-left text-xs uppercase tracking-wide text-foreground-muted">
-              <th className="px-4 py-3">Rank</th>
+              <th className="px-4 py-3">Hạng</th>
               <th className="px-4 py-3">Creator</th>
-              <th className="px-4 py-3">Niche</th>
-              <th className="px-4 py-3">Platform</th>
-              <th className="px-4 py-3">Followers</th>
-              <th className="px-4 py-3">Rating</th>
-              <th className="px-4 py-3">Score</th>
-              <th className="px-4 py-3">Badge</th>
+              <th className="px-4 py-3">Lĩnh vực</th>
+              <th className="px-4 py-3">Nền tảng</th>
+              <th className="px-4 py-3">Người theo dõi</th>
+              <th className="px-4 py-3">Đánh giá</th>
+              <th className="px-4 py-3">Điểm số</th>
+              <th className="px-4 py-3">Huy hiệu</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-primary-soft">
@@ -73,17 +74,23 @@ export function KolRankingTable({ items }: KolRankingTableProps) {
                   </div>
                 </td>
                 <td className="px-4 py-3">
-                  <div className="flex items-center gap-3">
-                    <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary-soft text-xs font-bold text-primary">
+                  <Link
+                    href={`/kol-verification/${encodeURIComponent(item.id)}`}
+                    title="Xem chứng nhận xác minh creator"
+                    className="group flex max-w-xs items-center gap-3 rounded-xl py-0.5 outline-none ring-offset-2 ring-offset-card transition-colors hover:bg-primary-soft/40 focus-visible:ring-2 focus-visible:ring-primary"
+                  >
+                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary-soft text-xs font-bold text-primary transition-colors group-hover:bg-primary/15">
                       {item.avatarText}
                     </div>
-                    <div>
-                      <p className="text-sm font-semibold text-foreground">{item.name}</p>
+                    <div className="min-w-0 text-left">
+                      <p className="text-sm font-semibold text-foreground group-hover:text-primary group-hover:underline">
+                        {item.name}
+                      </p>
                       <p className="text-xs text-foreground-muted">
-                        ER {item.engagementRate.toFixed(1)}%
+                        ER {item.engagementRate.toFixed(1)}% · Chứng nhận
                       </p>
                     </div>
-                  </div>
+                  </Link>
                 </td>
                 <td className="px-4 py-3 text-sm text-foreground">{item.niche}</td>
                 <td className="px-4 py-3 text-sm text-foreground">{item.platform}</td>

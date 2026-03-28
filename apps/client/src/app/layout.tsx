@@ -9,9 +9,9 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "KOL Connect - Empowering the Creator Economy",
+  title: "KOL Connect - Nâng tầm Nền kinh tế Sáng tạo",
   description:
-    "All-in-one platform for KOLs and Brands with AI-driven matching, real-time analytics, and secure payments.",
+    "Nền tảng toàn diện dành cho KOL và Thương hiệu với tính năng ghép đôi bằng AI, phân tích thời gian thực và thanh toán an toàn.",
 };
 
 type RootLayoutProps = {
@@ -20,7 +20,7 @@ type RootLayoutProps = {
 
 export default function RootLayout({ children }: RootLayoutProps) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="vi" suppressHydrationWarning>
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />

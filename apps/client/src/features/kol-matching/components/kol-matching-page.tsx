@@ -61,7 +61,7 @@ export function KolMatchingPage() {
             onClick={restartFlow}
             className="rounded-xl border border-primary-soft px-3 py-2 text-xs font-semibold text-foreground transition-colors hover:bg-primary-soft"
           >
-            New search
+            Tìm kiếm mới
           </button>
           <button
             type="button"
@@ -69,7 +69,7 @@ export function KolMatchingPage() {
             disabled={selectedCandidateIds.length < 2}
             className="rounded-xl bg-primary px-3 py-2 text-xs font-semibold text-background-dark transition-opacity disabled:cursor-not-allowed disabled:opacity-50"
           >
-            Compare selected
+            So sánh Lựa chọn
           </button>
         </div>
       ) : null}
@@ -78,20 +78,20 @@ export function KolMatchingPage() {
           <button
             type="button"
             onClick={restartFlow}
-            title="New search"
+            title="Tìm kiếm mới"
             className="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-primary-soft text-foreground transition-colors hover:bg-primary-soft"
           >
-            <span className="sr-only">New search</span>
+            <span className="sr-only">Tìm kiếm mới</span>
             <RefreshCw className="h-4 w-4" aria-hidden />
           </button>
           <button
             type="button"
             onClick={goToComparison}
             disabled={selectedCandidateIds.length < 2}
-            title="Compare selected"
+            title="So sánh Lựa chọn"
             className="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-primary text-background-dark transition-opacity disabled:cursor-not-allowed disabled:opacity-50"
           >
-            <span className="sr-only">Compare selected</span>
+            <span className="sr-only">So sánh Lựa chọn</span>
             <ArrowLeftRight className="h-4 w-4" aria-hidden />
           </button>
         </div>
@@ -109,15 +109,15 @@ export function KolMatchingPage() {
             nav={
               step === "find-entry" ? (
                 <nav className="flex items-center gap-2 text-sm text-foreground-muted">
-                  <span>Dashboard</span>
+                  <span>Bảng điều khiển</span>
                   <span>/</span>
-                  <span className="font-medium text-primary">Find KOL/KOC</span>
+                  <span className="font-medium text-primary">Tìm KOL/KOC</span>
                 </nav>
               ) : null
             }
             title={
               <h1 className="text-3xl font-extrabold tracking-tight text-foreground">
-                {step === "find-entry" ? "Discover Creators" : "KOL/KOC Matching"}
+                {step === "find-entry" ? "Khám phá Creator" : "Ghép đôi KOL/KOC"}
               </h1>
             }
           />

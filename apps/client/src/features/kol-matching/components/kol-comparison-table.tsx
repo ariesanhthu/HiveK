@@ -109,7 +109,7 @@ export function KolComparisonTable({
               <thead>
                 <tr>
                   <th className="w-52 px-4 py-4 text-left text-xs font-bold uppercase tracking-wide text-foreground-muted">
-                    Campaign Metrics
+                    Chỉ số Chiến dịch
                   </th>
                   {candidates.map((candidate, index) => {
                     const excluded = isColumnExcluded(candidate.id);
@@ -180,7 +180,7 @@ export function KolComparisonTable({
 
               <tbody className="[&_tr>td]:transition-colors [&_tr:hover>td:not([data-excluded])]:bg-primary-soft">
                 <tr className="odd:bg-card even:bg-muted/60">
-                  <td className={`${METRIC_LABEL_CELL_CLASS} font-semibold text-foreground`}>Match Score</td>
+                  <td className={`${METRIC_LABEL_CELL_CLASS} font-semibold text-foreground`}>Điểm phù hợp</td>
                   {candidates.map((candidate) => {
                     const excluded = isColumnExcluded(candidate.id);
                     const isTop =
@@ -201,11 +201,11 @@ export function KolComparisonTable({
                         <p className={METRIC_VALUE_TEXT_CLASS}>{candidate.fitScore}%</p>
                         {isTop ? (
                           <p className="text-[10px] font-bold uppercase tracking-wide text-primary">
-                            {highestFitCount > 1 ? "Top Score" : "Highest Match"}
+                            {highestFitCount > 1 ? "Điểm Cao nhất" : "Độ Phù hợp Cao nhất"}
                           </p>
                         ) : (
                           <p className="invisible text-[10px] font-bold uppercase tracking-wide">
-                            Highest Match
+                            Độ Phù hợp Cao nhất
                           </p>
                         )}
                       </td>
@@ -214,7 +214,7 @@ export function KolComparisonTable({
                 </tr>
 
                 <tr className="odd:bg-card even:bg-muted/60">
-                  <td className={METRIC_LABEL_CELL_CLASS}>Followers</td>
+                  <td className={METRIC_LABEL_CELL_CLASS}>Người theo dõi</td>
                   {candidates.map((candidate) => (
                     <td
                       key={`${candidate.id}-followers`}
@@ -230,7 +230,7 @@ export function KolComparisonTable({
                 </tr>
 
                 <tr className="odd:bg-card even:bg-muted/60">
-                  <td className={METRIC_LABEL_CELL_CLASS}>Engagement</td>
+                  <td className={METRIC_LABEL_CELL_CLASS}>Mức tương tác</td>
                   {candidates.map((candidate) => (
                     <td
                       key={`${candidate.id}-engagement`}
@@ -246,7 +246,7 @@ export function KolComparisonTable({
                 </tr>
 
                 <tr className="odd:bg-card even:bg-muted/60">
-                  <td className={METRIC_LABEL_CELL_CLASS}>Rating</td>
+                  <td className={METRIC_LABEL_CELL_CLASS}>Đánh giá</td>
                   {candidates.map((candidate) => (
                     <td
                       key={`${candidate.id}-rating`}
@@ -262,7 +262,7 @@ export function KolComparisonTable({
                 </tr>
 
                 <tr className="odd:bg-card even:bg-muted/60">
-                  <td className={METRIC_LABEL_CELL_CLASS}>Completion Rate</td>
+                  <td className={METRIC_LABEL_CELL_CLASS}>Tỷ lệ Hoàn thành</td>
                   {candidates.map((candidate) => (
                     <td
                       key={`${candidate.id}-completion`}
@@ -278,7 +278,7 @@ export function KolComparisonTable({
                 </tr>
 
                 <tr className="odd:bg-card even:bg-muted/60">
-                  <td className={METRIC_LABEL_CELL_CLASS}>Estimated Fee</td>
+                  <td className={METRIC_LABEL_CELL_CLASS}>Chi phí Ước tính</td>
                   {candidates.map((candidate) => {
                     const excluded = isColumnExcluded(candidate.id);
                     const isLowest =
@@ -302,7 +302,7 @@ export function KolComparisonTable({
                 </tr>
 
                 <tr className="odd:bg-card even:bg-muted/60">
-                  <td className={METRIC_LABEL_CELL_CLASS}>Audience Fit</td>
+                  <td className={METRIC_LABEL_CELL_CLASS}>Phù hợp Khán giả</td>
                   {candidates.map((candidate) => {
                     const audienceFit = getAudienceFitBadge(candidate.fitScore);
                     const excluded = isColumnExcluded(candidate.id);
@@ -321,7 +321,7 @@ export function KolComparisonTable({
                 </tr>
 
                 <tr className="odd:bg-card even:bg-muted/60">
-                  <td className={METRIC_LABEL_CELL_CLASS}>Risk Level</td>
+                  <td className={METRIC_LABEL_CELL_CLASS}>Mức độ Rủi ro</td>
                   {candidates.map((candidate) => {
                     const riskLevel = getRiskLevel(candidate.estimatedCpaUsd);
                     const excluded = isColumnExcluded(candidate.id);
@@ -371,13 +371,13 @@ export function KolComparisonTable({
             <div>
               <p className="text-sm font-bold text-foreground">
                 {excludedCount === 0
-                  ? `${candidates.length} KOLs selected for review`
-                  : `${activeCount} of ${candidates.length} KOLs in active comparison`}
+                  ? `${candidates.length} KOL đã chọn để xem xét`
+                  : `${activeCount} / ${candidates.length} KOL đang được so sánh`}
               </p>
               <p className="text-xs text-foreground-muted">
                 {excludedCount > 0
-                  ? `${excludedCount} hidden (dimmed). Use undo on the column header to restore.`
-                  : "Shortlisting these creators will add them to your campaign workspace."}
+                  ? `${excludedCount} bị ẩn. Sử dụng nút hoàn tác trên tiêu đề cột để khôi phục.`
+                  : "Đưa các creator này vào danh sách rút gọn sẽ thêm họ vào không gian làm việc chiến dịch của bạn."}
               </p>
             </div>
           </div>
@@ -388,20 +388,20 @@ export function KolComparisonTable({
               onClick={onBack}
               className="rounded-full border border-primary-soft bg-card px-4 py-2 text-sm font-semibold text-foreground hover:bg-primary-soft"
             >
-              Back
+              Quay lại
             </button>
             <button
               type="button"
               onClick={onRestart}
               className="rounded-full bg-muted px-5 py-2 text-sm font-bold text-foreground hover:bg-primary-soft"
             >
-              Save Shortlist
+              Lưu Danh sách rút gọn
             </button>
             <button
               type="button"
               className="rounded-full bg-primary px-5 py-2 text-sm font-bold text-background-dark"
             >
-              Invite Selected
+              Mời người đã chọn
             </button>
           </div>
         </CardContent>

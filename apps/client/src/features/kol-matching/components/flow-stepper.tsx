@@ -19,10 +19,10 @@ type FlowStep = {
 };
 
 const FLOW_STEPS: FlowStep[] = [
-  { id: "find-entry", label: "Find KOL/KOC Entry", icon: Search },
-  { id: "agent-processing", label: "Agent Processing", icon: Bot },
-  { id: "search-results", label: "KOL Search Results", icon: ListFilter },
-  { id: "kol-comparison", label: "KOL Comparison", icon: Scale },
+  { id: "find-entry", label: "Nhập thông tin KOL/KOC", icon: Search },
+  { id: "agent-processing", label: "AI Đang xử lý", icon: Bot },
+  { id: "search-results", label: "Kết quả Tìm kiếm", icon: ListFilter },
+  { id: "kol-comparison", label: "So sánh KOL", icon: Scale },
 ];
 
 type FlowStepperProps = {
@@ -63,13 +63,13 @@ export function FlowStepper({
             )}
           >
             {!isCollapsed ? (
-              <CardTitle className="text-base">Flow Progress</CardTitle>
+              <CardTitle className="text-base">Tiến trình</CardTitle>
             ) : null}
             <button
               type="button"
               onClick={onToggleCollapse}
               aria-expanded={!isCollapsed}
-              aria-label={isCollapsed ? "Expand flow panel" : "Collapse flow panel"}
+              aria-label={isCollapsed ? "Mở rộng" : "Thu gọn"}
               className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-primary-soft bg-card text-foreground transition-colors hover:bg-primary-soft"
             >
               {isCollapsed ? (
@@ -80,7 +80,7 @@ export function FlowStepper({
             </button>
           </div>
         ) : (
-          <CardTitle className="text-base">Flow Progress</CardTitle>
+          <CardTitle className="text-base">Tiến trình</CardTitle>
         )}
       </CardHeader>
       <CardContent className={cn("pt-1", isCollapsed && isCollapsible && "px-2 pb-3 pt-2")}>
@@ -170,7 +170,7 @@ export function FlowStepper({
                     >
                       {step.label}
                     </p>
-                    <p className="text-xs text-foreground-muted">Step {index + 1}</p>
+                    <p className="text-xs text-foreground-muted">Bước {index + 1}</p>
                   </div>
                 </li>
               );

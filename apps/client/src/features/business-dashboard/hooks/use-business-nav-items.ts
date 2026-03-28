@@ -5,11 +5,11 @@ import { usePathname } from "next/navigation";
 import { type DashboardNavItem } from "@/features/business-dashboard/types";
 
 const BUSINESS_NAV_BASE: Omit<DashboardNavItem, "isActive">[] = [
-  { id: "dashboard", label: "Dashboard", icon: "dashboard", href: "/dashboard" },
-  { id: "campaigns", label: "Campaigns", icon: "campaign", href: "#" },
-  { id: "discovery", label: "KOL Discovery", icon: "travel_explore", href: "/kol-matching" },
-  { id: "analytics", label: "Analytics", icon: "bar_chart", href: "#" },
-  { id: "settings", label: "Settings", icon: "settings", href: "#" },
+  { id: "dashboard", label: "Bảng điều khiển", icon: "dashboard", href: "/dashboard" },
+  { id: "campaigns", label: "Chiến dịch", icon: "campaign", href: "#" },
+  { id: "discovery", label: "Khám phá KOL", icon: "travel_explore", href: "/kol-matching" },
+  { id: "analytics", label: "Phân tích", icon: "bar_chart", href: "#" },
+  { id: "settings", label: "Cài đặt", icon: "settings", href: "#" },
 ];
 
 function isNavItemActive(pathname: string, href: string): boolean {

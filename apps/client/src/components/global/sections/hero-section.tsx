@@ -1,4 +1,7 @@
+import Link from "next/link";
 import React from "react";
+import { HeroSlideshowSlot } from "@/components/global/sections/hero-slideshow-slot";
+import { AUTH_ROUTES } from "@/features/auth/constants";
 
 export const HeroSection: React.FC = () => {
   return (
@@ -10,23 +13,28 @@ export const HeroSection: React.FC = () => {
               <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-75" />
               <span className="relative inline-flex h-2 w-2 rounded-full bg-primary" />
             </span>
-            Next-Gen Influencer Marketing
+            KOL Marketing Thế Hệ Mới
           </div>
           <h1 className="text-5xl font-black leading-[1.1] tracking-tight text-foreground md:text-7xl">
-            Empowering the <span className="text-primary">Creator</span> Economy
+            Nâng tầm nền kinh tế <span className="text-primary">Sáng tạo</span>
           </h1>
           <p className="max-w-xl text-lg leading-relaxed text-foreground-muted">
-            The all-in-one platform for KOLs and Brands. Scale your influence
-            with AI-driven matching, real-time analytics, and seamless secure
-            payments.
+            Nền tảng toàn diện dành cho KOL và Nhãn hàng. Mở rộng tầm ảnh hưởng
+            với cơ chế ghép đôi AI thông minh, phân tích thời gian thực và thanh
+            toán an toàn liền mạch.
           </p>
           <div className="flex flex-wrap gap-4">
-            <button className="flex items-center gap-2 rounded-xl bg-primary px-8 py-4 text-lg font-bold text-background-dark transition-all hover:bg-primary/90">
-              Join Now
-              <span className="material-symbols-outlined">trending_up</span>
-            </button>
+            <Link
+              href={AUTH_ROUTES.SIGN_IN}
+              className="inline-flex items-center gap-2 rounded-xl bg-primary px-8 py-4 text-lg font-bold text-background-dark transition-all hover:bg-primary/90"
+            >
+              Tham gia ngay
+              <span className="material-symbols-outlined" aria-hidden>
+                trending_up
+              </span>
+            </Link>
             <button className="rounded-xl border border-primary-soft px-8 py-4 text-lg font-bold text-foreground transition-all hover:bg-primary-soft">
-              View Demo
+              Xem Demo
             </button>
           </div>
           <div className="flex items-center gap-4 pt-4">
@@ -51,22 +59,12 @@ export const HeroSection: React.FC = () => {
               </div>
             </div>
             <p className="text-sm font-medium text-muted">
-              Trusted by 2,000+ top creators globally
+              Được tin dùng bởi hơn 2,000 creators toàn cầu
             </p>
           </div>
         </div>
 
-        <div className="relative">
-          <div className="absolute -top-10 -left-10 h-64 w-64 rounded-full bg-primary/20 blur-[100px]" />
-          <div className="absolute -bottom-10 -right-10 h-64 w-64 rounded-full bg-primary/10 blur-[100px]" />
-          <div className="relative overflow-hidden rounded-3xl border border-primary-soft bg-overlay-light shadow-2xl backdrop-blur-sm">
-            <img
-              className="aspect-4/3 h-full w-full object-cover"
-              src="https://lh3.googleusercontent.com/aida-public/AB6AXuCRcYU--JQsbRpblDb6bstQYkVn14o2_QA1F6F2hqvTR-J2Y_tSh3_MsgpNW1i4lv2QiY3slAsoocjq_P6X3ULF7gaqQtorBPIYdsP8SA-_FeZLy-vUmiu8SZ27UoQV1d1dVTtSZFsZ0vOoMXQVmhtPVlfvShaWIGS_LmcN-vMgKTIN8QwcO2Jj152aXgeJSWFOthOu7e49UDYd4XLqreqf9nA3jnPsUeCuXw2CNdciZtMznlL4u3g_S5P_OpdG18xGOGiypJfRWkk"
-              alt="Influencer using a mobile app showing analytics dashboard"
-            />
-          </div>
-        </div>
+        <HeroSlideshowSlot />
       </div>
     </section>
   );

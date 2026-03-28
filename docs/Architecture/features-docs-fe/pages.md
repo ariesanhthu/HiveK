@@ -105,7 +105,90 @@ Query
 
 ---
 
-## 1.3 KOL Public Profile
+## 1.2b Campaigns listing (public)
+
+### URL
+
+```
+/campaigns
+```
+
+### Mục tiêu
+
+Trang danh sách chiến dịch đang mở; lọc nhanh theo ngành hàng; thẻ dẫn anchor `#campaign-id` để chia sẻ.
+
+### Task
+
+```
+CampaignsListPage (client)
+CampaignCategoryChips
+CampaignsGrid + CampaignCard
+ACTIVE_CAMPAIGNS (mock data)
+```
+
+Landing section `ActiveCampaignsSection` → CTA **Xem tất cả** → `/campaigns`; từng thẻ → `/campaigns/<id>`.
+
+### API (sau này)
+
+```
+GET /api/public/campaigns
+```
+
+---
+
+## 1.2c Campaign detail (public)
+
+### URL
+
+```
+/campaigns/[id]
+```
+
+### Mục tiêu
+
+Dashboard-style detail: header + stats, KPI donuts, bảng creators (filter), sidebar brief + recent content (approve/decline stub).
+
+### Task
+
+```
+CampaignDetailView
+getCampaignDetailById
+```
+
+### API (sau này)
+
+```
+GET /api/public/campaigns/:id
+```
+
+---
+
+## 1.3 KOL Verification Certificate (public)
+
+### URL
+
+```
+/kol-verification/[id]
+```
+
+`id` là slug công khai (ví dụ `alex-rivers`). Dữ liệu hiện mock + deterministic theo id; sau này `GET /api/kols/:id/certificate` hoặc tương đương.
+
+### UI
+
+- Thẻ chứng nhận: badge verified, tiêu đề, avatar + verified mark, rating aggregate, competencies, checklist, partner feedback, issuing authority + hash.
+- Actions: Download PDF (in trang), Share, copy Verify Link.
+
+### Task
+
+```
+KolVerificationCertificateView
+CertificateActionBar (client)
+getCertificateById (server / mock)
+```
+
+---
+
+## 1.4 KOL Public Profile
 
 ### URL
 
@@ -225,6 +308,15 @@ Redirect
 ```
 Business -> /dashboard/business
 KOL -> /dashboard/kol
+```
+
+### Implementation (apps/client)
+
+```
+/auth/sign-in        — SignInForm + Server Action submitSignIn (validate server-side, không log password)
+/auth/sign-up        — SignUpForm + submitSignUp, chọn role brand | creator
+/auth/forgot-password — placeholder (sẽ nối token reset)
+Demo nhanh trên sign-in: link /dashboard (business), /ambassador/dashboard (KOL/KOC; không dùng /dashboard song song vì đã là business)
 ```
 
 ---

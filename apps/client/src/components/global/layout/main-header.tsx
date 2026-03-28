@@ -19,25 +19,25 @@ export const MainHeader: React.FC = () => {
               href="#platform"
               className="text-sm font-semibold transition-colors hover:text-primary"
             >
-              Platform
+              Nền tảng
             </a>
             <a
               href="#influencers"
               className="text-sm font-semibold transition-colors hover:text-primary"
             >
-              Influencers
+              KOLs
             </a>
             <a
               href="#campaigns"
               className="text-sm font-semibold transition-colors hover:text-primary"
             >
-              Campaigns
+              Chiến dịch
             </a>
             <Link
               href="/kol-ranking"
               className="text-sm font-semibold transition-colors hover:text-primary"
             >
-              Ranking
+              Xếp hạng
             </Link>
           </nav>
         </div>
@@ -48,13 +48,16 @@ export const MainHeader: React.FC = () => {
             </span>
             <input
               type="text"
-              placeholder="Search creators..."
+              placeholder="Tìm kiếm creator..."
               className="w-32 border-none bg-transparent text-sm text-foreground placeholder:text-muted focus:outline-none focus:ring-0 lg:w-48"
             />
           </div>
-          <button className="rounded-xl bg-primary px-6 py-2.5 text-sm font-bold text-background-dark shadow-primary transition-all hover:bg-primary/90">
-            Get Started
-          </button>
+          <Link
+            href="/auth/sign-in"
+            className="text-white rounded-xl bg-primary px-6 py-2.5 text-sm font-bold text-background-dark shadow-primary transition-all hover:bg-primary/90"
+          >
+            Bắt đầu
+          </Link>
         </div>
       </div>
     </header>

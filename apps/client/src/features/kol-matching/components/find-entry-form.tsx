@@ -65,27 +65,27 @@ export function FindEntryForm({
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <span className="material-symbols-outlined text-primary">description</span>
-            Search Brief Panel
+            Bảng Thông tin Tìm kiếm
           </CardTitle>
         </CardHeader>
         <CardContent>
           <form className="space-y-5" onSubmit={handleSubmit}>
             <div className="grid gap-4 md:grid-cols-2">
               <label className="space-y-1 text-sm">
-                <span className="font-semibold text-foreground">Select Campaign</span>
+                <span className="font-semibold text-foreground">Chọn Chiến dịch</span>
                 <select
                   value={formValue.campaignOption}
                   onChange={(event) => updateValue("campaignOption", event.target.value)}
                   className="w-full rounded-xl border border-primary-soft bg-muted px-3 py-2 text-sm text-foreground outline-none focus:border-primary"
                 >
-                  <option>Summer Launch 2024</option>
-                  <option>Tech Gadget Promo</option>
-                  <option>Influencer Outreach Q3</option>
+                  <option>Ra mắt Mùa hè 2024</option>
+                  <option>Khuyến mãi Đồ công nghệ</option>
+                  <option>Chiến dịch Influencer Q3</option>
                 </select>
               </label>
 
               <label className="space-y-1 text-sm">
-                <span className="font-semibold text-foreground">Niche Category</span>
+                <span className="font-semibold text-foreground">Lĩnh vực</span>
                 <select
                   value={formValue.nicheCategory}
                   onChange={(event) => {
@@ -94,27 +94,27 @@ export function FindEntryForm({
                   }}
                   className="w-full rounded-xl border border-primary-soft bg-muted px-3 py-2 text-sm text-foreground outline-none focus:border-primary"
                 >
-                  <option>Lifestyle & Fashion</option>
-                  <option>Tech & Gaming</option>
-                  <option>Health & Wellness</option>
-                  <option>Food & Cooking</option>
+                  <option>Đời sống & Thời trang</option>
+                  <option>Công nghệ & Game</option>
+                  <option>Sức khỏe & Thể chất</option>
+                  <option>Ẩm thực</option>
                 </select>
               </label>
             </div>
 
             <label className="space-y-1 text-sm">
-              <span className="font-semibold text-foreground">Product/Campaign Summary</span>
+              <span className="font-semibold text-foreground">Tóm tắt Sản phẩm/Chiến dịch</span>
               <textarea
                 rows={4}
                 value={formValue.summary}
                 onChange={(event) => updateValue("summary", event.target.value)}
-                placeholder="Describe the product and the goals of this campaign..."
+                placeholder="Mô tả sản phẩm và mục tiêu của chiến dịch này..."
                 className="w-full rounded-xl border border-primary-soft bg-muted px-3 py-2 text-sm text-foreground outline-none placeholder:text-foreground-muted focus:border-primary"
               />
             </label>
 
             <div className="space-y-2">
-              <p className="text-sm font-semibold text-foreground">Target Platforms</p>
+              <p className="text-sm font-semibold text-foreground">Nền tảng mục tiêu</p>
               <div className="flex flex-wrap gap-2">
                 {(["tiktok", "instagram", "youtube"] as const).map((platform) => {
                   const isChecked = formValue.targetPlatforms.includes(platform);
@@ -140,7 +140,7 @@ export function FindEntryForm({
             <div className="grid gap-4 rounded-xl border border-primary-soft bg-muted p-4 md:grid-cols-3">
               <label className="space-y-1 text-xs">
                 <span className="font-bold uppercase tracking-wider text-foreground-muted">
-                  Min. Reach
+                  Tiếp cận (Min)
                 </span>
                 <input
                   type="number"
@@ -153,7 +153,7 @@ export function FindEntryForm({
 
               <label className="space-y-1 text-xs">
                 <span className="font-bold uppercase tracking-wider text-foreground-muted">
-                  Min. CTR (%)
+                  CTR Tối thiểu (%)
                 </span>
                 <input
                   type="number"
@@ -167,7 +167,7 @@ export function FindEntryForm({
 
               <label className="space-y-1 text-xs">
                 <span className="font-bold uppercase tracking-wider text-foreground-muted">
-                  Conversion Target
+                  Mục tiêu chuyển đổi
                 </span>
                 <input
                   type="number"
@@ -183,7 +183,7 @@ export function FindEntryForm({
             <div className="grid gap-6 md:grid-cols-2">
               <label className="space-y-2 text-sm">
                 <span className="flex items-center justify-between font-semibold text-foreground">
-                  Budget Range
+                  Khoảng Ngân sách
                   <span className="text-primary">{budgetRangeLabel}</span>
                 </span>
                 <input
@@ -198,7 +198,7 @@ export function FindEntryForm({
 
               <label className="space-y-2 text-sm">
                 <span className="flex items-center justify-between font-semibold text-foreground">
-                  Follower Range
+                  Khoảng Người theo dõi
                   <span className="text-primary">{followerRangeLabel}</span>
                 </span>
                 <input
@@ -221,7 +221,7 @@ export function FindEntryForm({
                   className="inline-flex items-center gap-1 rounded-lg border border-primary-soft px-4 py-2 text-sm font-semibold text-foreground hover:bg-primary-soft"
                 >
                   <span className="material-symbols-outlined text-base">filter_list</span>
-                  Advanced Filters
+                  Bộ lọc Nâng cao
                 </button>
                 <button
                   type="submit"
@@ -229,7 +229,7 @@ export function FindEntryForm({
                   className="inline-flex items-center gap-1 rounded-lg bg-primary px-4 py-2 text-sm font-bold text-background-dark disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   <span className="material-symbols-outlined text-base">auto_awesome</span>
-                  {isSubmitting ? "Generating..." : "Generate Suggestions"}
+                  {isSubmitting ? "Đang tạo..." : "Tạo Gợi ý"}
                 </button>
               </div>
             </div>

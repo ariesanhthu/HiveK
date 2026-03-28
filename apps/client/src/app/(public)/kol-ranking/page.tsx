@@ -6,9 +6,9 @@ import {
 } from "@/features/kol-ranking/server/get-kol-rankings";
 
 export const metadata: Metadata = {
-  title: "KOL Ranking | KOLConnect",
+  title: "Bảng xếp hạng KOL | KOLConnect",
   description:
-    "Live KOL ranking page with filters, pagination and real-time score updates.",
+    "Bảng xếp hạng KOL trực tuyến với bộ lọc, phân trang và cập nhật điểm số theo thời gian thực.",
 };
 
 export default function Page() {

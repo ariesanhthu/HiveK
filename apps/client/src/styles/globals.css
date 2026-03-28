@@ -123,3 +123,13 @@ body {
     background-color: var(--color-overlay-light);
   }
 }
+
+/* Chỉ khi in chứng nhận: ẩn header/footer public (set từ CertificateActionBar). */
+body[data-print-certificate="1"] header,
+body[data-print-certificate="1"] footer {
+  display: none !important;
+}
+
+body[data-print-certificate="1"] main {
+  padding-top: 0 !important;
+}

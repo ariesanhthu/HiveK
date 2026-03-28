@@ -9,10 +9,10 @@ type DashboardRecentActivitiesProps = {
 };
 
 function getStatusLabel(status: DashboardActivityStatus): string {
-  if (status === "review") return "Review";
-  if (status === "active") return "Active";
-  if (status === "paid") return "Paid";
-  return "Alert";
+  if (status === "review") return "Đánh giá";
+  if (status === "active") return "Hoạt động";
+  if (status === "paid") return "Đã thanh toán";
+  return "Cảnh báo";
 }
 
 function getStatusVariant(
@@ -30,12 +30,12 @@ export function DashboardRecentActivities({
   return (
     <section className="rounded-2xl border border-primary-soft bg-card">
       <div className="flex items-center justify-between border-b border-primary-soft px-4 py-3 md:px-5">
-        <h2 className="text-lg font-bold text-foreground">Recent Activities</h2>
+        <h2 className="text-lg font-bold text-foreground">Hoạt động Gần đây</h2>
         <button
           type="button"
           className="text-sm font-semibold text-primary transition-opacity hover:opacity-80"
         >
-          View all
+          Xem tất cả
         </button>
       </div>
 

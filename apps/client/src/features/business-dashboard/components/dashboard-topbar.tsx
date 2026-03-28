@@ -12,7 +12,7 @@ export function DashboardTopbar({ periodLabel }: DashboardTopbarProps) {
           </span>
           <input
             type="text"
-            placeholder="Search creators or campaigns..."
+            placeholder="Tìm kiếm creator hoặc chiến dịch..."
             className="w-full bg-transparent text-sm text-foreground placeholder:text-foreground-muted focus:outline-none"
           />
         </div>
@@ -25,14 +25,14 @@ export function DashboardTopbar({ periodLabel }: DashboardTopbarProps) {
         <button
           type="button"
           className="flex h-9 w-9 items-center justify-center rounded-full border border-primary-soft bg-card text-foreground-muted transition-colors hover:bg-primary-soft hover:text-foreground"
-          aria-label="Notifications"
+          aria-label="Thông báo"
         >
           <span className="material-symbols-outlined text-[18px]">notifications</span>
         </button>
         <button
           type="button"
           className="flex h-9 w-9 items-center justify-center rounded-full border border-primary-soft bg-card text-foreground-muted transition-colors hover:bg-primary-soft hover:text-foreground"
-          aria-label="Settings"
+          aria-label="Cài đặt"
         >
           <span className="material-symbols-outlined text-[18px]">settings</span>
         </button>
