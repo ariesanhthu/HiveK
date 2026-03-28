@@ -3,58 +3,58 @@ import Link from "next/link";
 
 export const MainHeader: React.FC = () => {
   return (
-    <header className="fixed top-0 left-0 z-50 w-full border-b border-primary-soft bg-background-light/80 px-6 py-4 backdrop-blur-md dark:bg-background-dark/80 md:px-20">
-      <div className="mx-auto flex max-w-7xl items-center justify-between">
+    <header className="fixed left-0 top-0 z-50 w-full p-4 transition-all duration-300 sm:p-6">
+      <div className="mx-auto flex max-w-7xl items-center justify-between rounded-[2rem] border border-white/10 bg-[#1f1f1f]/70 px-6 py-3 shadow-2xl backdrop-blur-2xl">
         <div className="flex items-center gap-8">
           <div className="flex items-center gap-2 text-primary">
-            <span className="material-symbols-outlined text-3xl font-bold">
+            <span className="material-symbols-outlined text-3xl font-bold drop-shadow-sm">
               hub
             </span>
-            <a href='/' className="text-xl font-extrabold tracking-tight text-foreground">
+            <a href='/' className="text-xl font-extrabold tracking-tight text-white drop-shadow-sm">
               KOLConnect
             </a>
           </div>
           <nav className="hidden items-center gap-8 md:flex">
             <a
               href="#platform"
-              className="text-sm font-semibold transition-colors hover:text-primary"
+              className="text-sm font-semibold text-zinc-300 transition-colors hover:text-white"
             >
               Nền tảng
             </a>
             <a
               href="#influencers"
-              className="text-sm font-semibold transition-colors hover:text-primary"
+              className="text-sm font-semibold text-zinc-300 transition-colors hover:text-white"
             >
               KOLs
             </a>
             <a
               href="#campaigns"
-              className="text-sm font-semibold transition-colors hover:text-primary"
+              className="text-sm font-semibold text-zinc-300 transition-colors hover:text-white"
             >
               Chiến dịch
             </a>
             <Link
               href="/kol-ranking"
-              className="text-sm font-semibold transition-colors hover:text-primary"
+              className="text-sm font-semibold text-zinc-300 transition-colors hover:text-white"
             >
               Xếp hạng
             </Link>
           </nav>
         </div>
         <div className="flex items-center gap-4">
-          <div className="hidden items-center rounded-xl border border-primary-soft bg-primary-soft px-3 py-1.5 sm:flex">
-            <span className="material-symbols-outlined text-xl text-primary">
+          <div className="hidden items-center rounded-full border border-white/5 bg-white/5 px-4 py-2 transition-colors hover:bg-white/10 sm:flex">
+            <span className="material-symbols-outlined mr-2 text-lg text-zinc-400">
               search
             </span>
             <input
               type="text"
               placeholder="Tìm kiếm creator..."
-              className="w-32 border-none bg-transparent text-sm text-foreground placeholder:text-muted focus:outline-none focus:ring-0 lg:w-48"
+              className="w-32 border-none bg-transparent text-white  text-sm text-zinc-200 placeholder:text-white/50 focus:outline-none focus:ring-0 lg:w-48"
             />
           </div>
           <Link
             href="/auth/sign-in"
-            className="text-white rounded-xl bg-primary px-6 py-2.5 text-sm font-bold text-background-dark shadow-primary transition-all hover:bg-primary/90"
+            className="rounded-full bg-primary px-6 py-2.5 text-sm font-bold text-background-dark shadow-[0_4px_14px_0_rgba(245,158,11,0.39)] transition-all hover:translate-y-[-1px] hover:bg-primary/90 hover:shadow-[0_6px_20px_rgba(245,158,11,0.23)]"
           >
             Bắt đầu
           </Link>

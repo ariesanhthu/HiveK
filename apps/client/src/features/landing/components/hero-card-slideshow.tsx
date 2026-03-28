@@ -11,6 +11,7 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart";
 import { cn } from "@/lib/utils";
+import { TOP_PERFORMERS } from "@/data/mock-data";
 
 const AUTO_MS = 5200;
 const SLIDE_COUNT = 3;
@@ -231,7 +232,7 @@ function SlideAiMatch({ isActive }: { isActive: boolean }) {
         <div className="flex flex-col items-center gap-2 text-center">
           <div className="relative shrink-0">
             <img
-              src={IMG_CREATOR}
+              src={TOP_PERFORMERS[0]?.avatar || IMG_CREATOR}
               alt=""
               className="size-14 rounded-full border border-primary-soft object-cover md:size-16"
             />
@@ -244,7 +245,7 @@ function SlideAiMatch({ isActive }: { isActive: boolean }) {
             </span>
           </div>
           <span className="text-[10px] font-bold uppercase tracking-wider text-foreground">
-            Sarah J.
+            {TOP_PERFORMERS[0]?.name.split(' ').pop() || "Sarah J."}
           </span>
         </div>
       </div>

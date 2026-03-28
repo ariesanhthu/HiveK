@@ -11,7 +11,7 @@ export const LandingPage: React.FC = () => {
     <>
       <HeroSection />
       <LazyPlatformBenefits fallback={<SectionSkeleton variant="section" />} />
-      <LazyTopPerformers fallback={<SectionSkeleton variant="table" />} />
+      <LazyTopPerformers fallback={<SectionSkeleton variant="table"/>} />
       <LazyActiveCampaigns fallback={<SectionSkeleton variant="cards" />} />
       <LazyCta fallback={<SectionSkeleton variant="section" />} />
     </>

@@ -2,6 +2,7 @@ import Link from "next/link";
 import React from "react";
 import { HeroSlideshowSlot } from "@/components/global/sections/hero-slideshow-slot";
 import { AUTH_ROUTES } from "@/features/auth/constants";
+import { TOP_PERFORMERS } from "@/data/mock-data";
 
 export const HeroSection: React.FC = () => {
   return (
@@ -37,23 +38,16 @@ export const HeroSection: React.FC = () => {
               Xem Demo
             </button>
           </div>
-          <div className="flex items-center gap-4 pt-4">
+            <div className="flex items-center gap-4 pt-4">
             <div className="flex -space-x-3">
-              <img
-                className="h-10 w-10 rounded-full border-2 border-background-light object-cover dark:border-background-dark"
-                src="https://lh3.googleusercontent.com/aida-public/AB6AXuCsRrzUuWDirEMwF2OltbobKUmxhouU1JE0gUja5_5L3Cx9rHIPDiT8J8vatWP6FyhL45QOMUDBwHhCcAiGRZ49WPTbAlarbcB8VGtJnOx9idTtyZuwwLD0Q8e7AwU8ZFjkzyCrMjVZCKPsEGtOLoIXTLt1hhUezRcwH4kr6DjBrlo4ioj8TqMt67C01LUFeKKKMgjZGlGL09l9EkoaRAPOvvncCjenjAxf67pQg5Tzn93O1EAEEsJbVms-IpeI4wpmtG8vjOuC0IA"
-                alt="Profile photo of a female creator"
-              />
-              <img
-                className="h-10 w-10 rounded-full border-2 border-background-light object-cover dark:border-background-dark"
-                src="https://lh3.googleusercontent.com/aida-public/AB6AXuA3wPI_w6boxlZHqAxKr3rx7usXp6Jj-7shD3vr6as4joCWfYJYf-RPPa0Mtg8w4LvQVEaRH4bfEHufPMTL9R2jS7xPfcgtnlceN_XNG2lmcaaWkDyU9QeOWbgtyo0prp1b28nsyND-Vsjt23Wc1boeWg6O6Mh5Tf5c5uTJmOzIEnr0UXQPBit6rGVRbKc112hQyqxzsT9jQ1vvDoiuI3U_gqSEN_Io7tU-WwEd_ynCA7tgj9yxF6b-96C8eGFvV8XBm9U_OFRX9IU"
-                alt="Profile photo of a male creator"
-              />
-              <img
-                className="h-10 w-10 rounded-full border-2 border-background-light object-cover dark:border-background-dark"
-                src="https://lh3.googleusercontent.com/aida-public/AB6AXuCABOfn3xiIF__XjH2_d81iMywHnmbE8d3MK78PFJsS0H4CCK7QezWCvlK4gc4o5Ahp08Eyo1pWET3qinqjePu7J72fef67QOsWZzy2Xl1IAzsE48d4GN8yrqV63C9YR_15woT9xdKmsGDPiZaUvRXC6g2YHeYWenNUC3cQvmqqj8OzHBWQjz1q44Oun3f_taZ19zhCXLsdKc47Wu-oZwb19WaIrXhrh-raTm1ZXgCAQLHkh4AIPwD5p-_1cTsEncmv3dgAGLInVVM"
-                alt="Profile photo of a young influencer"
-              />
+              {TOP_PERFORMERS.slice(0, 3).map((performer, idx) => (
+                <img
+                  key={idx}
+                  className="h-10 w-10 rounded-full border-2 border-background-light object-cover dark:border-background-dark"
+                  src={performer.avatar}
+                  alt={`Profile photo of ${performer.name}`}
+                />
+              ))}
               <div className="flex h-10 w-10 items-center justify-center rounded-full border-2 border-background-light bg-primary text-[10px] font-bold text-background-dark dark:border-background-dark">
                 +2k
               </div>

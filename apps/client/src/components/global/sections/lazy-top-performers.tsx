@@ -28,7 +28,7 @@ export function LazyTopPerformers({
 
   if (Component) return <Component />;
   return (
-    <div ref={ref} style={{ minHeight }} aria-busy={!Component}>
+    <div id="#influencers" ref={ref} style={{ minHeight }} aria-busy={!Component}>
       {fallback}
     </div>
   );

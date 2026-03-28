@@ -25,7 +25,7 @@ export function SignInForm() {
   const [state, formAction, isPending] = useActionState(submitSignIn, INITIAL);
 
   return (
-    <Card className="w-full max-w-md border-primary-soft shadow-lg">
+    <Card className="w-full max-w-md rounded-[2.5rem] border-primary/10 bg-background/80 p-2 shadow-[0_8px_40px_rgb(0,0,0,0.08)] backdrop-blur-xl sm:p-4">
       <CardHeader className="space-y-1 text-center sm:text-left">
         <CardTitle className="text-2xl font-extrabold tracking-tight">
           Chào mừng trở lại
@@ -50,7 +50,7 @@ export function SignInForm() {
                 autoComplete="email"
                 inputMode="email"
                 placeholder="ten@congty.com"
-                className="pl-10"
+                className="h-14 rounded-2xl border-border/50 bg-muted/30 pl-11 text-base transition-colors hover:border-primary/30 focus-visible:border-primary focus-visible:ring-primary/20"
                 aria-invalid={Boolean(state.fieldErrors.email)}
                 aria-describedby={state.fieldErrors.email ? "email-error" : undefined}
               />
@@ -83,7 +83,7 @@ export function SignInForm() {
                 type="password"
                 autoComplete="current-password"
                 placeholder="••••••••"
-                className="pl-10"
+                className="h-14 rounded-2xl border-border/50 bg-muted/30 pl-11 text-base transition-colors hover:border-primary/30 focus-visible:border-primary focus-visible:ring-primary/20"
                 aria-invalid={Boolean(state.fieldErrors.password)}
                 aria-describedby={
                   state.fieldErrors.password ? "password-error" : undefined
@@ -110,7 +110,7 @@ export function SignInForm() {
             </p>
           ) : null}
 
-          <Button type="submit" className="w-full" size="lg" disabled={isPending}>
+          <Button type="submit" className="h-14 w-full rounded-2xl text-lg font-bold shadow-lg shadow-primary/25" disabled={isPending}>
             {isPending ? "Đang xử lý…" : "Đăng nhập"}
           </Button>
         </form>
@@ -125,10 +125,10 @@ export function SignInForm() {
         </div>
 
         <div className="grid grid-cols-2 gap-3">
-          <Button type="button" variant="outline" className="w-full" disabled>
+          <Button type="button" variant="outline" className="h-12 rounded-2xl border-border/60 hover:bg-muted/50" disabled>
             Google
           </Button>
-          <Button type="button" variant="outline" className="w-full" disabled>
+          <Button type="button" variant="outline" className="h-12 rounded-2xl border-border/60 hover:bg-muted/50" disabled>
             Apple
           </Button>
         </div>
@@ -136,16 +136,16 @@ export function SignInForm() {
           OAuth sẽ bật khi cấu hình provider (không gửi mật khẩu qua nút này).
         </p>
 
-        <div className="space-y-3 rounded-xl border border-dashed border-primary/40 bg-primary-soft/30 p-4">
-          <p className="text-center text-xs font-semibold uppercase tracking-wide text-foreground-muted">
+        <div className="space-y-3 rounded-2xl border border-dashed border-primary/30 bg-primary/[0.03] p-5">
+          <p className="text-center text-xs font-bold uppercase tracking-widest text-primary/80">
             Truy cập nhanh demo
           </p>
           <div className="flex flex-col gap-2 sm:flex-row">
             <Link
               href={AUTH_ROUTES.BUSINESS_DASHBOARD}
               className={cn(
-                buttonVariants({ variant: "secondary", size: "default" }),
-                "flex flex-1 items-center justify-center gap-2 no-underline"
+                buttonVariants({ variant: "outline" }),
+                "flex h-12 flex-1 items-center justify-center gap-2 rounded-xl border-primary/20 bg-background/50 text-[13px] font-semibold hover:border-primary/40 hover:bg-card no-underline shadow-sm"
               )}
             >
               <Building2 className="size-4 shrink-0" aria-hidden />
@@ -154,8 +154,8 @@ export function SignInForm() {
             <Link
               href={AUTH_ROUTES.AMBASSADOR_DASHBOARD}
               className={cn(
-                buttonVariants({ variant: "secondary", size: "default" }),
-                "flex flex-1 items-center justify-center gap-2 no-underline"
+                buttonVariants({ variant: "outline" }),
+                "flex h-12 flex-1 items-center justify-center gap-2 rounded-xl border-primary/20 bg-background/50 text-[13px] font-semibold hover:border-primary/40 hover:bg-card no-underline shadow-sm"
               )}
             >
               <Sparkles className="size-4 shrink-0" aria-hidden />

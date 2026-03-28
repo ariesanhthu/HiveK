@@ -38,15 +38,15 @@ function RoleCard({ role, selected, onSelect, title, description, icon }: RoleCa
       type="button"
       onClick={() => onSelect(role)}
       className={cn(
-        "flex w-full flex-col items-start gap-2 rounded-xl border-2 p-4 text-left transition-colors",
+        "flex w-full flex-col items-start gap-2 rounded-2xl border-2 p-5 text-left transition-colors",
         isOn
-          ? "border-primary bg-primary-soft/40 shadow-sm"
-          : "border-primary-soft bg-card hover:bg-muted/50"
+          ? "border-primary bg-primary/5 shadow-md"
+          : "border-border/60 bg-muted/30 hover:border-primary/30 hover:bg-muted/50"
       )}
     >
-      <span className="text-primary">{icon}</span>
+      <span className={cn("rounded-full p-2", isOn ? "bg-primary/10 text-primary" : "text-muted-foreground")}>{icon}</span>
       <span className="text-sm font-bold text-foreground">{title}</span>
-      <span className="text-xs text-foreground-muted">{description}</span>
+      <span className="text-xs text-foreground-muted leading-relaxed">{description}</span>
     </button>
   );
 }
@@ -85,7 +85,7 @@ export function SignUpForm() {
         />
       </div>
 
-      <Card className="border-primary-soft shadow-lg">
+      <Card className="rounded-[2.5rem] border-primary/10 bg-background/80 p-2 shadow-[0_8px_40px_rgb(0,0,0,0.08)] backdrop-blur-xl sm:p-4">
         <CardHeader>
           <CardTitle className="text-lg">Thông tin tài khoản</CardTitle>
           <CardDescription>Mật khẩu tối thiểu 8 ký tự.</CardDescription>
@@ -107,7 +107,7 @@ export function SignUpForm() {
                     name="fullName"
                     autoComplete="name"
                     placeholder="Nguyễn Văn A"
-                    className="pl-10"
+                    className="h-14 rounded-2xl border-border/50 bg-muted/30 pl-11 text-base transition-colors hover:border-primary/30 focus-visible:border-primary focus-visible:ring-primary/20"
                     aria-invalid={Boolean(state.fieldErrors.fullName)}
                   />
                 </div>
@@ -131,7 +131,7 @@ export function SignUpForm() {
                     type="email"
                     autoComplete="email"
                     placeholder="ban@email.com"
-                    className="pl-10"
+                    className="h-14 rounded-2xl border-border/50 bg-muted/30 pl-11 text-base transition-colors hover:border-primary/30 focus-visible:border-primary focus-visible:ring-primary/20"
                     aria-invalid={Boolean(state.fieldErrors.email)}
                   />
                 </div>
@@ -155,7 +155,7 @@ export function SignUpForm() {
                     type="password"
                     autoComplete="new-password"
                     placeholder="••••••••"
-                    className="pl-10"
+                    className="h-14 rounded-2xl border-border/50 bg-muted/30 pl-11 text-base transition-colors hover:border-primary/30 focus-visible:border-primary focus-visible:ring-primary/20"
                     aria-invalid={Boolean(state.fieldErrors.password)}
                   />
                 </div>
@@ -179,7 +179,7 @@ export function SignUpForm() {
                     type="password"
                     autoComplete="new-password"
                     placeholder="••••••••"
-                    className="pl-10"
+                    className="h-14 rounded-2xl border-border/50 bg-muted/30 pl-11 text-base transition-colors hover:border-primary/30 focus-visible:border-primary focus-visible:ring-primary/20"
                     aria-invalid={Boolean(state.fieldErrors.confirmPassword)}
                   />
                 </div>
@@ -200,7 +200,7 @@ export function SignUpForm() {
               </p>
             ) : null}
 
-            <Button type="submit" className="w-full" size="lg" disabled={isPending}>
+            <Button type="submit" className="h-14 w-full rounded-2xl text-lg font-bold shadow-lg shadow-primary/25" disabled={isPending}>
               {isPending ? "Đang gửi…" : "Tạo tài khoản"}
             </Button>
 
