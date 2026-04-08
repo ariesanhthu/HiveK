@@ -11,10 +11,10 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const { id } = await params;
   const detail = getCampaignDetailById(id);
   if (!detail) {
-    return { title: "Chiến dịch | KOLConnect" };
+    return { title: "Chiến dịch | Hive-K" };
   }
   return {
-    title: `${detail.title} | KOLConnect`,
+    title: `${detail.title} | Hive-K`,
     description: `${detail.externalIdLabel} — ${detail.createdByLabel}`,
   };
 }

@@ -19,31 +19,31 @@ export type SearchNicheFilterOption = {
 export const SEARCH_NICHE_FILTER_OPTIONS: SearchNicheFilterOption[] = [
   {
     id: "beauty-lifestyle",
-    label: "Beauty & Lifestyle",
-    matchers: ["beauty", "lifestyle", "fashion"],
+    label: "Làm đẹp & Đời sống",
+    matchers: ["làm đẹp", "đời sống", "thời trang", "beauty", "lifestyle", "fashion"],
   },
   {
     id: "tech-gaming",
-    label: "Tech & Gaming",
-    matchers: ["tech", "gaming"],
+    label: "Công nghệ & Game",
+    matchers: ["công nghệ", "game", "tech", "gaming"],
   },
   {
     id: "health-wellness",
-    label: "Health & Wellness",
-    matchers: ["health", "wellness"],
+    label: "Thể hình & Sức khỏe",
+    matchers: ["thể hình", "sức khỏe", "health", "wellness", "fitness"],
   },
   {
     id: "food-cooking",
-    label: "Food & Cooking",
-    matchers: ["food", "cooking"],
+    label: "Ẩm thực & Nấu ăn",
+    matchers: ["ẩm thực", "nấu ăn", "food", "cooking", "du lịch"],
   },
 ];
 
 export const ENGAGEMENT_THRESHOLD_OPTIONS: { value: number; label: string }[] = [
-  { value: 0, label: "Any" },
-  { value: 3, label: "Above 3%" },
-  { value: 5, label: "Above 5%" },
-  { value: 7, label: "Above 7%" },
+  { value: 0, label: "Bất kỳ" },
+  { value: 3, label: "Trên 3%" },
+  { value: 5, label: "Trên 5%" },
+  { value: 7, label: "Trên 7%" },
 ];
 
 export const FOLLOWER_MIN_K_MAX = 900;

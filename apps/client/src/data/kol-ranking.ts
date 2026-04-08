@@ -14,7 +14,7 @@ export const KOL_SEEDS: KolSeed[] = [
   {
     id: "kol-001",
     name: "Lê Hạ Anh",
-    niche: "Beauty",
+    niche: "Làm đẹp",
     platform: "TikTok",
     followers: 2_430_000,
     rating: 4.93,
@@ -23,7 +23,7 @@ export const KOL_SEEDS: KolSeed[] = [
   {
     id: "kol-002",
     name: "Trần Đức Bo",
-    niche: "Gaming",
+    niche: "Game",
     platform: "YouTube",
     followers: 1_780_000,
     rating: 4.89,
@@ -32,7 +32,7 @@ export const KOL_SEEDS: KolSeed[] = [
   {
     id: "kol-003",
     name: "Hồ Linh",
-    niche: "Lifestyle",
+    niche: "Đời sống",
     platform: "Instagram",
     followers: 956_000,
     rating: 4.86,
@@ -41,7 +41,7 @@ export const KOL_SEEDS: KolSeed[] = [
   {
     id: "kol-004",
     name: "Phạm Đức",
-    niche: "Tech",
+    niche: "Công nghệ",
     platform: "YouTube",
     followers: 1_240_000,
     rating: 4.91,
@@ -50,7 +50,7 @@ export const KOL_SEEDS: KolSeed[] = [
   {
     id: "kol-005",
     name: "Lê Hana",
-    niche: "Fitness",
+    niche: "Thể hình",
     platform: "TikTok",
     followers: 812_000,
     rating: 4.82,
@@ -59,7 +59,7 @@ export const KOL_SEEDS: KolSeed[] = [
   {
     id: "kol-006",
     name: "Đỗ Quang",
-    niche: "Tech",
+    niche: "Công nghệ",
     platform: "Instagram",
     followers: 635_000,
     rating: 4.79,
@@ -68,7 +68,7 @@ export const KOL_SEEDS: KolSeed[] = [
   {
     id: "kol-007",
     name: "Vũ Nhi",
-    niche: "Beauty",
+    niche: "Làm đẹp",
     platform: "Instagram",
     followers: 1_120_000,
     rating: 4.88,
@@ -77,7 +77,7 @@ export const KOL_SEEDS: KolSeed[] = [
   {
     id: "kol-008",
     name: "Lê An",
-    niche: "Gaming",
+    niche: "Game",
     platform: "TikTok",
     followers: 702_000,
     rating: 4.74,
@@ -86,7 +86,7 @@ export const KOL_SEEDS: KolSeed[] = [
   {
     id: "kol-009",
     name: "Bùi Vy",
-    niche: "Lifestyle",
+    niche: "Đời sống",
     platform: "TikTok",
     followers: 2_010_000,
     rating: 4.9,
@@ -95,7 +95,7 @@ export const KOL_SEEDS: KolSeed[] = [
   {
     id: "kol-010",
     name: "Mai Tuấn",
-    niche: "Fitness",
+    niche: "Thể hình",
     platform: "YouTube",
     followers: 1_580_000,
     rating: 4.85,
@@ -104,7 +104,7 @@ export const KOL_SEEDS: KolSeed[] = [
   {
     id: "kol-011",
     name: "Phan Gia",
-    niche: "Beauty",
+    niche: "Làm đẹp",
     platform: "YouTube",
     followers: 864_000,
     rating: 4.83,
@@ -113,7 +113,7 @@ export const KOL_SEEDS: KolSeed[] = [
   {
     id: "kol-012",
     name: "Châu Minh",
-    niche: "Lifestyle",
+    niche: "Đời sống",
     platform: "Instagram",
     followers: 1_360_000,
     rating: 4.87,
@@ -122,7 +122,7 @@ export const KOL_SEEDS: KolSeed[] = [
   {
     id: "kol-013",
     name: "Đăng Khoa",
-    niche: "Gaming",
+    niche: "Game",
     platform: "YouTube",
     followers: 2_900_000,
     rating: 4.92,
@@ -131,7 +131,7 @@ export const KOL_SEEDS: KolSeed[] = [
   {
     id: "kol-014",
     name: "Trương Lâm",
-    niche: "Tech",
+    niche: "Công nghệ",
     platform: "TikTok",
     followers: 548_000,
     rating: 4.76,
@@ -140,7 +140,7 @@ export const KOL_SEEDS: KolSeed[] = [
   {
     id: "kol-015",
     name: "Anh Thư",
-    niche: "Fitness",
+    niche: "Thể hình",
     platform: "Instagram",
     followers: 987_000,
     rating: 4.84,

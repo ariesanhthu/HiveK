@@ -69,10 +69,10 @@ function withLiveJitter(seed: KolSeed, tickBucket: number): KolSeed {
 }
 
 function resolveBadge(rank: number): KolBadge {
-  if (rank <= 3) return "Elite";
+  if (rank <= 3) return "Ưu tú";
   if (rank <= 10) return "Top 10";
-  if (rank <= 20) return "Consistent";
-  return "Rising";
+  if (rank <= 20) return "Ổn định";
+  return "Triển vọng";
 }
 
 function normalizeFilters(

@@ -13,15 +13,15 @@ import {
 } from "@/features/kol-matching/types";
 
 const INITIAL_ENTRY: FindKolEntryInput = {
-  campaignOption: "Summer Launch 2024",
-  nicheCategory: "Lifestyle & Fashion",
+  campaignOption: "Ra mắt Mùa hè 2024",
+  nicheCategory: "Đời sống & Thời trang",
   summary: "",
   campaignName: "",
   creatorType: "both",
   objective: "awareness",
   targetPlatforms: ["tiktok", "youtube"],
-  niche: "Beauty",
-  targetRegion: "Vietnam",
+  niche: "Làm đẹp",
+  targetRegion: "Việt Nam",
   budgetTier: "growth",
   minReach: 50_000,
   minCtr: 2.5,

@@ -11,28 +11,28 @@ export const MainHeader: React.FC = () => {
               hub
             </span>
             <a href='/' className="text-xl font-extrabold tracking-tight text-white drop-shadow-sm">
-              KOLConnect
+              Hive-K
             </a>
           </div>
           <nav className="hidden items-center gap-8 md:flex">
-            <a
-              href="#platform"
+            <Link
+              href="/#platform"
               className="text-sm font-semibold text-zinc-300 transition-colors hover:text-white"
             >
               Nền tảng
-            </a>
-            <a
-              href="#influencers"
+            </Link>
+            <Link
+              href="/#influencers"
               className="text-sm font-semibold text-zinc-300 transition-colors hover:text-white"
             >
               KOLs
-            </a>
-            <a
-              href="#campaigns"
+            </Link>
+            <Link
+              href="/#campaigns"
               className="text-sm font-semibold text-zinc-300 transition-colors hover:text-white"
             >
               Chiến dịch
-            </a>
+            </Link>
             <Link
               href="/kol-ranking"
               className="text-sm font-semibold text-zinc-300 transition-colors hover:text-white"
@@ -49,12 +49,12 @@ export const MainHeader: React.FC = () => {
             <input
               type="text"
               placeholder="Tìm kiếm creator..."
-              className="w-32 border-none bg-transparent text-white  text-sm text-zinc-200 placeholder:text-white/50 focus:outline-none focus:ring-0 lg:w-48"
+              className="w-32 border-none bg-transparent text-sm text-zinc-200 placeholder:text-white/50 focus:outline-none focus:ring-0 lg:w-48"
             />
           </div>
           <Link
             href="/auth/sign-in"
-            className="rounded-full bg-primary px-6 py-2.5 text-sm font-bold text-background-dark shadow-[0_4px_14px_0_rgba(245,158,11,0.39)] transition-all hover:translate-y-[-1px] hover:bg-primary/90 hover:shadow-[0_6px_20px_rgba(245,158,11,0.23)]"
+            className="rounded-full bg-primary px-6 py-2.5 text-sm font-bold text-background-dark shadow-[0_4px_14px_0_rgba(245,158,11,0.39)] transition-all hover:bg-primary/90 hover:shadow-[0_6px_20px_rgba(245,158,11,0.23)]"
           >
             Bắt đầu
           </Link>

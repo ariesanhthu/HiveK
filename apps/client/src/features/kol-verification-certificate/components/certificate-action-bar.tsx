@@ -46,7 +46,7 @@ export function CertificateActionBar({
       if (navigator.share) {
         await navigator.share({
           title: `${displayName} — Creator Verification`,
-          text: "Xem chứng nhận xác minh creator trên KOLConnect.",
+          text: "Xem chứng nhận xác minh creator trên Hive-K.",
           url: verifyUrl,
         });
       } else {

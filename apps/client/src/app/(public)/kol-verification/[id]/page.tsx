@@ -25,7 +25,7 @@ export async function generateMetadata({
   const { id } = await params;
   const data = getCertificateById(decodeURIComponent(id));
   return {
-    title: `${data.displayName} | Chứng nhận xác minh | KOLConnect`,
+    title: `${data.displayName} | Chứng nhận xác minh | Hive-K`,
     description:
       "Chứng nhận xác minh creator: metrics, kiểm tra hệ thống và phản hồi đối tác đã xác minh.",
     openGraph: {

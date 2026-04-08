@@ -22,7 +22,7 @@ export function AuthLegalInline({ className }: AuthLegalInlineProps) {
       >
         Chính sách quyền riêng tư
       </Link>{" "}
-      của KOLConnect.
+      của Hive-K.
     </p>
   );
 }

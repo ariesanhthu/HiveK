@@ -11,7 +11,7 @@ export const MainFooter: React.FC = () => {
                 hub
               </span>
               <h2 className="text-xl font-extrabold tracking-tight text-foreground">
-                KOLConnect
+                Hive-K
               </h2>
             </div>
             <p className="max-w-xs text-sm leading-relaxed text-muted">
@@ -69,7 +69,7 @@ export const MainFooter: React.FC = () => {
 
         <div className="mt-12 flex flex-col items-center justify-between border-t border-primary-soft pt-8 md:flex-row">
           <p className="text-sm text-muted">
-            © 2024 KOLConnect. Đã đăng ký bản quyền.
+            © 2024 Hive-K. Đã đăng ký bản quyền.
           </p>
           <div className="mt-4 flex items-center gap-6 md:mt-0">
             <a

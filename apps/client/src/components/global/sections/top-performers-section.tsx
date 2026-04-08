@@ -3,7 +3,7 @@ import { TOP_PERFORMERS } from "@/data/mock-data";
 
 export const TopPerformersSection: React.FC = () => {
   return (
-    <section className="py-24" aria-labelledby="top-performers-heading">
+    <section id="influencers" className="py-24" aria-labelledby="top-performers-heading">
       <div className="mx-auto max-w-7xl px-6">
         <div className="mb-12 flex items-end justify-between">
           <div>

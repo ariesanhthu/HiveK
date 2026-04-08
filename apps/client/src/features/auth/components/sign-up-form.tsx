@@ -3,7 +3,7 @@
 import type { ReactNode } from "react";
 import { useActionState, useState } from "react";
 import Link from "next/link";
-import { Building2, Lock, Mail, ShieldCheck, Star, User } from "lucide-react";
+import { Building2, Lock, Mail, ShieldCheck, Sparkles, User, CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -38,15 +38,17 @@ function RoleCard({ role, selected, onSelect, title, description, icon }: RoleCa
       type="button"
       onClick={() => onSelect(role)}
       className={cn(
-        "flex w-full flex-col items-start gap-2 rounded-2xl border-2 p-5 text-left transition-colors",
+        "flex w-full flex-col items-center gap-3 rounded-2xl border-2 p-6 text-center transition-all bg-[#1e293b]",
         isOn
-          ? "border-primary bg-primary/5 shadow-md"
-          : "border-border/60 bg-muted/30 hover:border-primary/30 hover:bg-muted/50"
+          ? "border-[#f39c12] shadow-sm"
+          : "border-slate-700/60 hover:border-[#f39c12]/50 hover:shadow-sm"
       )}
     >
-      <span className={cn("rounded-full p-2", isOn ? "bg-primary/10 text-primary" : "text-muted-foreground")}>{icon}</span>
-      <span className="text-sm font-bold text-foreground">{title}</span>
-      <span className="text-xs text-foreground-muted leading-relaxed">{description}</span>
+      <span className={cn("inline-flex items-center justify-center rounded-full w-12 h-12 mb-1", isOn ? "bg-[#f39c12]/20 text-[#f39c12]" : "bg-slate-800 text-[#f39c12]")}>
+        {icon}
+      </span>
+      <span className="text-[15px] font-bold text-white">{title}</span>
+      <span className="text-[13px] font-medium text-slate-400 leading-relaxed max-w-[200px]">{description}</span>
     </button>
   );
 }
@@ -56,135 +58,119 @@ export function SignUpForm() {
   const [state, formAction, isPending] = useActionState(submitSignUp, INITIAL);
 
   return (
-    <div className="flex w-full max-w-lg flex-col gap-6">
-      <div className="space-y-2 text-center">
-        <h1 className="text-2xl font-extrabold tracking-tight text-foreground md:text-3xl">
-          Gia nhập KOLConnect
+    <div className="flex w-full max-w-2xl flex-col items-center gap-8">
+      <div className="space-y-3 text-center">
+        <h1 className="text-3xl font-extrabold tracking-tight text-white md:text-4xl">
+          Gia nhập Hive-K
         </h1>
-        <p className="text-sm text-foreground-muted">
-          Chọn vai trò và hoàn tất đăng ký trên nền tảng creator economy.
+        <p className="text-sm font-medium text-slate-400 max-w-[400px] mx-auto leading-relaxed">
+          Chọn vai trò và hoàn tất đăng ký trên nền tảng creator economy tuyệt vời nhất.
         </p>
       </div>
 
-      <div className="grid gap-3 sm:grid-cols-2">
+      <div className="grid w-full gap-4 sm:grid-cols-2">
         <RoleCard
           role="brand"
           selected={role}
           onSelect={setRole}
-          title="Tôi là thương hiệu / doanh nghiệp"
-          description="Tìm creator và chạy chiến dịch."
-          icon={<Building2 className="size-6" aria-hidden />}
+          title="Thương hiệu / Doanh nghiệp"
+          description="Tìm kiếm creator tiềm năng và chạy các chiến dịch bùng nổ."
+          icon={<Building2 className="flex-shrink-0" size={20} aria-hidden />}
         />
         <RoleCard
           role="creator"
           selected={role}
           onSelect={setRole}
-          title="Tôi là KOL / Creator"
-          description="Kiếm tiền từ nội dung và phát triển thương hiệu cá nhân."
-          icon={<Star className="size-6" aria-hidden />}
+          title="KOL / Creator"
+          description="Kiếm tiền từ tầm ảnh hưởng và phát triển thương hiệu cá nhân."
+          icon={<Sparkles className="flex-shrink-0" size={20} aria-hidden />}
         />
       </div>
 
-      <Card className="rounded-[2.5rem] border-primary/10 bg-background/80 p-2 shadow-[0_8px_40px_rgb(0,0,0,0.08)] backdrop-blur-xl sm:p-4">
-        <CardHeader>
-          <CardTitle className="text-lg">Thông tin tài khoản</CardTitle>
-          <CardDescription>Mật khẩu tối thiểu 8 ký tự.</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form action={formAction} className="space-y-4" noValidate>
+      <Card className="w-full max-w-2xl rounded-2xl border border-slate-700/60 bg-[#1e293b] p-6 shadow-sm sm:p-10">
+        <CardContent className="p-0">
+          <form action={formAction} className="space-y-6" noValidate>
             <input type="hidden" name="role" value={role} />
 
-            <div className="grid gap-4 sm:grid-cols-2">
-              <div className="space-y-2 sm:col-span-2">
-                <Label htmlFor="fullName">Họ và tên</Label>
-                <div className="relative">
-                  <User
-                    className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
-                    aria-hidden
-                  />
-                  <Input
-                    id="fullName"
-                    name="fullName"
-                    autoComplete="name"
-                    placeholder="Nguyễn Văn A"
-                    className="h-14 rounded-2xl border-border/50 bg-muted/30 pl-11 text-base transition-colors hover:border-primary/30 focus-visible:border-primary focus-visible:ring-primary/20"
-                    aria-invalid={Boolean(state.fieldErrors.fullName)}
-                  />
-                </div>
+            <div className="grid gap-6 sm:grid-cols-2">
+              <div className="space-y-2">
+                <Label htmlFor="fullName" className="flex items-center gap-2 text-[13px] font-bold text-white">
+                  <User size={14} className="text-[#3b82f6]" aria-hidden />
+                  Họ và tên
+                </Label>
+                <Input
+                  id="fullName"
+                  name="fullName"
+                  autoComplete="name"
+                  placeholder="Nguyễn Văn A"
+                  className="h-11 rounded-xl border-none bg-[#f4f7fb] px-4 text-sm font-medium text-slate-800 placeholder:text-slate-400 transition-colors focus-visible:bg-white focus-visible:ring-2 focus-visible:ring-[#3b82f6]/30"
+                  aria-invalid={Boolean(state.fieldErrors.fullName)}
+                />
                 {state.fieldErrors.fullName ? (
-                  <p className="text-xs text-red-600 dark:text-red-400" role="alert">
+                  <p className="text-xs text-red-500" role="alert">
                     {state.fieldErrors.fullName}
                   </p>
                 ) : null}
               </div>
 
-              <div className="space-y-2 sm:col-span-2">
-                <Label htmlFor="su-email">Email</Label>
-                <div className="relative">
-                  <Mail
-                    className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
-                    aria-hidden
-                  />
-                  <Input
-                    id="su-email"
-                    name="email"
-                    type="email"
-                    autoComplete="email"
-                    placeholder="ban@email.com"
-                    className="h-14 rounded-2xl border-border/50 bg-muted/30 pl-11 text-base transition-colors hover:border-primary/30 focus-visible:border-primary focus-visible:ring-primary/20"
-                    aria-invalid={Boolean(state.fieldErrors.email)}
-                  />
-                </div>
+              <div className="space-y-2">
+                <Label htmlFor="su-email" className="flex items-center gap-2 text-[13px] font-bold text-white">
+                  <Mail size={14} className="text-[#3b82f6]" aria-hidden />
+                  Email
+                </Label>
+                <Input
+                  id="su-email"
+                  name="email"
+                  type="email"
+                  inputMode="email"
+                  placeholder="ban@email.com"
+                  className="h-11 rounded-xl border-none bg-[#f4f7fb] px-4 text-sm font-medium text-slate-800 placeholder:text-slate-400 transition-colors focus-visible:bg-white focus-visible:ring-2 focus-visible:ring-[#3b82f6]/30"
+                  aria-invalid={Boolean(state.fieldErrors.email)}
+                />
                 {state.fieldErrors.email ? (
-                  <p className="text-xs text-red-600 dark:text-red-400" role="alert">
+                  <p className="text-xs text-red-500" role="alert">
                     {state.fieldErrors.email}
                   </p>
                 ) : null}
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="su-password">Mật khẩu</Label>
-                <div className="relative">
-                  <Lock
-                    className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
-                    aria-hidden
-                  />
-                  <Input
-                    id="su-password"
-                    name="password"
-                    type="password"
-                    autoComplete="new-password"
-                    placeholder="••••••••"
-                    className="h-14 rounded-2xl border-border/50 bg-muted/30 pl-11 text-base transition-colors hover:border-primary/30 focus-visible:border-primary focus-visible:ring-primary/20"
-                    aria-invalid={Boolean(state.fieldErrors.password)}
-                  />
-                </div>
+                <Label htmlFor="su-password" className="flex items-center gap-2 text-[13px] font-bold text-white">
+                  <Lock size={14} className="text-[#3b82f6]" aria-hidden />
+                  Mật khẩu
+                </Label>
+                <Input
+                  id="su-password"
+                  name="password"
+                  type="password"
+                  autoComplete="new-password"
+                  placeholder="••••••••"
+                  className="h-11 rounded-xl border-none bg-[#f4f7fb] px-4 text-sm font-medium text-slate-800 placeholder:text-slate-400 transition-colors focus-visible:bg-white focus-visible:ring-2 focus-visible:ring-[#3b82f6]/30"
+                  aria-invalid={Boolean(state.fieldErrors.password)}
+                />
                 {state.fieldErrors.password ? (
-                  <p className="text-xs text-red-600 dark:text-red-400" role="alert">
+                  <p className="text-xs text-red-500" role="alert">
                     {state.fieldErrors.password}
                   </p>
                 ) : null}
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="su-confirm">Xác nhận mật khẩu</Label>
-                <div className="relative">
-                  <ShieldCheck
-                    className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
-                    aria-hidden
-                  />
-                  <Input
-                    id="su-confirm"
-                    name="confirmPassword"
-                    type="password"
-                    autoComplete="new-password"
-                    placeholder="••••••••"
-                    className="h-14 rounded-2xl border-border/50 bg-muted/30 pl-11 text-base transition-colors hover:border-primary/30 focus-visible:border-primary focus-visible:ring-primary/20"
-                    aria-invalid={Boolean(state.fieldErrors.confirmPassword)}
-                  />
-                </div>
+                <Label htmlFor="su-confirm" className="flex items-center gap-2 text-[13px] font-bold text-white">
+                  <CheckCircle size={14} className="text-[#3b82f6]" aria-hidden />
+                  Xác nhận mật khẩu
+                </Label>
+                <Input
+                  id="su-confirm"
+                  name="confirmPassword"
+                  type="password"
+                  autoComplete="new-password"
+                  placeholder="••••••••"
+                  className="h-11 rounded-xl border-none bg-[#f4f7fb] px-4 text-sm font-medium text-slate-800 placeholder:text-slate-400 transition-colors focus-visible:bg-white focus-visible:ring-2 focus-visible:ring-[#3b82f6]/30"
+                  aria-invalid={Boolean(state.fieldErrors.confirmPassword)}
+                />
                 {state.fieldErrors.confirmPassword ? (
-                  <p className="text-xs text-red-600 dark:text-red-400" role="alert">
+                  <p className="text-xs text-red-500" role="alert">
                     {state.fieldErrors.confirmPassword}
                   </p>
                 ) : null}
@@ -200,36 +186,27 @@ export function SignUpForm() {
               </p>
             ) : null}
 
-            <Button type="submit" className="h-14 w-full rounded-2xl text-lg font-bold shadow-lg shadow-primary/25" disabled={isPending}>
-              {isPending ? "Đang gửi…" : "Tạo tài khoản"}
-            </Button>
+            <div className="pt-2">
+              <Button type="submit" className="mt-2 h-12 w-full rounded-lg bg-[#f39c12] text-base font-bold text-white hover:bg-[#e67e22] shadow-[0_0_20px_-5px_#f39c12] transition-colors disabled:opacity-70 disabled:hover:bg-[#f39c12]" disabled={isPending}>
+                {isPending ? "Đang xử lý..." : "Tạo tài khoản"}
+              </Button>
+            </div>
 
-            <p className="text-center text-[11px] text-muted-foreground">
-              Bằng cách bấm «Tạo tài khoản», bạn đồng ý với{" "}
-              <Link
-                href="/terms"
-                className="text-[var(--color-tech-blue)] underline underline-offset-2"
-              >
-                Điều khoản
-              </Link>{" "}
+            <p className="text-center text-[11px] text-slate-500">
+              Bằng việc Tạo tài khoản, bạn đồng ý với{" "}
+              <Link href="/terms" className="text-[#3b82f6] hover:underline">Điều khoản</Link>{" "}
               và{" "}
-              <Link
-                href="/privacy"
-                className="text-[var(--color-tech-blue)] underline underline-offset-2"
-              >
-                Chính sách quyền riêng tư
-              </Link>
-              .
+              <Link href="/privacy" className="text-[#3b82f6] hover:underline">Quyền riêng tư</Link>
             </p>
           </form>
         </CardContent>
       </Card>
 
-      <p className="text-center text-sm text-foreground-muted">
+      <p className="mt-2 text-center text-sm font-medium text-slate-400">
         Đã có tài khoản?{" "}
         <Link
           href={AUTH_ROUTES.SIGN_IN}
-          className="font-bold text-primary hover:underline"
+          className="font-bold text-[#f39c12] hover:text-[#fcd34d] hover:underline"
         >
           Đăng nhập
         </Link>

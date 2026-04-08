@@ -6,7 +6,7 @@ import {
 } from "@/features/kol-ranking/server/get-kol-rankings";
 
 export const metadata: Metadata = {
-  title: "Bảng xếp hạng KOL | KOLConnect",
+  title: "Bảng xếp hạng KOL | Hive-K",
   description:
     "Bảng xếp hạng KOL trực tuyến với bộ lọc, phân trang và cập nhật điểm số theo thời gian thực.",
 };

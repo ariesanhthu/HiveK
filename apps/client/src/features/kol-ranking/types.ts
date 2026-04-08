@@ -1,9 +1,9 @@
 export const KOL_NICHES = [
-  "Beauty",
-  "Gaming",
-  "Lifestyle",
-  "Tech",
-  "Fitness",
+  "Làm đẹp",
+  "Game",
+  "Đời sống",
+  "Công nghệ",
+  "Thể hình",
 ] as const;
 
 export const KOL_PLATFORMS = ["TikTok", "Instagram", "YouTube"] as const;
@@ -17,10 +17,10 @@ export const FOLLOWER_RANGE_OPTIONS = [
 ] as const;
 
 export const BADGE_TYPES = [
-  "Rising",
-  "Consistent",
+  "Triển vọng",
+  "Ổn định",
   "Top 10",
-  "Elite",
+  "Ưu tú",
 ] as const;
 
 export type KolNiche = (typeof KOL_NICHES)[number];

@@ -8,37 +8,62 @@ type AuthGroupLayoutProps = {
 
 export default function AuthGroupLayout({ children }: AuthGroupLayoutProps) {
   return (
-    <div className="relative min-h-screen w-full overflow-hidden bg-gradient-to-b from-sky-50/80 via-background-light to-background-light dark:from-slate-950 dark:via-background-dark dark:to-background-dark">
+    <div className="relative min-h-screen w-full overflow-hidden bg-[#0a0f1c] flex flex-col font-sans">
+      {/* Top right orange glow */}
       <div
-        className="pointer-events-none absolute inset-0 opacity-40 dark:opacity-20"
+        className="pointer-events-none absolute right-0 top-0 h-[600px] w-[600px] -translate-y-1/3 translate-x-1/3 rounded-full bg-[#f39c12] opacity-30 blur-[100px]"
         aria-hidden
-        style={{
-          backgroundImage:
-            "radial-gradient(ellipse 80% 50% at 50% -20%, color-mix(in srgb, var(--color-tech-blue) 25%, transparent), transparent)",
-        }}
       />
-      <header className="relative z-10 border-b border-primary-soft/60 bg-card/60 px-6 py-4 backdrop-blur-md">
-        <div className="mx-auto flex max-w-6xl items-center justify-between">
+      {/* Bottom left blue glow */}
+      <div
+        className="pointer-events-none absolute bottom-0 left-0 h-[600px] w-[600px] -translate-x-1/3 translate-y-1/3 rounded-full bg-[#3b82f6] opacity-30 blur-[100px]"
+        aria-hidden
+      />
+      
+      <header className="relative z-10 px-8 py-5">
+        <div className="mx-auto flex max-w-[1400px] items-center justify-between">
           <Link
             href={AUTH_ROUTES.LANDING}
-            className="flex items-center gap-2 text-primary transition-opacity hover:opacity-90"
           >
-            <span className="material-symbols-outlined text-3xl font-bold">hub</span>
-            <span className="text-lg font-extrabold tracking-tight text-foreground">
-              KOLConnect
+            <span className="text-2xl font-extrabold tracking-tight text-[#f39c12]">
+              Hive-K
             </span>
           </Link>
-          <Link
-            href={AUTH_ROUTES.LANDING}
-            className="text-sm font-semibold text-foreground-muted transition-colors hover:text-primary"
-          >
-            Về trang chủ
-          </Link>
+          <div className="flex items-center gap-6">
+            <Link
+              href="/help"
+              className="text-sm font-semibold text-slate-400 transition-colors hover:text-white"
+            >
+              Trợ giúp
+            </Link>
+            <Link
+              href="/support"
+              className="text-sm font-semibold text-slate-400 transition-colors hover:text-white"
+            >
+              Hỗ trợ
+            </Link>
+          </div>
         </div>
       </header>
-      <div className="relative z-10 flex flex-1 flex-col items-center px-4 py-10 md:py-14">
+      
+      <main className="relative z-10 flex flex-1 flex-col items-center px-4 py-8 md:py-10">
         {children}
-      </div>
+      </main>
+
+      {/* Footer */}
+      <footer className="relative z-10 w-full border-t border-slate-800/80 bg-transparent py-6 text-center">
+        <div className="mx-auto flex max-w-[1400px] flex-col items-center justify-between px-8 sm:flex-row">
+          <div className="mb-4 sm:mb-0 text-left">
+            <p className="text-sm font-bold text-white">Hive</p>
+            <p className="text-xs text-slate-400">© 2024 Hive Creator Economy. All rights reserved.</p>
+          </div>
+          <div className="flex gap-6">
+            <Link href="/privacy" className="text-xs text-slate-400 hover:text-white">Quyền riêng tư</Link>
+            <Link href="/terms" className="text-xs text-slate-400 hover:text-white">Điều khoản</Link>
+            <Link href="/cookie" className="text-xs text-slate-400 hover:text-white">Cookie</Link>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }

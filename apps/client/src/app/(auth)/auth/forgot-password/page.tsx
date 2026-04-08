@@ -5,7 +5,7 @@ import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 export const metadata: Metadata = {
-  title: "Quên mật khẩu | KOLConnect",
+  title: "Quên mật khẩu | Hive-K",
   robots: { index: false, follow: false },
 };
 
