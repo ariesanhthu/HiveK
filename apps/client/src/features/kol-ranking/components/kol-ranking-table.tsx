@@ -16,7 +16,7 @@ function formatFollowers(value: number): string {
 }
 
 function badgeVariantFromType(badge: KolBadge): "success" | "warning" | "default" {
-  if (badge === "Elite") return "success";
+  if (badge === "Ưu tú") return "success";
   if (badge === "Top 10") return "warning";
   return "default";
 }

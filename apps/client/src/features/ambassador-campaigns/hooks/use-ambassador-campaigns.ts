@@ -11,11 +11,13 @@ export function useAmbassadorCampaigns(initialCampaigns: AmbassadorCampaign[]) {
   const filteredCampaigns = useMemo(() => {
     switch (activeTab) {
       case "Active":
-        return initialCampaigns.filter(c => c.shortStatus === "POSTING" || c.shortStatus === "IN PLANNING");
+        return initialCampaigns.filter(
+          c => c.shortStatus === "ĐANG ĐĂNG BÀI" || c.shortStatus === "ĐANG LÊN KẾ HOẠCH"
+        );
       case "Pending":
-        return initialCampaigns.filter(c => c.shortStatus === "WAITING REVIEW");
+        return initialCampaigns.filter(c => c.shortStatus === "CHỜ DUYỆT");
       case "History":
-        return initialCampaigns.filter(c => c.shortStatus === "COMPLETED");
+        return initialCampaigns.filter(c => c.shortStatus === "ĐÃ HOÀN THÀNH");
       case "All":
       default:
         return initialCampaigns;
