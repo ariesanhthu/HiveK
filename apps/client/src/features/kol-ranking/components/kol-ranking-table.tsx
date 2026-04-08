@@ -36,6 +36,29 @@ function RankDelta({ rank, previousRank }: { rank: number; previousRank: number 
   );
 }
 
+function KolAvatar({ src, fallback }: { src: string; fallback: string }) {
+  const [hasError, setHasError] = React.useState(false);
+
+  if (hasError || !src) {
+    return (
+      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary-soft text-xs font-bold text-primary">
+        {fallback}
+      </div>
+    );
+  }
+
+  return (
+    <img
+      src={src}
+      alt=""
+      width={36}
+      height={36}
+      className="h-9 w-9 shrink-0 rounded-full border border-primary-soft object-cover"
+      onError={() => setHasError(true)}
+    />
+  );
+}
+
 export function KolRankingTable({ items }: KolRankingTableProps) {
   if (items.length === 0) {
     return (
@@ -75,19 +98,17 @@ export function KolRankingTable({ items }: KolRankingTableProps) {
                 </td>
                 <td className="px-4 py-3">
                   <Link
-                    href={`/kol-verification/${encodeURIComponent(item.id)}`}
-                    title="Xem chứng nhận xác minh creator"
+                    href={`/kol/${encodeURIComponent(item.id)}`}
+                    title="Xem hồ sơ KOL"
                     className="group flex max-w-xs items-center gap-3 rounded-xl py-0.5 outline-none ring-offset-2 ring-offset-card transition-colors hover:bg-primary-soft/40 focus-visible:ring-2 focus-visible:ring-primary"
                   >
-                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary-soft text-xs font-bold text-primary transition-colors group-hover:bg-primary/15">
-                      {item.avatarText}
-                    </div>
+                    <KolAvatar src={item.avatarUrl} fallback={item.avatarText} />
                     <div className="min-w-0 text-left">
                       <p className="text-sm font-semibold text-foreground group-hover:text-primary group-hover:underline">
                         {item.name}
                       </p>
                       <p className="text-xs text-foreground-muted">
-                        ER {item.engagementRate.toFixed(1)}% · Chứng nhận
+                        ER {item.engagementRate.toFixed(1)}% · Xem chi tiết
                       </p>
                     </div>
                   </Link>

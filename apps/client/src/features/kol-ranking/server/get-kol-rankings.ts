@@ -3,9 +3,13 @@ import {
   KOL_NICHES,
   KOL_PLATFORMS,
   type KolRankingFilters,
+  type KolRankingItem,
   type KolRankingResponse,
 } from "@/features/kol-ranking/types";
-import { getKolRankingsSnapshot } from "@/features/kol-ranking/server/ranking-dataset";
+import {
+  getKolRankingItemById,
+  getKolRankingsSnapshot,
+} from "@/features/kol-ranking/server/ranking-dataset";
 
 export const DEFAULT_RANKING_FILTERS: KolRankingFilters = {
   niche: "all",
@@ -64,4 +68,8 @@ export function getKolRankings(
   filters: Partial<KolRankingFilters> = DEFAULT_RANKING_FILTERS
 ): KolRankingResponse {
   return getKolRankingsSnapshot(filters);
+}
+
+export function getKolById(id: string): KolRankingItem | null {
+  return getKolRankingItemById(id);
 }

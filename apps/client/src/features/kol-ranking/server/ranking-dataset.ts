@@ -1,3 +1,5 @@
+import { readFileSync } from "fs";
+import { join } from "path";
 import {
   type FollowerRange,
   type KolBadge,
@@ -16,6 +18,46 @@ const SCORE_WEIGHT_ENGAGEMENT = 30;
 const SCORE_WEIGHT_FOLLOWERS = 35;
 const FOLLOWER_BASE = 1_000;
 const LIVE_JITTER_SCALE = 6;
+const CACHE_FILE_NAME = ".kol-cache.json";
+
+type KolCacheEntry = {
+  name: string;
+  avatarUrl: string;
+  followers: number;
+  syncedAt: string;
+};
+
+type KolCache = Record<string, KolCacheEntry>;
+
+let cachedYoutubeData: KolCache | null | undefined;
+
+function loadYoutubeCache(): KolCache | null {
+  if (cachedYoutubeData !== undefined) return cachedYoutubeData;
+
+  try {
+    const cachePath = join(process.cwd(), "src", "data", CACHE_FILE_NAME);
+    const raw = readFileSync(cachePath, "utf-8");
+    cachedYoutubeData = JSON.parse(raw) as KolCache;
+    return cachedYoutubeData;
+  } catch {
+    cachedYoutubeData = null;
+    return null;
+  }
+}
+
+function applyCacheToSeed(seed: KolSeed): KolSeed {
+  const cache = loadYoutubeCache();
+  if (!cache) return seed;
+
+  const entry = cache[seed.id];
+  if (!entry) return seed;
+
+  return {
+    ...seed,
+    avatarUrl: entry.avatarUrl || seed.avatarUrl,
+    followers: entry.followers || seed.followers,
+  };
+}
 
 function hashSeed(value: string): number {
   let hash = 0;
@@ -99,12 +141,14 @@ function buildRankedItems(tickBucket: number): KolRankingItem[] {
   const previousTickBucket = tickBucket - 1;
   const previousScoresById = new Map<string, number>();
 
-  for (const seed of KOL_SEEDS) {
+  const enrichedSeeds = KOL_SEEDS.map(applyCacheToSeed);
+
+  for (const seed of enrichedSeeds) {
     const previousSnapshot = withLiveJitter(seed, previousTickBucket);
     previousScoresById.set(seed.id, getScore(previousSnapshot));
   }
 
-  const currentItems = KOL_SEEDS.map((seed) => {
+  const currentItems = enrichedSeeds.map((seed) => {
     const liveSeed = withLiveJitter(seed, tickBucket);
     return {
       ...liveSeed,
@@ -133,9 +177,10 @@ function buildRankedItems(tickBucket: number): KolRankingItem[] {
         rank,
         previousRank: previousRankById.get(item.id) ?? rank,
         avatarText: item.avatarText,
+        avatarUrl: item.avatarUrl,
         name: item.name,
-        niche: item.niche,
-        platform: item.platform,
+        niche: item.niche as KolNiche,
+        platform: item.platform as KolPlatform,
         followers: item.followers,
         rating: item.rating,
         engagementRate: item.engagementRate,
@@ -193,4 +238,21 @@ export function getKolRankingsSnapshot(
     pageSize: filters.pageSize,
     generatedAt: new Date().toISOString(),
   };
+}
+
+export function getKolRankingItemById(
+  id: string,
+  tickBucket = Math.floor(Date.now() / 3_000)
+): KolRankingItem | null {
+  const normalizedId = id.trim().toLowerCase();
+  if (!normalizedId) return null;
+
+  const rankedItems = buildRankedItems(tickBucket);
+  return (
+    rankedItems.find((item) => item.id.toLowerCase() === normalizedId) ?? null
+  );
+}
+
+export function invalidateYoutubeCache(): void {
+  cachedYoutubeData = undefined;
 }

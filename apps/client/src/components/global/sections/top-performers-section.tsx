@@ -1,3 +1,4 @@
+import Link from "next/link";
 import React from "react";
 import { TOP_PERFORMERS } from "@/data/mock-data";
 
@@ -17,7 +18,7 @@ export const TopPerformersSection: React.FC = () => {
               Những nhà sáng tạo có ảnh hưởng nhất tuần này
             </p>
           </div>
-          <a
+          <Link
             href="/kol-ranking"
             className="flex items-center gap-1 font-bold text-primary hover:underline"
           >
@@ -25,7 +26,7 @@ export const TopPerformersSection: React.FC = () => {
             <span className="material-symbols-outlined text-sm">
               arrow_forward
             </span>
-          </a>
+          </Link>
         </div>
 
         <div className="overflow-hidden rounded-2xl border border-primary-soft bg-card shadow-sm">
@@ -44,25 +45,28 @@ export const TopPerformersSection: React.FC = () => {
             <tbody className="divide-y divide-primary-soft">
               {TOP_PERFORMERS.map((row) => (
                 <tr
-                  key={row.handle}
+                  key={row.id}
                   className="transition-colors hover:bg-primary/5"
                 >
                   <td className="px-6 py-4">
-                    <div className="flex items-center gap-3">
+                    <Link
+                      href={`/kol/${encodeURIComponent(row.id)}`}
+                      className="group flex items-center gap-3 rounded-xl outline-none ring-offset-2 ring-offset-card transition-colors focus-visible:ring-2 focus-visible:ring-primary"
+                    >
                       <img
                         src={row.avatar}
                         alt={`Portrait of ${row.name}`}
                         className="h-10 w-10 rounded-full object-cover"
                       />
                       <div>
-                        <div className="font-bold text-foreground">
+                        <div className="font-bold text-foreground group-hover:text-primary group-hover:underline">
                           {row.name}
                         </div>
                         <div className="text-xs text-muted">
                           {row.handle}
                         </div>
                       </div>
-                    </div>
+                    </Link>
                   </td>
                   <td className="px-6 py-4 text-sm font-medium text-foreground-muted">
                     {row.category}

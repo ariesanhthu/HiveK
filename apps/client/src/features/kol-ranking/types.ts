@@ -33,6 +33,7 @@ export type KolRankingItem = {
   rank: number;
   previousRank: number;
   avatarText: string;
+  avatarUrl: string;
   name: string;
   niche: KolNiche;
   platform: KolPlatform;

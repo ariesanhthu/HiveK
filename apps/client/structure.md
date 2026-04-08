@@ -17,6 +17,7 @@ Next.js 16 frontend (App Router).
     - `page.tsx` – Trang chủ → LandingPage (mặc định `/`)
     - `loading.tsx` – Loading UI (skeleton) khi chuyển route / load page
     - `kol-ranking/page.tsx` – Trang xếp hạng KOL real-time
+    - `kol/[id]/page.tsx` – Trang chi tiết KOL đồng bộ từ bảng xếp hạng theo `id`
     - `campaigns/page.tsx` – Trang danh sách chiến dịch công khai (lọc theo ngành, anchor từ landing)
     - `campaigns/loading.tsx` – Skeleton grid khi chuyển route
     - `campaigns/[id]/page.tsx` – Chi tiết chiến dịch (KPI, creators, brief, recent content)
@@ -27,6 +28,7 @@ Next.js 16 frontend (App Router).
   - `(business)/kol-matching/page.tsx` – Trang matching flow 4 bước (entry → processing → results → comparison)
   - `api/ranking/kols/route.ts` – Endpoint snapshot ranking (JSON)
   - `api/ranking/kols/live/route.ts` – SSE stream ranking real-time
+  - `api/ranking/sync/route.ts` – POST: sync KOL data từ YouTube API hoặc scrape public HTML, GET: xem danh sách handle
 - **`src/components/global/`**
   - `layout/` – MainHeader, MainFooter
   - `sections/` – Hero (`HeroSlideshowSlot` client + dynamic `ssr:false` → `HeroCardSlideshow`), PlatformBenefits, TopPerformers, ActiveCampaigns, CTA, **section-skeleton**
@@ -47,10 +49,12 @@ Next.js 16 frontend (App Router).
   - `index.ts` – export form + routes
 - **`src/features/landing/`** – `landing-page.tsx`; `components/hero-card-slideshow.tsx` — slideshow chồng thẻ (framer-motion, auto + dot)
 - **`src/features/kol-ranking/`** – Feature ranking tách riêng:
-  - `components/` – Page composition, filters, table, pagination
+  - `components/` – Page composition, filters, table (avatar thật), pagination
   - `hooks/use-kol-ranking-realtime.ts` – Hook kết nối SSE + reconnect
-  - `server/` – Data layer và filter parser cho ranking
-  - `types.ts` – Typed contracts cho ranking
+  - `server/` – Data layer, filter parser, YouTube cache reader cho ranking
+  - `services/youtube-api.ts` – YouTube Data API v3 client (fetch channel avatar + subscriber)
+  - `services/youtube-public-scraper.ts` – Scrape public metadata từ trang YouTube channel (`og:title`, `og:image`)
+  - `types.ts` – Typed contracts cho ranking (bao gồm `avatarUrl`)
 - **`src/features/business-dashboard/`** – Feature dashboard cho business workspace:
   - `components/` – Dashboard shell layers (sidebar, topbar, KPI cards, performance, activities)
   - `hooks/use-business-nav-items.ts` – Nav sidebar theo `usePathname` (Dashboard, KOL Discovery → `/kol-matching`, …)
