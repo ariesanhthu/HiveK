@@ -1,11 +1,8 @@
-export interface IUnitOfWorkSession {
-	commit(): Promise<void>;
-	rollback(): Promise<void>;
-	end(): Promise<void>;
-}
-
 export interface IUnitOfWork {
-	start(): Promise<IUnitOfWorkSession>;
+  startTransaction(): Promise<void>;
+  commitTransaction(): Promise<void>;
+  rollbackTransaction(): Promise<void>;
+  execute<T>(operation: () => Promise<T>): Promise<T>;
 }
 
 export const UNIT_OF_WORK = Symbol('IUnitOfWork');
