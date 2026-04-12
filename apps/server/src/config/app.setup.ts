@@ -1,5 +1,8 @@
 import { INestApplication } from '@nestjs/common';
+import { ZodValidationPipe } from 'nestjs-zod';
 import helmet from 'helmet';
+import { LoggingInterceptor } from '@/presentation/middleware/logging.interceptor';
+import { HttpExceptionFilter } from '@/presentation/middleware/http-exception.filter';
 
 export function setupApplication(app: INestApplication): void {
   // Apply Security Headers
@@ -15,5 +18,12 @@ export function setupApplication(app: INestApplication): void {
   // Global Prefix for all routes
   app.setGlobalPrefix('hivek/api');
 
-  // Can easily append app.useGlobalPipes() or app.useGlobalInterceptors() here later
+  // Apply Global Pipes
+  app.useGlobalPipes(new ZodValidationPipe());
+
+  // Apply Global Interceptors
+  app.useGlobalInterceptors(new LoggingInterceptor());
+
+  // Apply Global Filters
+  app.useGlobalFilters(new HttpExceptionFilter());
 }

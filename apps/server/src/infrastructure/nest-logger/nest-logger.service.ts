@@ -1,4 +1,4 @@
-import { ILoggerService } from '@/application/common';
+import { ILoggerService } from '@/application/interfaces';
 import { Injectable, Logger, Scope, Optional } from '@nestjs/common';
 
 @Injectable({ scope: Scope.TRANSIENT })

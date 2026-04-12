@@ -1,7 +1,10 @@
 import { INestApplication } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+// import { patchNestjsSwagger } from 'nestjs-zod';
 
 export function setupSwagger(app: INestApplication): void {
+  // patchNestjsSwagger();
+
   const config = new DocumentBuilder()
     .setTitle('HiveK API')
     .setDescription('The API documentation for the HiveK Platform.')

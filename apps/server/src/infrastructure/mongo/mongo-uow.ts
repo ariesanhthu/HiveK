@@ -1,7 +1,7 @@
 import { Injectable, Scope } from '@nestjs/common';
 import { InjectConnection } from '@nestjs/mongoose';
 import { Connection, ClientSession } from 'mongoose';
-import { IUnitOfWork } from '@/application/common';
+import { IUnitOfWork } from '@/application/interfaces';
 import { Nullable } from '@/shared/types';
 
 @Injectable({ scope: Scope.REQUEST })

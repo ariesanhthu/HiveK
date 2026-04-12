@@ -1,14 +1,21 @@
 export abstract class BaseEntity<Props> {
-  protected readonly _id: string;
+  protected _id?: string;
   public readonly props: Props;
 
-  constructor(id: string, props: Props) {
+  constructor(props: Props, id?: string) {
     this._id = id;
     this.props = props;
   }
 
-  get id(): string {
+  get id(): string | undefined {
     return this._id;
+  }
+
+  public setId(id: string): void {
+    if (this._id) {
+      throw new Error('ID is already set');
+    }
+    this._id = id;
   }
 
   public equals(object?: BaseEntity<Props>): boolean {
