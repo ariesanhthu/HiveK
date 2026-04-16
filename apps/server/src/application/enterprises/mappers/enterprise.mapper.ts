@@ -14,8 +14,8 @@ export class EnterpriseMapper {
       taxId: root.taxId,
       logoUrl: root.logoUrl,
       isVerified: root.isVerified,
-      createdAt: root.createdAt,
-      updatedAt: root.updatedAt,
+      createdAt: root.createdAt.toISOString(),
+      updatedAt: root.updatedAt.toISOString(),
     };
   }
 

@@ -12,8 +12,8 @@ export const EnterpriseDtoSchema = z.object({
   taxId: z.string().optional(),
   logoUrl: z.string().optional(),
   isVerified: z.boolean(),
-  createdAt: z.date(),
-  updatedAt: z.date(),
+  createdAt: z.iso.datetime(),
+  updatedAt: z.iso.datetime(),
 });
 
 // export type EnterpriseDto = z.infer<typeof EnterpriseDtoSchema>;

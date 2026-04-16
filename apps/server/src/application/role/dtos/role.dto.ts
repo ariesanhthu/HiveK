@@ -6,8 +6,8 @@ export const RoleDtoSchema = z.object({
   title: z.string(),
   permissions: z.array(z.string()),
   isBlocked: z.boolean(),
-  createdAt: z.date(),
-  updatedAt: z.date(),
+  createdAt: z.iso.datetime(),
+  updatedAt: z.iso.datetime(),
 });
 
 // export type RoleDto = z.infer<typeof RoleDtoSchema>;

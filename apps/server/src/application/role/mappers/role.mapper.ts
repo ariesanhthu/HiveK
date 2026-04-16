@@ -8,8 +8,8 @@ export class RoleMapper {
       title: root.title,
       permissions: root.permissions,
       isBlocked: root.isBlocked,
-      createdAt: root.createdAt,
-      updatedAt: root.updatedAt,
+      createdAt: root.createdAt.toISOString(),
+      updatedAt: root.updatedAt.toISOString(),
     };
   }
 

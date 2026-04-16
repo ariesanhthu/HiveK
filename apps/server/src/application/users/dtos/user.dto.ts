@@ -9,8 +9,8 @@ const BaseUserDtoSchema = z.object({
   fullName: z.string(),
   roleId: z.string(),
   isEmailVerified: z.boolean(),
-  createdAt: z.date(),
-  updatedAt: z.date(),
+  createdAt: z.iso.datetime(),
+  updatedAt: z.iso.datetime(),
 });
 
 export const AdminDtoSchema = BaseUserDtoSchema.extend({

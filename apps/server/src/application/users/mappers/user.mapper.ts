@@ -11,8 +11,8 @@ export class UserMapper {
       fullName: root.fullName,
       roleId: root.roleId,
       isEmailVerified: root.isEmailVerified,
-      createdAt: root.createdAt,
-      updatedAt: root.updatedAt,
+      createdAt: root.createdAt.toISOString(),
+      updatedAt: root.updatedAt.toISOString(),
     };
 
     const type = root.type;
