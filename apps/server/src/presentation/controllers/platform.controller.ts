@@ -3,7 +3,8 @@ import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
 import { CreatePlatformCommand, UpdatePlatformCommand } from '@/application/platforms/commands';
 import { GetPlatformsQuery, GetPlatformByIdQuery } from '@/application/platforms/queries';
-import { CreatePlatformInputDto, UpdatePlatformInputDto, PlatformDto } from '@/application/platforms/dtos';
+import { CreatePlatformInputDto, UpdatePlatformInputDto, PlatformDto, PlatformFilterDto } from '@/application/platforms/dtos';
+import { PaginatedResponseDto } from '@/shared/dtos/pagination.dto';
 
 @ApiTags('platforms')
 @Controller('platforms')
@@ -15,8 +16,8 @@ export class PlatformController {
 
   @Get()
   @ApiOperation({ summary: 'Get all platforms' })
-  async findAll(): Promise<PlatformDto[]> {
-    return this.queryBus.execute(new GetPlatformsQuery({}));
+  async findAll(@Query() filters: PlatformFilterDto): Promise<PaginatedResponseDto<PlatformDto>> {
+    return this.queryBus.execute(new GetPlatformsQuery(filters));
   }
 
   @Get(':id')

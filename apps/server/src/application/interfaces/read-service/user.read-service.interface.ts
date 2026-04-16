@@ -1,8 +1,8 @@
 import { IBaseReadService } from './base.read-service.interface';
-import { UserDto } from '@/application/users/dtos/user.dto';
+import { UserDto, UserFilterDto } from '@/application/users/dtos';
 import { Nullable } from '@/shared/types/utility.type';
 
-export interface IUserReadService extends IBaseReadService<UserDto> {
+export interface IUserReadService extends IBaseReadService<UserDto, UserFilterDto> {
   findByEmail(email: string): Promise<Nullable<UserDto>>;
 }
 

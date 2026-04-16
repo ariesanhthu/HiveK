@@ -2,8 +2,8 @@ import { Controller, Get, Param, Query } from '@nestjs/common';
 import { QueryBus } from '@nestjs/cqrs';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
 import { GetKolProfilesQuery, GetKolProfileByIdQuery } from '@/application/kol-profiles/queries';
-import { KolProfileDto } from '@/application/kol-profiles/dtos';
-import { JsonRecord } from '@/shared/types';
+import { KolProfileDto, KolProfileFilterDto } from '@/application/kol-profiles/dtos';
+import { PaginatedResponseDto } from '@/shared/dtos/pagination.dto';
 
 @ApiTags('kol-profiles')
 @Controller('kol-profiles')
@@ -12,8 +12,8 @@ export class KolProfileController {
 
   @Get()
   @ApiOperation({ summary: 'Search/List KOL profiles' })
-  async findAll(): Promise<KolProfileDto[]> {
-    return this.queryBus.execute(new GetKolProfilesQuery({}));
+  async findAll(@Query() filters: KolProfileFilterDto): Promise<PaginatedResponseDto<KolProfileDto>> {
+    return this.queryBus.execute(new GetKolProfilesQuery(filters));
   }
 
   @Get(':id')

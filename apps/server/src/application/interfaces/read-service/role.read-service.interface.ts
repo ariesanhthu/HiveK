@@ -1,8 +1,8 @@
 import { IBaseReadService } from './base.read-service.interface';
-import { RoleDto } from '@/application/role/dtos/role.dto';
+import { RoleDto, RoleFilterDto } from '@/application/role/dtos';
 import { Nullable } from '@/shared/types/utility.type';
 
-export interface IRoleReadService extends IBaseReadService<RoleDto> {
+export interface IRoleReadService extends IBaseReadService<RoleDto, RoleFilterDto> {
   findByTitle(title: string): Promise<Nullable<RoleDto>>;
 }
 

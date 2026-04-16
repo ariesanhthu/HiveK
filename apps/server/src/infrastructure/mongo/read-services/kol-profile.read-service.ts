@@ -2,9 +2,10 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { IKolProfileReadService } from '@/application/interfaces';
-import { KolProfileDto } from '@/application/kol-profiles/dtos';
+import { KolProfileDto, KolProfileFilterDto } from '@/application/kol-profiles/dtos';
 import { KolProfileModel, KolProfileDocument } from '../schemas';
 import { JsonRecord, Nullable } from '@/shared/types';
+import { PaginatedResponseDto, SortOrder } from '@/shared/dtos/pagination.dto';
 
 @Injectable()
 export class MongoKolProfileReadService implements IKolProfileReadService {
@@ -13,9 +14,48 @@ export class MongoKolProfileReadService implements IKolProfileReadService {
     private readonly kolProfileModel: Model<KolProfileDocument>,
   ) {}
 
-  async findAll(filters?: JsonRecord): Promise<KolProfileDto[]> {
-    const docs = await this.kolProfileModel.find().lean().exec();
-    return docs.map((doc) => this.mapToDto(doc));
+  async findAll(filters: KolProfileFilterDto = {} as any): Promise<PaginatedResponseDto<KolProfileDto>> {
+    const { cursor, limit = 10, sort = SortOrder.DESC, name, location, gender, isVerified, categories, tags } = filters;
+    const query: any = {};
+
+    if (name) {
+      query.name = { $regex: name, $options: 'i' };
+    }
+    if (location) {
+      query.location = { $regex: location, $options: 'i' };
+    }
+    if (gender) {
+      query.gender = gender;
+    }
+    if (isVerified !== undefined) {
+      query.is_verified = isVerified;
+    }
+    if (categories && categories.length > 0) {
+      query['platforms.categories'] = { $in: categories };
+    }
+    if (tags && tags.length > 0) {
+      query['platforms.top_tags'] = { $in: tags };
+    }
+
+    if (cursor) {
+      query._id = sort === SortOrder.DESC ? { $lt: cursor } : { $gt: cursor };
+    }
+
+    const docs = await this.kolProfileModel
+      .find(query)
+      .sort({ _id: sort === SortOrder.DESC ? -1 : 1 })
+      .limit(limit + 1)
+      .lean()
+      .exec();
+
+    const hasNextPage = docs.length > limit;
+    const results = hasNextPage ? docs.slice(0, limit) : docs;
+    const nextCursor = hasNextPage ? results[results.length - 1]._id.toString() : null;
+
+    return new PaginatedResponseDto(
+      results.map((doc) => this.mapToDto(doc)),
+      nextCursor,
+    );
   }
 
   async findById(id: string): Promise<Nullable<KolProfileDto>> {

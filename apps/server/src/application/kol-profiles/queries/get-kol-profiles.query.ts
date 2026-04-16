@@ -1,9 +1,9 @@
 import { Query } from '@nestjs/cqrs';
-import { KolProfileDto } from '../dtos';
-import { JsonRecord } from '@/shared/types';
+import { KolProfileDto, KolProfileFilterDto } from '../dtos';
+import { PaginatedResponseDto } from '@/shared/dtos/pagination.dto';
 
-export class GetKolProfilesQuery extends Query<KolProfileDto[]> {
-  constructor(public readonly filters?: JsonRecord) {
+export class GetKolProfilesQuery extends Query<PaginatedResponseDto<KolProfileDto>> {
+  constructor(public readonly filters?: KolProfileFilterDto) {
     super();
   }
 }

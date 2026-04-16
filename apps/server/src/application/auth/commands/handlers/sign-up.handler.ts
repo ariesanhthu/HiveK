@@ -27,7 +27,7 @@ export class SignUpCommandHandler implements ICommandHandler<SignUpCommand, Sign
 
     // Simplified role selection for now
     const roles = await this.roleReadService.findAll();
-    const defaultRole = roles.find(r => r.title.toUpperCase() === type.toUpperCase()) || roles[0];
+    const defaultRole = roles.data.find(r => r.title.toUpperCase() === type.toUpperCase()) || roles.data[0];
     if (!defaultRole) {
       throw new Error('No roles found in system');
     }
