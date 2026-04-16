@@ -1,10 +1,16 @@
-import { Module } from '@nestjs/common';
-import { MongoModule } from '../mongo/mongo.module';
-import { EnterpriseModule } from './enterprise.module';
-import { UserModule } from './user.module';
+import { Global, Module } from '@nestjs/common';
+import { LOGGER_SERVICE } from '@/application/interfaces';
+import { NestLoggerService } from '../nest-logger/nest-logger.service';
 
+@Global()
 @Module({
-  imports: [MongoModule, EnterpriseModule, UserModule],
-  exports: [MongoModule, EnterpriseModule, UserModule],
+  imports: [],
+  providers: [
+    {
+      provide: LOGGER_SERVICE,
+      useClass: NestLoggerService
+    }
+  ],
+  exports: [LOGGER_SERVICE],
 })
 export class InfrastructureModule {}

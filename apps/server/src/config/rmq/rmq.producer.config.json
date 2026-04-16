@@ -1,0 +1,57 @@
+{
+    "version": "1.0.0",
+    "role": "producer",
+    "service": "hivek.server",
+    "connection": {
+        "uri": "amqp://guest:guest@localhost:5672/",
+        "vhost": "/",
+        "heartbeat": 60,
+        "connection_timeout_ms": 10000,
+        "reconnect": {
+            "enabled": true,
+            "initial_delay_ms": 1000,
+            "max_delay_ms": 30000,
+            "factor": 2,
+            "max_retries": -1
+        }
+    },
+    "exchange_contract": {
+        "name": "order_events_exchange",
+        "type": "direct",
+        "options": {
+            "durable": true,
+            "internal": false,
+            "autoDelete": false
+        }
+    },
+    "routes": {
+        "order.created": "order.created",
+        "order.updated": "order.updated",
+        "order.cancelled": "order.cancelled"
+    },
+    "publish": {
+        "persistent": true,
+        "mandatory": true,
+        "publisher_confirms": true,
+        "delivery_mode": 2,
+        "timeout_ms": 5000,
+        "retry": {
+            "max_attempts": 5,
+            "backoff_ms": 1000,
+            "max_backoff_ms": 30000,
+            "factor": 2,
+            "jitter": true
+        }
+    },
+    "message_contract": {
+        "default_content_type": "application/json",
+        "default_content_encoding": "utf-8",
+        "required_headers": [
+            "message_id",
+            "correlation_id",
+            "event_name",
+            "schema_version",
+            "timestamp"
+        ]
+    }
+}

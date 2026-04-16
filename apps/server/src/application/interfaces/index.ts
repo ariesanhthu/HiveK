@@ -6,3 +6,5 @@ export * from './logger.interface';
 export * from './uow.interface';
 export * from './role.read-service.interface';
 export * from './user.repository.interface';
+export * from './message-queue.interface';
+export * from './web-socket.interface';

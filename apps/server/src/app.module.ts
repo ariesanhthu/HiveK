@@ -5,24 +5,37 @@ import { EnterpriseModule } from '@/infrastructure/modules/enterprise.module';
 import { UserModule } from '@/infrastructure/modules/user.module';
 import { RoleModule } from '@/infrastructure/modules/role.module';
 import { AuthModule } from '@/infrastructure/modules/auth.module';
+import { RabbitMQModule } from '@/infrastructure/rabbitmq/rabbitmq.module';
+import { WebSocketModule } from '@/infrastructure/websocket/websocket.module';
 import { APP_PIPE } from '@nestjs/core';
 import { ZodValidationPipe } from 'nestjs-zod';
+import { NestConfigModule } from './infrastructure/nest-config/nest-config.module';
+import { InfrastructureModule } from './infrastructure/modules/infrastructure.module';
+import { TestController } from './presentation/controllers/test/test.controller';
+import { TestRmqHandler } from './presentation/controllers/test/test-rmq.controller';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({ isGlobal: true }),
+    // ConfigModule.forRoot({ isGlobal: true }),
+    NestConfigModule,
+    InfrastructureModule,
     MongoModule,
     UserModule,
     EnterpriseModule,
     RoleModule,
     AuthModule,
+    RabbitMQModule,
+    WebSocketModule,
   ],
-  controllers: [],
+  controllers: [
+    TestController
+  ],
   providers: [
     {
       provide: APP_PIPE,
       useValue: ZodValidationPipe
-    }
+    },
+    TestRmqHandler
   ],
 })
 export class AppModule {}

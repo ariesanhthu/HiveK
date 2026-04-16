@@ -1,0 +1,55 @@
+{
+  "version": "1.0.0",
+  "role": "consumer",
+  "service": "hivek.server",
+  "uses_producer_contract": "./rabbitmq.producer.minimal.json",
+  "connection": {
+    "uri": "amqp://guest:guest@localhost:5672/",
+    "vhost": "/",
+    "heartbeat": 60,
+    "connection_timeout_ms": 10000,
+    "reconnect": {
+      "enabled": true,
+      "initial_delay_ms": 1000,
+      "max_delay_ms": 30000,
+      "factor": 2,
+      "max_retries": -1
+    }
+  },
+  "consume": {
+    "prefetch_count": 1,
+    "no_ack": false,
+    "manual_ack": true,
+    "requeue_on_error": false
+  },
+  "queues": [
+    {
+      "name": "hivek_queue",
+      "type": "classic",
+      "options": {
+        "durable": true,
+        "exclusive": false,
+        "autoDelete": false,
+        "arguments": {}
+      },
+      "bindings": [
+        {
+          "exchange": "hivek_exchange",
+          "routing_key": "test_event"
+        },
+        {
+          "exchange": "hivek_exchange",
+          "routing_key": "default"
+        }        
+      ]
+    }
+  ],
+  "validation": {
+    "require_exchange_contract_match": true,
+    "match_fields": [
+      "exchange_contract.name",
+      "exchange_contract.type",
+      "exchange_contract.options.durable"
+    ]
+  }
+}

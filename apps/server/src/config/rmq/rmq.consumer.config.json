@@ -1,0 +1,72 @@
+{
+    "version": "1.0.0",
+    "role": "consumer",
+    "service": "python.order-worker",
+    "uses_producer_contract": "./rabbitmq.producer.config.json",
+    "connection": {
+        "uri": "amqp://guest:guest@localhost:5672/",
+        "vhost": "/",
+        "heartbeat": 60,
+        "connection_timeout_ms": 10000,
+        "reconnect": {
+            "enabled": true,
+            "initial_delay_ms": 1000,
+            "max_delay_ms": 30000,
+            "factor": 2,
+            "max_retries": -1
+        }
+    },
+    "consume": {
+        "prefetch_count": 10,
+        "no_ack": false,
+        "manual_ack": true,
+        "requeue_on_error": false
+    },
+    "queues": [
+        {
+            "name": "process_order_queue",
+            "type": "quorum",
+            "options": {
+                "durable": true,
+                "exclusive": false,
+                "autoDelete": false,
+                "arguments": {
+                    "x-dead-letter-exchange": "order_events_dlx",
+                    "x-dead-letter-routing-key": "order.created.dlq",
+                    "x-message-ttl": 300000,
+                    "x-queue-type": "quorum"
+                }
+            },
+            "bindings": [
+                {
+                    "exchange": "order_events_exchange",
+                    "routing_key": "order.created"
+                }
+            ]
+        },
+        {
+            "name": "process_order_dlq",
+            "type": "classic",
+            "options": {
+                "durable": true,
+                "exclusive": false,
+                "autoDelete": false,
+                "arguments": {}
+            },
+            "bindings": [
+                {
+                    "exchange": "order_events_dlx",
+                    "routing_key": "order.created.dlq"
+                }
+            ]
+        }
+    ],
+    "validation": {
+        "require_exchange_contract_match": true,
+        "match_fields": [
+            "exchange_contract.name",
+            "exchange_contract.type",
+            "exchange_contract.options.durable"
+        ]
+    }
+}
