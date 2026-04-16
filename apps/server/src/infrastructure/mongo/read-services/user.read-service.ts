@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { IUserReadService } from '@/application/interfaces/user.read-service.interface';
+import { IUserReadService } from '@/application/interfaces';
 import { UserDto } from '@/application/users/dtos/user.dto';
 import { UserDocument, UserModel } from '../schemas/user.schema';
 import { Nullable, JsonRecord } from '@/shared/types/utility.type';
@@ -12,7 +12,7 @@ export class MongoUserReadService implements IUserReadService {
   constructor(
     @InjectModel(UserModel.name)
     private readonly userModel: Model<UserDocument>,
-  ) {}
+  ) { }
 
   async findById(id: string): Promise<Nullable<UserDto>> {
     const doc = await this.userModel.findById(id).lean().exec();

@@ -2,7 +2,8 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { SignInCommand } from '../sign-in.command';
 import { SignInOutputDto } from '../../dtos';
 import { Inject } from '@nestjs/common';
-import { USER_REPOSITORY, type IUserRepository, AUTH_JWT_SERVICE, type IAuthJwtService } from '@/application/interfaces';
+import { AUTH_JWT_SERVICE, type IAuthJwtService } from '@/application/interfaces';
+import { USER_REPOSITORY, type IUserRepository } from '@/core/interfaces';
 import * as bcrypt from 'bcrypt';
 
 @CommandHandler(SignInCommand)

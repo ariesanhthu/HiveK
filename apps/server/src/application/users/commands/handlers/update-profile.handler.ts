@@ -2,7 +2,7 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { UpdateProfileCommand } from '../update-profile.command';
 import { UpdateProfileOutputDto } from '../../dtos';
 import { Inject } from '@nestjs/common';
-import { USER_REPOSITORY, type IUserRepository } from '@/application/interfaces';
+import { USER_REPOSITORY, type IUserRepository } from '@/core/interfaces';
 
 @CommandHandler(UpdateProfileCommand)
 export class UpdateProfileCommandHandler implements ICommandHandler<UpdateProfileCommand, UpdateProfileOutputDto> {

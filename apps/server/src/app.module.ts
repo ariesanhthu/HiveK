@@ -11,6 +11,8 @@ import { APP_PIPE } from '@nestjs/core';
 import { ZodValidationPipe } from 'nestjs-zod';
 import { NestConfigModule } from './infrastructure/nest-config/nest-config.module';
 import { InfrastructureModule } from './infrastructure/modules/infrastructure.module';
+import { PlatformModule } from './infrastructure/modules/platform.module';
+import { KolProfileModule } from './infrastructure/modules/kol-profile.module';
 import { TestController } from './presentation/controllers/test/test.controller';
 import { TestRmqHandler } from './presentation/controllers/test/test-rmq.controller';
 
@@ -24,6 +26,8 @@ import { TestRmqHandler } from './presentation/controllers/test/test-rmq.control
     EnterpriseModule,
     RoleModule,
     AuthModule,
+    PlatformModule,
+    KolProfileModule,
     RabbitMQModule,
     WebSocketModule,
   ],

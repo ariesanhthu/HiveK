@@ -22,6 +22,10 @@ export abstract class UserRoot<T extends UserProps = UserProps> extends BaseAggr
     return this.props.email;
   }
 
+  get phone(): string {
+    return this.props.phone;
+  }
+
   get passwordHash(): string {
     return this.props.passwordHash;
   }

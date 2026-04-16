@@ -79,14 +79,11 @@ Chứa dữ liệu định danh hệ thống và kết quả từ AI Node/Gather
 ```json
 {
   "_id": "ObjectId",
-  "user_id": "ObjectId", // Null nếu là dữ liệu cào chưa có tài khoản app
-  "personal_info": {
-    "full_name": "string",
-    "location": "string",
-    "gender": "string",
-    "bio": "string",
-    "contact": { "email": "string", "phone": "string" }
-  },
+  "name": "string",
+  "location": "string",
+  "gender": "string",
+  "bio": "string",
+  "contact": { "email": "string", "phone": "string" },
   "platforms": [
     {
       "platform_id": "ObjectId", // Ref Platforms
@@ -94,7 +91,8 @@ Chứa dữ liệu định danh hệ thống và kết quả từ AI Node/Gather
       "external_id": "string", // ID của nền tảng (TikTok ID, FB ID)
       "follower_count": "number",
       "avg_engagement": "number",
-      "top_tags": ["string"]
+      "top_tags": ["string"],
+      "categories": ["string"],
     }
   ],
   "ai_metadata": {
@@ -103,7 +101,6 @@ Chứa dữ liệu định danh hệ thống và kết quả từ AI Node/Gather
     "sentiment_rank": "number", // Chỉ số tích cực 0-1
     "last_calculation": "ISODate"
   },
-  "categories": ["ObjectId"], // Ref tới Master Category (nếu có) hoặc mảng string
   "is_verified": "boolean"
 }
 

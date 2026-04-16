@@ -9,7 +9,8 @@ import {
   ResetPasswordCommandHandler 
 } from '@/application/auth/commands/handlers';
 import { GetProfileQueryHandler } from '@/application/auth/queries/get-profile.query';
-import { AUTH_JWT_SERVICE, USER_REPOSITORY } from '@/application/interfaces';
+import { AUTH_JWT_SERVICE } from '@/application/interfaces';
+import { USER_REPOSITORY } from '@/core/interfaces';
 import { JwtAuthService } from '../auth/jwt.service';
 import { MongoUserRepository } from '../mongo/repositories';
 import { UserModule } from './user.module';

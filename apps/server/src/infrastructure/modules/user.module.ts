@@ -4,7 +4,8 @@ import { CqrsModule } from '@nestjs/cqrs';
 import { UserController } from '@/presentation/controllers';
 import { GetUserQueryHandler } from '@/application/users/queries';
 import { UpdateProfileCommandHandler } from '@/application/users/commands/handlers';
-import { USER_READ_SERVICE, USER_REPOSITORY } from '@/application/interfaces';
+import { USER_READ_SERVICE } from '@/application/interfaces';
+import { USER_REPOSITORY } from '@/core/interfaces';
 import { MongoUserReadService } from '@/infrastructure/mongo/read-services';
 import { MongoUserRepository } from '@/infrastructure/mongo/repositories';
 import { 
