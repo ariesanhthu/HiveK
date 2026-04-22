@@ -11,6 +11,8 @@ export interface AmbassadorCampaign {
   progressPercent: number;
   progressLabel: string;
   imageUrl: string;
+  /** Slug sản phẩm dùng để tạo link certificate-product. */
+  productSlug: string;
 }
 
 export const AMBASSADOR_CAMPAIGNS: AmbassadorCampaign[] = [
@@ -25,6 +27,7 @@ export const AMBASSADOR_CAMPAIGNS: AmbassadorCampaign[] = [
     progressPercent: 75,
     progressLabel: "KPI HIỆU SUẤT",
     imageUrl: "/placeholder.png", // Will use colored initial boxes in UI if no image
+    productSlug: "nike-future-speed-run",
   },
   {
     id: "2",
@@ -37,6 +40,7 @@ export const AMBASSADOR_CAMPAIGNS: AmbassadorCampaign[] = [
     progressPercent: 100,
     progressLabel: "KPI HIỆU SUẤT",
     imageUrl: "/placeholder.png",
+    productSlug: "soundmaster-pro-review",
   },
   {
     id: "3",
@@ -49,6 +53,7 @@ export const AMBASSADOR_CAMPAIGNS: AmbassadorCampaign[] = [
     progressPercent: 0,
     progressLabel: "KPI HIỆU SUẤT",
     imageUrl: "/placeholder.png",
+    productSlug: "summer-glow-skincare",
   },
   {
     id: "4",
@@ -61,6 +66,7 @@ export const AMBASSADOR_CAMPAIGNS: AmbassadorCampaign[] = [
     progressPercent: 112,
     progressLabel: "KPI HIỆU SUẤT",
     imageUrl: "/placeholder.png",
+    productSlug: "barista-series-home-hub",
   }
 ];
 

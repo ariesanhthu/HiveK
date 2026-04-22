@@ -1,13 +1,19 @@
+"use client";
+
+import { useState } from "react";
 import { cn } from "@/lib/utils";
 import type { AmbassadorCampaign } from "@/data/mock-data";
-import { Clock } from "lucide-react";
-import Image from "next/image";
+import { Clock, Link2, Check } from "lucide-react";
+
+/** Mock current ambassador KOL ID — in production this comes from auth context. */
+const CURRENT_KOL_ID = "kol-004";
 
 interface CampaignCardProps {
   campaign: AmbassadorCampaign;
 }
 
 export function CampaignCard({ campaign }: CampaignCardProps) {
+  const [copied, setCopied] = useState(false);
   const isCompleted = campaign.shortStatus === "ĐÃ HOÀN THÀNH";
 
   // Derive colors and button setups based on status
@@ -45,6 +51,33 @@ export function CampaignCard({ campaign }: CampaignCardProps) {
   if (campaign.statusDetail.includes("Hạn chót")) detailTextClass = "text-red-500 font-bold bg-red-50 px-2 py-0.5 rounded-full text-[10px]";
   else if (campaign.statusDetail.includes("phê duyệt") || campaign.statusDetail.includes("THANH TOÁN")) detailTextClass = "text-emerald-500 font-bold bg-emerald-50 px-2 py-0.5 rounded-full text-[10px]";
   else detailTextClass = "text-slate-400 text-xs";
+
+  /** Fetch short code & copy shortened link to clipboard */
+  const handleCopyLink = async () => {
+    try {
+      // Get short code from API
+      const res = await fetch(
+        `/api/shortlink?productSlug=${encodeURIComponent(campaign.productSlug)}&kolId=${encodeURIComponent(CURRENT_KOL_ID)}`
+      );
+      const { code } = (await res.json()) as { code: string };
+      const link = `${window.location.origin}/${code}`;
+
+      await navigator.clipboard.writeText(link);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      // Fallback: copy full link directly
+      const link = `${window.location.origin}/certificate-product/${campaign.productSlug}-${CURRENT_KOL_ID}`;
+      const textArea = document.createElement("textarea");
+      textArea.value = link;
+      document.body.appendChild(textArea);
+      textArea.select();
+      document.execCommand("copy");
+      document.body.removeChild(textArea);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }
+  };
 
   return (
     <div className={cn(
@@ -114,6 +147,29 @@ export function CampaignCard({ campaign }: CampaignCardProps) {
         </button>
         <button className="w-full rounded-xl border border-slate-200 bg-white py-2.5 text-sm font-bold text-slate-600 transition-colors hover:bg-slate-50 active:scale-95">
           {secondaryBtnText}
+        </button>
+
+        {/* Copy Product Link */}
+        <button
+          onClick={handleCopyLink}
+          className={cn(
+            "flex w-full items-center justify-center gap-1.5 rounded-xl py-2 text-xs font-semibold transition-all active:scale-95",
+            copied
+              ? "border border-emerald-200 bg-emerald-50 text-emerald-600"
+              : "border border-dashed border-slate-300 text-slate-500 hover:border-primary hover:bg-primary/5 hover:text-primary"
+          )}
+        >
+          {copied ? (
+            <>
+              <Check className="h-3.5 w-3.5" />
+              Đã sao chép!
+            </>
+          ) : (
+            <>
+              <Link2 className="h-3.5 w-3.5" />
+              Lấy link sản phẩm
+            </>
+          )}
         </button>
       </div>
     </div>
