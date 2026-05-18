@@ -1,0 +1,94 @@
+# Cấu trúc `apps/client/`
+
+Next.js 16 frontend (App Router).
+
+## Thư mục chính
+
+- **`src/app/`** – Routes & layouts
+  - `layout.tsx` – Root layout (font, metadata)
+  - `(auth)/` – Nhóm route đăng nhập / đăng ký (không dùng header/footer public)
+    - `layout.tsx` – Nền gradient + logo link về `/`
+    - `auth/sign-in/page.tsx` – Đăng nhập (`SignInForm`, Server Action validate, nút demo → `/dashboard` & `/ambassador/dashboard`)
+    - `auth/sign-up/page.tsx` – Đăng ký (`SignUpForm`, chọn role brand/creator)
+    - `auth/forgot-password/page.tsx` – Placeholder khôi phục mật khẩu
+  - `ambassador/dashboard/page.tsx` – Workspace demo KOL/KOC tại URL `/ambassador/dashboard` (không dùng nhóm `(ambassador)/dashboard` vì trùng `/dashboard` với business)
+  - `(public)/` – Nhóm route public (landing)
+    - `layout.tsx` – Header + dynamic Footer
+    - `page.tsx` – Trang chủ → LandingPage (mặc định `/`)
+    - `loading.tsx` – Loading UI (skeleton) khi chuyển route / load page
+    - `kol-ranking/page.tsx` – Trang xếp hạng KOL real-time
+    - `kol/[id]/page.tsx` – Trang chi tiết KOL đồng bộ từ bảng xếp hạng theo `id`
+    - `campaigns/page.tsx` – Trang danh sách chiến dịch công khai (lọc theo ngành, anchor từ landing)
+    - `campaigns/loading.tsx` – Skeleton grid khi chuyển route
+    - `campaigns/[id]/page.tsx` – Chi tiết chiến dịch (KPI, creators, brief, recent content)
+    - `campaigns/[id]/loading.tsx` – Skeleton chi tiết campaign
+    - `kol-verification/[id]/page.tsx` – Chứng nhận xác minh creator công khai theo slug/id
+    - `kol-verification/[id]/loading.tsx` – Skeleton khi tải trang chứng nhận
+  - `(business)/dashboard/page.tsx` – Trang Business Dashboard (KPI, campaign performance, execution queue)
+  - `(business)/kol-matching/page.tsx` – Trang matching flow 4 bước (entry → processing → results → comparison)
+  - `api/ranking/kols/route.ts` – Endpoint snapshot ranking (JSON)
+  - `api/ranking/kols/live/route.ts` – SSE stream ranking real-time
+  - `api/ranking/sync/route.ts` – POST: sync KOL data từ YouTube API hoặc scrape public HTML, GET: xem danh sách handle
+- **`src/components/global/`**
+  - `layout/` – MainHeader, MainFooter
+  - `sections/` – Hero (`HeroSlideshowSlot` client + dynamic `ssr:false` → `HeroCardSlideshow`), PlatformBenefits, TopPerformers, ActiveCampaigns, CTA, **section-skeleton**
+  - **`lazy-*.tsx`** (platform-benefits, top-performers, active-campaigns, cta) – Mỗi file 1 dynamic import, load khi scroll vào viewport (hook `useInView`)
+- **`src/components/ui/`** – UI primitives:
+  - `badge.tsx` – Badge dùng `cva` cho variant UI
+  - `button.tsx` – Button + `buttonVariants` (cva)
+  - `input.tsx` – Input (forwardRef)
+  - `label.tsx` – Label
+  - `card.tsx` – Card primitives (Card, CardHeader, CardContent, ...)
+  - `chart.tsx` – Chart primitives theo shadcn (ChartContainer, ChartTooltip, ChartTooltipContent, `ChartConfig`)
+- **`src/hooks/use-in-view.ts`** – Hook Intersection Observer, không phụ thuộc section nào → giảm compile scope
+- **`src/features/auth/`** – Auth UI + validation:
+  - `constants.ts` – `AUTH_ROUTES` (sign-in/up, landing, dashboard business & ambassador)
+  - `lib/auth-validation.ts` – Email/password rules (client + server tái sử dụng)
+  - `server/auth-actions.ts` – Server Actions `submitSignIn` / `submitSignUp` (double validation, không log password)
+  - `components/sign-in-form.tsx`, `sign-up-form.tsx`, `auth-legal-inline.tsx`
+  - `index.ts` – export form + routes
+- **`src/features/landing/`** – `landing-page.tsx`; `components/hero-card-slideshow.tsx` — slideshow chồng thẻ (framer-motion, auto + dot)
+- **`src/features/kol-ranking/`** – Feature ranking tách riêng:
+  - `components/` – Page composition, filters, table (avatar thật), pagination
+  - `hooks/use-kol-ranking-realtime.ts` – Hook kết nối SSE + reconnect
+  - `server/` – Data layer, filter parser, YouTube cache reader cho ranking
+  - `services/youtube-api.ts` – YouTube Data API v3 client (fetch channel avatar + subscriber)
+  - `services/youtube-public-scraper.ts` – Scrape public metadata từ trang YouTube channel (`og:title`, `og:image`)
+  - `types.ts` – Typed contracts cho ranking (bao gồm `avatarUrl`)
+- **`src/features/business-dashboard/`** – Feature dashboard cho business workspace:
+  - `components/` – Dashboard shell layers (sidebar, topbar, KPI cards, performance, activities)
+  - `hooks/use-business-nav-items.ts` – Nav sidebar theo `usePathname` (Dashboard, KOL Discovery → `/kol-matching`, …)
+  - `hooks/use-business-dashboard-data.ts` – State period (weekly/monthly) + data mapper
+  - `types.ts` – Typed contracts cho nav, metrics, trend chart, activities
+  - `index.ts` – Public entry export `BusinessDashboardPage`
+- **`src/features/kol-verification-certificate/`** – Chứng nhận xác minh KOL (public share):
+  - `components/kol-verification-certificate-view.tsx` – Layout thẻ chứng nhận (gradient, profile, rating, competencies, checks, feedback, footer)
+  - `components/certificate-action-bar.tsx` – Client: in/PDF (print), share Web Share API / clipboard, copy verify URL
+  - `server/get-certificate-by-id.ts` – Mock + deterministic theo `id` (sẵn sàng thay bằng API)
+  - `types.ts` – Contract dữ liệu chứng nhận
+  - `index.ts` – Export public
+- **`src/features/campaigns/`** – Danh sách chiến dịch public:
+  - `data/active-campaigns-data.ts` – Mock danh sách + hằng `CAMPAIGN_FILTER_ALL`
+  - `components/` – `campaign-card`, `campaign-category-chips`, `campaigns-grid`, `campaigns-page-header`, `campaigns-list-page`
+  - `types.ts` – `CampaignListItem`, `CampaignStatus`
+  - `index.ts` – Export page + card + data
+- **`src/features/campaign-detail/`** – Trang chi tiết campaign (`/campaigns/[id]`):
+  - `server/get-campaign-detail-by-id.ts` – Mock theo id (override Summer Glow + derive từ `ACTIVE_CAMPAIGNS`)
+  - `components/` – `campaign-detail-view`, `campaign-detail-header`, `campaign-stats-grid`, `campaign-kpi-donut`, `campaign-kpi-section`, `campaign-active-creators-table`, `campaign-brief-card`, `campaign-recent-content-list`
+  - `types.ts` – Contract chi tiết campaign
+  - `index.ts` – Export view + getter
+- **`src/features/kol-matching/`** – Feature KOL/KOC matching theo step:
+  - `components/` – Stepper + step views (entry form, agent processing, `flow-page-header`, `flow-stepper` rail có collapse, `search-results-list`, `search-results-filters-panel`, comparison); page bọc `DashboardSidebar` + nội dung `flex-1`; bước `kol-comparison` full-width trong vùng content + flow rail phải sticky
+  - `hooks/use-kol-matching-flow.ts` – Orchestrate state machine của flow (gồm `inviteSelected` stub)
+  - `hooks/use-search-results-filters.ts` – State + derived list cho filter step 3
+  - `services/kol-matching-service.ts` – Search/scoring pipeline (mock service, ready để cắm MCP/API)
+  - `services/search-results-filter-service.ts` – Pure filter helpers cho danh sách KOL (platform, niche, followers, ER)
+  - `types.ts` – Typed contracts cho entry, stages, candidates, comparison metrics
+  - `index.ts` – Public entry export `KolMatchingPage`
+- **`src/lib/utils.ts`** – `cn()` helper
+
+## Tối ưu load
+
+- **Initial:** Chỉ load HeroSection + MainHeader (+ layout). Footer và 4 section dưới load dynamic.
+- **Khi scroll:** Mỗi section load khi vào viewport (LazySection) → chunk tách riêng, không build hết lúc đầu.
+- **Loading state:** `loading.tsx` cho route; SectionSkeleton cho từng section đang load.
