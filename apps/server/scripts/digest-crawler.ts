@@ -154,9 +154,12 @@ async function syncCrawlerData(client: MongoClient, platformIds: { tiktokId: str
       // Extract categories
       const categories = tiktokUser.categories ? Object.keys(tiktokUser.categories) : [];
 
+      const tkUniqueId = tiktokUser.uniqueId || '';
+      const cleanTkUniqueId = tkUniqueId.startsWith('@') ? tkUniqueId.substring(1) : tkUniqueId;
+
       platforms.push({
         platform_id: platformIds.tiktokId,
-        handle: tiktokUser.uniqueId,
+        uniqueId: cleanTkUniqueId,
         external_id: tiktokUser._id.toString(),
         follower_count: followerCount,
         avg_engagement: avgEngagement,
@@ -166,9 +169,12 @@ async function syncCrawlerData(client: MongoClient, platformIds: { tiktokId: str
     }
 
     if (youtubeUser) {
+      const ytHandle = youtubeUser.handle || '';
+      const cleanYtHandle = ytHandle.startsWith('@') ? ytHandle.substring(1) : ytHandle;
+
       platforms.push({
         platform_id: platformIds.youtubeId,
-        handle: youtubeUser.handle,
+        uniqueId: cleanYtHandle,
         external_id: youtubeUser._id.toString(),
         follower_count: youtubeUser.subscribers || 0,
         avg_engagement: 0,
@@ -197,7 +203,10 @@ async function syncCrawlerData(client: MongoClient, platformIds: { tiktokId: str
       { email },
       { 
         $set: influencerDoc,
-        $setOnInsert: { created_at: new Date() }
+        $setOnInsert: { 
+          created_at: new Date(),
+          scores: {}
+        }
       },
       { upsert: true }
     );

@@ -10,6 +10,7 @@ export interface KolProfileProps {
   phone: string; // Flattened contact
   platforms: KolPlatformInfo[];
   isVerified: boolean;
+  scores?: Record<string, any>;
 }
 
 /**
@@ -55,5 +56,9 @@ export class KolProfileEntity extends BaseEntity<KolProfileProps> {
 
   get isVerified(): boolean {
     return this.props.isVerified;
+  }
+
+  get scores(): Record<string, any> {
+    return this.props.scores || {};
   }
 }

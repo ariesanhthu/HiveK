@@ -3,7 +3,7 @@ import { createZodDto } from 'nestjs-zod';
 
 export const KolPlatformInfoDtoSchema = z.object({
   platformId: z.string(),
-  handle: z.string(),
+  uniqueId: z.string(),
   externalId: z.string(),
   followerCount: z.number().int().nonnegative(),
   avgEngagement: z.number().nonnegative(),
@@ -21,6 +21,7 @@ export const KolProfileDtoSchema = z.object({
   phone: z.string(),
   platforms: z.array(KolPlatformInfoDtoSchema),
   isVerified: z.boolean(),
+  scores: z.record(z.string(), z.any()).optional(),
 });
 
 export class KolProfileDto extends createZodDto(KolProfileDtoSchema) {}

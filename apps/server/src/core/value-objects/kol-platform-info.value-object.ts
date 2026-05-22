@@ -2,7 +2,7 @@ import { BaseValueObject } from '../common/base.value-object';
 
 export interface KolPlatformInfoProps {
   platformId: string;
-  handle: string;
+  uniqueId: string;
   externalId: string;
   followerCount: number;
   avgEngagement: number;
@@ -27,8 +27,8 @@ export class KolPlatformInfo extends BaseValueObject<KolPlatformInfoProps> {
     return this.props.platformId;
   }
 
-  get handle(): string {
-    return this.props.handle;
+  get uniqueId(): string {
+    return this.props.uniqueId;
   }
 
   get externalId(): string {

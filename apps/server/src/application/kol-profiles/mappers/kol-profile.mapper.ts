@@ -12,14 +12,15 @@ export class KolProfileMapper {
       email: entity.email,
       phone: entity.phone,
       isVerified: entity.isVerified,
+      scores: entity.scores,
       platforms: (entity.platforms || []).map((p) => ({
-        platformId: p.props.platformId,
-        handle: p.props.handle,
-        externalId: p.props.externalId,
-        followerCount: p.props.followerCount,
-        avgEngagement: p.props.avgEngagement,
-        topTags: p.props.topTags,
-        categories: p.props.categories,
+        platformId: p.platformId,
+        uniqueId: p.uniqueId,
+        externalId: p.externalId,
+        followerCount: p.followerCount,
+        avgEngagement: p.avgEngagement,
+        topTags: p.topTags,
+        categories: p.categories,
       })),
     };
   }

@@ -86,9 +86,10 @@ export class MongoKolProfileReadService implements IKolProfileReadService {
       email: doc.email,
       phone: doc.phone,
       isVerified: doc.is_verified,
+      scores: doc.scores || {},
       platforms: (doc.platforms || []).map((p: any) => ({
         platformId: p.platform_id,
-        handle: p.handle,
+        uniqueId: p.uniqueId ?? p.handle ?? '',
         externalId: p.external_id,
         followerCount: p.follower_count,
         avgEngagement: p.avg_engagement,

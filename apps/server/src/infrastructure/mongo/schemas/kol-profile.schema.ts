@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument } from 'mongoose';
+import { HydratedDocument, Schema as MongooseSchema } from 'mongoose';
 
 @Schema({ _id: false })
 class NativePlatformInfo {
@@ -7,7 +7,7 @@ class NativePlatformInfo {
   platform_id: string;
 
   @Prop({ required: true })
-  handle: string;
+  uniqueId: string;
 
   @Prop({ required: true })
   external_id: string;
@@ -42,7 +42,7 @@ export class KolProfileModel {
   @Prop()
   bio: string;
 
-  @Prop({ required: true, unique: true })
+  @Prop({ required: true })
   email: string;
 
   @Prop()
@@ -53,6 +53,9 @@ export class KolProfileModel {
 
   @Prop({ default: false })
   is_verified: boolean;
+
+  @Prop({ type: MongooseSchema.Types.Mixed, default: {} })
+  scores: Record<string, any>;
 }
 
 export type KolProfileDocument = HydratedDocument<KolProfileModel>;
