@@ -5,3 +5,4 @@ export * from './enterprise-user.aggregate';
 export * from './kol-user.aggregate';
 export * from './role.aggregate';
 export * from './platform.aggregate';
+export * from './campaign.aggregate';

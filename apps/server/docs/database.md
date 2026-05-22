@@ -189,3 +189,92 @@ Quản lý thực thi và mục tiêu riêng biệt cho từng KOL.
 }
 
 ```
+
+
+```json
+{
+  "_id": "ObjectId",
+
+  "campaign": {
+    "name": "string",
+    "type": "promotion | launch | seasonal",
+    "start_date": "ISODate",
+    "end_date": "ISODate",
+    "objective": "string",
+    "description": "string"
+  },
+
+  "targeting": {
+    "audience": {
+      "age_range": "string",
+      "interests": ["string"]
+    },
+    "locations": ["string"]
+  },
+
+  "campaign_items": [
+    {
+      "product": {
+        "name": "string",
+        "category": "string",
+        "brand": "string",
+        "description": "string",
+
+        "features": [
+          "long battery life",
+          "waterproof",
+          "lightweight"
+        ],
+
+        "keywords": [
+          "gaming",
+          "performance",
+          "budget"
+        ],
+
+        "price_segment": "low | mid | high"
+      },
+
+      "marketing": {
+        "angle": [
+          "luxury",
+          "affordable",
+          "trendy",
+          "eco-friendly"
+        ],
+        "content_style": [],
+        "tone": [],
+        "key_messages": []
+      },      
+
+      "pricing": {
+        "original_price": "number",
+        "sale_price": "number",
+        "currency": "VND"
+      },
+
+      "promotion": {
+        "type": "discount | bundle | cashback",
+        "value": "number",
+        "unit": "percent | amount"
+      },
+
+      "channels": [
+        {
+          "type": "ecommerce | retail | social",
+          "platform": "Shopee",
+          "url": "string"
+        }
+      ]
+    }
+  ],
+
+  "raw": [
+    {
+      "file_id": string,
+      "raw_text": "full extracted text from PDF",
+      "inference": ""
+    } 
+  ]
+}
+```

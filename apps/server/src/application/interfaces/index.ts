@@ -4,6 +4,7 @@ export * from './read-service/platform.read-service.interface';
 export * from './read-service/role.read-service.interface';
 export * from './read-service/user.read-service.interface';
 export * from './read-service/kpi-log.read-service.interface';
+export * from './read-service/campaign.read-service.interface';
 
 export * from './uow.interface';
 

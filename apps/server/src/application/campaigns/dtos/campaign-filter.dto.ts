@@ -1,0 +1,12 @@
+import { z } from 'zod';
+import { createZodDto } from 'nestjs-zod';
+import { CursorPaginationRequestSchema } from '@/shared/dtos/pagination.dto';
+
+export const CampaignFilterSchema = CursorPaginationRequestSchema.extend({
+  name: z.string().optional(),
+  type: z.enum(['promotion', 'launch', 'seasonal']).optional(),
+  ownerId: z.string().optional(),
+  enterpriseId: z.string().optional(),
+});
+
+export class CampaignFilterDto extends createZodDto(CampaignFilterSchema) {}

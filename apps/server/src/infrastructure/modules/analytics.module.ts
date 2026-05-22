@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { CqrsModule } from '@nestjs/cqrs';
-import { KpiLogModel, KpiLogSchema } from '../mongo/schemas/kpi-log.schema';
+import { KpiLogModel, KpiLogSchema } from '@infrastructure/mongo/schemas';
 import { KPI_LOG_READ_SERVICE } from '@/application/interfaces';
-import { MongoKpiLogReadService } from '../mongo/read-services/kpi-log.read-service';
+import { MongoKpiLogReadService } from '@infrastructure/mongo/read-services';
 import { GetKpiLogsHandler } from '@/application/analytics/queries/get-kpi-logs.handler';
 import { KpiLogController } from '@/presentation/controllers/kpi-log.controller';
 
