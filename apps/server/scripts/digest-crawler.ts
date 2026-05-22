@@ -198,9 +198,40 @@ async function syncCrawlerData(client: MongoClient, platformIds: { tiktokId: str
       updated_at: new Date(),
     };
 
-    // 5. Upsert by email to avoid duplicate errors and keep it sync-friendly
+    // 5. Match by platform external IDs to find the existing influencer, avoiding collisions on null emails
+    const filterQuery: any = {};
+    const platformConditions: any[] = [];
+    if (tiktokUser) {
+      platformConditions.push({ 
+        platforms: { 
+          $elemMatch: { 
+            platform_id: platformIds.tiktokId, 
+            external_id: tiktokUser._id.toString() 
+          } 
+        } 
+      });
+    }
+    if (youtubeUser) {
+      platformConditions.push({ 
+        platforms: { 
+          $elemMatch: { 
+            platform_id: platformIds.youtubeId, 
+            external_id: youtubeUser._id.toString() 
+          } 
+        } 
+      });
+    }
+
+    if (platformConditions.length > 1) {
+      filterQuery.$or = platformConditions;
+    } else if (platformConditions.length === 1) {
+      Object.assign(filterQuery, platformConditions[0]);
+    } else {
+      continue; 
+    }
+
     await serverDb.collection('influencers').updateOne(
-      { email },
+      filterQuery,
       { 
         $set: influencerDoc,
         $setOnInsert: { 
