@@ -46,38 +46,82 @@ async function mapUsersByHandle() {
       }
     }
 
-    let createdCount = 0;
+    const matchedTiktokIds = new Set<string>();
+    const matchedYoutubeIds = new Set<string>();
+
+    let matchedCount = 0;
+    let tiktokOnlyCount = 0;
+    let youtubeOnlyCount = 0;
     const userCol = db.collection('user');
 
     console.log('🚀 Matching uniqueId from TikTok with handle from YouTube...');
     for (const tk of tiktokUsers) {
       if (!tk.uniqueId) continue;
 
-      // Construct target handle (e.g., "@uniqueid")
       const targetHandle = `@${tk.uniqueId.toLowerCase()}`;
       const ytId = youtubeMap.get(targetHandle);
 
       if (ytId) {
-        // Match found! Upsert mapping into the 'user' collection (No deletes)
-        const result = await userCol.updateOne(
-          { tiktok_id: tk._id, youtube_id: ytId },
-          { 
-            $set: { 
-              tiktok_id: tk._id, 
-              youtube_id: ytId 
-            } 
-          },
-          { upsert: true }
-        );
+        matchedTiktokIds.add(tk._id.toString());
+        matchedYoutubeIds.add(ytId.toString());
 
-        if (result.upsertedCount > 0) {
-          createdCount++;
+        // Check if there is an existing mapping for either tiktok_id or youtube_id
+        const existing = await userCol.findOne({
+          $or: [
+            { tiktok_id: tk._id },
+            { youtube_id: ytId }
+          ]
+        });
+
+        if (existing) {
+          await userCol.updateOne(
+            { _id: existing._id },
+            { $set: { tiktok_id: tk._id, youtube_id: ytId } }
+          );
+        } else {
+          await userCol.insertOne({
+            tiktok_id: tk._id,
+            youtube_id: ytId
+          });
         }
+        matchedCount++;
       }
     }
 
+    console.log('📝 Upserting standalone TikTok-only mappings...');
+    for (const tk of tiktokUsers) {
+      if (matchedTiktokIds.has(tk._id.toString())) continue;
+
+      await userCol.updateOne(
+        { tiktok_id: tk._id },
+        {
+          $set: { tiktok_id: tk._id },
+          $setOnInsert: { youtube_id: null }
+        },
+        { upsert: true }
+      );
+      tiktokOnlyCount++;
+    }
+
+    console.log('📝 Upserting standalone YouTube-only mappings...');
+    for (const yt of youtubeUsers) {
+      if (matchedYoutubeIds.has(yt._id.toString())) continue;
+
+      await userCol.updateOne(
+        { youtube_id: yt._id },
+        {
+          $set: { youtube_id: yt._id },
+          $setOnInsert: { tiktok_id: null }
+        },
+        { upsert: true }
+      );
+      youtubeOnlyCount++;
+    }
+
     console.log(`\n🎉 Success! Processed mapping completed.`);
-    console.log(`- New mappings created: ${createdCount}`);
+    console.log(`- Matched profiles (TikTok & YouTube): ${matchedCount}`);
+    console.log(`- TikTok-only profiles: ${tiktokOnlyCount}`);
+    console.log(`- YouTube-only profiles: ${youtubeOnlyCount}`);
 
   } catch (error) {
     console.error('❌ Error executing mapping script:', error);
