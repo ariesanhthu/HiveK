@@ -86,8 +86,9 @@ export class NestConfigService extends ConfigService {
       return filePath;
     }
 
-    // If relative, resolve from config directory (src/config)
-    const configDir = path.join(process.cwd(), "src/config");
+    // Resolve relative to the directory of this service: src/infrastructure/nest-config/
+    // We go 2 levels up to reach src/ (or dist/src/), and then locate config/
+    const configDir = path.join(__dirname, "../..", "config");
     return path.join(configDir, filePath);
   }
 

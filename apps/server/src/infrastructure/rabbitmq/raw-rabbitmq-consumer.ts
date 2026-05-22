@@ -8,7 +8,7 @@ import { RmqHandlerRegistry } from './rmq-consumer.registry';
  * Handles topology setup (exchanges, queues, bindings) and message consumption
  */
 export class RawRabbitMQConsumerClient {
-  private connection: amqp.Connection | null = null;
+  private connection: amqp.Connection | null | any  = null;
   private channel: amqp.Channel | null = null;
   private isConnected = false;
   private connectionAttempts = 0;

@@ -9,7 +9,7 @@ import { Logger } from '@nestjs/common';
  * Handles direct AMQP connection, channel management, and message publishing
  */
 export class RawRabbitMQProducerClient {
-  private connection: amqp.Connection | null = null;
+  private connection: amqp.Connection | null | any = null;
   private channel: amqp.ConfirmChannel | null = null;
   private isConnected = false;
   private connectionAttempts = 0;
