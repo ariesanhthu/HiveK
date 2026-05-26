@@ -3,12 +3,12 @@ import { CqrsModule } from '@nestjs/cqrs';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { 
-  SignInCommandHandler, 
-  SignUpCommandHandler, 
-  SignOutCommandHandler, 
-  ResetPasswordCommandHandler 
-} from '@/application/auth/commands/handlers';
-import { GetProfileQueryHandler } from '@/application/auth/queries/get-profile.query';
+  AuthSignInCommandHandler, 
+  AuthSignUpCommandHandler, 
+  AuthSignOutCommandHandler, 
+  AuthResetPasswordCommandHandler 
+} from '@/application/commands';
+import { AuthGetProfileHandler } from '@/application/queries';
 import { AUTH_JWT_SERVICE } from '@/application/interfaces';
 import { USER_REPOSITORY } from '@/core/interfaces';
 import { JwtAuthService } from '../auth/jwt.service';
@@ -18,11 +18,11 @@ import { RoleModule } from './role.module';
 import { AuthController } from '@/presentation/controllers/auth.controller';
 
 const Handlers = [
-  SignInCommandHandler,
-  SignUpCommandHandler,
-  SignOutCommandHandler,
-  ResetPasswordCommandHandler,
-  GetProfileQueryHandler,
+  AuthSignInCommandHandler,
+  AuthSignUpCommandHandler,
+  AuthSignOutCommandHandler,
+  AuthResetPasswordCommandHandler,
+  AuthGetProfileHandler,
 ];
 
 @Module({

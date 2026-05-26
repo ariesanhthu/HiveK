@@ -1,21 +1,21 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { CqrsModule } from '@nestjs/cqrs';
-import { CampaignModel, CampaignSchema } from '@infrastructure/mongo/schemas';
-import { CAMPAIGN_READ_SERVICE } from '@application/interfaces';
-import { CAMPAIGN_REPOSITORY } from '@core/interfaces';
-import { MongoCampaignReadService } from '@infrastructure/mongo/read-services';
-import { MongoCampaignRepository } from '@infrastructure/mongo/repositories';
-import { CreateCampaignHandler, UpdateCampaignHandler, DeleteCampaignHandler } from '@application/campaigns/commands';
-import { GetCampaignsHandler, GetCampaignByIdHandler } from '@application/campaigns/queries';
+import { CampaignModel, CampaignSchema } from '@/infrastructure/mongo/schemas';
+import { CAMPAIGN_READ_SERVICE } from '@/application/interfaces';
+import { CAMPAIGN_REPOSITORY } from '@/core/interfaces';
+import { MongoCampaignReadService } from '@/infrastructure/mongo/read-services';
+import { MongoCampaignRepository } from '@/infrastructure/mongo/repositories';
+import { CreateCampaignHandler, UpdateCampaignHandler, DeleteCampaignHandler } from '@/application/commands';
+import { CampaignGetListHandler, CampaignGetByIdHandler } from '@/application/queries';
 import { CampaignController } from '@/presentation/controllers/campaign.controller';
 
 const Handlers = [
   CreateCampaignHandler,
   UpdateCampaignHandler,
   DeleteCampaignHandler,
-  GetCampaignsHandler,
-  GetCampaignByIdHandler,
+  CampaignGetListHandler,
+  CampaignGetByIdHandler,
 ];
 
 @Module({

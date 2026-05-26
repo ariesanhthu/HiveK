@@ -4,14 +4,14 @@ import { CqrsModule } from '@nestjs/cqrs';
 import { KolProfileModel, KolProfileSchema, PlatformModel, PlatformSchema } from '@/infrastructure/mongo/schemas';
 import { KOL_PROFILE_READ_SERVICE } from '@/application/interfaces';
 import { MongoKolProfileReadService } from '@/infrastructure/mongo/read-services';
-import { GetKolProfilesHandler, GetKolProfileByIdHandler, GetKolProfileHandlesDevHandler } from '@/application/kol-profiles/queries';
-import { UpdateKolProfileHandler } from '@/application/kol-profiles/commands';
+import { KolProfileGetListHandler, KolProfileGetByIdHandler, KolProfileGetHandlesDevHandler } from '@/application/queries';
+import { UpdateKolProfileHandler } from '@/application/commands';
 import { KolProfileController } from '@/presentation/controllers/kol-profile.controller';
 
 const Handlers = [
-  GetKolProfilesHandler,
-  GetKolProfileByIdHandler,
-  GetKolProfileHandlesDevHandler,
+  KolProfileGetListHandler,
+  KolProfileGetByIdHandler,
+  KolProfileGetHandlesDevHandler,
   UpdateKolProfileHandler,
 ];
 

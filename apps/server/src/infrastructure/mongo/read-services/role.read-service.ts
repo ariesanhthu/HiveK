@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { IRoleReadService } from '@/application/interfaces';
-import { RoleDto, RoleFilterDto } from '@/application/role/dtos';
+import { RoleDto, RoleFilterDto } from '@/application/dtos';
 import { RoleDocument, RoleModel } from '../schemas/role.schema';
 import { Nullable, JsonRecord } from '@/shared/types';
 import { PaginatedResponseDto, SortOrder } from '@/shared/dtos/pagination.dto';

@@ -1,9 +1,8 @@
 import { Controller, Post, Body, HttpCode, HttpStatus, Get, UseGuards } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
-import { SignInCommand, SignUpCommand, SignOutCommand, ResetPasswordCommand } from '@/application/auth/commands';
-import { GetProfileQuery } from '@/application/auth/queries';
-import { SignInInputDto, SignUpInputDto, ResetPasswordInputDto, SignOutInputDto } from '@/application/auth/dtos';
+import { AuthSignInCommand, AuthSignUpCommand, AuthSignOutCommand, AuthResetPasswordCommand, AuthSignInInputDto, AuthSignUpInputDto, AuthResetPasswordInputDto, AuthSignOutInputDto } from '@/application/commands';
+import { AuthGetProfileQuery } from '@/application/queries';
 import { UserType } from '@/core/enums';
 import { JwtAuthGuard } from '@/presentation/middleware/jwt-auth.guard';
 import { CurrentUser } from '@/presentation/decorators/current-user.decorator';
@@ -16,37 +15,37 @@ export class AuthController {
     private readonly queryBus: QueryBus,
   ) {}
 
-  @Post('sign-up/kol')
+  @Post('auth-sign-up/kol')
   @ApiOperation({ summary: 'Sign up as KOL' })
-  async signUpKOL(@Body() input: SignUpInputDto) {
-    return this.commandBus.execute(new SignUpCommand(UserType.KOL, input));
+  async signUpKOL(@Body() input: AuthSignUpInputDto) {
+    return this.commandBus.execute(new AuthSignUpCommand(UserType.KOL, input));
   }
 
-  @Post('sign-up/enterprise')
+  @Post('auth-sign-up/enterprise')
   @ApiOperation({ summary: 'Sign up as Enterprise' })
-  async signUpEnterprise(@Body() input: SignUpInputDto) {
-    return this.commandBus.execute(new SignUpCommand(UserType.ENTERPRISE, input));
+  async signUpEnterprise(@Body() input: AuthSignUpInputDto) {
+    return this.commandBus.execute(new AuthSignUpCommand(UserType.ENTERPRISE, input));
   }
 
-  @Post('sign-in')
+  @Post('auth-sign-in')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Sign in' })
-  async signIn(@Body() input: SignInInputDto) {
-    return this.commandBus.execute(new SignInCommand(input));
+  async signIn(@Body() input: AuthSignInInputDto) {
+    return this.commandBus.execute(new AuthSignInCommand(input));
   }
 
-  @Post('sign-out')
+  @Post('auth-sign-out')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Sign out' })
-  async signOut(@Body() input: SignOutInputDto) {
-    return this.commandBus.execute(new SignOutCommand(input));
+  async signOut(@Body() input: AuthSignOutInputDto) {
+    return this.commandBus.execute(new AuthSignOutCommand(input));
   }
 
-  @Post('reset-password')
+  @Post('auth-reset-password')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Reset password' })
-  async resetPassword(@Body() input: ResetPasswordInputDto) {
-    return this.commandBus.execute(new ResetPasswordCommand(input));
+  async resetPassword(@Body() input: AuthResetPasswordInputDto) {
+    return this.commandBus.execute(new AuthResetPasswordCommand(input));
   }
 
   @Get('profile')
@@ -54,6 +53,6 @@ export class AuthController {
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Get current user profile' })
   async getProfile(@CurrentUser('sub') userId: string) {
-    return this.queryBus.execute(new GetProfileQuery(userId));
+    return this.queryBus.execute(new AuthGetProfileQuery(userId));
   }
 }

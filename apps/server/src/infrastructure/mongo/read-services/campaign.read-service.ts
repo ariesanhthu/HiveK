@@ -4,7 +4,8 @@ import { Model } from 'mongoose';
 import { CampaignDocument, CampaignModel } from '../schemas';
 import { ICampaignReadService } from '@/application/interfaces';
 import { Nullable } from '@/shared/types';
-import { CampaignDto, CampaignFilterDto } from '@/application/campaigns/dtos';
+import { CampaignDto } from '@/application/dtos';
+import { CampaignFilterDto } from '@/application/queries';
 import { PaginatedResponseDto, SortOrder } from '@/shared/dtos/pagination.dto';
 
 @Injectable()

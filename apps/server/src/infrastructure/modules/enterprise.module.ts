@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { CqrsModule } from '@nestjs/cqrs';
 import { EnterpriseController } from '@/presentation/controllers';
-import { GetEnterpriseQueryHandler } from '@/application/enterprises/queries';
+import { EnterpriseGetByIdHandler } from '@/application/queries';
 import { ENTERPRISE_READ_SERVICE } from '@/application/interfaces';
 import { MongoEnterpriseReadService } from '@/infrastructure/mongo/read-services';
 import { EnterpriseDocument, EnterpriseModel, EnterpriseSchema } from '@/infrastructure/mongo/schemas';
@@ -16,7 +16,7 @@ import { EnterpriseDocument, EnterpriseModel, EnterpriseSchema } from '@/infrast
   ],
   controllers: [EnterpriseController],
   providers: [
-    GetEnterpriseQueryHandler,
+    EnterpriseGetByIdHandler,
     {
       provide: ENTERPRISE_READ_SERVICE,
       useClass: MongoEnterpriseReadService,

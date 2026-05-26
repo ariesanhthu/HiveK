@@ -1,5 +1,5 @@
 import { IBaseReadService } from './base.read-service.interface';
-import { EnterpriseDto, EnterpriseFilterDto } from '@/application/enterprises/dtos';
+import { EnterpriseDto, EnterpriseFilterDto } from '@/application/dtos';
 import { Nullable } from '@/shared/types/utility.type';
 
 export interface IEnterpriseReadService extends IBaseReadService<EnterpriseDto, EnterpriseFilterDto> {

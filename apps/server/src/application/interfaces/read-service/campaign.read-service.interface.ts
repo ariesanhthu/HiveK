@@ -1,5 +1,6 @@
 import { IBaseReadService } from './base.read-service.interface';
-import { CampaignDto, CampaignFilterDto } from '@/application/campaigns/dtos';
+import { CampaignDto } from '@/application/dtos';
+import { CampaignFilterDto } from '@/application/queries';
 
 export const CAMPAIGN_READ_SERVICE = Symbol('CAMPAIGN_READ_SERVICE');
 

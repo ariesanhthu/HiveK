@@ -2,8 +2,8 @@ import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { CqrsModule } from '@nestjs/cqrs';
 import { UserController } from '@/presentation/controllers';
-import { GetUserQueryHandler } from '@/application/users/queries';
-import { UpdateProfileCommandHandler } from '@/application/users/commands/handlers';
+import { UserGetByIdHandler } from '@/application/queries';
+import { UserUpdateProfileCommandHandler } from '@/application/commands';
 import { USER_READ_SERVICE } from '@/application/interfaces';
 import { USER_REPOSITORY } from '@/core/interfaces';
 import { MongoUserReadService } from '@/infrastructure/mongo/read-services';
@@ -31,8 +31,8 @@ import {
   ],
   // controllers: [UserController],
   providers: [
-    GetUserQueryHandler,
-    UpdateProfileCommandHandler,
+    UserGetByIdHandler,
+    UserUpdateProfileCommandHandler,
     {
       provide: USER_READ_SERVICE,
       useClass: MongoUserReadService,

@@ -13,7 +13,7 @@ export class PlatformModel {
   @Prop({ required: true })
   base_url: string;
 
-  @Prop({ required: true, enum: PlatformApiStatus, default: PlatformApiStatus.STABLE })
+  @Prop({ type: String, required: true, enum: PlatformApiStatus, default: PlatformApiStatus.STABLE })
   api_status: PlatformApiStatus;
 
   @Prop({ required: true })

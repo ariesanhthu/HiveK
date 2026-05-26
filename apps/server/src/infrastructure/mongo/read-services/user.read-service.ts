@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { IUserReadService } from '@/application/interfaces';
-import { UserDto, UserFilterDto } from '@/application/users/dtos';
+import { UserDto, UserFilterDto } from '@/application/dtos';
 import { UserDocument, UserModel } from '../schemas';
 import { Nullable } from '@/shared/types';
 import { UserType } from '@/core/enums';

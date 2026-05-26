@@ -4,7 +4,8 @@ import { Model } from 'mongoose';
 import { PlatformDocument, PlatformModel } from '../schemas';
 import { IPlatformReadService } from '@/application/interfaces';
 import { Nullable } from '@/shared/types';
-import { PlatformDto, PlatformFilterDto } from '@/application/platforms/dtos';
+import { PlatformDto } from '@/application/dtos';
+import { PlatformFilterDto } from '@/application/queries';
 import { PaginatedResponseDto, SortOrder } from '@/shared/dtos/pagination.dto';
 
 @Injectable()

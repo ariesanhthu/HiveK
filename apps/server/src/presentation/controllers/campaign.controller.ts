@@ -1,9 +1,9 @@
 import { Controller, Get, Post, Patch, Delete, Body, Param, Query, HttpCode, HttpStatus } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
-import { CreateCampaignCommand, UpdateCampaignCommand, DeleteCampaignCommand } from '@/application/campaigns/commands';
-import { GetCampaignsQuery, GetCampaignByIdQuery } from '@/application/campaigns/queries';
-import { CreateCampaignInputDto, UpdateCampaignInputDto, CampaignDto, CampaignFilterDto } from '@/application/campaigns/dtos';
+import { CampaignCreateCommand, CampaignUpdateCommand, CampaignDeleteCommand, CampaignCreateInputDto, CampaignUpdateInputDto } from '@/application/commands';
+import { CampaignGetListQuery, CampaignGetByIdQuery, CampaignFilterDto } from '@/application/queries';
+import { CampaignDto } from '@/application/dtos';
 import { PaginatedResponseDto } from '@/shared/dtos/pagination.dto';
 
 @ApiTags('campaigns')
@@ -17,34 +17,34 @@ export class CampaignController {
   @Get()
   @ApiOperation({ summary: 'Get all campaigns' })
   async findAll(@Query() filters: CampaignFilterDto): Promise<PaginatedResponseDto<CampaignDto>> {
-    return this.queryBus.execute(new GetCampaignsQuery(filters));
+    return this.queryBus.execute(new CampaignGetListQuery(filters));
   }
 
   @Get(':id')
   @ApiOperation({ summary: 'Get campaign by ID' })
   async findById(@Param('id') id: string): Promise<CampaignDto> {
-    return this.queryBus.execute(new GetCampaignByIdQuery(id));
+    return this.queryBus.execute(new CampaignGetByIdQuery(id));
   }
 
   @Post()
   @ApiOperation({ summary: 'Create new campaign' })
-  async create(@Body() input: CreateCampaignInputDto): Promise<CampaignDto> {
-    return this.commandBus.execute(new CreateCampaignCommand(input));
+  async create(@Body() input: CampaignCreateInputDto): Promise<CampaignDto> {
+    return this.commandBus.execute(new CampaignCreateCommand(input));
   }
 
   @Patch(':id')
   @ApiOperation({ summary: 'Update campaign' })
   async update(
     @Param('id') id: string,
-    @Body() input: UpdateCampaignInputDto,
+    @Body() input: CampaignUpdateInputDto,
   ): Promise<CampaignDto> {
-    return this.commandBus.execute(new UpdateCampaignCommand(id, input));
+    return this.commandBus.execute(new CampaignUpdateCommand(id, input));
   }
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: 'Delete campaign' })
   async delete(@Param('id') id: string): Promise<void> {
-    return this.commandBus.execute(new DeleteCampaignCommand(id));
+    return this.commandBus.execute(new CampaignDeleteCommand(id));
   }
 }

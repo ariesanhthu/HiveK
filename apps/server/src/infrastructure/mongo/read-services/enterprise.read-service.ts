@@ -4,7 +4,7 @@ import { Model } from 'mongoose';
 import { IEnterpriseReadService } from '@/application/interfaces';
 import { EnterpriseModel, type EnterpriseDocument } from '../schemas/enterprise.schema';
 import { Nullable } from '@/shared/types';
-import { EnterpriseDto, EnterpriseFilterDto } from '@/application/enterprises/dtos';
+import { EnterpriseDto, EnterpriseFilterDto } from '@/application/dtos';
 import { PaginatedResponseDto, SortOrder } from '@/shared/dtos/pagination.dto';
 
 @Injectable()
