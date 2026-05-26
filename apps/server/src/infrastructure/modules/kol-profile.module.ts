@@ -3,9 +3,11 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { CqrsModule } from '@nestjs/cqrs';
 import { KolProfileModel, KolProfileSchema, PlatformModel, PlatformSchema } from '@/infrastructure/mongo/schemas';
 import { KOL_PROFILE_READ_SERVICE } from '@/application/interfaces';
+import { KOL_PROFILE_REPOSITORY } from '@/core/interfaces';
 import { MongoKolProfileReadService } from '@/infrastructure/mongo/read-services';
+import { MongoKolProfileRepository } from '@/infrastructure/mongo/repositories';
 import { KolProfileGetListHandler, KolProfileGetByIdHandler, KolProfileGetHandlesDevHandler } from '@/application/queries';
-import { UpdateKolProfileHandler } from '@/application/commands';
+import { UpdateKolProfileHandler, KolProfileSoftDeleteCommandHandler, KolProfileHardDeleteCommandHandler, KolProfileRestoreCommandHandler } from '@/application/commands';
 import { KolProfileController } from '@/presentation/controllers/kol-profile.controller';
 
 const Handlers = [
@@ -13,6 +15,9 @@ const Handlers = [
   KolProfileGetByIdHandler,
   KolProfileGetHandlesDevHandler,
   UpdateKolProfileHandler,
+  KolProfileSoftDeleteCommandHandler,
+  KolProfileHardDeleteCommandHandler,
+  KolProfileRestoreCommandHandler,
 ];
 
 @Module({
@@ -30,7 +35,11 @@ const Handlers = [
       provide: KOL_PROFILE_READ_SERVICE,
       useClass: MongoKolProfileReadService,
     },
+    {
+      provide: KOL_PROFILE_REPOSITORY,
+      useClass: MongoKolProfileRepository,
+    },
   ],
-  exports: [KOL_PROFILE_READ_SERVICE],
+  exports: [KOL_PROFILE_READ_SERVICE, KOL_PROFILE_REPOSITORY],
 })
 export class KolProfileModule {}

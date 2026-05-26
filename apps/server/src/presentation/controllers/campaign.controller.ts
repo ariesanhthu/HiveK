@@ -1,9 +1,9 @@
 import { Controller, Get, Post, Patch, Delete, Body, Param, Query, HttpCode, HttpStatus } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
-import { CampaignCreateCommand, CampaignUpdateCommand, CampaignDeleteCommand, CampaignCreateInputDto, CampaignUpdateInputDto } from '@/application/commands';
+import { CampaignCreateCommand, CampaignUpdateCommand, CampaignSoftDeleteCommand, CampaignHardDeleteCommand, CampaignRestoreCommand, CampaignCreateInputDto, CampaignUpdateInputDto } from '@/application/commands';
 import { CampaignGetListQuery, CampaignGetByIdQuery, CampaignFilterDto } from '@/application/queries';
-import { CampaignDto } from '@/application/dtos';
+import { CampaignDto, SoftDeleteInputDto } from '@/application/dtos';
 import { PaginatedResponseDto } from '@/shared/dtos/pagination.dto';
 
 @ApiTags('campaigns')
@@ -43,8 +43,25 @@ export class CampaignController {
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  @ApiOperation({ summary: 'Delete campaign' })
-  async delete(@Param('id') id: string): Promise<void> {
-    return this.commandBus.execute(new CampaignDeleteCommand(id));
+  @ApiOperation({ summary: 'Soft delete campaign' })
+  async delete(
+    @Param('id') id: string,
+    @Query() dto: SoftDeleteInputDto,
+  ): Promise<void> {
+    return this.commandBus.execute(new CampaignSoftDeleteCommand(id, dto.deletedBy));
+  }
+
+  @Delete(':id/hard')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiOperation({ summary: 'Hard delete campaign' })
+  async hardDelete(@Param('id') id: string): Promise<void> {
+    return this.commandBus.execute(new CampaignHardDeleteCommand(id));
+  }
+
+  @Post(':id/restore')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Restore soft deleted campaign' })
+  async restore(@Param('id') id: string): Promise<void> {
+    return this.commandBus.execute(new CampaignRestoreCommand(id));
   }
 }

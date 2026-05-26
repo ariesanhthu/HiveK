@@ -90,6 +90,8 @@ export class MongoCampaignRepository implements ICampaignRepository {
         rawText: r.raw_text,
         inference: r.inference,
       })),
+      deleteAt: doc.delete_at,
+      deleteBy: doc.delete_by,
     });
   }
 
@@ -149,6 +151,8 @@ export class MongoCampaignRepository implements ICampaignRepository {
         raw_text: r.rawText,
         inference: r.inference,
       })),
+      delete_at: campaign.deleteAt,
+      delete_by: campaign.deleteBy,
     };
   }
 }

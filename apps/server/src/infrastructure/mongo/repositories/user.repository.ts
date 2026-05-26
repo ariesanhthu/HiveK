@@ -51,6 +51,8 @@ export class MongoUserRepository implements IUserRepository {
       isEmailVerified: doc.is_email_verified,
       createdAt: doc.get('created_at'),
       updatedAt: doc.get('updated_at'),
+      deleteAt: doc.delete_at,
+      deleteBy: doc.delete_by,
     };
 
     const id = doc._id.toString();
@@ -79,6 +81,8 @@ export class MongoUserRepository implements IUserRepository {
       type: user.type,
       role_id: user.roleId,
       is_email_verified: user.isEmailVerified,
+      delete_at: user.deleteAt,
+      delete_by: user.deleteBy,
     };
 
     if (user instanceof EnterpriseUserRoot) {

@@ -11,6 +11,8 @@ export interface UserProps {
   fullName: string;
   createdAt: Date;
   updatedAt: Date;
+  deleteAt?: Date | null;
+  deleteBy?: string | null;
 }
 
 export abstract class UserRoot<T extends UserProps = UserProps> extends BaseAggregateRoot<T> {
@@ -52,5 +54,23 @@ export abstract class UserRoot<T extends UserProps = UserProps> extends BaseAggr
 
   get fullName(): string {
     return this.props.fullName;
+  }
+
+  get deleteAt(): Date | null | undefined {
+    return this.props.deleteAt;
+  }
+
+  get deleteBy(): string | null | undefined {
+    return this.props.deleteBy;
+  }
+
+  public softDelete(deletedBy: string): void {
+    this.props.deleteAt = new Date();
+    this.props.deleteBy = deletedBy;
+  }
+
+  public restore(): void {
+    this.props.deleteAt = null;
+    this.props.deleteBy = null;
   }
 }

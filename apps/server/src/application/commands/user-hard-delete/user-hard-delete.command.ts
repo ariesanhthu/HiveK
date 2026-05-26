@@ -1,6 +1,6 @@
 import { Command } from '@nestjs/cqrs';
 
-export class CampaignDeleteCommand extends Command<void> {
+export class UserHardDeleteCommand extends Command<void> {
   constructor(public readonly id: string) {
     super();
   }

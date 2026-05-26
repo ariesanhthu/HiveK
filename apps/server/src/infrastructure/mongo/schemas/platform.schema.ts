@@ -18,6 +18,12 @@ export class PlatformModel {
 
   @Prop({ required: true })
   icon_url: string;
+
+  @Prop({ type: Date, default: null })
+  delete_at: Date | null;
+
+  @Prop({ type: String, default: null })
+  delete_by: string | null;
 }
 
 export type PlatformDocument = HydratedDocument<PlatformModel>;

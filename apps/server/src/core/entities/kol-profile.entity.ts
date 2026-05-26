@@ -11,6 +11,8 @@ export interface KolProfileProps {
   platforms: KolPlatformInfo[];
   isVerified: boolean;
   scores?: Record<string, any>;
+  deleteAt?: Date | null;
+  deleteBy?: string | null;
 }
 
 /**
@@ -60,5 +62,23 @@ export class KolProfileEntity extends BaseEntity<KolProfileProps> {
 
   get scores(): Record<string, any> {
     return this.props.scores || {};
+  }
+
+  get deleteAt(): Date | null | undefined {
+    return this.props.deleteAt;
+  }
+
+  get deleteBy(): string | null | undefined {
+    return this.props.deleteBy;
+  }
+
+  public softDelete(deletedBy: string): void {
+    this.props.deleteAt = new Date();
+    this.props.deleteBy = deletedBy;
+  }
+
+  public restore(): void {
+    this.props.deleteAt = null;
+    this.props.deleteBy = null;
   }
 }

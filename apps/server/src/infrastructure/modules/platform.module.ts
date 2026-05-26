@@ -6,13 +6,16 @@ import { PLATFORM_READ_SERVICE } from '@/application/interfaces';
 import { PLATFORM_REPOSITORY } from '@/core/interfaces';
 import { MongoPlatformReadService } from '@/infrastructure/mongo/read-services';
 import { MongoPlatformRepository } from '@/infrastructure/mongo/repositories';
-import { CreatePlatformHandler, UpdatePlatformHandler } from '@/application/commands';
+import { CreatePlatformHandler, UpdatePlatformHandler, PlatformSoftDeleteCommandHandler, PlatformHardDeleteCommandHandler, PlatformRestoreCommandHandler } from '@/application/commands';
 import { PlatformGetListHandler, PlatformGetByIdHandler } from '@/application/queries';
 import { PlatformController } from '@/presentation/controllers/platform.controller';
 
 const Handlers = [
   CreatePlatformHandler,
   UpdatePlatformHandler,
+  PlatformSoftDeleteCommandHandler,
+  PlatformHardDeleteCommandHandler,
+  PlatformRestoreCommandHandler,
   PlatformGetListHandler,
   PlatformGetByIdHandler,
 ];

@@ -1,9 +1,9 @@
-import { Controller, Get, Param, Query, Body, Patch } from '@nestjs/common';
+import { Controller, Get, Param, Query, Body, Patch, Delete, Post, HttpCode, HttpStatus } from '@nestjs/common';
 import { QueryBus, CommandBus } from '@nestjs/cqrs';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
 import { KolProfileGetListQuery, KolProfileGetByIdQuery, KolProfileGetHandlesDevQuery, KolProfileFilterDto } from '@/application/queries';
-import { KolProfileUpdateCommand, UpdateKolProfileDto } from '@/application/commands';
-import { KolProfileDto } from '@/application/dtos';
+import { KolProfileUpdateCommand, KolProfileSoftDeleteCommand, KolProfileHardDeleteCommand, KolProfileRestoreCommand, UpdateKolProfileDto } from '@/application/commands';
+import { KolProfileDto, SoftDeleteInputDto } from '@/application/dtos';
 import { PaginatedResponseDto, CursorPaginationRequestDto } from '@/shared/dtos/pagination.dto';
 
 @ApiTags('kol-profiles')
@@ -36,5 +36,29 @@ export class KolProfileController {
   @ApiOperation({ summary: 'Update anything of an influencer (PATCH)' })
   async update(@Param('id') id: string, @Body() input: UpdateKolProfileDto): Promise<KolProfileDto> {
     return this.commandBus.execute(new KolProfileUpdateCommand(id, input));
+  }
+
+  @Delete(':id')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiOperation({ summary: 'Soft delete KOL profile' })
+  async delete(
+    @Param('id') id: string,
+    @Query() dto: SoftDeleteInputDto,
+  ): Promise<void> {
+    return this.commandBus.execute(new KolProfileSoftDeleteCommand(id, dto.deletedBy));
+  }
+
+  @Delete(':id/hard')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiOperation({ summary: 'Hard delete KOL profile' })
+  async hardDelete(@Param('id') id: string): Promise<void> {
+    return this.commandBus.execute(new KolProfileHardDeleteCommand(id));
+  }
+
+  @Post(':id/restore')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Restore soft deleted KOL profile' })
+  async restore(@Param('id') id: string): Promise<void> {
+    return this.commandBus.execute(new KolProfileRestoreCommand(id));
   }
 }

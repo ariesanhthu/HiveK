@@ -35,6 +35,12 @@ export class KpiLogModel {
     comments: number;
     shares: number;
   };
+
+  @Prop({ type: Date, default: null })
+  delete_at: Date | null;
+
+  @Prop({ type: String, default: null })
+  delete_by: string | null;
 }
 
 export const KpiLogSchema = SchemaFactory.createForClass(KpiLogModel);

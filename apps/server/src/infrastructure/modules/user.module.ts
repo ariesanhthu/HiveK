@@ -3,7 +3,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { CqrsModule } from '@nestjs/cqrs';
 import { UserController } from '@/presentation/controllers';
 import { UserGetByIdHandler } from '@/application/queries';
-import { UserUpdateProfileCommandHandler } from '@/application/commands';
+import { UserUpdateProfileCommandHandler, UserSoftDeleteCommandHandler, UserHardDeleteCommandHandler, UserRestoreCommandHandler } from '@/application/commands';
 import { USER_READ_SERVICE } from '@/application/interfaces';
 import { USER_REPOSITORY } from '@/core/interfaces';
 import { MongoUserReadService } from '@/infrastructure/mongo/read-services';
@@ -29,10 +29,13 @@ import {
       },
     ]),
   ],
-  // controllers: [UserController],
+  controllers: [UserController],
   providers: [
     UserGetByIdHandler,
     UserUpdateProfileCommandHandler,
+    UserSoftDeleteCommandHandler,
+    UserHardDeleteCommandHandler,
+    UserRestoreCommandHandler,
     {
       provide: USER_READ_SERVICE,
       useClass: MongoUserReadService,

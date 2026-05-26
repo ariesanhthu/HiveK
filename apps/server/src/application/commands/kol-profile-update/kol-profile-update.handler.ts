@@ -1,74 +1,52 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
-import { NotFoundException } from '@nestjs/common';
-import { KolProfileModel, KolProfileDocument } from '@/infrastructure/mongo/schemas';
+import { Inject, NotFoundException } from '@nestjs/common';
+import { KOL_PROFILE_REPOSITORY, type IKolProfileRepository } from '@/core/interfaces';
 import { KolProfileUpdateCommand } from './kol-profile-update.command';
 import { KolProfileDto } from '@/application/dtos';
+import { KolProfileMapper } from '@/application/mappers/kol-profile.mapper';
+import { KolPlatformInfo } from '@/core/value-objects/kol-platform-info.value-object';
+import { KolProfileEntity } from '@/core/entities/kol-profile.entity';
 
 @CommandHandler(KolProfileUpdateCommand)
 export class UpdateKolProfileHandler implements ICommandHandler<KolProfileUpdateCommand, KolProfileDto> {
   constructor(
-    @InjectModel(KolProfileModel.name)
-    private readonly kolProfileModel: Model<KolProfileDocument>,
+    @Inject(KOL_PROFILE_REPOSITORY)
+    private readonly kolProfileRepository: IKolProfileRepository,
   ) {}
 
   async execute(command: KolProfileUpdateCommand): Promise<KolProfileDto> {
     const { id, input } = command;
 
-    const existing = await this.kolProfileModel.findById(id).exec();
+    const existing = await this.kolProfileRepository.findById(id);
     if (!existing) {
       throw new NotFoundException(`Influencer with ID ${id} not found`);
     }
 
-    const updateDoc: any = {};
+    const props = { ...existing.props };
 
     for (const [key, value] of Object.entries(input)) {
       if (key === 'isVerified') {
-        updateDoc.is_verified = value;
+        props.isVerified = value as boolean;
       } else if (key === 'platforms' && Array.isArray(value)) {
-        updateDoc.platforms = value.map((p: any) => ({
-          platform_id: p.platformId ?? p.platform_id,
-          uniqueId: p.uniqueId ?? p.handle,
-          external_id: p.externalId ?? p.external_id,
-          follower_count: p.followerCount ?? p.follower_count,
-          avg_engagement: p.avgEngagement ?? p.avg_engagement,
-          top_tags: p.topTags ?? p.top_tags,
-          categories: p.categories,
-        }));
-      } else {
-        updateDoc[key] = value;
+        props.platforms = value.map((p: any) =>
+          KolPlatformInfo.create({
+            platformId: p.platformId ?? p.platform_id,
+            uniqueId: p.uniqueId ?? p.handle ?? '',
+            externalId: p.externalId ?? p.external_id,
+            followerCount: p.followerCount ?? p.follower_count,
+            avgEngagement: p.avgEngagement ?? p.avg_engagement,
+            topTags: p.topTags ?? p.top_tags,
+            categories: p.categories,
+          })
+        );
+      } else if (key in props) {
+        (props as any)[key] = value;
       }
     }
 
-    const updated = await this.kolProfileModel
-      .findByIdAndUpdate(id, { $set: updateDoc }, { new: true })
-      .lean()
-      .exec();
+    const updatedEntity = KolProfileEntity.create(props, existing.id);
+    await this.kolProfileRepository.save(updatedEntity);
 
-    if (!updated) {
-      throw new NotFoundException(`Influencer with ID ${id} not found during update`);
-    }
-
-    return {
-      id: updated._id.toString(),
-      name: updated.name,
-      location: updated.location,
-      gender: updated.gender,
-      bio: updated.bio,
-      email: updated.email,
-      phone: updated.phone,
-      isVerified: updated.is_verified,
-      scores: updated.scores || {},
-      platforms: (updated.platforms || []).map((p: any) => ({
-        platformId: p.platform_id,
-        uniqueId: p.uniqueId ?? p.handle ?? '',
-        externalId: p.external_id,
-        followerCount: p.follower_count,
-        avgEngagement: p.avg_engagement,
-        topTags: p.top_tags,
-        categories: p.categories,
-      })),
-    };
+    return KolProfileMapper.toDto(updatedEntity);
   }
 }

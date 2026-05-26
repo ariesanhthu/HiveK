@@ -167,6 +167,12 @@ export class CampaignModel {
 
   @Prop({ type: [RawItemModel], default: [] })
   raw: RawItemModel[];
+
+  @Prop({ type: Date, default: null })
+  delete_at: Date | null;
+
+  @Prop({ type: String, default: null })
+  delete_by: string | null;
 }
 
 export type CampaignDocument = HydratedDocument<CampaignModel>;

@@ -27,6 +27,12 @@ export class UserModel {
 
   @Prop({ default: false })
   is_email_verified: boolean;
+
+  @Prop({ type: Date, default: null })
+  delete_at: Date | null;
+
+  @Prop({ type: String, default: null })
+  delete_by: string | null;
 }
 
 export type UserDocument = HydratedDocument<UserModel>;

@@ -14,6 +14,12 @@ export class RoleModel {
 
   @Prop({ default: false })
   is_blocked: boolean;
+
+  @Prop({ type: Date, default: null })
+  delete_at: Date | null;
+
+  @Prop({ type: String, default: null })
+  delete_by: string | null;
 }
 
 export type RoleDocument = HydratedDocument<RoleModel>;

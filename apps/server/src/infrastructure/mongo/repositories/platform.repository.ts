@@ -45,6 +45,8 @@ export class MongoPlatformRepository implements IPlatformRepository {
       baseUrl: doc.base_url,
       apiStatus: doc.api_status,
       iconUrl: doc.icon_url,
+      deleteAt: doc.delete_at,
+      deleteBy: doc.delete_by,
     });
   }
 
@@ -54,6 +56,8 @@ export class MongoPlatformRepository implements IPlatformRepository {
       base_url: platform.baseUrl,
       api_status: platform.apiStatus,
       icon_url: platform.iconUrl,
+      delete_at: platform.deleteAt,
+      delete_by: platform.deleteBy,
     };
   }
 }
