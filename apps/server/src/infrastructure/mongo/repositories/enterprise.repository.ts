@@ -50,8 +50,8 @@ export class MongoEnterpriseRepository implements IEnterpriseRepository {
       taxId: doc.tax_id,
       logoUrl: doc.logo_url,
       isVerified: doc.is_verified,
-      createdAt: (doc as any).created_at,
-      updatedAt: (doc as any).updated_at,
+      createdAt: doc.created_at,
+      updatedAt: doc.updated_at,
       deleteAt: doc.delete_at,
       deleteBy: doc.delete_by,
     });

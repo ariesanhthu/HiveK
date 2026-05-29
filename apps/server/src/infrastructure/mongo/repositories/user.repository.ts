@@ -53,6 +53,7 @@ export class MongoUserRepository implements IUserRepository {
       updatedAt: doc.get('updated_at'),
       deleteAt: doc.delete_at,
       deleteBy: doc.delete_by,
+      refreshToken: doc.refresh_token,
     };
 
     const id = doc._id.toString();
@@ -83,6 +84,7 @@ export class MongoUserRepository implements IUserRepository {
       is_email_verified: user.isEmailVerified,
       delete_at: user.deleteAt,
       delete_by: user.deleteBy,
+      refresh_token: user.refreshToken,
     };
 
     if (user instanceof EnterpriseUserRoot) {

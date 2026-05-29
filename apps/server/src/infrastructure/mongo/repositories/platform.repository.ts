@@ -47,6 +47,8 @@ export class MongoPlatformRepository implements IPlatformRepository {
       iconUrl: doc.icon_url,
       deleteAt: doc.delete_at,
       deleteBy: doc.delete_by,
+      createdAt: doc.created_at,
+      updatedAt: doc.updated_at,
     });
   }
 

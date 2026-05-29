@@ -1,7 +1,18 @@
 import { Controller, Post, Body, HttpCode, HttpStatus, Get, UseGuards } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
-import { AuthSignInCommand, AuthSignUpCommand, AuthSignOutCommand, AuthResetPasswordCommand, AuthSignInInputDto, AuthSignUpInputDto, AuthResetPasswordInputDto, AuthSignOutInputDto } from '@/application/commands';
+import { 
+  AuthSignInCommand, 
+  AuthSignUpCommand, 
+  AuthSignOutCommand, 
+  AuthResetPasswordCommand, 
+  AuthRefreshTokenCommand,
+  AuthSignInInputDto, 
+  AuthSignUpInputDto, 
+  AuthResetPasswordInputDto, 
+  AuthSignOutInputDto,
+  AuthRefreshTokenInputDto
+} from '@/application/commands';
 import { AuthGetProfileQuery } from '@/application/queries';
 import { UserType } from '@/core/enums';
 import { JwtAuthGuard } from '@/presentation/middleware/jwt-auth.guard';
@@ -32,6 +43,13 @@ export class AuthController {
   @ApiOperation({ summary: 'Sign in' })
   async signIn(@Body() input: AuthSignInInputDto) {
     return this.commandBus.execute(new AuthSignInCommand(input));
+  }
+
+  @Post('refresh-token')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Refresh tokens' })
+  async refreshToken(@Body() input: AuthRefreshTokenInputDto) {
+    return this.commandBus.execute(new AuthRefreshTokenCommand(input));
   }
 
   @Post('auth-sign-out')

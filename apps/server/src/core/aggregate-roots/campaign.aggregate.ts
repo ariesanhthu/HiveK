@@ -1,4 +1,5 @@
 import { BaseAggregateRoot } from '@/core/common/base.aggregate-root';
+import { Nullable } from '@/core/types';
 
 export interface CampaignProps {
   ownerId: string;
@@ -55,17 +56,23 @@ export interface CampaignProps {
     rawText: string;
     inference: string;
   }[];
-  deleteAt?: Date | null;
-  deleteBy?: string | null;
+  deleteAt: Nullable<Date>;
+  deleteBy: Nullable<string>;
 }
+
+export type CampaignCreateProps = Omit<CampaignProps, 'deleteAt' | 'deleteBy'>;
 
 export class CampaignRoot extends BaseAggregateRoot<CampaignProps> {
   private constructor(props: CampaignProps, id?: string) {
     super(props, id);
   }
 
-  public static create(props: CampaignProps): CampaignRoot {
-    return new CampaignRoot(props);
+  public static create(props: CampaignCreateProps): CampaignRoot {
+    return new CampaignRoot({
+      ...props,
+      deleteAt: null,
+      deleteBy: null,
+    });
   }
 
   public static instantiate(id: string, props: CampaignProps): CampaignRoot {
@@ -96,11 +103,11 @@ export class CampaignRoot extends BaseAggregateRoot<CampaignProps> {
     return this.props.raw;
   }
 
-  get deleteAt(): Date | null | undefined {
+  get deleteAt(): Nullable<Date> {
     return this.props.deleteAt;
   }
 
-  get deleteBy(): string | null | undefined {
+  get deleteBy(): Nullable<string> {
     return this.props.deleteBy;
   }
 

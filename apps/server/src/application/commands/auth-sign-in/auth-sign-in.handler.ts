@@ -4,6 +4,7 @@ import { AuthSignInOutputDto } from './auth-sign-in.dto';
 import { Inject } from '@nestjs/common';
 import { AUTH_JWT_SERVICE, type IAuthJwtService } from '@/application/interfaces';
 import { USER_REPOSITORY, type IUserRepository } from '@/core/interfaces';
+import { ConfigService } from '@nestjs/config';
 import * as bcrypt from 'bcrypt';
 
 @CommandHandler(AuthSignInCommand)
@@ -13,6 +14,7 @@ export class AuthSignInCommandHandler implements ICommandHandler<AuthSignInComma
     private readonly userRepository: IUserRepository,
     @Inject(AUTH_JWT_SERVICE)
     private readonly jwtService: IAuthJwtService,
+    private readonly configService: ConfigService,
   ) {}
 
   async execute(command: AuthSignInCommand): Promise<AuthSignInOutputDto> {
@@ -28,12 +30,21 @@ export class AuthSignInCommandHandler implements ICommandHandler<AuthSignInComma
       throw new Error('Invalid credentials');
     }
 
-    const accessToken = this.jwtService.sign({
+    const payload = {
       sub: user.id,
       email: user.email,
       role: user.roleId,
-    });
+    };
 
-    return { accessToken };
+    const accessExpiration = this.configService.get<number>('JWT_ACCESS_EXPIRATION_MINUTES', 30);
+    const accessToken = this.jwtService.sign(payload, { expiresInMinutes: accessExpiration });
+    
+    const refreshExpiration = this.configService.get<number>('JWT_REFRESH_EXPIRATION_MINUTES', 10080);
+    const refreshToken = this.jwtService.sign(payload, { expiresInMinutes: refreshExpiration });
+
+    user.updateRefreshToken(refreshToken);
+    await this.userRepository.save(user);
+
+    return { accessToken, refreshToken };
   }
 }

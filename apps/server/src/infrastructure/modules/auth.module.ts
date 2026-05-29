@@ -6,7 +6,8 @@ import {
   AuthSignInCommandHandler, 
   AuthSignUpCommandHandler, 
   AuthSignOutCommandHandler, 
-  AuthResetPasswordCommandHandler 
+  AuthResetPasswordCommandHandler,
+  AuthRefreshTokenCommandHandler
 } from '@/application/commands';
 import { AuthGetProfileHandler } from '@/application/queries';
 import { AUTH_JWT_SERVICE } from '@/application/interfaces';
@@ -22,6 +23,7 @@ const Handlers = [
   AuthSignUpCommandHandler,
   AuthSignOutCommandHandler,
   AuthResetPasswordCommandHandler,
+  AuthRefreshTokenCommandHandler,
   AuthGetProfileHandler,
 ];
 

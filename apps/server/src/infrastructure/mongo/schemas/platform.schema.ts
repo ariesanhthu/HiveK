@@ -24,6 +24,9 @@ export class PlatformModel {
 
   @Prop({ type: String, default: null })
   delete_by: string | null;
+
+  created_at: Date;
+  updated_at: Date;
 }
 
 export type PlatformDocument = HydratedDocument<PlatformModel>;

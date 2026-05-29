@@ -39,6 +39,9 @@ export class EnterpriseModel {
 
   @Prop({ type: String, default: null })
   delete_by: string | null;
+
+  created_at: Date;
+  updated_at: Date;
 }
 
 export type EnterpriseDocument = HydratedDocument<EnterpriseModel>;

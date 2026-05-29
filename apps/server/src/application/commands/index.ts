@@ -2,6 +2,10 @@ export * from './auth-sign-in/auth-sign-in.command';
 export * from './auth-sign-in/auth-sign-in.handler';
 export * from './auth-sign-in/auth-sign-in.dto';
 
+export * from './auth-refresh-token/auth-refresh-token.command';
+export * from './auth-refresh-token/auth-refresh-token.handler';
+export * from './auth-refresh-token/auth-refresh-token.dto';
+
 export * from './auth-sign-up/auth-sign-up.command';
 export * from './auth-sign-up/auth-sign-up.handler';
 export * from './auth-sign-up/auth-sign-up.dto';

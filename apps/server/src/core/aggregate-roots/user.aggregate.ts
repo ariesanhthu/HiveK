@@ -1,5 +1,6 @@
 import { BaseAggregateRoot } from '@/core/common/base.aggregate-root';
 import { UserType } from '../enums/user-type.enum';
+import { Nullable } from '@/core/types';
 
 export interface UserProps {
   email: string;
@@ -11,9 +12,12 @@ export interface UserProps {
   fullName: string;
   createdAt: Date;
   updatedAt: Date;
-  deleteAt?: Date | null;
-  deleteBy?: string | null;
+  deleteAt: Nullable<Date>;
+  deleteBy: Nullable<string>;
+  refreshToken: Nullable<string>;
 }
+
+export type UserCreateProps = Omit<UserProps, 'createdAt' | 'updatedAt' | 'deleteAt' | 'deleteBy' | 'refreshToken'>;
 
 export abstract class UserRoot<T extends UserProps = UserProps> extends BaseAggregateRoot<T> {
   protected constructor(props: T, id?: string) {
@@ -56,12 +60,21 @@ export abstract class UserRoot<T extends UserProps = UserProps> extends BaseAggr
     return this.props.fullName;
   }
 
-  get deleteAt(): Date | null | undefined {
+  get deleteAt(): Nullable<Date> {
     return this.props.deleteAt;
   }
 
-  get deleteBy(): string | null | undefined {
+  get deleteBy(): Nullable<string> {
     return this.props.deleteBy;
+  }
+
+  get refreshToken(): Nullable<string> {
+    return this.props.refreshToken;
+  }
+
+  public updateRefreshToken(token: Nullable<string>): void {
+    this.props.refreshToken = token;
+    this.props.updatedAt = new Date();
   }
 
   public softDelete(deletedBy: string): void {

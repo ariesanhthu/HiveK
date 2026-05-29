@@ -33,6 +33,12 @@ export class UserModel {
 
   @Prop({ type: String, default: null })
   delete_by: string | null;
+
+  @Prop({ type: String, default: null })
+  refresh_token: string | null;
+
+  created_at: Date;
+  updated_at: Date;  
 }
 
 export type UserDocument = HydratedDocument<UserModel>;

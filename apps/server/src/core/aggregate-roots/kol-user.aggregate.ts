@@ -1,7 +1,11 @@
-import { UserProps, UserRoot } from './user.aggregate';
+import { UserProps, UserRoot, UserCreateProps } from './user.aggregate';
 import { UserType } from '../enums/user-type.enum';
 
 export interface KOLUserProps extends UserProps {
+  phoneNumber?: string;
+}
+
+export interface KOLUserCreateProps extends UserCreateProps {
   phoneNumber?: string;
 }
 
@@ -10,11 +14,19 @@ export class KOLUserRoot extends UserRoot<KOLUserProps> {
     super(props, id);
   }
 
-  public static create(props: KOLUserProps): KOLUserRoot {
+  public static create(props: KOLUserCreateProps): KOLUserRoot {
     if (props.type !== UserType.KOL) {
       throw new Error('Invalid user type for KOLUserRoot');
     }
-    return new KOLUserRoot(props);
+    const now = new Date();
+    return new KOLUserRoot({
+      ...props,
+      createdAt: now,
+      updatedAt: now,
+      deleteAt: null,
+      deleteBy: null,
+      refreshToken: null,
+    });
   }
 
   public static instantiate(id: string, props: KOLUserProps): KOLUserRoot {

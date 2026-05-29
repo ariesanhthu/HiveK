@@ -1,5 +1,6 @@
 import { BaseEntity } from '../common/base.entity';
 import { KolPlatformInfo } from '../value-objects/kol-platform-info.value-object';
+import { Nullable } from '@/core/types';
 
 export interface KolProfileProps {
   name: string;
@@ -11,9 +12,11 @@ export interface KolProfileProps {
   platforms: KolPlatformInfo[];
   isVerified: boolean;
   scores?: Record<string, any>;
-  deleteAt?: Date | null;
-  deleteBy?: string | null;
+  deleteAt: Nullable<Date>;
+  deleteBy: Nullable<string>;
 }
+
+export type KolProfileCreateProps = Omit<KolProfileProps, 'deleteAt' | 'deleteBy'>;
 
 /**
  * Entity representing an Influencer/KOL Profile.
@@ -24,7 +27,15 @@ export class KolProfileEntity extends BaseEntity<KolProfileProps> {
     super(props, id);
   }
 
-  public static create(props: KolProfileProps, id?: string): KolProfileEntity {
+  public static create(props: KolProfileCreateProps, id?: string): KolProfileEntity {
+    return new KolProfileEntity({
+      ...props,
+      deleteAt: null,
+      deleteBy: null,
+    }, id);
+  }
+
+  public static instantiate(id: string, props: KolProfileProps): KolProfileEntity {
     return new KolProfileEntity(props, id);
   }
 
@@ -64,11 +75,11 @@ export class KolProfileEntity extends BaseEntity<KolProfileProps> {
     return this.props.scores || {};
   }
 
-  get deleteAt(): Date | null | undefined {
+  get deleteAt(): Nullable<Date> {
     return this.props.deleteAt;
   }
 
-  get deleteBy(): string | null | undefined {
+  get deleteBy(): Nullable<string> {
     return this.props.deleteBy;
   }
 

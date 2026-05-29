@@ -1,5 +1,6 @@
 import { BaseAggregateRoot } from '@/core/common/base.aggregate-root';
 import { Optional } from '@/shared/types/utility.type';
+import { Nullable } from '@/core/types';
 
 export interface EnterpriseProps {
   userId: string;
@@ -13,17 +14,26 @@ export interface EnterpriseProps {
   isVerified: boolean;
   createdAt: Date;
   updatedAt: Date;
-  deleteAt?: Date | null;
-  deleteBy?: string | null;
+  deleteAt: Nullable<Date>;
+  deleteBy: Nullable<string>;
 }
+
+export type EnterpriseCreateProps = Omit<EnterpriseProps, 'createdAt' | 'updatedAt' | 'deleteAt' | 'deleteBy'>;
 
 export class EnterpriseRoot extends BaseAggregateRoot<EnterpriseProps> {
   private constructor(props: EnterpriseProps, id?: string) {
     super(props, id);
   }
 
-  public static create(props: EnterpriseProps): EnterpriseRoot {
-    return new EnterpriseRoot(props);
+  public static create(props: EnterpriseCreateProps): EnterpriseRoot {
+    const now = new Date();
+    return new EnterpriseRoot({
+      ...props,
+      createdAt: now,
+      updatedAt: now,
+      deleteAt: null,
+      deleteBy: null,
+    });
   }
 
   public static instantiate(id: string, props: EnterpriseProps): EnterpriseRoot {
@@ -74,11 +84,11 @@ export class EnterpriseRoot extends BaseAggregateRoot<EnterpriseProps> {
     return this.props.updatedAt;
   }
 
-  get deleteAt(): Date | null | undefined {
+  get deleteAt(): Nullable<Date> {
     return this.props.deleteAt;
   }
 
-  get deleteBy(): string | null | undefined {
+  get deleteBy(): Nullable<string> {
     return this.props.deleteBy;
   }
 

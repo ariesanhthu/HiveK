@@ -1,4 +1,5 @@
 import { BaseAggregateRoot } from '@/core/common/base.aggregate-root';
+import { Nullable } from '@/core/types';
 
 export interface RoleProps {
   title: string;
@@ -6,17 +7,26 @@ export interface RoleProps {
   isBlocked: boolean;
   createdAt: Date;
   updatedAt: Date;
-  deleteAt?: Date | null;
-  deleteBy?: string | null;
+  deleteAt: Nullable<Date>;
+  deleteBy: Nullable<string>;
 }
+
+export type RoleCreateProps = Omit<RoleProps, 'createdAt' | 'updatedAt' | 'deleteAt' | 'deleteBy'>;
 
 export class RoleRoot extends BaseAggregateRoot<RoleProps> {
   private constructor(props: RoleProps, id?: string) {
     super(props, id);
   }
 
-  public static create(props: RoleProps): RoleRoot {
-    return new RoleRoot(props);
+  public static create(props: RoleCreateProps): RoleRoot {
+    const now = new Date();
+    return new RoleRoot({
+      ...props,
+      createdAt: now,
+      updatedAt: now,
+      deleteAt: null,
+      deleteBy: null,
+    });
   }
 
   public static instantiate(id: string, props: RoleProps): RoleRoot {
@@ -43,11 +53,11 @@ export class RoleRoot extends BaseAggregateRoot<RoleProps> {
     return this.props.updatedAt;
   }
 
-  get deleteAt(): Date | null | undefined {
+  get deleteAt(): Nullable<Date> {
     return this.props.deleteAt;
   }
 
-  get deleteBy(): string | null | undefined {
+  get deleteBy(): Nullable<string> {
     return this.props.deleteBy;
   }
 

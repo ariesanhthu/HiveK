@@ -173,6 +173,9 @@ export class CampaignModel {
 
   @Prop({ type: String, default: null })
   delete_by: string | null;
+
+  created_at: Date;
+  updated_at: Date;
 }
 
 export type CampaignDocument = HydratedDocument<CampaignModel>;

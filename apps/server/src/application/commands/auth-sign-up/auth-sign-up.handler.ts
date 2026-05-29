@@ -42,8 +42,6 @@ export class AuthSignUpCommandHandler implements ICommandHandler<AuthSignUpComma
       type,
       roleId: defaultRole.id,
       isEmailVerified: false,
-      createdAt: new Date(),
-      updatedAt: new Date(),
     };
 
     switch (type) {
@@ -54,10 +52,10 @@ export class AuthSignUpCommandHandler implements ICommandHandler<AuthSignUpComma
         user = EnterpriseUserRoot.create({
           ...commonProps,
           enterpriseId: 'placeholder-enterprise-id',
-        } as any);
+        });
         break;
       case UserType.ADMIN:
-        user = AdminRoot.create(commonProps as any);
+        user = AdminRoot.create(commonProps);
         break;
       default:
         throw new Error(`Invalid user type: ${type}`);

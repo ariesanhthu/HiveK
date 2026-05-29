@@ -1,7 +1,11 @@
-import { UserProps, UserRoot } from './user.aggregate';
+import { UserProps, UserRoot, UserCreateProps } from './user.aggregate';
 import { UserType } from '../enums/user-type.enum';
 
 export interface EnterpriseUserProps extends UserProps {
+  enterpriseId: string;
+}
+
+export interface EnterpriseUserCreateProps extends UserCreateProps {
   enterpriseId: string;
 }
 
@@ -10,11 +14,19 @@ export class EnterpriseUserRoot extends UserRoot<EnterpriseUserProps> {
     super(props, id);
   }
 
-  public static create(props: EnterpriseUserProps): EnterpriseUserRoot {
+  public static create(props: EnterpriseUserCreateProps): EnterpriseUserRoot {
     if (props.type !== UserType.ENTERPRISE) {
       throw new Error('Invalid user type for EnterpriseUserRoot');
     }
-    return new EnterpriseUserRoot(props);
+    const now = new Date();
+    return new EnterpriseUserRoot({
+      ...props,
+      createdAt: now,
+      updatedAt: now,
+      deleteAt: null,
+      deleteBy: null,
+      refreshToken: null,
+    });
   }
 
   public static instantiate(id: string, props: EnterpriseUserProps): EnterpriseUserRoot {

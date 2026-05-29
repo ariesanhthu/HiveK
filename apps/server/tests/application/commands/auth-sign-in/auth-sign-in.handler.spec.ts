@@ -10,15 +10,24 @@ describe('AuthSignInCommandHandler', () => {
   let handler: AuthSignInCommandHandler;
   let mockUserRepository: any;
   let mockJwtService: any;
+  let mockConfigService: any;
 
   beforeEach(() => {
     mockUserRepository = {
       findByEmail: jest.fn(),
+      save: jest.fn(),
     };
     mockJwtService = {
       sign: jest.fn(),
     };
-    handler = new AuthSignInCommandHandler(mockUserRepository, mockJwtService);
+    mockConfigService = {
+      get: jest.fn((key: string, defaultValue?: any) => {
+        if (key === 'JWT_ACCESS_EXPIRATION_MINUTES') return 30;
+        if (key === 'JWT_REFRESH_EXPIRATION_MINUTES') return 10080;
+        return defaultValue;
+      }),
+    };
+    handler = new AuthSignInCommandHandler(mockUserRepository, mockJwtService, mockConfigService);
   });
 
   it('should sign in successfully with valid credentials', async () => {
@@ -28,22 +37,32 @@ describe('AuthSignInCommandHandler', () => {
       email: 'user@example.com',
       passwordHash: 'hashed',
       roleId: 'role-1',
+      updateRefreshToken: jest.fn(),
     } as any;
 
     mockUserRepository.findByEmail.mockResolvedValue(mockUser);
     (bcrypt.compare as jest.Mock).mockResolvedValue(true);
-    mockJwtService.sign.mockReturnValue('accessTokenString');
+    mockJwtService.sign
+      .mockReturnValueOnce('accessTokenString')
+      .mockReturnValueOnce('refreshTokenString');
 
     const result = await handler.execute(command);
 
-    expect(result).toEqual({ accessToken: 'accessTokenString' });
+    expect(result).toEqual({ accessToken: 'accessTokenString', refreshToken: 'refreshTokenString' });
     expect(mockUserRepository.findByEmail).toHaveBeenCalledWith('user@example.com');
     expect(bcrypt.compare).toHaveBeenCalledWith('password123', 'hashed');
-    expect(mockJwtService.sign).toHaveBeenCalledWith({
+    expect(mockUser.updateRefreshToken).toHaveBeenCalledWith('refreshTokenString');
+    expect(mockUserRepository.save).toHaveBeenCalledWith(mockUser);
+    expect(mockJwtService.sign).toHaveBeenNthCalledWith(1, {
       sub: 'user-123',
       email: 'user@example.com',
       role: 'role-1',
-    });
+    }, { expiresInMinutes: 30 });
+    expect(mockJwtService.sign).toHaveBeenNthCalledWith(2, {
+      sub: 'user-123',
+      email: 'user@example.com',
+      role: 'role-1',
+    }, { expiresInMinutes: 10080 });
   });
 
   it('should throw error if user email not found', async () => {

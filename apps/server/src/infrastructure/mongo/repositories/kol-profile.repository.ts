@@ -48,7 +48,7 @@ export class MongoKolProfileRepository implements IKolProfileRepository {
       })
     );
 
-    return KolProfileEntity.create({
+    return KolProfileEntity.instantiate(doc._id.toString(), {
       name: doc.name,
       location: doc.location,
       gender: doc.gender,
@@ -60,7 +60,7 @@ export class MongoKolProfileRepository implements IKolProfileRepository {
       scores: doc.scores,
       deleteAt: doc.delete_at,
       deleteBy: doc.delete_by,
-    }, doc._id.toString());
+    });
   }
 
   private mapToPersistence(entity: KolProfileEntity): any {

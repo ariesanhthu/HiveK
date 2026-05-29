@@ -10,6 +10,7 @@ export class AuthSignInInputDto extends createZodDto(AuthSignInInputSchema) {}
 
 export const AuthSignInOutputSchema = z.object({
   accessToken: z.string(),
+  refreshToken: z.string(),
 });
 
 export class AuthSignInOutputDto extends createZodDto(AuthSignInOutputSchema) {}

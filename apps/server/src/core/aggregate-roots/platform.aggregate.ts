@@ -1,13 +1,23 @@
 import { BaseAggregateRoot } from '@/core/common/base.aggregate-root';
 import { PlatformApiStatus } from '../enums/platform-api-status.enum';
+import { Nullable } from '@/core/types';
 
 export interface PlatformProps {
   name: string;
   baseUrl: string;
   apiStatus: PlatformApiStatus;
   iconUrl: string;
-  deleteAt?: Date | null;
-  deleteBy?: string | null;
+  deleteAt: Nullable<Date>;
+  deleteBy: Nullable<string>;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface PlatformCreateProps {
+  name: string;
+  baseUrl: string;
+  apiStatus: PlatformApiStatus;
+  iconUrl: string;
 }
 
 /**
@@ -18,10 +28,15 @@ export class PlatformRoot extends BaseAggregateRoot<PlatformProps> {
     super(props, id);
   }
 
-  public static create(props: PlatformProps): PlatformRoot {
+  public static create(props: PlatformCreateProps): PlatformRoot {
+    const now = new Date();
     return new PlatformRoot({
       ...props,
-      name: props.name.toLowerCase()
+      name: props.name.toLowerCase(),
+      createdAt: now,
+      updatedAt: now,
+      deleteAt: null,
+      deleteBy: null,
     });
   }
 
@@ -45,11 +60,11 @@ export class PlatformRoot extends BaseAggregateRoot<PlatformProps> {
     return this.props.iconUrl;
   }
 
-  get deleteAt(): Date | null | undefined {
+  get deleteAt(): Nullable<Date> {
     return this.props.deleteAt;
   }
 
-  get deleteBy(): string | null | undefined {
+  get deleteBy(): Nullable<string> {
     return this.props.deleteBy;
   }
 

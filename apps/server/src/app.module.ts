@@ -7,8 +7,9 @@ import { RoleModule } from '@/infrastructure/modules/role.module';
 import { AuthModule } from '@/infrastructure/modules/auth.module';
 import { RabbitMQModule } from '@/infrastructure/rabbitmq/rabbitmq.module';
 import { WebSocketModule } from '@/infrastructure/websocket/websocket.module';
-import { APP_PIPE } from '@nestjs/core';
+import { APP_PIPE, APP_GUARD } from '@nestjs/core';
 import { ZodValidationPipe } from 'nestjs-zod';
+import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 import { NestConfigModule } from './infrastructure/nest-config/nest-config.module';
 import { InfrastructureModule } from './infrastructure/modules/infrastructure.module';
 import { PlatformModule } from './infrastructure/modules/platform.module';
@@ -34,6 +35,12 @@ import { TestRmqHandler } from './presentation/controllers/test/test-rmq.control
     CampaignModule,
     RabbitMQModule,
     WebSocketModule,
+    ThrottlerModule.forRoot([
+      {
+        ttl: 60000, // 1 minute
+        limit: 60, // 60 requests per TTL
+      },
+    ]),
   ],
   controllers: [
     TestController
@@ -42,6 +49,10 @@ import { TestRmqHandler } from './presentation/controllers/test/test-rmq.control
     {
       provide: APP_PIPE,
       useValue: ZodValidationPipe
+    },
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard,
     },
     TestRmqHandler
   ],
