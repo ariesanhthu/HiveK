@@ -6,14 +6,14 @@ import { KpiLogDto } from '@/application/dtos';
 import { KpiLogFilterDto } from '@/application/queries';
 import { KpiLogModel, KpiLogDocument } from '../schemas/kpi-log.schema';
 import { PaginatedResponseDto, SortOrder } from '@/shared/dtos/pagination.dto';
-import { Nullable } from '@/shared/types';
+import { Nullable } from '@/core/types';
 
 @Injectable()
 export class MongoKpiLogReadService implements IKpiLogReadService {
   constructor(
     @InjectModel(KpiLogModel.name)
     private readonly kpiLogModel: Model<KpiLogDocument>,
-  ) {}
+  ) { }
 
   async findById(id: string): Promise<Nullable<KpiLogDto>> {
     const doc = await this.kpiLogModel.findById(id).lean().exec();

@@ -2,16 +2,16 @@ import { Module } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
-import { 
-  AuthSignInCommandHandler, 
-  AuthSignUpCommandHandler, 
-  AuthSignOutCommandHandler, 
+import {
+  AuthSignInCommandHandler,
+  AuthSignUpCommandHandler,
+  AuthSignOutCommandHandler,
   AuthResetPasswordCommandHandler,
   AuthRefreshTokenCommandHandler
 } from '@/application/commands';
 import { AuthGetProfileHandler } from '@/application/queries';
 import { AUTH_JWT_SERVICE } from '@/application/interfaces';
-import { USER_REPOSITORY } from '@/core/interfaces';
+import { USER_REPOSITORY } from '@/core/interfaces/repositories';
 import { JwtAuthService } from '../auth/jwt.service';
 import { MongoUserRepository } from '../mongo/repositories';
 import { UserModule } from './user.module';
@@ -54,4 +54,4 @@ const Handlers = [
   ],
   exports: [AUTH_JWT_SERVICE, USER_REPOSITORY],
 })
-export class AuthModule {}
+export class AuthModule { }

@@ -1,6 +1,6 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { Inject, NotFoundException } from '@nestjs/common';
-import { ROLE_REPOSITORY, type IRoleRepository } from '@/core/interfaces';
+import { ROLE_REPOSITORY, type IRoleRepository } from '@/core/interfaces/repositories';
 import { RoleRestoreCommand } from './role-restore.command';
 
 @CommandHandler(RoleRestoreCommand)
@@ -8,7 +8,7 @@ export class RoleRestoreCommandHandler implements ICommandHandler<RoleRestoreCom
   constructor(
     @Inject(ROLE_REPOSITORY)
     private readonly roleRepository: IRoleRepository,
-  ) {}
+  ) { }
 
   async execute(command: RoleRestoreCommand): Promise<void> {
     const { id } = command;

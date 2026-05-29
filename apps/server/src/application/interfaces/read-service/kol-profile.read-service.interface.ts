@@ -1,7 +1,7 @@
 import { IBaseReadService } from './base.read-service.interface';
 import { KolProfileDto } from '@/application/dtos';
 import { KolProfileFilterDto } from '@/application/queries';
-import { Nullable } from '@/shared/types/utility.type';
+import { Nullable } from '@core/types';
 
 export const KOL_PROFILE_READ_SERVICE = Symbol('KOL_PROFILE_READ_SERVICE');
 

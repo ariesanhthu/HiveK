@@ -5,7 +5,7 @@ import { MongoUnitOfWork } from './mongo-uow';
 import { UNIT_OF_WORK } from '@/application/interfaces';
 import { PlatformModel, PlatformSchema } from './schemas/platform.schema';
 import { KolProfileModel, KolProfileSchema } from './schemas/kol-profile.schema';
-import { PLATFORM_REPOSITORY } from '@/core/interfaces/platform.repository.interface';
+import { PLATFORM_REPOSITORY } from '@/core/interfaces/repositories/platform.repository';
 import { MongoPlatformRepository } from './repositories/platform.repository';
 import { KOL_PROFILE_READ_SERVICE } from '@/application/interfaces/read-service/kol-profile.read-service.interface';
 import { MongoKolProfileReadService } from './read-services/kol-profile.read-service';
@@ -17,7 +17,7 @@ import { MongoPlatformReadService } from './read-services/platform.read-service'
     MongooseModule.forRootAsync({
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({
-          uri: configService.get<string>('MONGODB_URI'),
+        uri: configService.get<string>('MONGODB_URI'),
       }),
     }),
     MongooseModule.forFeature([
@@ -44,11 +44,11 @@ import { MongoPlatformReadService } from './read-services/platform.read-service'
     },
   ],
   exports: [
-    UNIT_OF_WORK, 
-    PLATFORM_REPOSITORY, 
-    KOL_PROFILE_READ_SERVICE, 
+    UNIT_OF_WORK,
+    PLATFORM_REPOSITORY,
+    KOL_PROFILE_READ_SERVICE,
     PLATFORM_READ_SERVICE,
     MongooseModule
   ],
 })
-export class MongoModule {}
+export class MongoModule { }

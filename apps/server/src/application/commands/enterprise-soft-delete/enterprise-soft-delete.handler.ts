@@ -1,6 +1,6 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { Inject, NotFoundException } from '@nestjs/common';
-import { ENTERPRISE_REPOSITORY, type IEnterpriseRepository } from '@/core/interfaces';
+import { ENTERPRISE_REPOSITORY, type IEnterpriseRepository } from '@/core/interfaces/repositories';
 import { EnterpriseSoftDeleteCommand } from './enterprise-soft-delete.command';
 
 @CommandHandler(EnterpriseSoftDeleteCommand)
@@ -8,7 +8,7 @@ export class EnterpriseSoftDeleteCommandHandler implements ICommandHandler<Enter
   constructor(
     @Inject(ENTERPRISE_REPOSITORY)
     private readonly enterpriseRepository: IEnterpriseRepository,
-  ) {}
+  ) { }
 
   async execute(command: EnterpriseSoftDeleteCommand): Promise<void> {
     const { id, deletedBy } = command;

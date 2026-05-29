@@ -1,17 +1,17 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { IPlatformRepository } from '@/core/interfaces';
+import { IPlatformRepository } from '@/core/interfaces/repositories';
 import { PlatformRoot } from '@/core/aggregate-roots';
 import { PlatformModel, PlatformDocument } from '../schemas';
-import { Nullable } from '@/shared/types';
+import { Nullable } from '@/core/types';
 
 @Injectable()
 export class MongoPlatformRepository implements IPlatformRepository {
   constructor(
     @InjectModel(PlatformModel.name)
     private readonly platformModel: Model<PlatformDocument>,
-  ) {}
+  ) { }
 
   async findById(id: string): Promise<Nullable<PlatformRoot>> {
     const doc = await this.platformModel.findById(id).exec();
@@ -25,7 +25,7 @@ export class MongoPlatformRepository implements IPlatformRepository {
 
   async save(platform: PlatformRoot): Promise<void> {
     const data = this.mapToPersistence(platform);
-    
+
     if (!platform.id) {
       const created = new this.platformModel(data);
       const saved = await created.save();

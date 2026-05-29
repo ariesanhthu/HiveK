@@ -1,5 +1,5 @@
 import { BaseAggregateRoot } from '@/core/common/base.aggregate-root';
-import { Optional } from '@/shared/types/utility.type';
+import { Optional } from '@core/types';
 import { Nullable } from '@/core/types';
 
 export interface EnterpriseProps {

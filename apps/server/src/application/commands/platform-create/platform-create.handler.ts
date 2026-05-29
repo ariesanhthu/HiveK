@@ -1,6 +1,6 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { Inject } from '@nestjs/common';
-import { PLATFORM_REPOSITORY, type IPlatformRepository } from '@/core/interfaces';
+import { PLATFORM_REPOSITORY, type IPlatformRepository } from '@/core/interfaces/repositories';
 import { PlatformRoot } from '@/core/aggregate-roots';
 import { PlatformCreateCommand } from './platform-create.command';
 import { PlatformDto } from '@/application/dtos';
@@ -11,7 +11,7 @@ export class CreatePlatformHandler implements ICommandHandler<PlatformCreateComm
   constructor(
     @Inject(PLATFORM_REPOSITORY)
     private readonly platformRepository: IPlatformRepository,
-  ) {}
+  ) { }
 
   async execute(command: PlatformCreateCommand): Promise<PlatformDto> {
     const { input } = command;

@@ -4,7 +4,7 @@ import { CqrsModule } from '@nestjs/cqrs';
 import { EnterpriseController } from '@/presentation/controllers';
 import { EnterpriseGetByIdHandler } from '@/application/queries';
 import { ENTERPRISE_READ_SERVICE } from '@/application/interfaces';
-import { ENTERPRISE_REPOSITORY } from '@/core/interfaces';
+import { ENTERPRISE_REPOSITORY } from '@/core/interfaces/repositories';
 import { MongoEnterpriseReadService } from '@/infrastructure/mongo/read-services';
 import { MongoEnterpriseRepository } from '@/infrastructure/mongo/repositories';
 import { EnterpriseDocument, EnterpriseModel, EnterpriseSchema } from '@/infrastructure/mongo/schemas';
@@ -35,4 +35,4 @@ import { EnterpriseSoftDeleteCommandHandler, EnterpriseHardDeleteCommandHandler,
   ],
   exports: [ENTERPRISE_READ_SERVICE, ENTERPRISE_REPOSITORY],
 })
-export class EnterpriseModule {}
+export class EnterpriseModule { }

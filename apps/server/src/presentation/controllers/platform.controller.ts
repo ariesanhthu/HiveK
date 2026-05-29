@@ -12,7 +12,7 @@ export class PlatformController {
   constructor(
     private readonly commandBus: CommandBus,
     private readonly queryBus: QueryBus,
-  ) {}
+  ) { }
 
   @Get()
   @ApiOperation({ summary: 'Get all platforms' })
@@ -41,7 +41,7 @@ export class PlatformController {
     return this.commandBus.execute(new PlatformUpdateCommand(id, input));
   }
 
-  @Delete(':id')
+  @Patch(':id/soft-delete')
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: 'Soft delete platform' })
   async delete(
@@ -51,14 +51,14 @@ export class PlatformController {
     return this.commandBus.execute(new PlatformSoftDeleteCommand(id, dto.deletedBy));
   }
 
-  @Delete(':id/hard')
+  @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: 'Hard delete platform' })
   async hardDelete(@Param('id') id: string): Promise<void> {
     return this.commandBus.execute(new PlatformHardDeleteCommand(id));
   }
 
-  @Post(':id/restore')
+  @Patch(':id/restore')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Restore soft deleted platform' })
   async restore(@Param('id') id: string): Promise<void> {

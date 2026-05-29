@@ -1,5 +1,5 @@
-import { JsonRecord, Nullable } from "@/shared/types/utility.type";
-import { CursorPaginationRequestDto, PaginatedResponseDto } from "@/shared/dtos/pagination.dto";
+import { Nullable } from '@/core/types';
+import { CursorPaginationRequestDto, PaginatedResponseDto } from '@/shared/dtos/pagination.dto';
 
 /**
  * Base Read Service Interface.

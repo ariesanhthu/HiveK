@@ -1,5 +1,5 @@
-import { Nullable } from '@/shared/types';
-import { KolProfileEntity } from '../entities/kol-profile.entity';
+import { Nullable } from '@/core/types';
+import { KolProfileEntity } from '../../entities/kol-profile.entity';
 
 export interface IKolProfileRepository {
   findById(id: string): Promise<Nullable<KolProfileEntity>>;

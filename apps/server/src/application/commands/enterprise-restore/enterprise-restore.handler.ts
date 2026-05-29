@@ -1,6 +1,6 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { Inject, NotFoundException } from '@nestjs/common';
-import { ENTERPRISE_REPOSITORY, type IEnterpriseRepository } from '@/core/interfaces';
+import { ENTERPRISE_REPOSITORY, type IEnterpriseRepository } from '@/core/interfaces/repositories';
 import { EnterpriseRestoreCommand } from './enterprise-restore.command';
 
 @CommandHandler(EnterpriseRestoreCommand)
@@ -8,7 +8,7 @@ export class EnterpriseRestoreCommandHandler implements ICommandHandler<Enterpri
   constructor(
     @Inject(ENTERPRISE_REPOSITORY)
     private readonly enterpriseRepository: IEnterpriseRepository,
-  ) {}
+  ) { }
 
   async execute(command: EnterpriseRestoreCommand): Promise<void> {
     const { id } = command;

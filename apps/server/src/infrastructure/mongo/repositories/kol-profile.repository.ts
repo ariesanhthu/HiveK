@@ -1,18 +1,18 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { IKolProfileRepository } from '@/core/interfaces';
+import { IKolProfileRepository } from '@/core/interfaces/repositories';
 import { KolProfileEntity } from '@/core/entities/kol-profile.entity';
 import { KolPlatformInfo } from '@/core/value-objects/kol-platform-info.value-object';
 import { KolProfileModel, KolProfileDocument } from '../schemas';
-import { Nullable } from '@/shared/types';
+import { Nullable } from '@/core/types';
 
 @Injectable()
 export class MongoKolProfileRepository implements IKolProfileRepository {
   constructor(
     @InjectModel(KolProfileModel.name)
     private readonly kolProfileModel: Model<KolProfileDocument>,
-  ) {}
+  ) { }
 
   async findById(id: string): Promise<Nullable<KolProfileEntity>> {
     const doc = await this.kolProfileModel.findById(id).exec();

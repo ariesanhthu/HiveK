@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Delete, Param, Query, HttpCode, HttpStatus } from '@nestjs/common';
+import { Controller, Get, Patch, Delete, Param, Query, HttpCode, HttpStatus } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { UserGetByIdQuery } from '@/application/queries';
 import { UserSoftDeleteCommand, UserHardDeleteCommand, UserRestoreCommand } from '@/application/commands';
@@ -11,7 +11,7 @@ export class UserController {
   constructor(
     private readonly commandBus: CommandBus,
     private readonly queryBus: QueryBus,
-  ) {}
+  ) { }
 
   @Get(':id')
   @ApiOperation({ summary: 'Get user by ID' })
@@ -22,7 +22,7 @@ export class UserController {
     return user;
   }
 
-  @Delete(':id')
+  @Patch(':id/soft-delete')
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: 'Soft delete user' })
   async delete(
@@ -32,14 +32,14 @@ export class UserController {
     return this.commandBus.execute(new UserSoftDeleteCommand(id, dto.deletedBy));
   }
 
-  @Delete(':id/hard')
+  @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: 'Hard delete user' })
   async hardDelete(@Param('id') id: string): Promise<void> {
     return this.commandBus.execute(new UserHardDeleteCommand(id));
   }
 
-  @Post(':id/restore')
+  @Patch(':id/restore')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Restore soft deleted user' })
   async restore(@Param('id') id: string): Promise<void> {

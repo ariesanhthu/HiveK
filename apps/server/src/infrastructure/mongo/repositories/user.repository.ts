@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { IUserRepository } from '@core/interfaces';
+import { IUserRepository } from '@/core/interfaces/repositories';
 import { UserRoot, AdminRoot, EnterpriseUserRoot, KOLUserRoot } from '@/core/aggregate-roots';
 import { UserModel, UserDocument } from '../schemas/user.schema';
-import { Nullable } from '@/shared/types';
+import { Nullable } from '@/core/types';
 import { UserType } from '@/core/enums';
 
 @Injectable()
@@ -12,7 +12,7 @@ export class MongoUserRepository implements IUserRepository {
   constructor(
     @InjectModel(UserModel.name)
     private readonly userModel: Model<UserDocument>,
-  ) {}
+  ) { }
 
   async findById(id: string): Promise<Nullable<UserRoot>> {
     const doc = await this.userModel.findById(id).exec();
@@ -26,7 +26,7 @@ export class MongoUserRepository implements IUserRepository {
 
   async save(user: UserRoot): Promise<void> {
     const data = this.mapToPersistence(user);
-    
+
     if (!user.id) {
       const created = new this.userModel(data);
       const saved = await created.save();

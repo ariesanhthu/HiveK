@@ -1,17 +1,17 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { IRoleRepository } from '@/core/interfaces';
+import { IRoleRepository } from '@/core/interfaces/repositories';
 import { RoleRoot } from '@/core/aggregate-roots';
 import { RoleModel, RoleDocument } from '../schemas';
-import { Nullable } from '@/shared/types';
+import { Nullable } from '@/core/types';
 
 @Injectable()
 export class MongoRoleRepository implements IRoleRepository {
   constructor(
     @InjectModel(RoleModel.name)
     private readonly roleModel: Model<RoleDocument>,
-  ) {}
+  ) { }
 
   async findById(id: string): Promise<Nullable<RoleRoot>> {
     const doc = await this.roleModel.findById(id).exec();

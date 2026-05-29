@@ -90,3 +90,19 @@ export * from './enterprise-hard-delete/enterprise-hard-delete.command';
 export * from './enterprise-hard-delete/enterprise-hard-delete.handler';
 export * from './enterprise-restore/enterprise-restore.command';
 export * from './enterprise-restore/enterprise-restore.handler';
+
+// Uploaded File Commands
+export * from './uploaded-file-create/uploaded-file-create.command';
+export * from './uploaded-file-create/uploaded-file-create.handler';
+export * from './uploaded-file-create/uploaded-file-bulk-create.command';
+export * from './uploaded-file-create/uploaded-file-bulk-create.handler';
+export * from './uploaded-file-create/uploaded-file-create.dto';
+
+export * from './uploaded-file-soft-delete/uploaded-file-soft-delete.command';
+export * from './uploaded-file-soft-delete/uploaded-file-soft-delete.handler';
+
+export * from './uploaded-file-delete/uploaded-file-delete.command';
+export * from './uploaded-file-delete/uploaded-file-delete.handler';
+
+export * from './uploaded-file-restore/uploaded-file-restore.command';
+export * from './uploaded-file-restore/uploaded-file-restore.handler';

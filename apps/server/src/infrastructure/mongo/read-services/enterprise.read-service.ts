@@ -3,7 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { IEnterpriseReadService } from '@/application/interfaces';
 import { EnterpriseModel, type EnterpriseDocument } from '../schemas/enterprise.schema';
-import { Nullable } from '@/shared/types';
+import { Nullable } from '@/core/types';
 import { EnterpriseDto, EnterpriseFilterDto } from '@/application/dtos';
 import { PaginatedResponseDto, SortOrder } from '@/shared/dtos/pagination.dto';
 
@@ -12,7 +12,7 @@ export class MongoEnterpriseReadService implements IEnterpriseReadService {
   constructor(
     @InjectModel(EnterpriseModel.name)
     private readonly enterpriseModel: Model<EnterpriseDocument>,
-  ) {}
+  ) { }
 
   async findById(id: string): Promise<Nullable<EnterpriseDto>> {
     const doc = await this.enterpriseModel.findById(id).lean().exec();

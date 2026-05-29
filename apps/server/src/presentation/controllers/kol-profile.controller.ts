@@ -12,7 +12,7 @@ export class KolProfileController {
   constructor(
     private readonly queryBus: QueryBus,
     private readonly commandBus: CommandBus,
-  ) {}
+  ) { }
 
   @Get()
   @ApiOperation({ summary: 'Search/List KOL profiles' })
@@ -38,7 +38,7 @@ export class KolProfileController {
     return this.commandBus.execute(new KolProfileUpdateCommand(id, input));
   }
 
-  @Delete(':id')
+  @Patch(':id/soft-delete')
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: 'Soft delete KOL profile' })
   async delete(
@@ -48,14 +48,14 @@ export class KolProfileController {
     return this.commandBus.execute(new KolProfileSoftDeleteCommand(id, dto.deletedBy));
   }
 
-  @Delete(':id/hard')
+  @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: 'Hard delete KOL profile' })
   async hardDelete(@Param('id') id: string): Promise<void> {
     return this.commandBus.execute(new KolProfileHardDeleteCommand(id));
   }
 
-  @Post(':id/restore')
+  @Patch(':id/restore')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Restore soft deleted KOL profile' })
   async restore(@Param('id') id: string): Promise<void> {

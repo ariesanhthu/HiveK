@@ -3,7 +3,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { CqrsModule } from '@nestjs/cqrs';
 import { KolProfileModel, KolProfileSchema, PlatformModel, PlatformSchema } from '@/infrastructure/mongo/schemas';
 import { KOL_PROFILE_READ_SERVICE } from '@/application/interfaces';
-import { KOL_PROFILE_REPOSITORY } from '@/core/interfaces';
+import { KOL_PROFILE_REPOSITORY } from '@/core/interfaces/repositories';
 import { MongoKolProfileReadService } from '@/infrastructure/mongo/read-services';
 import { MongoKolProfileRepository } from '@/infrastructure/mongo/repositories';
 import { KolProfileGetListHandler, KolProfileGetByIdHandler, KolProfileGetHandlesDevHandler } from '@/application/queries';
@@ -42,4 +42,4 @@ const Handlers = [
   ],
   exports: [KOL_PROFILE_READ_SERVICE, KOL_PROFILE_REPOSITORY],
 })
-export class KolProfileModule {}
+export class KolProfileModule { }

@@ -1,6 +1,6 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { Inject, NotFoundException } from '@nestjs/common';
-import { USER_REPOSITORY, type IUserRepository } from '@/core/interfaces';
+import { USER_REPOSITORY, type IUserRepository } from '@/core/interfaces/repositories';
 import { UserHardDeleteCommand } from './user-hard-delete.command';
 
 @CommandHandler(UserHardDeleteCommand)
@@ -8,7 +8,7 @@ export class UserHardDeleteCommandHandler implements ICommandHandler<UserHardDel
   constructor(
     @Inject(USER_REPOSITORY)
     private readonly userRepository: IUserRepository,
-  ) {}
+  ) { }
 
   async execute(command: UserHardDeleteCommand): Promise<void> {
     const { id } = command;

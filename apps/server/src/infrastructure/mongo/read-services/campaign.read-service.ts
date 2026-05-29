@@ -3,7 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { CampaignDocument, CampaignModel } from '../schemas';
 import { ICampaignReadService } from '@/application/interfaces';
-import { Nullable } from '@/shared/types';
+import { Nullable } from '@/core/types';
 import { CampaignDto } from '@/application/dtos';
 import { CampaignFilterDto } from '@/application/queries';
 import { PaginatedResponseDto, SortOrder } from '@/shared/dtos/pagination.dto';
@@ -13,7 +13,7 @@ export class MongoCampaignReadService implements ICampaignReadService {
   constructor(
     @InjectModel(CampaignModel.name)
     private readonly campaignModel: Model<CampaignDocument>,
-  ) {}
+  ) { }
 
   async findAll(filters: CampaignFilterDto = {} as any): Promise<PaginatedResponseDto<CampaignDto>> {
     const { cursor, limit = 10, sort = SortOrder.DESC, name, type, ownerId, enterpriseId } = filters;

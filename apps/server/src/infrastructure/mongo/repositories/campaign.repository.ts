@@ -1,17 +1,17 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { ICampaignRepository } from '@/core/interfaces';
+import { ICampaignRepository } from '@/core/interfaces/repositories';
 import { CampaignRoot } from '@/core/aggregate-roots';
 import { CampaignModel, CampaignDocument } from '../schemas';
-import { Nullable } from '@/shared/types';
+import { Nullable } from '@/core/types';
 
 @Injectable()
 export class MongoCampaignRepository implements ICampaignRepository {
   constructor(
     @InjectModel(CampaignModel.name)
     private readonly campaignModel: Model<CampaignDocument>,
-  ) {}
+  ) { }
 
   async findById(id: string): Promise<Nullable<CampaignRoot>> {
     const doc = await this.campaignModel.findById(id).exec();

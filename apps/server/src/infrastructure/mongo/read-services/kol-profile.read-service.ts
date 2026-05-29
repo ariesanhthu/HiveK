@@ -5,7 +5,7 @@ import { IKolProfileReadService } from '@/application/interfaces';
 import { KolProfileDto } from '@/application/dtos';
 import { KolProfileFilterDto } from '@/application/queries';
 import { KolProfileModel, KolProfileDocument } from '../schemas';
-import { JsonRecord, Nullable } from '@/shared/types';
+import { JsonObject, Nullable } from '@/core/types';
 import { PaginatedResponseDto, SortOrder } from '@/shared/dtos/pagination.dto';
 
 @Injectable()
@@ -13,7 +13,7 @@ export class MongoKolProfileReadService implements IKolProfileReadService {
   constructor(
     @InjectModel(KolProfileModel.name)
     private readonly kolProfileModel: Model<KolProfileDocument>,
-  ) {}
+  ) { }
 
   async findAll(filters: KolProfileFilterDto = {} as any): Promise<PaginatedResponseDto<KolProfileDto>> {
     const { cursor, limit = 10, sort = SortOrder.DESC, name, location, gender, isVerified, categories, tags } = filters;

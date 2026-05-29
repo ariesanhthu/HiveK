@@ -2,13 +2,13 @@ import { Injectable, Scope } from '@nestjs/common';
 import { InjectConnection } from '@nestjs/mongoose';
 import { Connection, ClientSession } from 'mongoose';
 import { IUnitOfWork } from '@/application/interfaces';
-import { Nullable } from '@/shared/types';
+import { Nullable } from '@/core/types';
 
 @Injectable({ scope: Scope.REQUEST })
 export class MongoUnitOfWork implements IUnitOfWork {
   private session: Nullable<ClientSession> = null;
 
-  constructor(@InjectConnection() private readonly connection: Connection) {}
+  constructor(@InjectConnection() private readonly connection: Connection) { }
 
   async startTransaction(): Promise<void> {
     this.session = await this.connection.startSession();

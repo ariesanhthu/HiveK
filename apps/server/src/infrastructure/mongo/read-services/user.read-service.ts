@@ -4,7 +4,7 @@ import { Model } from 'mongoose';
 import { IUserReadService } from '@/application/interfaces';
 import { UserDto, UserFilterDto } from '@/application/dtos';
 import { UserDocument, UserModel } from '../schemas';
-import { Nullable } from '@/shared/types';
+import { Nullable } from '@/core/types';
 import { UserType } from '@/core/enums';
 import { PaginatedResponseDto, SortOrder } from '@/shared/dtos/pagination.dto';
 
@@ -13,7 +13,7 @@ export class MongoUserReadService implements IUserReadService {
   constructor(
     @InjectModel(UserModel.name)
     private readonly userModel: Model<UserDocument>,
-  ) {}
+  ) { }
 
   async findById(id: string): Promise<Nullable<UserDto>> {
     const doc = await this.userModel.findById(id).lean().exec();

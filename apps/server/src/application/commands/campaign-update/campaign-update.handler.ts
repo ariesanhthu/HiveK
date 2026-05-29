@@ -1,6 +1,6 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { Inject, NotFoundException } from '@nestjs/common';
-import { CAMPAIGN_REPOSITORY, type ICampaignRepository } from '@/core/interfaces';
+import { CAMPAIGN_REPOSITORY, type ICampaignRepository } from '@/core/interfaces/repositories';
 import { CampaignUpdateCommand } from './campaign-update.command';
 import { CampaignDto } from '@/application/dtos';
 import { CampaignMapper } from '@/application/mappers';
@@ -10,7 +10,7 @@ export class UpdateCampaignHandler implements ICommandHandler<CampaignUpdateComm
   constructor(
     @Inject(CAMPAIGN_REPOSITORY)
     private readonly campaignRepository: ICampaignRepository,
-  ) {}
+  ) { }
 
   async execute(command: CampaignUpdateCommand): Promise<CampaignDto> {
     const { id, input } = command;

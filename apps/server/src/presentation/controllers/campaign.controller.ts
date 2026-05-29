@@ -12,7 +12,7 @@ export class CampaignController {
   constructor(
     private readonly commandBus: CommandBus,
     private readonly queryBus: QueryBus,
-  ) {}
+  ) { }
 
   @Get()
   @ApiOperation({ summary: 'Get all campaigns' })
@@ -41,7 +41,7 @@ export class CampaignController {
     return this.commandBus.execute(new CampaignUpdateCommand(id, input));
   }
 
-  @Delete(':id')
+  @Patch(':id/soft-delete')
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: 'Soft delete campaign' })
   async delete(
@@ -51,14 +51,14 @@ export class CampaignController {
     return this.commandBus.execute(new CampaignSoftDeleteCommand(id, dto.deletedBy));
   }
 
-  @Delete(':id/hard')
+  @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: 'Hard delete campaign' })
   async hardDelete(@Param('id') id: string): Promise<void> {
     return this.commandBus.execute(new CampaignHardDeleteCommand(id));
   }
 
-  @Post(':id/restore')
+  @Patch(':id/restore')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Restore soft deleted campaign' })
   async restore(@Param('id') id: string): Promise<void> {

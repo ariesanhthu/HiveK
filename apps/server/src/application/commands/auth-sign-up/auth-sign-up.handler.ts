@@ -3,7 +3,7 @@ import { AuthSignUpCommand } from './auth-sign-up.command';
 import { AuthSignUpOutputDto } from './auth-sign-up.dto';
 import { Inject } from '@nestjs/common';
 import { ROLE_READ_SERVICE, type IRoleReadService } from '@/application/interfaces';
-import { USER_REPOSITORY, type IUserRepository } from '@/core/interfaces';
+import { USER_REPOSITORY, type IUserRepository } from '@/core/interfaces/repositories';
 import { KOLUserRoot, EnterpriseUserRoot, AdminRoot } from '@/core/aggregate-roots';
 import { UserType } from '@/core/enums';
 import * as bcrypt from 'bcrypt';
@@ -15,7 +15,7 @@ export class AuthSignUpCommandHandler implements ICommandHandler<AuthSignUpComma
     private readonly userRepository: IUserRepository,
     @Inject(ROLE_READ_SERVICE)
     private readonly roleReadService: IRoleReadService,
-  ) {}
+  ) { }
 
   async execute(command: AuthSignUpCommand): Promise<AuthSignUpOutputDto> {
     const { input, type } = command;
@@ -32,7 +32,7 @@ export class AuthSignUpCommandHandler implements ICommandHandler<AuthSignUpComma
     }
 
     const passwordHash = await bcrypt.hash(input.password, 10);
-    
+
     let user;
     const commonProps = {
       email: input.email,

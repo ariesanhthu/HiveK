@@ -1,17 +1,17 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { IEnterpriseRepository } from '@/core/interfaces';
+import { IEnterpriseRepository } from '@/core/interfaces/repositories';
 import { EnterpriseRoot } from '@/core/aggregate-roots';
 import { EnterpriseModel, EnterpriseDocument } from '../schemas';
-import { Nullable } from '@/shared/types';
+import { Nullable } from '@/core/types';
 
 @Injectable()
 export class MongoEnterpriseRepository implements IEnterpriseRepository {
   constructor(
     @InjectModel(EnterpriseModel.name)
     private readonly enterpriseModel: Model<EnterpriseDocument>,
-  ) {}
+  ) { }
 
   async findById(id: string): Promise<Nullable<EnterpriseRoot>> {
     const doc = await this.enterpriseModel.findById(id).exec();

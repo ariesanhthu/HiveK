@@ -5,3 +5,4 @@ export * from './kol-profile.schema';
 export * from './platform.schema';
 export * from './campaign.schema';
 export * from './kpi-log.schema';
+export * from './uploaded-file.schema';

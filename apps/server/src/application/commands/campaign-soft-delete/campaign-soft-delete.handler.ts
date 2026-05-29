@@ -1,6 +1,6 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { Inject, NotFoundException } from '@nestjs/common';
-import { CAMPAIGN_REPOSITORY, type ICampaignRepository } from '@/core/interfaces';
+import { CAMPAIGN_REPOSITORY, type ICampaignRepository } from '@/core/interfaces/repositories';
 import { CampaignSoftDeleteCommand } from './campaign-soft-delete.command';
 
 @CommandHandler(CampaignSoftDeleteCommand)
@@ -8,7 +8,7 @@ export class CampaignSoftDeleteCommandHandler implements ICommandHandler<Campaig
   constructor(
     @Inject(CAMPAIGN_REPOSITORY)
     private readonly campaignRepository: ICampaignRepository,
-  ) {}
+  ) { }
 
   async execute(command: CampaignSoftDeleteCommand): Promise<void> {
     const { id, deletedBy } = command;

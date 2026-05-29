@@ -1,6 +1,6 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { Inject, NotFoundException } from '@nestjs/common';
-import { KOL_PROFILE_REPOSITORY, type IKolProfileRepository } from '@/core/interfaces';
+import { KOL_PROFILE_REPOSITORY, type IKolProfileRepository } from '@/core/interfaces/repositories';
 import { KolProfileRestoreCommand } from './kol-profile-restore.command';
 
 @CommandHandler(KolProfileRestoreCommand)
@@ -8,7 +8,7 @@ export class KolProfileRestoreCommandHandler implements ICommandHandler<KolProfi
   constructor(
     @Inject(KOL_PROFILE_REPOSITORY)
     private readonly kolProfileRepository: IKolProfileRepository,
-  ) {}
+  ) { }
 
   async execute(command: KolProfileRestoreCommand): Promise<void> {
     const { id } = command;

@@ -3,7 +3,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { CqrsModule } from '@nestjs/cqrs';
 import { PlatformModel, PlatformSchema } from '@/infrastructure/mongo/schemas';
 import { PLATFORM_READ_SERVICE } from '@/application/interfaces';
-import { PLATFORM_REPOSITORY } from '@/core/interfaces';
+import { PLATFORM_REPOSITORY } from '@/core/interfaces/repositories';
 import { MongoPlatformReadService } from '@/infrastructure/mongo/read-services';
 import { MongoPlatformRepository } from '@/infrastructure/mongo/repositories';
 import { CreatePlatformHandler, UpdatePlatformHandler, PlatformSoftDeleteCommandHandler, PlatformHardDeleteCommandHandler, PlatformRestoreCommandHandler } from '@/application/commands';
@@ -41,4 +41,4 @@ const Handlers = [
   ],
   exports: [PLATFORM_READ_SERVICE, PLATFORM_REPOSITORY],
 })
-export class PlatformModule {}
+export class PlatformModule { }

@@ -1,7 +1,7 @@
 import { IBaseReadService } from './base.read-service.interface';
 import { PlatformDto } from '@/application/dtos';
 import { PlatformFilterDto } from '@/application/queries';
-import { Nullable } from '@/shared/types';
+import { Nullable } from '@/core/types';
 
 export const PLATFORM_READ_SERVICE = Symbol('PLATFORM_READ_SERVICE');
 

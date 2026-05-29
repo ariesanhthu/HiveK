@@ -1,0 +1,7 @@
+export enum TargetType {
+  USER = 'USER',
+  KOL_PROFILE = 'KOL_PROFILE',
+  PLATFORM = 'PLATFORM',
+  CAMPAIGN = 'CAMPAIGN',
+  ENTERPRISE = 'ENTERPRISE',
+}

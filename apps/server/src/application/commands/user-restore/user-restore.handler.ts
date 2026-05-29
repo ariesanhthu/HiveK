@@ -1,6 +1,6 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { Inject, NotFoundException } from '@nestjs/common';
-import { USER_REPOSITORY, type IUserRepository } from '@/core/interfaces';
+import { USER_REPOSITORY, type IUserRepository } from '@/core/interfaces/repositories';
 import { UserRestoreCommand } from './user-restore.command';
 
 @CommandHandler(UserRestoreCommand)
@@ -8,7 +8,7 @@ export class UserRestoreCommandHandler implements ICommandHandler<UserRestoreCom
   constructor(
     @Inject(USER_REPOSITORY)
     private readonly userRepository: IUserRepository,
-  ) {}
+  ) { }
 
   async execute(command: UserRestoreCommand): Promise<void> {
     const { id } = command;

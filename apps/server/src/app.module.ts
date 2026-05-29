@@ -16,6 +16,7 @@ import { PlatformModule } from './infrastructure/modules/platform.module';
 import { KolProfileModule } from './infrastructure/modules/kol-profile.module';
 import { AnalyticsModule } from './infrastructure/modules/analytics.module';
 import { CampaignModule } from './infrastructure/modules/campaign.module';
+import { UploadedFileModule } from './infrastructure/modules/uploaded-file.module';
 import { TestController } from './presentation/controllers/test/test.controller';
 import { TestRmqHandler } from './presentation/controllers/test/test-rmq.controller';
 
@@ -33,6 +34,7 @@ import { TestRmqHandler } from './presentation/controllers/test/test-rmq.control
     KolProfileModule,
     AnalyticsModule,
     CampaignModule,
+    UploadedFileModule,
     RabbitMQModule,
     WebSocketModule,
     ThrottlerModule.forRoot([

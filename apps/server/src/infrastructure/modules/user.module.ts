@@ -5,11 +5,11 @@ import { UserController } from '@/presentation/controllers';
 import { UserGetByIdHandler } from '@/application/queries';
 import { UserUpdateProfileCommandHandler, UserSoftDeleteCommandHandler, UserHardDeleteCommandHandler, UserRestoreCommandHandler } from '@/application/commands';
 import { USER_READ_SERVICE } from '@/application/interfaces';
-import { USER_REPOSITORY } from '@/core/interfaces';
+import { USER_REPOSITORY } from '@/core/interfaces/repositories';
 import { MongoUserReadService } from '@/infrastructure/mongo/read-services';
 import { MongoUserRepository } from '@/infrastructure/mongo/repositories';
-import { 
-  UserModel, UserSchema, 
+import {
+  UserModel, UserSchema,
   AdminModel, AdminSchema,
   EnterpriseUserModel, EnterpriseUserSchema,
   KOLUserModel, KOLUserSchema
@@ -17,9 +17,10 @@ import {
 
 @Module({
   imports: [
+    CqrsModule,
     MongooseModule.forFeature([
-      { 
-        name: UserModel.name, 
+      {
+        name: UserModel.name,
         schema: UserSchema,
         discriminators: [
           { name: AdminModel.name, schema: AdminSchema },
@@ -47,4 +48,4 @@ import {
   ],
   exports: [USER_READ_SERVICE, USER_REPOSITORY, MongooseModule],
 })
-export class UserModule {}
+export class UserModule { }

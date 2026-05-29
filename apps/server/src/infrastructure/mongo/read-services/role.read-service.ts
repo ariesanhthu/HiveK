@@ -4,7 +4,7 @@ import { Model } from 'mongoose';
 import { IRoleReadService } from '@/application/interfaces';
 import { RoleDto, RoleFilterDto } from '@/application/dtos';
 import { RoleDocument, RoleModel } from '../schemas/role.schema';
-import { Nullable, JsonRecord } from '@/shared/types';
+import { Nullable, JsonObject } from '@/core/types';
 import { PaginatedResponseDto, SortOrder } from '@/shared/dtos/pagination.dto';
 
 @Injectable()
@@ -12,7 +12,7 @@ export class MongoRoleReadService implements IRoleReadService {
   constructor(
     @InjectModel(RoleModel.name)
     private readonly roleModel: Model<RoleDocument>,
-  ) {}
+  ) { }
 
   async findById(id: string): Promise<Nullable<RoleDto>> {
     const doc = await this.roleModel.findById(id).lean().exec();

@@ -1,6 +1,6 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { Inject, NotFoundException } from '@nestjs/common';
-import { PLATFORM_REPOSITORY, type IPlatformRepository } from '@/core/interfaces';
+import { PLATFORM_REPOSITORY, type IPlatformRepository } from '@/core/interfaces/repositories';
 import { PlatformRestoreCommand } from './platform-restore.command';
 
 @CommandHandler(PlatformRestoreCommand)
@@ -8,7 +8,7 @@ export class PlatformRestoreCommandHandler implements ICommandHandler<PlatformRe
   constructor(
     @Inject(PLATFORM_REPOSITORY)
     private readonly platformRepository: IPlatformRepository,
-  ) {}
+  ) { }
 
   async execute(command: PlatformRestoreCommand): Promise<void> {
     const { id } = command;

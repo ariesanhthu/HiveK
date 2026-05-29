@@ -1,6 +1,6 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { Inject, NotFoundException } from '@nestjs/common';
-import { PLATFORM_REPOSITORY, type IPlatformRepository } from '@/core/interfaces';
+import { PLATFORM_REPOSITORY, type IPlatformRepository } from '@/core/interfaces/repositories';
 import { PlatformSoftDeleteCommand } from './platform-soft-delete.command';
 
 @CommandHandler(PlatformSoftDeleteCommand)
@@ -8,7 +8,7 @@ export class PlatformSoftDeleteCommandHandler implements ICommandHandler<Platfor
   constructor(
     @Inject(PLATFORM_REPOSITORY)
     private readonly platformRepository: IPlatformRepository,
-  ) {}
+  ) { }
 
   async execute(command: PlatformSoftDeleteCommand): Promise<void> {
     const { id, deletedBy } = command;

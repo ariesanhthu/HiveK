@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Delete, Param, Query, HttpCode, HttpStatus } from '@nestjs/common';
+import { Controller, Get, Patch, Delete, Param, Query, HttpCode, HttpStatus } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { EnterpriseGetByIdQuery } from '@/application/queries';
 import { EnterpriseSoftDeleteCommand, EnterpriseHardDeleteCommand, EnterpriseRestoreCommand } from '@/application/commands';
@@ -11,7 +11,7 @@ export class EnterpriseController {
   constructor(
     private readonly commandBus: CommandBus,
     private readonly queryBus: QueryBus,
-  ) {}
+  ) { }
 
   @Get(':id')
   @ApiOperation({ summary: 'Get enterprise by ID' })
@@ -22,7 +22,7 @@ export class EnterpriseController {
     return enterprise;
   }
 
-  @Delete(':id')
+  @Patch(':id/soft-delete')
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: 'Soft delete enterprise' })
   async delete(
@@ -32,14 +32,14 @@ export class EnterpriseController {
     return this.commandBus.execute(new EnterpriseSoftDeleteCommand(id, dto.deletedBy));
   }
 
-  @Delete(':id/hard')
+  @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: 'Hard delete enterprise' })
   async hardDelete(@Param('id') id: string): Promise<void> {
     return this.commandBus.execute(new EnterpriseHardDeleteCommand(id));
   }
 
-  @Post(':id/restore')
+  @Patch(':id/restore')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Restore soft deleted enterprise' })
   async restore(@Param('id') id: string): Promise<void> {

@@ -26,19 +26,19 @@ export class AuthController {
     private readonly queryBus: QueryBus,
   ) {}
 
-  @Post('auth-sign-up/kol')
+  @Post('sign-up/kol')
   @ApiOperation({ summary: 'Sign up as KOL' })
   async signUpKOL(@Body() input: AuthSignUpInputDto) {
     return this.commandBus.execute(new AuthSignUpCommand(UserType.KOL, input));
   }
 
-  @Post('auth-sign-up/enterprise')
+  @Post('sign-up/enterprise')
   @ApiOperation({ summary: 'Sign up as Enterprise' })
   async signUpEnterprise(@Body() input: AuthSignUpInputDto) {
     return this.commandBus.execute(new AuthSignUpCommand(UserType.ENTERPRISE, input));
   }
 
-  @Post('auth-sign-in')
+  @Post('sign-in')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Sign in' })
   async signIn(@Body() input: AuthSignInInputDto) {
@@ -52,14 +52,14 @@ export class AuthController {
     return this.commandBus.execute(new AuthRefreshTokenCommand(input));
   }
 
-  @Post('auth-sign-out')
+  @Post('sign-out')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Sign out' })
   async signOut(@Body() input: AuthSignOutInputDto) {
     return this.commandBus.execute(new AuthSignOutCommand(input));
   }
 
-  @Post('auth-reset-password')
+  @Post('reset-password')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Reset password' })
   async resetPassword(@Body() input: AuthResetPasswordInputDto) {

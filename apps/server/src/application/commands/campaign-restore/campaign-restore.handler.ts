@@ -1,6 +1,6 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { Inject, NotFoundException } from '@nestjs/common';
-import { CAMPAIGN_REPOSITORY, type ICampaignRepository } from '@/core/interfaces';
+import { CAMPAIGN_REPOSITORY, type ICampaignRepository } from '@/core/interfaces/repositories';
 import { CampaignRestoreCommand } from './campaign-restore.command';
 
 @CommandHandler(CampaignRestoreCommand)
@@ -8,7 +8,7 @@ export class CampaignRestoreCommandHandler implements ICommandHandler<CampaignRe
   constructor(
     @Inject(CAMPAIGN_REPOSITORY)
     private readonly campaignRepository: ICampaignRepository,
-  ) {}
+  ) { }
 
   async execute(command: CampaignRestoreCommand): Promise<void> {
     const { id } = command;

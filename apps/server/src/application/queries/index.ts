@@ -34,3 +34,10 @@ export * from './user-get-by-id/user-get-by-id.handler';
 
 export * from './enterprise-get-by-id/enterprise-get-by-id.query';
 export * from './enterprise-get-by-id/enterprise-get-by-id.handler';
+
+export * from './uploaded-file-get-by-id/uploaded-file-get-by-id.query';
+export * from './uploaded-file-get-by-id/uploaded-file-get-by-id.handler';
+
+export * from './uploaded-file-get-list/uploaded-file-get-list.query';
+export * from './uploaded-file-get-list/uploaded-file-get-list.handler';
+export * from './uploaded-file-get-list/uploaded-file-get-list.dto';

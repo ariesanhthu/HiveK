@@ -1,6 +1,6 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { Inject, NotFoundException } from '@nestjs/common';
-import { ROLE_REPOSITORY, type IRoleRepository } from '@/core/interfaces';
+import { ROLE_REPOSITORY, type IRoleRepository } from '@/core/interfaces/repositories';
 import { RoleHardDeleteCommand } from './role-hard-delete.command';
 
 @CommandHandler(RoleHardDeleteCommand)
@@ -8,7 +8,7 @@ export class RoleHardDeleteCommandHandler implements ICommandHandler<RoleHardDel
   constructor(
     @Inject(ROLE_REPOSITORY)
     private readonly roleRepository: IRoleRepository,
-  ) {}
+  ) { }
 
   async execute(command: RoleHardDeleteCommand): Promise<void> {
     const { id } = command;

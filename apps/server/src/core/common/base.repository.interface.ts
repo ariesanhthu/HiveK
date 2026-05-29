@@ -1,4 +1,4 @@
-import { Nullable } from '@shared/types';
+import { Nullable } from '@core/types';
 import { BaseAggregateRoot } from './base.aggregate-root';
 
 /**

@@ -3,7 +3,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { CqrsModule } from '@nestjs/cqrs';
 import { RoleModel, RoleSchema } from '@/infrastructure/mongo/schemas';
 import { ROLE_READ_SERVICE } from '@/application/interfaces';
-import { ROLE_REPOSITORY } from '@/core/interfaces';
+import { ROLE_REPOSITORY } from '@/core/interfaces/repositories';
 import { MongoRoleReadService } from '@/infrastructure/mongo/read-services';
 import { MongoRoleRepository } from '@/infrastructure/mongo/repositories';
 import { RoleSeedService } from '@/infrastructure/mongo/seeding/role-seed.service';
@@ -32,4 +32,4 @@ import { RoleSoftDeleteCommandHandler, RoleHardDeleteCommandHandler, RoleRestore
   ],
   exports: [ROLE_READ_SERVICE, ROLE_REPOSITORY, MongooseModule],
 })
-export class RoleModule {}
+export class RoleModule { }

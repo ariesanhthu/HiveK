@@ -1,6 +1,6 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { Inject } from '@nestjs/common';
-import { CAMPAIGN_REPOSITORY, type ICampaignRepository } from '@/core/interfaces';
+import { CAMPAIGN_REPOSITORY, type ICampaignRepository } from '@/core/interfaces/repositories';
 import { CampaignRoot } from '@/core/aggregate-roots';
 import { CampaignCreateCommand } from './campaign-create.command';
 import { CampaignDto } from '@/application/dtos';
@@ -11,7 +11,7 @@ export class CreateCampaignHandler implements ICommandHandler<CampaignCreateComm
   constructor(
     @Inject(CAMPAIGN_REPOSITORY)
     private readonly campaignRepository: ICampaignRepository,
-  ) {}
+  ) { }
 
   async execute(command: CampaignCreateCommand): Promise<CampaignDto> {
     const { input } = command;
