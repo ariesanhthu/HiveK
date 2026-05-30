@@ -2,9 +2,11 @@ import { Global, Module } from '@nestjs/common';
 import { WebSocketGateway } from './websocket.gateway';
 import { WebSocketService } from './websocket.service';
 import { WEBSOCKET_SERVICE } from '@/application/interfaces';
+import { AuthModule } from '../modules/auth.module';
 
 @Global()
 @Module({
+  imports: [AuthModule],
   providers: [
     WebSocketGateway,
     {

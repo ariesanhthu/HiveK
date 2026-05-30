@@ -34,8 +34,8 @@ import { NotificationSoftDeleteCommandHandler } from '@/application/commands/not
 import { NotificationGetListQueryHandler } from '@/application/queries/notification-get-list/notification-get-list.handler';
 
 // Event Handlers
-import { LinkInAppNotificationHandler } from '@/application/events/notification-dispatched/link-in-app-notification.handler';
-import { LinkEmailNotificationHandler } from '@/application/events/notification-dispatched/link-email-notification.handler';
+import { InAppNotificationHandler } from '@/application/events/notification-dispatched/in-app-notification.handler';
+import { EmailNotificationHandler } from '@/application/events/notification-dispatched/email-notification.handler';
 
 // Controller
 import { NotificationController } from '@/presentation/controllers/notification.controller';
@@ -52,8 +52,8 @@ const QUERY_HANDLERS = [
 ];
 
 const EVENT_HANDLERS = [
-  LinkInAppNotificationHandler,
-  LinkEmailNotificationHandler,
+  InAppNotificationHandler,
+  EmailNotificationHandler,
 ];
 
 @Module({
@@ -90,4 +90,4 @@ const EVENT_HANDLERS = [
     USER_NOTIFICATION_REPOSITORY,
   ],
 })
-export class NotificationModule {}
+export class NotificationModule { }
