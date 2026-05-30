@@ -15,3 +15,4 @@ export * from './read-service/base.read-service.interface';
 export * from './logger.interface';
 export * from './message-queue.interface';
 export * from './web-socket.interface';
+export * from './mailer.interface';

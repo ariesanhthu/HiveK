@@ -8,6 +8,10 @@
       {
         "include": "config/**/*.json",
         "outDir": "dist/src"
+      },
+      {
+        "include": "infrastructure/mailer/templates/**/*.hbs",
+        "outDir": "dist/src"
       }
     ]
   }

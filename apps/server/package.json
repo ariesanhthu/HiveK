@@ -20,6 +20,7 @@
     "test:e2e": "jest --config ./tests/jest-e2e.json --runInBand --forceExit"
   },
   "dependencies": {
+    "@nestjs-modules/mailer": "^2.3.6",
     "@nestjs/axios": "^4.0.1",
     "@nestjs/common": "^11.0.1",
     "@nestjs/config": "^4.0.2",
@@ -41,10 +42,12 @@
     "axios": "^1.12.2",
     "bcrypt": "^6.0.0",
     "cloudinary": "^2.10.0",
+    "handlebars": "^4.7.9",
     "helmet": "^8.1.0",
     "jsonwebtoken": "^9.0.3",
     "mongoose": "^9.3.0",
     "nestjs-zod": "^5.3.0",
+    "nodemailer": "^8.0.10",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1",
     "sharp": "^0.34.5",
@@ -63,6 +66,7 @@
     "@types/jsonwebtoken": "^9.0.10",
     "@types/mongoose": "^5.11.96",
     "@types/node": "^22.10.7",
+    "@types/nodemailer": "^8.0.0",
     "@types/supertest": "^6.0.2",
     "eslint": "^9.18.0",
     "eslint-config-prettier": "^10.0.1",
