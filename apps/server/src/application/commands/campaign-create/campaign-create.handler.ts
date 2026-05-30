@@ -66,11 +66,7 @@ export class CreateCampaignHandler implements ICommandHandler<CampaignCreateComm
           url: chan.url,
         })),
       })),
-      raw: input.raw.map((r) => ({
-        fileId: r.fileId,
-        rawText: r.rawText,
-        inference: r.inference,
-      })),
+      raw: [],
     });
 
     await this.campaignRepository.save(campaign);

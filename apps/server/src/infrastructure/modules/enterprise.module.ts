@@ -18,6 +18,7 @@ import {
 } from '@/application/commands';
 
 import { UploadedFileModule } from './uploaded-file.module';
+import { AuthModule } from './auth.module';
 
 import { LinkEnterpriseLogoHandler } from '@/application/events';
 
@@ -25,6 +26,7 @@ import { LinkEnterpriseLogoHandler } from '@/application/events';
   imports: [
     CqrsModule,
     UploadedFileModule,
+    AuthModule,
     MongooseModule.forFeature([
       { name: EnterpriseModel.name, schema: EnterpriseSchema },
     ]),

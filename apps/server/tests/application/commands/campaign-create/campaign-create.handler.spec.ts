@@ -1,7 +1,5 @@
 import { CreateCampaignHandler } from '@/application/commands/campaign-create/campaign-create.handler';
 import { CampaignCreateCommand } from '@/application/commands/campaign-create/campaign-create.command';
-import { CampaignRoot } from '@/core/aggregate-roots';
-import { CampaignMapper } from '@/application/mappers';
 
 describe('CreateCampaignHandler', () => {
   let handler: CreateCampaignHandler;
@@ -63,17 +61,10 @@ describe('CreateCampaignHandler', () => {
           channels: [
             {
               type: 'social',
-              platform: 'Facebook',
+               platform: 'Facebook',
               url: 'https://facebook.com',
             },
           ],
-        },
-      ],
-      raw: [
-        {
-          fileId: 'file-123',
-          rawText: 'Raw data input text',
-          inference: 'Extracted product: T-Shirt',
         },
       ],
     };

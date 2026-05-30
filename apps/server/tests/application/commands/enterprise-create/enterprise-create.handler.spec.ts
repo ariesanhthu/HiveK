@@ -5,22 +5,17 @@ import { ConflictException } from '@nestjs/common';
 describe('EnterpriseCreateCommandHandler', () => {
   let handler: EnterpriseCreateCommandHandler;
   let mockEnterpriseRepository: any;
-  let mockUploadedFileRepository: any;
 
   beforeEach(() => {
     mockEnterpriseRepository = {
       findByUserId: jest.fn(),
       save: jest.fn(),
     };
-    mockUploadedFileRepository = {
-      findById: jest.fn(),
-    };
-    handler = new EnterpriseCreateCommandHandler(mockEnterpriseRepository, mockUploadedFileRepository);
+    handler = new EnterpriseCreateCommandHandler(mockEnterpriseRepository);
   });
 
   it('should create enterprise successfully', async () => {
     mockEnterpriseRepository.findByUserId.mockResolvedValue(null);
-    mockUploadedFileRepository.findById.mockResolvedValue({});
 
     const input = {
       companyName: 'Test Company',
@@ -29,7 +24,6 @@ describe('EnterpriseCreateCommandHandler', () => {
       contactPhone: '1234567890',
       website: 'https://test.com',
       taxId: 'TAX123',
-      logoUrlId: 'logo-123',
     };
 
     const command = new EnterpriseCreateCommand('user-123', input);
@@ -39,7 +33,6 @@ describe('EnterpriseCreateCommandHandler', () => {
     expect(result.companyName).toBe('Test Company');
     expect(result.userId).toBe('user-123');
     expect(mockEnterpriseRepository.findByUserId).toHaveBeenCalledWith('user-123');
-    expect(mockUploadedFileRepository.findById).toHaveBeenCalledWith('logo-123');
     expect(mockEnterpriseRepository.save).toHaveBeenCalled();
   });
 

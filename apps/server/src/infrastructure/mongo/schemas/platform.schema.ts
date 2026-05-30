@@ -16,8 +16,8 @@ export class PlatformModel {
   @Prop({ type: String, required: true, enum: PlatformApiStatus, default: PlatformApiStatus.STABLE })
   api_status: PlatformApiStatus;
 
-  @Prop({ required: true })
-  icon: string;
+  @Prop({ type: String, default: null })
+  icon: string | null;
 
   @Prop({ type: Date, default: null })
   delete_at: Date | null;

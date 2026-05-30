@@ -11,8 +11,6 @@ export class CreatePlatformHandler implements ICommandHandler<PlatformCreateComm
   constructor(
     @Inject(PLATFORM_REPOSITORY)
     private readonly platformRepository: IPlatformRepository,
-    @Inject(UPLOADED_FILE_REPOSITORY)
-    private readonly uploadedFileRepository: IUploadedFileRepository,
   ) { }
 
   async execute(command: PlatformCreateCommand): Promise<PlatformDto> {
@@ -23,16 +21,10 @@ export class CreatePlatformHandler implements ICommandHandler<PlatformCreateComm
       throw new ConflictException(`Platform with name ${input.name} already exists`);
     }
 
-    const fileExists = await this.uploadedFileRepository.findById(input.icon);
-    if (!fileExists) {
-      throw new NotFoundException(`Icon file with ID ${input.icon} not found`);
-    }
-
     const platform = PlatformRoot.create({
       name: input.name,
       baseUrl: input.baseUrl,
       apiStatus: input.apiStatus,
-      icon: input.icon,
     });
 
     await this.platformRepository.save(platform);

@@ -6,7 +6,7 @@ export interface PlatformProps {
   name: string;
   baseUrl: string;
   apiStatus: PlatformApiStatus;
-  icon: string;
+  icon: Nullable<string>;
   deleteAt: Nullable<Date>;
   deleteBy: Nullable<string>;
   createdAt: Date;
@@ -17,7 +17,6 @@ export interface PlatformCreateProps {
   name: string;
   baseUrl: string;
   apiStatus: PlatformApiStatus;
-  icon: string;
 }
 
 /**
@@ -32,6 +31,7 @@ export class PlatformRoot extends BaseAggregateRoot<PlatformProps> {
     const now = new Date();
     return new PlatformRoot({
       ...props,
+      icon: null,
       name: props.name.toLowerCase(),
       createdAt: now,
       updatedAt: now,

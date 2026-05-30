@@ -8,7 +8,6 @@ export const EnterpriseCreateInputSchema = z.object({
   contactPhone: z.string(),
   website: z.url().nullable().optional(),
   taxId: z.string().nullable().optional(),
-  logoUrlId: z.string().nullable().optional(),
 });
 
 export class EnterpriseCreateInputDto extends createZodDto(EnterpriseCreateInputSchema) {}
