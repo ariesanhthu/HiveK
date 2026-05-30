@@ -4,10 +4,13 @@ import { INestApplication } from '@nestjs/common';
 import { getModelToken } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { AppModule } from './../../src/app.module';
+import { AUTH_JWT_SERVICE, type IAuthJwtService } from '@/application/interfaces/auth-jwt.interface';
 
 describe('Platform Domain (e2e)', () => {
   let app: INestApplication;
   let platformModel: Model<any>;
+  let jwtService: IAuthJwtService;
+  let authToken: string;
 
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -16,6 +19,13 @@ describe('Platform Domain (e2e)', () => {
 
     app = moduleFixture.createNestApplication();
     await app.init();
+
+    jwtService = app.get<IAuthJwtService>(AUTH_JWT_SERVICE);
+    authToken = jwtService.sign({
+      sub: '64f7b2c9e8b3c9001f3e4e94',
+      email: 'platform-tester@hivek.com',
+      role: 'ADMIN',
+    });
 
     platformModel = app.get<Model<any>>(getModelToken('PlatformModel'));
 
@@ -32,6 +42,7 @@ describe('Platform Domain (e2e)', () => {
     // 1. Create Platform
     const createRes = await request(app.getHttpServer())
       .post('/platforms')
+      .set('Authorization', `Bearer ${authToken}`)
       .send({
         name: 'E2E Platform',
         baseUrl: 'https://e2e-platform.com',
@@ -60,6 +71,7 @@ describe('Platform Domain (e2e)', () => {
     // 4. Update Platform
     const updateRes = await request(app.getHttpServer())
       .patch(`/platforms/${platformId}`)
+      .set('Authorization', `Bearer ${authToken}`)
       .send({
         name: 'E2E Platform Updated',
         apiStatus: 'maintenance',
@@ -72,6 +84,7 @@ describe('Platform Domain (e2e)', () => {
     // 5. Soft Delete
     await request(app.getHttpServer())
       .patch(`/platforms/${platformId}/soft-delete`)
+      .set('Authorization', `Bearer ${authToken}`)
       .query({ deletedBy: 'E2E-Tester' })
       .expect(204);
 
@@ -83,6 +96,7 @@ describe('Platform Domain (e2e)', () => {
     // 7. Hard Delete
     await request(app.getHttpServer())
       .delete(`/platforms/${platformId}`)
+      .set('Authorization', `Bearer ${authToken}`)
       .expect(204);
 
     // 8. Verify Gone

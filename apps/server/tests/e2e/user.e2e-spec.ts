@@ -4,10 +4,13 @@ import { INestApplication } from '@nestjs/common';
 import { getModelToken } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { AppModule } from './../../src/app.module';
+import { AUTH_JWT_SERVICE, type IAuthJwtService } from '@/application/interfaces/auth-jwt.interface';
 
 describe('User Domain (e2e)', () => {
   let app: INestApplication;
   let userModel: Model<any>;
+  let jwtService: IAuthJwtService;
+  let authToken: string;
   const testUserId = '64f7b2c9e8b3c9001f3e4e91';
 
   beforeAll(async () => {
@@ -17,6 +20,13 @@ describe('User Domain (e2e)', () => {
 
     app = moduleFixture.createNestApplication();
     await app.init();
+
+    jwtService = app.get<IAuthJwtService>(AUTH_JWT_SERVICE);
+    authToken = jwtService.sign({
+      sub: testUserId,
+      email: 'user-e2e@hivek.com',
+      role: 'KOL',
+    });
 
     userModel = app.get<Model<any>>(getModelToken('UserModel'));
 
@@ -45,6 +55,7 @@ describe('User Domain (e2e)', () => {
     // 1. Get by ID
     const getRes = await request(app.getHttpServer())
       .get(`/users/${testUserId}`)
+      .set('Authorization', `Bearer ${authToken}`)
       .expect(200);
 
     expect(getRes.body.email).toBe('user-e2e@hivek.com');
@@ -52,22 +63,26 @@ describe('User Domain (e2e)', () => {
     // 2. Soft delete
     await request(app.getHttpServer())
       .patch(`/users/${testUserId}/soft-delete`)
+      .set('Authorization', `Bearer ${authToken}`)
       .query({ deletedBy: 'E2E-Admin' })
       .expect(204);
 
     // 3. Restore
     await request(app.getHttpServer())
       .patch(`/users/${testUserId}/restore`)
+      .set('Authorization', `Bearer ${authToken}`)
       .expect(200);
 
     // 4. Hard delete
     await request(app.getHttpServer())
       .delete(`/users/${testUserId}`)
+      .set('Authorization', `Bearer ${authToken}`)
       .expect(204);
 
     // 5. Get by ID - should return 500 (since query handler throws generic Error)
     await request(app.getHttpServer())
       .get(`/users/${testUserId}`)
+      .set('Authorization', `Bearer ${authToken}`)
       .expect(500);
   });
 });

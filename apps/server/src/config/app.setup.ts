@@ -1,8 +1,8 @@
 import { INestApplication, Logger } from '@nestjs/common';
 import { ZodValidationPipe } from 'nestjs-zod';
 import helmet from 'helmet';
-import { LoggingInterceptor } from '@/presentation/middleware/logging.interceptor';
-import { HttpExceptionFilter } from '@/presentation/middleware/http-exception.filter';
+import { LoggingInterceptor } from '@/presentation/middleware/interceptors/logging.interceptor';
+import { HttpExceptionFilter } from '@/presentation/middleware/filters/http-exception.filter';
 import { NestConfigService } from '@infrastructure/nest-config/nest-config.service';
 
 export function setupApplication(app: INestApplication): void {

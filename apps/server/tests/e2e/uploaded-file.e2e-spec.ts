@@ -5,10 +5,13 @@ import { getModelToken } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { AppModule } from './../../src/app.module';
 import { STORAGE_SERVICE } from '@/core/interfaces/storage';
+import { AUTH_JWT_SERVICE, type IAuthJwtService } from '@/application/interfaces/auth-jwt.interface';
 
 describe('Uploaded File Domain (e2e)', () => {
   let app: INestApplication;
   let fileModel: Model<any>;
+  let jwtService: IAuthJwtService;
+  let authToken: string;
 
   const mockStorageService = {
     upload: jest.fn().mockResolvedValue({
@@ -32,6 +35,13 @@ describe('Uploaded File Domain (e2e)', () => {
     app = moduleFixture.createNestApplication();
     await app.init();
 
+    jwtService = app.get<IAuthJwtService>(AUTH_JWT_SERVICE);
+    authToken = jwtService.sign({
+      sub: '64f7b2c9e8b3c9001f3e4e94',
+      email: 'upload-tester@hivek.com',
+      role: 'ADMIN',
+    });
+
     fileModel = app.get<Model<any>>(getModelToken('UploadedFileModel'));
 
     // Clean up E2E file documents
@@ -47,6 +57,7 @@ describe('Uploaded File Domain (e2e)', () => {
     // 1. Upload File
     const uploadRes = await request(app.getHttpServer())
       .post('/upload')
+      .set('Authorization', `Bearer ${authToken}`)
       .attach('file', Buffer.from('fake image content'), 'test_avatar.jpg')
       .field('targetType', 'CAMPAIGN')
       .field('targetId', '64f7b2c9e8b3c9001f3e4e94')
@@ -59,6 +70,7 @@ describe('Uploaded File Domain (e2e)', () => {
     // 2. Get uploaded file metadata
     const getRes = await request(app.getHttpServer())
       .get(`/upload/${fileId}`)
+      .set('Authorization', `Bearer ${authToken}`)
       .expect(200);
 
     expect(getRes.body.url).toBe('https://cloudinary.com/test-file.jpg');
@@ -66,6 +78,7 @@ describe('Uploaded File Domain (e2e)', () => {
     // 3. Find All uploaded files
     const listRes = await request(app.getHttpServer())
       .get('/upload')
+      .set('Authorization', `Bearer ${authToken}`)
       .query({ targetId: '64f7b2c9e8b3c9001f3e4e94' })
       .expect(200);
 
@@ -75,22 +88,26 @@ describe('Uploaded File Domain (e2e)', () => {
     // 4. Soft Delete
     await request(app.getHttpServer())
       .patch(`/upload/${fileId}/soft-delete`)
+      .set('Authorization', `Bearer ${authToken}`)
       .query({ deletedBy: 'E2E-Tester' })
       .expect(204);
 
     // 5. Restore
     await request(app.getHttpServer())
       .patch(`/upload/${fileId}/restore`)
+      .set('Authorization', `Bearer ${authToken}`)
       .expect(200);
 
     // 6. Hard Delete
     await request(app.getHttpServer())
       .delete(`/upload/${fileId}`)
+      .set('Authorization', `Bearer ${authToken}`)
       .expect(204);
 
     // 7. Verify Gone
     await request(app.getHttpServer())
       .get(`/upload/${fileId}`)
+      .set('Authorization', `Bearer ${authToken}`)
       .expect(404);
   });
 });

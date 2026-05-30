@@ -1,10 +1,11 @@
-import { Controller, Get, Post, Patch, Delete, Body, Param, Query, HttpCode, HttpStatus } from '@nestjs/common';
+import { Controller, Get, Post, Patch, Delete, Body, Param, Query, HttpCode, HttpStatus, UseGuards } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
 import { PlatformCreateCommand, PlatformUpdateCommand, PlatformSoftDeleteCommand, PlatformHardDeleteCommand, PlatformRestoreCommand, PlatformCreateInputDto, PlatformUpdateInputDto } from '@/application/commands';
 import { PlatformGetListQuery, PlatformGetByIdQuery, PlatformFilterDto } from '@/application/queries';
 import { PlatformDto, SoftDeleteInputDto } from '@/application/dtos';
 import { PaginatedResponseDto } from '@/shared/dtos/pagination.dto';
+import { JwtAuthGuard } from '../middleware/guards';
 
 @ApiTags('platforms')
 @Controller('platforms')
@@ -27,12 +28,14 @@ export class PlatformController {
   }
 
   @Post()
+  @UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: 'Create new platform' })
   async create(@Body() input: PlatformCreateInputDto): Promise<PlatformDto> {
     return this.commandBus.execute(new PlatformCreateCommand(input));
   }
 
   @Patch(':id')
+  @UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: 'Update platform' })
   async update(
     @Param('id') id: string,
@@ -42,6 +45,7 @@ export class PlatformController {
   }
 
   @Patch(':id/soft-delete')
+  @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: 'Soft delete platform' })
   async delete(
@@ -52,6 +56,7 @@ export class PlatformController {
   }
 
   @Delete(':id')
+  @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: 'Hard delete platform' })
   async hardDelete(@Param('id') id: string): Promise<void> {

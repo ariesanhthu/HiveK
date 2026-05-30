@@ -4,8 +4,11 @@ import { UserGetByIdQuery } from '@/application/queries';
 import { UserSoftDeleteCommand, UserHardDeleteCommand, UserRestoreCommand } from '@/application/commands';
 import { UserDto, SoftDeleteInputDto } from '@/application/dtos';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
+import { JwtAuthGuard } from '../middleware/guards';
+import { UseGuards } from '@nestjs/common';
 
 @ApiTags('users')
+@UseGuards(JwtAuthGuard)
 @Controller('users')
 export class UserController {
   constructor(

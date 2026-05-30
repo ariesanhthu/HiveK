@@ -33,6 +33,7 @@ describe('InAppNotificationHandler', () => {
 
     mockWebSocketService = {
       emitToUser: jest.fn(),
+      disconnectUser: jest.fn().mockResolvedValue(undefined),
     };
 
     mockLogger = {

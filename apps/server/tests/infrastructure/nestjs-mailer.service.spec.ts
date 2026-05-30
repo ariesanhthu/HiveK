@@ -14,6 +14,7 @@ describe('NestjsMailerService', () => {
     };
 
     mockLogger = {
+      setContext: jest.fn(),
       log: jest.fn(),
       error: jest.fn(),
       warn: jest.fn(),

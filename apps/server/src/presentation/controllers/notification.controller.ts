@@ -1,7 +1,7 @@
 import { Controller, Get, Patch, Param, Query, HttpCode, HttpStatus, UseGuards } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
-import { JwtAuthGuard } from '@/presentation/middleware/jwt-auth.guard';
+import { JwtAuthGuard } from '@/presentation/middleware/guards/jwt-auth.guard';
 import { CurrentUser } from '@/presentation/decorators/current-user.decorator';
 import { NotificationGetListQuery } from '@/application/queries';
 import {
@@ -20,7 +20,7 @@ export class NotificationController {
   constructor(
     private readonly commandBus: CommandBus,
     private readonly queryBus: QueryBus,
-  ) {}
+  ) { }
 
   @Get()
   @ApiOperation({ summary: "Get currently logged-in user's notifications" })

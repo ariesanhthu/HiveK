@@ -31,22 +31,11 @@ export class WebSocketGateway implements OnGatewayConnection, OnGatewayDisconnec
   }
 
   async handleConnection(client: Socket) {
-    let token = client.handshake.auth?.token || client.handshake.query?.token;
-
-    // Check Authorization header if available
+    const token = client.handshake.auth?.token || client.handshake.query?.token;
     const authHeader = client.handshake.headers['authorization'];
-    if (!token && authHeader && authHeader.startsWith('Bearer ')) {
-      token = authHeader.split(' ')[1];
-    }
-
-    if (!token) {
-      this.logger.warn(`Connection rejected: No token provided (Client: ${client.id})`);
-      client.disconnect(true);
-      return;
-    }
 
     try {
-      const payload = this.jwtService.verify(token);
+      const payload = this.jwtService.verifyHandshake(authHeader, token);
       const userId = payload.sub;
       if (!userId) {
         throw new Error('No user ID found in token payload');

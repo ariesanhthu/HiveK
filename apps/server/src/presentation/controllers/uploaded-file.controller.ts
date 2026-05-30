@@ -13,6 +13,7 @@ import {
   UploadedFile,
   UploadedFiles,
   BadRequestException,
+  UseGuards,
 } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { ApiTags, ApiOperation, ApiConsumes, ApiBody } from '@nestjs/swagger';
@@ -33,8 +34,10 @@ import {
 } from '@/application/queries';
 import { UploadedFileDto, SoftDeleteInputDto } from '@/application/dtos';
 import { PaginatedResponseDto } from '@/shared/dtos/pagination.dto';
+import { JwtAuthGuard } from '../middleware/guards';
 
 @ApiTags('upload')
+@UseGuards(JwtAuthGuard)
 @Controller('upload')
 export class UploadedFileController {
   constructor(

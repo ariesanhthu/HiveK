@@ -21,6 +21,12 @@ export interface IWebSocketService {
    * @param data The payload.
    */
   broadcastAll<T = any>(event: string, data: T): void;
+
+  /**
+   * Disconnect a user from the socket server.
+   * @param userId The ID of the user to disconnect.
+   */
+  disconnectUser(userId: string): Promise<void>;
 }
 
 export const WEBSOCKET_SERVICE = Symbol('IWebSocketService');

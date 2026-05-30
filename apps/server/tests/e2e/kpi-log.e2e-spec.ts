@@ -4,10 +4,13 @@ import { INestApplication } from '@nestjs/common';
 import { getModelToken } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { AppModule } from './../../src/app.module';
+import { AUTH_JWT_SERVICE, type IAuthJwtService } from '@/application/interfaces/auth-jwt.interface';
 
 describe('KPI Log Domain (e2e)', () => {
   let app: INestApplication;
   let kpiLogModel: Model<any>;
+  let jwtService: IAuthJwtService;
+  let authToken: string;
 
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -16,6 +19,13 @@ describe('KPI Log Domain (e2e)', () => {
 
     app = moduleFixture.createNestApplication();
     await app.init();
+
+    jwtService = app.get<IAuthJwtService>(AUTH_JWT_SERVICE);
+    authToken = jwtService.sign({
+      sub: '64f7b2c9e8b3c9001f3e4e94',
+      email: 'kpi-tester@hivek.com',
+      role: 'ADMIN',
+    });
 
     kpiLogModel = app.get<Model<any>>(getModelToken('KpiLogModel'));
 
@@ -43,6 +53,7 @@ describe('KPI Log Domain (e2e)', () => {
   it('should fetch paginated KPI logs', async () => {
     const res = await request(app.getHttpServer())
       .get('/analytics/kpi-logs')
+      .set('Authorization', `Bearer ${authToken}`)
       .query({ participantId: '64f7b2c9e8b3c9001f3e4e96' })
       .expect(200);
 

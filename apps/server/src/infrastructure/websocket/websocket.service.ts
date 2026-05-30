@@ -18,4 +18,15 @@ export class WebSocketService implements IWebSocketService {
   broadcastAll<T = any>(event: string, data: T): void {
     this.gateway.server.emit(event, data);
   }
+
+  async disconnectUser(userId: string): Promise<void> {
+    const room = `user_${userId}`;
+    if (!this.gateway.server) {
+      return;
+    }
+    const sockets = await this.gateway.server.in(room).fetchSockets();
+    for (const socket of sockets) {
+      socket.disconnect(true);
+    }
+  }
 }

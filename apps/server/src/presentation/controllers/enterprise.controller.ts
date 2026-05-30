@@ -12,7 +12,7 @@ import {
 } from '@/application/commands';
 import { EnterpriseDto, SoftDeleteInputDto } from '@/application/dtos';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
-import { JwtAuthGuard } from '@/presentation/middleware/jwt-auth.guard';
+import { JwtAuthGuard } from '@/presentation/middleware/guards/jwt-auth.guard';
 import { CurrentUser } from '@/presentation/decorators/current-user.decorator';
 
 @ApiTags('enterprises')
@@ -47,6 +47,7 @@ export class EnterpriseController {
   }
 
   @Get(':id')
+  @UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: 'Get enterprise by ID' })
   async getById(@Param('id') id: string): Promise<EnterpriseDto> {
     const enterprise = await this.queryBus.execute<EnterpriseGetByIdQuery, EnterpriseDto>(
@@ -56,6 +57,7 @@ export class EnterpriseController {
   }
 
   @Patch(':id/soft-delete')
+  @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: 'Soft delete enterprise' })
   async delete(
@@ -66,6 +68,7 @@ export class EnterpriseController {
   }
 
   @Delete(':id')
+  @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: 'Hard delete enterprise' })
   async hardDelete(@Param('id') id: string): Promise<void> {
@@ -73,7 +76,7 @@ export class EnterpriseController {
   }
 
   @Patch(':id/restore')
-  @HttpCode(HttpStatus.OK)
+  @UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: 'Restore soft deleted enterprise' })
   async restore(@Param('id') id: string): Promise<void> {
     return this.commandBus.execute(new EnterpriseRestoreCommand(id));

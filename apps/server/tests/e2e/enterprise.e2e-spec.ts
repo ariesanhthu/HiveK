@@ -91,6 +91,7 @@ describe('Enterprise Domain (e2e)', () => {
     // 3. Get Enterprise Profile
     const getRes = await request(app.getHttpServer())
       .get(`/enterprises/${enterpriseId}`)
+      .set('Authorization', `Bearer ${authToken}`)
       .expect(200);
 
     expect(getRes.body.companyName).toBe('Enterprise E2E Inc Updated');

@@ -4,10 +4,13 @@ import { INestApplication } from '@nestjs/common';
 import { getModelToken } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { AppModule } from './../../src/app.module';
+import { AUTH_JWT_SERVICE, type IAuthJwtService } from '@/application/interfaces/auth-jwt.interface';
 
 describe('KOL Profile Domain (e2e)', () => {
   let app: INestApplication;
   let kolProfileModel: Model<any>;
+  let jwtService: IAuthJwtService;
+  let authToken: string;
   const testProfileId = '64f7b2c9e8b3c9001f3e4e93';
 
   beforeAll(async () => {
@@ -17,6 +20,13 @@ describe('KOL Profile Domain (e2e)', () => {
 
     app = moduleFixture.createNestApplication();
     await app.init();
+
+    jwtService = app.get<IAuthJwtService>(AUTH_JWT_SERVICE);
+    authToken = jwtService.sign({
+      sub: '64f7b2c9e8b3c9001f3e4e94',
+      email: 'kol-tester@hivek.com',
+      role: 'ADMIN',
+    });
 
     kolProfileModel = app.get<Model<any>>(getModelToken('KolProfileModel'));
 
@@ -72,17 +82,20 @@ describe('KOL Profile Domain (e2e)', () => {
     // 4. Soft Delete
     await request(app.getHttpServer())
       .patch(`/kol-profiles/${testProfileId}/soft-delete`)
+      .set('Authorization', `Bearer ${authToken}`)
       .query({ deletedBy: 'E2E-Tester' })
       .expect(204);
 
     // 5. Restore
     await request(app.getHttpServer())
       .patch(`/kol-profiles/${testProfileId}/restore`)
+      .set('Authorization', `Bearer ${authToken}`)
       .expect(200);
 
     // 6. Hard Delete
     await request(app.getHttpServer())
       .delete(`/kol-profiles/${testProfileId}`)
+      .set('Authorization', `Bearer ${authToken}`)
       .expect(204);
 
     // 7. Verify Gone
