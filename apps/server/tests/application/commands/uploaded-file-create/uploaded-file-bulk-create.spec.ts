@@ -20,6 +20,7 @@ describe('UploadedFileBulkCreateCommandHandler', () => {
   let handler: UploadedFileBulkCreateCommandHandler;
   let mockRepository: any;
   let mockStorageService: any;
+  let mockEventBus: any;
 
   beforeEach(() => {
     mockRepository = {
@@ -36,8 +37,16 @@ describe('UploadedFileBulkCreateCommandHandler', () => {
         format: 'jpg',
       }),
     };
+    mockEventBus = {
+      publish: jest.fn(),
+    };
     const uploadService = new UploadService();
-    handler = new UploadedFileBulkCreateCommandHandler(mockRepository, mockStorageService, uploadService);
+    handler = new UploadedFileBulkCreateCommandHandler(
+      mockRepository,
+      mockStorageService,
+      uploadService,
+      mockEventBus,
+    );
   });
 
   it('should upload multiple files successfully', async () => {
@@ -56,6 +65,7 @@ describe('UploadedFileBulkCreateCommandHandler', () => {
     const input = {
       targetType: TargetType.CAMPAIGN,
       targetId: 'campaign-123',
+      targetField: 'attachments',
       title: 'Campaign Attachments',
     };
 
@@ -65,9 +75,11 @@ describe('UploadedFileBulkCreateCommandHandler', () => {
     expect(result).toBeDefined();
     expect(result.length).toBe(2);
     expect(result[0].url).toBe('http://cloudinary.com/mock-file');
+    expect(result[0].targetField).toBe('attachments');
     expect(result[1].targetType).toBe(TargetType.CAMPAIGN);
     expect(mockStorageService.upload).toHaveBeenCalledTimes(2);
     expect(mockRepository.save).toHaveBeenCalledTimes(2);
+    expect(mockEventBus.publish).toHaveBeenCalledTimes(2);
   });
 
   it('should throw error if any non-image file in the batch exceeds 2MB', async () => {
@@ -87,6 +99,7 @@ describe('UploadedFileBulkCreateCommandHandler', () => {
     const input = {
       targetType: TargetType.USER,
       targetId: 'user-123',
+      targetField: 'document',
     };
 
     const command = new UploadedFileBulkCreateCommand(files, input);

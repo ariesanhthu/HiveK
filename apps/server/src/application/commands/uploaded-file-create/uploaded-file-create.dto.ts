@@ -6,6 +6,7 @@ export const UploadedFileCreateInputSchema = z.object({
   title: z.string().optional(),
   targetType: z.enum(TargetType),
   targetId: z.string(),
+  targetField: z.string(),
 });
 
 export class UploadedFileCreateInputDto extends createZodDto(UploadedFileCreateInputSchema) {}

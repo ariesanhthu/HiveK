@@ -10,6 +10,7 @@ export interface UploadedFileProps {
   title: Nullable<string>;
   targetType: TargetType;
   targetId: string;
+  targetField: string;
   deleteAt: Nullable<Date>;
   deleteBy: Nullable<string>;
   createdAt: Date;
@@ -24,6 +25,7 @@ export interface UploadedFileCreateProps {
   title?: Nullable<string>;
   targetType: TargetType;
   targetId: string;
+  targetField: string;
 }
 
 /**
@@ -76,6 +78,10 @@ export class UploadedFileRoot extends BaseAggregateRoot<UploadedFileProps> {
 
   get targetId(): string {
     return this.props.targetId;
+  }
+
+  get targetField(): string {
+    return this.props.targetField;
   }
 
   get deleteAt(): Nullable<Date> {

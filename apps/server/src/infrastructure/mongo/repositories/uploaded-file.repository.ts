@@ -49,6 +49,7 @@ export class MongoUploadedFileRepository implements IUploadedFileRepository {
       title: doc.title,
       targetType: doc.target_type,
       targetId: doc.target_id,
+      targetField: doc.target_field,
       deleteAt: doc.delete_at,
       deleteBy: doc.delete_by,
       createdAt: doc.created_at,
@@ -65,6 +66,7 @@ export class MongoUploadedFileRepository implements IUploadedFileRepository {
       title: root.title,
       target_type: root.targetType,
       target_id: root.targetId,
+      target_field: root.targetField,
       delete_at: root.deleteAt,
       delete_by: root.deleteBy,
     };

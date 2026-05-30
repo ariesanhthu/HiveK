@@ -10,6 +10,8 @@ import { CreateCampaignHandler, UpdateCampaignHandler, CampaignHardDeleteCommand
 import { CampaignGetListHandler, CampaignGetByIdHandler } from '@/application/queries';
 import { CampaignController } from '@/presentation/controllers/campaign.controller';
 
+import { LinkCampaignRawHandler } from '@/application/events';
+
 const Handlers = [
   CreateCampaignHandler,
   UpdateCampaignHandler,
@@ -18,6 +20,7 @@ const Handlers = [
   CampaignRestoreCommandHandler,
   CampaignGetListHandler,
   CampaignGetByIdHandler,
+  LinkCampaignRawHandler,
 ];
 
 @Module({

@@ -28,6 +28,9 @@ export class UploadedFileModel {
   @Prop({ required: true })
   target_id: string;
 
+  @Prop({ required: true })
+  target_field: string;
+
   @Prop({ type: Date, default: null })
   delete_at: Date | null;
 

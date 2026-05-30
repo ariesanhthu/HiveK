@@ -20,6 +20,7 @@ describe('UploadedFileCreateCommandHandler', () => {
   let handler: UploadedFileCreateCommandHandler;
   let mockRepository: any;
   let mockStorageService: any;
+  let mockEventBus: any;
 
   beforeEach(() => {
     mockRepository = {
@@ -36,8 +37,16 @@ describe('UploadedFileCreateCommandHandler', () => {
         format: 'jpg',
       }),
     };
+    mockEventBus = {
+      publish: jest.fn(),
+    };
     const uploadService = new UploadService();
-    handler = new UploadedFileCreateCommandHandler(mockRepository, mockStorageService, uploadService);
+    handler = new UploadedFileCreateCommandHandler(
+      mockRepository,
+      mockStorageService,
+      uploadService,
+      mockEventBus,
+    );
   });
 
   it('should upload a normal file successfully', async () => {
@@ -49,6 +58,7 @@ describe('UploadedFileCreateCommandHandler', () => {
     const input = {
       targetType: TargetType.CAMPAIGN,
       targetId: 'campaign-123',
+      targetField: 'contract_file',
       title: 'Campaign Attachment',
     };
 
@@ -58,8 +68,10 @@ describe('UploadedFileCreateCommandHandler', () => {
     expect(result).toBeDefined();
     expect(result.url).toBe('http://cloudinary.com/mock-file');
     expect(result.targetType).toBe(TargetType.CAMPAIGN);
+    expect(result.targetField).toBe('contractFile'); // normalized to camelCase
     expect(mockStorageService.upload).toHaveBeenCalled();
     expect(mockRepository.save).toHaveBeenCalled();
+    expect(mockEventBus.publish).toHaveBeenCalled();
   });
 
   it('should compress a large image file', async () => {
@@ -72,14 +84,17 @@ describe('UploadedFileCreateCommandHandler', () => {
     const input = {
       targetType: TargetType.USER,
       targetId: 'user-123',
+      targetField: 'avatar_url',
     };
 
     const command = new UploadedFileCreateCommand(file, input);
     const result = await handler.execute(command);
 
     expect(result).toBeDefined();
+    expect(result.targetField).toBe('avatarUrl'); // normalized to camelCase
     expect(mockStorageService.upload).toHaveBeenCalled();
     expect(mockRepository.save).toHaveBeenCalled();
+    expect(mockEventBus.publish).toHaveBeenCalled();
   });
 
   it('should throw error if non-image file exceeds 2MB', async () => {
@@ -92,6 +107,7 @@ describe('UploadedFileCreateCommandHandler', () => {
     const input = {
       targetType: TargetType.USER,
       targetId: 'user-123',
+      targetField: 'document',
     };
 
     const command = new UploadedFileCreateCommand(file, input);

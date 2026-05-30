@@ -15,6 +15,8 @@ import {
   KOLUserModel, KOLUserSchema
 } from '@/infrastructure/mongo/schemas';
 
+import { LinkUserAvatarHandler } from '@/application/events';
+
 @Module({
   imports: [
     CqrsModule,
@@ -37,6 +39,7 @@ import {
     UserSoftDeleteCommandHandler,
     UserHardDeleteCommandHandler,
     UserRestoreCommandHandler,
+    LinkUserAvatarHandler,
     {
       provide: USER_READ_SERVICE,
       useClass: MongoUserReadService,

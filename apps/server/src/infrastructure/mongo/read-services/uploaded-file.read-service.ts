@@ -75,6 +75,7 @@ export class MongoUploadedFileReadService implements IUploadedFileReadService {
       title: doc.title,
       targetType: doc.target_type,
       targetId: doc.target_id,
+      targetField: doc.target_field,
       createdAt: doc.created_at,
       updatedAt: doc.updated_at,
     };

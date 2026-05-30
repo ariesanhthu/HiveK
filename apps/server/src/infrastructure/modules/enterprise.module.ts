@@ -19,6 +19,8 @@ import {
 
 import { UploadedFileModule } from './uploaded-file.module';
 
+import { LinkEnterpriseLogoHandler } from '@/application/events';
+
 @Module({
   imports: [
     CqrsModule,
@@ -35,6 +37,7 @@ import { UploadedFileModule } from './uploaded-file.module';
     EnterpriseSoftDeleteCommandHandler,
     EnterpriseHardDeleteCommandHandler,
     EnterpriseRestoreCommandHandler,
+    LinkEnterpriseLogoHandler,
     {
       provide: ENTERPRISE_READ_SERVICE,
       useClass: MongoEnterpriseReadService,

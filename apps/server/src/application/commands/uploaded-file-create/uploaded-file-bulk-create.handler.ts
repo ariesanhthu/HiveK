@@ -1,4 +1,4 @@
-import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
+import { CommandHandler, ICommandHandler, EventBus } from '@nestjs/cqrs';
 import { Inject } from '@nestjs/common';
 import { UPLOADED_FILE_REPOSITORY, type IUploadedFileRepository } from '@/core/interfaces/repositories';
 import { STORAGE_SERVICE, type IStorageService } from '@/core/interfaces/storage';
@@ -7,6 +7,8 @@ import { UploadedFileBulkCreateCommand } from './uploaded-file-bulk-create.comma
 import { UploadedFileDto } from '@/application/dtos';
 import { UploadedFileMapper } from '@/application/mappers';
 import { UploadService } from '@/application/services';
+import { toCamelCase } from '@/shared/utils/string.util';
+import { UploadedFileCreatedEvent } from '@/application/events';
 
 @CommandHandler(UploadedFileBulkCreateCommand)
 export class UploadedFileBulkCreateCommandHandler implements ICommandHandler<UploadedFileBulkCreateCommand, UploadedFileDto[]> {
@@ -16,10 +18,12 @@ export class UploadedFileBulkCreateCommandHandler implements ICommandHandler<Upl
     @Inject(STORAGE_SERVICE)
     private readonly storageService: IStorageService,
     private readonly uploadService: UploadService,
+    private readonly eventBus: EventBus,
   ) {}
 
   async execute(command: UploadedFileBulkCreateCommand): Promise<UploadedFileDto[]> {
     const { files, input } = command;
+    const targetField = toCamelCase(input.targetField);
 
     const uploadPromises = files.map(async (file) => {
       // Validate size and auto-compress if image exceeds 2MB
@@ -43,6 +47,7 @@ export class UploadedFileBulkCreateCommandHandler implements ICommandHandler<Upl
         title: input.title,
         targetType: input.targetType,
         targetId: input.targetId,
+        targetField,
       });
 
       return root;
@@ -50,9 +55,16 @@ export class UploadedFileBulkCreateCommandHandler implements ICommandHandler<Upl
 
     const roots = await Promise.all(uploadPromises);
 
-    // Save all to database
+    // Save all to database and publish event
     for (const root of roots) {
       await this.repository.save(root);
+      
+      await this.eventBus.publish(new UploadedFileCreatedEvent(
+        root.id!,
+        root.targetType,
+        root.targetId,
+        root.targetField,
+      ));
     }
 
     return roots.map((root) => UploadedFileMapper.toDto(root));

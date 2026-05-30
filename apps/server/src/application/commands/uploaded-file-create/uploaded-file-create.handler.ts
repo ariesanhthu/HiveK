@@ -1,4 +1,4 @@
-import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
+import { CommandHandler, ICommandHandler, EventBus } from '@nestjs/cqrs';
 import { Inject } from '@nestjs/common';
 import { UPLOADED_FILE_REPOSITORY, type IUploadedFileRepository } from '@/core/interfaces/repositories';
 import { STORAGE_SERVICE, type IStorageService } from '@/core/interfaces/storage';
@@ -7,6 +7,8 @@ import { UploadedFileCreateCommand } from './uploaded-file-create.command';
 import { UploadedFileDto } from '@/application/dtos';
 import { UploadedFileMapper } from '@/application/mappers';
 import { UploadService } from '@/application/services';
+import { toCamelCase } from '@/shared/utils/string.util';
+import { UploadedFileCreatedEvent } from '@/application/events';
 
 @CommandHandler(UploadedFileCreateCommand)
 export class UploadedFileCreateCommandHandler implements ICommandHandler<UploadedFileCreateCommand, UploadedFileDto> {
@@ -16,6 +18,7 @@ export class UploadedFileCreateCommandHandler implements ICommandHandler<Uploade
     @Inject(STORAGE_SERVICE)
     private readonly storageService: IStorageService,
     private readonly uploadService: UploadService,
+    private readonly eventBus: EventBus,
   ) {}
 
   async execute(command: UploadedFileCreateCommand): Promise<UploadedFileDto> {
@@ -34,6 +37,8 @@ export class UploadedFileCreateCommandHandler implements ICommandHandler<Uploade
       filename: file.originalname.split('.')[0] + '-' + Date.now(),
     });
 
+    const targetField = toCamelCase(input.targetField);
+
     const root = UploadedFileRoot.create({
       url: uploadResult.url,
       publicId: uploadResult.publicId || '',
@@ -42,9 +47,18 @@ export class UploadedFileCreateCommandHandler implements ICommandHandler<Uploade
       title: input.title,
       targetType: input.targetType,
       targetId: input.targetId,
+      targetField,
     });
 
     await this.repository.save(root);
+
+    // Publish creation event to let target domains link the file asynchronously
+    await this.eventBus.publish(new UploadedFileCreatedEvent(
+      root.id!,
+      root.targetType,
+      root.targetId,
+      root.targetField,
+    ));
 
     return UploadedFileMapper.toDto(root);
   }

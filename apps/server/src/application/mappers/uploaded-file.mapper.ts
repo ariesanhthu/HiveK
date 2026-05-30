@@ -12,6 +12,7 @@ export class UploadedFileMapper {
       title: root.title,
       targetType: root.targetType,
       targetId: root.targetId,
+      targetField: root.targetField,
       createdAt: root.createdAt,
       updatedAt: root.updatedAt,
     };

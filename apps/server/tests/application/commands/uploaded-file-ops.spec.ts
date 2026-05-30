@@ -28,6 +28,7 @@ describe('Uploaded File Operations', () => {
       format: 'pdf',
       targetType: TargetType.CAMPAIGN,
       targetId: 'camp-1',
+      targetField: 'contract',
     });
 
     mockRepository = {

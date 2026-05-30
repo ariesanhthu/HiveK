@@ -79,8 +79,12 @@ export class UploadedFileController {
           type: 'string',
           description: 'Associated domain target ID',
         },
+        targetField: {
+          type: 'string',
+          description: 'Associated target field/property key (e.g. logo, avatar, icon)',
+        },
       },
-      required: ['file', 'targetType', 'targetId'],
+      required: ['file', 'targetType', 'targetId', 'targetField'],
     },
   })
   @ApiOperation({ summary: 'Upload and create new file' })
@@ -131,8 +135,12 @@ export class UploadedFileController {
           type: 'string',
           description: 'Associated domain target ID',
         },
+        targetField: {
+          type: 'string',
+          description: 'Associated target field/property key (e.g. logo, avatar, icon)',
+        },
       },
-      required: ['files', 'targetType', 'targetId'],
+      required: ['files', 'targetType', 'targetId', 'targetField'],
     },
   })
   @ApiOperation({ summary: 'Upload and create multiple files (limit to 10)' })

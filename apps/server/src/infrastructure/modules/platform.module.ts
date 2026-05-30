@@ -10,6 +10,8 @@ import { CreatePlatformHandler, UpdatePlatformHandler, PlatformSoftDeleteCommand
 import { PlatformGetListHandler, PlatformGetByIdHandler } from '@/application/queries';
 import { PlatformController } from '@/presentation/controllers/platform.controller';
 
+import { LinkPlatformIconHandler } from '@/application/events';
+
 const Handlers = [
   CreatePlatformHandler,
   UpdatePlatformHandler,
@@ -18,6 +20,7 @@ const Handlers = [
   PlatformRestoreCommandHandler,
   PlatformGetListHandler,
   PlatformGetByIdHandler,
+  LinkPlatformIconHandler,
 ];
 
 import { UploadedFileModule } from './uploaded-file.module';
