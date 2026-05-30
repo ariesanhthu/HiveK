@@ -5,4 +5,6 @@ export * from './role.repository';
 export * from './enterprise.repository';
 export * from './kol-profile.repository';
 export * from './uploaded-file.repository';
+export * from './notification.repository';
+export * from './user-notification.repository';
 

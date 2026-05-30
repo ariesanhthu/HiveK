@@ -6,3 +6,5 @@ export * from './platform.schema';
 export * from './campaign.schema';
 export * from './kpi-log.schema';
 export * from './uploaded-file.schema';
+export * from './notification.schema';
+export * from './user-notification.schema';

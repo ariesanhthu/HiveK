@@ -1,0 +1,93 @@
+import request from 'supertest';
+import { Test, TestingModule } from '@nestjs/testing';
+import { INestApplication } from '@nestjs/common';
+import { getModelToken } from '@nestjs/mongoose';
+import { Model, Types } from 'mongoose';
+import { AppModule } from './../../src/app.module';
+
+describe('KOL Profile Domain (e2e)', () => {
+  let app: INestApplication;
+  let kolProfileModel: Model<any>;
+  const testProfileId = '64f7b2c9e8b3c9001f3e4e93';
+
+  beforeAll(async () => {
+    const moduleFixture: TestingModule = await Test.createTestingModule({
+      imports: [AppModule],
+    }).compile();
+
+    app = moduleFixture.createNestApplication();
+    await app.init();
+
+    kolProfileModel = app.get<Model<any>>(getModelToken('KolProfileModel'));
+
+    // Clean up and seed test influencer profile
+    await kolProfileModel.deleteMany({ _id: new Types.ObjectId(testProfileId) });
+    await kolProfileModel.create({
+      _id: new Types.ObjectId(testProfileId),
+      name: 'E2E KOL Influencer',
+      email: 'kol-e2e@hivek.com',
+      location: 'VN',
+      gender: 'F',
+      bio: 'Influencer Bio E2E',
+      phone: '123456789',
+      is_verified: false,
+    });
+  });
+
+  afterAll(async () => {
+    await kolProfileModel.deleteMany({ _id: new Types.ObjectId(testProfileId) });
+    await app.close();
+  });
+
+  it('should manage KOL profile lifecycle', async () => {
+    // 1. Get by ID
+    const getRes = await request(app.getHttpServer())
+      .get(`/kol-profiles/${testProfileId}`)
+      .expect(200);
+
+    expect(getRes.body.name).toBe('E2E KOL Influencer');
+    expect(getRes.body.email).toBe('kol-e2e@hivek.com');
+
+    // 2. Search/List profiles
+    const listRes = await request(app.getHttpServer())
+      .get('/kol-profiles')
+      .query({ name: 'E2E KOL' })
+      .expect(200);
+
+    expect(listRes.body.data).toBeDefined();
+    expect(listRes.body.data.length).toBeGreaterThanOrEqual(1);
+
+    // 3. Update KOL Profile
+    const updateRes = await request(app.getHttpServer())
+      .patch(`/kol-profiles/${testProfileId}`)
+      .send({
+        name: 'E2E KOL Influencer Updated',
+        bio: 'Updated Bio E2E',
+      })
+      .expect(200);
+
+    expect(updateRes.body.name).toBe('E2E KOL Influencer Updated');
+    expect(updateRes.body.bio).toBe('Updated Bio E2E');
+
+    // 4. Soft Delete
+    await request(app.getHttpServer())
+      .patch(`/kol-profiles/${testProfileId}/soft-delete`)
+      .query({ deletedBy: 'E2E-Tester' })
+      .expect(204);
+
+    // 5. Restore
+    await request(app.getHttpServer())
+      .patch(`/kol-profiles/${testProfileId}/restore`)
+      .expect(200);
+
+    // 6. Hard Delete
+    await request(app.getHttpServer())
+      .delete(`/kol-profiles/${testProfileId}`)
+      .expect(204);
+
+    // 7. Verify Gone
+    await request(app.getHttpServer())
+      .get(`/kol-profiles/${testProfileId}`)
+      .expect(404);
+  });
+});

@@ -41,3 +41,5 @@ export * from './uploaded-file-get-by-id/uploaded-file-get-by-id.handler';
 export * from './uploaded-file-get-list/uploaded-file-get-list.query';
 export * from './uploaded-file-get-list/uploaded-file-get-list.handler';
 export * from './uploaded-file-get-list/uploaded-file-get-list.dto';
+export * from './notification-get-list/notification-get-list.query';
+export * from './notification-get-list/notification-get-list.handler';

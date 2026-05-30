@@ -1,0 +1,53 @@
+import request from 'supertest';
+import { Test, TestingModule } from '@nestjs/testing';
+import { INestApplication } from '@nestjs/common';
+import { getModelToken } from '@nestjs/mongoose';
+import { Model, Types } from 'mongoose';
+import { AppModule } from './../../src/app.module';
+
+describe('KPI Log Domain (e2e)', () => {
+  let app: INestApplication;
+  let kpiLogModel: Model<any>;
+
+  beforeAll(async () => {
+    const moduleFixture: TestingModule = await Test.createTestingModule({
+      imports: [AppModule],
+    }).compile();
+
+    app = moduleFixture.createNestApplication();
+    await app.init();
+
+    kpiLogModel = app.get<Model<any>>(getModelToken('KpiLogModel'));
+
+    // Clean up E2E KPI logs
+    await kpiLogModel.deleteMany({ participantId: new Types.ObjectId('64f7b2c9e8b3c9001f3e4e96') });
+
+    // Seed a timeseries KPI log
+    await kpiLogModel.create({
+      timestamp: new Date(),
+      participantId: new Types.ObjectId('64f7b2c9e8b3c9001f3e4e96'),
+      metrics: {
+        views: 1000,
+        likes: 500,
+        comments: 200,
+        shares: 50,
+      },
+    });
+  });
+
+  afterAll(async () => {
+    await kpiLogModel.deleteMany({ participantId: new Types.ObjectId('64f7b2c9e8b3c9001f3e4e96') });
+    await app.close();
+  });
+
+  it('should fetch paginated KPI logs', async () => {
+    const res = await request(app.getHttpServer())
+      .get('/analytics/kpi-logs')
+      .query({ participantId: '64f7b2c9e8b3c9001f3e4e96' })
+      .expect(200);
+
+    expect(res.body.data).toBeDefined();
+    expect(res.body.data.length).toBeGreaterThanOrEqual(1);
+    expect(res.body.data[0].metrics.views).toBe(1000);
+  });
+});

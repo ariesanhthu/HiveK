@@ -3,3 +3,7 @@ export * from './user.controller';
 export * from './auth.controller';
 export * from './platform.controller';
 export * from './kol-profile.controller';
+export * from './notification.controller';
+export * from './campaign.controller';
+export * from './uploaded-file.controller';
+export * from './kpi-log.controller';

@@ -7,3 +7,5 @@ export * from './role.aggregate';
 export * from './platform.aggregate';
 export * from './campaign.aggregate';
 export * from './uploaded-file.aggregate';
+export * from './notification.aggregate';
+export * from './user-notification.aggregate';
