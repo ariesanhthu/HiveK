@@ -6,7 +6,7 @@ describe('PlatformRoot Aggregate Root', () => {
     name: 'YouTube',
     baseUrl: 'https://youtube.com',
     apiStatus: PlatformApiStatus.STABLE,
-    iconUrl: 'https://youtube.com/icon.png',
+    icon: 'icon-youtube-id',
   };
 
   it('should create a PlatformRoot with lowercase name', () => {
@@ -16,7 +16,7 @@ describe('PlatformRoot Aggregate Root', () => {
     expect(root.name).toBe('youtube'); // verified lowercase conversion
     expect(root.baseUrl).toBe(props.baseUrl);
     expect(root.apiStatus).toBe(props.apiStatus);
-    expect(root.iconUrl).toBe(props.iconUrl);
+    expect(root.icon).toBe(props.icon);
   });
 
   it('should instantiate a PlatformRoot with id', () => {
@@ -33,7 +33,7 @@ describe('PlatformRoot Aggregate Root', () => {
     root.updateApiStatus(PlatformApiStatus.MAINTENANCE);
     expect(root.apiStatus).toBe(PlatformApiStatus.MAINTENANCE);
 
-    root.updateIconUrl('https://newicon.png');
-    expect(root.iconUrl).toBe('https://newicon.png');
+    root.updateIcon('newicon-id');
+    expect(root.icon).toBe('newicon-id');
   });
 });

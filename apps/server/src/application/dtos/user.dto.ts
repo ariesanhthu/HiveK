@@ -8,6 +8,7 @@ const BaseUserDtoSchema = z.object({
   email: z.email(),
   phone: z.string(),
   fullName: z.string(),
+  avatar: z.string().nullable(),
   roleId: z.string(),
   isEmailVerified: z.boolean(),
   createdAt: z.iso.datetime(),

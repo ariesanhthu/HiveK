@@ -39,6 +39,7 @@ export class AuthSignUpCommandHandler implements ICommandHandler<AuthSignUpComma
       phone: '0000000000',
       passwordHash,
       fullName: 'DEFAULT NAME',
+      avatar: null,
       type,
       roleId: defaultRole.id,
       isEmailVerified: false,

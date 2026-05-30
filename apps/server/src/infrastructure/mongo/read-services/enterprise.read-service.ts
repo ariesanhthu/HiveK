@@ -72,7 +72,7 @@ export class MongoEnterpriseReadService implements IEnterpriseReadService {
       contactPhone: doc.contact_phone,
       website: doc.website,
       taxId: doc.tax_id,
-      logoUrl: doc.logo_url,
+      logoUrlId: doc.logo_url_id,
       isVerified: doc.is_verified,
       createdAt: doc.created_at,
       updatedAt: doc.updated_at,

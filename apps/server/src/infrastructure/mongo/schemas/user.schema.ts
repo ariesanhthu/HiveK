@@ -37,6 +37,9 @@ export class UserModel {
   @Prop({ type: String, default: null })
   refresh_token: string | null;
 
+  @Prop({ type: String, default: null })
+  avatar: string | null;
+
   created_at: Date;
   updated_at: Date;  
 }

@@ -10,6 +10,7 @@ describe('KOLUserRoot', () => {
     roleId: 'role-kol',
     isEmailVerified: true,
     fullName: 'KOL User',
+    avatar: null,
     createdAt: new Date(),
     updatedAt: new Date(),
   };

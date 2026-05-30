@@ -83,7 +83,13 @@ export * from './kol-profile-hard-delete/kol-profile-hard-delete.handler';
 export * from './kol-profile-restore/kol-profile-restore.command';
 export * from './kol-profile-restore/kol-profile-restore.handler';
 
-// Enterprise Deletion
+// Enterprise Commands
+export * from './enterprise-create/enterprise-create.dto';
+export * from './enterprise-create/enterprise-create.command';
+export * from './enterprise-create/enterprise-create.handler';
+export * from './enterprise-update/enterprise-update.dto';
+export * from './enterprise-update/enterprise-update.command';
+export * from './enterprise-update/enterprise-update.handler';
 export * from './enterprise-soft-delete/enterprise-soft-delete.command';
 export * from './enterprise-soft-delete/enterprise-soft-delete.handler';
 export * from './enterprise-hard-delete/enterprise-hard-delete.command';

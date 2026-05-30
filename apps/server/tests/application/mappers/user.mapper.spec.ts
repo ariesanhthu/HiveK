@@ -8,6 +8,7 @@ describe('UserMapper', () => {
       email: 'john@doe.com',
       phone: '123456',
       fullName: 'John Doe',
+      avatar: 'http://avatar.com/1.png',
       roleId: 'role-1',
       isEmailVerified: true,
       createdAt: new Date('2026-06-01T00:00:00Z'),
@@ -20,6 +21,7 @@ describe('UserMapper', () => {
     expect(dto).toBeDefined();
     expect(dto.id).toBe('user-123');
     expect(dto.type).toBe(UserType.KOL);
+    expect(dto.avatar).toBe('http://avatar.com/1.png');
   });
 
   it('should map Enterprise UserRoot to UserDto', () => {

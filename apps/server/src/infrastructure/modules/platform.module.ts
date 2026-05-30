@@ -20,9 +20,12 @@ const Handlers = [
   PlatformGetByIdHandler,
 ];
 
+import { UploadedFileModule } from './uploaded-file.module';
+
 @Module({
   imports: [
     CqrsModule,
+    UploadedFileModule,
     MongooseModule.forFeature([
       { name: PlatformModel.name, schema: PlatformSchema },
     ]),

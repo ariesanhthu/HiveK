@@ -5,13 +5,17 @@ import { NotFoundException } from '@nestjs/common';
 describe('UpdatePlatformHandler', () => {
   let handler: UpdatePlatformHandler;
   let mockPlatformRepository: any;
+  let mockUploadedFileRepository: any;
 
   beforeEach(() => {
     mockPlatformRepository = {
       findById: jest.fn(),
       save: jest.fn(),
     };
-    handler = new UpdatePlatformHandler(mockPlatformRepository);
+    mockUploadedFileRepository = {
+      findById: jest.fn(),
+    };
+    handler = new UpdatePlatformHandler(mockPlatformRepository, mockUploadedFileRepository);
   });
 
   it('should update platform successfully', async () => {
@@ -21,15 +25,16 @@ describe('UpdatePlatformHandler', () => {
         name: 'facebook',
         baseUrl: 'https://facebook.com',
       },
-      updateIconUrl: jest.fn(),
+      updateIcon: jest.fn(),
       updateApiStatus: jest.fn(),
     };
     mockPlatformRepository.findById.mockResolvedValue(mockPlatform);
+    mockUploadedFileRepository.findById.mockResolvedValue({});
 
     const input = {
       name: 'Facebook2',
       baseUrl: 'https://fb2.com',
-      iconUrl: 'new-icon',
+      icon: 'new-icon',
       apiStatus: 'inactive',
     };
     const command = new PlatformUpdateCommand('platform-123', input as any);
@@ -38,7 +43,8 @@ describe('UpdatePlatformHandler', () => {
 
     expect(result).toBeDefined();
     expect(mockPlatformRepository.findById).toHaveBeenCalledWith('platform-123');
-    expect(mockPlatform.updateIconUrl).toHaveBeenCalledWith('new-icon');
+    expect(mockUploadedFileRepository.findById).toHaveBeenCalledWith('new-icon');
+    expect(mockPlatform.updateIcon).toHaveBeenCalledWith('new-icon');
     expect(mockPlatform.updateApiStatus).toHaveBeenCalledWith('inactive');
     expect(mockPlatformRepository.save).toHaveBeenCalledWith(mockPlatform);
   });
@@ -47,6 +53,21 @@ describe('UpdatePlatformHandler', () => {
     mockPlatformRepository.findById.mockResolvedValue(null);
 
     const command = new PlatformUpdateCommand('platform-123', {});
+    await expect(handler.execute(command)).rejects.toThrow(NotFoundException);
+  });
+
+  it('should throw NotFoundException if icon file not found', async () => {
+    const mockPlatform = {
+      id: 'platform-123',
+      props: {
+        name: 'facebook',
+      },
+      updateIcon: jest.fn(),
+    };
+    mockPlatformRepository.findById.mockResolvedValue(mockPlatform);
+    mockUploadedFileRepository.findById.mockResolvedValue(null);
+
+    const command = new PlatformUpdateCommand('platform-123', { icon: 'invalid-icon' } as any);
     await expect(handler.execute(command)).rejects.toThrow(NotFoundException);
   });
 });

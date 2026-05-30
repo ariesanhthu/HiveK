@@ -9,6 +9,7 @@ export class UserMapper {
       email: root.email,
       phone: root.phone,
       fullName: root.fullName,
+      avatar: root.avatar,
       roleId: root.roleId,
       isEmailVerified: root.isEmailVerified,
       createdAt: root.createdAt.toISOString(),

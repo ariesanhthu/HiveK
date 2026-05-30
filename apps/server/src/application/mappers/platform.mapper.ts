@@ -8,7 +8,7 @@ export class PlatformMapper {
       name: root.name,
       baseUrl: root.baseUrl,
       apiStatus: root.apiStatus,
-      iconUrl: root.iconUrl,
+      icon: root.icon,
     };
   }
 

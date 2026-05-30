@@ -10,6 +10,7 @@ describe('AdminRoot', () => {
     roleId: 'role-admin',
     isEmailVerified: true,
     fullName: 'Admin User',
+    avatar: null,
     createdAt: new Date(),
     updatedAt: new Date(),
   };

@@ -22,14 +22,14 @@ export class EnterpriseModel {
   @Prop({ required: true })
   contact_phone: string;
 
-  @Prop()
-  website?: string;
+  @Prop({ type: String, default: null })
+  website: string | null;
 
-  @Prop()
-  tax_id?: string;
+  @Prop({ type: String, default: null })
+  tax_id: string | null;
 
-  @Prop()
-  logo_url?: string;
+  @Prop({ type: String, default: null })
+  logo_url_id: string | null;
 
   @Prop({ default: false })
   is_verified: boolean;

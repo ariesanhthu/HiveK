@@ -6,7 +6,7 @@ export interface PlatformProps {
   name: string;
   baseUrl: string;
   apiStatus: PlatformApiStatus;
-  iconUrl: string;
+  icon: string;
   deleteAt: Nullable<Date>;
   deleteBy: Nullable<string>;
   createdAt: Date;
@@ -17,7 +17,7 @@ export interface PlatformCreateProps {
   name: string;
   baseUrl: string;
   apiStatus: PlatformApiStatus;
-  iconUrl: string;
+  icon: string;
 }
 
 /**
@@ -56,8 +56,8 @@ export class PlatformRoot extends BaseAggregateRoot<PlatformProps> {
     return this.props.apiStatus;
   }
 
-  get iconUrl(): string {
-    return this.props.iconUrl;
+  get icon(): string {
+    return this.props.icon;
   }
 
   get deleteAt(): Nullable<Date> {
@@ -82,7 +82,7 @@ export class PlatformRoot extends BaseAggregateRoot<PlatformProps> {
     this.props.apiStatus = status;
   }
 
-  public updateIconUrl(iconUrl: string): void {
-    this.props.iconUrl = iconUrl;
+  public updateIcon(icon: string): void {
+    this.props.icon = icon;
   }
 }

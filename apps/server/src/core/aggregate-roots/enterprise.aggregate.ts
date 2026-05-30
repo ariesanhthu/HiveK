@@ -1,5 +1,4 @@
 import { BaseAggregateRoot } from '@/core/common/base.aggregate-root';
-import { Optional } from '@core/types';
 import { Nullable } from '@/core/types';
 
 export interface EnterpriseProps {
@@ -8,9 +7,9 @@ export interface EnterpriseProps {
   description: string;
   contactEmail: string;
   contactPhone: string;
-  website?: string;
-  taxId?: string;
-  logoUrl?: string;
+  website: Nullable<string>;
+  taxId: Nullable<string>;
+  logoUrlId: Nullable<string>;
   isVerified: boolean;
   createdAt: Date;
   updatedAt: Date;
@@ -60,16 +59,16 @@ export class EnterpriseRoot extends BaseAggregateRoot<EnterpriseProps> {
     return this.props.contactPhone;
   }
 
-  get website(): Optional<string> {
+  get website(): Nullable<string> {
     return this.props.website;
   }
 
-  get taxId(): Optional<string> {
+  get taxId(): Nullable<string> {
     return this.props.taxId;
   }
 
-  get logoUrl(): Optional<string> {
-    return this.props.logoUrl;
+  get logoUrlId(): Nullable<string> {
+    return this.props.logoUrlId;
   }
 
   get isVerified(): boolean {
@@ -100,5 +99,17 @@ export class EnterpriseRoot extends BaseAggregateRoot<EnterpriseProps> {
   public restore(): void {
     this.props.deleteAt = null;
     this.props.deleteBy = null;
+  }
+
+  public update(props: Partial<EnterpriseProps>): void {
+    if (props.companyName !== undefined) this.props.companyName = props.companyName;
+    if (props.description !== undefined) this.props.description = props.description;
+    if (props.contactEmail !== undefined) this.props.contactEmail = props.contactEmail;
+    if (props.contactPhone !== undefined) this.props.contactPhone = props.contactPhone;
+    if (props.website !== undefined) this.props.website = props.website;
+    if (props.taxId !== undefined) this.props.taxId = props.taxId;
+    if (props.logoUrlId !== undefined) this.props.logoUrlId = props.logoUrlId;
+    if (props.isVerified !== undefined) this.props.isVerified = props.isVerified;
+    this.props.updatedAt = new Date();
   }
 }

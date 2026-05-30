@@ -1,6 +1,6 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { Inject, NotFoundException } from '@nestjs/common';
-import { PLATFORM_REPOSITORY, type IPlatformRepository } from '@/core/interfaces/repositories';
+import { PLATFORM_REPOSITORY, type IPlatformRepository, UPLOADED_FILE_REPOSITORY, type IUploadedFileRepository } from '@/core/interfaces/repositories';
 import { PlatformUpdateCommand } from './platform-update.command';
 import { PlatformDto } from '@/application/dtos';
 import { PlatformMapper } from '@/application/mappers';
@@ -10,6 +10,8 @@ export class UpdatePlatformHandler implements ICommandHandler<PlatformUpdateComm
   constructor(
     @Inject(PLATFORM_REPOSITORY)
     private readonly platformRepository: IPlatformRepository,
+    @Inject(UPLOADED_FILE_REPOSITORY)
+    private readonly uploadedFileRepository: IUploadedFileRepository,
   ) { }
 
   async execute(command: PlatformUpdateCommand): Promise<PlatformDto> {
@@ -25,7 +27,15 @@ export class UpdatePlatformHandler implements ICommandHandler<PlatformUpdateComm
     }
 
     if (input.baseUrl) (platform.props as any).baseUrl = input.baseUrl;
-    if (input.iconUrl) platform.updateIconUrl(input.iconUrl);
+    
+    if (input.icon) {
+      const fileExists = await this.uploadedFileRepository.findById(input.icon);
+      if (!fileExists) {
+        throw new NotFoundException(`Icon file with ID ${input.icon} not found`);
+      }
+      platform.updateIcon(input.icon);
+    }
+    
     if (input.apiStatus) platform.updateApiStatus(input.apiStatus);
 
     await this.platformRepository.save(platform);

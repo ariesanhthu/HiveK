@@ -9,7 +9,7 @@ describe('EnterpriseRoot', () => {
     contactPhone: '987654321',
     website: 'https://acme.com',
     taxId: 'TAX-001',
-    logoUrl: 'https://acme.com/logo.png',
+    logoUrlId: 'logo-123',
     isVerified: true,
     createdAt: new Date(),
     updatedAt: new Date(),
@@ -26,7 +26,7 @@ describe('EnterpriseRoot', () => {
     expect(root.contactPhone).toBe(props.contactPhone);
     expect(root.website).toBe(props.website);
     expect(root.taxId).toBe(props.taxId);
-    expect(root.logoUrl).toBe(props.logoUrl);
+    expect(root.logoUrlId).toBe(props.logoUrlId);
     expect(root.isVerified).toBe(props.isVerified);
   });
 

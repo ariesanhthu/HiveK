@@ -12,7 +12,7 @@ export class EnterpriseMapper {
       contactPhone: root.contactPhone,
       website: root.website,
       taxId: root.taxId,
-      logoUrl: root.logoUrl,
+      logoUrlId: root.logoUrlId,
       isVerified: root.isVerified,
       createdAt: root.createdAt.toISOString(),
       updatedAt: root.updatedAt.toISOString(),

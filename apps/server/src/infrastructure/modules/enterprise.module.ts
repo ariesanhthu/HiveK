@@ -9,11 +9,20 @@ import { MongoEnterpriseReadService } from '@/infrastructure/mongo/read-services
 import { MongoEnterpriseRepository } from '@/infrastructure/mongo/repositories';
 import { EnterpriseDocument, EnterpriseModel, EnterpriseSchema } from '@/infrastructure/mongo/schemas';
 
-import { EnterpriseSoftDeleteCommandHandler, EnterpriseHardDeleteCommandHandler, EnterpriseRestoreCommandHandler } from '@/application/commands';
+import {
+  EnterpriseCreateCommandHandler,
+  EnterpriseUpdateCommandHandler,
+  EnterpriseSoftDeleteCommandHandler,
+  EnterpriseHardDeleteCommandHandler,
+  EnterpriseRestoreCommandHandler,
+} from '@/application/commands';
+
+import { UploadedFileModule } from './uploaded-file.module';
 
 @Module({
   imports: [
     CqrsModule,
+    UploadedFileModule,
     MongooseModule.forFeature([
       { name: EnterpriseModel.name, schema: EnterpriseSchema },
     ]),
@@ -21,6 +30,8 @@ import { EnterpriseSoftDeleteCommandHandler, EnterpriseHardDeleteCommandHandler,
   controllers: [EnterpriseController],
   providers: [
     EnterpriseGetByIdHandler,
+    EnterpriseCreateCommandHandler,
+    EnterpriseUpdateCommandHandler,
     EnterpriseSoftDeleteCommandHandler,
     EnterpriseHardDeleteCommandHandler,
     EnterpriseRestoreCommandHandler,

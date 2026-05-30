@@ -21,6 +21,7 @@ export class UserUpdateProfileCommandHandler implements ICommandHandler<UserUpda
 
     const anyProps = user.props as any;
     if ((input as any).firstName) anyProps.fullName = `${(input as any).firstName} ${(input as any).lastName || ''}`;
+    if (input.avatarUrl !== undefined) anyProps.avatar = input.avatarUrl ?? null;
 
     await this.userRepository.save(user);
 

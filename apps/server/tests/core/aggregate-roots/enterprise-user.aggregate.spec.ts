@@ -10,6 +10,7 @@ describe('EnterpriseUserRoot', () => {
     roleId: 'role-ent',
     isEmailVerified: true,
     fullName: 'Ent Owner',
+    avatar: null,
     enterpriseId: 'enterprise-123',
     createdAt: new Date(),
     updatedAt: new Date(),

@@ -10,6 +10,7 @@ export interface UserProps {
   roleId: string;
   isEmailVerified: boolean;
   fullName: string;
+  avatar: Nullable<string>;
   createdAt: Date;
   updatedAt: Date;
   deleteAt: Nullable<Date>;
@@ -58,6 +59,10 @@ export abstract class UserRoot<T extends UserProps = UserProps> extends BaseAggr
 
   get fullName(): string {
     return this.props.fullName;
+  }
+
+  get avatar(): Nullable<string> {
+    return this.props.avatar;
   }
 
   get deleteAt(): Nullable<Date> {

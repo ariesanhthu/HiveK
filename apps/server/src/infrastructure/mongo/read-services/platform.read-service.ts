@@ -64,7 +64,7 @@ export class MongoPlatformReadService implements IPlatformReadService {
       name: doc.name,
       baseUrl: doc.base_url,
       apiStatus: doc.api_status,
-      iconUrl: doc.icon_url,
+      icon: doc.icon,
     };
   }
 }

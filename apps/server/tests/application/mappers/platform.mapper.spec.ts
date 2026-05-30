@@ -7,7 +7,7 @@ describe('PlatformMapper', () => {
       name: 'Facebook',
       baseUrl: 'https://facebook.com',
       apiStatus: 'active',
-      iconUrl: 'icon.png',
+      icon: 'icon.png',
     } as any;
 
     const dto = PlatformMapper.toDto(mockRoot);
@@ -23,7 +23,7 @@ describe('PlatformMapper', () => {
       name: 'Facebook',
       baseUrl: 'https://facebook.com',
       apiStatus: 'active',
-      iconUrl: 'icon.png',
+      icon: 'icon.png',
     } as any;
 
     const dtos = PlatformMapper.toListDto([mockRoot]);

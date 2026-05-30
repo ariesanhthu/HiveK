@@ -17,7 +17,7 @@ export class PlatformModel {
   api_status: PlatformApiStatus;
 
   @Prop({ required: true })
-  icon_url: string;
+  icon: string;
 
   @Prop({ type: Date, default: null })
   delete_at: Date | null;

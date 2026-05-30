@@ -1,9 +1,19 @@
-import { Controller, Get, Patch, Delete, Param, Query, HttpCode, HttpStatus } from '@nestjs/common';
+import { Controller, Get, Post, Patch, Delete, Param, Query, Body, HttpCode, HttpStatus, UseGuards } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { EnterpriseGetByIdQuery } from '@/application/queries';
-import { EnterpriseSoftDeleteCommand, EnterpriseHardDeleteCommand, EnterpriseRestoreCommand } from '@/application/commands';
+import {
+  EnterpriseCreateCommand,
+  EnterpriseUpdateCommand,
+  EnterpriseSoftDeleteCommand,
+  EnterpriseHardDeleteCommand,
+  EnterpriseRestoreCommand,
+  EnterpriseCreateInputDto,
+  EnterpriseUpdateInputDto,
+} from '@/application/commands';
 import { EnterpriseDto, SoftDeleteInputDto } from '@/application/dtos';
-import { ApiTags, ApiOperation } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
+import { JwtAuthGuard } from '@/presentation/middleware/jwt-auth.guard';
+import { CurrentUser } from '@/presentation/decorators/current-user.decorator';
 
 @ApiTags('enterprises')
 @Controller('enterprises')
@@ -12,6 +22,29 @@ export class EnterpriseController {
     private readonly commandBus: CommandBus,
     private readonly queryBus: QueryBus,
   ) { }
+
+  @Post()
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Create new enterprise profile' })
+  async create(
+    @CurrentUser('sub') userId: string,
+    @Body() input: EnterpriseCreateInputDto,
+  ): Promise<EnterpriseDto> {
+    return this.commandBus.execute(new EnterpriseCreateCommand(userId, input));
+  }
+
+  @Patch(':id')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Update enterprise profile' })
+  async update(
+    @Param('id') id: string,
+    @CurrentUser('sub') userId: string,
+    @Body() input: EnterpriseUpdateInputDto,
+  ): Promise<EnterpriseDto> {
+    return this.commandBus.execute(new EnterpriseUpdateCommand(id, userId, input));
+  }
 
   @Get(':id')
   @ApiOperation({ summary: 'Get enterprise by ID' })

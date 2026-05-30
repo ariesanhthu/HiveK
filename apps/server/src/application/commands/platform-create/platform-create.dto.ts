@@ -6,7 +6,7 @@ export const PlatformCreateInputDtoSchema = z.object({
   name: z.string(),
   baseUrl: z.url(),
   apiStatus: z.enum(PlatformApiStatus),
-  iconUrl: z.url(),
+  icon: z.string(),
 });
 
 export class PlatformCreateInputDto extends createZodDto(PlatformCreateInputDtoSchema) {}
