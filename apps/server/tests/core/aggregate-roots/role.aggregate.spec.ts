@@ -4,7 +4,7 @@ describe('RoleRoot Aggregate Root', () => {
   const createProps = {
     title: 'Admin',
     permissions: ['read', 'write'],
-    isBlocked: false,
+    type: 'admin' as any,
   };
 
   it('should create and read properties correctly', () => {
@@ -13,23 +13,18 @@ describe('RoleRoot Aggregate Root', () => {
     expect(root).toBeDefined();
     expect(root.title).toBe(createProps.title);
     expect(root.permissions).toEqual(createProps.permissions);
-    expect(root.isBlocked).toBe(createProps.isBlocked);
     expect(root.createdAt).toBeInstanceOf(Date);
     expect(root.updatedAt).toBeInstanceOf(Date);
   });
 
-  it('should block and unblock correctly', () => {
+  it('should update correctly', () => {
     const root = RoleRoot.create(createProps);
-    const initialCreatedAt = root.createdAt;
+    const initialUpdatedAt = root.updatedAt;
 
-    root.block();
-    expect(root.isBlocked).toBe(true);
-    expect(root.updatedAt.getTime()).toBeGreaterThanOrEqual(initialCreatedAt.getTime());
-
-    const beforeUnblock = root.updatedAt;
-    root.unblock();
-    expect(root.isBlocked).toBe(false);
-    expect(root.updatedAt.getTime()).toBeGreaterThanOrEqual(beforeUnblock.getTime());
+    root.update({ title: 'Super Admin', permissions: ['*'] });
+    expect(root.title).toBe('Super Admin');
+    expect(root.permissions).toEqual(['*']);
+    expect(root.updatedAt.getTime()).toBeGreaterThanOrEqual(initialUpdatedAt.getTime());
   });
 
   it('should update permissions correctly', () => {

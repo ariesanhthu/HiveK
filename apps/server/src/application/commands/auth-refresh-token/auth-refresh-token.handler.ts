@@ -40,6 +40,7 @@ export class AuthRefreshTokenCommandHandler implements ICommandHandler<AuthRefre
       sub: user.id,
       email: user.email,
       role: user.roleId,
+      type: user.type,
     };
 
     const accessExpiration = this.configService.get<number>('JWT_ACCESS_EXPIRATION_MINUTES', 30);

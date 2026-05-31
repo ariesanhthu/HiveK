@@ -2,8 +2,8 @@ import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { CqrsModule } from '@nestjs/cqrs';
 import { UserController } from '@/presentation/controllers';
-import { UserGetByIdHandler } from '@/application/queries';
-import { UserUpdateProfileCommandHandler, UserSoftDeleteCommandHandler, UserHardDeleteCommandHandler, UserRestoreCommandHandler } from '@/application/commands';
+import { UserGetByIdHandler, UserGetListHandler } from '@/application/queries';
+import { UserCreateCommandHandler, UserUpdateCommandHandler, UserUpdateProfileCommandHandler, UserSoftDeleteCommandHandler, UserHardDeleteCommandHandler, UserRestoreCommandHandler } from '@/application/commands';
 import { USER_READ_SERVICE } from '@/application/interfaces';
 import { USER_REPOSITORY } from '@/core/interfaces/repositories';
 import { MongoUserReadService } from '@/infrastructure/mongo/read-services';
@@ -35,6 +35,9 @@ import { LinkUserAvatarHandler } from '@/application/events';
   controllers: [UserController],
   providers: [
     UserGetByIdHandler,
+    UserGetListHandler,
+    UserCreateCommandHandler,
+    UserUpdateCommandHandler,
     UserUpdateProfileCommandHandler,
     UserSoftDeleteCommandHandler,
     UserHardDeleteCommandHandler,

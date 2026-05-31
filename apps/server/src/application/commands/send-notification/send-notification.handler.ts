@@ -2,7 +2,7 @@ import { CommandHandler, ICommandHandler, EventBus } from '@nestjs/cqrs';
 import { Inject, BadRequestException, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { UserType } from '@/core/enums';
+import { ERoleType } from '@/core/enums';
 import { UserModel, UserDocument } from '@/infrastructure/mongo/schemas/user.schema';
 import { ENTERPRISE_REPOSITORY, type IEnterpriseRepository } from '@/core/interfaces/repositories';
 import { SendNotificationCommand } from './send-notification.command';
@@ -32,7 +32,7 @@ export class SendNotificationCommandHandler implements ICommandHandler<SendNotif
       }
       case 'admin': {
         const admins = await this.userModel
-          .find({ type: UserType.ADMIN, delete_at: null })
+          .find({ type: ERoleType.ADMIN, delete_at: null })
           .select('_id')
           .lean()
           .exec();
@@ -52,7 +52,7 @@ export class SendNotificationCommandHandler implements ICommandHandler<SendNotif
 
         // Fetch enterprise members
         const members = await this.userModel
-          .find({ type: UserType.ENTERPRISE, enterprise_id: enterpriseId, delete_at: null })
+          .find({ type: ERoleType.ENTERPRISE, enterprise_id: enterpriseId, delete_at: null })
           .select('_id')
           .lean()
           .exec();

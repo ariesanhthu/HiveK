@@ -5,7 +5,7 @@ import { IUserRepository } from '@/core/interfaces/repositories';
 import { UserRoot, AdminRoot, EnterpriseUserRoot, KOLUserRoot } from '@/core/aggregate-roots';
 import { UserModel, UserDocument } from '../schemas/user.schema';
 import { Nullable } from '@/core/types';
-import { UserType } from '@/core/enums';
+import { ERoleType } from '@/core/enums';
 
 @Injectable()
 export class MongoUserRepository implements IUserRepository {
@@ -60,14 +60,14 @@ export class MongoUserRepository implements IUserRepository {
     const id = doc._id.toString();
 
     switch (doc.type) {
-      case UserType.ADMIN:
+      case ERoleType.ADMIN:
         return AdminRoot.instantiate(id, props as any);
-      case UserType.ENTERPRISE:
+      case ERoleType.ENTERPRISE:
         return EnterpriseUserRoot.instantiate(id, {
           ...props,
           enterpriseId: (doc as any).enterprise_id,
         } as any);
-      case UserType.KOL:
+      case ERoleType.KOL:
         return KOLUserRoot.instantiate(id, props as any);
       default:
         throw new Error(`Unknown user type: ${doc.type}`);

@@ -6,6 +6,7 @@ import { KolProfileUpdateCommand, KolProfileSoftDeleteCommand, KolProfileHardDel
 import { KolProfileDto, SoftDeleteInputDto } from '@/application/dtos';
 import { PaginatedResponseDto, CursorPaginationRequestDto } from '@/shared/dtos/pagination.dto';
 import { JwtAuthGuard } from '../middleware/guards';
+import { Public } from '@/presentation/decorators/public.decorator';
 
 @ApiTags('kol-profiles')
 @Controller('kol-profiles')
@@ -15,24 +16,28 @@ export class KolProfileController {
     private readonly commandBus: CommandBus,
   ) { }
 
+  @Public()
   @Get()
   @ApiOperation({ summary: 'Search/List KOL profiles' })
   async findAll(@Query() filters: KolProfileFilterDto): Promise<PaginatedResponseDto<KolProfileDto>> {
     return this.queryBus.execute(new KolProfileGetListQuery(filters));
   }
 
+  @Public()
   @Get('platforms')
   @ApiOperation({ summary: 'Get KOL profile handles mapping (for dev)' })
   async findHandlesDev(@Query() pagination: CursorPaginationRequestDto): Promise<PaginatedResponseDto<any>> {
     return this.queryBus.execute(new KolProfileGetHandlesDevQuery(pagination));
   }
 
+  @Public()
   @Get(':id')
   @ApiOperation({ summary: 'Get KOL profile by ID' })
   async findById(@Param('id') id: string): Promise<KolProfileDto> {
     return this.queryBus.execute(new KolProfileGetByIdQuery(id));
   }
 
+  @Public()
   @Patch(':id')
   @ApiOperation({ summary: 'Update anything of an influencer (PATCH)' })
   async update(@Param('id') id: string, @Body() input: UpdateKolProfileDto): Promise<KolProfileDto> {

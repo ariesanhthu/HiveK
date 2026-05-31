@@ -1,20 +1,50 @@
-import { Controller, Get, Patch, Delete, Param, Query, HttpCode, HttpStatus } from '@nestjs/common';
+import { Controller, Get, Post, Patch, Delete, Param, Query, Body, HttpCode, HttpStatus } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
-import { UserGetByIdQuery } from '@/application/queries';
-import { UserSoftDeleteCommand, UserHardDeleteCommand, UserRestoreCommand } from '@/application/commands';
-import { UserDto, SoftDeleteInputDto } from '@/application/dtos';
+import { UserGetByIdQuery, UserGetListQuery } from '@/application/queries';
+import { UserCreateCommand, UserUpdateCommand, UserSoftDeleteCommand, UserHardDeleteCommand, UserRestoreCommand } from '@/application/commands';
+import { UserDto, UserFilterDto, UserCreateInputDto, UserUpdateInputDto, SoftDeleteInputDto } from '@/application/dtos';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../middleware/guards';
 import { UseGuards } from '@nestjs/common';
+import { Roles } from '@/presentation/decorators/roles.decorator';
+import { ERoleType } from '@/core/enums';
+import { PaginatedResponseDto } from '@/shared/dtos/pagination.dto';
 
 @ApiTags('users')
 @UseGuards(JwtAuthGuard)
+@Roles(ERoleType.ADMIN)
 @Controller('users')
 export class UserController {
   constructor(
     private readonly commandBus: CommandBus,
     private readonly queryBus: QueryBus,
   ) { }
+
+  @Post()
+  @ApiOperation({ summary: 'Create a new user' })
+  async create(@Body() input: UserCreateInputDto): Promise<{ id: string }> {
+    const id = await this.commandBus.execute<UserCreateCommand, string>(
+      new UserCreateCommand(input),
+    );
+    return { id };
+  }
+
+  @Patch(':id')
+  @ApiOperation({ summary: 'Update a user' })
+  async update(
+    @Param('id') id: string,
+    @Body() input: UserUpdateInputDto,
+  ): Promise<void> {
+    await this.commandBus.execute(new UserUpdateCommand(id, input));
+  }
+
+  @Get()
+  @ApiOperation({ summary: 'Get paginated list of users' })
+  async findAll(@Query() filters: UserFilterDto): Promise<PaginatedResponseDto<UserDto>> {
+    return this.queryBus.execute<UserGetListQuery, PaginatedResponseDto<UserDto>>(
+      new UserGetListQuery(filters),
+    );
+  }
 
   @Get(':id')
   @ApiOperation({ summary: 'Get user by ID' })

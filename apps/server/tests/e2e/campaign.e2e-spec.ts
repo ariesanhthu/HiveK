@@ -24,7 +24,7 @@ describe('Campaign Domain (e2e)', () => {
     authToken = jwtService.sign({
       sub: '64f7b2c9e8b3c9001f3e4e94',
       email: 'campaign-tester@hivek.com',
-      role: 'ENTERPRISE',
+      role: 'enterprise',
     });
 
     campaignModel = app.get<Model<any>>(getModelToken('CampaignModel'));

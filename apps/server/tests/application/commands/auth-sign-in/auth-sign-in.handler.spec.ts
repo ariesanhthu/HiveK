@@ -1,5 +1,6 @@
 import { AuthSignInCommandHandler } from '@/application/commands/auth-sign-in/auth-sign-in.handler';
 import { AuthSignInCommand } from '@/application/commands/auth-sign-in/auth-sign-in.command';
+import { ERoleType } from '@/core/enums';
 import * as bcrypt from 'bcrypt';
 
 jest.mock('bcrypt', () => ({
@@ -37,6 +38,7 @@ describe('AuthSignInCommandHandler', () => {
       email: 'user@example.com',
       passwordHash: 'hashed',
       roleId: 'role-1',
+      type: ERoleType.KOL,
       updateRefreshToken: jest.fn(),
     } as any;
 
@@ -57,11 +59,13 @@ describe('AuthSignInCommandHandler', () => {
       sub: 'user-123',
       email: 'user@example.com',
       role: 'role-1',
+      type: ERoleType.KOL,
     }, { expiresInMinutes: 30 });
     expect(mockJwtService.sign).toHaveBeenNthCalledWith(2, {
       sub: 'user-123',
       email: 'user@example.com',
       role: 'role-1',
+      type: ERoleType.KOL,
     }, { expiresInMinutes: 10080 });
   });
 

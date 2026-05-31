@@ -7,7 +7,7 @@ export class RoleMapper {
       id: root.id!,
       title: root.title,
       permissions: root.permissions,
-      isBlocked: root.isBlocked,
+      type: root.type,
       createdAt: root.createdAt.toISOString(),
       updatedAt: root.updatedAt.toISOString(),
     };

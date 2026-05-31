@@ -15,9 +15,10 @@ import {
   AuthRefreshTokenInputDto
 } from '@/application/commands';
 import { AuthGetProfileQuery } from '@/application/queries';
-import { UserType } from '@/core/enums';
+import { ERoleType } from '@/core/enums';
 import { JwtAuthGuard } from '@/presentation/middleware/guards/jwt-auth.guard';
 import { CurrentUser } from '@/presentation/decorators/current-user.decorator';
+import { Public } from '@/presentation/decorators/public.decorator';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -27,18 +28,21 @@ export class AuthController {
     private readonly queryBus: QueryBus,
   ) { }
 
+  @Public()
   @Post('sign-up/kol')
   @ApiOperation({ summary: 'Sign up as KOL' })
   async signUpKOL(@Body() input: AuthSignUpInputDto) {
-    return this.commandBus.execute(new AuthSignUpCommand(UserType.KOL, input));
+    return this.commandBus.execute(new AuthSignUpCommand(ERoleType.KOL, input));
   }
 
+  @Public()
   @Post('sign-up/enterprise')
   @ApiOperation({ summary: 'Sign up as Enterprise' })
   async signUpEnterprise(@Body() input: AuthSignUpInputDto) {
-    return this.commandBus.execute(new AuthSignUpCommand(UserType.ENTERPRISE, input));
+    return this.commandBus.execute(new AuthSignUpCommand(ERoleType.ENTERPRISE, input));
   }
 
+  @Public()
   @Post('sign-in')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Sign in' })
@@ -66,6 +70,7 @@ export class AuthController {
     return result;
   }
 
+  @Public()
   @Post('refresh-token')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Refresh tokens' })
@@ -93,6 +98,7 @@ export class AuthController {
     return result;
   }
 
+  @Public()
   @Post('sign-out')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Sign out' })
@@ -105,6 +111,7 @@ export class AuthController {
     return this.commandBus.execute(new AuthSignOutCommand(input));
   }
 
+  @Public()
   @Post('reset-password')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Reset password' })

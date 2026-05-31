@@ -1,6 +1,6 @@
 import { AuthSignUpCommandHandler } from '@/application/commands/auth-sign-up/auth-sign-up.handler';
 import { AuthSignUpCommand } from '@/application/commands/auth-sign-up/auth-sign-up.command';
-import { UserType } from '@/core/enums';
+import { ERoleType } from '@/core/enums';
 import * as bcrypt from 'bcrypt';
 
 jest.mock('bcrypt', () => ({
@@ -28,7 +28,7 @@ describe('AuthSignUpCommandHandler', () => {
 
   it('should sign up a KOL successfully', async () => {
     const input = { email: 'kol@example.com', password: 'password123' };
-    const command = new AuthSignUpCommand(UserType.KOL, input);
+    const command = new AuthSignUpCommand(ERoleType.KOL, input);
 
     mockUserRepository.findByEmail.mockResolvedValue(null);
     mockRoleReadService.findAll.mockResolvedValue({
@@ -46,7 +46,7 @@ describe('AuthSignUpCommandHandler', () => {
 
   it('should throw error if user already exists', async () => {
     const input = { email: 'kol@example.com', password: 'password123' };
-    const command = new AuthSignUpCommand(UserType.KOL, input);
+    const command = new AuthSignUpCommand(ERoleType.KOL, input);
 
     mockUserRepository.findByEmail.mockResolvedValue({ id: 'existing-id' });
 
@@ -55,7 +55,7 @@ describe('AuthSignUpCommandHandler', () => {
 
   it('should throw error if no roles are found', async () => {
     const input = { email: 'kol@example.com', password: 'password123' };
-    const command = new AuthSignUpCommand(UserType.KOL, input);
+    const command = new AuthSignUpCommand(ERoleType.KOL, input);
 
     mockUserRepository.findByEmail.mockResolvedValue(null);
     mockRoleReadService.findAll.mockResolvedValue({ data: [] });

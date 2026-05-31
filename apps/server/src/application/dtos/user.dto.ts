@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { createZodDto } from 'nestjs-zod';
-import { UserType } from '@/core/enums/user-type.enum';
+import { ERoleType } from '@/core/enums';
 import { CursorPaginationRequestSchema } from '@/shared/dtos/pagination.dto';
 
 const BaseUserDtoSchema = z.object({
@@ -16,16 +16,16 @@ const BaseUserDtoSchema = z.object({
 });
 
 export const AdminDtoSchema = BaseUserDtoSchema.extend({
-  type: z.literal(UserType.ADMIN),
+  type: z.literal(ERoleType.ADMIN),
 });
 
 export const EnterpriseUserDtoSchema = BaseUserDtoSchema.extend({
-  type: z.literal(UserType.ENTERPRISE),
+  type: z.literal(ERoleType.ENTERPRISE),
   enterpriseId: z.string(),
 });
 
 export const KOLUserDtoSchema = BaseUserDtoSchema.extend({
-  type: z.literal(UserType.KOL),
+  type: z.literal(ERoleType.KOL),
 });
 
 export const UserDtoSchema = z.discriminatedUnion('type', [
@@ -43,9 +43,35 @@ export const UserFilterSchema = CursorPaginationRequestSchema.extend({
   email: z.string().optional(),
   phone: z.string().optional(),
   fullName: z.string().optional(),
-  type: z.enum(UserType).optional(),
+  type: z.nativeEnum(ERoleType).optional(),
   roleId: z.string().optional(),
   isEmailVerified: z.preprocess((val) => val === 'true' || val === true, z.boolean()).optional(),
 });
 
 export class UserFilterDto extends createZodDto(UserFilterSchema) {}
+
+export const UserCreateInputSchema = z.object({
+  email: z.string().email(),
+  phone: z.string().default('0000000000'),
+  password: z.string().min(6),
+  fullName: z.string().min(1),
+  avatar: z.string().nullable().optional().default(null),
+  type: z.nativeEnum(ERoleType),
+  roleId: z.string(),
+  isEmailVerified: z.boolean().optional().default(false),
+  enterpriseId: z.string().optional(),
+});
+
+export class UserCreateInputDto extends createZodDto(UserCreateInputSchema) {}
+
+export const UserUpdateInputSchema = z.object({
+  phone: z.string().optional(),
+  password: z.string().min(6).optional(),
+  fullName: z.string().min(1).optional(),
+  avatar: z.string().nullable().optional(),
+  roleId: z.string().optional(),
+  isEmailVerified: z.boolean().optional(),
+  enterpriseId: z.string().optional(),
+});
+
+export class UserUpdateInputDto extends createZodDto(UserUpdateInputSchema) {}

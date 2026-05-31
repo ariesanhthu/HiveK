@@ -39,7 +39,7 @@ describe('Uploaded File Domain (e2e)', () => {
     authToken = jwtService.sign({
       sub: '64f7b2c9e8b3c9001f3e4e94',
       email: 'upload-tester@hivek.com',
-      role: 'ADMIN',
+      role: 'admin',
     });
 
     fileModel = app.get<Model<any>>(getModelToken('UploadedFileModel'));

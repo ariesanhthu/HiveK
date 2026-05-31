@@ -25,14 +25,11 @@ export class MongoRoleReadService implements IRoleReadService {
   }
 
   async findAll(filters: RoleFilterDto = {} as any): Promise<PaginatedResponseDto<RoleDto>> {
-    const { cursor, limit = 10, sort = SortOrder.DESC, title, isBlocked } = filters;
+    const { cursor, limit = 10, sort = SortOrder.DESC, title } = filters;
     const query: any = {};
 
     if (title) {
       query.title = { $regex: title, $options: 'i' };
-    }
-    if (isBlocked !== undefined) {
-      query.is_blocked = isBlocked;
     }
 
     if (cursor) {
@@ -61,7 +58,7 @@ export class MongoRoleReadService implements IRoleReadService {
       id: doc._id.toString(),
       title: doc.title,
       permissions: doc.permissions,
-      isBlocked: doc.is_blocked,
+      type: doc.type,
       createdAt: doc.created_at,
       updatedAt: doc.updated_at,
     };

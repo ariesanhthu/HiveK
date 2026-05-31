@@ -11,6 +11,8 @@ import { KOL_PROFILE_READ_SERVICE } from '@/application/interfaces/read-service/
 import { MongoKolProfileReadService } from './read-services/kol-profile.read-service';
 import { PLATFORM_READ_SERVICE } from '@/application/interfaces/read-service/platform.read-service.interface';
 import { MongoPlatformReadService } from './read-services/platform.read-service';
+import { RoleSeedService } from './seeding/role-seed.service';
+import { RoleModel, RoleSchema, UserModel, UserSchema } from './schemas';
 
 @Module({
   imports: [

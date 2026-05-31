@@ -10,6 +10,8 @@ import { WebSocketModule } from '@/infrastructure/websocket/websocket.module';
 import { APP_PIPE, APP_GUARD } from '@nestjs/core';
 import { ZodValidationPipe } from 'nestjs-zod';
 import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
+import { RolesGuard } from './presentation/middleware/guards/roles.guard';
+import { JwtAuthGuard } from './presentation/middleware/guards/jwt-auth.guard';
 import { NestConfigModule } from './infrastructure/nest-config/nest-config.module';
 import { InfrastructureModule } from './infrastructure/modules/infrastructure.module';
 import { PlatformModule } from './infrastructure/modules/platform.module';
@@ -57,6 +59,14 @@ import { TestRmqHandler } from './presentation/controllers/test/test-rmq.control
     {
       provide: APP_GUARD,
       useClass: ThrottlerGuard,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: JwtAuthGuard,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: RolesGuard,
     },
     TestRmqHandler
   ],

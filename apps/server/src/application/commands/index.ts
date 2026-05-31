@@ -122,3 +122,15 @@ export * from './mark-all-notifications-read/mark-all-notifications-read.command
 export * from './mark-all-notifications-read/mark-all-notifications-read.handler';
 export * from './notification-soft-delete/notification-soft-delete.command';
 export * from './notification-soft-delete/notification-soft-delete.handler';
+
+// User Create & Update
+export * from './user-create/user-create.command';
+export * from './user-create/user-create.handler';
+export * from './user-update/user-update.command';
+export * from './user-update/user-update.handler';
+
+// Role Create & Update
+export * from './role-create/role-create.command';
+export * from './role-create/role-create.handler';
+export * from './role-update/role-update.command';
+export * from './role-update/role-update.handler';

@@ -1,5 +1,5 @@
 import { UserDto } from '@/application/dtos';
-import { UserType } from '@/core/enums';
+import { ERoleType } from '@/core/enums';
 import { UserRoot, EnterpriseUserRoot } from '@/core/aggregate-roots';
 
 export class UserMapper {
@@ -19,21 +19,21 @@ export class UserMapper {
     const type = root.type;
 
     switch (type) {
-      case UserType.ENTERPRISE:
+      case ERoleType.ENTERPRISE:
         return {
           ...baseFields,
-          type: UserType.ENTERPRISE,
+          type: ERoleType.ENTERPRISE,
           enterpriseId: (root as EnterpriseUserRoot).enterpriseId,
         };
-      case UserType.ADMIN:
+      case ERoleType.ADMIN:
         return {
           ...baseFields,
-          type: UserType.ADMIN,
+          type: ERoleType.ADMIN,
           };
-      case UserType.KOL:
+      case ERoleType.KOL:
         return {
           ...baseFields,
-          type: UserType.KOL,
+          type: ERoleType.KOL,
         };
       default:
         throw new Error(`Unknown user type: ${type}`);

@@ -1,12 +1,12 @@
 import { BaseAggregateRoot } from '@/core/common/base.aggregate-root';
-import { UserType } from '../enums/user-type.enum';
+import { ERoleType } from '../enums';
 import { Nullable } from '@/core/types';
 
 export interface UserProps {
   email: string;
   phone: string;
   passwordHash: string;
-  type: UserType;
+  type: ERoleType;
   roleId: string;
   isEmailVerified: boolean;
   fullName: string;
@@ -37,7 +37,7 @@ export abstract class UserRoot<T extends UserProps = UserProps> extends BaseAggr
     return this.props.passwordHash;
   }
 
-  get type(): UserType {
+  get type(): ERoleType {
     return this.props.type;
   }
 

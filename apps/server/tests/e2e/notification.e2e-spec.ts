@@ -37,7 +37,7 @@ describe('Notification System (e2e)', () => {
     authToken = jwtService.sign({
       sub: testUserId,
       email: 'e2e-tester@hivek.com',
-      role: 'KOL',
+      role: 'kol',
     });
   });
 

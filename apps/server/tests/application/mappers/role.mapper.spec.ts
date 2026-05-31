@@ -6,7 +6,6 @@ describe('RoleMapper', () => {
       id: 'role-123',
       title: 'Admin',
       permissions: ['read', 'write'],
-      isBlocked: false,
       createdAt: new Date('2026-06-01T00:00:00Z'),
       updatedAt: new Date('2026-06-30T00:00:00Z'),
     } as any;
@@ -23,7 +22,6 @@ describe('RoleMapper', () => {
       id: 'role-123',
       title: 'Admin',
       permissions: ['read', 'write'],
-      isBlocked: false,
       createdAt: new Date('2026-06-01T00:00:00Z'),
       updatedAt: new Date('2026-06-30T00:00:00Z'),
     } as any;

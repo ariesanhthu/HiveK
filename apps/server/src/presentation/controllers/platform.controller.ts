@@ -6,6 +6,7 @@ import { PlatformGetListQuery, PlatformGetByIdQuery, PlatformFilterDto } from '@
 import { PlatformDto, SoftDeleteInputDto } from '@/application/dtos';
 import { PaginatedResponseDto } from '@/shared/dtos/pagination.dto';
 import { JwtAuthGuard } from '../middleware/guards';
+import { Public } from '@/presentation/decorators/public.decorator';
 
 @ApiTags('platforms')
 @Controller('platforms')
@@ -15,12 +16,14 @@ export class PlatformController {
     private readonly queryBus: QueryBus,
   ) { }
 
+  @Public()
   @Get()
   @ApiOperation({ summary: 'Get all platforms' })
   async findAll(@Query() filters: PlatformFilterDto): Promise<PaginatedResponseDto<PlatformDto>> {
     return this.queryBus.execute(new PlatformGetListQuery(filters));
   }
 
+  @Public()
   @Get(':id')
   @ApiOperation({ summary: 'Get platform by ID' })
   async findById(@Param('id') id: string): Promise<PlatformDto> {
@@ -63,6 +66,7 @@ export class PlatformController {
     return this.commandBus.execute(new PlatformHardDeleteCommand(id));
   }
 
+  @Public()
   @Patch(':id/restore')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Restore soft deleted platform' })

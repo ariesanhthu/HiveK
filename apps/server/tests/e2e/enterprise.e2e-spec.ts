@@ -35,7 +35,7 @@ describe('Enterprise Domain (e2e)', () => {
       full_name: 'Enterprise Owner E2E',
       phone: '0000000000',
       password_hash: 'password123',
-      type: 'ENTERPRISE',
+      type: 'enterprise',
       role_id: new Types.ObjectId().toString(),
       is_email_verified: false,
       created_at: new Date(),
@@ -46,7 +46,7 @@ describe('Enterprise Domain (e2e)', () => {
     authToken = jwtService.sign({
       sub: testUserId,
       email: 'enterprise-owner-e2e@hivek.com',
-      role: 'ENTERPRISE',
+      role: 'enterprise',
     });
 
     await enterpriseModel.deleteMany({ user_id: testUserId });

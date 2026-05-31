@@ -1,5 +1,5 @@
 import { UserProps, UserRoot, UserCreateProps } from './user.aggregate';
-import { UserType } from '../enums/user-type.enum';
+import { ERoleType } from '../enums';
 
 export interface AdminProps extends UserProps {
 }
@@ -13,7 +13,7 @@ export class AdminRoot extends UserRoot<AdminProps> {
   }
 
   public static create(props: AdminCreateProps): AdminRoot {
-    if (props.type !== UserType.ADMIN) {
+    if (props.type !== ERoleType.ADMIN) {
       throw new Error('Invalid user type for AdminRoot');
     }
     const now = new Date();

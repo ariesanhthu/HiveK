@@ -1,12 +1,12 @@
 import { KOLUserRoot } from '@core/aggregate-roots/kol-user.aggregate';
-import { UserType } from '@core/enums/user-type.enum';
+import { ERoleType } from '@core/enums';
 
 describe('KOLUserRoot', () => {
   const validProps = {
     email: 'kol@example.com',
     phone: '1234567890',
     passwordHash: 'hashedpassword',
-    type: UserType.KOL,
+    type: ERoleType.KOL,
     roleId: 'role-kol',
     isEmailVerified: true,
     fullName: 'KOL User',
@@ -18,13 +18,13 @@ describe('KOLUserRoot', () => {
   it('should create a valid KOLUserRoot when type is KOL', () => {
     const user = KOLUserRoot.create(validProps);
     expect(user).toBeDefined();
-    expect(user.type).toBe(UserType.KOL);
+    expect(user.type).toBe(ERoleType.KOL);
     expect(user.fullName).toBe('KOL User');
   });
 
   it('should throw an error when type is not KOL during creation', () => {
     expect(() => {
-      KOLUserRoot.create({ ...validProps, type: UserType.ADMIN });
+      KOLUserRoot.create({ ...validProps, type: ERoleType.ADMIN });
     }).toThrow('Invalid user type for KOLUserRoot');
   });
 

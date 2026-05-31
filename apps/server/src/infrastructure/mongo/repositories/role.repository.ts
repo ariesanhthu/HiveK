@@ -43,7 +43,7 @@ export class MongoRoleRepository implements IRoleRepository {
     return RoleRoot.instantiate(doc._id.toString(), {
       title: doc.title,
       permissions: doc.permissions,
-      isBlocked: doc.is_blocked,
+      type: doc.type,
       createdAt: doc.created_at,
       updatedAt: doc.updated_at,
       deleteAt: doc.delete_at,
@@ -55,7 +55,9 @@ export class MongoRoleRepository implements IRoleRepository {
     return {
       title: role.title,
       permissions: role.permissions,
-      is_blocked: role.isBlocked,
+      type: role.type,
+      created_at: role.createdAt,
+      updated_at: role.updatedAt,
       delete_at: role.deleteAt,
       delete_by: role.deleteBy,
     };

@@ -5,7 +5,7 @@ import { Inject } from '@nestjs/common';
 import { ROLE_READ_SERVICE, type IRoleReadService } from '@/application/interfaces';
 import { USER_REPOSITORY, type IUserRepository } from '@/core/interfaces/repositories';
 import { KOLUserRoot, EnterpriseUserRoot, AdminRoot } from '@/core/aggregate-roots';
-import { UserType } from '@/core/enums';
+import { ERoleType } from '@/core/enums';
 import * as bcrypt from 'bcrypt';
 
 @CommandHandler(AuthSignUpCommand)
@@ -46,16 +46,16 @@ export class AuthSignUpCommandHandler implements ICommandHandler<AuthSignUpComma
     };
 
     switch (type) {
-      case UserType.KOL:
+      case ERoleType.KOL:
         user = KOLUserRoot.create(commonProps);
         break;
-      case UserType.ENTERPRISE:
+      case ERoleType.ENTERPRISE:
         user = EnterpriseUserRoot.create({
           ...commonProps,
           enterpriseId: 'placeholder-enterprise-id',
         });
         break;
-      case UserType.ADMIN:
+      case ERoleType.ADMIN:
         user = AdminRoot.create(commonProps);
         break;
       default:

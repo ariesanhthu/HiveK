@@ -1,6 +1,8 @@
 import { Controller, Get, Inject, Logger, Query } from '@nestjs/common';
 import { type IMessageQueueService, type IWebSocketService, MESSAGE_QUEUE_SERVICE, WEBSOCKET_SERVICE } from '@/application/interfaces';
+import { Public } from '@/presentation/decorators/public.decorator';
 
+@Public()
 @Controller('test')
 export class TestController {
   private readonly logger = new Logger(TestController.name);

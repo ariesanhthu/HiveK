@@ -1,5 +1,5 @@
 import { UserProps, UserRoot, UserCreateProps } from './user.aggregate';
-import { UserType } from '../enums/user-type.enum';
+import { ERoleType } from '../enums';
 
 export interface EnterpriseUserProps extends UserProps {
   enterpriseId: string;
@@ -15,7 +15,7 @@ export class EnterpriseUserRoot extends UserRoot<EnterpriseUserProps> {
   }
 
   public static create(props: EnterpriseUserCreateProps): EnterpriseUserRoot {
-    if (props.type !== UserType.ENTERPRISE) {
+    if (props.type !== ERoleType.ENTERPRISE) {
       throw new Error('Invalid user type for EnterpriseUserRoot');
     }
     const now = new Date();

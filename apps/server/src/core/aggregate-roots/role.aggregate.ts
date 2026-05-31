@@ -1,10 +1,11 @@
 import { BaseAggregateRoot } from '@/core/common/base.aggregate-root';
 import { Nullable } from '@/core/types';
+import { ERoleType } from '../enums';
 
 export interface RoleProps {
   title: string;
   permissions: string[];
-  isBlocked: boolean;
+  type: ERoleType;
   createdAt: Date;
   updatedAt: Date;
   deleteAt: Nullable<Date>;
@@ -41,10 +42,6 @@ export class RoleRoot extends BaseAggregateRoot<RoleProps> {
     return this.props.permissions;
   }
 
-  get isBlocked(): boolean {
-    return this.props.isBlocked;
-  }
-
   get createdAt(): Date {
     return this.props.createdAt;
   }
@@ -61,6 +58,10 @@ export class RoleRoot extends BaseAggregateRoot<RoleProps> {
     return this.props.deleteBy;
   }
 
+  get type(): ERoleType {
+    return this.props.type;
+  }
+
   public softDelete(deletedBy: string): void {
     this.props.deleteAt = new Date();
     this.props.deleteBy = deletedBy;
@@ -71,13 +72,10 @@ export class RoleRoot extends BaseAggregateRoot<RoleProps> {
     this.props.deleteBy = null;
   }
 
-  public block(): void {
-    this.props.isBlocked = true;
-    this.props.updatedAt = new Date();
-  }
-
-  public unblock(): void {
-    this.props.isBlocked = false;
+  public update(props: { title?: string; permissions?: string[]; type?: ERoleType }): void {
+    if (props.title !== undefined) this.props.title = props.title;
+    if (props.permissions !== undefined) this.props.permissions = props.permissions;
+    if (props.type !== undefined) this.props.type = props.type;
     this.props.updatedAt = new Date();
   }
 

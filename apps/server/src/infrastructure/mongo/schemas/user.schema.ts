@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
-import { UserType } from '@/core/enums/user-type.enum';
+import { ERoleType } from '@/core/enums';
 
 @Schema({
   collection: 'users',
@@ -20,7 +20,7 @@ export class UserModel {
   @Prop({ required: true })
   full_name: string;
 
-  type: UserType;
+  type: ERoleType;
 
   @Prop({ required: true })
   role_id: string;

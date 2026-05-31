@@ -1,5 +1,6 @@
 import { AuthRefreshTokenCommandHandler } from '@/application/commands/auth-refresh-token/auth-refresh-token.handler';
 import { AuthRefreshTokenCommand } from '@/application/commands/auth-refresh-token/auth-refresh-token.command';
+import { ERoleType } from '@/core/enums';
 
 describe('AuthRefreshTokenCommandHandler', () => {
   let handler: AuthRefreshTokenCommandHandler;
@@ -32,6 +33,7 @@ describe('AuthRefreshTokenCommandHandler', () => {
       id: 'user-123',
       email: 'user@example.com',
       roleId: 'role-1',
+      type: ERoleType.KOL,
       refreshToken: 'validRefreshToken',
       updateRefreshToken: jest.fn(),
     } as any;
@@ -56,11 +58,13 @@ describe('AuthRefreshTokenCommandHandler', () => {
       sub: 'user-123',
       email: 'user@example.com',
       role: 'role-1',
+      type: ERoleType.KOL,
     }, { expiresInMinutes: 30 });
     expect(mockJwtService.sign).toHaveBeenNthCalledWith(2, {
       sub: 'user-123',
       email: 'user@example.com',
       role: 'role-1',
+      type: ERoleType.KOL,
     }, { expiresInMinutes: 10080 });
   });
 

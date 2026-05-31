@@ -1,3 +1,4 @@
+import { ERoleType } from '@/core/enums';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
 
@@ -12,8 +13,8 @@ export class RoleModel {
   @Prop({ type: [String], default: [] })
   permissions: string[];
 
-  @Prop({ default: false })
-  is_blocked: boolean;
+  @Prop({ type: String, enum: ERoleType, required: true })
+  type: ERoleType;
 
   @Prop({ type: Date, default: null })
   delete_at: Date | null;

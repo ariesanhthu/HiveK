@@ -1,5 +1,5 @@
 import { UserMapper } from '@/application/mappers/user.mapper';
-import { UserType } from '@/core/enums';
+import { ERoleType } from '@/core/enums';
 
 describe('UserMapper', () => {
   it('should map KOL UserRoot to UserDto', () => {
@@ -13,14 +13,14 @@ describe('UserMapper', () => {
       isEmailVerified: true,
       createdAt: new Date('2026-06-01T00:00:00Z'),
       updatedAt: new Date('2026-06-30T00:00:00Z'),
-      type: UserType.KOL,
+      type: ERoleType.KOL,
     } as any;
 
     const dto = UserMapper.toDto(mockRoot);
 
     expect(dto).toBeDefined();
     expect(dto.id).toBe('user-123');
-    expect(dto.type).toBe(UserType.KOL);
+    expect(dto.type).toBe(ERoleType.KOL);
     expect(dto.avatar).toBe('http://avatar.com/1.png');
   });
 
@@ -34,7 +34,7 @@ describe('UserMapper', () => {
       isEmailVerified: true,
       createdAt: new Date('2026-06-01T00:00:00Z'),
       updatedAt: new Date('2026-06-30T00:00:00Z'),
-      type: UserType.ENTERPRISE,
+      type: ERoleType.ENTERPRISE,
       enterpriseId: 'ent-123',
     } as any;
 
@@ -42,7 +42,7 @@ describe('UserMapper', () => {
 
     expect(dto).toBeDefined();
     expect(dto.id).toBe('user-123');
-    expect(dto.type).toBe(UserType.ENTERPRISE);
+    expect(dto.type).toBe(ERoleType.ENTERPRISE);
     expect((dto as any).enterpriseId).toBe('ent-123');
   });
 
@@ -56,14 +56,14 @@ describe('UserMapper', () => {
       isEmailVerified: true,
       createdAt: new Date('2026-06-01T00:00:00Z'),
       updatedAt: new Date('2026-06-30T00:00:00Z'),
-      type: UserType.ADMIN,
+      type: ERoleType.ADMIN,
     } as any;
 
     const dto = UserMapper.toDto(mockRoot);
 
     expect(dto).toBeDefined();
     expect(dto.id).toBe('user-123');
-    expect(dto.type).toBe(UserType.ADMIN);
+    expect(dto.type).toBe(ERoleType.ADMIN);
   });
 
   it('should throw error for unknown user type', () => {

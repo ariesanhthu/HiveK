@@ -5,7 +5,7 @@ import { IUserReadService } from '@/application/interfaces';
 import { UserDto, UserFilterDto } from '@/application/dtos';
 import { UserDocument, UserModel } from '../schemas';
 import { Nullable } from '@/core/types';
-import { UserType } from '@/core/enums';
+import { ERoleType } from '@/core/enums';
 import { PaginatedResponseDto, SortOrder } from '@/shared/dtos/pagination.dto';
 
 @Injectable()
@@ -82,21 +82,21 @@ export class MongoUserReadService implements IUserReadService {
     };
 
     switch (doc.type) {
-      case UserType.ENTERPRISE:
+      case ERoleType.ENTERPRISE:
         return {
           ...baseFields,
-          type: UserType.ENTERPRISE,
+          type: ERoleType.ENTERPRISE,
           enterpriseId: doc.enterprise_id,
         };
-      case UserType.ADMIN:
+      case ERoleType.ADMIN:
         return {
           ...baseFields,
-          type: UserType.ADMIN,
+          type: ERoleType.ADMIN,
         };
-      case UserType.KOL:
+      case ERoleType.KOL:
         return {
           ...baseFields,
-          type: UserType.KOL,
+          type: ERoleType.KOL,
         };
       default:
         throw new Error(`Unknown user type: ${doc.type}`);

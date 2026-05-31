@@ -1,6 +1,6 @@
 import { SendNotificationCommandHandler } from '@/application/commands/send-notification/send-notification.handler';
 import { SendNotificationCommand } from '@/application/commands/send-notification/send-notification.command';
-import { NotificationType, NotificationChannel, UserType } from '@/core/enums';
+import { NotificationType, NotificationChannel, ERoleType } from '@/core/enums';
 import { BadRequestException, NotFoundException } from '@nestjs/common';
 import { NotificationDispatchedEvent } from '@/application/events';
 
@@ -82,7 +82,7 @@ describe('SendNotificationCommandHandler', () => {
 
     await handler.execute(command);
 
-    expect(mockUserModel.find).toHaveBeenCalledWith({ type: UserType.ADMIN, delete_at: null });
+    expect(mockUserModel.find).toHaveBeenCalledWith({ type: ERoleType.ADMIN, delete_at: null });
     expect(mockEventBus.publish).toHaveBeenCalled();
     const event = mockEventBus.publish.mock.calls[0][0];
     expect(event.recipientIds).toEqual(['admin-1', 'admin-2']);
@@ -109,7 +109,7 @@ describe('SendNotificationCommandHandler', () => {
 
     expect(mockEnterpriseRepository.findById).toHaveBeenCalledWith('enterprise-123');
     expect(mockUserModel.find).toHaveBeenCalledWith({
-      type: UserType.ENTERPRISE,
+      type: ERoleType.ENTERPRISE,
       enterprise_id: 'enterprise-123',
       delete_at: null,
     });
