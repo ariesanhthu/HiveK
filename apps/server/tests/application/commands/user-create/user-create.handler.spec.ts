@@ -1,7 +1,7 @@
 import { UserCreateCommandHandler } from '@/application/commands/user-create/user-create.handler';
 import { UserCreateCommand } from '@/application/commands/user-create/user-create.command';
 import { ERoleType } from '@/core/enums';
-import { ConflictException } from '@nestjs/common';
+import { UserConflictException } from '@/core/exceptions';
 
 describe('UserCreateCommandHandler', () => {
   let handler: UserCreateCommandHandler;
@@ -48,6 +48,6 @@ describe('UserCreateCommandHandler', () => {
       phone: '1234567890',
     });
 
-    await expect(handler.execute(command)).rejects.toThrow(ConflictException);
+    await expect(handler.execute(command)).rejects.toThrow(UserConflictException);
   });
 });

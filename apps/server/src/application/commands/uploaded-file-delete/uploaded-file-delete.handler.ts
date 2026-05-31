@@ -1,5 +1,6 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { Inject, NotFoundException } from '@nestjs/common';
+import { Inject } from '@nestjs/common';
+import { UploadedFileNotFoundException } from '@/core/exceptions';
 import { UPLOADED_FILE_REPOSITORY, type IUploadedFileRepository } from '@/core/interfaces/repositories';
 import { STORAGE_SERVICE, type IStorageService } from '@/core/interfaces/storage';
 import { UploadedFileDeleteCommand } from './uploaded-file-delete.command';
@@ -20,7 +21,7 @@ export class UploadedFileDeleteCommandHandler implements ICommandHandler<Uploade
 
     const file = await this.repository.findById(id);
     if (!file) {
-      throw new NotFoundException(`Uploaded file with ID ${id} not found`);
+      throw new UploadedFileNotFoundException(id);
     }
 
     // Determine resource type for deletion from format

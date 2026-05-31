@@ -1,6 +1,6 @@
 import { KolProfileHardDeleteCommandHandler } from '@/application/commands/kol-profile-hard-delete/kol-profile-hard-delete.handler';
 import { KolProfileHardDeleteCommand } from '@/application/commands/kol-profile-hard-delete/kol-profile-hard-delete.command';
-import { NotFoundException } from '@nestjs/common';
+import { UserNotFoundException } from '@/core/exceptions';
 
 describe('KolProfileHardDeleteCommandHandler', () => {
   let handler: KolProfileHardDeleteCommandHandler;
@@ -29,6 +29,6 @@ describe('KolProfileHardDeleteCommandHandler', () => {
     mockKolProfileRepository.findById.mockResolvedValue(null);
 
     const command = new KolProfileHardDeleteCommand('kol-123');
-    await expect(handler.execute(command)).rejects.toThrow(NotFoundException);
+    await expect(handler.execute(command)).rejects.toThrow(UserNotFoundException);
   });
 });

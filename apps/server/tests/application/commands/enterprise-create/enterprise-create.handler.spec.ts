@@ -1,6 +1,6 @@
 import { EnterpriseCreateCommandHandler } from '@/application/commands/enterprise-create/enterprise-create.handler';
 import { EnterpriseCreateCommand } from '@/application/commands/enterprise-create/enterprise-create.command';
-import { ConflictException } from '@nestjs/common';
+import { EnterpriseConflictException } from '@/core/exceptions';
 
 describe('EnterpriseCreateCommandHandler', () => {
   let handler: EnterpriseCreateCommandHandler;
@@ -47,6 +47,6 @@ describe('EnterpriseCreateCommandHandler', () => {
     };
 
     const command = new EnterpriseCreateCommand('user-123', input);
-    await expect(handler.execute(command)).rejects.toThrow(ConflictException);
+    await expect(handler.execute(command)).rejects.toThrow(EnterpriseConflictException);
   });
 });

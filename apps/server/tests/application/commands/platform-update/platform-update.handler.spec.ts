@@ -1,6 +1,6 @@
 import { UpdatePlatformHandler } from '@/application/commands/platform-update/platform-update.handler';
 import { PlatformUpdateCommand } from '@/application/commands/platform-update/platform-update.command';
-import { NotFoundException } from '@nestjs/common';
+import { PlatformNotFoundException, UploadedFileNotFoundException } from '@/core/exceptions';
 
 describe('UpdatePlatformHandler', () => {
   let handler: UpdatePlatformHandler;
@@ -53,7 +53,7 @@ describe('UpdatePlatformHandler', () => {
     mockPlatformRepository.findById.mockResolvedValue(null);
 
     const command = new PlatformUpdateCommand('platform-123', {});
-    await expect(handler.execute(command)).rejects.toThrow(NotFoundException);
+    await expect(handler.execute(command)).rejects.toThrow(PlatformNotFoundException);
   });
 
   it('should throw NotFoundException if icon file not found', async () => {
@@ -68,6 +68,6 @@ describe('UpdatePlatformHandler', () => {
     mockUploadedFileRepository.findById.mockResolvedValue(null);
 
     const command = new PlatformUpdateCommand('platform-123', { icon: 'invalid-icon' } as any);
-    await expect(handler.execute(command)).rejects.toThrow(NotFoundException);
+    await expect(handler.execute(command)).rejects.toThrow(UploadedFileNotFoundException);
   });
 });

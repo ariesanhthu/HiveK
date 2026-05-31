@@ -1,6 +1,6 @@
 import { RoleHardDeleteCommandHandler } from '@/application/commands/role-hard-delete/role-hard-delete.handler';
 import { RoleHardDeleteCommand } from '@/application/commands/role-hard-delete/role-hard-delete.command';
-import { NotFoundException } from '@nestjs/common';
+import { RoleNotFoundException } from '@/core/exceptions';
 
 describe('RoleHardDeleteCommandHandler', () => {
   let handler: RoleHardDeleteCommandHandler;
@@ -29,6 +29,6 @@ describe('RoleHardDeleteCommandHandler', () => {
     mockRoleRepository.findById.mockResolvedValue(null);
 
     const command = new RoleHardDeleteCommand('role-123');
-    await expect(handler.execute(command)).rejects.toThrow(NotFoundException);
+    await expect(handler.execute(command)).rejects.toThrow(RoleNotFoundException);
   });
 });

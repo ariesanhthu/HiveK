@@ -1,6 +1,6 @@
 import { UserUpdateCommandHandler } from '@/application/commands/user-update/user-update.handler';
 import { UserUpdateCommand } from '@/application/commands/user-update/user-update.command';
-import { NotFoundException } from '@nestjs/common';
+import { UserNotFoundException } from '@/core/exceptions';
 
 describe('UserUpdateCommandHandler', () => {
   let handler: UserUpdateCommandHandler;
@@ -43,6 +43,6 @@ describe('UserUpdateCommandHandler', () => {
       fullName: 'New Name',
     });
 
-    await expect(handler.execute(command)).rejects.toThrow(NotFoundException);
+    await expect(handler.execute(command)).rejects.toThrow(UserNotFoundException);
   });
 });

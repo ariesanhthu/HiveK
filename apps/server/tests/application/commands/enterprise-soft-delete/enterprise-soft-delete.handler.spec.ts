@@ -1,6 +1,6 @@
 import { EnterpriseSoftDeleteCommandHandler } from '@/application/commands/enterprise-soft-delete/enterprise-soft-delete.handler';
 import { EnterpriseSoftDeleteCommand } from '@/application/commands/enterprise-soft-delete/enterprise-soft-delete.command';
-import { NotFoundException } from '@nestjs/common';
+import { EnterpriseNotFoundException } from '@/core/exceptions';
 
 describe('EnterpriseSoftDeleteCommandHandler', () => {
   let handler: EnterpriseSoftDeleteCommandHandler;
@@ -32,6 +32,6 @@ describe('EnterpriseSoftDeleteCommandHandler', () => {
     mockEnterpriseRepository.findById.mockResolvedValue(null);
 
     const command = new EnterpriseSoftDeleteCommand('ent-123', 'admin');
-    await expect(handler.execute(command)).rejects.toThrow(NotFoundException);
+    await expect(handler.execute(command)).rejects.toThrow(EnterpriseNotFoundException);
   });
 });

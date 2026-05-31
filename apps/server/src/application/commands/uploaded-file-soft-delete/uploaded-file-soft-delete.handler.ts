@@ -1,5 +1,6 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { Inject, NotFoundException } from '@nestjs/common';
+import { Inject } from '@nestjs/common';
+import { UploadedFileNotFoundException } from '@/core/exceptions';
 import { UPLOADED_FILE_REPOSITORY, type IUploadedFileRepository } from '@/core/interfaces/repositories';
 import { UploadedFileSoftDeleteCommand } from './uploaded-file-soft-delete.command';
 
@@ -15,7 +16,7 @@ export class UploadedFileSoftDeleteCommandHandler implements ICommandHandler<Upl
 
     const file = await this.repository.findById(id);
     if (!file) {
-      throw new NotFoundException(`Uploaded file with ID ${id} not found`);
+      throw new UploadedFileNotFoundException(id);
     }
 
     file.softDelete(deletedBy);

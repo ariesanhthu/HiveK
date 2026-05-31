@@ -1,6 +1,6 @@
 import { UpdateKolProfileHandler } from '@/application/commands/kol-profile-update/kol-profile-update.handler';
 import { KolProfileUpdateCommand } from '@/application/commands/kol-profile-update/kol-profile-update.command';
-import { NotFoundException } from '@nestjs/common';
+import { UserNotFoundException } from '@/core/exceptions';
 import { KolProfileEntity } from '@/core/entities/kol-profile.entity';
 import { KolPlatformInfo } from '@/core/value-objects/kol-platform-info.value-object';
 
@@ -64,6 +64,6 @@ describe('UpdateKolProfileHandler', () => {
     mockKolProfileRepository.findById.mockResolvedValue(null);
 
     const command = new KolProfileUpdateCommand('kol-123', {});
-    await expect(handler.execute(command)).rejects.toThrow(NotFoundException);
+    await expect(handler.execute(command)).rejects.toThrow(UserNotFoundException);
   });
 });

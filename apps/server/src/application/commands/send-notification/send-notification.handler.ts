@@ -1,5 +1,5 @@
 import { CommandHandler, ICommandHandler, EventBus } from '@nestjs/cqrs';
-import { Inject, BadRequestException, NotFoundException } from '@nestjs/common';
+import { Inject } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { ERoleType } from '@/core/enums';
@@ -7,6 +7,7 @@ import { UserModel, UserDocument } from '@/infrastructure/mongo/schemas/user.sch
 import { ENTERPRISE_REPOSITORY, type IEnterpriseRepository } from '@/core/interfaces/repositories';
 import { SendNotificationCommand } from './send-notification.command';
 import { NotificationDispatchedEvent } from '@/application/events';
+import { EnterpriseNotFoundException, InvalidOperationException } from '@/core/exceptions';
 
 @CommandHandler(SendNotificationCommand)
 export class SendNotificationCommandHandler implements ICommandHandler<SendNotificationCommand, void> {
@@ -25,7 +26,7 @@ export class SendNotificationCommandHandler implements ICommandHandler<SendNotif
     switch (props.audience.broadcastType) {
       case 'direct': {
         if (!props.audience.userIds || props.audience.userIds.length === 0) {
-          throw new BadRequestException('Recipient user IDs are required for direct broadcast');
+          throw new InvalidOperationException('Recipient user IDs are required for direct broadcast');
         }
         recipientIds.push(...props.audience.userIds);
         break;
@@ -42,12 +43,12 @@ export class SendNotificationCommandHandler implements ICommandHandler<SendNotif
       case 'enterprise': {
         const { enterpriseId } = props.audience;
         if (!enterpriseId) {
-          throw new BadRequestException('Enterprise ID is required for enterprise broadcast');
+          throw new InvalidOperationException('Enterprise ID is required for enterprise broadcast');
         }
 
         const enterprise = await this.enterpriseRepository.findById(enterpriseId);
         if (!enterprise) {
-          throw new NotFoundException(`Enterprise with ID ${enterpriseId} not found`);
+          throw new EnterpriseNotFoundException(enterpriseId);
         }
 
         // Fetch enterprise members
@@ -78,7 +79,7 @@ export class SendNotificationCommandHandler implements ICommandHandler<SendNotif
         break;
       }
       default:
-        throw new BadRequestException(`Unknown broadcast type: ${(props.audience as any).broadcastType}`);
+        throw new InvalidOperationException(`Unknown broadcast type: ${(props.audience as any).broadcastType}`);
     }
 
     if (recipientIds.length === 0) {

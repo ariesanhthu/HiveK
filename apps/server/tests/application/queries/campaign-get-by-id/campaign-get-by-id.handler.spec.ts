@@ -1,6 +1,6 @@
 import { CampaignGetByIdHandler } from '@/application/queries/campaign-get-by-id/campaign-get-by-id.handler';
 import { CampaignGetByIdQuery } from '@/application/queries/campaign-get-by-id/campaign-get-by-id.query';
-import { NotFoundException } from '@nestjs/common';
+import { CampaignNotFoundException } from '@/core/exceptions';
 
 describe('CampaignGetByIdHandler', () => {
   let handler: CampaignGetByIdHandler;
@@ -28,6 +28,6 @@ describe('CampaignGetByIdHandler', () => {
     mockCampaignReadService.findById.mockResolvedValue(null);
 
     const query = new CampaignGetByIdQuery('campaign-123');
-    await expect(handler.execute(query)).rejects.toThrow(NotFoundException);
+    await expect(handler.execute(query)).rejects.toThrow(CampaignNotFoundException);
   });
 });

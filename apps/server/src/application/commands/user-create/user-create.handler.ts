@@ -1,6 +1,7 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { UserCreateCommand } from './user-create.command';
-import { Inject, ConflictException } from '@nestjs/common';
+import { Inject } from '@nestjs/common';
+import { UserConflictException } from '@/core/exceptions';
 import { USER_REPOSITORY, type IUserRepository } from '@/core/interfaces/repositories';
 import { KOLUserRoot, EnterpriseUserRoot, AdminRoot } from '@/core/aggregate-roots';
 import { ERoleType } from '@/core/enums';
@@ -18,7 +19,7 @@ export class UserCreateCommandHandler implements ICommandHandler<UserCreateComma
 
     const existingUser = await this.userRepository.findByEmail(input.email);
     if (existingUser) {
-      throw new ConflictException('Email already in use');
+      throw new UserConflictException('Email already in use');
     }
 
     const passwordHash = await bcrypt.hash(input.password, 10);

@@ -1,6 +1,6 @@
 import { RoleGetByIdQueryHandler } from '@/application/queries/role-get-by-id/role-get-by-id.handler';
 import { RoleGetByIdQuery } from '@/application/queries/role-get-by-id/role-get-by-id.query';
-import { NotFoundException } from '@nestjs/common';
+import { RoleNotFoundException } from '@/core/exceptions';
 
 describe('RoleGetByIdQueryHandler', () => {
   let handler: RoleGetByIdQueryHandler;
@@ -28,6 +28,6 @@ describe('RoleGetByIdQueryHandler', () => {
     mockRoleReadService.findById.mockResolvedValue(null);
 
     const query = new RoleGetByIdQuery('role-123');
-    await expect(handler.execute(query)).rejects.toThrow(NotFoundException);
+    await expect(handler.execute(query)).rejects.toThrow(RoleNotFoundException);
   });
 });

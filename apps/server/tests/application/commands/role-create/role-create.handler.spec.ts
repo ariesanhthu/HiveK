@@ -1,7 +1,7 @@
 import { RoleCreateCommandHandler } from '@/application/commands/role-create/role-create.handler';
 import { RoleCreateCommand } from '@/application/commands/role-create/role-create.command';
 import { ERoleType } from '@/core/enums';
-import { ConflictException } from '@nestjs/common';
+import { RoleConflictException } from '@/core/exceptions';
 
 describe('RoleCreateCommandHandler', () => {
   let handler: RoleCreateCommandHandler;
@@ -42,6 +42,6 @@ describe('RoleCreateCommandHandler', () => {
       type: ERoleType.KOL,
     });
 
-    await expect(handler.execute(command)).rejects.toThrow(ConflictException);
+    await expect(handler.execute(command)).rejects.toThrow(RoleConflictException);
   });
 });

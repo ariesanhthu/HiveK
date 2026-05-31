@@ -1,7 +1,7 @@
 import { MarkNotificationReadCommandHandler } from '@/application/commands/mark-notification-read/mark-notification-read.handler';
 import { MarkNotificationReadCommand } from '@/application/commands/mark-notification-read/mark-notification-read.command';
 import { UserNotificationRoot } from '@/core/aggregate-roots';
-import { NotFoundException, ForbiddenException } from '@nestjs/common';
+import { NotificationNotFoundException, NotificationForbiddenException } from '@/core/exceptions';
 
 describe('MarkNotificationReadCommandHandler', () => {
   let handler: MarkNotificationReadCommandHandler;
@@ -41,7 +41,7 @@ describe('MarkNotificationReadCommandHandler', () => {
     mockUserNotificationRepository.findById.mockResolvedValue(null);
 
     const command = new MarkNotificationReadCommand('receipt-none', 'user-123');
-    await expect(handler.execute(command)).rejects.toThrow(NotFoundException);
+    await expect(handler.execute(command)).rejects.toThrow(NotificationNotFoundException);
   });
 
   it('should throw ForbiddenException if receipt belongs to a different user', async () => {
@@ -59,6 +59,6 @@ describe('MarkNotificationReadCommandHandler', () => {
     mockUserNotificationRepository.findById.mockResolvedValue(mockReceipt);
 
     const command = new MarkNotificationReadCommand('receipt-123', 'user-123');
-    await expect(handler.execute(command)).rejects.toThrow(ForbiddenException);
+    await expect(handler.execute(command)).rejects.toThrow(NotificationForbiddenException);
   });
 });

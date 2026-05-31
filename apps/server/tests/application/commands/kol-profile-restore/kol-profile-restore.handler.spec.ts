@@ -1,6 +1,6 @@
 import { KolProfileRestoreCommandHandler } from '@/application/commands/kol-profile-restore/kol-profile-restore.handler';
 import { KolProfileRestoreCommand } from '@/application/commands/kol-profile-restore/kol-profile-restore.command';
-import { NotFoundException } from '@nestjs/common';
+import { UserNotFoundException } from '@/core/exceptions';
 
 describe('KolProfileRestoreCommandHandler', () => {
   let handler: KolProfileRestoreCommandHandler;
@@ -32,6 +32,6 @@ describe('KolProfileRestoreCommandHandler', () => {
     mockKolProfileRepository.findById.mockResolvedValue(null);
 
     const command = new KolProfileRestoreCommand('kol-123');
-    await expect(handler.execute(command)).rejects.toThrow(NotFoundException);
+    await expect(handler.execute(command)).rejects.toThrow(UserNotFoundException);
   });
 });

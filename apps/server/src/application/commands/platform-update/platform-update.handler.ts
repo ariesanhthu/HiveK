@@ -1,5 +1,6 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { Inject, NotFoundException } from '@nestjs/common';
+import { Inject } from '@nestjs/common';
+import { PlatformNotFoundException, UploadedFileNotFoundException } from '@/core/exceptions';
 import { PLATFORM_REPOSITORY, type IPlatformRepository, UPLOADED_FILE_REPOSITORY, type IUploadedFileRepository } from '@/core/interfaces/repositories';
 import { PlatformUpdateCommand } from './platform-update.command';
 import { PlatformDto } from '@/application/dtos';
@@ -19,7 +20,7 @@ export class UpdatePlatformHandler implements ICommandHandler<PlatformUpdateComm
 
     const platform = await this.platformRepository.findById(id);
     if (!platform) {
-      throw new NotFoundException(`Platform with ID ${id} not found`);
+      throw new PlatformNotFoundException(id);
     }
 
     if (input.name) {
@@ -31,7 +32,7 @@ export class UpdatePlatformHandler implements ICommandHandler<PlatformUpdateComm
     if (input.icon) {
       const fileExists = await this.uploadedFileRepository.findById(input.icon);
       if (!fileExists) {
-        throw new NotFoundException(`Icon file with ID ${input.icon} not found`);
+        throw new UploadedFileNotFoundException(input.icon);
       }
       platform.updateIcon(input.icon);
     }

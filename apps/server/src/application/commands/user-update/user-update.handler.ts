@@ -1,6 +1,7 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { UserUpdateCommand } from './user-update.command';
-import { Inject, NotFoundException } from '@nestjs/common';
+import { Inject } from '@nestjs/common';
+import { UserNotFoundException } from '@/core/exceptions';
 import { USER_REPOSITORY, type IUserRepository } from '@/core/interfaces/repositories';
 import { EnterpriseUserRoot } from '@/core/aggregate-roots';
 import * as bcrypt from 'bcrypt';
@@ -17,7 +18,7 @@ export class UserUpdateCommandHandler implements ICommandHandler<UserUpdateComma
 
     const user = await this.userRepository.findById(id);
     if (!user) {
-      throw new NotFoundException(`User with ID ${id} not found`);
+      throw new UserNotFoundException(id);
     }
 
     const anyProps = user.props as any;

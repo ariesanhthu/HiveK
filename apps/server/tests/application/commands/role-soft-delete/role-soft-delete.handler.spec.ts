@@ -1,6 +1,6 @@
 import { RoleSoftDeleteCommandHandler } from '@/application/commands/role-soft-delete/role-soft-delete.handler';
 import { RoleSoftDeleteCommand } from '@/application/commands/role-soft-delete/role-soft-delete.command';
-import { NotFoundException } from '@nestjs/common';
+import { RoleNotFoundException } from '@/core/exceptions';
 
 describe('RoleSoftDeleteCommandHandler', () => {
   let handler: RoleSoftDeleteCommandHandler;
@@ -32,6 +32,6 @@ describe('RoleSoftDeleteCommandHandler', () => {
     mockRoleRepository.findById.mockResolvedValue(null);
 
     const command = new RoleSoftDeleteCommand('role-123', 'admin');
-    await expect(handler.execute(command)).rejects.toThrow(NotFoundException);
+    await expect(handler.execute(command)).rejects.toThrow(RoleNotFoundException);
   });
 });

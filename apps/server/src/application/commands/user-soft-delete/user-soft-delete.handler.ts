@@ -1,5 +1,6 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { Inject, NotFoundException } from '@nestjs/common';
+import { Inject } from '@nestjs/common';
+import { UserNotFoundException } from '@/core/exceptions';
 import { USER_REPOSITORY, type IUserRepository } from '@/core/interfaces/repositories';
 import { UserSoftDeleteCommand } from './user-soft-delete.command';
 
@@ -15,7 +16,7 @@ export class UserSoftDeleteCommandHandler implements ICommandHandler<UserSoftDel
 
     const user = await this.userRepository.findById(id);
     if (!user) {
-      throw new NotFoundException(`User with ID ${id} not found`);
+      throw new UserNotFoundException(id);
     }
 
     user.softDelete(deletedBy);

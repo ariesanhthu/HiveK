@@ -1,5 +1,6 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { Inject, NotFoundException } from '@nestjs/common';
+import { Inject } from '@nestjs/common';
+import { UserNotFoundException } from '@/core/exceptions';
 import { KOL_PROFILE_REPOSITORY, type IKolProfileRepository } from '@/core/interfaces/repositories';
 import { KolProfileSoftDeleteCommand } from './kol-profile-soft-delete.command';
 
@@ -15,7 +16,7 @@ export class KolProfileSoftDeleteCommandHandler implements ICommandHandler<KolPr
 
     const profile = await this.kolProfileRepository.findById(id);
     if (!profile) {
-      throw new NotFoundException(`KOL Profile with ID ${id} not found`);
+      throw new UserNotFoundException(id);
     }
 
     profile.softDelete(deletedBy);

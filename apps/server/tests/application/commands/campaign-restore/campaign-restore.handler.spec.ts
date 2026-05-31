@@ -1,6 +1,6 @@
 import { CampaignRestoreCommandHandler } from '@/application/commands/campaign-restore/campaign-restore.handler';
 import { CampaignRestoreCommand } from '@/application/commands/campaign-restore/campaign-restore.command';
-import { NotFoundException } from '@nestjs/common';
+import { CampaignNotFoundException } from '@/core/exceptions';
 
 describe('CampaignRestoreCommandHandler', () => {
   let handler: CampaignRestoreCommandHandler;
@@ -33,7 +33,7 @@ describe('CampaignRestoreCommandHandler', () => {
     mockCampaignRepository.findById.mockResolvedValue(null);
     const command = new CampaignRestoreCommand('campaign-123');
 
-    await expect(handler.execute(command)).rejects.toThrow(NotFoundException);
+    await expect(handler.execute(command)).rejects.toThrow(CampaignNotFoundException);
     expect(mockCampaignRepository.save).not.toHaveBeenCalled();
   });
 });

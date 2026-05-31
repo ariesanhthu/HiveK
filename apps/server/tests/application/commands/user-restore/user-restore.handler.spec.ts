@@ -1,6 +1,6 @@
 import { UserRestoreCommandHandler } from '@/application/commands/user-restore/user-restore.handler';
 import { UserRestoreCommand } from '@/application/commands/user-restore/user-restore.command';
-import { NotFoundException } from '@nestjs/common';
+import { UserNotFoundException } from '@/core/exceptions';
 
 describe('UserRestoreCommandHandler', () => {
   let handler: UserRestoreCommandHandler;
@@ -32,6 +32,6 @@ describe('UserRestoreCommandHandler', () => {
     mockUserRepository.findById.mockResolvedValue(null);
 
     const command = new UserRestoreCommand('user-123');
-    await expect(handler.execute(command)).rejects.toThrow(NotFoundException);
+    await expect(handler.execute(command)).rejects.toThrow(UserNotFoundException);
   });
 });

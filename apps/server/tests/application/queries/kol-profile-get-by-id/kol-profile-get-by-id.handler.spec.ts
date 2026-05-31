@@ -1,6 +1,6 @@
 import { KolProfileGetByIdHandler } from '@/application/queries/kol-profile-get-by-id/kol-profile-get-by-id.handler';
 import { KolProfileGetByIdQuery } from '@/application/queries/kol-profile-get-by-id/kol-profile-get-by-id.query';
-import { NotFoundException } from '@nestjs/common';
+import { UserNotFoundException } from '@/core/exceptions';
 
 describe('KolProfileGetByIdHandler', () => {
   let handler: KolProfileGetByIdHandler;
@@ -28,6 +28,6 @@ describe('KolProfileGetByIdHandler', () => {
     mockKolProfileReadService.findById.mockResolvedValue(null);
 
     const query = new KolProfileGetByIdQuery('kol-123');
-    await expect(handler.execute(query)).rejects.toThrow(NotFoundException);
+    await expect(handler.execute(query)).rejects.toThrow(UserNotFoundException);
   });
 });

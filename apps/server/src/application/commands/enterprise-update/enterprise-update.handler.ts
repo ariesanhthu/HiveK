@@ -1,5 +1,6 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { Inject, NotFoundException, ForbiddenException } from '@nestjs/common';
+import { Inject } from '@nestjs/common';
+import { EnterpriseNotFoundException, EnterpriseForbiddenException, UploadedFileNotFoundException } from '@/core/exceptions';
 import { ENTERPRISE_REPOSITORY, type IEnterpriseRepository, UPLOADED_FILE_REPOSITORY, type IUploadedFileRepository } from '@/core/interfaces/repositories';
 import { EnterpriseUpdateCommand } from './enterprise-update.command';
 import { EnterpriseDto } from '@/application/dtos';
@@ -19,17 +20,17 @@ export class EnterpriseUpdateCommandHandler implements ICommandHandler<Enterpris
 
     const enterprise = await this.enterpriseRepository.findById(id);
     if (!enterprise) {
-      throw new NotFoundException(`Enterprise with ID ${id} not found`);
+      throw new EnterpriseNotFoundException(id);
     }
 
     if (enterprise.userId !== userId) {
-      throw new ForbiddenException('You do not own this enterprise profile');
+      throw new EnterpriseForbiddenException();
     }
 
     if (input.logoUrlId) {
       const fileExists = await this.uploadedFileRepository.findById(input.logoUrlId);
       if (!fileExists) {
-        throw new NotFoundException(`Logo file with ID ${input.logoUrlId} not found`);
+        throw new UploadedFileNotFoundException(input.logoUrlId);
       }
     }
 

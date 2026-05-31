@@ -1,7 +1,7 @@
 import { SendNotificationCommandHandler } from '@/application/commands/send-notification/send-notification.handler';
 import { SendNotificationCommand } from '@/application/commands/send-notification/send-notification.command';
 import { NotificationType, NotificationChannel, ERoleType } from '@/core/enums';
-import { BadRequestException, NotFoundException } from '@nestjs/common';
+import { EnterpriseNotFoundException, InvalidOperationException } from '@/core/exceptions';
 import { NotificationDispatchedEvent } from '@/application/events';
 
 describe('SendNotificationCommandHandler', () => {
@@ -64,7 +64,7 @@ describe('SendNotificationCommandHandler', () => {
       },
     });
 
-    await expect(handler.execute(command)).rejects.toThrow(BadRequestException);
+    await expect(handler.execute(command)).rejects.toThrow(InvalidOperationException);
   });
 
   it('should publish Event for admin broadcast successfully', async () => {
@@ -132,6 +132,6 @@ describe('SendNotificationCommandHandler', () => {
       },
     });
 
-    await expect(handler.execute(command)).rejects.toThrow(NotFoundException);
+    await expect(handler.execute(command)).rejects.toThrow(EnterpriseNotFoundException);
   });
 });

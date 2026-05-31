@@ -1,6 +1,6 @@
 import { EnterpriseRestoreCommandHandler } from '@/application/commands/enterprise-restore/enterprise-restore.handler';
 import { EnterpriseRestoreCommand } from '@/application/commands/enterprise-restore/enterprise-restore.command';
-import { NotFoundException } from '@nestjs/common';
+import { EnterpriseNotFoundException } from '@/core/exceptions';
 
 describe('EnterpriseRestoreCommandHandler', () => {
   let handler: EnterpriseRestoreCommandHandler;
@@ -32,6 +32,6 @@ describe('EnterpriseRestoreCommandHandler', () => {
     mockEnterpriseRepository.findById.mockResolvedValue(null);
 
     const command = new EnterpriseRestoreCommand('ent-123');
-    await expect(handler.execute(command)).rejects.toThrow(NotFoundException);
+    await expect(handler.execute(command)).rejects.toThrow(EnterpriseNotFoundException);
   });
 });

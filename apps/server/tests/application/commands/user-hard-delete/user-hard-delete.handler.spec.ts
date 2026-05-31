@@ -1,6 +1,6 @@
 import { UserHardDeleteCommandHandler } from '@/application/commands/user-hard-delete/user-hard-delete.handler';
 import { UserHardDeleteCommand } from '@/application/commands/user-hard-delete/user-hard-delete.command';
-import { NotFoundException } from '@nestjs/common';
+import { UserNotFoundException } from '@/core/exceptions';
 
 describe('UserHardDeleteCommandHandler', () => {
   let handler: UserHardDeleteCommandHandler;
@@ -29,6 +29,6 @@ describe('UserHardDeleteCommandHandler', () => {
     mockUserRepository.findById.mockResolvedValue(null);
 
     const command = new UserHardDeleteCommand('user-123');
-    await expect(handler.execute(command)).rejects.toThrow(NotFoundException);
+    await expect(handler.execute(command)).rejects.toThrow(UserNotFoundException);
   });
 });

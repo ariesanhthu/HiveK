@@ -7,7 +7,7 @@ import { RoleModule } from '@/infrastructure/modules/role.module';
 import { AuthModule } from '@/infrastructure/modules/auth.module';
 import { RabbitMQModule } from '@/infrastructure/rabbitmq/rabbitmq.module';
 import { WebSocketModule } from '@/infrastructure/websocket/websocket.module';
-import { APP_PIPE, APP_GUARD } from '@nestjs/core';
+import { APP_PIPE, APP_GUARD, APP_FILTER } from '@nestjs/core';
 import { ZodValidationPipe } from 'nestjs-zod';
 import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 import { RolesGuard } from './presentation/middleware/guards/roles.guard';
@@ -22,6 +22,7 @@ import { UploadedFileModule } from './infrastructure/modules/uploaded-file.modul
 import { NotificationModule } from './infrastructure/modules/notification.module';
 import { TestController } from './presentation/controllers/test/test.controller';
 import { TestRmqHandler } from './presentation/controllers/test/test-rmq.controller';
+import { DomainExceptionFilter } from './presentation/middleware/filters/domain-exception.filter';
 
 @Module({
   imports: [
@@ -55,6 +56,10 @@ import { TestRmqHandler } from './presentation/controllers/test/test-rmq.control
     {
       provide: APP_PIPE,
       useValue: ZodValidationPipe
+    },
+    {
+      provide: APP_FILTER,
+      useClass: DomainExceptionFilter,
     },
     {
       provide: APP_GUARD,

@@ -1,6 +1,6 @@
 import { PlatformSoftDeleteCommandHandler } from '@/application/commands/platform-soft-delete/platform-soft-delete.handler';
 import { PlatformSoftDeleteCommand } from '@/application/commands/platform-soft-delete/platform-soft-delete.command';
-import { NotFoundException } from '@nestjs/common';
+import { PlatformNotFoundException } from '@/core/exceptions';
 
 describe('PlatformSoftDeleteCommandHandler', () => {
   let handler: PlatformSoftDeleteCommandHandler;
@@ -32,6 +32,6 @@ describe('PlatformSoftDeleteCommandHandler', () => {
     mockPlatformRepository.findById.mockResolvedValue(null);
 
     const command = new PlatformSoftDeleteCommand('platform-123', 'admin');
-    await expect(handler.execute(command)).rejects.toThrow(NotFoundException);
+    await expect(handler.execute(command)).rejects.toThrow(PlatformNotFoundException);
   });
 });

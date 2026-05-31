@@ -1,5 +1,6 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { Inject, NotFoundException, ForbiddenException } from '@nestjs/common';
+import { Inject } from '@nestjs/common';
+import { NotificationNotFoundException, NotificationForbiddenException } from '@/core/exceptions';
 import { USER_NOTIFICATION_REPOSITORY, type IUserNotificationRepository } from '@/core/interfaces/repositories';
 import { NotificationSoftDeleteCommand } from './notification-soft-delete.command';
 
@@ -15,11 +16,11 @@ export class NotificationSoftDeleteCommandHandler implements ICommandHandler<Not
 
     const userNotification = await this.userNotificationRepository.findById(userNotificationId);
     if (!userNotification || userNotification.deleteAt) {
-      throw new NotFoundException(`Notification receipt with ID ${userNotificationId} not found`);
+      throw new NotificationNotFoundException(userNotificationId);
     }
 
     if (userNotification.recipientId !== userId) {
-      throw new ForbiddenException('You are not authorized to delete this notification');
+      throw new NotificationForbiddenException('You are not authorized to delete this notification');
     }
 
     userNotification.softDelete(userId);

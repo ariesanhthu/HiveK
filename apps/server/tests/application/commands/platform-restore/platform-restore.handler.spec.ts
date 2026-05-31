@@ -1,6 +1,6 @@
 import { PlatformRestoreCommandHandler } from '@/application/commands/platform-restore/platform-restore.handler';
 import { PlatformRestoreCommand } from '@/application/commands/platform-restore/platform-restore.command';
-import { NotFoundException } from '@nestjs/common';
+import { PlatformNotFoundException } from '@/core/exceptions';
 
 describe('PlatformRestoreCommandHandler', () => {
   let handler: PlatformRestoreCommandHandler;
@@ -32,6 +32,6 @@ describe('PlatformRestoreCommandHandler', () => {
     mockPlatformRepository.findById.mockResolvedValue(null);
 
     const command = new PlatformRestoreCommand('platform-123');
-    await expect(handler.execute(command)).rejects.toThrow(NotFoundException);
+    await expect(handler.execute(command)).rejects.toThrow(PlatformNotFoundException);
   });
 });

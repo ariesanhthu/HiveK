@@ -1,5 +1,6 @@
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
-import { Inject, NotFoundException } from '@nestjs/common';
+import { Inject } from '@nestjs/common';
+import { CampaignNotFoundException } from '@/core/exceptions';
 import { CAMPAIGN_READ_SERVICE, type ICampaignReadService } from '@/application/interfaces';
 import { CampaignDto } from '@/application/dtos';
 import { CampaignGetByIdQuery } from './campaign-get-by-id.query';
@@ -14,7 +15,7 @@ export class CampaignGetByIdHandler implements IQueryHandler<CampaignGetByIdQuer
   async execute(query: CampaignGetByIdQuery): Promise<CampaignDto> {
     const campaign = await this.campaignReadService.findById(query.id);
     if (!campaign) {
-      throw new NotFoundException(`Campaign with ID ${query.id} not found`);
+      throw new CampaignNotFoundException(query.id);
     }
     return campaign;
   }

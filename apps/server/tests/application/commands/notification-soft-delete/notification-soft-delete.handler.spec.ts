@@ -1,7 +1,7 @@
 import { NotificationSoftDeleteCommandHandler } from '@/application/commands/notification-soft-delete/notification-soft-delete.handler';
 import { NotificationSoftDeleteCommand } from '@/application/commands/notification-soft-delete/notification-soft-delete.command';
 import { UserNotificationRoot } from '@/core/aggregate-roots';
-import { NotFoundException, ForbiddenException } from '@nestjs/common';
+import { NotificationNotFoundException, NotificationForbiddenException } from '@/core/exceptions';
 
 describe('NotificationSoftDeleteCommandHandler', () => {
   let handler: NotificationSoftDeleteCommandHandler;
@@ -41,7 +41,7 @@ describe('NotificationSoftDeleteCommandHandler', () => {
     mockUserNotificationRepository.findById.mockResolvedValue(null);
 
     const command = new NotificationSoftDeleteCommand('receipt-none', 'user-123');
-    await expect(handler.execute(command)).rejects.toThrow(NotFoundException);
+    await expect(handler.execute(command)).rejects.toThrow(NotificationNotFoundException);
   });
 
   it('should throw ForbiddenException if receipt belongs to a different user', async () => {
@@ -59,6 +59,6 @@ describe('NotificationSoftDeleteCommandHandler', () => {
     mockUserNotificationRepository.findById.mockResolvedValue(mockReceipt);
 
     const command = new NotificationSoftDeleteCommand('receipt-123', 'user-123');
-    await expect(handler.execute(command)).rejects.toThrow(ForbiddenException);
+    await expect(handler.execute(command)).rejects.toThrow(NotificationForbiddenException);
   });
 });

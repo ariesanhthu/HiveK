@@ -1,5 +1,6 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { Inject, ConflictException } from '@nestjs/common';
+import { Inject } from '@nestjs/common';
+import { EnterpriseConflictException } from '@/core/exceptions';
 import { ENTERPRISE_REPOSITORY, type IEnterpriseRepository } from '@/core/interfaces/repositories';
 import { EnterpriseRoot } from '@/core/aggregate-roots';
 import { EnterpriseCreateCommand } from './enterprise-create.command';
@@ -18,7 +19,7 @@ export class EnterpriseCreateCommandHandler implements ICommandHandler<Enterpris
 
     const existing = await this.enterpriseRepository.findByUserId(userId);
     if (existing) {
-      throw new ConflictException('User already has an enterprise profile');
+      throw new EnterpriseConflictException('User already has an enterprise profile');
     }
 
     const enterprise = EnterpriseRoot.create({

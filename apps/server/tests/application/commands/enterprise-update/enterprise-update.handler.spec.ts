@@ -1,6 +1,6 @@
 import { EnterpriseUpdateCommandHandler } from '@/application/commands/enterprise-update/enterprise-update.handler';
 import { EnterpriseUpdateCommand } from '@/application/commands/enterprise-update/enterprise-update.command';
-import { NotFoundException, ForbiddenException } from '@nestjs/common';
+import { EnterpriseNotFoundException, EnterpriseForbiddenException } from '@/core/exceptions';
 
 describe('EnterpriseUpdateCommandHandler', () => {
   let handler: EnterpriseUpdateCommandHandler;
@@ -62,7 +62,7 @@ describe('EnterpriseUpdateCommandHandler', () => {
     mockEnterpriseRepository.findById.mockResolvedValue(null);
 
     const command = new EnterpriseUpdateCommand('ent-123', 'user-123', {});
-    await expect(handler.execute(command)).rejects.toThrow(NotFoundException);
+    await expect(handler.execute(command)).rejects.toThrow(EnterpriseNotFoundException);
   });
 
   it('should throw ForbiddenException if enterprise not owned by user', async () => {
@@ -73,6 +73,6 @@ describe('EnterpriseUpdateCommandHandler', () => {
     mockEnterpriseRepository.findById.mockResolvedValue(mockEnterprise);
 
     const command = new EnterpriseUpdateCommand('ent-123', 'user-123', {});
-    await expect(handler.execute(command)).rejects.toThrow(ForbiddenException);
+    await expect(handler.execute(command)).rejects.toThrow(EnterpriseForbiddenException);
   });
 });

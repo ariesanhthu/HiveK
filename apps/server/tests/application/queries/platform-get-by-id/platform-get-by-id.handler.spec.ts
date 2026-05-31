@@ -1,6 +1,6 @@
 import { PlatformGetByIdHandler } from '@/application/queries/platform-get-by-id/platform-get-by-id.handler';
 import { PlatformGetByIdQuery } from '@/application/queries/platform-get-by-id/platform-get-by-id.query';
-import { NotFoundException } from '@nestjs/common';
+import { PlatformNotFoundException } from '@/core/exceptions';
 
 describe('PlatformGetByIdHandler', () => {
   let handler: PlatformGetByIdHandler;
@@ -28,6 +28,6 @@ describe('PlatformGetByIdHandler', () => {
     mockPlatformReadService.findById.mockResolvedValue(null);
 
     const query = new PlatformGetByIdQuery('platform-123');
-    await expect(handler.execute(query)).rejects.toThrow(NotFoundException);
+    await expect(handler.execute(query)).rejects.toThrow(PlatformNotFoundException);
   });
 });

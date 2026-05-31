@@ -1,5 +1,6 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { Inject, NotFoundException } from '@nestjs/common';
+import { Inject } from '@nestjs/common';
+import { RoleNotFoundException } from '@/core/exceptions';
 import { ROLE_REPOSITORY, type IRoleRepository } from '@/core/interfaces/repositories';
 import { RoleSoftDeleteCommand } from './role-soft-delete.command';
 
@@ -15,7 +16,7 @@ export class RoleSoftDeleteCommandHandler implements ICommandHandler<RoleSoftDel
 
     const role = await this.roleRepository.findById(id);
     if (!role) {
-      throw new NotFoundException(`Role with ID ${id} not found`);
+      throw new RoleNotFoundException(id);
     }
 
     role.softDelete(deletedBy);

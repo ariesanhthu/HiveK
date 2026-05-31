@@ -1,5 +1,6 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { Inject, NotFoundException } from '@nestjs/common';
+import { Inject } from '@nestjs/common';
+import { UserNotFoundException } from '@/core/exceptions';
 import { KOL_PROFILE_REPOSITORY, type IKolProfileRepository } from '@/core/interfaces/repositories';
 import { KolProfileRestoreCommand } from './kol-profile-restore.command';
 
@@ -15,7 +16,7 @@ export class KolProfileRestoreCommandHandler implements ICommandHandler<KolProfi
 
     const profile = await this.kolProfileRepository.findById(id);
     if (!profile) {
-      throw new NotFoundException(`KOL Profile with ID ${id} not found`);
+      throw new UserNotFoundException(id);
     }
 
     profile.restore();

@@ -1,6 +1,6 @@
 import { RoleUpdateCommandHandler } from '@/application/commands/role-update/role-update.handler';
 import { RoleUpdateCommand } from '@/application/commands/role-update/role-update.command';
-import { NotFoundException, ConflictException } from '@nestjs/common';
+import { RoleNotFoundException, RoleConflictException } from '@/core/exceptions';
 
 describe('RoleUpdateCommandHandler', () => {
   let handler: RoleUpdateCommandHandler;
@@ -51,7 +51,7 @@ describe('RoleUpdateCommandHandler', () => {
       title: 'ExistingTitle',
     });
 
-    await expect(handler.execute(command)).rejects.toThrow(ConflictException);
+    await expect(handler.execute(command)).rejects.toThrow(RoleConflictException);
   });
 
   it('should throw NotFoundException if role not found', async () => {
@@ -61,6 +61,6 @@ describe('RoleUpdateCommandHandler', () => {
       title: 'New Title',
     });
 
-    await expect(handler.execute(command)).rejects.toThrow(NotFoundException);
+    await expect(handler.execute(command)).rejects.toThrow(RoleNotFoundException);
   });
 });

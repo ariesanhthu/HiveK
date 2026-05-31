@@ -1,6 +1,6 @@
 import { RoleRestoreCommandHandler } from '@/application/commands/role-restore/role-restore.handler';
 import { RoleRestoreCommand } from '@/application/commands/role-restore/role-restore.command';
-import { NotFoundException } from '@nestjs/common';
+import { RoleNotFoundException } from '@/core/exceptions';
 
 describe('RoleRestoreCommandHandler', () => {
   let handler: RoleRestoreCommandHandler;
@@ -32,6 +32,6 @@ describe('RoleRestoreCommandHandler', () => {
     mockRoleRepository.findById.mockResolvedValue(null);
 
     const command = new RoleRestoreCommand('role-123');
-    await expect(handler.execute(command)).rejects.toThrow(NotFoundException);
+    await expect(handler.execute(command)).rejects.toThrow(RoleNotFoundException);
   });
 });

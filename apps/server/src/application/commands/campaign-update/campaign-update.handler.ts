@@ -1,5 +1,6 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { Inject, NotFoundException } from '@nestjs/common';
+import { Inject } from '@nestjs/common';
+import { CampaignNotFoundException } from '@/core/exceptions';
 import { CAMPAIGN_REPOSITORY, type ICampaignRepository } from '@/core/interfaces/repositories';
 import { CampaignUpdateCommand } from './campaign-update.command';
 import { CampaignDto } from '@/application/dtos';
@@ -17,7 +18,7 @@ export class UpdateCampaignHandler implements ICommandHandler<CampaignUpdateComm
 
     const campaign = await this.campaignRepository.findById(id);
     if (!campaign) {
-      throw new NotFoundException(`Campaign with ID ${id} not found`);
+      throw new CampaignNotFoundException(id);
     }
 
     const updateProps: any = {};

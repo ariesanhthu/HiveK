@@ -1,6 +1,6 @@
 import { KolProfileSoftDeleteCommandHandler } from '@/application/commands/kol-profile-soft-delete/kol-profile-soft-delete.handler';
 import { KolProfileSoftDeleteCommand } from '@/application/commands/kol-profile-soft-delete/kol-profile-soft-delete.command';
-import { NotFoundException } from '@nestjs/common';
+import { UserNotFoundException } from '@/core/exceptions';
 
 describe('KolProfileSoftDeleteCommandHandler', () => {
   let handler: KolProfileSoftDeleteCommandHandler;
@@ -32,6 +32,6 @@ describe('KolProfileSoftDeleteCommandHandler', () => {
     mockKolProfileRepository.findById.mockResolvedValue(null);
 
     const command = new KolProfileSoftDeleteCommand('kol-123', 'admin');
-    await expect(handler.execute(command)).rejects.toThrow(NotFoundException);
+    await expect(handler.execute(command)).rejects.toThrow(UserNotFoundException);
   });
 });

@@ -1,5 +1,6 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { Inject, NotFoundException } from '@nestjs/common';
+import { Inject } from '@nestjs/common';
+import { UserNotFoundException } from '@/core/exceptions';
 import { KOL_PROFILE_REPOSITORY, type IKolProfileRepository } from '@/core/interfaces/repositories';
 import { KolProfileUpdateCommand } from './kol-profile-update.command';
 import { KolProfileDto } from '@/application/dtos';
@@ -19,7 +20,7 @@ export class UpdateKolProfileHandler implements ICommandHandler<KolProfileUpdate
 
     const existing = await this.kolProfileRepository.findById(id);
     if (!existing) {
-      throw new NotFoundException(`Influencer with ID ${id} not found`);
+      throw new UserNotFoundException(id);
     }
 
     const props = { ...existing.props };

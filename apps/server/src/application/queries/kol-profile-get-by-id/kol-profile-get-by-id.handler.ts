@@ -1,5 +1,6 @@
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
-import { Inject, NotFoundException } from '@nestjs/common';
+import { Inject } from '@nestjs/common';
+import { UserNotFoundException } from '@/core/exceptions';
 import { KOL_PROFILE_READ_SERVICE, type IKolProfileReadService } from '@/application/interfaces';
 import { KolProfileDto } from '@/application/dtos';
 import { KolProfileGetByIdQuery } from './kol-profile-get-by-id.query';
@@ -14,7 +15,7 @@ export class KolProfileGetByIdHandler implements IQueryHandler<KolProfileGetById
   async execute(query: KolProfileGetByIdQuery): Promise<KolProfileDto> {
     const profile = await this.kolProfileReadService.findById(query.id);
     if (!profile) {
-      throw new NotFoundException(`KOL Profile with ID ${query.id} not found`);
+      throw new UserNotFoundException(query.id);
     }
     return profile;
   }

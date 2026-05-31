@@ -1,6 +1,6 @@
 import { CampaignHardDeleteCommandHandler } from '@/application/commands/campaign-hard-delete/campaign-hard-delete.handler';
 import { CampaignHardDeleteCommand } from '@/application/commands/campaign-hard-delete/campaign-hard-delete.command';
-import { NotFoundException } from '@nestjs/common';
+import { CampaignNotFoundException } from '@/core/exceptions';
 
 describe('CampaignHardDeleteCommandHandler', () => {
   let handler: CampaignHardDeleteCommandHandler;
@@ -28,7 +28,7 @@ describe('CampaignHardDeleteCommandHandler', () => {
     mockCampaignRepository.findById.mockResolvedValue(null);
     const command = new CampaignHardDeleteCommand('campaign-123');
 
-    await expect(handler.execute(command)).rejects.toThrow(NotFoundException);
+    await expect(handler.execute(command)).rejects.toThrow(CampaignNotFoundException);
     expect(mockCampaignRepository.delete).not.toHaveBeenCalled();
   });
 });

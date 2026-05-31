@@ -1,5 +1,6 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { Inject, NotFoundException } from '@nestjs/common';
+import { Inject } from '@nestjs/common';
+import { EnterpriseNotFoundException } from '@/core/exceptions';
 import { ENTERPRISE_REPOSITORY, type IEnterpriseRepository } from '@/core/interfaces/repositories';
 import { EnterpriseRestoreCommand } from './enterprise-restore.command';
 
@@ -15,7 +16,7 @@ export class EnterpriseRestoreCommandHandler implements ICommandHandler<Enterpri
 
     const enterprise = await this.enterpriseRepository.findById(id);
     if (!enterprise) {
-      throw new NotFoundException(`Enterprise with ID ${id} not found`);
+      throw new EnterpriseNotFoundException(id);
     }
 
     enterprise.restore();

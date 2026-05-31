@@ -1,6 +1,6 @@
 import { UpdateCampaignHandler } from '@/application/commands/campaign-update/campaign-update.handler';
 import { CampaignUpdateCommand } from '@/application/commands/campaign-update/campaign-update.command';
-import { NotFoundException } from '@nestjs/common';
+import { CampaignNotFoundException } from '@/core/exceptions';
 import { CampaignRoot } from '@/core/aggregate-roots';
 import { CampaignMapper } from '@/application/mappers';
 
@@ -67,6 +67,6 @@ describe('UpdateCampaignHandler', () => {
     mockCampaignRepository.findById.mockResolvedValue(null);
 
     const command = new CampaignUpdateCommand('campaign-123', {});
-    await expect(handler.execute(command)).rejects.toThrow(NotFoundException);
+    await expect(handler.execute(command)).rejects.toThrow(CampaignNotFoundException);
   });
 });

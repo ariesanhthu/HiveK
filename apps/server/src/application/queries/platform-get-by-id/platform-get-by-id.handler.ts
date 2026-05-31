@@ -1,5 +1,6 @@
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
-import { Inject, NotFoundException } from '@nestjs/common';
+import { Inject } from '@nestjs/common';
+import { PlatformNotFoundException } from '@/core/exceptions';
 import { PLATFORM_READ_SERVICE, type IPlatformReadService } from '@/application/interfaces';
 import { PlatformDto } from '@/application/dtos';
 import { PlatformGetByIdQuery } from './platform-get-by-id.query';
@@ -14,7 +15,7 @@ export class PlatformGetByIdHandler implements IQueryHandler<PlatformGetByIdQuer
   async execute(query: PlatformGetByIdQuery): Promise<PlatformDto> {
     const platform = await this.platformReadService.findById(query.id);
     if (!platform) {
-      throw new NotFoundException(`Platform with ID ${query.id} not found`);
+      throw new PlatformNotFoundException(query.id);
     }
     return platform;
   }

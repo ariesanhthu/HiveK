@@ -1,5 +1,6 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { Inject, NotFoundException } from '@nestjs/common';
+import { Inject } from '@nestjs/common';
+import { PlatformNotFoundException } from '@/core/exceptions';
 import { PLATFORM_REPOSITORY, type IPlatformRepository } from '@/core/interfaces/repositories';
 import { PlatformHardDeleteCommand } from './platform-hard-delete.command';
 
@@ -15,7 +16,7 @@ export class PlatformHardDeleteCommandHandler implements ICommandHandler<Platfor
 
     const platform = await this.platformRepository.findById(id);
     if (!platform) {
-      throw new NotFoundException(`Platform with ID ${id} not found`);
+      throw new PlatformNotFoundException(id);
     }
 
     await this.platformRepository.delete(id);

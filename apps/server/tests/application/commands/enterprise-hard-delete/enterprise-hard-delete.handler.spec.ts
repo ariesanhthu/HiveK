@@ -1,6 +1,6 @@
 import { EnterpriseHardDeleteCommandHandler } from '@/application/commands/enterprise-hard-delete/enterprise-hard-delete.handler';
 import { EnterpriseHardDeleteCommand } from '@/application/commands/enterprise-hard-delete/enterprise-hard-delete.command';
-import { NotFoundException } from '@nestjs/common';
+import { EnterpriseNotFoundException } from '@/core/exceptions';
 
 describe('EnterpriseHardDeleteCommandHandler', () => {
   let handler: EnterpriseHardDeleteCommandHandler;
@@ -29,6 +29,6 @@ describe('EnterpriseHardDeleteCommandHandler', () => {
     mockEnterpriseRepository.findById.mockResolvedValue(null);
 
     const command = new EnterpriseHardDeleteCommand('ent-123');
-    await expect(handler.execute(command)).rejects.toThrow(NotFoundException);
+    await expect(handler.execute(command)).rejects.toThrow(EnterpriseNotFoundException);
   });
 });

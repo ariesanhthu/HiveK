@@ -1,6 +1,6 @@
 import { CreatePlatformHandler } from '@/application/commands/platform-create/platform-create.handler';
 import { PlatformCreateCommand } from '@/application/commands/platform-create/platform-create.command';
-import { ConflictException } from '@nestjs/common';
+import { PlatformConflictException } from '@/core/exceptions';
 
 describe('CreatePlatformHandler', () => {
   let handler: CreatePlatformHandler;
@@ -43,7 +43,7 @@ describe('CreatePlatformHandler', () => {
 
     mockPlatformRepository.findByName.mockResolvedValue({ id: 'existing-id' });
 
-    await expect(handler.execute(command)).rejects.toThrow(ConflictException);
+    await expect(handler.execute(command)).rejects.toThrow(PlatformConflictException);
     expect(mockPlatformRepository.save).not.toHaveBeenCalled();
   });
 });

@@ -1,6 +1,6 @@
 import { PlatformHardDeleteCommandHandler } from '@/application/commands/platform-hard-delete/platform-hard-delete.handler';
 import { PlatformHardDeleteCommand } from '@/application/commands/platform-hard-delete/platform-hard-delete.command';
-import { NotFoundException } from '@nestjs/common';
+import { PlatformNotFoundException } from '@/core/exceptions';
 
 describe('PlatformHardDeleteCommandHandler', () => {
   let handler: PlatformHardDeleteCommandHandler;
@@ -29,6 +29,6 @@ describe('PlatformHardDeleteCommandHandler', () => {
     mockPlatformRepository.findById.mockResolvedValue(null);
 
     const command = new PlatformHardDeleteCommand('platform-123');
-    await expect(handler.execute(command)).rejects.toThrow(NotFoundException);
+    await expect(handler.execute(command)).rejects.toThrow(PlatformNotFoundException);
   });
 });
