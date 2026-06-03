@@ -40,6 +40,9 @@ export class MongoPlatformRepository implements IPlatformRepository {
   }
 
   private mapToDomain(doc: PlatformDocument): PlatformRoot {
+    if (!doc._id) {
+      throw new Error('Platform document ID is missing');
+    }
     return PlatformRoot.instantiate(doc._id.toString(), {
       name: doc.name,
       baseUrl: doc.base_url,
@@ -52,7 +55,7 @@ export class MongoPlatformRepository implements IPlatformRepository {
     });
   }
 
-  private mapToPersistence(platform: PlatformRoot): any {
+  private mapToPersistence(platform: PlatformRoot): Omit<PlatformModel, 'created_at' | 'updated_at'> {
     return {
       name: platform.name,
       base_url: platform.baseUrl,

@@ -6,11 +6,11 @@ export interface KolProfileProps {
   userId: Nullable<string>;
   verificationType: Nullable<string>;
   name: string;
-  location: string;
-  gender: string;
-  bio: string;
+  location?: string;
+  gender?: string;
+  bio?: string;
   email: string; // Flattened contact
-  phone: string; // Flattened contact
+  phone?: string; // Flattened contact
   platforms: KolPlatformInfo[];
   isVerified: boolean;
   scores?: Record<string, any>;
@@ -53,15 +53,15 @@ export class KolProfileEntity extends BaseEntity<KolProfileProps> {
     return this.props.name;
   }
 
-  get location(): string {
+  get location(): string | undefined {
     return this.props.location;
   }
 
-  get gender(): string {
+  get gender(): string | undefined {
     return this.props.gender;
   }
 
-  get bio(): string {
+  get bio(): string | undefined {
     return this.props.bio;
   }
 
@@ -69,7 +69,7 @@ export class KolProfileEntity extends BaseEntity<KolProfileProps> {
     return this.props.email;
   }
 
-  get phone(): string {
+  get phone(): string | undefined {
     return this.props.phone;
   }
 

@@ -41,6 +41,9 @@ export class MongoUploadedFileRepository implements IUploadedFileRepository {
   }
 
   private mapToDomain(doc: UploadedFileDocument): UploadedFileRoot {
+    if (!doc._id) {
+      throw new Error('UploadedFile document ID is missing');
+    }
     return UploadedFileRoot.instantiate(doc._id.toString(), {
       url: doc.url,
       publicId: doc.public_id,
@@ -57,7 +60,7 @@ export class MongoUploadedFileRepository implements IUploadedFileRepository {
     });
   }
 
-  private mapToPersistence(root: UploadedFileRoot): any {
+  private mapToPersistence(root: UploadedFileRoot): Omit<UploadedFileModel, 'created_at' | 'updated_at'> {
     return {
       url: root.url,
       public_id: root.publicId,

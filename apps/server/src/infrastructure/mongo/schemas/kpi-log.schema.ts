@@ -14,18 +14,18 @@ export type KpiLogDocument = KpiLogModel & Document;
   versionKey: false,
 })
 export class KpiLogModel {
-  @Prop({ required: true, type: Date })
+  @Prop({ required: true, type: MongooseSchema.Types.Date })
   timestamp: Date;
 
-  @Prop({ required: true, type: MongooseSchema.Types.ObjectId })
+  @Prop({ required: true, type: MongooseSchema.Types.ObjectId, ref: 'UserModel' })
   participantId: MongooseSchema.Types.ObjectId;
 
   @Prop({
     type: {
-      views: { type: Number, default: 0 },
-      likes: { type: Number, default: 0 },
-      comments: { type: Number, default: 0 },
-      shares: { type: Number, default: 0 },
+      views: { type: MongooseSchema.Types.Number, default: 0 },
+      likes: { type: MongooseSchema.Types.Number, default: 0 },
+      comments: { type: MongooseSchema.Types.Number, default: 0 },
+      shares: { type: MongooseSchema.Types.Number, default: 0 },
     },
     _id: false,
   })
@@ -36,10 +36,10 @@ export class KpiLogModel {
     shares: number;
   };
 
-  @Prop({ type: Date, default: null })
+  @Prop({ type: MongooseSchema.Types.Date, default: null })
   delete_at: Date | null;
 
-  @Prop({ type: String, default: null })
+  @Prop({ type: MongooseSchema.Types.String, default: null })
   delete_by: string | null;
 }
 

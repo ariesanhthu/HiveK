@@ -4,12 +4,12 @@ import { Nullable } from '@/core/types';
 export interface EnterpriseProps {
   userId: string;
   companyName: string;
-  description: string;
+  description?: string;
   contactEmail: string;
-  contactPhone: string;
-  website: Nullable<string>;
-  taxId: Nullable<string>;
-  logoUrlId: Nullable<string>;
+  contactPhone?: string;
+  website?: string;
+  taxId?: string;
+  logoUrlId?: string;
   isVerified: boolean;
   createdAt: Date;
   updatedAt: Date;
@@ -47,7 +47,7 @@ export class EnterpriseRoot extends BaseAggregateRoot<EnterpriseProps> {
     return this.props.companyName;
   }
 
-  get description(): string {
+  get description(): string | undefined {
     return this.props.description;
   }
 
@@ -55,19 +55,19 @@ export class EnterpriseRoot extends BaseAggregateRoot<EnterpriseProps> {
     return this.props.contactEmail;
   }
 
-  get contactPhone(): string {
+  get contactPhone(): string | undefined {
     return this.props.contactPhone;
   }
 
-  get website(): Nullable<string> {
+  get website(): string | undefined {
     return this.props.website;
   }
 
-  get taxId(): Nullable<string> {
+  get taxId(): string | undefined {
     return this.props.taxId;
   }
 
-  get logoUrlId(): Nullable<string> {
+  get logoUrlId(): string | undefined {
     return this.props.logoUrlId;
   }
 

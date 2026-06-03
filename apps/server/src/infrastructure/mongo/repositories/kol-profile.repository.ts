@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { IKolProfileRepository } from '@/core/interfaces/repositories';
 import { KolProfileEntity } from '@/core/entities/kol-profile.entity';
 import { KolPlatformInfo } from '@/core/value-objects/kol-platform-info.value-object';
@@ -28,7 +28,7 @@ export class MongoKolProfileRepository implements IKolProfileRepository {
   }
 
   async findByUserId(userId: string): Promise<Nullable<KolProfileEntity>> {
-    const doc = await this.kolProfileModel.findOne({ user_id: userId }).exec();
+    const doc = await this.kolProfileModel.findOne({ user_id: new Types.ObjectId(userId) as any }).exec();
     return doc ? this.mapToDomain(doc) : null;
   }
 
@@ -61,15 +61,18 @@ export class MongoKolProfileRepository implements IKolProfileRepository {
       })
     );
 
+    if (!doc._id) {
+      throw new Error('KolProfile document ID is missing');
+    }
     return KolProfileEntity.instantiate(doc._id.toString(), {
-      userId: doc.user_id,
+      userId: doc.user_id ? doc.user_id.toString() : null,
       verificationType: doc.verification_type,
       name: doc.name,
-      location: doc.location,
-      gender: doc.gender,
-      bio: doc.bio,
+      location: doc.location || undefined,
+      gender: doc.gender || undefined,
+      bio: doc.bio || undefined,
       email: doc.email,
-      phone: doc.phone,
+      phone: doc.phone || undefined,
       platforms,
       isVerified: doc.is_verified,
       scores: doc.scores,
@@ -78,7 +81,7 @@ export class MongoKolProfileRepository implements IKolProfileRepository {
     });
   }
 
-  private mapToPersistence(entity: KolProfileEntity): any {
+  private mapToPersistence(entity: KolProfileEntity): Omit<KolProfileModel, 'created_at' | 'updated_at'> {
     const platforms = (entity.platforms || []).map((p) => ({
       platform_id: p.platformId,
       uniqueId: p.uniqueId,
@@ -90,14 +93,14 @@ export class MongoKolProfileRepository implements IKolProfileRepository {
     }));
 
     return {
-      user_id: entity.userId,
+      user_id: entity.userId ? new Types.ObjectId(entity.userId) as any : null,
       verification_type: entity.verificationType,
       name: entity.name,
-      location: entity.location,
-      gender: entity.gender,
-      bio: entity.bio,
+      location: entity.location ?? null,
+      gender: entity.gender ?? null,
+      bio: entity.bio ?? null,
       email: entity.email,
-      phone: entity.phone,
+      phone: entity.phone ?? null,
       platforms,
       is_verified: entity.isVerified,
       scores: entity.scores,

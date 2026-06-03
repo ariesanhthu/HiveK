@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { IUserRepository } from '@/core/interfaces/repositories';
 import { UserRoot, AdminRoot, EnterpriseUserRoot, KOLUserRoot } from '@/core/aggregate-roots';
 import { UserModel, UserDocument } from '../schemas/user.schema';
@@ -41,14 +41,17 @@ export class MongoUserRepository implements IUserRepository {
   }
 
   private mapToDomain(doc: UserDocument): UserRoot {
+    if (!doc._id) {
+      throw new Error('User document ID is missing');
+    }
     const props = {
       email: doc.email,
       phone: doc.phone,
       passwordHash: doc.password_hash,
       fullName: doc.full_name,
-      avatar: doc.avatar,
+      avatar: doc.avatar || undefined,
       type: doc.type,
-      roleId: doc.role_id,
+      roleId: doc.role_id ? doc.role_id.toString() : '',
       isEmailVerified: doc.is_email_verified,
       createdAt: doc.get('created_at'),
       updatedAt: doc.get('updated_at'),
@@ -66,7 +69,7 @@ export class MongoUserRepository implements IUserRepository {
       case ERoleType.ENTERPRISE:
         return EnterpriseUserRoot.instantiate(id, {
           ...props,
-          enterpriseId: (doc as any).enterprise_id,
+          enterpriseId: (doc as any).enterprise_id ? (doc as any).enterprise_id.toString() : '',
         } as any);
       case ERoleType.KOL:
         return KOLUserRoot.instantiate(id, props as any);
@@ -75,15 +78,15 @@ export class MongoUserRepository implements IUserRepository {
     }
   }
 
-  private mapToPersistence(user: UserRoot): any {
+  private mapToPersistence(user: UserRoot): Omit<UserModel, 'created_at' | 'updated_at'> & { enterprise_id?: Types.ObjectId } {
     const base = {
       email: user.email,
       phone: (user.props as any).phone,
       password_hash: user.passwordHash,
       full_name: user.fullName,
-      avatar: user.avatar,
+      avatar: user.avatar ?? null,
       type: user.type,
-      role_id: user.roleId,
+      role_id: new Types.ObjectId(user.roleId) as any,
       is_email_verified: user.isEmailVerified,
       delete_at: user.deleteAt,
       delete_by: user.deleteBy,
@@ -92,9 +95,9 @@ export class MongoUserRepository implements IUserRepository {
     };
 
     if (user instanceof EnterpriseUserRoot) {
-      return { ...base, enterprise_id: user.enterpriseId };
+      return { ...base, enterprise_id: new Types.ObjectId(user.enterpriseId) };
     }
 
-    return base;
+    return base as any;
   }
 }

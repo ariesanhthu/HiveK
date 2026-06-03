@@ -40,6 +40,9 @@ export class MongoRoleRepository implements IRoleRepository {
   }
 
   private mapToDomain(doc: RoleDocument): RoleRoot {
+    if (!doc._id) {
+      throw new Error('Role document ID is missing');
+    }
     return RoleRoot.instantiate(doc._id.toString(), {
       title: doc.title,
       permissions: doc.permissions,
@@ -51,13 +54,11 @@ export class MongoRoleRepository implements IRoleRepository {
     });
   }
 
-  private mapToPersistence(role: RoleRoot): any {
+  private mapToPersistence(role: RoleRoot): Omit<RoleModel, 'created_at' | 'updated_at'> {
     return {
       title: role.title,
       permissions: role.permissions,
       type: role.type,
-      created_at: role.createdAt,
-      updated_at: role.updatedAt,
       delete_at: role.deleteAt,
       delete_by: role.deleteBy,
     };

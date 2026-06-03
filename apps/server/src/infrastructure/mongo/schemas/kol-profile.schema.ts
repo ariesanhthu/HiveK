@@ -2,26 +2,26 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Schema as MongooseSchema } from 'mongoose';
 
 @Schema({ _id: false })
-class NativePlatformInfo {
-  @Prop({ required: true })
+export class NativePlatformInfo {
+  @Prop({ type: MongooseSchema.Types.String, required: true })
   platform_id: string;
 
-  @Prop({ required: true })
+  @Prop({ type: MongooseSchema.Types.String, required: true })
   uniqueId: string;
 
-  @Prop({ required: true })
+  @Prop({ type: MongooseSchema.Types.String, required: true })
   external_id: string;
 
-  @Prop({ default: 0 })
+  @Prop({ type: MongooseSchema.Types.Number, default: 0 })
   follower_count: number;
 
-  @Prop({ default: 0 })
+  @Prop({ type: MongooseSchema.Types.Number, default: 0 })
   avg_engagement: number;
 
-  @Prop({ type: [String], default: [] })
+  @Prop({ type: [MongooseSchema.Types.String], default: [] })
   top_tags: string[];
 
-  @Prop({ type: [String], default: [] })
+  @Prop({ type: [MongooseSchema.Types.String], default: [] })
   categories: string[];
 }
 
@@ -30,43 +30,43 @@ class NativePlatformInfo {
   timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' },
 })
 export class KolProfileModel {
-  @Prop({ type: String, default: null })
-  user_id: string | null;
+  @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'UserModel', default: null })
+  user_id: MongooseSchema.Types.ObjectId | null;
 
-  @Prop({ type: String, default: null })
+  @Prop({ type: MongooseSchema.Types.String, default: null })
   verification_type: string | null;
 
-  @Prop({ required: true })
+  @Prop({ type: MongooseSchema.Types.String, required: true })
   name: string;
 
-  @Prop()
+  @Prop({ type: MongooseSchema.Types.String })
   location: string;
 
-  @Prop()
+  @Prop({ type: MongooseSchema.Types.String })
   gender: string;
 
-  @Prop()
+  @Prop({ type: MongooseSchema.Types.String })
   bio: string;
 
-  @Prop({ required: true })
+  @Prop({ type: MongooseSchema.Types.String, required: true })
   email: string;
 
-  @Prop()
+  @Prop({ type: MongooseSchema.Types.String })
   phone: string;
 
   @Prop({ type: [SchemaFactory.createForClass(NativePlatformInfo)], default: [] })
   platforms: NativePlatformInfo[];
 
-  @Prop({ default: false })
+  @Prop({ type: MongooseSchema.Types.Boolean, default: false })
   is_verified: boolean;
 
   @Prop({ type: MongooseSchema.Types.Mixed, default: {} })
   scores: Record<string, any>;
 
-  @Prop({ type: Date, default: null })
+  @Prop({ type: MongooseSchema.Types.Date, default: null })
   delete_at: Date | null;
 
-  @Prop({ type: String, default: null })
+  @Prop({ type: MongooseSchema.Types.String, default: null })
   delete_by: string | null;
 
   created_at: Date;

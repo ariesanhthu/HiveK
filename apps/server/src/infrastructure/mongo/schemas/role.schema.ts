@@ -1,25 +1,25 @@
 import { ERoleType } from '@/core/enums';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument } from 'mongoose';
+import { HydratedDocument, Schema as MongooseSchema } from 'mongoose';
 
 @Schema({
   collection: 'roles',
   timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' },
 })
 export class RoleModel {
-  @Prop({ required: true, unique: true })
+  @Prop({ type: MongooseSchema.Types.String, required: true, unique: true })
   title: string;
 
-  @Prop({ type: [String], default: [] })
+  @Prop({ type: [MongooseSchema.Types.String], default: [] })
   permissions: string[];
 
-  @Prop({ type: String, enum: ERoleType, required: true })
+  @Prop({ type: MongooseSchema.Types.String, enum: ERoleType, required: true })
   type: ERoleType;
 
-  @Prop({ type: Date, default: null })
+  @Prop({ type: MongooseSchema.Types.Date, default: null })
   delete_at: Date | null;
 
-  @Prop({ type: String, default: null })
+  @Prop({ type: MongooseSchema.Types.String, default: null })
   delete_by: string | null;
 
   created_at: Date;

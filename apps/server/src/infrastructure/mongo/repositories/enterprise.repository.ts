@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { IEnterpriseRepository } from '@/core/interfaces/repositories';
 import { EnterpriseRoot } from '@/core/aggregate-roots';
 import { EnterpriseModel, EnterpriseDocument } from '../schemas';
@@ -19,7 +19,7 @@ export class MongoEnterpriseRepository implements IEnterpriseRepository {
   }
 
   async findByUserId(userId: string): Promise<Nullable<EnterpriseRoot>> {
-    const doc = await this.enterpriseModel.findOne({ user_id: userId }).exec();
+    const doc = await this.enterpriseModel.findOne({ user_id: new Types.ObjectId(userId) as any }).exec();
     return doc ? this.mapToDomain(doc) : null;
   }
 
@@ -40,15 +40,18 @@ export class MongoEnterpriseRepository implements IEnterpriseRepository {
   }
 
   private mapToDomain(doc: EnterpriseDocument): EnterpriseRoot {
+    if (!doc._id) {
+      throw new Error('Enterprise document ID is missing');
+    }
     return EnterpriseRoot.instantiate(doc._id.toString(), {
-      userId: doc.user_id,
+      userId: doc.user_id ? doc.user_id.toString() : '',
       companyName: doc.company_name,
-      description: doc.description,
+      description: doc.description || undefined,
       contactEmail: doc.contact_email,
-      contactPhone: doc.contact_phone,
-      website: doc.website,
-      taxId: doc.tax_id,
-      logoUrlId: doc.logo_url_id,
+      contactPhone: doc.contact_phone || undefined,
+      website: doc.website || undefined,
+      taxId: doc.tax_id || undefined,
+      logoUrlId: doc.logo_url_id || undefined,
       isVerified: doc.is_verified,
       createdAt: doc.created_at,
       updatedAt: doc.updated_at,
@@ -57,16 +60,16 @@ export class MongoEnterpriseRepository implements IEnterpriseRepository {
     });
   }
 
-  private mapToPersistence(enterprise: EnterpriseRoot): any {
+  private mapToPersistence(enterprise: EnterpriseRoot): Omit<EnterpriseModel, 'created_at' | 'updated_at'> {
     return {
-      user_id: enterprise.userId,
+      user_id: new Types.ObjectId(enterprise.userId) as any,
       company_name: enterprise.companyName,
-      description: enterprise.description,
+      description: enterprise.description ?? null,
       contact_email: enterprise.contactEmail,
-      contact_phone: enterprise.contactPhone,
-      website: enterprise.website,
-      tax_id: enterprise.taxId,
-      logo_url_id: enterprise.logoUrlId,
+      contact_phone: enterprise.contactPhone ?? null,
+      website: enterprise.website ?? null,
+      tax_id: enterprise.taxId ?? null,
+      logo_url_id: enterprise.logoUrlId ?? null,
       is_verified: enterprise.isVerified,
       delete_at: enterprise.deleteAt,
       delete_by: enterprise.deleteBy,

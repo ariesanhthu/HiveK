@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { IEnterpriseReadService } from '@/application/interfaces';
 import { EnterpriseModel, type EnterpriseDocument } from '../schemas/enterprise.schema';
 import { Nullable } from '@/core/types';
@@ -20,7 +20,7 @@ export class MongoEnterpriseReadService implements IEnterpriseReadService {
   }
 
   async findByUserId(userId: string): Promise<Nullable<EnterpriseDto>> {
-    const doc = await this.enterpriseModel.findOne({ user_id: userId }).lean().exec();
+    const doc = await this.enterpriseModel.findOne({ user_id: new Types.ObjectId(userId) as any }).lean().exec();
     return doc ? this.mapToDto(doc) : null;
   }
 

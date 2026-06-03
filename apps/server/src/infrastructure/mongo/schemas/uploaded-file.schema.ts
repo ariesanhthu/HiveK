@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument } from 'mongoose';
+import { HydratedDocument, Schema as MongooseSchema } from 'mongoose';
 import { TargetType } from '@/core/enums/target-type.enum';
 
 @Schema({
@@ -7,34 +7,34 @@ import { TargetType } from '@/core/enums/target-type.enum';
   timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' },
 })
 export class UploadedFileModel {
-  @Prop({ required: true })
+  @Prop({ type: MongooseSchema.Types.String, required: true })
   url: string;
 
-  @Prop({ required: true })
+  @Prop({ type: MongooseSchema.Types.String, required: true })
   public_id: string;
 
-  @Prop({ required: true })
+  @Prop({ type: MongooseSchema.Types.Number, required: true })
   size: number;
 
-  @Prop({ required: true })
+  @Prop({ type: MongooseSchema.Types.String, required: true })
   format: string;
 
-  @Prop({ type: String, default: null })
+  @Prop({ type: MongooseSchema.Types.String, default: null })
   title: string | null;
 
-  @Prop({ type: String, required: true, enum: TargetType })
+  @Prop({ type: MongooseSchema.Types.String, required: true, enum: TargetType })
   target_type: TargetType;
 
-  @Prop({ required: true })
+  @Prop({ type: MongooseSchema.Types.String, required: true })
   target_id: string;
 
-  @Prop({ required: true })
+  @Prop({ type: MongooseSchema.Types.String, required: true })
   target_field: string;
 
-  @Prop({ type: Date, default: null })
+  @Prop({ type: MongooseSchema.Types.Date, default: null })
   delete_at: Date | null;
 
-  @Prop({ type: String, default: null })
+  @Prop({ type: MongooseSchema.Types.String, default: null })
   delete_by: string | null;
 
   created_at: Date;

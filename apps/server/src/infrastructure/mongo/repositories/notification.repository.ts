@@ -35,6 +35,9 @@ export class MongoNotificationRepository implements INotificationRepository {
   }
 
   private mapToDomain(doc: NotificationDocument): NotificationRoot {
+    if (!doc._id) {
+      throw new Error('Notification document ID is missing');
+    }
     return NotificationRoot.instantiate(doc._id.toString(), {
       type: doc.type,
       title: doc.title,
@@ -46,7 +49,7 @@ export class MongoNotificationRepository implements INotificationRepository {
     });
   }
 
-  private mapToPersistence(notification: NotificationRoot): any {
+  private mapToPersistence(notification: NotificationRoot): Omit<NotificationModel, 'created_at' | 'updated_at'> {
     return {
       type: notification.type,
       title: notification.title,

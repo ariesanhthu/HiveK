@@ -52,6 +52,9 @@ export class MongoUserNotificationRepository implements IUserNotificationReposit
   }
 
   private mapToDomain(doc: UserNotificationDocument): UserNotificationRoot {
+    if (!doc._id) {
+      throw new Error('UserNotification document ID is missing');
+    }
     return UserNotificationRoot.instantiate(doc._id.toString(), {
       notificationId: doc.notification_id.toString(),
       recipientId: doc.recipient_id.toString(),
@@ -64,10 +67,10 @@ export class MongoUserNotificationRepository implements IUserNotificationReposit
     });
   }
 
-  private mapToPersistence(userNotification: UserNotificationRoot): any {
-    const data: any = {
-      notification_id: new Types.ObjectId(userNotification.notificationId),
-      recipient_id: new Types.ObjectId(userNotification.recipientId),
+  private mapToPersistence(userNotification: UserNotificationRoot): Omit<UserNotificationModel, 'created_at' | 'updated_at'> & { _id?: Types.ObjectId } {
+    const data: Omit<UserNotificationModel, 'created_at' | 'updated_at'> & { _id?: Types.ObjectId } = {
+      notification_id: new Types.ObjectId(userNotification.notificationId) as any,
+      recipient_id: new Types.ObjectId(userNotification.recipientId) as any,
       is_read: userNotification.isRead,
       read_at: userNotification.readAt,
       delete_at: userNotification.deleteAt,
