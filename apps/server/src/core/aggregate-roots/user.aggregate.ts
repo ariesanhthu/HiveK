@@ -16,9 +16,12 @@ export interface UserProps {
   deleteAt: Nullable<Date>;
   deleteBy: Nullable<string>;
   refreshToken: Nullable<string>;
+  googleId: Nullable<string>;
 }
 
-export type UserCreateProps = Omit<UserProps, 'createdAt' | 'updatedAt' | 'deleteAt' | 'deleteBy' | 'refreshToken'>;
+export type UserCreateProps = Omit<UserProps, 'createdAt' | 'updatedAt' | 'deleteAt' | 'deleteBy' | 'refreshToken' | 'googleId'> & {
+  googleId?: Nullable<string>;
+};
 
 export abstract class UserRoot<T extends UserProps = UserProps> extends BaseAggregateRoot<T> {
   protected constructor(props: T, id?: string) {
@@ -77,8 +80,17 @@ export abstract class UserRoot<T extends UserProps = UserProps> extends BaseAggr
     return this.props.refreshToken;
   }
 
+  get googleId(): Nullable<string> {
+    return this.props.googleId;
+  }
+
   public updateRefreshToken(token: Nullable<string>): void {
     this.props.refreshToken = token;
+    this.props.updatedAt = new Date();
+  }
+
+  public updateGoogleId(googleId: Nullable<string>): void {
+    this.props.googleId = googleId;
     this.props.updatedAt = new Date();
   }
 

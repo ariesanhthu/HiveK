@@ -1,4 +1,4 @@
-import { Controller, Post, Body, HttpCode, HttpStatus, Get, UseGuards, Res } from '@nestjs/common';
+import { Controller, Post, Body, HttpCode, HttpStatus, Get, UseGuards, Res, Req } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import type { Response } from 'express';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
@@ -19,14 +19,52 @@ import { ERoleType } from '@/core/enums';
 import { JwtAuthGuard } from '@/presentation/middleware/guards/jwt-auth.guard';
 import { CurrentUser } from '@/presentation/decorators/current-user.decorator';
 import { Public } from '@/presentation/decorators/public.decorator';
+import { AuthGuard } from '@nestjs/passport';
 
 @ApiTags('auth')
+@ApiBearerAuth()
 @Controller('auth')
 export class AuthController {
   constructor(
     private readonly commandBus: CommandBus,
     private readonly queryBus: QueryBus,
   ) { }
+
+  @Public()
+  @Get('google')
+  @UseGuards(AuthGuard('google'))
+  @ApiOperation({ summary: 'Google OAuth sign-in' })
+  async googleAuth() {
+    return;
+  }
+
+  @Public()
+  @Get('google/callback')
+  @UseGuards(AuthGuard('google'))
+  @ApiOperation({ summary: 'Google OAuth callback' })
+  async googleAuthCallback(
+    @Req() req: any,
+    @Res({ passthrough: true }) response: Response,
+  ) {
+    const result = req.user;
+    if (result && result.accessToken) {
+      response.cookie('access_token', result.accessToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
+        maxAge: 24 * 60 * 60 * 1000, // 1 day
+      });
+    }
+    if (result && result.refreshToken) {
+      response.cookie('refresh_token', result.refreshToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
+        maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+      });
+    }
+    return result;
+  }
 
   @Public()
   @Post('sign-up/kol')

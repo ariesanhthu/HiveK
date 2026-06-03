@@ -40,6 +40,9 @@ export class UserModel {
   @Prop({ type: String, default: null })
   avatar: string | null;
 
+  @Prop({ type: String, default: null })
+  google_id: string | null;
+
   created_at: Date;
   updated_at: Date;  
 }

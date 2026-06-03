@@ -16,7 +16,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
-import { ApiTags, ApiOperation, ApiConsumes, ApiBody } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiConsumes, ApiBody, ApiBearerAuth } from '@nestjs/swagger';
 import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { TargetType } from '@/core/enums/target-type.enum';
 import {
@@ -37,6 +37,7 @@ import { PaginatedResponseDto } from '@/shared/dtos/pagination.dto';
 import { JwtAuthGuard } from '../middleware/guards';
 
 @ApiTags('upload')
+@ApiBearerAuth()
 @UseGuards(JwtAuthGuard)
 @Controller('upload')
 export class UploadedFileController {

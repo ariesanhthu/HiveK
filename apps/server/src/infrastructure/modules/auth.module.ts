@@ -8,17 +8,19 @@ import {
   AuthSignUpCommandHandler,
   AuthSignOutCommandHandler,
   AuthResetPasswordCommandHandler,
-  AuthRefreshTokenCommandHandler
+  AuthRefreshTokenCommandHandler,
+  AuthGoogleSignInCommandHandler
 } from '@/application/commands';
 import { AuthGetProfileHandler } from '@/application/queries';
 import { AUTH_JWT_SERVICE } from '@/application/interfaces';
 import { USER_REPOSITORY } from '@/core/interfaces/repositories';
 import { JwtAuthService } from '../auth/jwt.service';
-import { JwtStrategy } from '../auth/jwt.strategy';
+import { JwtStrategy } from '../auth/strategies/jwt.strategy';
 import { MongoUserRepository } from '../mongo/repositories';
 import { UserModule } from './user.module';
 import { RoleModule } from './role.module';
 import { AuthController } from '@/presentation/controllers/auth.controller';
+import { GoogleStrategy } from '../auth/strategies/google.strategy';
 
 const Handlers = [
   AuthSignInCommandHandler,
@@ -27,6 +29,7 @@ const Handlers = [
   AuthResetPasswordCommandHandler,
   AuthRefreshTokenCommandHandler,
   AuthGetProfileHandler,
+  AuthGoogleSignInCommandHandler,
 ];
 
 @Module({
@@ -47,6 +50,7 @@ const Handlers = [
   providers: [
     ...Handlers,
     JwtStrategy,
+    GoogleStrategy,
     {
       provide: AUTH_JWT_SERVICE,
       useClass: JwtAuthService,

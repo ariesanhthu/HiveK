@@ -1,6 +1,6 @@
 import { Controller, Get, Post, Patch, Delete, Body, Param, Query, HttpCode, HttpStatus, UseGuards } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
-import { ApiTags, ApiOperation } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { PlatformCreateCommand, PlatformUpdateCommand, PlatformSoftDeleteCommand, PlatformHardDeleteCommand, PlatformRestoreCommand, PlatformCreateInputDto, PlatformUpdateInputDto } from '@/application/commands';
 import { PlatformGetListQuery, PlatformGetByIdQuery, PlatformFilterDto } from '@/application/queries';
 import { PlatformDto, SoftDeleteInputDto } from '@/application/dtos';
@@ -9,6 +9,7 @@ import { JwtAuthGuard } from '../middleware/guards';
 import { Public } from '@/presentation/decorators/public.decorator';
 
 @ApiTags('platforms')
+@ApiBearerAuth()
 @Controller('platforms')
 export class PlatformController {
   constructor(

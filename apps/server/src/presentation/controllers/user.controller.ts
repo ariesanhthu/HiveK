@@ -3,7 +3,7 @@ import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { UserGetByIdQuery, UserGetListQuery } from '@/application/queries';
 import { UserCreateCommand, UserUpdateCommand, UserSoftDeleteCommand, UserHardDeleteCommand, UserRestoreCommand } from '@/application/commands';
 import { UserDto, UserFilterDto, UserCreateInputDto, UserUpdateInputDto, SoftDeleteInputDto } from '@/application/dtos';
-import { ApiTags, ApiOperation } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../middleware/guards';
 import { UseGuards } from '@nestjs/common';
 import { Roles } from '@/presentation/decorators/roles.decorator';
@@ -11,6 +11,7 @@ import { ERoleType } from '@/core/enums';
 import { PaginatedResponseDto } from '@/shared/dtos/pagination.dto';
 
 @ApiTags('users')
+@ApiBearerAuth()
 @UseGuards(JwtAuthGuard)
 @Roles(ERoleType.ADMIN)
 @Controller('users')

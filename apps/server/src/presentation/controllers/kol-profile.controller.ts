@@ -1,6 +1,6 @@
 import { Controller, Get, Param, Query, Body, Patch, Delete, Post, HttpCode, HttpStatus, UseGuards } from '@nestjs/common';
 import { QueryBus, CommandBus } from '@nestjs/cqrs';
-import { ApiTags, ApiOperation } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { KolProfileGetListQuery, KolProfileGetByIdQuery, KolProfileGetHandlesDevQuery, KolProfileFilterDto } from '@/application/queries';
 import { KolProfileUpdateCommand, KolProfileSoftDeleteCommand, KolProfileHardDeleteCommand, KolProfileRestoreCommand, UpdateKolProfileDto } from '@/application/commands';
 import { KolProfileDto, SoftDeleteInputDto } from '@/application/dtos';
@@ -9,6 +9,7 @@ import { JwtAuthGuard } from '../middleware/guards';
 import { Public } from '@/presentation/decorators/public.decorator';
 
 @ApiTags('kol-profiles')
+@ApiBearerAuth()
 @Controller('kol-profiles')
 export class KolProfileController {
   constructor(

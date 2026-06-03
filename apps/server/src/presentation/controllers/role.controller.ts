@@ -1,6 +1,6 @@
 import { Controller, Get, Post, Patch, Delete, Param, Query, Body, HttpCode, HttpStatus, UseGuards } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
-import { ApiTags, ApiOperation } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { RoleGetByIdQuery, RoleGetListQuery } from '@/application/queries';
 import {
   RoleCreateCommand,
@@ -10,13 +10,14 @@ import {
   RoleRestoreCommand,
 } from '@/application/commands';
 import { RoleDto, RoleFilterDto, RoleCreateInputDto, RoleUpdateInputDto, SoftDeleteInputDto } from '@/application/dtos';
-import { JwtAuthGuard } from '../middleware/guards';
+import { JwtAuthGuard, RolesGuard } from '../middleware/guards';
 import { Roles } from '@/presentation/decorators/roles.decorator';
 import { ERoleType } from '@/core/enums';
 import { PaginatedResponseDto } from '@/shared/dtos/pagination.dto';
 
 @ApiTags('roles')
-@UseGuards(JwtAuthGuard)
+@ApiBearerAuth()
+@UseGuards(JwtAuthGuard, RolesGuard)
 @Roles(ERoleType.ADMIN)
 @Controller('roles')
 export class RoleController {

@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { Reflector } from '@nestjs/core';
 import { ConfigService } from '@nestjs/config';
 import { JwtAuthGuard } from '@/presentation/middleware/guards/jwt-auth.guard';
-import { JwtStrategy } from '@/infrastructure/auth/jwt.strategy';
+import { JwtStrategy } from '@/infrastructure/auth/strategies/jwt.strategy';
 import { AUTH_JWT_SERVICE } from '@/application/interfaces/auth-jwt.interface';
 import { USER_REPOSITORY } from '@/core/interfaces/repositories';
 import { ERoleType } from '@/core/enums';

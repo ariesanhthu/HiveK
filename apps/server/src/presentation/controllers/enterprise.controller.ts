@@ -16,6 +16,7 @@ import { JwtAuthGuard } from '@/presentation/middleware/guards/jwt-auth.guard';
 import { CurrentUser } from '@/presentation/decorators/current-user.decorator';
 
 @ApiTags('enterprises')
+@ApiBearerAuth()
 @Controller('enterprises')
 export class EnterpriseController {
   constructor(

@@ -21,6 +21,7 @@ export class EnterpriseUserRoot extends UserRoot<EnterpriseUserProps> {
     const now = new Date();
     return new EnterpriseUserRoot({
       ...props,
+      googleId: props.googleId || null,
       createdAt: now,
       updatedAt: now,
       deleteAt: null,

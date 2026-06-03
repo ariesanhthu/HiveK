@@ -134,3 +134,8 @@ export * from './role-create/role-create.command';
 export * from './role-create/role-create.handler';
 export * from './role-update/role-update.command';
 export * from './role-update/role-update.handler';
+
+// Google Sign-In
+export * from './auth-google-sign-in/auth-google-sign-in.command';
+export * from './auth-google-sign-in/auth-google-sign-in.handler';
+export * from './auth-google-sign-in/auth-google-sign-in.dto';

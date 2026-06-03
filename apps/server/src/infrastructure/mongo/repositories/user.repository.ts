@@ -55,6 +55,7 @@ export class MongoUserRepository implements IUserRepository {
       deleteAt: doc.delete_at,
       deleteBy: doc.delete_by,
       refreshToken: doc.refresh_token,
+      googleId: doc.google_id,
     };
 
     const id = doc._id.toString();
@@ -87,6 +88,7 @@ export class MongoUserRepository implements IUserRepository {
       delete_at: user.deleteAt,
       delete_by: user.deleteBy,
       refresh_token: user.refreshToken,
+      google_id: user.googleId,
     };
 
     if (user instanceof EnterpriseUserRoot) {

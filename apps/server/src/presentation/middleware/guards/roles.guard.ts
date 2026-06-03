@@ -20,6 +20,7 @@ export class RolesGuard implements CanActivate {
     if (!user) {
       return false;
     }
+    console.log('User:', user);
     // Access is allowed if the user's type matches one of the required roles,
     // or if the user is an ADMIN (who bypasses specific checks).
     return requiredRoles.includes(user.type) || user.type === ERoleType.ADMIN;

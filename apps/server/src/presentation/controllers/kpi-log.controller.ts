@@ -1,12 +1,13 @@
 import { Controller, Get, Query, UseGuards } from '@nestjs/common';
 import { QueryBus } from '@nestjs/cqrs';
-import { ApiTags, ApiOperation } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { KpiLogDto } from '@/application/dtos';
 import { PaginatedResponseDto } from '@/shared/dtos/pagination.dto';
 import { KpiLogGetListQuery, KpiLogFilterDto } from '@/application/queries';
 import { JwtAuthGuard } from '../middleware/guards';
 
 @ApiTags('analytics')
+@ApiBearerAuth()
 @Controller('analytics/kpi-logs')
 export class KpiLogController {
   constructor(private readonly queryBus: QueryBus) {}

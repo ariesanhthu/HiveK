@@ -19,6 +19,7 @@ export class KOLUserRoot extends UserRoot<KOLUserProps> {
     const now = new Date();
     return new KOLUserRoot({
       ...props,
+      googleId: props.googleId || null,
       createdAt: now,
       updatedAt: now,
       deleteAt: null,
