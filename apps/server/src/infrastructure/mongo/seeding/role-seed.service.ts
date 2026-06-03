@@ -22,6 +22,9 @@ export class RoleSeedService implements OnModuleInit {
   ) {}
 
   async onModuleInit() {
+    if (process.env.SEEDING === '0') {
+      return;
+    }
     await this.seedRoles();
     await this.seedUsers();
   }
