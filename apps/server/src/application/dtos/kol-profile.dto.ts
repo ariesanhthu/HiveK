@@ -13,6 +13,8 @@ export const KolPlatformInfoDtoSchema = z.object({
 
 export const KolProfileDtoSchema = z.object({
   id: z.string(),
+  userId: z.string().nullable().optional(),
+  verificationType: z.string().nullable().optional(),
   name: z.string(),
   location: z.string(),
   gender: z.string(),

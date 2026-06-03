@@ -3,6 +3,8 @@ import { KolPlatformInfo } from '../value-objects/kol-platform-info.value-object
 import { Nullable } from '@/core/types';
 
 export interface KolProfileProps {
+  userId: Nullable<string>;
+  verificationType: Nullable<string>;
   name: string;
   location: string;
   gender: string;
@@ -37,6 +39,14 @@ export class KolProfileEntity extends BaseEntity<KolProfileProps> {
 
   public static instantiate(id: string, props: KolProfileProps): KolProfileEntity {
     return new KolProfileEntity(props, id);
+  }
+
+  get userId(): Nullable<string> {
+    return this.props.userId;
+  }
+
+  get verificationType(): Nullable<string> {
+    return this.props.verificationType;
   }
 
   get name(): string {
@@ -81,6 +91,24 @@ export class KolProfileEntity extends BaseEntity<KolProfileProps> {
 
   get deleteBy(): Nullable<string> {
     return this.props.deleteBy;
+  }
+
+  public linkUser(userId: string, verificationType: string): void {
+    this.props.userId = userId;
+    this.props.verificationType = verificationType;
+    this.props.isVerified = true;
+  }
+
+  public addPlatform(platform: KolPlatformInfo): void {
+    if (!this.props.platforms) {
+      this.props.platforms = [];
+    }
+    const exists = this.props.platforms.some(
+      (p) => p.platformId === platform.platformId && p.externalId === platform.externalId
+    );
+    if (!exists) {
+      this.props.platforms.push(platform);
+    }
   }
 
   public softDelete(deletedBy: string): void {

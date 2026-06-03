@@ -80,6 +80,8 @@ export class MongoKolProfileReadService implements IKolProfileReadService {
   private mapToDto(doc: any): KolProfileDto {
     return {
       id: doc._id.toString(),
+      userId: doc.user_id ? doc.user_id.toString() : null,
+      verificationType: doc.verification_type ?? null,
       name: doc.name,
       location: doc.location,
       gender: doc.gender,

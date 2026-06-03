@@ -139,3 +139,7 @@ export * from './role-update/role-update.handler';
 export * from './auth-google-sign-in/auth-google-sign-in.command';
 export * from './auth-google-sign-in/auth-google-sign-in.handler';
 export * from './auth-google-sign-in/auth-google-sign-in.dto';
+
+// Platform Verification
+export * from './verify-platform-account/verify-platform-account.command';
+export * from './verify-platform-account/verify-platform-account.handler';

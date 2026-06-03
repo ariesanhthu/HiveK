@@ -3,6 +3,8 @@ import { KolProfileEntity } from '../../entities/kol-profile.entity';
 
 export interface IKolProfileRepository {
   findById(id: string): Promise<Nullable<KolProfileEntity>>;
+  findByPlatformInfo(platformId: string, externalId: string): Promise<Nullable<KolProfileEntity>>;
+  findByUserId(userId: string): Promise<Nullable<KolProfileEntity>>;
   save(entity: KolProfileEntity): Promise<void>;
   delete(id: string): Promise<void>;
 }

@@ -30,6 +30,12 @@ class NativePlatformInfo {
   timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' },
 })
 export class KolProfileModel {
+  @Prop({ type: String, default: null })
+  user_id: string | null;
+
+  @Prop({ type: String, default: null })
+  verification_type: string | null;
+
   @Prop({ required: true })
   name: string;
 

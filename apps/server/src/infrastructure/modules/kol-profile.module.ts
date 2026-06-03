@@ -7,7 +7,7 @@ import { KOL_PROFILE_REPOSITORY } from '@/core/interfaces/repositories';
 import { MongoKolProfileReadService } from '@/infrastructure/mongo/read-services';
 import { MongoKolProfileRepository } from '@/infrastructure/mongo/repositories';
 import { KolProfileGetListHandler, KolProfileGetByIdHandler, KolProfileGetHandlesDevHandler } from '@/application/queries';
-import { UpdateKolProfileHandler, KolProfileSoftDeleteCommandHandler, KolProfileHardDeleteCommandHandler, KolProfileRestoreCommandHandler } from '@/application/commands';
+import { UpdateKolProfileHandler, KolProfileSoftDeleteCommandHandler, KolProfileHardDeleteCommandHandler, KolProfileRestoreCommandHandler, VerifyPlatformAccountHandler } from '@/application/commands';
 import { KolProfileController } from '@/presentation/controllers/kol-profile.controller';
 
 const Handlers = [
@@ -18,6 +18,7 @@ const Handlers = [
   KolProfileSoftDeleteCommandHandler,
   KolProfileHardDeleteCommandHandler,
   KolProfileRestoreCommandHandler,
+  VerifyPlatformAccountHandler,
 ];
 
 @Module({

@@ -1,12 +1,13 @@
-import { Controller, Get, Param, Query, Body, Patch, Delete, Post, HttpCode, HttpStatus, UseGuards } from '@nestjs/common';
+import { Controller, Get, Param, Query, Body, Patch, Delete, Post, HttpCode, HttpStatus, UseGuards, Req, Res, Injectable } from '@nestjs/common';
 import { QueryBus, CommandBus } from '@nestjs/cqrs';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { KolProfileGetListQuery, KolProfileGetByIdQuery, KolProfileGetHandlesDevQuery, KolProfileFilterDto } from '@/application/queries';
 import { KolProfileUpdateCommand, KolProfileSoftDeleteCommand, KolProfileHardDeleteCommand, KolProfileRestoreCommand, UpdateKolProfileDto } from '@/application/commands';
 import { KolProfileDto, SoftDeleteInputDto } from '@/application/dtos';
 import { PaginatedResponseDto, CursorPaginationRequestDto } from '@/shared/dtos/pagination.dto';
-import { JwtAuthGuard } from '../middleware/guards';
+import { JwtAuthGuard, YoutubeAuthGuard, FacebookAuthGuard } from '../middleware/guards';
 import { Public } from '@/presentation/decorators/public.decorator';
+import { AuthGuard } from '@nestjs/passport';
 
 @ApiTags('kol-profiles')
 @ApiBearerAuth()
@@ -16,6 +17,56 @@ export class KolProfileController {
     private readonly queryBus: QueryBus,
     private readonly commandBus: CommandBus,
   ) { }
+
+  @Get('verify/youtube')
+  @UseGuards(JwtAuthGuard, YoutubeAuthGuard)
+  @ApiOperation({ summary: 'Initiate YouTube verification flow for KOL' })
+  async verifyYoutube() {
+    // Handled by Passport strategy redirection
+    return;
+  }
+
+  @Public()
+  @Get('verify/youtube/callback')
+  @UseGuards(AuthGuard('youtube'))
+  @ApiOperation({ summary: 'YouTube OAuth callback' })
+  async verifyYoutubeCallback(@Req() req: any) {
+    // req.user contains the output from YoutubeStrategy.validate()
+    return req.user;
+  }
+
+  @Get('verify/facebook')
+  @UseGuards(JwtAuthGuard, FacebookAuthGuard)
+  @ApiOperation({ summary: 'Initiate Facebook verification flow for KOL' })
+  async verifyFacebook() {
+    // Handled by Passport strategy redirection
+    return;
+  }
+
+  @Public()
+  @Get('verify/facebook/callback')
+  @UseGuards(AuthGuard('facebook'))
+  @ApiOperation({ summary: 'Facebook OAuth callback' })
+  async verifyFacebookCallback(@Req() req: any) {
+    // req.user contains the output from FacebookStrategy.validate()
+    return req.user;
+  }
+
+  @Get('verify/twitter')
+  @UseGuards(JwtAuthGuard, AuthGuard('twitter'))
+  @ApiOperation({ summary: 'Initiate Twitter verification flow for KOL' })
+  async verifyTwitter() {
+    // Handled by Passport strategy redirection
+    return;
+  }
+
+  @Get('verify/twitter/callback')
+  @UseGuards(JwtAuthGuard, AuthGuard('twitter'))
+  @ApiOperation({ summary: 'Twitter OAuth callback' })
+  async verifyTwitterCallback(@Req() req: any) {
+    // req.user contains the output from TwitterStrategy.validate()
+    return req.user;
+  }
 
   @Public()
   @Get()

@@ -21,6 +21,9 @@ import { UserModule } from './user.module';
 import { RoleModule } from './role.module';
 import { AuthController } from '@/presentation/controllers/auth.controller';
 import { GoogleStrategy } from '../auth/strategies/google.strategy';
+import { YoutubeStrategy } from '../auth/strategies/youtube.strategy';
+import { FacebookStrategy } from '../auth/strategies/facebook.strategy';
+import { TwitterStrategy } from '../auth/strategies/twitter.strategy';
 
 const Handlers = [
   AuthSignInCommandHandler,
@@ -51,6 +54,9 @@ const Handlers = [
     ...Handlers,
     JwtStrategy,
     GoogleStrategy,
+    YoutubeStrategy,
+    FacebookStrategy,
+    TwitterStrategy,
     {
       provide: AUTH_JWT_SERVICE,
       useClass: JwtAuthService,

@@ -19,6 +19,19 @@ export class MongoKolProfileRepository implements IKolProfileRepository {
     return doc ? this.mapToDomain(doc) : null;
   }
 
+  async findByPlatformInfo(platformId: string, externalId: string): Promise<Nullable<KolProfileEntity>> {
+    const doc = await this.kolProfileModel.findOne({
+      'platforms.platform_id': platformId,
+      'platforms.external_id': externalId,
+    }).exec();
+    return doc ? this.mapToDomain(doc) : null;
+  }
+
+  async findByUserId(userId: string): Promise<Nullable<KolProfileEntity>> {
+    const doc = await this.kolProfileModel.findOne({ user_id: userId }).exec();
+    return doc ? this.mapToDomain(doc) : null;
+  }
+
   async save(entity: KolProfileEntity): Promise<void> {
     const data = this.mapToPersistence(entity);
 
@@ -49,6 +62,8 @@ export class MongoKolProfileRepository implements IKolProfileRepository {
     );
 
     return KolProfileEntity.instantiate(doc._id.toString(), {
+      userId: doc.user_id,
+      verificationType: doc.verification_type,
       name: doc.name,
       location: doc.location,
       gender: doc.gender,
@@ -75,6 +90,8 @@ export class MongoKolProfileRepository implements IKolProfileRepository {
     }));
 
     return {
+      user_id: entity.userId,
+      verification_type: entity.verificationType,
       name: entity.name,
       location: entity.location,
       gender: entity.gender,
