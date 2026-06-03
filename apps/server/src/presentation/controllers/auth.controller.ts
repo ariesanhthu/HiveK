@@ -8,11 +8,17 @@ import {
   AuthSignOutCommand,
   AuthResetPasswordCommand,
   AuthRefreshTokenCommand,
+  AuthSendOtpCommand,
+  AuthChangePasswordCommand,
+  AuthVerifyOtpCommand,
   AuthSignInInputDto,
   AuthSignUpInputDto,
   AuthResetPasswordInputDto,
   AuthSignOutInputDto,
-  AuthRefreshTokenInputDto
+  AuthRefreshTokenInputDto,
+  AuthSendOtpInputDto,
+  AuthChangePasswordInputDto,
+  AuthVerifyOtpInputDto
 } from '@/application/commands';
 import { AuthGetProfileQuery } from '@/application/queries';
 import { ERoleType } from '@/core/enums';
@@ -155,6 +161,34 @@ export class AuthController {
   @ApiOperation({ summary: 'Reset password' })
   async resetPassword(@Body() input: AuthResetPasswordInputDto) {
     return this.commandBus.execute(new AuthResetPasswordCommand(input));
+  }
+
+  @Public()
+  @Post('send-otp')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Send OTP verification code' })
+  async sendOtp(@Body() input: AuthSendOtpInputDto) {
+    return this.commandBus.execute(new AuthSendOtpCommand(input));
+  }
+
+  @Public()
+  @Post('verify-otp')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Verify OTP verification code' })
+  async verifyOtp(@Body() input: AuthVerifyOtpInputDto) {
+    return this.commandBus.execute(new AuthVerifyOtpCommand(input));
+  }
+
+  @Post('change-password')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Change current user password' })
+  async changePassword(
+    @CurrentUser('sub') userId: string,
+    @Body() input: AuthChangePasswordInputDto,
+  ) {
+    return this.commandBus.execute(new AuthChangePasswordCommand(userId, input));
   }
 
   @Get('profile')

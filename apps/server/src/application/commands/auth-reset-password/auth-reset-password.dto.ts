@@ -2,7 +2,9 @@ import { z } from 'zod';
 import { createZodDto } from 'nestjs-zod';
 
 export const AuthResetPasswordInputSchema = z.object({
-  email: z.email(),
+  email: z.string().email(),
+  otpCode: z.string().length(6),
+  newPassword: z.string().min(6),
 });
 
 export class AuthResetPasswordInputDto extends createZodDto(AuthResetPasswordInputSchema) {}

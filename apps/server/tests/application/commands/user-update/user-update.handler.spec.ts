@@ -5,13 +5,17 @@ import { UserNotFoundException } from '@/core/exceptions';
 describe('UserUpdateCommandHandler', () => {
   let handler: UserUpdateCommandHandler;
   let mockUserRepository: any;
+  let mockAuthService: any;
 
   beforeEach(() => {
     mockUserRepository = {
       findById: jest.fn(),
       save: jest.fn(),
     };
-    handler = new UserUpdateCommandHandler(mockUserRepository);
+    mockAuthService = {
+      hashPassword: jest.fn(() => Promise.resolve('hashed')),
+    };
+    handler = new UserUpdateCommandHandler(mockUserRepository, mockAuthService);
   });
 
   it('should successfully update user properties', async () => {

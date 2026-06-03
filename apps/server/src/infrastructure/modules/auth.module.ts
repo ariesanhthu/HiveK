@@ -3,18 +3,25 @@ import { CqrsModule } from '@nestjs/cqrs';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { PassportModule } from '@nestjs/passport';
+import { MongooseModule } from '@nestjs/mongoose';
 import {
   AuthSignInCommandHandler,
   AuthSignUpCommandHandler,
   AuthSignOutCommandHandler,
   AuthResetPasswordCommandHandler,
   AuthRefreshTokenCommandHandler,
-  AuthGoogleSignInCommandHandler
+  AuthGoogleSignInCommandHandler,
+  AuthSendOtpCommandHandler,
+  AuthChangePasswordCommandHandler,
+  AuthVerifyOtpCommandHandler,
 } from '@/application/commands';
 import { AuthGetProfileHandler } from '@/application/queries';
 import { AUTH_JWT_SERVICE } from '@/application/interfaces';
-import { USER_REPOSITORY } from '@/core/interfaces/repositories';
+import { USER_REPOSITORY, OTP_REPOSITORY } from '@/core/interfaces/repositories';
+import { OtpModel, OtpSchema } from '../mongo/schemas/otp.schema';
+import { MongoOtpRepository } from '../mongo/repositories/otp.repository';
 import { JwtAuthService } from '../auth/jwt.service';
+import { AuthService } from '@/application/services/auth.service';
 import { JwtStrategy } from '../auth/strategies/jwt.strategy';
 import { MongoUserRepository } from '../mongo/repositories';
 import { UserModule } from './user.module';
@@ -33,6 +40,9 @@ const Handlers = [
   AuthRefreshTokenCommandHandler,
   AuthGetProfileHandler,
   AuthGoogleSignInCommandHandler,
+  AuthSendOtpCommandHandler,
+  AuthChangePasswordCommandHandler,
+  AuthVerifyOtpCommandHandler,
 ];
 
 @Module({
@@ -41,6 +51,7 @@ const Handlers = [
     UserModule,
     RoleModule,
     PassportModule.register({ defaultStrategy: 'jwt' }),
+    MongooseModule.forFeature([{ name: OtpModel.name, schema: OtpSchema }]),
     JwtModule.registerAsync({
       inject: [ConfigService],
       useFactory: (config: ConfigService) => ({
@@ -57,6 +68,7 @@ const Handlers = [
     YoutubeStrategy,
     FacebookStrategy,
     TwitterStrategy,
+    AuthService,
     {
       provide: AUTH_JWT_SERVICE,
       useClass: JwtAuthService,
@@ -65,7 +77,11 @@ const Handlers = [
       provide: USER_REPOSITORY,
       useClass: MongoUserRepository,
     },
+    {
+      provide: OTP_REPOSITORY,
+      useClass: MongoOtpRepository,
+    },
   ],
-  exports: [AUTH_JWT_SERVICE, USER_REPOSITORY, PassportModule, JwtStrategy],
+  exports: [AUTH_JWT_SERVICE, AuthService, USER_REPOSITORY, OTP_REPOSITORY, PassportModule, JwtStrategy],
 })
 export class AuthModule { }

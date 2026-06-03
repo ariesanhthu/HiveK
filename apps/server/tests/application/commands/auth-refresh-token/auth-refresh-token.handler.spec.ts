@@ -6,7 +6,7 @@ describe('AuthRefreshTokenCommandHandler', () => {
   let handler: AuthRefreshTokenCommandHandler;
   let mockUserRepository: any;
   let mockJwtService: any;
-  let mockConfigService: any;
+  let mockAuthService: any;
 
   beforeEach(() => {
     mockUserRepository = {
@@ -15,16 +15,11 @@ describe('AuthRefreshTokenCommandHandler', () => {
     };
     mockJwtService = {
       verify: jest.fn(),
-      sign: jest.fn(),
     };
-    mockConfigService = {
-      get: jest.fn((key: string, defaultValue?: any) => {
-        if (key === 'JWT_ACCESS_EXPIRATION_MINUTES') return 30;
-        if (key === 'JWT_REFRESH_EXPIRATION_MINUTES') return 10080;
-        return defaultValue;
-      }),
+    mockAuthService = {
+      generateTokens: jest.fn(),
     };
-    handler = new AuthRefreshTokenCommandHandler(mockUserRepository, mockJwtService, mockConfigService);
+    handler = new AuthRefreshTokenCommandHandler(mockUserRepository, mockJwtService, mockAuthService);
   });
 
   it('should refresh tokens successfully', async () => {
@@ -40,9 +35,10 @@ describe('AuthRefreshTokenCommandHandler', () => {
 
     mockJwtService.verify.mockReturnValue({ sub: 'user-123' });
     mockUserRepository.findById.mockResolvedValue(mockUser);
-    mockJwtService.sign
-      .mockReturnValueOnce('newAccessTokenString')
-      .mockReturnValueOnce('newRefreshTokenString');
+    mockAuthService.generateTokens.mockResolvedValue({
+      accessToken: 'newAccessTokenString',
+      refreshToken: 'newRefreshTokenString',
+    });
 
     const result = await handler.execute(command);
 
@@ -52,20 +48,14 @@ describe('AuthRefreshTokenCommandHandler', () => {
     });
     expect(mockJwtService.verify).toHaveBeenCalledWith('validRefreshToken');
     expect(mockUserRepository.findById).toHaveBeenCalledWith('user-123');
+    expect(mockAuthService.generateTokens).toHaveBeenCalledWith({
+      sub: 'user-123',
+      email: 'user@example.com',
+      role: 'role-1',
+      type: ERoleType.KOL,
+    });
     expect(mockUser.updateRefreshToken).toHaveBeenCalledWith('newRefreshTokenString');
     expect(mockUserRepository.save).toHaveBeenCalledWith(mockUser);
-    expect(mockJwtService.sign).toHaveBeenNthCalledWith(1, {
-      sub: 'user-123',
-      email: 'user@example.com',
-      role: 'role-1',
-      type: ERoleType.KOL,
-    }, { expiresInMinutes: 30 });
-    expect(mockJwtService.sign).toHaveBeenNthCalledWith(2, {
-      sub: 'user-123',
-      email: 'user@example.com',
-      role: 'role-1',
-      type: ERoleType.KOL,
-    }, { expiresInMinutes: 10080 });
   });
 
   it('should throw error if token verification fails', async () => {

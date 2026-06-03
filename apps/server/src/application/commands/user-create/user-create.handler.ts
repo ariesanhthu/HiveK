@@ -5,27 +5,29 @@ import { UserConflictException } from '@/core/exceptions';
 import { USER_REPOSITORY, type IUserRepository } from '@/core/interfaces/repositories';
 import { KOLUserRoot, EnterpriseUserRoot, AdminRoot } from '@/core/aggregate-roots';
 import { ERoleType } from '@/core/enums';
-import * as bcrypt from 'bcrypt';
+import { AuthService } from '@/application/services/auth.service';
 
 @CommandHandler(UserCreateCommand)
 export class UserCreateCommandHandler implements ICommandHandler<UserCreateCommand, string> {
   constructor(
     @Inject(USER_REPOSITORY)
     private readonly userRepository: IUserRepository,
+    private readonly authService: AuthService,
   ) {}
 
   async execute(command: UserCreateCommand): Promise<string> {
     const { input } = command;
 
-    const existingUser = await this.userRepository.findByEmail(input.email);
+    const normalizedEmail = this.authService.normalizeEmail(input.email);
+    const existingUser = await this.userRepository.findByEmail(normalizedEmail);
     if (existingUser) {
       throw new UserConflictException('Email already in use');
     }
 
-    const passwordHash = await bcrypt.hash(input.password, 10);
+    const passwordHash = await this.authService.hashPassword(input.password);
 
     const commonProps = {
-      email: input.email,
+      email: normalizedEmail,
       phone: input.phone || '0000000000',
       passwordHash,
       fullName: input.fullName,
@@ -43,7 +45,6 @@ export class UserCreateCommandHandler implements ICommandHandler<UserCreateComma
       case ERoleType.ENTERPRISE:
         user = EnterpriseUserRoot.create({
           ...commonProps,
-          enterpriseId: input.enterpriseId || 'placeholder-enterprise-id',
         });
         break;
       case ERoleType.ADMIN:

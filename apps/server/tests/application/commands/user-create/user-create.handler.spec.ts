@@ -6,6 +6,7 @@ import { UserConflictException } from '@/core/exceptions';
 describe('UserCreateCommandHandler', () => {
   let handler: UserCreateCommandHandler;
   let mockUserRepository: any;
+  let mockAuthService: any;
 
   beforeEach(() => {
     mockUserRepository = {
@@ -15,7 +16,11 @@ describe('UserCreateCommandHandler', () => {
         return Promise.resolve();
       }),
     };
-    handler = new UserCreateCommandHandler(mockUserRepository);
+    mockAuthService = {
+      normalizeEmail: jest.fn((email: string) => email.trim().toLowerCase()),
+      hashPassword: jest.fn(() => Promise.resolve('hashed')),
+    };
+    handler = new UserCreateCommandHandler(mockUserRepository, mockAuthService);
   });
 
   it('should successfully create a new admin user', async () => {
@@ -32,7 +37,9 @@ describe('UserCreateCommandHandler', () => {
 
     const result = await handler.execute(command);
     expect(result).toBeDefined();
+    expect(mockAuthService.normalizeEmail).toHaveBeenCalledWith('admin@test.com');
     expect(mockUserRepository.findByEmail).toHaveBeenCalledWith('admin@test.com');
+    expect(mockAuthService.hashPassword).toHaveBeenCalledWith('password123');
     expect(mockUserRepository.save).toHaveBeenCalled();
   });
 

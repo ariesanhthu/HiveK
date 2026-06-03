@@ -4,7 +4,7 @@ import { AuthRefreshTokenOutputDto } from './auth-refresh-token.dto';
 import { Inject } from '@nestjs/common';
 import { AUTH_JWT_SERVICE, type IAuthJwtService } from '@/application/interfaces';
 import { USER_REPOSITORY, type IUserRepository } from '@/core/interfaces/repositories';
-import { ConfigService } from '@nestjs/config';
+import { AuthService } from '@/application/services/auth.service';
 
 @CommandHandler(AuthRefreshTokenCommand)
 export class AuthRefreshTokenCommandHandler implements ICommandHandler<AuthRefreshTokenCommand, AuthRefreshTokenOutputDto> {
@@ -13,7 +13,7 @@ export class AuthRefreshTokenCommandHandler implements ICommandHandler<AuthRefre
     private readonly userRepository: IUserRepository,
     @Inject(AUTH_JWT_SERVICE)
     private readonly jwtService: IAuthJwtService,
-    private readonly configService: ConfigService,
+    private readonly authService: AuthService,
   ) { }
 
   async execute(command: AuthRefreshTokenCommand): Promise<AuthRefreshTokenOutputDto> {
@@ -43,11 +43,7 @@ export class AuthRefreshTokenCommandHandler implements ICommandHandler<AuthRefre
       type: user.type,
     };
 
-    const accessExpiration = this.configService.get<number>('JWT_ACCESS_EXPIRATION_MINUTES', 30);
-    const accessToken = this.jwtService.sign(tokenPayload, { expiresInMinutes: accessExpiration });
-
-    const refreshExpiration = this.configService.get<number>('JWT_REFRESH_EXPIRATION_MINUTES', 10080);
-    const newRefreshToken = this.jwtService.sign(tokenPayload, { expiresInMinutes: refreshExpiration });
+    const { accessToken, refreshToken: newRefreshToken } = await this.authService.generateTokens(tokenPayload);
 
     user.updateRefreshToken(newRefreshToken);
     await this.userRepository.save(user);

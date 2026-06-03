@@ -58,8 +58,8 @@ export const AdminSchema = SchemaFactory.createForClass(AdminModel);
 
 @Schema()
 export class EnterpriseUserModel extends UserModel {
-  @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'EnterpriseModel', required: true })
-  enterprise_id: MongooseSchema.Types.ObjectId;
+  @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'EnterpriseModel', required: false, default: null })
+  enterprise_id: MongooseSchema.Types.ObjectId | null;
 }
 export const EnterpriseUserSchema = SchemaFactory.createForClass(EnterpriseUserModel);
 

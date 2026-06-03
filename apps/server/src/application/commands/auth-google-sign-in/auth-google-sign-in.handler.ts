@@ -2,12 +2,11 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { AuthGoogleSignInCommand } from './auth-google-sign-in.command';
 import { AuthGoogleSignInOutputDto } from './auth-google-sign-in.dto';
 import { Inject } from '@nestjs/common';
-import { AUTH_JWT_SERVICE, type IAuthJwtService } from '@/application/interfaces';
 import { USER_REPOSITORY, ROLE_REPOSITORY } from '@/core/interfaces/repositories';
 import type { IUserRepository, IRoleRepository } from '@/core/interfaces/repositories';
 import { ERoleType } from '@/core/enums';
 import { KOLUserRoot } from '@/core/aggregate-roots';
-import { ConfigService } from '@nestjs/config';
+import { AuthService } from '@/application/services/auth.service';
 
 @CommandHandler(AuthGoogleSignInCommand)
 export class AuthGoogleSignInCommandHandler implements ICommandHandler<AuthGoogleSignInCommand, AuthGoogleSignInOutputDto> {
@@ -16,15 +15,14 @@ export class AuthGoogleSignInCommandHandler implements ICommandHandler<AuthGoogl
     private readonly userRepository: IUserRepository,
     @Inject(ROLE_REPOSITORY)
     private readonly roleRepository: IRoleRepository,
-    @Inject(AUTH_JWT_SERVICE)
-    private readonly jwtService: IAuthJwtService,
-    private readonly configService: ConfigService,
+    private readonly authService: AuthService,
   ) {}
 
   async execute(command: AuthGoogleSignInCommand): Promise<AuthGoogleSignInOutputDto> {
     const { input } = command;
 
-    let user = await this.userRepository.findByEmail(input.email);
+    const normalizedEmail = this.authService.normalizeEmail(input.email);
+    let user = await this.userRepository.findByEmail(normalizedEmail);
 
     if (user) {
       if (user.deleteAt) {
@@ -40,7 +38,7 @@ export class AuthGoogleSignInCommandHandler implements ICommandHandler<AuthGoogl
       }
 
       user = KOLUserRoot.create({
-        email: input.email,
+        email: normalizedEmail,
         phone: '0000000000',
         passwordHash: '',
         fullName: input.displayName || 'Google User',
@@ -59,11 +57,7 @@ export class AuthGoogleSignInCommandHandler implements ICommandHandler<AuthGoogl
       type: user.type,
     };
 
-    const accessExpiration = this.configService.get<number>('JWT_ACCESS_EXPIRATION_MINUTES', 30);
-    const accessToken = this.jwtService.sign(payload, { expiresInMinutes: accessExpiration });
-
-    const refreshExpiration = this.configService.get<number>('JWT_REFRESH_EXPIRATION_MINUTES', 10080);
-    const refreshToken = this.jwtService.sign(payload, { expiresInMinutes: refreshExpiration });
+    const { accessToken, refreshToken } = await this.authService.generateTokens(payload);
 
     user.updateRefreshToken(refreshToken);
     await this.userRepository.save(user);

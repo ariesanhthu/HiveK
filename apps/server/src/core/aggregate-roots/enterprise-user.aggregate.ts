@@ -1,12 +1,12 @@
 import { UserProps, UserRoot, UserCreateProps } from './user.aggregate';
 import { ERoleType } from '../enums';
+import { Nullable } from '../types';
 
 export interface EnterpriseUserProps extends UserProps {
-  enterpriseId: string;
+  enterpriseId: Nullable<string>;
 }
 
 export interface EnterpriseUserCreateProps extends UserCreateProps {
-  enterpriseId: string;
 }
 
 export class EnterpriseUserRoot extends UserRoot<EnterpriseUserProps> {
@@ -21,6 +21,7 @@ export class EnterpriseUserRoot extends UserRoot<EnterpriseUserProps> {
     const now = new Date();
     return new EnterpriseUserRoot({
       ...props,
+      enterpriseId: null,
       googleId: props.googleId || null,
       createdAt: now,
       updatedAt: now,

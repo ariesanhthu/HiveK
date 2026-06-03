@@ -8,3 +8,4 @@ export * from './kpi-log.schema';
 export * from './uploaded-file.schema';
 export * from './notification.schema';
 export * from './user-notification.schema';
+export * from './otp.schema';

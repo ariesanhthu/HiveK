@@ -1,15 +1,15 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { Inject } from '@nestjs/common';
-import { AuthResetPasswordCommand } from './auth-reset-password.command';
-import { AuthResetPasswordOutputDto } from './auth-reset-password.dto';
+import { AuthChangePasswordCommand } from './auth-change-password.command';
+import { AuthChangePasswordOutputDto } from './auth-change-password.dto';
 import { USER_REPOSITORY, OTP_REPOSITORY, type IUserRepository } from '@/core/interfaces/repositories';
 import { type IOtpRepository } from '@/core/interfaces/repositories/otp.repository';
 import { AuthService } from '@/application/services/auth.service';
 import { UserNotFoundException, InvalidOperationException } from '@/core/exceptions';
 import { EOtpType } from '@/core/enums/otp-type.enum';
 
-@CommandHandler(AuthResetPasswordCommand)
-export class AuthResetPasswordCommandHandler implements ICommandHandler<AuthResetPasswordCommand, AuthResetPasswordOutputDto> {
+@CommandHandler(AuthChangePasswordCommand)
+export class AuthChangePasswordCommandHandler implements ICommandHandler<AuthChangePasswordCommand, AuthChangePasswordOutputDto> {
   constructor(
     @Inject(USER_REPOSITORY)
     private readonly userRepository: IUserRepository,
@@ -18,31 +18,36 @@ export class AuthResetPasswordCommandHandler implements ICommandHandler<AuthRese
     private readonly authService: AuthService,
   ) {}
 
-  async execute(command: AuthResetPasswordCommand): Promise<AuthResetPasswordOutputDto> {
-    const { input } = command;
-    const normalizedEmail = this.authService.normalizeEmail(input.email);
-    const user = await this.userRepository.findByEmail(normalizedEmail);
+  async execute(command: AuthChangePasswordCommand): Promise<AuthChangePasswordOutputDto> {
+    const { userId, input } = command;
+
+    const user = await this.userRepository.findById(userId);
     if (!user) {
-      throw new UserNotFoundException(normalizedEmail);
+      throw new UserNotFoundException(userId);
     }
 
     // Verify OTP first
     const validOtp = await this.otpRepository.findValidOtp(
-      normalizedEmail,
+      user.email,
       input.otpCode,
-      EOtpType.RESET_PASSWORD,
+      EOtpType.CHANGE_PASSWORD,
     );
     if (!validOtp) {
       throw new InvalidOperationException('Invalid or expired OTP');
     }
 
-    const hashedPassword = await this.authService.hashPassword(input.newPassword);
+    const isOldPasswordValid = await this.authService.comparePassword(input.oldPassword, user.passwordHash);
+    if (!isOldPasswordValid) {
+      throw new Error('Invalid old password');
+    }
 
-    user.updatePassword(hashedPassword);
+    const newHashedPassword = await this.authService.hashPassword(input.newPassword);
+    
+    user.updatePassword(newHashedPassword);
 
     await this.userRepository.save(user);
 
-    await this.otpRepository.deleteByEmailAndType(normalizedEmail, EOtpType.RESET_PASSWORD);
+    await this.otpRepository.deleteByEmailAndType(user.email, EOtpType.CHANGE_PASSWORD);
 
     return { success: true };
   }

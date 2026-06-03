@@ -4,13 +4,14 @@ import { Inject } from '@nestjs/common';
 import { UserNotFoundException } from '@/core/exceptions';
 import { USER_REPOSITORY, type IUserRepository } from '@/core/interfaces/repositories';
 import { EnterpriseUserRoot } from '@/core/aggregate-roots';
-import * as bcrypt from 'bcrypt';
+import { AuthService } from '@/application/services/auth.service';
 
 @CommandHandler(UserUpdateCommand)
 export class UserUpdateCommandHandler implements ICommandHandler<UserUpdateCommand, void> {
   constructor(
     @Inject(USER_REPOSITORY)
     private readonly userRepository: IUserRepository,
+    private readonly authService: AuthService,
   ) {}
 
   async execute(command: UserUpdateCommand): Promise<void> {
@@ -30,7 +31,7 @@ export class UserUpdateCommandHandler implements ICommandHandler<UserUpdateComma
     if (input.isEmailVerified !== undefined) anyProps.isEmailVerified = input.isEmailVerified;
 
     if (input.password !== undefined) {
-      anyProps.passwordHash = await bcrypt.hash(input.password, 10);
+      anyProps.passwordHash = await this.authService.hashPassword(input.password);
     }
 
     if (input.enterpriseId !== undefined && user instanceof EnterpriseUserRoot) {

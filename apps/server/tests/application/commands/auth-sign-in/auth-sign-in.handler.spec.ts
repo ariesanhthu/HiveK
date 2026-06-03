@@ -1,34 +1,23 @@
 import { AuthSignInCommandHandler } from '@/application/commands/auth-sign-in/auth-sign-in.handler';
 import { AuthSignInCommand } from '@/application/commands/auth-sign-in/auth-sign-in.command';
 import { ERoleType } from '@/core/enums';
-import * as bcrypt from 'bcrypt';
-
-jest.mock('bcrypt', () => ({
-  compare: jest.fn(),
-}));
 
 describe('AuthSignInCommandHandler', () => {
   let handler: AuthSignInCommandHandler;
   let mockUserRepository: any;
-  let mockJwtService: any;
-  let mockConfigService: any;
+  let mockAuthService: any;
 
   beforeEach(() => {
     mockUserRepository = {
       findByEmail: jest.fn(),
       save: jest.fn(),
     };
-    mockJwtService = {
-      sign: jest.fn(),
+    mockAuthService = {
+      normalizeEmail: jest.fn((email: string) => email.trim().toLowerCase()),
+      comparePassword: jest.fn(),
+      generateTokens: jest.fn(),
     };
-    mockConfigService = {
-      get: jest.fn((key: string, defaultValue?: any) => {
-        if (key === 'JWT_ACCESS_EXPIRATION_MINUTES') return 30;
-        if (key === 'JWT_REFRESH_EXPIRATION_MINUTES') return 10080;
-        return defaultValue;
-      }),
-    };
-    handler = new AuthSignInCommandHandler(mockUserRepository, mockJwtService, mockConfigService);
+    handler = new AuthSignInCommandHandler(mockUserRepository, mockAuthService);
   });
 
   it('should sign in successfully with valid credentials', async () => {
@@ -43,30 +32,26 @@ describe('AuthSignInCommandHandler', () => {
     } as any;
 
     mockUserRepository.findByEmail.mockResolvedValue(mockUser);
-    (bcrypt.compare as jest.Mock).mockResolvedValue(true);
-    mockJwtService.sign
-      .mockReturnValueOnce('accessTokenString')
-      .mockReturnValueOnce('refreshTokenString');
+    mockAuthService.comparePassword.mockResolvedValue(true);
+    mockAuthService.generateTokens.mockResolvedValue({
+      accessToken: 'accessTokenString',
+      refreshToken: 'refreshTokenString',
+    });
 
     const result = await handler.execute(command);
 
     expect(result).toEqual({ accessToken: 'accessTokenString', refreshToken: 'refreshTokenString' });
+    expect(mockAuthService.normalizeEmail).toHaveBeenCalledWith('user@example.com');
     expect(mockUserRepository.findByEmail).toHaveBeenCalledWith('user@example.com');
-    expect(bcrypt.compare).toHaveBeenCalledWith('password123', 'hashed');
+    expect(mockAuthService.comparePassword).toHaveBeenCalledWith('password123', 'hashed');
+    expect(mockAuthService.generateTokens).toHaveBeenCalledWith({
+      sub: 'user-123',
+      email: 'user@example.com',
+      role: 'role-1',
+      type: ERoleType.KOL,
+    });
     expect(mockUser.updateRefreshToken).toHaveBeenCalledWith('refreshTokenString');
     expect(mockUserRepository.save).toHaveBeenCalledWith(mockUser);
-    expect(mockJwtService.sign).toHaveBeenNthCalledWith(1, {
-      sub: 'user-123',
-      email: 'user@example.com',
-      role: 'role-1',
-      type: ERoleType.KOL,
-    }, { expiresInMinutes: 30 });
-    expect(mockJwtService.sign).toHaveBeenNthCalledWith(2, {
-      sub: 'user-123',
-      email: 'user@example.com',
-      role: 'role-1',
-      type: ERoleType.KOL,
-    }, { expiresInMinutes: 10080 });
   });
 
   it('should throw error if user email not found', async () => {
@@ -86,7 +71,7 @@ describe('AuthSignInCommandHandler', () => {
     } as any;
 
     mockUserRepository.findByEmail.mockResolvedValue(mockUser);
-    (bcrypt.compare as jest.Mock).mockResolvedValue(false);
+    mockAuthService.comparePassword.mockResolvedValue(false);
 
     await expect(handler.execute(command)).rejects.toThrow('Invalid credentials');
   });

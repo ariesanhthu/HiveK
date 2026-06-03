@@ -79,6 +79,7 @@ export class MongoUserRepository implements IUserRepository {
   }
 
   private mapToPersistence(user: UserRoot): Omit<UserModel, 'created_at' | 'updated_at'> & { enterprise_id?: Types.ObjectId } {
+    console.log(user);
     const base = {
       email: user.email,
       phone: (user.props as any).phone,
@@ -95,7 +96,7 @@ export class MongoUserRepository implements IUserRepository {
     };
 
     if (user instanceof EnterpriseUserRoot) {
-      return { ...base, enterprise_id: new Types.ObjectId(user.enterpriseId) };
+      return { ...base, enterprise_id: user.enterpriseId ? new Types.ObjectId(user.enterpriseId) : null };
     }
 
     return base as any;

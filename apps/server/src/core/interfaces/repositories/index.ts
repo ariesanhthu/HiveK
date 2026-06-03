@@ -7,4 +7,5 @@ export * from './kol-profile.repository';
 export * from './uploaded-file.repository';
 export * from './notification.repository';
 export * from './user-notification.repository';
+export * from './otp.repository';
 

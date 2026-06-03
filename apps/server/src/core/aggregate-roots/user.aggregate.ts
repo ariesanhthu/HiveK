@@ -89,6 +89,11 @@ export abstract class UserRoot<T extends UserProps = UserProps> extends BaseAggr
     this.props.updatedAt = new Date();
   }
 
+  public updatePassword(passwordHash: string): void {
+    this.props.passwordHash = passwordHash;
+    this.props.updatedAt = new Date();
+  }
+
   public updateGoogleId(googleId: Nullable<string>): void {
     this.props.googleId = googleId;
     this.props.updatedAt = new Date();
@@ -102,5 +107,10 @@ export abstract class UserRoot<T extends UserProps = UserProps> extends BaseAggr
   public restore(): void {
     this.props.deleteAt = null;
     this.props.deleteBy = null;
+  }
+
+  public verifyEmail(): void {
+    this.props.isEmailVerified = true;
+    this.props.updatedAt = new Date();
   }
 }

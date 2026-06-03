@@ -1,15 +1,15 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { Inject } from '@nestjs/common';
-import { AuthResetPasswordCommand } from './auth-reset-password.command';
-import { AuthResetPasswordOutputDto } from './auth-reset-password.dto';
-import { USER_REPOSITORY, OTP_REPOSITORY, type IUserRepository } from '@/core/interfaces/repositories';
-import { type IOtpRepository } from '@/core/interfaces/repositories/otp.repository';
+import { AuthVerifyOtpCommand } from './auth-verify-otp.command';
+import { AuthVerifyOtpOutputDto } from './auth-verify-otp.dto';
+import { USER_REPOSITORY, type IUserRepository } from '@/core/interfaces/repositories';
+import { OTP_REPOSITORY, type IOtpRepository } from '@/core/interfaces/repositories/otp.repository';
 import { AuthService } from '@/application/services/auth.service';
-import { UserNotFoundException, InvalidOperationException } from '@/core/exceptions';
 import { EOtpType } from '@/core/enums/otp-type.enum';
+import { UserNotFoundException, InvalidOperationException } from '@/core/exceptions';
 
-@CommandHandler(AuthResetPasswordCommand)
-export class AuthResetPasswordCommandHandler implements ICommandHandler<AuthResetPasswordCommand, AuthResetPasswordOutputDto> {
+@CommandHandler(AuthVerifyOtpCommand)
+export class AuthVerifyOtpCommandHandler implements ICommandHandler<AuthVerifyOtpCommand, AuthVerifyOtpOutputDto> {
   constructor(
     @Inject(USER_REPOSITORY)
     private readonly userRepository: IUserRepository,
@@ -18,33 +18,30 @@ export class AuthResetPasswordCommandHandler implements ICommandHandler<AuthRese
     private readonly authService: AuthService,
   ) {}
 
-  async execute(command: AuthResetPasswordCommand): Promise<AuthResetPasswordOutputDto> {
+  async execute(command: AuthVerifyOtpCommand): Promise<AuthVerifyOtpOutputDto> {
     const { input } = command;
     const normalizedEmail = this.authService.normalizeEmail(input.email);
+
     const user = await this.userRepository.findByEmail(normalizedEmail);
     if (!user) {
       throw new UserNotFoundException(normalizedEmail);
     }
 
-    // Verify OTP first
     const validOtp = await this.otpRepository.findValidOtp(
       normalizedEmail,
       input.otpCode,
-      EOtpType.RESET_PASSWORD,
+      EOtpType.CREATE_ACCOUNT,
     );
+
     if (!validOtp) {
       throw new InvalidOperationException('Invalid or expired OTP');
     }
 
-    const hashedPassword = await this.authService.hashPassword(input.newPassword);
-
-    user.updatePassword(hashedPassword);
-
+    user.verifyEmail();
     await this.userRepository.save(user);
 
-    await this.otpRepository.deleteByEmailAndType(normalizedEmail, EOtpType.RESET_PASSWORD);
+    await this.otpRepository.deleteByEmailAndType(normalizedEmail, EOtpType.CREATE_ACCOUNT);
 
     return { success: true };
   }
 }
-

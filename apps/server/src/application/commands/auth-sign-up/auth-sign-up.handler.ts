@@ -1,4 +1,4 @@
-import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
+import { CommandHandler, ICommandHandler, CommandBus } from '@nestjs/cqrs';
 import { AuthSignUpCommand } from './auth-sign-up.command';
 import { AuthSignUpOutputDto } from './auth-sign-up.dto';
 import { Inject } from '@nestjs/common';
@@ -6,7 +6,9 @@ import { ROLE_READ_SERVICE, type IRoleReadService } from '@/application/interfac
 import { USER_REPOSITORY, type IUserRepository } from '@/core/interfaces/repositories';
 import { KOLUserRoot, EnterpriseUserRoot, AdminRoot } from '@/core/aggregate-roots';
 import { ERoleType } from '@/core/enums';
-import * as bcrypt from 'bcrypt';
+import { AuthService } from '@/application/services/auth.service';
+import { AuthSendOtpCommand } from '../auth-send-otp/auth-send-otp.command';
+import { EOtpType } from '@/core/enums/otp-type.enum';
 
 @CommandHandler(AuthSignUpCommand)
 export class AuthSignUpCommandHandler implements ICommandHandler<AuthSignUpCommand, AuthSignUpOutputDto> {
@@ -15,12 +17,15 @@ export class AuthSignUpCommandHandler implements ICommandHandler<AuthSignUpComma
     private readonly userRepository: IUserRepository,
     @Inject(ROLE_READ_SERVICE)
     private readonly roleReadService: IRoleReadService,
+    private readonly authService: AuthService,
+    private readonly commandBus: CommandBus,
   ) { }
 
   async execute(command: AuthSignUpCommand): Promise<AuthSignUpOutputDto> {
     const { input, type } = command;
 
-    const existingUser = await this.userRepository.findByEmail(input.email);
+    const normalizedEmail = this.authService.normalizeEmail(input.email);
+    const existingUser = await this.userRepository.findByEmail(normalizedEmail);
     if (existingUser) {
       throw new Error('User already exists');
     }
@@ -31,11 +36,11 @@ export class AuthSignUpCommandHandler implements ICommandHandler<AuthSignUpComma
       throw new Error('No roles found in system');
     }
 
-    const passwordHash = await bcrypt.hash(input.password, 10);
+    const passwordHash = await this.authService.hashPassword(input.password);
 
     let user;
     const commonProps = {
-      email: input.email,
+      email: normalizedEmail,
       phone: '0000000000',
       passwordHash,
       fullName: 'DEFAULT NAME',
@@ -52,7 +57,6 @@ export class AuthSignUpCommandHandler implements ICommandHandler<AuthSignUpComma
       case ERoleType.ENTERPRISE:
         user = EnterpriseUserRoot.create({
           ...commonProps,
-          enterpriseId: 'placeholder-enterprise-id',
         });
         break;
       case ERoleType.ADMIN:
@@ -64,6 +68,18 @@ export class AuthSignUpCommandHandler implements ICommandHandler<AuthSignUpComma
 
     await this.userRepository.save(user);
 
+    try {
+      await this.commandBus.execute(
+        new AuthSendOtpCommand({
+          email: normalizedEmail,
+          type: EOtpType.CREATE_ACCOUNT,
+        }),
+      );
+    } catch (error) {
+      // Do not block signup if OTP dispatch fails
+    }
+
     return { userId: user.id! };
   }
 }
+

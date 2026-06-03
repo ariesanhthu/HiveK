@@ -143,3 +143,18 @@ export * from './auth-google-sign-in/auth-google-sign-in.dto';
 // Platform Verification
 export * from './kol-profile-verify-platform-account/kol-profile-verify-platform-account.command';
 export * from './kol-profile-verify-platform-account/kol-profile-verify-platform-account.handler';
+
+// OTP & Change Password
+export * from './auth-send-otp/auth-send-otp.command';
+export * from './auth-send-otp/auth-send-otp.handler';
+export * from './auth-send-otp/auth-send-otp.dto';
+export * from './auth-change-password/auth-change-password.command';
+export * from './auth-change-password/auth-change-password.handler';
+export * from './auth-change-password/auth-change-password.dto';
+
+// Verify OTP
+export * from './auth-verify-otp/auth-verify-otp.command';
+export * from './auth-verify-otp/auth-verify-otp.handler';
+export * from './auth-verify-otp/auth-verify-otp.dto';
+
+

@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { CqrsModule } from '@nestjs/cqrs';
 import { UserController } from '@/presentation/controllers';
@@ -16,6 +16,7 @@ import {
 } from '@/infrastructure/mongo/schemas';
 
 import { LinkUserAvatarHandler } from '@/application/events';
+import { AuthModule } from './auth.module';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { LinkUserAvatarHandler } from '@/application/events';
         ]
       },
     ]),
+    forwardRef(() => AuthModule),
   ],
   controllers: [UserController],
   providers: [
