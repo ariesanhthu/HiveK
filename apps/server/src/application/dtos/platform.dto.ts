@@ -10,4 +10,11 @@ export const PlatformDtoSchema = z.object({
   icon: z.string(),
 });
 
+import { UploadedFileDto } from './uploaded-file.dto';
+
 export class PlatformDto extends createZodDto(PlatformDtoSchema) {}
+
+export type PlatformDetailDto = Omit<PlatformDto, 'icon'> & {
+  icon: UploadedFileDto | null;
+};
+

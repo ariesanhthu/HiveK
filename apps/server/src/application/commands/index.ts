@@ -141,5 +141,5 @@ export * from './auth-google-sign-in/auth-google-sign-in.handler';
 export * from './auth-google-sign-in/auth-google-sign-in.dto';
 
 // Platform Verification
-export * from './verify-platform-account/verify-platform-account.command';
-export * from './verify-platform-account/verify-platform-account.handler';
+export * from './kol-profile-verify-platform-account/kol-profile-verify-platform-account.command';
+export * from './kol-profile-verify-platform-account/kol-profile-verify-platform-account.handler';

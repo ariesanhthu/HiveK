@@ -3,7 +3,7 @@ import { PassportStrategy } from '@nestjs/passport';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { CommandBus } from '@nestjs/cqrs';
-import { VerifyPlatformAccountCommand } from '@/application/commands';
+import { KolProfileVerifyPlatformAccountCommand } from '@/application/commands';
 
 @Injectable()
 export class TwitterStrategy extends PassportStrategy(Strategy, 'twitter') {
@@ -30,7 +30,7 @@ export class TwitterStrategy extends PassportStrategy(Strategy, 'twitter') {
     const email = emails?.[0]?.value || '';
 
     const result = await this.commandBus.execute(
-      new VerifyPlatformAccountCommand(
+      new KolProfileVerifyPlatformAccountCommand(
         userId,
         'twitter',
         id, // externalId

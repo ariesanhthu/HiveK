@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { CqrsModule } from '@nestjs/cqrs';
 import { EnterpriseController } from '@/presentation/controllers';
-import { EnterpriseGetByIdHandler } from '@/application/queries';
+import { EnterpriseGetByIdHandler, EnterpriseGetListQuery, EnterpriseGetListHandler } from '@/application/queries';
 import { ENTERPRISE_READ_SERVICE } from '@/application/interfaces';
 import { ENTERPRISE_REPOSITORY } from '@/core/interfaces/repositories';
 import { MongoEnterpriseReadService } from '@/infrastructure/mongo/read-services';
@@ -34,6 +34,7 @@ import { LinkEnterpriseLogoHandler } from '@/application/events';
   controllers: [EnterpriseController],
   providers: [
     EnterpriseGetByIdHandler,
+    EnterpriseGetListHandler,
     EnterpriseCreateCommandHandler,
     EnterpriseUpdateCommandHandler,
     EnterpriseSoftDeleteCommandHandler,

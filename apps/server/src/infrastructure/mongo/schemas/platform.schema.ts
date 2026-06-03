@@ -16,8 +16,8 @@ export class PlatformModel {
   @Prop({ type: MongooseSchema.Types.String, required: true, enum: PlatformApiStatus, default: PlatformApiStatus.STABLE })
   api_status: PlatformApiStatus;
 
-  @Prop({ type: MongooseSchema.Types.String, default: null })
-  icon: string | null;
+  @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'UploadedFileModel', default: null })
+  icon: MongooseSchema.Types.ObjectId | null;
 
   @Prop({ type: MongooseSchema.Types.Date, default: null })
   delete_at: Date | null;

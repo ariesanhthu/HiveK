@@ -3,7 +3,7 @@ import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { PlatformCreateCommand, PlatformUpdateCommand, PlatformSoftDeleteCommand, PlatformHardDeleteCommand, PlatformRestoreCommand, PlatformCreateInputDto, PlatformUpdateInputDto } from '@/application/commands';
 import { PlatformGetListQuery, PlatformGetByIdQuery, PlatformFilterDto } from '@/application/queries';
-import { PlatformDto, SoftDeleteInputDto } from '@/application/dtos';
+import { PlatformDto, PlatformDetailDto, SoftDeleteInputDto } from '@/application/dtos';
 import { PaginatedResponseDto } from '@/shared/dtos/pagination.dto';
 import { JwtAuthGuard } from '../middleware/guards';
 import { Public } from '@/presentation/decorators/public.decorator';
@@ -20,14 +20,14 @@ export class PlatformController {
   @Public()
   @Get()
   @ApiOperation({ summary: 'Get all platforms' })
-  async findAll(@Query() filters: PlatformFilterDto): Promise<PaginatedResponseDto<PlatformDto>> {
+  async findAll(@Query() filters: PlatformFilterDto): Promise<PaginatedResponseDto<PlatformDetailDto>> {
     return this.queryBus.execute(new PlatformGetListQuery(filters));
   }
 
   @Public()
   @Get(':id')
   @ApiOperation({ summary: 'Get platform by ID' })
-  async findById(@Param('id') id: string): Promise<PlatformDto> {
+  async findById(@Param('id') id: string): Promise<PlatformDetailDto> {
     return this.queryBus.execute(new PlatformGetByIdQuery(id));
   }
 

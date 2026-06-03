@@ -8,15 +8,15 @@ import {
   MESSAGE_QUEUE_SERVICE,
   type IMessageQueueService,
 } from '@/application/interfaces';
-import { VerifyPlatformAccountCommand } from './verify-platform-account.command';
+import { KolProfileVerifyPlatformAccountCommand } from './kol-profile-verify-platform-account.command';
 import { KolProfileDto } from '@/application/dtos';
 import { KolProfileMapper } from '@/application/mappers/kol-profile.mapper';
 import { KolProfileEntity } from '@/core/entities/kol-profile.entity';
 import { KolPlatformInfo } from '@/core/value-objects/kol-platform-info.value-object';
 
-@CommandHandler(VerifyPlatformAccountCommand)
-export class VerifyPlatformAccountHandler
-  implements ICommandHandler<VerifyPlatformAccountCommand, KolProfileDto>
+@CommandHandler(KolProfileVerifyPlatformAccountCommand)
+export class KolProfileVerifyPlatformAccountHandler
+  implements ICommandHandler<KolProfileVerifyPlatformAccountCommand, KolProfileDto>
 {
   constructor(
     @Inject(KOL_PROFILE_REPOSITORY)
@@ -25,7 +25,7 @@ export class VerifyPlatformAccountHandler
     private readonly mqService: IMessageQueueService,
   ) {}
 
-  async execute(command: VerifyPlatformAccountCommand): Promise<KolProfileDto> {
+  async execute(command: KolProfileVerifyPlatformAccountCommand): Promise<KolProfileDto> {
     const { userId, platformId, externalId, uniqueId, displayName, email } =
       command;
 

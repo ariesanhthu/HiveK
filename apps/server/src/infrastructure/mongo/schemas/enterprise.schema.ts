@@ -27,8 +27,8 @@ export class EnterpriseModel {
   @Prop({ type: MongooseSchema.Types.String, default: null })
   tax_id: string | null;
 
-  @Prop({ type: MongooseSchema.Types.String, default: null })
-  logo_url_id: string | null;
+  @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'UploadedFileModel', default: null })
+  logo_url_id: MongooseSchema.Types.ObjectId | null;
 
   @Prop({ type: MongooseSchema.Types.Boolean, default: false })
   is_verified: boolean;

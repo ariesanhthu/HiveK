@@ -1,7 +1,7 @@
 import { Query } from '@nestjs/cqrs';
-import { EnterpriseDto } from '@/application/dtos';
+import { EnterpriseDetailDto } from '@/application/dtos';
 
-export class EnterpriseGetByIdQuery extends Query<EnterpriseDto> {
+export class EnterpriseGetByIdQuery extends Query<EnterpriseDetailDto> {
   constructor(public readonly id: string) {
     super();
   }

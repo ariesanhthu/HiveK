@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { IKolProfileReadService } from '@/application/interfaces';
-import { KolProfileDto } from '@/application/dtos';
+import { KolProfileDetailDto } from '@/application/dtos';
 import { KolProfileFilterDto } from '@/application/queries';
 import { KolProfileModel, KolProfileDocument } from '../schemas';
 import { JsonObject, Nullable } from '@/core/types';
@@ -15,7 +15,7 @@ export class MongoKolProfileReadService implements IKolProfileReadService {
     private readonly kolProfileModel: Model<KolProfileDocument>,
   ) { }
 
-  async findAll(filters: KolProfileFilterDto = {} as any): Promise<PaginatedResponseDto<KolProfileDto>> {
+  async findAll(filters: KolProfileFilterDto = {} as any): Promise<PaginatedResponseDto<KolProfileDetailDto>> {
     const { cursor, limit = 10, sort = SortOrder.DESC, name, location, gender, isVerified, categories, tags } = filters;
     const query: any = {};
 
@@ -46,6 +46,7 @@ export class MongoKolProfileReadService implements IKolProfileReadService {
       .find(query)
       .sort({ _id: sort === SortOrder.DESC ? -1 : 1 })
       .limit(limit + 1)
+      .populate('user_id')
       .lean()
       .exec();
 
@@ -59,28 +60,29 @@ export class MongoKolProfileReadService implements IKolProfileReadService {
     );
   }
 
-  async findById(id: string): Promise<Nullable<KolProfileDto>> {
-    const doc = await this.kolProfileModel.findById(id).lean().exec();
+  async findById(id: string): Promise<Nullable<KolProfileDetailDto>> {
+    const doc = await this.kolProfileModel.findById(id).populate('user_id').lean().exec();
     return doc ? this.mapToDto(doc) : null;
   }
 
-  async findByEmail(email: string): Promise<Nullable<KolProfileDto>> {
-    const doc = await this.kolProfileModel.findOne({ email }).lean().exec();
+  async findByEmail(email: string): Promise<Nullable<KolProfileDetailDto>> {
+    const doc = await this.kolProfileModel.findOne({ email }).populate('user_id').lean().exec();
     return doc ? this.mapToDto(doc) : null;
   }
 
-  async findByName(name: string): Promise<KolProfileDto[]> {
+  async findByName(name: string): Promise<KolProfileDetailDto[]> {
     const docs = await this.kolProfileModel
       .find({ name: { $regex: name, $options: 'i' } })
+      .populate('user_id')
       .lean()
       .exec();
     return docs.map((doc) => this.mapToDto(doc));
   }
 
-  private mapToDto(doc: any): KolProfileDto {
+  private mapToDto(doc: any): KolProfileDetailDto {
     return {
       id: doc._id.toString(),
-      userId: doc.user_id ? doc.user_id.toString() : null,
+      userId: doc.user_id && typeof doc.user_id === 'object' && doc.user_id._id ? doc.user_id._id.toString() : doc.user_id?.toString() || null,
       verificationType: doc.verification_type ?? null,
       name: doc.name,
       location: doc.location,
@@ -99,6 +101,17 @@ export class MongoKolProfileReadService implements IKolProfileReadService {
         topTags: p.top_tags,
         categories: p.categories,
       })),
+      user: doc.user_id && typeof doc.user_id === 'object' && doc.user_id._id ? {
+        id: doc.user_id._id.toString(),
+        email: doc.user_id.email,
+        phone: doc.user_id.phone,
+        fullName: doc.user_id.full_name,
+        roleId: doc.user_id.role_id ? doc.user_id.role_id.toString() : '',
+        isEmailVerified: doc.user_id.is_email_verified,
+        type: doc.user_id.type,
+        createdAt: doc.user_id.created_at,
+        updatedAt: doc.user_id.updated_at,
+      } as any : undefined,
     };
   }
 }

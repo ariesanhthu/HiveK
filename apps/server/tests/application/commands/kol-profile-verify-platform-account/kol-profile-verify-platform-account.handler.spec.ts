@@ -1,10 +1,10 @@
-import { VerifyPlatformAccountHandler } from '@/application/commands/verify-platform-account/verify-platform-account.handler';
-import { VerifyPlatformAccountCommand } from '@/application/commands/verify-platform-account/verify-platform-account.command';
+import { KolProfileVerifyPlatformAccountHandler } from '@/application/commands/kol-profile-verify-platform-account/kol-profile-verify-platform-account.handler';
+import { KolProfileVerifyPlatformAccountCommand } from '@/application/commands/kol-profile-verify-platform-account/kol-profile-verify-platform-account.command';
 import { KolProfileEntity } from '@/core/entities/kol-profile.entity';
 import { KolPlatformInfo } from '@/core/value-objects/kol-platform-info.value-object';
 
-describe('VerifyPlatformAccountHandler', () => {
-  let handler: VerifyPlatformAccountHandler;
+describe('KolProfileVerifyPlatformAccountHandler', () => {
+  let handler: KolProfileVerifyPlatformAccountHandler;
   let mockKolProfileRepository: any;
   let mockMqService: any;
 
@@ -19,7 +19,7 @@ describe('VerifyPlatformAccountHandler', () => {
       emit: jest.fn(),
       send: jest.fn(),
     };
-    handler = new VerifyPlatformAccountHandler(mockKolProfileRepository, mockMqService);
+    handler = new KolProfileVerifyPlatformAccountHandler(mockKolProfileRepository, mockMqService);
   });
 
   it('should link user to existing profile found by platform info', async () => {
@@ -38,7 +38,7 @@ describe('VerifyPlatformAccountHandler', () => {
 
     mockKolProfileRepository.findByPlatformInfo.mockResolvedValue(mockProfile);
 
-    const command = new VerifyPlatformAccountCommand(
+    const command = new KolProfileVerifyPlatformAccountCommand(
       'user-456',
       'youtube',
       'ext-id',
@@ -74,7 +74,7 @@ describe('VerifyPlatformAccountHandler', () => {
     mockKolProfileRepository.findByPlatformInfo.mockResolvedValue(null);
     mockKolProfileRepository.findByUserId.mockResolvedValue(mockProfile);
 
-    const command = new VerifyPlatformAccountCommand(
+    const command = new KolProfileVerifyPlatformAccountCommand(
       'user-456',
       'youtube',
       'ext-id',
@@ -105,7 +105,7 @@ describe('VerifyPlatformAccountHandler', () => {
       entity.setId('new-profile-789');
     });
 
-    const command = new VerifyPlatformAccountCommand(
+    const command = new KolProfileVerifyPlatformAccountCommand(
       'user-456',
       'youtube',
       'ext-id',

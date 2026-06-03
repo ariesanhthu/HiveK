@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { IPlatformRepository } from '@/core/interfaces/repositories';
 import { PlatformRoot } from '@/core/aggregate-roots';
 import { PlatformModel, PlatformDocument } from '../schemas';
@@ -47,7 +47,7 @@ export class MongoPlatformRepository implements IPlatformRepository {
       name: doc.name,
       baseUrl: doc.base_url,
       apiStatus: doc.api_status,
-      icon: doc.icon,
+      icon: doc.icon ? doc.icon.toString() : null,
       deleteAt: doc.delete_at,
       deleteBy: doc.delete_by,
       createdAt: doc.created_at,
@@ -60,7 +60,7 @@ export class MongoPlatformRepository implements IPlatformRepository {
       name: platform.name,
       base_url: platform.baseUrl,
       api_status: platform.apiStatus,
-      icon: platform.icon,
+      icon: platform.icon ? new Types.ObjectId(platform.icon) as any : null,
       delete_at: platform.deleteAt,
       delete_by: platform.deleteBy,
     };

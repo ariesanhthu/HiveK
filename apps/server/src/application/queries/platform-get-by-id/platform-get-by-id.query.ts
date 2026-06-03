@@ -1,7 +1,7 @@
 import { Query } from '@nestjs/cqrs';
-import { PlatformDto } from '@/application/dtos';
+import { PlatformDetailDto } from '@/application/dtos';
 
-export class PlatformGetByIdQuery extends Query<PlatformDto> {
+export class PlatformGetByIdQuery extends Query<PlatformDetailDto> {
   constructor(public readonly id: string) {
     super();
   }

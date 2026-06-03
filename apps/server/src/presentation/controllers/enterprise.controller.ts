@@ -1,6 +1,6 @@
 import { Controller, Get, Post, Patch, Delete, Param, Query, Body, HttpCode, HttpStatus, UseGuards } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
-import { EnterpriseGetByIdQuery } from '@/application/queries';
+import { EnterpriseGetByIdQuery, EnterpriseGetListQuery } from '@/application/queries';
 import {
   EnterpriseCreateCommand,
   EnterpriseUpdateCommand,
@@ -10,10 +10,12 @@ import {
   EnterpriseCreateInputDto,
   EnterpriseUpdateInputDto,
 } from '@/application/commands';
-import { EnterpriseDto, SoftDeleteInputDto } from '@/application/dtos';
+import { EnterpriseDto, EnterpriseDetailDto, SoftDeleteInputDto } from '@/application/dtos';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { JwtAuthGuard } from '@/presentation/middleware/guards/jwt-auth.guard';
 import { CurrentUser } from '@/presentation/decorators/current-user.decorator';
+import { PaginatedResponseDto } from '@/shared/dtos/pagination.dto';
+import { EnterpriseFilterDto } from '@/application/queries/enterprise-get-list/enterprise-get-list.dto';
 
 @ApiTags('enterprises')
 @ApiBearerAuth()
@@ -47,11 +49,18 @@ export class EnterpriseController {
     return this.commandBus.execute(new EnterpriseUpdateCommand(id, userId, input));
   }
 
+  @Get()
+  @UseGuards(JwtAuthGuard)
+  @ApiOperation({ summary: 'Get list of enterprises' })
+  async getList(@Query() filters: EnterpriseFilterDto): Promise<PaginatedResponseDto<EnterpriseDetailDto>> {
+    return this.queryBus.execute(new EnterpriseGetListQuery(filters));
+  }
+
   @Get(':id')
   @UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: 'Get enterprise by ID' })
-  async getById(@Param('id') id: string): Promise<EnterpriseDto> {
-    const enterprise = await this.queryBus.execute<EnterpriseGetByIdQuery, EnterpriseDto>(
+  async getById(@Param('id') id: string): Promise<EnterpriseDetailDto> {
+    const enterprise = await this.queryBus.execute<EnterpriseGetByIdQuery, EnterpriseDetailDto>(
       new EnterpriseGetByIdQuery(id),
     );
     return enterprise;

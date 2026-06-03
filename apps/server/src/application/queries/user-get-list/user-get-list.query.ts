@@ -1,8 +1,8 @@
 import { Query } from '@nestjs/cqrs';
-import { UserFilterDto, UserDto } from '../../dtos/user.dto';
+import { UserFilterDto, UserDetailDto } from '../../dtos/user.dto';
 import { PaginatedResponseDto } from '@/shared/dtos/pagination.dto';
 
-export class UserGetListQuery extends Query<PaginatedResponseDto<UserDto>> {
+export class UserGetListQuery extends Query<PaginatedResponseDto<UserDetailDto>> {
   constructor(public readonly filters?: UserFilterDto) {
     super();
   }

@@ -77,4 +77,13 @@ export const CampaignDtoSchema = z.object({
   raw: z.array(RawItemDtoSchema),
 });
 
+import { UserDto } from './user.dto';
+import { EnterpriseDto } from './enterprise.dto';
+
 export class CampaignDto extends createZodDto(CampaignDtoSchema) {}
+
+export class CampaignDetailDto extends CampaignDto {
+  owner?: UserDto;
+  enterprise?: EnterpriseDto;
+}
+

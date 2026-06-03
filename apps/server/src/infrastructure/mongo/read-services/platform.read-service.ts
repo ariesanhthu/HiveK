@@ -4,7 +4,7 @@ import { Model } from 'mongoose';
 import { PlatformDocument, PlatformModel } from '../schemas';
 import { IPlatformReadService } from '@/application/interfaces';
 import { Nullable } from '@/core/types';
-import { PlatformDto } from '@/application/dtos';
+import { PlatformDetailDto } from '@/application/dtos';
 import { PlatformFilterDto } from '@/application/queries';
 import { PaginatedResponseDto, SortOrder } from '@/shared/dtos/pagination.dto';
 
@@ -15,7 +15,7 @@ export class MongoPlatformReadService implements IPlatformReadService {
     private readonly platformModel: Model<PlatformDocument>,
   ) { }
 
-  async findAll(filters: PlatformFilterDto = {} as any): Promise<PaginatedResponseDto<PlatformDto>> {
+  async findAll(filters: PlatformFilterDto = {} as any): Promise<PaginatedResponseDto<PlatformDetailDto>> {
     const { cursor, limit = 10, sort = SortOrder.DESC, name, apiStatus } = filters;
     const query: any = {};
 
@@ -35,6 +35,7 @@ export class MongoPlatformReadService implements IPlatformReadService {
       .find(query)
       .sort({ _id: sort === SortOrder.DESC ? -1 : 1 })
       .limit(limit + 1)
+      .populate('icon')
       .lean()
       .exec();
 
@@ -48,23 +49,35 @@ export class MongoPlatformReadService implements IPlatformReadService {
     );
   }
 
-  async findById(id: string): Promise<Nullable<PlatformDto>> {
-    const doc = await this.platformModel.findById(id).lean().exec();
+  async findById(id: string): Promise<Nullable<PlatformDetailDto>> {
+    const doc = await this.platformModel.findById(id).populate('icon').lean().exec();
     return doc ? this.mapToDto(doc) : null;
   }
 
-  async findByName(name: string): Promise<Nullable<PlatformDto>> {
-    const doc = await this.platformModel.findOne({ name: name.toLowerCase() }).lean().exec();
+  async findByName(name: string): Promise<Nullable<PlatformDetailDto>> {
+    const doc = await this.platformModel.findOne({ name: name.toLowerCase() }).populate('icon').lean().exec();
     return doc ? this.mapToDto(doc) : null;
   }
 
-  private mapToDto(doc: any): PlatformDto {
+  private mapToDto(doc: any): PlatformDetailDto {
     return {
       id: doc._id.toString(),
       name: doc.name,
       baseUrl: doc.base_url,
       apiStatus: doc.api_status,
-      icon: doc.icon,
+      icon: doc.icon && typeof doc.icon === 'object' && doc.icon._id ? {
+        id: doc.icon._id.toString(),
+        url: doc.icon.url,
+        publicId: doc.icon.public_id,
+        size: doc.icon.size,
+        format: doc.icon.format,
+        title: doc.icon.title,
+        targetType: doc.icon.target_type,
+        targetId: doc.icon.target_id,
+        targetField: doc.icon.target_field,
+        createdAt: doc.icon.created_at,
+        updatedAt: doc.icon.updated_at,
+      } : null,
     };
   }
 }

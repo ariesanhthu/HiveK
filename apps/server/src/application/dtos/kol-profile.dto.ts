@@ -26,4 +26,11 @@ export const KolProfileDtoSchema = z.object({
   scores: z.record(z.string(), z.any()).optional(),
 });
 
+import { UserDto } from './user.dto';
+
 export class KolProfileDto extends createZodDto(KolProfileDtoSchema) {}
+
+export class KolProfileDetailDto extends KolProfileDto {
+  user?: UserDto;
+}
+

@@ -1,4 +1,4 @@
-export class VerifyPlatformAccountCommand {
+export class KolProfileVerifyPlatformAccountCommand {
   constructor(
     public readonly userId: string,
     public readonly platformId: string,

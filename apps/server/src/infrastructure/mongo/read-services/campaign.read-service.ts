@@ -4,7 +4,7 @@ import { Model } from 'mongoose';
 import { CampaignDocument, CampaignModel } from '../schemas';
 import { ICampaignReadService } from '@/application/interfaces';
 import { Nullable } from '@/core/types';
-import { CampaignDto } from '@/application/dtos';
+import { CampaignDetailDto, CampaignDto } from '@/application/dtos';
 import { CampaignFilterDto } from '@/application/queries';
 import { PaginatedResponseDto, SortOrder } from '@/shared/dtos/pagination.dto';
 
@@ -15,7 +15,7 @@ export class MongoCampaignReadService implements ICampaignReadService {
     private readonly campaignModel: Model<CampaignDocument>,
   ) { }
 
-  async findAll(filters: CampaignFilterDto = {} as any): Promise<PaginatedResponseDto<CampaignDto>> {
+  async findAll(filters: CampaignFilterDto = {} as any): Promise<PaginatedResponseDto<CampaignDetailDto>> {
     const { cursor, limit = 10, sort = SortOrder.DESC, name, type, ownerId, enterpriseId } = filters;
     const query: any = {};
 
@@ -43,6 +43,8 @@ export class MongoCampaignReadService implements ICampaignReadService {
       .find(query)
       .sort({ _id: sort === SortOrder.DESC ? -1 : 1 })
       .limit(limit + 1)
+      .populate('owner_id')
+      .populate('enterprise_id')
       .lean()
       .exec();
 
@@ -56,16 +58,16 @@ export class MongoCampaignReadService implements ICampaignReadService {
     );
   }
 
-  async findById(id: string): Promise<Nullable<CampaignDto>> {
-    const doc = await this.campaignModel.findById(id).lean().exec();
+  async findById(id: string): Promise<Nullable<CampaignDetailDto>> {
+    const doc = await this.campaignModel.findById(id).populate('owner_id').populate('enterprise_id').lean().exec();
     return doc ? this.mapToDto(doc) : null;
   }
 
-  private mapToDto(doc: any): CampaignDto {
+  private mapToDto(doc: any): CampaignDetailDto {
     return {
       id: doc._id.toString(),
-      ownerId: doc.owner_id.toString(),
-      enterpriseId: doc.enterprise_id.toString(),
+      ownerId: doc.owner_id && typeof doc.owner_id === 'object' && doc.owner_id._id ? doc.owner_id._id.toString() : doc.owner_id?.toString() || '',
+      enterpriseId: doc.enterprise_id && typeof doc.enterprise_id === 'object' && doc.enterprise_id._id ? doc.enterprise_id._id.toString() : doc.enterprise_id?.toString() || '',
       campaign: {
         name: doc.campaign.name,
         type: doc.campaign.type,
@@ -118,6 +120,31 @@ export class MongoCampaignReadService implements ICampaignReadService {
         rawText: r.raw_text,
         inference: r.inference || '',
       })),
+      owner: doc.owner_id && typeof doc.owner_id === 'object' && doc.owner_id._id ? {
+        id: doc.owner_id._id.toString(),
+        email: doc.owner_id.email,
+        phone: doc.owner_id.phone,
+        fullName: doc.owner_id.full_name,
+        roleId: doc.owner_id.role_id ? doc.owner_id.role_id.toString() : '',
+        isEmailVerified: doc.owner_id.is_email_verified,
+        type: doc.owner_id.type,
+        createdAt: doc.owner_id.created_at,
+        updatedAt: doc.owner_id.updated_at,
+      } as any : undefined,
+      enterprise: doc.enterprise_id && typeof doc.enterprise_id === 'object' && doc.enterprise_id._id ? {
+        id: doc.enterprise_id._id.toString(),
+        userId: doc.enterprise_id.user_id ? doc.enterprise_id.user_id.toString() : '',
+        companyName: doc.enterprise_id.company_name,
+        description: doc.enterprise_id.description,
+        contactEmail: doc.enterprise_id.contact_email,
+        contactPhone: doc.enterprise_id.contact_phone,
+        website: doc.enterprise_id.website,
+        taxId: doc.enterprise_id.tax_id,
+        logoUrlId: doc.enterprise_id.logo_url_id,
+        isVerified: doc.enterprise_id.is_verified,
+        createdAt: doc.enterprise_id.created_at,
+        updatedAt: doc.enterprise_id.updated_at,
+      } : undefined,
     };
   }
 }

@@ -1,6 +1,8 @@
 import { z } from 'zod';
 import { createZodDto } from 'nestjs-zod';
 import { CursorPaginationRequestSchema } from '@/shared/dtos/pagination.dto';
+import { UserDto } from './user.dto';
+import { UploadedFileDto } from './uploaded-file.dto';
 
 export const EnterpriseDtoSchema = z.object({
   id: z.string(),
@@ -19,11 +21,8 @@ export const EnterpriseDtoSchema = z.object({
 
 export class EnterpriseDto extends createZodDto(EnterpriseDtoSchema) {}
 
-export const EnterpriseFilterSchema = CursorPaginationRequestSchema.extend({
-  companyName: z.string().optional(),
-  contactEmail: z.string().optional(),
-  taxId: z.string().optional(),
-  isVerified: z.preprocess((val) => val === 'true' || val === true, z.boolean()).optional(),
-});
+export type EnterpriseDetailDto = Omit<EnterpriseDto, 'logoUrlId'> & {
+  logoUrlId: UploadedFileDto | null;
+  user?: UserDto;
+};
 
-export class EnterpriseFilterDto extends createZodDto(EnterpriseFilterSchema) {}

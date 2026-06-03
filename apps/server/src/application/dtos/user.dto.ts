@@ -2,6 +2,8 @@ import { z } from 'zod';
 import { createZodDto } from 'nestjs-zod';
 import { ERoleType } from '@/core/enums';
 import { CursorPaginationRequestSchema } from '@/shared/dtos/pagination.dto';
+import { RoleDto } from './role.dto';
+import { UploadedFileDto } from './uploaded-file.dto';
 
 const BaseUserDtoSchema = z.object({
   id: z.string(),
@@ -75,3 +77,11 @@ export const UserUpdateInputSchema = z.object({
 });
 
 export class UserUpdateInputDto extends createZodDto(UserUpdateInputSchema) {}
+
+type DistributiveOmit<T, K extends keyof any> = T extends any ? Omit<T, K> : never;
+
+export type UserDetailDto = DistributiveOmit<UserDto, 'avatar'> & {
+  avatar: UploadedFileDto | null;
+  role?: RoleDto;
+};
+

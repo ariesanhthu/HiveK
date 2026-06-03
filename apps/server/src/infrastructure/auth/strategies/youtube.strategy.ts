@@ -3,7 +3,7 @@ import { PassportStrategy } from '@nestjs/passport';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { CommandBus } from '@nestjs/cqrs';
-import { VerifyPlatformAccountCommand } from '@/application/commands';
+import { KolProfileVerifyPlatformAccountCommand } from '@/application/commands';
 
 @Injectable()
 export class YoutubeStrategy extends PassportStrategy(Strategy, 'youtube') {
@@ -30,7 +30,7 @@ export class YoutubeStrategy extends PassportStrategy(Strategy, 'youtube') {
     const email = emails?.[0]?.value || '';
 
     const result = await this.commandBus.execute(
-      new VerifyPlatformAccountCommand(
+      new KolProfileVerifyPlatformAccountCommand(
         userId,
         'youtube',
         id, // externalId

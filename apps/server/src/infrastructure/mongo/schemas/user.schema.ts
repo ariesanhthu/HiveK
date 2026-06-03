@@ -37,8 +37,8 @@ export class UserModel {
   @Prop({ type: MongooseSchema.Types.String, default: null })
   refresh_token: string | null;
 
-  @Prop({ type: MongooseSchema.Types.String, default: null })
-  avatar: string | null;
+  @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'UploadedFileModel', default: null })
+  avatar: MongooseSchema.Types.ObjectId | null;
 
   @Prop({ type: MongooseSchema.Types.String, default: null })
   google_id: string | null;
