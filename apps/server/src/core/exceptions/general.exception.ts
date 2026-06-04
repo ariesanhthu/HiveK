@@ -18,3 +18,12 @@ export class OtpRateLimitException extends ConflictDomainException {
   }
 }
 
+import { NotFoundDomainException } from '../common/exceptions/domain.exception';
+
+export class CampaignParticipantNotFoundException extends NotFoundDomainException {
+  constructor(id: string) {
+    super(`Campaign participant with ID '${id}' not found`);
+  }
+}
+
+

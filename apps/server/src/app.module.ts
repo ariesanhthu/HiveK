@@ -20,6 +20,7 @@ import { AnalyticsModule } from './infrastructure/modules/analytics.module';
 import { CampaignModule } from './infrastructure/modules/campaign.module';
 import { UploadedFileModule } from './infrastructure/modules/uploaded-file.module';
 import { NotificationModule } from './infrastructure/modules/notification.module';
+import { CampaignParticipantModule } from './infrastructure/modules/campaign-participant.module';
 import { TestController } from './presentation/controllers/test/test.controller';
 import { TestRmqHandler } from './presentation/controllers/test/test-rmq.controller';
 import { DomainExceptionFilter } from './presentation/middleware/filters/domain-exception.filter';
@@ -38,6 +39,7 @@ import { DomainExceptionFilter } from './presentation/middleware/filters/domain-
     KolProfileModule,
     AnalyticsModule,
     CampaignModule,
+    CampaignParticipantModule,
     UploadedFileModule,
     NotificationModule,
     RabbitMQModule,

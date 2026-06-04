@@ -32,6 +32,10 @@ describe('AuthChangePasswordCommandHandler', () => {
       props: {
         passwordHash: 'old-hashed-password',
       },
+      updatePassword: jest.fn().mockImplementation((passwordHash: string) => {
+        mockUser.passwordHash = passwordHash;
+        mockUser.props.passwordHash = passwordHash;
+      }),
     };
     mockUserRepository.findById.mockResolvedValue(mockUser);
     mockAuthService.comparePassword.mockResolvedValue(true);
@@ -50,6 +54,7 @@ describe('AuthChangePasswordCommandHandler', () => {
     expect(mockOtpRepository.findValidOtp).toHaveBeenCalledWith('user@example.com', '123456', 'change_password');
     expect(mockAuthService.comparePassword).toHaveBeenCalledWith('oldPassword123', 'old-hashed-password');
     expect(mockAuthService.hashPassword).toHaveBeenCalledWith('newPassword123');
+    expect(mockUser.updatePassword).toHaveBeenCalledWith('new-hashed-password');
     expect(mockUser.props.passwordHash).toBe('new-hashed-password');
     expect(mockUserRepository.save).toHaveBeenCalledWith(mockUser);
     expect(mockOtpRepository.deleteByEmailAndType).toHaveBeenCalledWith('user@example.com', 'change_password');
@@ -72,6 +77,7 @@ describe('AuthChangePasswordCommandHandler', () => {
       id: 'user-123',
       email: 'user@example.com',
       passwordHash: 'old-hashed-password',
+      updatePassword: jest.fn(),
     };
     mockUserRepository.findById.mockResolvedValue(mockUser);
     mockAuthService.comparePassword.mockResolvedValue(false);
@@ -85,4 +91,5 @@ describe('AuthChangePasswordCommandHandler', () => {
     await expect(handler.execute(command)).rejects.toThrow('Invalid old password');
   });
 });
+
 

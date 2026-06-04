@@ -31,6 +31,9 @@ describe('AuthResetPasswordCommandHandler', () => {
       props: {
         passwordHash: 'old-hash',
       },
+      updatePassword: jest.fn().mockImplementation((passwordHash: string) => {
+        mockUser.props.passwordHash = passwordHash;
+      }),
     };
     mockUserRepository.findByEmail.mockResolvedValue(mockUser);
 
@@ -46,6 +49,7 @@ describe('AuthResetPasswordCommandHandler', () => {
     expect(mockUserRepository.findByEmail).toHaveBeenCalledWith('user@example.com');
     expect(mockOtpRepository.findValidOtp).toHaveBeenCalledWith('user@example.com', '123456', 'reset_password');
     expect(mockAuthService.hashPassword).toHaveBeenCalledWith('newPassword123');
+    expect(mockUser.updatePassword).toHaveBeenCalledWith('hashed');
     expect(mockUser.props.passwordHash).toBe('hashed');
     expect(mockUserRepository.save).toHaveBeenCalled();
     expect(mockOtpRepository.deleteByEmailAndType).toHaveBeenCalledWith('user@example.com', 'reset_password');
@@ -62,4 +66,5 @@ describe('AuthResetPasswordCommandHandler', () => {
     await expect(handler.execute(command)).rejects.toThrow(UserNotFoundException);
   });
 });
+
 

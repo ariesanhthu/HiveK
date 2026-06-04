@@ -55,3 +55,11 @@ export * from './role-get-by-id/role-get-by-id.query';
 export * from './role-get-by-id/role-get-by-id.handler';
 export * from './role-get-list/role-get-list.query';
 export * from './role-get-list/role-get-list.handler';
+
+// Campaign Participant Queries
+export * from './campaign-participant-get-by-id/campaign-participant-get-by-id.query';
+export * from './campaign-participant-get-by-id/campaign-participant-get-by-id.handler';
+export * from './campaign-participant-get-list/campaign-participant-get-list.query';
+export * from './campaign-participant-get-list/campaign-participant-get-list.handler';
+export * from './campaign-participant-get-list/campaign-participant-get-list.dto';
+

@@ -8,3 +8,4 @@ export * from './kpi-log.dto';
 export * from './soft-delete.dto';
 export * from './uploaded-file.dto';
 export * from './notification.dto';
+export * from './campaign-participant.dto';

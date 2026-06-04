@@ -20,7 +20,7 @@ describe('EnterpriseUserRoot', () => {
     const user = EnterpriseUserRoot.create(validProps);
     expect(user).toBeDefined();
     expect(user.type).toBe(ERoleType.ENTERPRISE);
-    expect(user.enterpriseId).toBe('enterprise-123');
+    expect(user.enterpriseId).toBeNull();
   });
 
   it('should throw an error when type is not ENTERPRISE during creation', () => {

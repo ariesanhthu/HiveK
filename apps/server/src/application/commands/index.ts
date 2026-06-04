@@ -157,4 +157,19 @@ export * from './auth-verify-otp/auth-verify-otp.command';
 export * from './auth-verify-otp/auth-verify-otp.handler';
 export * from './auth-verify-otp/auth-verify-otp.dto';
 
+// Campaign Participant Commands
+export * from './campaign-participant-create/campaign-participant-create.command';
+export * from './campaign-participant-create/campaign-participant-create.handler';
+export * from './campaign-participant-create/campaign-participant-create.dto';
+export * from './campaign-participant-soft-delete/campaign-participant-soft-delete.command';
+export * from './campaign-participant-soft-delete/campaign-participant-soft-delete.handler';
+export * from './campaign-participant-hard-delete/campaign-participant-hard-delete.command';
+export * from './campaign-participant-hard-delete/campaign-participant-hard-delete.handler';
+export * from './campaign-participant-restore/campaign-participant-restore.command';
+export * from './campaign-participant-restore/campaign-participant-restore.handler';
+export * from './campaign-participant-update/campaign-participant-update.command';
+export * from './campaign-participant-update/campaign-participant-update.handler';
+export * from './campaign-participant-update/campaign-participant-update.dto';
+
+
 
