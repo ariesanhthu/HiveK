@@ -165,4 +165,25 @@ describe('Campaign Domain (e2e)', () => {
       .set('Authorization', `Bearer ${authToken}`)
       .expect(404);
   });
+
+  it('should return 401 without auth token', async () => {
+    await request(app.getHttpServer())
+      .get('/campaigns')
+      .expect(401);
+  });
+
+  it('should return 404 when getting non-existent campaign', async () => {
+    await request(app.getHttpServer())
+      .get('/campaigns/507f1f77bcf86cd799439011')
+      .set('Authorization', `Bearer ${authToken}`)
+      .expect(404);
+  });
+
+  it('should return 404 when updating non-existent campaign', async () => {
+    await request(app.getHttpServer())
+      .patch('/campaigns/507f1f77bcf86cd799439011')
+      .set('Authorization', `Bearer ${authToken}`)
+      .send({ campaign: { name: 'Ghost', type: 'promotion', startDate: new Date().toISOString(), endDate: new Date().toISOString(), objective: 'x', description: 'x' } })
+      .expect(404);
+  });
 });

@@ -1,5 +1,6 @@
 import { EnterpriseGetByIdHandler } from '@/application/queries/enterprise-get-by-id/enterprise-get-by-id.handler';
 import { EnterpriseGetByIdQuery } from '@/application/queries/enterprise-get-by-id/enterprise-get-by-id.query';
+import { EnterpriseNotFoundException } from '@/core/exceptions';
 
 describe('EnterpriseGetByIdHandler', () => {
   let handler: EnterpriseGetByIdHandler;
@@ -27,6 +28,6 @@ describe('EnterpriseGetByIdHandler', () => {
     mockEnterpriseReadService.findById.mockResolvedValue(null);
 
     const query = new EnterpriseGetByIdQuery('ent-123');
-    await expect(handler.execute(query)).rejects.toThrow('Enterprise not found');
+    await expect(handler.execute(query)).rejects.toThrow(EnterpriseNotFoundException);
   });
 });

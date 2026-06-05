@@ -1,5 +1,6 @@
 import { CampaignParticipantGetByIdQueryHandler } from '@/application/queries/campaign-participant-get-by-id/campaign-participant-get-by-id.handler';
 import { CampaignParticipantGetByIdQuery } from '@/application/queries/campaign-participant-get-by-id/campaign-participant-get-by-id.query';
+import { CampaignParticipantNotFoundException } from '@/core/exceptions';
 
 describe('CampaignParticipantGetByIdQueryHandler', () => {
   let handler: CampaignParticipantGetByIdQueryHandler;
@@ -23,13 +24,10 @@ describe('CampaignParticipantGetByIdQueryHandler', () => {
     expect(mockReadService.findById).toHaveBeenCalledWith('participant-123');
   });
 
-  it('should return null when not found', async () => {
+  it('should throw CampaignParticipantNotFoundException when not found', async () => {
     mockReadService.findById.mockResolvedValue(null);
 
     const query = new CampaignParticipantGetByIdQuery('participant-123');
-    const result = await handler.execute(query);
-
-    expect(result).toBeNull();
-    expect(mockReadService.findById).toHaveBeenCalledWith('participant-123');
+    await expect(handler.execute(query)).rejects.toThrow(CampaignParticipantNotFoundException);
   });
 });

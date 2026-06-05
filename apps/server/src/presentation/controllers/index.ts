@@ -8,3 +8,4 @@ export * from './campaign.controller';
 export * from './uploaded-file.controller';
 export * from './kpi-log.controller';
 export * from './role.controller';
+export * from './campaign-participant.controller';

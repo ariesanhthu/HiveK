@@ -2,7 +2,7 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { Inject } from '@nestjs/common';
 import { Types } from 'mongoose';
 import { CAMPAIGN_PARTICIPANT_REPOSITORY, type ICampaignParticipantRepository } from '@/core/interfaces/repositories/campaign-participant.repository';
-import { CampaignParticipantNotFoundException } from '@/core/exceptions';
+import { CampaignParticipantNotFoundException, InvalidOperationException } from '@/core/exceptions';
 import { EParticipantStatus, EOutputStatus } from '@/core/enums';
 import { CampaignParticipantUpdateCommand } from './campaign-participant-update.command';
 import { CampaignOutput } from '@/core/aggregate-roots/campaign-participant.aggregate';
@@ -45,7 +45,7 @@ export class CampaignParticipantUpdateCommandHandler implements ICommandHandler<
         const postedAt = o.isScheduleForPost ? null : new Date();
 
         if (!o.isScheduleForPost && !url) {
-          throw new Error('Published output requires a URL');
+          throw new InvalidOperationException('Published output requires a URL');
         }
 
         return {

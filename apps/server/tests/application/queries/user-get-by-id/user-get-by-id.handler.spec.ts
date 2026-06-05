@@ -1,5 +1,6 @@
 import { UserGetByIdHandler } from '@/application/queries/user-get-by-id/user-get-by-id.handler';
 import { UserGetByIdQuery } from '@/application/queries/user-get-by-id/user-get-by-id.query';
+import { UserNotFoundException } from '@/core/exceptions';
 
 describe('UserGetByIdHandler', () => {
   let handler: UserGetByIdHandler;
@@ -27,6 +28,6 @@ describe('UserGetByIdHandler', () => {
     mockUserReadService.findById.mockResolvedValue(null);
 
     const query = new UserGetByIdQuery('user-123');
-    await expect(handler.execute(query)).rejects.toThrow('User not found');
+    await expect(handler.execute(query)).rejects.toThrow(UserNotFoundException);
   });
 });

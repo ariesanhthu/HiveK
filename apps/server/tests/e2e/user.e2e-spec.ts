@@ -130,11 +130,11 @@ describe('User Domain (e2e)', () => {
       .set('Authorization', `Bearer ${adminToken}`)
       .expect(204);
 
-    // 8. Get by ID - should return 500 (since query handler throws generic Error)
+    // 8. Get by ID - should return 404 (since query handler throws UserNotFoundException)
     await request(app.getHttpServer())
       .get(`/users/${testUserId}`)
       .set('Authorization', `Bearer ${adminToken}`)
-      .expect(500);
+      .expect(404);
 
     // Clean up new user
     await userModel.deleteMany({ _id: new Types.ObjectId(newUserId) });

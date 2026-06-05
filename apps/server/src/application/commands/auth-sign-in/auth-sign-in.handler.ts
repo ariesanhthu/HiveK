@@ -4,6 +4,7 @@ import { AuthSignInOutputDto } from './auth-sign-in.dto';
 import { Inject } from '@nestjs/common';
 import { USER_REPOSITORY, type IUserRepository } from '@/core/interfaces/repositories';
 import { AuthService } from '@/application/services/auth.service';
+import { InvalidCredentialsException } from '@/core/exceptions';
 
 @CommandHandler(AuthSignInCommand)
 export class AuthSignInCommandHandler implements ICommandHandler<AuthSignInCommand, AuthSignInOutputDto> {
@@ -19,12 +20,12 @@ export class AuthSignInCommandHandler implements ICommandHandler<AuthSignInComma
     const normalizedEmail = this.authService.normalizeEmail(input.email);
     const user = await this.userRepository.findByEmail(normalizedEmail);
     if (!user) {
-      throw new Error('Invalid credentials');
+      throw new InvalidCredentialsException();
     }
 
     const isPasswordValid = await this.authService.comparePassword(input.password, user.passwordHash);
     if (!isPasswordValid) {
-      throw new Error('Invalid credentials');
+      throw new InvalidCredentialsException();
     }
 
     const payload = {

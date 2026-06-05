@@ -7,3 +7,4 @@ export * from './platform.exception';
 export * from './uploaded-file.exception';
 export * from './notification.exception';
 export * from './general.exception';
+export * from './auth.exception';

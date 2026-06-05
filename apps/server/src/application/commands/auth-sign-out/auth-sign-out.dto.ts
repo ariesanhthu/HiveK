@@ -1,9 +1,7 @@
 import { z } from 'zod';
 import { createZodDto } from 'nestjs-zod';
 
-export const AuthSignOutInputSchema = z.object({
-  userId: z.string(),
-});
+export const AuthSignOutInputSchema = z.object({});
 
 export class AuthSignOutInputDto extends createZodDto(AuthSignOutInputSchema) {}
 

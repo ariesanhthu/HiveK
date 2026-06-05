@@ -2,6 +2,8 @@ import { UserDto } from '@/application/dtos';
 import { ERoleType } from '@/core/enums';
 import { UserRoot, EnterpriseUserRoot } from '@/core/aggregate-roots';
 
+import { InvalidUserTypeException } from '@/core/exceptions';
+
 export class UserMapper {
   static toDto(root: UserRoot<any>): UserDto {
     const baseFields = {
@@ -36,7 +38,7 @@ export class UserMapper {
           type: ERoleType.KOL,
         };
       default:
-        throw new Error(`Unknown user type: ${type}`);
+        throw new InvalidUserTypeException(`Unknown user type: ${type}`);
     }
   }
 

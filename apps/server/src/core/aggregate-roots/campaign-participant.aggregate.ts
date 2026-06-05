@@ -1,6 +1,7 @@
 import { BaseAggregateRoot } from '@/core/common/base.aggregate-root';
 import { Nullable } from '@/core/types';
 import { EParticipantStatus, EOutputStatus, EOutputType } from '../enums';
+import { InvalidOperationException } from '../exceptions/general.exception';
 
 export interface CampaignOutput {
   id: string; // uuid
@@ -93,7 +94,7 @@ export class CampaignParticipantRoot extends BaseAggregateRoot<CampaignParticipa
 
   public join(): void {
     if (this.props.status !== EParticipantStatus.PENDING_APPROVAL) {
-      throw new Error('Can only join when status is PENDING_APPROVAL');
+      throw new InvalidOperationException('Can only join when status is PENDING_APPROVAL');
     }
     this.props.status = EParticipantStatus.JOINED;
     this.props.joinedAt = new Date();
@@ -105,7 +106,7 @@ export class CampaignParticipantRoot extends BaseAggregateRoot<CampaignParticipa
       this.props.status !== EParticipantStatus.PENDING_APPROVAL &&
       this.props.status !== EParticipantStatus.JOINED
     ) {
-      throw new Error('Can only reject when status is PENDING_APPROVAL or JOINED');
+      throw new InvalidOperationException('Can only reject when status is PENDING_APPROVAL or JOINED');
     }
     this.props.status = EParticipantStatus.REJECTED;
     this.props.updatedAt = new Date();
@@ -113,7 +114,7 @@ export class CampaignParticipantRoot extends BaseAggregateRoot<CampaignParticipa
 
   public complete(): void {
     if (this.props.status !== EParticipantStatus.JOINED) {
-      throw new Error('Can only complete when status is JOINED');
+      throw new InvalidOperationException('Can only complete when status is JOINED');
     }
     this.props.status = EParticipantStatus.COMPLETED;
     this.props.updatedAt = new Date();
@@ -134,7 +135,7 @@ export class CampaignParticipantRoot extends BaseAggregateRoot<CampaignParticipa
     const postedAt = output.isScheduleForPost ? null : output.postedAt || new Date();
 
     if (!output.isScheduleForPost && !url) {
-      throw new Error('Published output requires a URL');
+      throw new InvalidOperationException('Published output requires a URL');
     }
 
     this.props.outputs.push({
@@ -149,7 +150,7 @@ export class CampaignParticipantRoot extends BaseAggregateRoot<CampaignParticipa
   public publishOutput(outputId: string, url: string): void {
     const output = this.props.outputs.find((o) => o.id === outputId);
     if (!output) {
-      throw new Error(`Output with ID '${outputId}' not found`);
+      throw new InvalidOperationException(`Output with ID '${outputId}' not found`);
     }
 
     output.status = EOutputStatus.PUBLISHED;
@@ -161,7 +162,7 @@ export class CampaignParticipantRoot extends BaseAggregateRoot<CampaignParticipa
   public softDelete(deletedBy: string): void {
     const hasPublishedOutputs = this.props.outputs.some(o => o.status === EOutputStatus.PUBLISHED);
     if (hasPublishedOutputs) {
-      throw new Error('Cannot delete participant with published outputs');
+      throw new InvalidOperationException('Cannot delete participant with published outputs');
     }
     this.props.deleteAt = new Date();
     this.props.deleteBy = deletedBy;
@@ -177,7 +178,7 @@ export class CampaignParticipantRoot extends BaseAggregateRoot<CampaignParticipa
   public update(props: Partial<Omit<CampaignParticipantProps, 'createdAt' | 'updatedAt' | 'outputs' | 'deleteAt' | 'deleteBy'>>): void {
     const hasPublishedOutputs = this.props.outputs.some(o => o.status === EOutputStatus.PUBLISHED);
     if (hasPublishedOutputs) {
-      throw new Error('Cannot update participant with published outputs');
+      throw new InvalidOperationException('Cannot update participant with published outputs');
     }
     Object.assign(this.props, props);
     this.props.updatedAt = new Date();
@@ -188,10 +189,10 @@ export class CampaignParticipantRoot extends BaseAggregateRoot<CampaignParticipa
     for (const pub of existingPublished) {
       const matched = outputs.find(o => o.id === pub.id);
       if (!matched) {
-        throw new Error(`Cannot delete published output: ${pub.title}`);
+        throw new InvalidOperationException(`Cannot delete published output: ${pub.title}`);
       }
       if (matched.status !== EOutputStatus.PUBLISHED || matched.url !== pub.url) {
-        throw new Error(`Cannot modify published output: ${pub.title}`);
+        throw new InvalidOperationException(`Cannot modify published output: ${pub.title}`);
       }
     }
     this.props.outputs = outputs;
@@ -201,7 +202,7 @@ export class CampaignParticipantRoot extends BaseAggregateRoot<CampaignParticipa
   public setOutputFileId(outputId: string, fileId: string): void {
     const output = this.props.outputs.find((o) => o.id === outputId);
     if (!output) {
-      throw new Error(`Output with ID '${outputId}' not found`);
+      throw new InvalidOperationException(`Output with ID '${outputId}' not found`);
     }
     output.fileId = fileId;
     this.props.updatedAt = new Date();

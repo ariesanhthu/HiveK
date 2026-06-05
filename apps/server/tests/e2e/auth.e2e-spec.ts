@@ -26,6 +26,7 @@ describe('Auth Domain (e2e)', () => {
 
   afterAll(async () => {
     await userModel.deleteMany({ email: testEmail });
+    await userModel.deleteMany({ email: 'e2e-auth-duplicate@hivek.com' });
     await app.close();
   });
 
@@ -63,5 +64,61 @@ describe('Auth Domain (e2e)', () => {
 
     expect(profileRes.body.email).toBe(testEmail);
     expect(profileRes.body.fullName).toBe('DEFAULT NAME');
+  });
+
+  it('should return 401 when accessing profile without token', async () => {
+    await request(app.getHttpServer())
+      .get('/auth/profile')
+      .expect(401);
+  });
+
+  it('should return 401 when accessing profile with invalid token', async () => {
+    await request(app.getHttpServer())
+      .get('/auth/profile')
+      .set('Authorization', 'Bearer invalid-jwt-token')
+      .expect(401);
+  });
+
+  it('should return 401 when refreshing with invalid refresh token', async () => {
+    await request(app.getHttpServer())
+      .post('/auth/refresh-token')
+      .send({ refreshToken: 'invalid-token' })
+      .expect(401);
+  });
+
+  it('should return 401 when signing out without auth token', async () => {
+    await request(app.getHttpServer())
+      .post('/auth/sign-out')
+      .expect(401);
+  });
+
+  it('should return 401 when signing in with wrong password', async () => {
+    await request(app.getHttpServer())
+      .post('/auth/sign-in')
+      .send({
+        email: testEmail,
+        password: 'WrongPassword!',
+      })
+      .expect(401);
+  });
+
+  it('should return 401 when signing in with non-existent email', async () => {
+    await request(app.getHttpServer())
+      .post('/auth/sign-in')
+      .send({
+        email: 'nonexistent@hivek.com',
+        password: 'SecurePassword123!',
+      })
+      .expect(401);
+  });
+
+  it('should return 409 when signing up with duplicate email', async () => {
+    await request(app.getHttpServer())
+      .post('/auth/sign-up/kol')
+      .send({
+        email: testEmail,
+        password: 'SecurePassword123!',
+      })
+      .expect(409);
   });
 });

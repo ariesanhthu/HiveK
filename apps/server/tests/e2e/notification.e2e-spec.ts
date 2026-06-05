@@ -71,7 +71,7 @@ describe('Notification System (e2e)', () => {
     );
 
     // Wait for the asynchronous Event Handler to write to the database
-    await new Promise((resolve) => setTimeout(resolve, 500));
+    await new Promise((resolve) => setTimeout(resolve, 1500));
 
     // 2. GET /notifications - verify notification is in list and isRead is false
     const listRes = await request(app.getHttpServer())

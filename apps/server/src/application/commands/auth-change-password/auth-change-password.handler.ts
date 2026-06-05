@@ -5,7 +5,7 @@ import { AuthChangePasswordOutputDto } from './auth-change-password.dto';
 import { USER_REPOSITORY, OTP_REPOSITORY, type IUserRepository } from '@/core/interfaces/repositories';
 import { type IOtpRepository } from '@/core/interfaces/repositories/otp.repository';
 import { AuthService } from '@/application/services/auth.service';
-import { UserNotFoundException, InvalidOperationException } from '@/core/exceptions';
+import { UserNotFoundException, InvalidOperationException, InvalidPasswordException } from '@/core/exceptions';
 import { EOtpType } from '@/core/enums/otp-type.enum';
 
 @CommandHandler(AuthChangePasswordCommand)
@@ -38,7 +38,7 @@ export class AuthChangePasswordCommandHandler implements ICommandHandler<AuthCha
 
     const isOldPasswordValid = await this.authService.comparePassword(input.oldPassword, user.passwordHash);
     if (!isOldPasswordValid) {
-      throw new Error('Invalid old password');
+      throw new InvalidPasswordException();
     }
 
     const newHashedPassword = await this.authService.hashPassword(input.newPassword);

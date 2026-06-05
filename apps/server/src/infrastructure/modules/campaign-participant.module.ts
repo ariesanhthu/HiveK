@@ -20,6 +20,7 @@ import { CampaignParticipantGetListQueryHandler } from '@/application/queries/ca
 
 // Event Handlers
 import { LinkCampaignParticipantOutputFileHandler } from '@/application/events';
+import { CampaignParticipantController } from '@/presentation/controllers/campaign-participant.controller';
 
 const Handlers = [
   CampaignParticipantCreateCommandHandler,
@@ -39,6 +40,7 @@ const Handlers = [
       { name: CampaignParticipantModel.name, schema: CampaignParticipantSchema },
     ]),
   ],
+  controllers: [CampaignParticipantController],
   providers: [
     ...Handlers,
     {

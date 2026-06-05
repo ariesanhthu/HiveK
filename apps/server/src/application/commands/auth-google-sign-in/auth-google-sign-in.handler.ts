@@ -7,6 +7,7 @@ import type { IUserRepository, IRoleRepository } from '@/core/interfaces/reposit
 import { ERoleType } from '@/core/enums';
 import { KOLUserRoot } from '@/core/aggregate-roots';
 import { AuthService } from '@/application/services/auth.service';
+import { UserDeletedException, RoleNotFoundException } from '@/core/exceptions';
 
 @CommandHandler(AuthGoogleSignInCommand)
 export class AuthGoogleSignInCommandHandler implements ICommandHandler<AuthGoogleSignInCommand, AuthGoogleSignInOutputDto> {
@@ -26,7 +27,7 @@ export class AuthGoogleSignInCommandHandler implements ICommandHandler<AuthGoogl
 
     if (user) {
       if (user.deleteAt) {
-        throw new Error('User has been deleted');
+        throw new UserDeletedException();
       }
       if (!user.googleId) {
         user.updateGoogleId(input.googleId);
@@ -34,7 +35,7 @@ export class AuthGoogleSignInCommandHandler implements ICommandHandler<AuthGoogl
     } else {
       const defaultRole = await this.roleRepository.findByTitle(ERoleType.KOL);
       if (!defaultRole) {
-        throw new Error('Default role for KOL not found');
+        throw new RoleNotFoundException(ERoleType.KOL);
       }
 
       user = KOLUserRoot.create({

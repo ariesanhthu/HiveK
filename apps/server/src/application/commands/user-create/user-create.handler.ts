@@ -1,7 +1,7 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { UserCreateCommand } from './user-create.command';
 import { Inject } from '@nestjs/common';
-import { UserConflictException } from '@/core/exceptions';
+import { UserConflictException, InvalidUserTypeException } from '@/core/exceptions';
 import { USER_REPOSITORY, type IUserRepository } from '@/core/interfaces/repositories';
 import { KOLUserRoot, EnterpriseUserRoot, AdminRoot } from '@/core/aggregate-roots';
 import { ERoleType } from '@/core/enums';
@@ -51,7 +51,7 @@ export class UserCreateCommandHandler implements ICommandHandler<UserCreateComma
         user = AdminRoot.create(commonProps);
         break;
       default:
-        throw new Error(`Invalid user type: ${input.type}`);
+        throw new InvalidUserTypeException(`Invalid user type: ${input.type}`);
     }
 
     await this.userRepository.save(user);

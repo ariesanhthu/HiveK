@@ -2,7 +2,7 @@ import { z } from 'zod';
 import { createZodDto } from 'nestjs-zod';
 
 export const AuthRefreshTokenInputSchema = z.object({
-  refreshToken: z.string(),
+  refreshToken: z.string().optional(),
 });
 
 export class AuthRefreshTokenInputDto extends createZodDto(AuthRefreshTokenInputSchema) {}

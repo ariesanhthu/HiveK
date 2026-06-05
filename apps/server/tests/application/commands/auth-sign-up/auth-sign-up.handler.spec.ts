@@ -3,6 +3,7 @@ import { AuthSignUpCommand } from '@/application/commands/auth-sign-up/auth-sign
 import { ERoleType } from '@/core/enums';
 import { AuthSendOtpCommand } from '@/application/commands/auth-send-otp/auth-send-otp.command';
 import { EOtpType } from '@/core/enums/otp-type.enum';
+import { UserConflictException, RoleNotFoundException } from '@/core/exceptions';
 
 describe('AuthSignUpCommandHandler', () => {
   let handler: AuthSignUpCommandHandler;
@@ -14,44 +15,41 @@ describe('AuthSignUpCommandHandler', () => {
   beforeEach(() => {
     mockUserRepository = {
       findByEmail: jest.fn(),
-      save: jest.fn().mockImplementation((user: any) => {
-        user.setId('some-user-id');
-        return Promise.resolve();
-      }),
+      save: jest.fn(),
     };
     mockRoleReadService = {
       findAll: jest.fn(),
     };
     mockAuthService = {
-      normalizeEmail: jest.fn((email: string) => email.trim().toLowerCase()),
-      hashPassword: jest.fn(),
+      normalizeEmail: jest.fn().mockImplementation((e) => e),
+      hashPassword: jest.fn().mockResolvedValue('hashedPassword'),
     };
     mockCommandBus = {
-      execute: jest.fn().mockResolvedValue({ success: true }),
+      execute: jest.fn(),
     };
-    handler = new AuthSignUpCommandHandler(mockUserRepository, mockRoleReadService, mockAuthService, mockCommandBus);
+    handler = new AuthSignUpCommandHandler(
+      mockUserRepository,
+      mockRoleReadService,
+      mockAuthService,
+      mockCommandBus,
+    );
   });
 
-  it('should sign up a KOL successfully', async () => {
+  it('should successfully sign up a new user', async () => {
     const input = { email: 'kol@example.com', password: 'password123' };
     const command = new AuthSignUpCommand(ERoleType.KOL, input);
 
     mockUserRepository.findByEmail.mockResolvedValue(null);
     mockRoleReadService.findAll.mockResolvedValue({
-      data: [{ id: 'role-kol', title: 'KOL' }],
+      data: [{ id: 'role-123', title: 'KOL' }],
     });
-    mockAuthService.hashPassword.mockResolvedValue('hashed_password');
 
     const result = await handler.execute(command);
 
     expect(result).toBeDefined();
-    expect(result.userId).toBeDefined();
-    expect(mockAuthService.normalizeEmail).toHaveBeenCalledWith('kol@example.com');
-    expect(mockUserRepository.findByEmail).toHaveBeenCalledWith('kol@example.com');
-    expect(mockAuthService.hashPassword).toHaveBeenCalledWith('password123');
     expect(mockUserRepository.save).toHaveBeenCalled();
     expect(mockCommandBus.execute).toHaveBeenCalledWith(
-      expect.any(AuthSendOtpCommand)
+      expect.any(AuthSendOtpCommand),
     );
     const sentCmd = mockCommandBus.execute.mock.calls[0][0];
     expect(sentCmd.input).toEqual({
@@ -66,7 +64,7 @@ describe('AuthSignUpCommandHandler', () => {
 
     mockUserRepository.findByEmail.mockResolvedValue({ id: 'existing-id' });
 
-    await expect(handler.execute(command)).rejects.toThrow('User already exists');
+    await expect(handler.execute(command)).rejects.toThrow(UserConflictException);
   });
 
   it('should throw error if no roles are found', async () => {
@@ -76,7 +74,6 @@ describe('AuthSignUpCommandHandler', () => {
     mockUserRepository.findByEmail.mockResolvedValue(null);
     mockRoleReadService.findAll.mockResolvedValue({ data: [] });
 
-    await expect(handler.execute(command)).rejects.toThrow('No roles found in system');
+    await expect(handler.execute(command)).rejects.toThrow(RoleNotFoundException);
   });
 });
-

@@ -4,6 +4,7 @@ import { AuthSignOutOutputDto } from './auth-sign-out.dto';
 import { Inject } from '@nestjs/common';
 import { USER_REPOSITORY, type IUserRepository } from '@/core/interfaces/repositories';
 import { WEBSOCKET_SERVICE, type IWebSocketService } from '@/application/interfaces';
+import { UserNotFoundException } from '@/core/exceptions';
 
 @CommandHandler(AuthSignOutCommand)
 export class AuthSignOutCommandHandler implements ICommandHandler<AuthSignOutCommand, AuthSignOutOutputDto> {
@@ -15,11 +16,11 @@ export class AuthSignOutCommandHandler implements ICommandHandler<AuthSignOutCom
   ) {}
 
   async execute(command: AuthSignOutCommand): Promise<AuthSignOutOutputDto> {
-    const { userId } = command.input;
+    const { userId } = command;
 
     const user = await this.userRepository.findById(userId);
     if (!user) {
-      throw new Error('User not found');
+      throw new UserNotFoundException(userId);
     }
 
     user.updateRefreshToken(null);

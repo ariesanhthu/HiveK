@@ -1,6 +1,6 @@
-import { Controller, Post, Body, HttpCode, HttpStatus, Get, UseGuards, Res, Req } from '@nestjs/common';
+import { Controller, Post, Body, HttpCode, HttpStatus, Get, UseGuards, Res, Req, BadRequestException } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
-import type { Response } from 'express';
+import type { Response, Request } from 'express';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import {
   AuthSignInCommand,
@@ -119,10 +119,24 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Refresh tokens' })
   async refreshToken(
+    @Req() req: Request,
     @Body() input: AuthRefreshTokenInputDto,
     @Res({ passthrough: true }) response: Response,
   ) {
-    const result = await this.commandBus.execute(new AuthRefreshTokenCommand(input));
+    let token = input.refreshToken;
+    if (!token && req.cookies) {
+      token = req.cookies['refresh_token'];
+    }
+    if (!token && req.headers?.cookie) {
+      const match = req.headers.cookie.match(/(?:^|; )refresh_token=([^;]*)/);
+      token = match ? decodeURIComponent(match[1]) : undefined;
+    }
+
+    if (!token) {
+      throw new BadRequestException('Refresh token is required');
+    }
+
+    const result = await this.commandBus.execute(new AuthRefreshTokenCommand({ refreshToken: token }));
     if (result && result.accessToken) {
       response.cookie('access_token', result.accessToken, {
         httpOnly: true,
@@ -142,17 +156,18 @@ export class AuthController {
     return result;
   }
 
-  @Public()
   @Post('sign-out')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'Sign out' })
+  @ApiOperation({ summary: 'Sign out current user' })
   async signOut(
-    @Body() input: AuthSignOutInputDto,
+    @CurrentUser('sub') userId: string,
     @Res({ passthrough: true }) response: Response,
   ) {
     response.clearCookie('access_token');
     response.clearCookie('refresh_token');
-    return this.commandBus.execute(new AuthSignOutCommand(input));
+    return this.commandBus.execute(new AuthSignOutCommand(userId));
   }
 
   @Public()

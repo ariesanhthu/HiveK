@@ -8,6 +8,7 @@ import { WEBSOCKET_SERVICE } from '@/application/interfaces/web-socket.interface
 import type { IWebSocketService } from '@/application/interfaces/web-socket.interface';
 import { LOGGER_SERVICE } from '@/application/interfaces/logger.interface';
 import type { ILoggerService } from '@/application/interfaces/logger.interface';
+import { InvalidOperationException } from '@/core/exceptions';
 
 @EventsHandler(NotificationDispatchedEvent)
 export class InAppNotificationHandler implements IEventHandler<NotificationDispatchedEvent> {
@@ -47,7 +48,7 @@ export class InAppNotificationHandler implements IEventHandler<NotificationDispa
 
     const notificationId = notification.id;
     if (!notificationId) {
-      throw new Error('Failed to save notification payload: ID not generated.');
+      throw new InvalidOperationException('Failed to save notification payload: ID not generated.');
     }
 
     // 2. Create UserNotification status receipts for each recipient

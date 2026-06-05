@@ -3,6 +3,7 @@ import { UserUpdateProfileCommand } from './user-update-profile.command';
 import { UserUpdateProfileOutputDto } from './user-update-profile.dto';
 import { Inject } from '@nestjs/common';
 import { USER_REPOSITORY, type IUserRepository } from '@/core/interfaces/repositories';
+import { UserNotFoundException } from '@/core/exceptions';
 
 @CommandHandler(UserUpdateProfileCommand)
 export class UserUpdateProfileCommandHandler implements ICommandHandler<UserUpdateProfileCommand, UserUpdateProfileOutputDto> {
@@ -16,7 +17,7 @@ export class UserUpdateProfileCommandHandler implements ICommandHandler<UserUpda
 
     const user = await this.userRepository.findById(userId);
     if (!user) {
-      throw new Error('User not found');
+      throw new UserNotFoundException(userId);
     }
 
     const anyProps = user.props as any;

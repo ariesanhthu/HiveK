@@ -1,5 +1,6 @@
 import { UserUpdateProfileCommandHandler } from '@/application/commands/user-update-profile/user-update-profile.handler';
 import { UserUpdateProfileCommand } from '@/application/commands/user-update-profile/user-update-profile.command';
+import { UserNotFoundException } from '@/core/exceptions';
 
 describe('UserUpdateProfileCommandHandler', () => {
   let handler: UserUpdateProfileCommandHandler;
@@ -39,6 +40,6 @@ describe('UserUpdateProfileCommandHandler', () => {
     mockUserRepository.findById.mockResolvedValue(null);
 
     const command = new UserUpdateProfileCommand('user-123', {} as any);
-    await expect(handler.execute(command)).rejects.toThrow('User not found');
+    await expect(handler.execute(command)).rejects.toThrow(UserNotFoundException);
   });
 });

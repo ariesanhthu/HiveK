@@ -5,6 +5,7 @@ import { Inject } from '@nestjs/common';
 import { AUTH_JWT_SERVICE, type IAuthJwtService } from '@/application/interfaces';
 import { USER_REPOSITORY, type IUserRepository } from '@/core/interfaces/repositories';
 import { AuthService } from '@/application/services/auth.service';
+import { InvalidRefreshTokenException, UserNotFoundException } from '@/core/exceptions';
 
 @CommandHandler(AuthRefreshTokenCommand)
 export class AuthRefreshTokenCommandHandler implements ICommandHandler<AuthRefreshTokenCommand, AuthRefreshTokenOutputDto> {
@@ -23,17 +24,17 @@ export class AuthRefreshTokenCommandHandler implements ICommandHandler<AuthRefre
     try {
       payload = this.jwtService.verify(input.refreshToken);
     } catch (err) {
-      throw new Error('Invalid or expired refresh token');
+      throw new InvalidRefreshTokenException();
     }
 
     const userId = payload.sub;
     const user = await this.userRepository.findById(userId);
     if (!user) {
-      throw new Error('User not found');
+      throw new UserNotFoundException(userId);
     }
 
     if (user.refreshToken !== input.refreshToken) {
-      throw new Error('Invalid refresh token');
+      throw new InvalidRefreshTokenException('Invalid refresh token');
     }
 
     const tokenPayload = {

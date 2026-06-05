@@ -1,5 +1,6 @@
 import { AuthSignOutCommandHandler } from '@/application/commands/auth-sign-out/auth-sign-out.handler';
 import { AuthSignOutCommand } from '@/application/commands/auth-sign-out/auth-sign-out.command';
+import { UserNotFoundException } from '@/core/exceptions';
 
 describe('AuthSignOutCommandHandler', () => {
   let handler: AuthSignOutCommandHandler;
@@ -18,7 +19,7 @@ describe('AuthSignOutCommandHandler', () => {
   });
 
   it('should sign out successfully', async () => {
-    const command = new AuthSignOutCommand({ userId: 'user-123' });
+    const command = new AuthSignOutCommand('user-123');
     const mockUser = {
       id: 'user-123',
       updateRefreshToken: jest.fn(),
@@ -36,10 +37,10 @@ describe('AuthSignOutCommandHandler', () => {
   });
 
   it('should throw error if user is not found', async () => {
-    const command = new AuthSignOutCommand({ userId: 'user-123' });
+    const command = new AuthSignOutCommand('user-123');
     mockUserRepository.findById.mockResolvedValue(null);
 
-    await expect(handler.execute(command)).rejects.toThrow('User not found');
+    await expect(handler.execute(command)).rejects.toThrow(UserNotFoundException);
     expect(mockUserRepository.findById).toHaveBeenCalledWith('user-123');
     expect(mockUserRepository.save).not.toHaveBeenCalled();
     expect(mockWebSocketService.disconnectUser).not.toHaveBeenCalled();
