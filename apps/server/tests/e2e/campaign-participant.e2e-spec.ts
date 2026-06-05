@@ -5,10 +5,12 @@ import { getModelToken } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { AppModule } from './../../src/app.module';
 import { AUTH_JWT_SERVICE, type IAuthJwtService } from '@/application/interfaces/auth-jwt.interface';
+import { ECampaignStatus } from '@/core/enums/campaign-status.enum';
 
 describe('Campaign Participant Domain (e2e)', () => {
   let app: INestApplication;
   let participantModel: Model<any>;
+  let campaignModel: Model<any>;
   let jwtService: IAuthJwtService;
   let authToken: string;
 
@@ -32,13 +34,29 @@ describe('Campaign Participant Domain (e2e)', () => {
     });
 
     participantModel = app.get<Model<any>>(getModelToken('CampaignParticipantModel'));
+    campaignModel = app.get<Model<any>>(getModelToken('CampaignModel'));
 
     // Clean up E2E participant documents
     await participantModel.deleteMany({ campaign_id: new Types.ObjectId(mockCampaignId) as any });
+    await campaignModel.deleteMany({ _id: new Types.ObjectId(mockCampaignId) as any });
+
+    // Seed campaign in FINDING_KOL status
+    await campaignModel.create({
+      _id: new Types.ObjectId(mockCampaignId),
+      owner_id: new Types.ObjectId('64f7b2c9e8b3c9001f3e4e94'),
+      budget: 5000,
+      financial_target: {},
+      description: 'E2E Campaign for participant testing',
+      platform_target: [],
+      status: ECampaignStatus.FINDING_KOL,
+      collaborator_ids: ['64f7b2c9e8b3c9001f3e4e94'],
+      raw_contents: [],
+    });
   });
 
   afterAll(async () => {
     await participantModel.deleteMany({ campaign_id: new Types.ObjectId(mockCampaignId) as any });
+    await campaignModel.deleteMany({ _id: new Types.ObjectId(mockCampaignId) as any });
     await app.close();
   });
 

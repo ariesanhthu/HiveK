@@ -1,6 +1,7 @@
 import { Model, Types } from 'mongoose';
 import { MongoCampaignRepository } from '@/infrastructure/mongo/repositories/campaign.repository';
 import { CampaignRoot } from '@/core/aggregate-roots';
+import { ECampaignStatus } from '@/core/enums/campaign-status.enum';
 
 jest.mock('mongoose', () => {
   const actual = jest.requireActual('mongoose');
@@ -22,58 +23,26 @@ describe('MongoCampaignRepository', () => {
     _id: new Types.ObjectId('camp-123'),
     owner_id: new Types.ObjectId('owner-123'),
     enterprise_id: new Types.ObjectId('ent-123'),
-    campaign: {
-      name: 'Summer Promo',
-      type: 'seasonal',
-      start_date: new Date('2026-06-01T00:00:00Z'),
-      end_date: new Date('2026-06-30T00:00:00Z'),
-      objective: 'Objective',
-      description: 'Desc',
-    },
-    targeting: {
-      audience: {
-        age_range: '18-35',
-        interests: ['fashion'],
-      },
-      locations: ['VN'],
-    },
-    campaign_items: [
+    budget: 5000,
+    financial_target: { sales: 10000 },
+    description: 'Summer sale campaign',
+    platform_target: [
       {
-        product: {
-          name: 'Shirt',
-          category: 'Apparel',
-          brand: 'BrandA',
-          description: 'Cotton',
-          features: ['cool'],
-          keywords: ['shirt'],
-          price_segment: 'mid',
-        },
-        marketing: {
-          angle: ['youthful'],
-          content_style: ['video'],
-          tone: ['energetic'],
-          key_messages: ['Buy'],
-        },
-        pricing: {
-          original_price: 100,
-          sale_price: 90,
-          currency: 'USD',
-        },
-        promotion: {
-          type: 'discount',
-          value: 10,
-          unit: 'percent',
-        },
-        channels: [
-          {
-            type: 'social',
-            platform: 'Facebook',
-            url: 'https://fb.com',
-          },
-        ],
+        platformId: 'instagram',
+        minFollowers: 1000,
+        maxFollowers: 5000,
+        note: 'E2E target platform',
+        others: { age: '18-25' },
       },
     ],
-    raw: [],
+    status: ECampaignStatus.DRAFT,
+    collaborator_ids: ['owner-123'],
+    raw_contents: [
+      {
+        fileId: 'file-123',
+        rawContent: 'Original details text',
+      },
+    ],
     delete_at: null,
     delete_by: null,
   } as any;
@@ -97,8 +66,8 @@ describe('MongoCampaignRepository', () => {
       expect(mockModel.findById).toHaveBeenCalledWith('camp-123');
       expect(result).toBeInstanceOf(CampaignRoot);
       expect(result?.id).toBe('camp-123');
-      expect(result?.campaign.name).toBe('Summer Promo');
-      expect(result?.campaignItems[0].product.brand).toBe('BrandA');
+      expect(result?.budget).toBe(5000);
+      expect(result?.description).toBe('Summer sale campaign');
     });
 
     it('should return null when document is not found', async () => {
@@ -115,23 +84,11 @@ describe('MongoCampaignRepository', () => {
       const campaign = CampaignRoot.create({
         ownerId: 'owner-123',
         enterpriseId: 'ent-123',
-        campaign: {
-          name: 'Summer Promo',
-          type: 'seasonal',
-          startDate: new Date('2026-06-01T00:00:00Z'),
-          endDate: new Date('2026-06-30T00:00:00Z'),
-          objective: 'Objective',
-          description: 'Desc',
-        },
-        targeting: {
-          audience: {
-            ageRange: '18-35',
-            interests: ['fashion'],
-          },
-          locations: ['VN'],
-        },
-        campaignItems: [],
-        raw: [],
+        budget: 5000,
+        financialTarget: {},
+        description: 'Summer sale campaign',
+        platformTarget: [],
+        rawContents: [],
       });
 
       const saveMock = jest.fn().mockResolvedValue({ _id: new Types.ObjectId('generated-camp-id') });
@@ -147,23 +104,13 @@ describe('MongoCampaignRepository', () => {
       const campaign = CampaignRoot.instantiate('camp-123', {
         ownerId: 'owner-123',
         enterpriseId: 'ent-123',
-        campaign: {
-          name: 'Summer Promo Updated',
-          type: 'seasonal',
-          startDate: new Date('2026-06-01T00:00:00Z'),
-          endDate: new Date('2026-06-30T00:00:00Z'),
-          objective: 'Objective',
-          description: 'Desc',
-        },
-        targeting: {
-          audience: {
-            ageRange: '18-35',
-            interests: ['fashion'],
-          },
-          locations: ['VN'],
-        },
-        campaignItems: [],
-        raw: [],
+        budget: 5000,
+        financialTarget: {},
+        description: 'Summer sale campaign Updated',
+        platformTarget: [],
+        status: ECampaignStatus.DRAFT,
+        collaboratorIds: ['owner-123'],
+        rawContents: [],
         deleteAt: null,
         deleteBy: null,
       });
@@ -175,7 +122,7 @@ describe('MongoCampaignRepository', () => {
       expect(mockModel.findByIdAndUpdate).toHaveBeenCalledWith(
         'camp-123',
         expect.objectContaining({
-          campaign: expect.objectContaining({ name: 'Summer Promo Updated' }),
+          description: 'Summer sale campaign Updated',
         }),
         { upsert: true }
       );

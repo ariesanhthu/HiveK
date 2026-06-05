@@ -171,5 +171,17 @@ export * from './campaign-participant-update/campaign-participant-update.command
 export * from './campaign-participant-update/campaign-participant-update.handler';
 export * from './campaign-participant-update/campaign-participant-update.dto';
 
+// Campaign Update Status and Collaborator Commands
+export * from './campaign-update-status/campaign-update-status.command';
+export * from './campaign-update-status/campaign-update-status.handler';
+export * from './campaign-update-status/campaign-update-status.dto';
+export * from './campaign-invite-collaborator/campaign-invite-collaborator.command';
+export * from './campaign-invite-collaborator/campaign-invite-collaborator.handler';
+export * from './campaign-invite-collaborator/campaign-invite-collaborator.dto';
+export * from './campaign-revoke-collaborator/campaign-revoke-collaborator.command';
+export * from './campaign-revoke-collaborator/campaign-revoke-collaborator.handler';
+export * from './campaign-revoke-collaborator/campaign-revoke-collaborator.dto';
+
+
 
 

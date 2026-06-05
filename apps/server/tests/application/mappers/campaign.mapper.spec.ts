@@ -1,4 +1,5 @@
 import { CampaignMapper } from '@/application/mappers/campaign.mapper';
+import { ECampaignStatus } from '@/core/enums/campaign-status.enum';
 
 describe('CampaignMapper', () => {
   it('should map CampaignRoot to CampaignDto', () => {
@@ -6,62 +7,24 @@ describe('CampaignMapper', () => {
       id: 'campaign-123',
       ownerId: 'owner-123',
       enterpriseId: 'enterprise-123',
-      campaign: {
-        name: 'Summer Sale',
-        type: 'Promo',
-        startDate: new Date('2026-06-01T00:00:00Z'),
-        endDate: new Date('2026-06-30T00:00:00Z'),
-        objective: 'Objective',
-        description: 'Description',
-      },
-      targeting: {
-        audience: {
-          ageRange: '18-35',
-          interests: ['fashion'],
-        },
-        locations: ['Vietnam'],
-      },
-      campaignItems: [
+      budget: 5000,
+      financialTarget: { target: 'sales' },
+      description: 'Summer sale campaign',
+      platformTarget: [
         {
-          product: {
-            name: 'P1',
-            category: 'C1',
-            brand: 'B1',
-            description: 'D1',
-            features: ['F1'],
-            keywords: ['K1'],
-            priceSegment: 'low',
-          },
-          marketing: {
-            angle: ['A1'],
-            contentStyle: ['S1'],
-            tone: ['T1'],
-            keyMessages: ['M1'],
-          },
-          pricing: {
-            originalPrice: 10,
-            salePrice: 8,
-            currency: 'USD',
-          },
-          promotion: {
-            type: 'type',
-            value: 2,
-            unit: 'USD',
-          },
-          channels: [
-            {
-              type: 'social',
-              platform: 'Facebook',
-              url: 'https://fb.com',
-            },
-          ],
+          platformId: 'instagram',
+          minFollowers: 1000,
+          maxFollowers: 5000,
+          note: 'E2E target platform',
+          others: { age: '18-25' },
         },
       ],
-      raw: [
+      status: ECampaignStatus.DRAFT,
+      collaboratorIds: ['owner-123'],
+      rawContents: [
         {
-          fileId: 'file-1',
-          rawText: 'text',
-          inference: 'inf',
+          fileId: 'file-123',
+          rawContent: 'Original details text',
         },
       ],
     } as any;
@@ -70,7 +33,8 @@ describe('CampaignMapper', () => {
 
     expect(dto).toBeDefined();
     expect(dto.id).toBe('campaign-123');
-    expect(dto.campaign.startDate).toBe('2026-06-01T00:00:00.000Z');
+    expect(dto.budget).toBe(5000);
+    expect(dto.status).toBe(ECampaignStatus.DRAFT);
   });
 
   it('should map list of roots to list of DTOs', () => {
@@ -78,23 +42,13 @@ describe('CampaignMapper', () => {
       id: 'campaign-123',
       ownerId: 'owner-123',
       enterpriseId: 'enterprise-123',
-      campaign: {
-        name: 'Summer Sale',
-        type: 'Promo',
-        startDate: new Date('2026-06-01T00:00:00Z'),
-        endDate: new Date('2026-06-30T00:00:00Z'),
-        objective: 'Objective',
-        description: 'Description',
-      },
-      targeting: {
-        audience: {
-          ageRange: '18-35',
-          interests: ['fashion'],
-        },
-        locations: ['Vietnam'],
-      },
-      campaignItems: [],
-      raw: [],
+      budget: 5000,
+      financialTarget: {},
+      description: 'Summer sale campaign',
+      platformTarget: [],
+      status: ECampaignStatus.DRAFT,
+      collaboratorIds: ['owner-123'],
+      rawContents: [],
     } as any;
 
     const dtos = CampaignMapper.toListDto([mockRoot]);

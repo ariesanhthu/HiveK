@@ -26,17 +26,16 @@ export class LinkCampaignRawHandler implements IEventHandler<UploadedFileCreated
       return;
     }
 
-    // Append raw item to existing list
+    // Append raw content item to existing list
     const updatedRaw = [
-      ...(campaign.raw || []),
+      ...(campaign.rawContents || []),
       {
         fileId: event.fileId,
-        rawText: '',
-        inference: '',
+        rawContent: '',
       },
     ];
 
-    campaign.update({ raw: updatedRaw });
+    campaign.update({ rawContents: updatedRaw });
     await this.campaignRepository.save(campaign);
   }
 }

@@ -19,54 +19,17 @@ export class CreateCampaignHandler implements ICommandHandler<CampaignCreateComm
     const campaign = CampaignRoot.create({
       ownerId: input.ownerId,
       enterpriseId: input.enterpriseId,
-      campaign: {
-        name: input.campaign.name,
-        type: input.campaign.type,
-        startDate: new Date(input.campaign.startDate),
-        endDate: new Date(input.campaign.endDate),
-        objective: input.campaign.objective,
-        description: input.campaign.description,
-      },
-      targeting: {
-        audience: {
-          ageRange: input.targeting.audience.ageRange,
-          interests: input.targeting.audience.interests,
-        },
-        locations: input.targeting.locations,
-      },
-      campaignItems: input.campaignItems.map((item) => ({
-        product: {
-          name: item.product.name,
-          category: item.product.category,
-          brand: item.product.brand,
-          description: item.product.description,
-          features: item.product.features,
-          keywords: item.product.keywords,
-          priceSegment: item.product.priceSegment,
-        },
-        marketing: {
-          angle: item.marketing.angle,
-          contentStyle: item.marketing.contentStyle,
-          tone: item.marketing.tone,
-          keyMessages: item.marketing.keyMessages,
-        },
-        pricing: {
-          originalPrice: item.pricing.originalPrice,
-          salePrice: item.pricing.salePrice,
-          currency: item.pricing.currency,
-        },
-        promotion: {
-          type: item.promotion.type,
-          value: item.promotion.value,
-          unit: item.promotion.unit,
-        },
-        channels: item.channels.map((chan) => ({
-          type: chan.type,
-          platform: chan.platform,
-          url: chan.url,
-        })),
+      budget: input.budget,
+      financialTarget: input.financialTarget,
+      description: input.description,
+      platformTarget: (input.platformTarget || []).map((item) => ({
+        platformId: item.platformId,
+        minFollowers: item.minFollowers,
+        maxFollowers: item.maxFollowers,
+        note: item.note,
+        others: item.others,
       })),
-      raw: [],
+      rawContents: [],
     });
 
     await this.campaignRepository.save(campaign);

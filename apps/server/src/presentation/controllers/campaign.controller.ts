@@ -6,6 +6,9 @@ import { CampaignGetListQuery, CampaignGetByIdQuery, CampaignFilterDto } from '@
 import { CampaignDto, SoftDeleteInputDto } from '@/application/dtos';
 import { PaginatedResponseDto } from '@/shared/dtos/pagination.dto';
 import { JwtAuthGuard } from '../middleware/guards';
+import { CurrentUser } from '../decorators/current-user.decorator';
+
+import { CampaignInviteCollaboratorCommand, CampaignRevokeCollaboratorCommand, CampaignUpdateStatusCommand, CampaignUpdateStatusInputDto, CampaignInviteCollaboratorInputDto, CampaignRevokeCollaboratorInputDto } from '@/application/commands';
 
 @ApiTags('campaigns')
 @ApiBearerAuth()
@@ -72,5 +75,40 @@ export class CampaignController {
   @ApiOperation({ summary: 'Restore soft deleted campaign' })
   async restore(@Param('id') id: string): Promise<void> {
     return this.commandBus.execute(new CampaignRestoreCommand(id));
+  }
+
+  @Patch(':id/status')
+  @UseGuards(JwtAuthGuard)
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Update campaign status' })
+  async updateStatus(
+    @Param('id') id: string,
+    @Body() input: CampaignUpdateStatusInputDto,
+  ): Promise<void> {
+    return this.commandBus.execute(new CampaignUpdateStatusCommand(id, input.status));
+  }
+
+  @Patch(':id/collaborators/invite')
+  @UseGuards(JwtAuthGuard)
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Invite a collaborator to campaign' })
+  async inviteCollaborator(
+    @CurrentUser('sub') requestedBy: string,
+    @Param('id') id: string,
+    @Body() input: CampaignInviteCollaboratorInputDto,
+  ): Promise<void> {
+    return this.commandBus.execute(new CampaignInviteCollaboratorCommand(id, input.userId, requestedBy));
+  }
+
+  @Patch(':id/collaborators/revoke')
+  @UseGuards(JwtAuthGuard)
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Revoke a collaborator from campaign' })
+  async revokeCollaborator(
+    @CurrentUser('sub') requestedBy: string,
+    @Param('id') id: string,
+    @Body() input: CampaignRevokeCollaboratorInputDto,
+  ): Promise<void> {
+    return this.commandBus.execute(new CampaignRevokeCollaboratorCommand(id, input.userId, requestedBy));
   }
 }

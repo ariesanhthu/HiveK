@@ -2,7 +2,7 @@ import { UpdateCampaignHandler } from '@/application/commands/campaign-update/ca
 import { CampaignUpdateCommand } from '@/application/commands/campaign-update/campaign-update.command';
 import { CampaignNotFoundException } from '@/core/exceptions';
 import { CampaignRoot } from '@/core/aggregate-roots';
-import { CampaignMapper } from '@/application/mappers';
+import { ECampaignStatus } from '@/core/enums/campaign-status.enum';
 
 describe('UpdateCampaignHandler', () => {
   let handler: UpdateCampaignHandler;
@@ -17,41 +17,25 @@ describe('UpdateCampaignHandler', () => {
   });
 
   it('should update a campaign successfully', async () => {
-    const mockCampaign = {
-      id: 'campaign-123',
+    const mockCampaign = CampaignRoot.instantiate('campaign-123', {
       ownerId: 'owner-id',
       enterpriseId: 'enterprise-id',
-      campaign: {
-        name: 'Summer Sale',
-        type: 'Discount',
-        startDate: new Date('2026-06-01T00:00:00Z'),
-        endDate: new Date('2026-06-30T00:00:00Z'),
-        objective: 'Sales',
-        description: 'Promo campaign',
-      },
-      targeting: {
-        audience: {
-          ageRange: '18-35',
-          interests: ['fashion', 'electronics'],
-        },
-        locations: ['Vietnam'],
-      },
-      campaignItems: [],
-      raw: [],
-      update: jest.fn(),
-    };
+      budget: 5000,
+      financialTarget: {},
+      description: 'Summer sale campaign',
+      platformTarget: [],
+      status: ECampaignStatus.DRAFT,
+      collaboratorIds: ['owner-id'],
+      rawContents: [],
+      deleteAt: null,
+      deleteBy: null,
+    });
 
     mockCampaignRepository.findById.mockResolvedValue(mockCampaign);
 
     const input = {
-      campaign: {
-        name: 'Updated Summer Sale',
-        type: 'Discount',
-        startDate: '2026-06-01T00:00:00Z',
-        endDate: '2026-06-30T00:00:00Z',
-        objective: 'Updated Objective',
-        description: 'Updated Description',
-      },
+      description: 'Updated Description',
+      budget: 6000,
     };
 
     const command = new CampaignUpdateCommand('campaign-123', input as any);
@@ -59,7 +43,8 @@ describe('UpdateCampaignHandler', () => {
 
     expect(result).toBeDefined();
     expect(mockCampaignRepository.findById).toHaveBeenCalledWith('campaign-123');
-    expect(mockCampaign.update).toHaveBeenCalled();
+    expect(result.description).toBe('Updated Description');
+    expect(result.budget).toBe(6000);
     expect(mockCampaignRepository.save).toHaveBeenCalledWith(mockCampaign);
   });
 

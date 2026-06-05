@@ -6,7 +6,7 @@ import { CAMPAIGN_READ_SERVICE } from '@/application/interfaces';
 import { CAMPAIGN_REPOSITORY } from '@/core/interfaces/repositories';
 import { MongoCampaignReadService } from '@/infrastructure/mongo/read-services';
 import { MongoCampaignRepository } from '@/infrastructure/mongo/repositories';
-import { CreateCampaignHandler, UpdateCampaignHandler, CampaignHardDeleteCommandHandler, CampaignSoftDeleteCommandHandler, CampaignRestoreCommandHandler } from '@/application/commands';
+import { CreateCampaignHandler, UpdateCampaignHandler, CampaignHardDeleteCommandHandler, CampaignSoftDeleteCommandHandler, CampaignRestoreCommandHandler, CampaignUpdateStatusCommandHandler, CampaignInviteCollaboratorCommandHandler, CampaignRevokeCollaboratorCommandHandler } from '@/application/commands';
 import { CampaignGetListHandler, CampaignGetByIdHandler } from '@/application/queries';
 import { CampaignController } from '@/presentation/controllers/campaign.controller';
 
@@ -18,14 +18,20 @@ const Handlers = [
   CampaignHardDeleteCommandHandler,
   CampaignSoftDeleteCommandHandler,
   CampaignRestoreCommandHandler,
+  CampaignUpdateStatusCommandHandler,
+  CampaignInviteCollaboratorCommandHandler,
+  CampaignRevokeCollaboratorCommandHandler,
   CampaignGetListHandler,
   CampaignGetByIdHandler,
   LinkCampaignRawHandler,
 ];
 
+import { UserModule } from './user.module';
+
 @Module({
   imports: [
     CqrsModule,
+    UserModule,
     MongooseModule.forFeature([
       { name: CampaignModel.name, schema: CampaignSchema },
     ]),

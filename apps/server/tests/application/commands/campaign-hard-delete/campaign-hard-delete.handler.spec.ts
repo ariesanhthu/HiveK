@@ -1,6 +1,8 @@
 import { CampaignHardDeleteCommandHandler } from '@/application/commands/campaign-hard-delete/campaign-hard-delete.handler';
 import { CampaignHardDeleteCommand } from '@/application/commands/campaign-hard-delete/campaign-hard-delete.command';
 import { CampaignNotFoundException } from '@/core/exceptions';
+import { CampaignRoot } from '@/core/aggregate-roots';
+import { ECampaignStatus } from '@/core/enums/campaign-status.enum';
 
 describe('CampaignHardDeleteCommandHandler', () => {
   let handler: CampaignHardDeleteCommandHandler;
@@ -15,7 +17,21 @@ describe('CampaignHardDeleteCommandHandler', () => {
   });
 
   it('should delete campaign successfully', async () => {
-    mockCampaignRepository.findById.mockResolvedValue({ id: 'campaign-123' });
+    const campaign = CampaignRoot.instantiate('campaign-123', {
+      ownerId: 'owner-1',
+      enterpriseId: 'enterprise-1',
+      budget: 5000,
+      financialTarget: {},
+      description: 'Test Campaign',
+      platformTarget: [],
+      status: ECampaignStatus.DRAFT,
+      collaboratorIds: ['owner-1'],
+      rawContents: [],
+      deleteAt: null,
+      deleteBy: null,
+    });
+
+    mockCampaignRepository.findById.mockResolvedValue(campaign);
     const command = new CampaignHardDeleteCommand('campaign-123');
 
     await handler.execute(command);

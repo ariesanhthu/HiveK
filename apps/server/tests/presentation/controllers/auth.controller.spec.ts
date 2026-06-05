@@ -113,8 +113,9 @@ describe('AuthController', () => {
       const tokens = { accessToken: 'new-access', refreshToken: 'new-refresh' };
       mockCommandBus.execute.mockResolvedValue(tokens);
       const res = createMockResponse();
+      const req: any = { cookies: {} };
 
-      const result = await controller.refreshToken(input, res);
+      const result = await controller.refreshToken(req, input, res);
 
       expect(mockCommandBus.execute).toHaveBeenCalledWith(new AuthRefreshTokenCommand(input));
       expect(res.cookie).toHaveBeenCalledWith('access_token', 'new-access', expect.any(Object));
@@ -125,15 +126,15 @@ describe('AuthController', () => {
 
   describe('signOut', () => {
     it('should clear cookies and execute AuthSignOutCommand', async () => {
-      const input = { refreshToken: 'refresh-token-to-invalidate' };
+      const userId = 'user-123';
       mockCommandBus.execute.mockResolvedValue({ success: true });
       const res = createMockResponse();
 
-      const result = await controller.signOut(input, res);
+      const result = await controller.signOut(userId, res);
 
       expect(res.clearCookie).toHaveBeenCalledWith('access_token');
       expect(res.clearCookie).toHaveBeenCalledWith('refresh_token');
-      expect(mockCommandBus.execute).toHaveBeenCalledWith(new AuthSignOutCommand(input));
+      expect(mockCommandBus.execute).toHaveBeenCalledWith(new AuthSignOutCommand(userId));
       expect(result).toEqual({ success: true });
     });
   });

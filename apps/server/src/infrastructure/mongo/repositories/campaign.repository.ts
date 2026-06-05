@@ -40,58 +40,22 @@ export class MongoCampaignRepository implements ICampaignRepository {
     }
     return CampaignRoot.instantiate(doc._id.toString(), {
       ownerId: doc.owner_id.toString(),
-      enterpriseId: doc.enterprise_id.toString(),
-      campaign: {
-        name: doc.campaign.name,
-        type: doc.campaign.type,
-        startDate: doc.campaign.start_date,
-        endDate: doc.campaign.end_date,
-        objective: doc.campaign.objective,
-        description: doc.campaign.description,
-      },
-      targeting: {
-        audience: {
-          ageRange: doc.targeting.audience.age_range,
-          interests: doc.targeting.audience.interests,
-        },
-        locations: doc.targeting.locations,
-      },
-      campaignItems: doc.campaign_items.map((item) => ({
-        product: {
-          name: item.product.name,
-          category: item.product.category,
-          brand: item.product.brand,
-          description: item.product.description,
-          features: item.product.features,
-          keywords: item.product.keywords,
-          priceSegment: item.product.price_segment,
-        },
-        marketing: {
-          angle: item.marketing.angle,
-          contentStyle: item.marketing.content_style,
-          tone: item.marketing.tone,
-          keyMessages: item.marketing.key_messages,
-        },
-        pricing: {
-          originalPrice: item.pricing.original_price,
-          salePrice: item.pricing.sale_price,
-          currency: item.pricing.currency,
-        },
-        promotion: {
-          type: item.promotion.type,
-          value: item.promotion.value,
-          unit: item.promotion.unit,
-        },
-        channels: item.channels.map((chan) => ({
-          type: chan.type,
-          platform: chan.platform,
-          url: chan.url,
-        })),
+      enterpriseId: doc.enterprise_id ? doc.enterprise_id.toString() : null,
+      budget: doc.budget,
+      financialTarget: doc.financial_target instanceof Map ? Object.fromEntries(doc.financial_target) : doc.financial_target || {},
+      description: doc.description,
+      platformTarget: (doc.platform_target || []).map((p) => ({
+        platformId: p.platformId,
+        minFollowers: p.minFollowers,
+        maxFollowers: p.maxFollowers,
+        note: p.note,
+        others: p.others instanceof Map ? Object.fromEntries(p.others) : p.others,
       })),
-      raw: doc.raw.map((r) => ({
-        fileId: r.file_id,
-        rawText: r.raw_text,
-        inference: r.inference,
+      status: doc.status,
+      collaboratorIds: doc.collaborator_ids || [],
+      rawContents: (doc.raw_contents || []).map((r) => ({
+        fileId: r.fileId,
+        rawContent: r.rawContent,
       })),
       deleteAt: doc.delete_at,
       deleteBy: doc.delete_by,
@@ -101,58 +65,22 @@ export class MongoCampaignRepository implements ICampaignRepository {
   private mapToPersistence(campaign: CampaignRoot): Omit<CampaignModel, 'created_at' | 'updated_at'> {
     return {
       owner_id: new Types.ObjectId(campaign.ownerId) as any,
-      enterprise_id: new Types.ObjectId(campaign.enterpriseId) as any,
-      campaign: {
-        name: campaign.campaign.name,
-        type: campaign.campaign.type,
-        start_date: campaign.campaign.startDate,
-        end_date: campaign.campaign.endDate,
-        objective: campaign.campaign.objective,
-        description: campaign.campaign.description,
-      },
-      targeting: {
-        audience: {
-          age_range: campaign.targeting.audience.ageRange,
-          interests: campaign.targeting.audience.interests,
-        },
-        locations: campaign.targeting.locations,
-      },
-      campaign_items: campaign.campaignItems.map((item) => ({
-        product: {
-          name: item.product.name,
-          category: item.product.category,
-          brand: item.product.brand,
-          description: item.product.description,
-          features: item.product.features,
-          keywords: item.product.keywords,
-          price_segment: item.product.priceSegment,
-        },
-        marketing: {
-          angle: item.marketing.angle,
-          content_style: item.marketing.contentStyle,
-          tone: item.marketing.tone,
-          key_messages: item.marketing.keyMessages,
-        },
-        pricing: {
-          original_price: item.pricing.originalPrice,
-          sale_price: item.pricing.salePrice,
-          currency: item.pricing.currency,
-        },
-        promotion: {
-          type: item.promotion.type,
-          value: item.promotion.value,
-          unit: item.promotion.unit,
-        },
-        channels: item.channels.map((chan) => ({
-          type: chan.type,
-          platform: chan.platform,
-          url: chan.url,
-        })),
+      enterprise_id: campaign.enterpriseId ? new Types.ObjectId(campaign.enterpriseId) as any : null,
+      budget: campaign.budget,
+      financial_target: campaign.financialTarget,
+      description: campaign.description,
+      platform_target: campaign.platformTarget.map((p) => ({
+        platformId: p.platformId,
+        minFollowers: p.minFollowers,
+        maxFollowers: p.maxFollowers,
+        note: p.note,
+        others: p.others,
       })),
-      raw: campaign.raw.map((r) => ({
-        file_id: r.fileId,
-        raw_text: r.rawText,
-        inference: r.inference,
+      status: campaign.status,
+      collaborator_ids: campaign.collaboratorIds,
+      raw_contents: campaign.rawContents.map((r) => ({
+        fileId: r.fileId,
+        rawContent: r.rawContent,
       })),
       delete_at: campaign.deleteAt,
       delete_by: campaign.deleteBy,

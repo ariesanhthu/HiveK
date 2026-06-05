@@ -4,7 +4,6 @@ import { CursorPaginationRequestSchema } from '@/shared/dtos/pagination.dto';
 
 export const CampaignFilterSchema = CursorPaginationRequestSchema.extend({
   name: z.string().optional(),
-  type: z.enum(['promotion', 'launch', 'seasonal']).optional(),
   ownerId: z.string().optional(),
   enterpriseId: z.string().optional(),
 });

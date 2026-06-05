@@ -1,11 +1,12 @@
 import { CampaignParticipantCreateCommandHandler } from '@/application/commands/campaign-participant-create/campaign-participant-create.handler';
 import { CampaignParticipantCreateCommand } from '@/application/commands/campaign-participant-create/campaign-participant-create.command';
-import { CampaignParticipantRoot } from '@/core/aggregate-roots';
-import { EParticipantStatus } from '@/core/enums';
+import { CampaignParticipantRoot, CampaignRoot } from '@/core/aggregate-roots';
+import { ECampaignStatus } from '@/core/enums/campaign-status.enum';
 
 describe('CampaignParticipantCreateCommandHandler', () => {
   let handler: CampaignParticipantCreateCommandHandler;
   let mockParticipantRepository: any;
+  let mockCampaignRepository: any;
 
   beforeEach(() => {
     mockParticipantRepository = {
@@ -15,7 +16,30 @@ describe('CampaignParticipantCreateCommandHandler', () => {
         return Promise.resolve();
       }),
     };
-    handler = new CampaignParticipantCreateCommandHandler(mockParticipantRepository);
+
+    const mockCampaign = CampaignRoot.instantiate('campaign-123', {
+      ownerId: 'owner-1',
+      enterpriseId: 'enterprise-1',
+      budget: 5000,
+      financialTarget: {},
+      description: 'Test Campaign',
+      platformTarget: [],
+      status: ECampaignStatus.FINDING_KOL,
+      collaboratorIds: ['owner-1'],
+      rawContents: [],
+      deleteAt: null,
+      deleteBy: null,
+    });
+
+    mockCampaignRepository = {
+      findById: jest.fn().mockResolvedValue(mockCampaign),
+      save: jest.fn().mockResolvedValue(undefined),
+    };
+
+    handler = new CampaignParticipantCreateCommandHandler(
+      mockParticipantRepository,
+      mockCampaignRepository,
+    );
   });
 
   it('should successfully create a new campaign participant', async () => {

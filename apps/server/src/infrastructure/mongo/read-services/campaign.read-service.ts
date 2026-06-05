@@ -4,7 +4,7 @@ import { Model } from 'mongoose';
 import { CampaignDocument, CampaignModel } from '../schemas';
 import { ICampaignReadService } from '@/application/interfaces';
 import { Nullable } from '@/core/types';
-import { CampaignDetailDto, CampaignDto } from '@/application/dtos';
+import { CampaignDetailDto } from '@/application/dtos';
 import { CampaignFilterDto } from '@/application/queries';
 import { PaginatedResponseDto, SortOrder } from '@/shared/dtos/pagination.dto';
 
@@ -16,15 +16,11 @@ export class MongoCampaignReadService implements ICampaignReadService {
   ) { }
 
   async findAll(filters: CampaignFilterDto = {} as any): Promise<PaginatedResponseDto<CampaignDetailDto>> {
-    const { cursor, limit = 10, sort = SortOrder.DESC, name, type, ownerId, enterpriseId } = filters;
+    const { cursor, limit = 10, sort = SortOrder.DESC, name, ownerId, enterpriseId } = filters;
     const query: any = {};
 
     if (name) {
-      query['campaign.name'] = { $regex: name, $options: 'i' };
-    }
-
-    if (type) {
-      query['campaign.type'] = type;
+      query.description = { $regex: name, $options: 'i' };
     }
 
     if (ownerId) {
@@ -67,58 +63,22 @@ export class MongoCampaignReadService implements ICampaignReadService {
     return {
       id: doc._id.toString(),
       ownerId: doc.owner_id && typeof doc.owner_id === 'object' && doc.owner_id._id ? doc.owner_id._id.toString() : doc.owner_id?.toString() || '',
-      enterpriseId: doc.enterprise_id && typeof doc.enterprise_id === 'object' && doc.enterprise_id._id ? doc.enterprise_id._id.toString() : doc.enterprise_id?.toString() || '',
-      campaign: {
-        name: doc.campaign.name,
-        type: doc.campaign.type,
-        startDate: doc.campaign.start_date.toISOString(),
-        endDate: doc.campaign.end_date.toISOString(),
-        objective: doc.campaign.objective,
-        description: doc.campaign.description,
-      },
-      targeting: {
-        audience: {
-          ageRange: doc.targeting.audience.age_range,
-          interests: doc.targeting.audience.interests,
-        },
-        locations: doc.targeting.locations,
-      },
-      campaignItems: doc.campaign_items.map((item: any) => ({
-        product: {
-          name: item.product.name,
-          category: item.product.category,
-          brand: item.product.brand,
-          description: item.product.description,
-          features: item.product.features || [],
-          keywords: item.product.keywords || [],
-          priceSegment: item.product.price_segment,
-        },
-        marketing: {
-          angle: item.marketing.angle || [],
-          contentStyle: item.marketing.content_style || [],
-          tone: item.marketing.tone || [],
-          keyMessages: item.marketing.key_messages || [],
-        },
-        pricing: {
-          originalPrice: item.pricing.original_price,
-          salePrice: item.pricing.sale_price,
-          currency: item.pricing.currency,
-        },
-        promotion: {
-          type: item.promotion.type,
-          value: item.promotion.value,
-          unit: item.promotion.unit,
-        },
-        channels: (item.channels || []).map((chan: any) => ({
-          type: chan.type,
-          platform: chan.platform,
-          url: chan.url,
-        })),
+      enterpriseId: doc.enterprise_id && typeof doc.enterprise_id === 'object' && doc.enterprise_id._id ? doc.enterprise_id._id.toString() : doc.enterprise_id?.toString() || null,
+      budget: doc.budget,
+      financialTarget: doc.financial_target instanceof Map ? Object.fromEntries(doc.financial_target) : doc.financial_target || {},
+      description: doc.description || '',
+      platformTarget: (doc.platform_target || []).map((p: any) => ({
+        platformId: p.platformId,
+        minFollowers: p.minFollowers,
+        maxFollowers: p.maxFollowers,
+        note: p.note,
+        others: p.others instanceof Map ? Object.fromEntries(p.others) : p.others,
       })),
-      raw: (doc.raw || []).map((r: any) => ({
-        fileId: r.file_id,
-        rawText: r.raw_text,
-        inference: r.inference || '',
+      status: doc.status,
+      collaboratorIds: doc.collaborator_ids || [],
+      rawContents: (doc.raw_contents || []).map((r: any) => ({
+        fileId: r.fileId,
+        rawContent: r.rawContent,
       })),
       owner: doc.owner_id && typeof doc.owner_id === 'object' && doc.owner_id._id ? {
         id: doc.owner_id._id.toString(),

@@ -14,29 +14,29 @@ describe('LinkCampaignRawHandler', () => {
     handler = new LinkCampaignRawHandler(mockCampaignRepository);
   });
 
-  it('should append raw to campaign when target is CAMPAIGN with raw field', async () => {
-    const campaign = { id: 'cmp-1', raw: [{ fileId: 'old-file', rawText: '', inference: '' }], update: jest.fn() };
+  it('should append raw contents to campaign when target is CAMPAIGN with raw field', async () => {
+    const campaign = { id: 'cmp-1', rawContents: [{ fileId: 'old-file', rawContent: '' }], update: jest.fn() };
     mockCampaignRepository.findById.mockResolvedValue(campaign);
 
     await handler.handle(new UploadedFileCreatedEvent('file-1', TargetType.CAMPAIGN, 'cmp-1', 'raw'));
 
     expect(campaign.update).toHaveBeenCalledWith({
-      raw: [
-        { fileId: 'old-file', rawText: '', inference: '' },
-        { fileId: 'file-1', rawText: '', inference: '' },
+      rawContents: [
+        { fileId: 'old-file', rawContent: '' },
+        { fileId: 'file-1', rawContent: '' },
       ],
     });
     expect(mockCampaignRepository.save).toHaveBeenCalledWith(campaign);
   });
 
-  it('should handle empty raw array', async () => {
-    const campaign = { id: 'cmp-2', raw: [], update: jest.fn() };
+  it('should handle empty rawContents array', async () => {
+    const campaign = { id: 'cmp-2', rawContents: [], update: jest.fn() };
     mockCampaignRepository.findById.mockResolvedValue(campaign);
 
     await handler.handle(new UploadedFileCreatedEvent('file-2', TargetType.CAMPAIGN, 'cmp-2', 'raw'));
 
     expect(campaign.update).toHaveBeenCalledWith({
-      raw: [{ fileId: 'file-2', rawText: '', inference: '' }],
+      rawContents: [{ fileId: 'file-2', rawContent: '' }],
     });
   });
 

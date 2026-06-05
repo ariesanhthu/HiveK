@@ -33,9 +33,12 @@ const Handlers = [
   LinkCampaignParticipantOutputFileHandler,
 ];
 
+import { CampaignModule } from './campaign.module';
+
 @Module({
   imports: [
     CqrsModule,
+    CampaignModule,
     MongooseModule.forFeature([
       { name: CampaignParticipantModel.name, schema: CampaignParticipantSchema },
     ]),

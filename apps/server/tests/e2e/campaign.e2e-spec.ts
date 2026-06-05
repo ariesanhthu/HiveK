@@ -30,11 +30,11 @@ describe('Campaign Domain (e2e)', () => {
     campaignModel = app.get<Model<any>>(getModelToken('CampaignModel'));
 
     // Clean up E2E campaigns
-    await campaignModel.deleteMany({ 'campaign.name': { $regex: /^E2E / } });
+    await campaignModel.deleteMany({ description: { $regex: /^E2E / } });
   });
 
   afterAll(async () => {
-    await campaignModel.deleteMany({ 'campaign.name': { $regex: /^E2E / } });
+    await campaignModel.deleteMany({ description: { $regex: /^E2E / } });
     await app.close();
   });
 
@@ -42,55 +42,15 @@ describe('Campaign Domain (e2e)', () => {
     const campaignPayload = {
       ownerId: '64f7b2c9e8b3c9001f3e4e94',
       enterpriseId: '64f7b2c9e8b3c9001f3e4e95',
-      campaign: {
-        name: 'E2E Campaign Test',
-        type: 'promotion',
-        startDate: new Date().toISOString(),
-        endDate: new Date(Date.now() + 86400000).toISOString(),
-        objective: 'Test Campaign',
-        description: 'Test Campaign Description',
-      },
-      targeting: {
-        audience: {
-          ageRange: '18-25',
-          interests: ['beauty', 'fashion'],
-        },
-        locations: ['HCM', 'HN'],
-      },
-      campaignItems: [
+      budget: 5000,
+      financialTarget: { target: 'sales' },
+      description: 'E2E Campaign Test Description',
+      platformTarget: [
         {
-          product: {
-            name: 'Lipstick E2E',
-            category: 'Beauty',
-            brand: 'E2E Brand',
-            description: 'Red Lipstick',
-            features: ['matte', 'long-lasting'],
-            keywords: ['lipstick', 'beauty'],
-            priceSegment: 'mid',
-          },
-          marketing: {
-            angle: ['romantic'],
-            contentStyle: ['video'],
-            tone: ['friendly'],
-            keyMessages: ['Be beautiful'],
-          },
-          pricing: {
-            originalPrice: 200000,
-            salePrice: 150000,
-            currency: 'VND',
-          },
-          promotion: {
-            type: 'discount',
-            value: 25,
-            unit: 'percent',
-          },
-          channels: [
-            {
-              type: 'social',
-              platform: 'tiktok',
-              url: 'https://tiktok.com',
-            },
-          ],
+          platformId: 'instagram',
+          min: 100,
+          max: 500,
+          others: { age: '18-24' },
         },
       ],
     };
@@ -102,7 +62,7 @@ describe('Campaign Domain (e2e)', () => {
       .send(campaignPayload)
       .expect(201);
 
-    expect(createRes.body.campaign.name).toBe('E2E Campaign Test');
+    expect(createRes.body.description).toBe('E2E Campaign Test Description');
     const campaignId = createRes.body.id;
 
     // 2. Get Campaign by ID
@@ -111,7 +71,7 @@ describe('Campaign Domain (e2e)', () => {
       .set('Authorization', `Bearer ${authToken}`)
       .expect(200);
 
-    expect(getRes.body.campaign.name).toBe('E2E Campaign Test');
+    expect(getRes.body.description).toBe('E2E Campaign Test Description');
 
     // 3. Get All Campaigns
     const listRes = await request(app.getHttpServer())
@@ -127,18 +87,13 @@ describe('Campaign Domain (e2e)', () => {
       .patch(`/campaigns/${campaignId}`)
       .set('Authorization', `Bearer ${authToken}`)
       .send({
-        campaign: {
-          name: 'E2E Campaign Test Updated',
-          type: 'launch',
-          startDate: new Date().toISOString(),
-          endDate: new Date(Date.now() + 86400000).toISOString(),
-          objective: 'Updated Objective',
-          description: 'Updated Description',
-        },
+        description: 'E2E Campaign Test Updated Description',
+        budget: 6000,
       })
       .expect(200);
 
-    expect(updateRes.body.campaign.name).toBe('E2E Campaign Test Updated');
+    expect(updateRes.body.description).toBe('E2E Campaign Test Updated Description');
+    expect(updateRes.body.budget).toBe(6000);
 
     // 5. Soft Delete
     await request(app.getHttpServer())
@@ -183,7 +138,7 @@ describe('Campaign Domain (e2e)', () => {
     await request(app.getHttpServer())
       .patch('/campaigns/507f1f77bcf86cd799439011')
       .set('Authorization', `Bearer ${authToken}`)
-      .send({ campaign: { name: 'Ghost', type: 'promotion', startDate: new Date().toISOString(), endDate: new Date().toISOString(), objective: 'x', description: 'x' } })
+      .send({ description: 'Ghost' })
       .expect(404);
   });
 });

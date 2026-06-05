@@ -1,80 +1,31 @@
 import { z } from 'zod';
 import { createZodDto } from 'nestjs-zod';
+import { ECampaignStatus } from '@/core/enums/campaign-status.enum';
 
-export const AudienceDtoSchema = z.object({
-  ageRange: z.string(),
-  interests: z.array(z.string()),
+export const PlatformTargetItemDtoSchema = z.object({
+  platformId: z.string(),
+  minFollowers: z.number().optional(),
+  maxFollowers: z.number().optional(),
+  note: z.string().optional(),
+  others: z.record(z.string(), z.any()).optional(),
 });
 
-export const TargetingDtoSchema = z.object({
-  audience: AudienceDtoSchema,
-  locations: z.array(z.string()),
-});
-
-export const ProductDtoSchema = z.object({
-  name: z.string(),
-  category: z.string(),
-  brand: z.string(),
-  description: z.string(),
-  features: z.array(z.string()),
-  keywords: z.array(z.string()),
-  priceSegment: z.enum(['low', 'mid', 'high']),
-});
-
-export const MarketingDtoSchema = z.object({
-  angle: z.array(z.string()),
-  contentStyle: z.array(z.string()),
-  tone: z.array(z.string()),
-  keyMessages: z.array(z.string()),
-});
-
-export const PricingDtoSchema = z.object({
-  originalPrice: z.number().nonnegative(),
-  salePrice: z.number().nonnegative(),
-  currency: z.string().default('VND'),
-});
-
-export const PromotionDtoSchema = z.object({
-  type: z.enum(['discount', 'bundle', 'cashback']),
-  value: z.number().nonnegative(),
-  unit: z.enum(['percent', 'amount']),
-});
-
-export const ChannelDtoSchema = z.object({
-  type: z.enum(['ecommerce', 'retail', 'social']),
-  platform: z.string(),
-  url: z.string(),
-});
-
-export const CampaignItemDtoSchema = z.object({
-  product: ProductDtoSchema,
-  marketing: MarketingDtoSchema,
-  pricing: PricingDtoSchema,
-  promotion: PromotionDtoSchema,
-  channels: z.array(ChannelDtoSchema),
-});
-
-export const RawItemDtoSchema = z.object({
+export const RawContentItemDtoSchema = z.object({
   fileId: z.string(),
-  rawText: z.string(),
-  inference: z.string().default(''),
+  rawContent: z.string().optional(),
 });
 
 export const CampaignDtoSchema = z.object({
   id: z.string(),
   ownerId: z.string(),
-  enterpriseId: z.string(),
-  campaign: z.object({
-    name: z.string(),
-    type: z.enum(['promotion', 'launch', 'seasonal']),
-    startDate: z.string().datetime(),
-    endDate: z.string().datetime(),
-    objective: z.string(),
-    description: z.string(),
-  }),
-  targeting: TargetingDtoSchema,
-  campaignItems: z.array(CampaignItemDtoSchema),
-  raw: z.array(RawItemDtoSchema),
+  enterpriseId: z.string().nullable(),
+  budget: z.number().nonnegative(),
+  financialTarget: z.record(z.string(), z.any()),
+  description: z.string(),
+  platformTarget: z.array(PlatformTargetItemDtoSchema),
+  status: z.nativeEnum(ECampaignStatus),
+  collaboratorIds: z.array(z.string()),
+  rawContents: z.array(RawContentItemDtoSchema),
 });
 
 import { UserDto } from './user.dto';
@@ -86,4 +37,3 @@ export class CampaignDetailDto extends CampaignDto {
   owner?: UserDto;
   enterprise?: EnterpriseDto;
 }
-
