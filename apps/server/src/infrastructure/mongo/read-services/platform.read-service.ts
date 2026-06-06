@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, QueryFilter } from 'mongoose';
 import { PlatformDocument, PlatformModel } from '../schemas';
 import { IPlatformReadService } from '@/application/interfaces';
 import { Nullable } from '@/core/types';
@@ -17,7 +17,7 @@ export class MongoPlatformReadService implements IPlatformReadService {
 
   async findAll(filters: PlatformFilterDto = {} as any): Promise<PaginatedResponseDto<PlatformDetailDto>> {
     const { cursor, limit = 10, sort = SortOrder.DESC, name, apiStatus } = filters;
-    const query: any = {};
+    const query: QueryFilter<PlatformDocument> = {};
 
     if (name) {
       query.name = { $regex: name, $options: 'i' };

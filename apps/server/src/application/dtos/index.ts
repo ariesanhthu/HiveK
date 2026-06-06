@@ -9,3 +9,5 @@ export * from './soft-delete.dto';
 export * from './uploaded-file.dto';
 export * from './notification.dto';
 export * from './campaign-participant.dto';
+export * from './projection.dto';
+

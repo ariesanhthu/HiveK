@@ -13,7 +13,7 @@ export class KolProfileGetByIdHandler implements IQueryHandler<KolProfileGetById
   ) {}
 
   async execute(query: KolProfileGetByIdQuery): Promise<KolProfileDto> {
-    const profile = await this.kolProfileReadService.findById(query.id);
+    const profile = await this.kolProfileReadService.findById(query.id, query.projection);
     if (!profile) {
       throw new UserNotFoundException(query.id);
     }

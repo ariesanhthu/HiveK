@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, QueryFilter } from 'mongoose';
 import { IRoleReadService } from '@/application/interfaces';
 import { RoleDto, RoleFilterDto } from '@/application/dtos';
 import { RoleDocument, RoleModel } from '../schemas/role.schema';
@@ -26,7 +26,7 @@ export class MongoRoleReadService implements IRoleReadService {
 
   async findAll(filters: RoleFilterDto = {} as any): Promise<PaginatedResponseDto<RoleDto>> {
     const { cursor, limit = 10, sort = SortOrder.DESC, title } = filters;
-    const query: any = {};
+    const query: QueryFilter<RoleDocument> = {};
 
     if (title) {
       query.title = { $regex: title, $options: 'i' };

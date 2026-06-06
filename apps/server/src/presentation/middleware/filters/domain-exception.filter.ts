@@ -5,6 +5,9 @@ import { DomainException, NotFoundDomainException, ConflictDomainException, Forb
 @Catch(DomainException)
 export class DomainExceptionFilter implements ExceptionFilter {
   catch(exception: DomainException, host: ArgumentsHost) {
+    if (typeof host.getType === 'function' && host.getType() as string === 'graphql') {
+      throw exception;
+    }
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
 

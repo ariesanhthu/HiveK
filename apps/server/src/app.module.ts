@@ -10,8 +10,7 @@ import { WebSocketModule } from '@/infrastructure/websocket/websocket.module';
 import { APP_PIPE, APP_GUARD, APP_FILTER } from '@nestjs/core';
 import { ZodValidationPipe } from 'nestjs-zod';
 import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
-import { RolesGuard } from './presentation/middleware/guards/roles.guard';
-import { JwtAuthGuard } from './presentation/middleware/guards/jwt-auth.guard';
+import { RolesGuard, JwtAuthGuard, GqlThrottlerGuard } from './presentation/middleware/guards';
 import { NestConfigModule } from './infrastructure/nest-config/nest-config.module';
 import { InfrastructureModule } from './infrastructure/modules/infrastructure.module';
 import { PlatformModule } from './infrastructure/modules/platform.module';
@@ -23,6 +22,9 @@ import { NotificationModule } from './infrastructure/modules/notification.module
 import { CampaignParticipantModule } from './infrastructure/modules/campaign-participant.module';
 import { TestController } from './presentation/controllers/test/test.controller';
 import { TestRmqHandler } from './presentation/controllers/test/test-rmq.controller';
+import { GraphQLModule } from '@nestjs/graphql';
+import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
+import { join } from 'path';
 import { DomainExceptionFilter } from './presentation/middleware/filters/domain-exception.filter';
 
 @Module({
@@ -44,6 +46,12 @@ import { DomainExceptionFilter } from './presentation/middleware/filters/domain-
     NotificationModule,
     RabbitMQModule,
     WebSocketModule,
+    GraphQLModule.forRoot<ApolloDriverConfig>({
+      driver: ApolloDriver,
+      autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
+      playground: true,
+      context: ({ req, res }) => ({ req, res }),
+    }),
     ThrottlerModule.forRoot([
       {
         ttl: 60000, // 1 minute
@@ -65,7 +73,7 @@ import { DomainExceptionFilter } from './presentation/middleware/filters/domain-
     },
     {
       provide: APP_GUARD,
-      useClass: ThrottlerGuard,
+      useClass: GqlThrottlerGuard,
     },
     {
       provide: APP_GUARD,

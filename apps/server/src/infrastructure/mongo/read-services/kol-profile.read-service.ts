@@ -1,12 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, QueryFilter } from 'mongoose';
 import { IKolProfileReadService } from '@/application/interfaces';
 import { KolProfileDetailDto } from '@/application/dtos';
 import { KolProfileFilterDto } from '@/application/queries';
 import { KolProfileModel, KolProfileDocument } from '../schemas';
 import { JsonObject, Nullable } from '@/core/types';
 import { PaginatedResponseDto, SortOrder } from '@/shared/dtos/pagination.dto';
+import { parseMongoProjection } from '../utils';
 
 @Injectable()
 export class MongoKolProfileReadService implements IKolProfileReadService {
@@ -17,7 +18,7 @@ export class MongoKolProfileReadService implements IKolProfileReadService {
 
   async findAll(filters: KolProfileFilterDto = {} as any): Promise<PaginatedResponseDto<KolProfileDetailDto>> {
     const { cursor, limit = 10, sort = SortOrder.DESC, name, location, gender, isVerified, categories, tags } = filters;
-    const query: any = {};
+    const query: QueryFilter<KolProfileDocument> = {};
 
     if (name) {
       query.name = { $regex: name, $options: 'i' };
@@ -60,8 +61,45 @@ export class MongoKolProfileReadService implements IKolProfileReadService {
     );
   }
 
-  async findById(id: string): Promise<Nullable<KolProfileDetailDto>> {
-    const doc = await this.kolProfileModel.findById(id).populate('user_id').lean().exec();
+  async findById(id: string, projection?: any): Promise<Nullable<KolProfileDetailDto>> {
+    let queryBuilder: any = this.kolProfileModel.findById(id);
+
+    if (projection) {
+      const { select, populate } = parseMongoProjection(projection, {
+        allowedFields: [
+          'id', 'userId', 'verificationType', 'name', 'location',
+          'gender', 'bio', 'email', 'phone', 'platforms', 'isVerified', 'scores'
+        ],
+        fieldMap: {
+          userId: 'user_id',
+          verificationType: 'verification_type',
+          isVerified: 'is_verified',
+        },
+        populate: {
+          user: {
+            path: 'user_id',
+            select: ['email', 'phone', 'fullName', 'roleId', 'type'],
+            fieldMap: {
+              fullName: 'full_name',
+              roleId: 'role_id',
+            },
+          },
+        },
+      });
+
+      if (select) {
+        queryBuilder = queryBuilder.select(select);
+      }
+      if (populate && populate.length > 0) {
+        populate.forEach((opt) => {
+          queryBuilder = queryBuilder.populate(opt);
+        });
+      }
+    } else {
+      queryBuilder = queryBuilder.populate('user_id');
+    }
+
+    const doc = await queryBuilder.lean().exec();
     return doc ? this.mapToDto(doc) : null;
   }
 

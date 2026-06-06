@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, Types } from 'mongoose';
+import { Model, Types, QueryFilter } from 'mongoose';
 import { CampaignParticipantDocument, CampaignParticipantModel } from '../schemas/campaign-participant.schema';
 import { ICampaignParticipantReadService } from '@/application/interfaces';
 import { Nullable } from '@/core/types';
@@ -15,14 +15,14 @@ export class MongoCampaignParticipantReadService implements ICampaignParticipant
     private readonly participantModel: Model<CampaignParticipantDocument>,
   ) {}
 
-  async findById(id: string): Promise<Nullable<CampaignParticipantDto>> {
+  async findById(id: string, projection?: any): Promise<Nullable<CampaignParticipantDto>> {
     const doc = await this.participantModel.findById(id).lean().exec();
     return doc ? this.mapToDto(doc) : null;
   }
 
-  async findAll(filters: CampaignParticipantFilterDto = {} as any): Promise<PaginatedResponseDto<CampaignParticipantDto>> {
+  async findAll(filters: CampaignParticipantFilterDto): Promise<PaginatedResponseDto<CampaignParticipantDto>> {
     const { cursor, limit = 10, sort = SortOrder.DESC, campaignId, kolProfileId, status } = filters;
-    const query: any = {};
+    const query: QueryFilter<CampaignParticipantDocument> = {};
 
     // Do not fetch soft-deleted items
     query.delete_at = null;
@@ -40,7 +40,7 @@ export class MongoCampaignParticipantReadService implements ICampaignParticipant
     }
 
     if (cursor) {
-      query._id = sort === SortOrder.DESC ? { $lt: cursor } : { $gt: cursor };
+      query._id = sort === SortOrder.DESC ? { $lt: new Types.ObjectId(cursor) } : { $gt: new Types.ObjectId(cursor) };
     }
 
     const docs = await this.participantModel
@@ -60,7 +60,7 @@ export class MongoCampaignParticipantReadService implements ICampaignParticipant
     );
   }
 
-  private mapToDto(doc: any): CampaignParticipantDto {
+  private mapToDto(doc: CampaignParticipantDocument): CampaignParticipantDto {
     return {
       id: doc._id.toString(),
       campaignId: doc.campaign_id.toString(),
@@ -69,7 +69,7 @@ export class MongoCampaignParticipantReadService implements ICampaignParticipant
       joinedAt: doc.joined_at ? doc.joined_at.toISOString() : null,
       createdAt: doc.created_at ? doc.created_at.toISOString() : new Date().toISOString(),
       updatedAt: doc.updated_at ? doc.updated_at.toISOString() : new Date().toISOString(),
-      outputs: (doc.outputs || []).map((o: any) => ({
+      outputs: (doc.outputs || []).map((o) => ({
         id: o._id.toString(),
         platformId: o.platform_id.toString(),
         outputType: o.output_type,

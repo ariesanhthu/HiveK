@@ -1,15 +1,16 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument, Schema as MongooseSchema } from 'mongoose';
+import { HydratedDocument, Schema as MongooseSchema, Types } from 'mongoose';
 import { EParticipantStatus, EOutputStatus, EOutputType } from '@/core/enums';
 
 export type CampaignParticipantDocument = HydratedDocument<CampaignParticipantModel>;
 
+
 @Schema()
 export class CampaignOutputModel {
-  _id: MongooseSchema.Types.ObjectId;
+  _id: Types.ObjectId;
 
   @Prop({ required: true, type: MongooseSchema.Types.ObjectId, ref: 'PlatformModel' })
-  platform_id: MongooseSchema.Types.ObjectId;
+  platform_id: Types.ObjectId;
 
   @Prop({ required: true, type: MongooseSchema.Types.String, enum: EOutputType })
   output_type: EOutputType;
@@ -21,7 +22,7 @@ export class CampaignOutputModel {
   is_schedule_for_post: boolean;
 
   @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'UploadedFileModel', default: null })
-  file_id: MongooseSchema.Types.ObjectId | null;
+  file_id: Types.ObjectId | null;
 
   @Prop({ type: MongooseSchema.Types.Date, default: null })
   scheduled_at: Date | null;
@@ -44,10 +45,10 @@ export const CampaignOutputSchema = SchemaFactory.createForClass(CampaignOutputM
 })
 export class CampaignParticipantModel {
   @Prop({ required: true, type: MongooseSchema.Types.ObjectId, ref: 'CampaignModel' })
-  campaign_id: MongooseSchema.Types.ObjectId;
+  campaign_id: Types.ObjectId;
 
   @Prop({ required: true, type: MongooseSchema.Types.ObjectId, ref: 'KolProfileModel' })
-  kol_profile_id: MongooseSchema.Types.ObjectId;
+  kol_profile_id: Types.ObjectId;
 
   @Prop({ required: true, type: MongooseSchema.Types.String, enum: EParticipantStatus })
   status: EParticipantStatus;
@@ -63,6 +64,9 @@ export class CampaignParticipantModel {
 
   @Prop({ type: MongooseSchema.Types.String, default: null })
   delete_by: string | null;
+
+  created_at: Date;
+  updated_at: Date;
 }
 
 export const CampaignParticipantSchema = SchemaFactory.createForClass(CampaignParticipantModel);

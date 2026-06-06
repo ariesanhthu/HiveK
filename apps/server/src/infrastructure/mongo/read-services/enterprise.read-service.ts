@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, Types } from 'mongoose';
+import { Model, QueryFilter, Types } from 'mongoose';
 import { IEnterpriseReadService } from '@/application/interfaces';
 import { EnterpriseModel, type EnterpriseDocument } from '../schemas/enterprise.schema';
 import { Nullable } from '@/core/types';
@@ -27,7 +27,7 @@ export class MongoEnterpriseReadService implements IEnterpriseReadService {
 
   async findAll(filters: EnterpriseFilterDto = {} as any): Promise<PaginatedResponseDto<EnterpriseDetailDto>> {
     const { cursor, limit = 10, sort = SortOrder.DESC, companyName, contactEmail, taxId, isVerified } = filters;
-    const query: any = {};
+    const query: QueryFilter<EnterpriseDocument> = {};
 
     if (companyName) {
       query.company_name = { $regex: companyName, $options: 'i' };

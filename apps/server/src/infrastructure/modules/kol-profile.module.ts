@@ -9,6 +9,7 @@ import { MongoKolProfileRepository } from '@/infrastructure/mongo/repositories';
 import { KolProfileGetListHandler, KolProfileGetByIdHandler, KolProfileGetHandlesDevHandler } from '@/application/queries';
 import { UpdateKolProfileHandler, KolProfileSoftDeleteCommandHandler, KolProfileHardDeleteCommandHandler, KolProfileRestoreCommandHandler, KolProfileVerifyPlatformAccountHandler } from '@/application/commands';
 import { KolProfileController } from '@/presentation/controllers/kol-profile.controller';
+import { KolProfileResolver } from '@/presentation/resolvers/kol-profile.resolver';
 
 const Handlers = [
   KolProfileGetListHandler,
@@ -32,6 +33,7 @@ const Handlers = [
   controllers: [KolProfileController],
   providers: [
     ...Handlers,
+    KolProfileResolver,
     {
       provide: KOL_PROFILE_READ_SERVICE,
       useClass: MongoKolProfileReadService,

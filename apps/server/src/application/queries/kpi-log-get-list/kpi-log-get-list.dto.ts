@@ -4,6 +4,7 @@ import { CursorPaginationRequestSchema } from '@/shared/dtos/pagination.dto';
 
 export const KpiLogFilterSchema = CursorPaginationRequestSchema.extend({
   participantId: z.string().optional(),
+  outputId: z.string().optional(),
   startTime: z.iso.datetime().optional(),
   endTime: z.iso.datetime().optional(),
 });

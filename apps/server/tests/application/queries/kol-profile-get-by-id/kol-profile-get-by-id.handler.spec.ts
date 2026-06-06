@@ -21,7 +21,7 @@ describe('KolProfileGetByIdHandler', () => {
     const result = await handler.execute(query);
 
     expect(result).toEqual(mockProfile);
-    expect(mockKolProfileReadService.findById).toHaveBeenCalledWith('kol-123');
+    expect(mockKolProfileReadService.findById).toHaveBeenCalledWith('kol-123', undefined);
   });
 
   it('should throw NotFoundException when profile not found', async () => {

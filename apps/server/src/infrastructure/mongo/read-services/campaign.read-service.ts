@@ -1,12 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, QueryFilter } from 'mongoose';
 import { CampaignDocument, CampaignModel } from '../schemas';
 import { ICampaignReadService } from '@/application/interfaces';
 import { Nullable } from '@/core/types';
 import { CampaignDetailDto } from '@/application/dtos';
 import { CampaignFilterDto } from '@/application/queries';
 import { PaginatedResponseDto, SortOrder } from '@/shared/dtos/pagination.dto';
+import { Schema } from 'mongoose';
 
 @Injectable()
 export class MongoCampaignReadService implements ICampaignReadService {
@@ -17,18 +18,18 @@ export class MongoCampaignReadService implements ICampaignReadService {
 
   async findAll(filters: CampaignFilterDto = {} as any): Promise<PaginatedResponseDto<CampaignDetailDto>> {
     const { cursor, limit = 10, sort = SortOrder.DESC, name, ownerId, enterpriseId } = filters;
-    const query: any = {};
+    const query: QueryFilter<CampaignDocument> = {};
 
     if (name) {
       query.description = { $regex: name, $options: 'i' };
     }
 
     if (ownerId) {
-      query.owner_id = ownerId;
+      query.owner_id = new Schema.Types.ObjectId(ownerId);
     }
 
     if (enterpriseId) {
-      query.enterprise_id = enterpriseId;
+      query.enterprise_id = new Schema.Types.ObjectId(enterpriseId);
     }
 
     if (cursor) {
@@ -54,7 +55,7 @@ export class MongoCampaignReadService implements ICampaignReadService {
     );
   }
 
-  async findById(id: string): Promise<Nullable<CampaignDetailDto>> {
+  async findById(id: string, projection?: any): Promise<Nullable<CampaignDetailDto>> {
     const doc = await this.campaignModel.findById(id).populate('owner_id').populate('enterprise_id').lean().exec();
     return doc ? this.mapToDto(doc) : null;
   }

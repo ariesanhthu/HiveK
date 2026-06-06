@@ -1,12 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, QueryFilter } from 'mongoose';
 import { IUserReadService } from '@/application/interfaces';
 import { UserDetailDto, UserFilterDto } from '@/application/dtos';
 import { UserDocument, UserModel } from '../schemas';
 import { Nullable } from '@/core/types';
 import { ERoleType } from '@/core/enums';
 import { PaginatedResponseDto, SortOrder } from '@/shared/dtos/pagination.dto';
+import { Schema } from 'mongoose';
 
 @Injectable()
 export class MongoUserReadService implements IUserReadService {
@@ -27,7 +28,7 @@ export class MongoUserReadService implements IUserReadService {
 
   async findAll(filters: UserFilterDto = {} as any): Promise<PaginatedResponseDto<UserDetailDto>> {
     const { cursor, limit = 10, sort = SortOrder.DESC, email, phone, fullName, type, roleId, isEmailVerified } = filters;
-    const query: any = {};
+    const query: QueryFilter<UserDocument> = {};
 
     if (email) {
       query.email = { $regex: email, $options: 'i' };
@@ -42,7 +43,7 @@ export class MongoUserReadService implements IUserReadService {
       query.type = type;
     }
     if (roleId) {
-      query.role_id = roleId;
+      query.role_id = new Schema.Types.ObjectId(roleId);
     }
     if (isEmailVerified !== undefined) {
       query.is_email_verified = isEmailVerified;

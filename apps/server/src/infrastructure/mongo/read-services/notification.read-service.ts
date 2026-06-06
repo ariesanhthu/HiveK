@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, Types } from 'mongoose';
+import { Model, QueryFilter, Schema, Types } from 'mongoose';
 import { INotificationReadService } from '@/application/interfaces';
 import { UserNotificationModel, UserNotificationDocument } from '../schemas';
 import { NotificationDto, NotificationFilterDto } from '@/application/dtos';
@@ -16,10 +16,10 @@ export class MongoNotificationReadService implements INotificationReadService {
 
   async findAll(filters: NotificationFilterDto = {} as any): Promise<PaginatedResponseDto<NotificationDto>> {
     const { cursor, limit = 10, recipientId, isRead } = filters;
-    const matchStage: any = { delete_at: null };
+    const matchStage: QueryFilter<UserNotificationDocument> = { delete_at: null };
 
     if (recipientId) {
-      matchStage.recipient_id = new Types.ObjectId(recipientId);
+      matchStage.recipient_id = new Schema.Types.ObjectId(recipientId);
     }
 
     if (isRead !== undefined) {

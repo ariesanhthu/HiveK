@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, Types } from 'mongoose';
+import { Model, Schema, Types } from 'mongoose';
 import { ICampaignRepository } from '@/core/interfaces/repositories';
 import { CampaignRoot } from '@/core/aggregate-roots';
 import { CampaignModel, CampaignDocument } from '../schemas';
@@ -64,8 +64,8 @@ export class MongoCampaignRepository implements ICampaignRepository {
 
   private mapToPersistence(campaign: CampaignRoot): Omit<CampaignModel, 'created_at' | 'updated_at'> {
     return {
-      owner_id: new Types.ObjectId(campaign.ownerId) as any,
-      enterprise_id: campaign.enterpriseId ? new Types.ObjectId(campaign.enterpriseId) as any : null,
+      owner_id: new Schema.Types.ObjectId(campaign.ownerId),
+      enterprise_id: campaign.enterpriseId ? new Schema.Types.ObjectId(campaign.enterpriseId) : null,
       budget: campaign.budget,
       financial_target: campaign.financialTarget,
       description: campaign.description,
