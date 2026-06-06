@@ -1,6 +1,6 @@
 import { Controller, Get, Post, Patch, Delete, Param, Query, Body, HttpCode, HttpStatus, UseGuards } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
-import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiBearerAuth, ApiSecurity } from '@nestjs/swagger';
 import { RoleGetByIdQuery, RoleGetListQuery } from '@/application/queries';
 import {
   RoleCreateCommand,
@@ -17,6 +17,7 @@ import { PaginatedResponseDto } from '@/shared/dtos/pagination.dto';
 
 @ApiTags('roles')
 @ApiBearerAuth()
+@ApiSecurity('x-api-key')
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Roles(ERoleType.ADMIN)
 @Controller('roles')

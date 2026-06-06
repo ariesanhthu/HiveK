@@ -1,6 +1,6 @@
 import { Controller, Get, Post, Patch, Delete, Body, Param, Query, HttpCode, HttpStatus, UseGuards } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
-import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiBearerAuth, ApiSecurity } from '@nestjs/swagger';
 import {
   CampaignParticipantCreateCommand,
   CampaignParticipantUpdateCommand,
@@ -22,6 +22,7 @@ import { Public } from '@/presentation/decorators/public.decorator';
 
 @ApiTags('campaign-participants')
 @ApiBearerAuth()
+@ApiSecurity('x-api-key')
 @Controller('campaign-participants')
 export class CampaignParticipantController {
   constructor(

@@ -7,7 +7,6 @@ import { NestConfigService } from '@infrastructure/nest-config/nest-config.servi
 
 export function setupApplication(app: INestApplication): void {
   // Apply Security Headers
-  // Apply security headers, but skip Helmet for the GraphQL Playground to avoid CSP blocking external assets
   app.use((req, res, next) => {
     if (!req.path?.startsWith('/hivek/graphql')) {
       return helmet()(req, res, next);

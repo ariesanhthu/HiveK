@@ -3,7 +3,7 @@ import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { UserGetByIdQuery, UserGetListQuery } from '@/application/queries';
 import { UserCreateCommand, UserUpdateCommand, UserSoftDeleteCommand, UserHardDeleteCommand, UserRestoreCommand } from '@/application/commands';
 import { UserDto, UserFilterDto, UserCreateInputDto, UserUpdateInputDto, SoftDeleteInputDto } from '@/application/dtos';
-import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiBearerAuth, ApiSecurity } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../middleware/guards';
 import { UseGuards } from '@nestjs/common';
 import { Roles } from '@/presentation/decorators/roles.decorator';
@@ -12,6 +12,7 @@ import { PaginatedResponseDto } from '@/shared/dtos/pagination.dto';
 
 @ApiTags('users')
 @ApiBearerAuth()
+@ApiSecurity('x-api-key')
 @UseGuards(JwtAuthGuard)
 @Roles(ERoleType.ADMIN)
 @Controller('users')
@@ -70,13 +71,13 @@ export class UserController {
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: 'Hard delete user' })
   async hardDelete(@Param('id') id: string): Promise<void> {
-    return this.commandBus.execute(new UserHardDeleteCommand(id));
+    await this.commandBus.execute(new UserHardDeleteCommand(id));
   }
 
   @Patch(':id/restore')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Restore soft deleted user' })
   async restore(@Param('id') id: string): Promise<void> {
-    return this.commandBus.execute(new UserRestoreCommand(id));
+    await this.commandBus.execute(new UserRestoreCommand(id));
   }
 }

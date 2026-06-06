@@ -17,7 +17,8 @@ export function setupSwagger(app: INestApplication): void {
       description: 'Enter JWT token',
       in: 'header',
     })
-    // .addApiKey({ type: 'apiKey', name: 'x-api-key', in: 'header' }, 'x-api-key')
+    .addApiKey({ type: 'apiKey', name: 'x-api-key', in: 'header' }, 'x-api-key')
+    .addSecurityRequirements('x-api-key')
     .build();
 
   const swaggerCustomOptions = {
@@ -26,7 +27,6 @@ export function setupSwagger(app: INestApplication): void {
       persistAuthorization: true,
       tagsSorter: 'alpha',
       operationSorter: 'alpha',
-      security: [{ 'x-api-key': [] }],
     },
   };
     

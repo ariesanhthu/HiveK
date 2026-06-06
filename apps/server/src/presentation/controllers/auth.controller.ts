@@ -1,7 +1,7 @@
 import { Controller, Post, Body, HttpCode, HttpStatus, Get, UseGuards, Res, Req, BadRequestException } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import type { Response, Request } from 'express';
-import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiBearerAuth, ApiSecurity } from '@nestjs/swagger';
 import {
   AuthSignInCommand,
   AuthSignUpCommand,
@@ -29,6 +29,7 @@ import { AuthGuard } from '@nestjs/passport';
 
 @ApiTags('auth')
 @ApiBearerAuth()
+@ApiSecurity('x-api-key')
 @Controller('auth')
 export class AuthController {
   constructor(

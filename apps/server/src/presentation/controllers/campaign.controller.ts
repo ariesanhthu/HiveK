@@ -1,6 +1,6 @@
 import { Controller, Get, Post, Patch, Delete, Body, Param, Query, HttpCode, HttpStatus, UseGuards } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
-import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiBearerAuth, ApiSecurity } from '@nestjs/swagger';
 import { CampaignCreateCommand, CampaignUpdateCommand, CampaignSoftDeleteCommand, CampaignHardDeleteCommand, CampaignRestoreCommand, CampaignCreateInputDto, CampaignUpdateInputDto } from '@/application/commands';
 import { CampaignGetListQuery, CampaignGetByIdQuery, CampaignFilterDto } from '@/application/queries';
 import { CampaignDto, SoftDeleteInputDto } from '@/application/dtos';
@@ -12,6 +12,7 @@ import { CampaignInviteCollaboratorCommand, CampaignRevokeCollaboratorCommand, C
 
 @ApiTags('campaigns')
 @ApiBearerAuth()
+@ApiSecurity('x-api-key')
 @Controller('campaigns')
 export class CampaignController {
   constructor(

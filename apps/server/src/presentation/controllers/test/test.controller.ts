@@ -1,7 +1,10 @@
 import { Controller, Get, Inject, Logger, Query } from '@nestjs/common';
 import { type IMessageQueueService, type IWebSocketService, MESSAGE_QUEUE_SERVICE, WEBSOCKET_SERVICE } from '@/application/interfaces';
 import { Public } from '@/presentation/decorators/public.decorator';
+import { ApiTags, ApiSecurity } from '@nestjs/swagger';
 
+@ApiTags('test')
+@ApiSecurity('x-api-key')
 @Public()
 @Controller('test')
 export class TestController {
