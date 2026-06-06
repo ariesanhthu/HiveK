@@ -8,6 +8,7 @@ import { CampaignDetailDto } from '@/application/dtos';
 import { CampaignFilterDto } from '@/application/queries';
 import { PaginatedResponseDto, SortOrder } from '@/shared/dtos/pagination.dto';
 import { Schema } from 'mongoose';
+import { parseMongoProjection } from '../utils';
 
 @Injectable()
 export class MongoCampaignReadService implements ICampaignReadService {
@@ -16,7 +17,7 @@ export class MongoCampaignReadService implements ICampaignReadService {
     private readonly campaignModel: Model<CampaignDocument>,
   ) { }
 
-  async findAll(filters: CampaignFilterDto = {} as any): Promise<PaginatedResponseDto<CampaignDetailDto>> {
+  async findAll(filters: CampaignFilterDto = {} as any, projection?: any): Promise<PaginatedResponseDto<CampaignDetailDto>> {
     const { cursor, limit = 10, sort = SortOrder.DESC, name, ownerId, enterpriseId } = filters;
     const query: QueryFilter<CampaignDocument> = {};
 
@@ -36,27 +37,151 @@ export class MongoCampaignReadService implements ICampaignReadService {
       query._id = sort === SortOrder.DESC ? { $lt: cursor } : { $gt: cursor };
     }
 
-    const docs = await this.campaignModel
+    let queryBuilder: any = this.campaignModel
       .find(query)
       .sort({ _id: sort === SortOrder.DESC ? -1 : 1 })
-      .limit(limit + 1)
-      .populate('owner_id')
-      .populate('enterprise_id')
-      .lean()
-      .exec();
+      .limit(limit + 1);
+
+    if (projection) {
+      const { select, populate } = parseMongoProjection(projection, {
+        allowedFields: [
+          'id', 'ownerId', 'enterpriseId', 'budget', 'financialTarget',
+          'description', 'platformTarget', 'status', 'collaboratorIds', 'rawContents'
+        ],
+        fieldMap: {
+          ownerId: 'owner_id',
+          enterpriseId: 'enterprise_id',
+          collaboratorIds: 'collaborator_ids',
+          rawContents: 'raw_contents',
+          platformTarget: 'platform_target',
+          financialTarget: 'financial_target',
+        },
+        populate: {
+          owner: {
+            path: 'owner_id',
+            select: ['email', 'phone', 'fullName', 'roleId', 'type'],
+            fieldMap: {
+              fullName: 'full_name',
+              roleId: 'role_id',
+            },
+          },
+          enterprise: {
+            path: 'enterprise_id',
+            select: [
+              'userId', 'companyName', 'description', 'contactEmail',
+              'contactPhone', 'website', 'taxId', 'logoUrlId', 'isVerified'
+            ],
+            fieldMap: {
+              userId: 'user_id',
+              companyName: 'company_name',
+              contactEmail: 'contact_email',
+              contactPhone: 'contact_phone',
+              logoUrlId: 'logo_url_id',
+              isVerified: 'is_verified',
+            },
+          },
+          collaborators: {
+            path: 'collaborator_ids',
+            model: 'UserModel',
+            select: ['email', 'phone', 'fullName', 'roleId', 'type'],
+            fieldMap: {
+              fullName: 'full_name',
+              roleId: 'role_id',
+            },
+          },
+        },
+      });
+
+      if (select) {
+        queryBuilder = queryBuilder.select(select);
+      }
+      if (populate && populate.length > 0) {
+        populate.forEach((opt) => {
+          queryBuilder = queryBuilder.populate(opt);
+        });
+      }
+    } else {
+      queryBuilder = queryBuilder.populate('owner_id').populate('enterprise_id');
+    }
+
+    const docs = await queryBuilder.lean().exec();
 
     const hasNextPage = docs.length > limit;
     const results = hasNextPage ? docs.slice(0, limit) : docs;
     const nextCursor = hasNextPage ? results[results.length - 1]._id.toString() : null;
 
     return new PaginatedResponseDto(
-      results.map((doc) => this.mapToDto(doc)),
+      results.map((doc: any) => this.mapToDto(doc)),
       nextCursor,
     );
   }
 
   async findById(id: string, projection?: any): Promise<Nullable<CampaignDetailDto>> {
-    const doc = await this.campaignModel.findById(id).populate('owner_id').populate('enterprise_id').lean().exec();
+    let queryBuilder: any = this.campaignModel.findById(id);
+
+    if (projection) {
+      const { select, populate } = parseMongoProjection(projection, {
+        allowedFields: [
+          'id', 'ownerId', 'enterpriseId', 'budget', 'financialTarget',
+          'description', 'platformTarget', 'status', 'collaboratorIds', 'rawContents'
+        ],
+        fieldMap: {
+          ownerId: 'owner_id',
+          enterpriseId: 'enterprise_id',
+          collaboratorIds: 'collaborator_ids',
+          rawContents: 'raw_contents',
+          platformTarget: 'platform_target',
+          financialTarget: 'financial_target',
+        },
+        populate: {
+          owner: {
+            path: 'owner_id',
+            select: ['email', 'phone', 'fullName', 'roleId', 'type'],
+            fieldMap: {
+              fullName: 'full_name',
+              roleId: 'role_id',
+            },
+          },
+          enterprise: {
+            path: 'enterprise_id',
+            select: [
+              'userId', 'companyName', 'description', 'contactEmail',
+              'contactPhone', 'website', 'taxId', 'logoUrlId', 'isVerified'
+            ],
+            fieldMap: {
+              userId: 'user_id',
+              companyName: 'company_name',
+              contactEmail: 'contact_email',
+              contactPhone: 'contact_phone',
+              logoUrlId: 'logo_url_id',
+              isVerified: 'is_verified',
+            },
+          },
+          collaborators: {
+            path: 'collaborator_ids',
+            model: 'UserModel',
+            select: ['email', 'phone', 'fullName', 'roleId', 'type'],
+            fieldMap: {
+              fullName: 'full_name',
+              roleId: 'role_id',
+            },
+          },
+        },
+      });
+
+      if (select) {
+        queryBuilder = queryBuilder.select(select);
+      }
+      if (populate && populate.length > 0) {
+        populate.forEach((opt) => {
+          queryBuilder = queryBuilder.populate(opt);
+        });
+      }
+    } else {
+      queryBuilder = queryBuilder.populate('owner_id').populate('enterprise_id');
+    }
+
+    const doc = await queryBuilder.lean().exec();
     return doc ? this.mapToDto(doc) : null;
   }
 
@@ -106,6 +231,17 @@ export class MongoCampaignReadService implements ICampaignReadService {
         createdAt: doc.enterprise_id.created_at,
         updatedAt: doc.enterprise_id.updated_at,
       } : undefined,
+      collaborators: Array.isArray(doc.collaborator_ids) && doc.collaborator_ids.length > 0 && typeof doc.collaborator_ids[0] === 'object' ? doc.collaborator_ids.map((u: any) => ({
+        id: u._id.toString(),
+        email: u.email,
+        phone: u.phone,
+        fullName: u.full_name,
+        roleId: u.role_id ? u.role_id.toString() : '',
+        isEmailVerified: u.is_email_verified,
+        type: u.type,
+        createdAt: u.created_at,
+        updatedAt: u.updated_at,
+      })) : undefined,
     };
   }
 }

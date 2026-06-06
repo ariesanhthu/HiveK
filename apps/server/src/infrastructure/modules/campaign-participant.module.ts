@@ -21,6 +21,7 @@ import { CampaignParticipantGetListQueryHandler } from '@/application/queries/ca
 // Event Handlers
 import { LinkCampaignParticipantOutputFileHandler } from '@/application/events';
 import { CampaignParticipantController } from '@/presentation/controllers/campaign-participant.controller';
+import { CampaignParticipantResolver } from '@/presentation/resolvers/campaign-participant.resolver';
 
 const Handlers = [
   CampaignParticipantCreateCommandHandler,
@@ -46,6 +47,7 @@ import { CampaignModule } from './campaign.module';
   controllers: [CampaignParticipantController],
   providers: [
     ...Handlers,
+    CampaignParticipantResolver,
     {
       provide: CAMPAIGN_PARTICIPANT_REPOSITORY,
       useClass: MongoCampaignParticipantRepository,

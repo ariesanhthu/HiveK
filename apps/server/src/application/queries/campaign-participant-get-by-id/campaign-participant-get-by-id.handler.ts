@@ -14,7 +14,7 @@ export class CampaignParticipantGetByIdQueryHandler implements IQueryHandler<Cam
   ) {}
 
   async execute(query: CampaignParticipantGetByIdQuery): Promise<CampaignParticipantDto> {
-    const result = await this.readService.findById(query.id);
+    const result = await this.readService.findById(query.id, query.projection);
     if (!result) {
       throw new CampaignParticipantNotFoundException(query.id);
     }

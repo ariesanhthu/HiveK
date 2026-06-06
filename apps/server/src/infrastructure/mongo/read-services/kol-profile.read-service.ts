@@ -84,6 +84,10 @@ export class MongoKolProfileReadService implements IKolProfileReadService {
               roleId: 'role_id',
             },
           },
+          platforms: {
+            path: 'platforms.platform_id',
+            select: ['name', 'baseUrl', 'apiStatus', 'icon'],
+          },
         },
       });
 
@@ -131,7 +135,14 @@ export class MongoKolProfileReadService implements IKolProfileReadService {
       isVerified: doc.is_verified,
       scores: doc.scores || {},
       platforms: (doc.platforms || []).map((p: any) => ({
-        platformId: p.platform_id,
+        platformId: p.platform_id && typeof p.platform_id === 'object' && p.platform_id._id ? p.platform_id._id.toString() : p.platform_id?.toString() || '',
+        platform: p.platform_id && typeof p.platform_id === 'object' && p.platform_id._id ? {
+          id: p.platform_id._id.toString(),
+          name: p.platform_id.name,
+          baseUrl: p.platform_id.base_url || p.platform_id.baseUrl || '',
+          apiStatus: p.platform_id.api_status || p.platform_id.apiStatus || '',
+          icon: p.platform_id.icon ? p.platform_id.icon.toString() : null,
+        } : undefined,
         uniqueId: p.uniqueId ?? p.handle ?? '',
         externalId: p.external_id,
         followerCount: p.follower_count,

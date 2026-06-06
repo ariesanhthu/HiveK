@@ -13,6 +13,6 @@ export class CampaignParticipantGetListQueryHandler implements IQueryHandler<Cam
   ) {}
 
   async execute(query: CampaignParticipantGetListQuery): Promise<PaginatedResponseDto<CampaignParticipantDto>> {
-    return this.readService.findAll(query.filters);
+    return this.readService.findAll(query.filters, query.projection);
   }
 }

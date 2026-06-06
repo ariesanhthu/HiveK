@@ -1,16 +1,21 @@
 import { Field, ObjectType, ID, Float, Int } from '@nestjs/graphql';
 import { GraphQLJSONObject } from 'graphql-type-json';
+import { UserType } from './user.type';
+import { PlatformType } from './platform.type';
 
 @ObjectType()
 export class KolPlatformInfoType {
   @Field()
   platformId: string;
 
+  @Field(() => PlatformType, { nullable: true })
+  platform?: any;
+
   @Field()
   uniqueId: string;
 
-  @Field()
-  externalId: string;
+  @Field({ nullable: true })
+  externalId?: string;
 
   @Field(() => Int)
   followerCount: number;
@@ -23,36 +28,6 @@ export class KolPlatformInfoType {
 
   @Field(() => [String])
   categories: string[];
-}
-
-@ObjectType()
-export class UserType {
-  @Field(() => ID)
-  id: string;
-
-  @Field()
-  email: string;
-
-  @Field()
-  phone: string;
-
-  @Field()
-  fullName: string;
-
-  @Field()
-  roleId: string;
-
-  @Field()
-  isEmailVerified: boolean;
-
-  @Field()
-  type: string;
-
-  @Field()
-  createdAt: string;
-
-  @Field()
-  updatedAt: string;
 }
 
 @ObjectType()
@@ -69,20 +44,20 @@ export class KolProfileType {
   @Field()
   name: string;
 
-  @Field()
-  location: string;
+  @Field({ nullable: true })
+  location?: string;
 
-  @Field()
-  gender: string;
+  @Field({ nullable: true })
+  gender?: string;
 
-  @Field()
-  bio: string;
+  @Field({ nullable: true })
+  bio?: string;
 
-  @Field()
-  email: string;
+  @Field({ nullable: true })
+  email?: string;
 
-  @Field()
-  phone: string;
+  @Field({ nullable: true })
+  phone?: string;
 
   @Field(() => [KolPlatformInfoType])
   platforms: KolPlatformInfoType[];

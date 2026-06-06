@@ -13,6 +13,6 @@ export class CampaignGetListHandler implements IQueryHandler<CampaignGetListQuer
   ) {}
 
   async execute(query: CampaignGetListQuery): Promise<PaginatedResponseDto<CampaignDto>> {
-    return this.campaignReadService.findAll(query.filters);
+    return this.campaignReadService.findAll(query.filters, query.projection);
   }
 }

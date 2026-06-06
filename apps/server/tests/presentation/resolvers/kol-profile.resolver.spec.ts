@@ -58,4 +58,26 @@ describe('KolProfileResolver', () => {
     expect(executedQuery.projection).toBeInstanceOf(ProjectionDto);
     expect(executedQuery.projection.fields).toEqual(mockFields);
   });
+
+  describe('getKolProfiles', () => {
+    it('should construct correct list query and projection and dispatch to QueryBus', async () => {
+      const mockResult = { data: [], cursor: null };
+      queryBus.execute.mockResolvedValue(mockResult);
+
+      const mockFields = {
+        data: {
+          id: {},
+          name: {},
+        },
+      };
+      (graphqlFields as jest.Mock).mockReturnValue(mockFields);
+      const mockInfo = {} as GraphQLResolveInfo;
+      const filters = { limit: 10, cursor: 'cursor-1' } as any;
+
+      const result = await resolver.getKolProfiles(filters, mockInfo);
+
+      expect(result).toEqual(mockResult);
+      expect(queryBus.execute).toHaveBeenCalledTimes(1);
+    });
+  });
 });

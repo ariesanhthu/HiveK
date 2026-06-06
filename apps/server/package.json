@@ -20,7 +20,7 @@
     "test:e2e": "jest --config ./tests/jest-e2e.json --runInBand --forceExit"
   },
   "dependencies": {
-    "@apollo/server": "^4.13.0",
+    "@apollo/server": "^5.0.0",
     "@as-integrations/express5": "^1.1.2",
     "@nestjs-modules/mailer": "^2.3.6",
     "@nestjs/apollo": "^13.4.2",

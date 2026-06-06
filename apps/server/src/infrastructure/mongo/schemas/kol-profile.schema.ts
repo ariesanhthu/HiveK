@@ -3,7 +3,7 @@ import { HydratedDocument, Schema as MongooseSchema } from 'mongoose';
 
 @Schema({ _id: false })
 export class NativePlatformInfo {
-  @Prop({ type: MongooseSchema.Types.String, required: true })
+  @Prop({ type: MongooseSchema.Types.String, ref: 'PlatformModel', required: true })
   platform_id: string;
 
   @Prop({ type: MongooseSchema.Types.String, required: true })

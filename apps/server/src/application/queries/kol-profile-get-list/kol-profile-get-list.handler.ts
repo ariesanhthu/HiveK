@@ -13,6 +13,6 @@ export class KolProfileGetListHandler implements IQueryHandler<KolProfileGetList
   ) {}
 
   async execute(query: KolProfileGetListQuery): Promise<PaginatedResponseDto<KolProfileDto>> {
-    return this.kolProfileReadService.findAll(query.filters);
+    return this.kolProfileReadService.findAll(query.filters, query.projection);
   }
 }

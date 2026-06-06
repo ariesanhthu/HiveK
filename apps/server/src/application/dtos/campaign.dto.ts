@@ -36,4 +36,5 @@ export class CampaignDto extends createZodDto(CampaignDtoSchema) {}
 export class CampaignDetailDto extends CampaignDto {
   owner?: UserDto;
   enterprise?: EnterpriseDto;
+  collaborators?: UserDto[];
 }

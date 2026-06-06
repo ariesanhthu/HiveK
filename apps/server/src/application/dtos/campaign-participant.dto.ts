@@ -15,7 +15,15 @@ export const CampaignOutputDtoSchema = z.object({
   postedAt: z.string().nullable(),
 });
 
-export class CampaignOutputDto extends createZodDto(CampaignOutputDtoSchema) {}
+import { CampaignDetailDto } from './campaign.dto';
+import { KolProfileDetailDto } from './kol-profile.dto';
+import { PlatformDto } from './platform.dto';
+import { UploadedFileDto } from './uploaded-file.dto';
+
+export class CampaignOutputDto extends createZodDto(CampaignOutputDtoSchema) {
+  platform?: PlatformDto;
+  file?: UploadedFileDto;
+}
 
 export const CampaignParticipantDtoSchema = z.object({
   id: z.string(),
@@ -28,4 +36,7 @@ export const CampaignParticipantDtoSchema = z.object({
   outputs: z.array(CampaignOutputDtoSchema),
 });
 
-export class CampaignParticipantDto extends createZodDto(CampaignParticipantDtoSchema) {}
+export class CampaignParticipantDto extends createZodDto(CampaignParticipantDtoSchema) {
+  campaign?: CampaignDetailDto;
+  kolProfile?: KolProfileDetailDto;
+}

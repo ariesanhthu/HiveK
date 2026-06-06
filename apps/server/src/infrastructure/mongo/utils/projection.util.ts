@@ -5,6 +5,7 @@ export interface PopulateConfig {
   select: string[] | '*';
   fieldMap?: Record<string, string>;
   populate?: Record<string, PopulateConfig>;
+  model?: string;
 }
 
 export interface ProjectionConfig {
@@ -41,6 +42,9 @@ function parseMongoProjectionMap(
     if (config.populate && config.populate[field]) {
       const popConfig = config.populate[field];
       const popOption: any = { path: popConfig.path };
+      if ((popConfig as any).model) {
+        popOption.model = (popConfig as any).model;
+      }
 
       // Map inner select fields if defined
       if (popConfig.select !== '*') {

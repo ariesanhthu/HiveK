@@ -21,7 +21,7 @@ describe('CampaignGetByIdHandler', () => {
     const result = await handler.execute(query);
 
     expect(result).toEqual(mockCampaign);
-    expect(mockCampaignReadService.findById).toHaveBeenCalledWith('campaign-123');
+    expect(mockCampaignReadService.findById).toHaveBeenCalledWith('campaign-123', undefined);
   });
 
   it('should throw NotFoundException when campaign not found', async () => {

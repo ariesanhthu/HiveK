@@ -9,6 +9,7 @@ import { MongoCampaignRepository } from '@/infrastructure/mongo/repositories';
 import { CreateCampaignHandler, UpdateCampaignHandler, CampaignHardDeleteCommandHandler, CampaignSoftDeleteCommandHandler, CampaignRestoreCommandHandler, CampaignUpdateStatusCommandHandler, CampaignInviteCollaboratorCommandHandler, CampaignRevokeCollaboratorCommandHandler } from '@/application/commands';
 import { CampaignGetListHandler, CampaignGetByIdHandler } from '@/application/queries';
 import { CampaignController } from '@/presentation/controllers/campaign.controller';
+import { CampaignResolver } from '@/presentation/resolvers/campaign.resolver';
 
 import { LinkCampaignRawHandler } from '@/application/events';
 
@@ -39,6 +40,7 @@ import { UserModule } from './user.module';
   controllers: [CampaignController],
   providers: [
     ...Handlers,
+    CampaignResolver,
     {
       provide: CAMPAIGN_READ_SERVICE,
       useClass: MongoCampaignReadService,

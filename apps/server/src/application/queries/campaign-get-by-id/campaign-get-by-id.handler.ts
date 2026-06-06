@@ -13,7 +13,7 @@ export class CampaignGetByIdHandler implements IQueryHandler<CampaignGetByIdQuer
   ) {}
 
   async execute(query: CampaignGetByIdQuery): Promise<CampaignDto> {
-    const campaign = await this.campaignReadService.findById(query.id);
+    const campaign = await this.campaignReadService.findById(query.id, query.projection);
     if (!campaign) {
       throw new CampaignNotFoundException(query.id);
     }

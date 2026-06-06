@@ -21,7 +21,7 @@ describe('CampaignParticipantGetByIdQueryHandler', () => {
     const result = await handler.execute(query);
 
     expect(result).toEqual(mockDto);
-    expect(mockReadService.findById).toHaveBeenCalledWith('participant-123');
+    expect(mockReadService.findById).toHaveBeenCalledWith('participant-123', undefined);
   });
 
   it('should throw CampaignParticipantNotFoundException when not found', async () => {

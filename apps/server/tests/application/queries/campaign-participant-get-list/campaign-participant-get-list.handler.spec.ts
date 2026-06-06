@@ -24,6 +24,6 @@ describe('CampaignParticipantGetListQueryHandler', () => {
     const result = await handler.execute(query);
 
     expect(result).toEqual(mockListDto);
-    expect(mockReadService.findAll).toHaveBeenCalledWith(input);
+    expect(mockReadService.findAll).toHaveBeenCalledWith(input, undefined);
   });
 });
