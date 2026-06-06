@@ -22,7 +22,7 @@ export class GqlThrottlerGuard extends ThrottlerGuard {
     if (type === 'http' && typeof context.switchToHttp === 'function') {
       const req = context.switchToHttp().getRequest();
       // Bypass rate limiting for GraphQL playground GET requests
-      if (req && req.method === 'GET' && req.url?.includes('/graphql')) {
+      if (req && req.method === 'GET' && (req.url?.includes('/graphql') || req.url?.includes('/hivek/graphql'))) {
         return true;
       }
     }

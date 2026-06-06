@@ -23,7 +23,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
     if (type === 'http' && typeof context.switchToHttp === 'function') {
       const req = context.switchToHttp().getRequest();
       // Bypass authentication for GraphQL playground GET requests
-      if (req && req.method === 'GET' && req.url?.includes('/graphql')) {
+      if (req && req.method === 'GET' && (req.url?.includes('/graphql') || req.url?.includes('/hivek/graphql'))) {
         return true;
       }
     } else if (type === 'graphql') {

@@ -47,6 +47,7 @@ import { DomainExceptionFilter } from './presentation/middleware/filters/domain-
     RabbitMQModule,
     WebSocketModule,
     GraphQLModule.forRoot<ApolloDriverConfig>({
+      path: '/hivek/graphql',
       driver: ApolloDriver,
       autoSchemaFile: join(process.cwd(), 'src/infrastructure/graphql/schema.gql'),
       playground: true,
