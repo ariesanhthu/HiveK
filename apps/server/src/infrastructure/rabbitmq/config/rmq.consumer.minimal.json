@@ -4,8 +4,8 @@
   "service": "hivek.server",
   "uses_producer_contract": "./rabbitmq.producer.minimal.json",
   "connection": {
-    "uri": "amqp://guest:guest@localhost:5672/",
-    "vhost": "/",
+    "uri": "{{RABBITMQ_URI}}",
+    "vhost": "/ospvaoft",
     "heartbeat": 60,
     "connection_timeout_ms": 10000,
     "reconnect": {

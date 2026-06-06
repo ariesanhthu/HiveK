@@ -3,6 +3,7 @@ import { ConfigService } from "@nestjs/config";
 import { Transport, RmqOptions } from "@nestjs/microservices";
 import * as fs from "fs";
 import * as path from "path";
+import { getRmqUri } from "../rabbitmq/rmq.env";
 import {
   RabbitMQProducerConfig,
   RabbitMQConsumerConfig,
@@ -24,7 +25,8 @@ export class NestConfigService extends ConfigService {
       this.logger.debug(`Reading RMQ producer config from: ${resolvedPath}`);
 
       const fileContent = fs.readFileSync(resolvedPath, "utf-8");
-      const config = JSON.parse(fileContent) as RabbitMQProducerConfig;
+      const rawConfig = JSON.parse(fileContent);
+      const config = this.replacePlaceholders(rawConfig) as RabbitMQProducerConfig;
 
       if (config.role !== "producer") {
         throw new BadRequestException(
@@ -56,7 +58,8 @@ export class NestConfigService extends ConfigService {
       this.logger.debug(`Reading RMQ consumer config from: ${resolvedPath}`);
 
       const fileContent = fs.readFileSync(resolvedPath, "utf-8");
-      const config = JSON.parse(fileContent) as RabbitMQConsumerConfig;
+      const rawConfig = JSON.parse(fileContent);
+      const config = this.replacePlaceholders(rawConfig) as RabbitMQConsumerConfig;
 
       if (config.role !== "consumer") {
         throw new BadRequestException(
@@ -82,15 +85,21 @@ export class NestConfigService extends ConfigService {
    * @returns Absolute file path
    */
   private resolvePath(filePath: string): string {
+    // Resolve relative to the RabbitMQ config directory (src/infrastructure/rabbitmq/config)
     if (path.isAbsolute(filePath)) {
       return filePath;
     }
-
-    // Resolve relative to the directory of this service: src/infrastructure/nest-config/
-    // We go 2 levels up to reach src/ (or dist/src/), and then locate config/
-    const configDir = path.join(__dirname, "../..", "config");
+    const configDir = path.join(__dirname, "../..", "infrastructure", "rabbitmq", "config");
     return path.join(configDir, filePath);
   }
+
+  /** Replace placeholder {{RABBITMQ_URI}} with actual URI from env */
+  private replacePlaceholders<T>(obj: T): T {
+    const json = JSON.stringify(obj);
+    const replaced = json.replace(/"\{\{RABBITMQ_URI\}\}"/g, `"${getRmqUri()}"`);
+    return JSON.parse(replaced) as T;
+  }
+
 
   /**
    * Convert RabbitMQ Producer config to NestJS ClientProxy options (for clients/producers)

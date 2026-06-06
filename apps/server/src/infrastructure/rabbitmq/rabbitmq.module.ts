@@ -21,7 +21,7 @@ export const RABBITMQ_CONSUMER_CLIENT = Symbol('RABBITMQ_CONSUMER_CLIENT');
     {
       provide: RABBITMQ_CONFIG,
       useFactory: (nestConfigService: NestConfigService) => {
-        return nestConfigService.readRMQProducerConfig('rmq/rmq.producer.minimal.json');
+        return nestConfigService.readRMQProducerConfig('rmq.producer.minimal.json');
       },
       inject: [NestConfigService],
     },
@@ -29,7 +29,7 @@ export const RABBITMQ_CONSUMER_CLIENT = Symbol('RABBITMQ_CONSUMER_CLIENT');
     {
       provide: RABBITMQ_CONSUMER_CONFIG,
       useFactory: (nestConfigService: NestConfigService) => {
-        return nestConfigService.readRMQConsumerConfig('rmq/rmq.consumer.minimal.json');
+        return nestConfigService.readRMQConsumerConfig('rmq.consumer.minimal.json');
       },
       inject: [NestConfigService],
     },

@@ -32,7 +32,7 @@ export class RawRabbitMQProducerClient {
     }
 
     try {
-      this.logger.log(`Connecting to RabbitMQ at ${this.config.connection.uri}...`);
+      this.logger.log(`Connecting to RabbitMQ at ${this.config.connection.vhost}...`);
       this.connection = await amqp.connect(this.config.connection.uri);
 
       // Handle connection errors

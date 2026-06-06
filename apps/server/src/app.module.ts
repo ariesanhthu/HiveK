@@ -48,7 +48,7 @@ import { DomainExceptionFilter } from './presentation/middleware/filters/domain-
     WebSocketModule,
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
-      autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
+      autoSchemaFile: join(process.cwd(), 'src/infrastructure/graphql/schema.gql'),
       playground: true,
       context: ({ req, res }) => ({ req, res }),
     }),

@@ -6,6 +6,10 @@
     "deleteOutDir": true,
     "assets": [
       {
+        "include": "infrastructure/rabbitmq/**/*.json",
+        "outDir": "dist/src"
+      },
+      {
         "include": "config/**/*.json",
         "outDir": "dist/src"
       },
