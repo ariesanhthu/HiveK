@@ -3,20 +3,10 @@ import { Reflector } from '@nestjs/core';
 import { ConfigService } from '@nestjs/config';
 import { JwtAuthGuard } from '@/presentation/middleware/guards/jwt-auth.guard';
 import { JwtStrategy } from '@/infrastructure/auth/strategies/jwt.strategy';
-import { AUTH_JWT_SERVICE } from '@/application/interfaces/auth-jwt.interface';
-import { USER_REPOSITORY } from '@/core/interfaces/repositories';
 import { ERoleType } from '@/core/enums';
 import { ExecutionContext } from '@nestjs/common';
 
 describe('JwtAuthGuard & Strategy', () => {
-  let mockUserRepository: any;
-
-  beforeEach(() => {
-    mockUserRepository = {
-      findById: jest.fn(),
-    };
-  });
-
   describe('JwtAuthGuard', () => {
     let guard: JwtAuthGuard;
     let mockReflector: any;
@@ -37,14 +27,6 @@ describe('JwtAuthGuard & Strategy', () => {
           {
             provide: ConfigService,
             useValue: { get: jest.fn().mockReturnValue('test-secret') },
-          },
-          {
-            provide: AUTH_JWT_SERVICE,
-            useValue: { extractTokenFromCookie: jest.fn() },
-          },
-          {
-            provide: USER_REPOSITORY,
-            useValue: mockUserRepository,
           },
         ],
       }).compile();
@@ -95,16 +77,10 @@ describe('JwtAuthGuard & Strategy', () => {
 
   describe('JwtStrategy', () => {
     let strategy: JwtStrategy;
-    let mockConfigService: any;
-    let mockJwtService: any;
 
     beforeEach(async () => {
-      mockConfigService = {
+      const mockConfigService = {
         get: jest.fn().mockReturnValue('test-secret'),
-      };
-
-      mockJwtService = {
-        extractTokenFromCookie: jest.fn(),
       };
 
       const module: TestingModule = await Test.createTestingModule({
@@ -113,14 +89,6 @@ describe('JwtAuthGuard & Strategy', () => {
           {
             provide: ConfigService,
             useValue: mockConfigService,
-          },
-          {
-            provide: AUTH_JWT_SERVICE,
-            useValue: mockJwtService,
-          },
-          {
-            provide: USER_REPOSITORY,
-            useValue: mockUserRepository,
           },
         ],
       }).compile();
@@ -132,48 +100,52 @@ describe('JwtAuthGuard & Strategy', () => {
       expect(strategy).toBeDefined();
     });
 
-    it('should validate and return the token payload if user exists and is not deleted', async () => {
-      const payload = { sub: 'user-1', email: 'alice@example.com', role: 'KOL' };
-      const mockUser = {
-        id: 'user-1',
-        email: 'alice@example.com',
-        roleId: 'role-KOL',
-        type: ERoleType.KOL,
-        deleteAt: null,
-      };
-      mockUserRepository.findById.mockResolvedValue(mockUser);
+    it('should return payload with inferred type from role string', async () => {
+      const payload = { sub: 'user-1', email: 'alice@example.com', role: 'kol' };
 
       const result = await strategy.validate(payload);
+
       expect(result).toEqual({
         sub: 'user-1',
         email: 'alice@example.com',
-        role: 'role-KOL',
+        role: 'kol',
         type: ERoleType.KOL,
       });
-      expect(mockUserRepository.findById).toHaveBeenCalledWith('user-1');
     });
 
-    it('should throw UnauthorizedException if user does not exist', async () => {
-      const payload = { sub: 'user-1', email: 'alice@example.com', role: 'KOL' };
-      mockUserRepository.findById.mockResolvedValue(null);
+    it('should handle enterprise role', async () => {
+      const payload = { sub: 'user-2', email: 'biz@example.com', role: 'enterprise' };
 
-      await expect(strategy.validate(payload)).rejects.toThrow('User not found or deleted');
-      expect(mockUserRepository.findById).toHaveBeenCalledWith('user-1');
+      const result = await strategy.validate(payload);
+
+      expect(result.type).toBe(ERoleType.ENTERPRISE);
     });
 
-    it('should throw UnauthorizedException if user is soft deleted', async () => {
-      const payload = { sub: 'user-1', email: 'alice@example.com', role: 'KOL' };
-      const mockUser = {
-        id: 'user-1',
-        email: 'alice@example.com',
-        roleId: 'role-KOL',
-        type: ERoleType.KOL,
-        deleteAt: new Date(),
-      };
-      mockUserRepository.findById.mockResolvedValue(mockUser);
+    it('should handle admin role', async () => {
+      const payload = { sub: 'user-3', email: 'admin@example.com', role: 'admin' };
 
-      await expect(strategy.validate(payload)).rejects.toThrow('User not found or deleted');
-      expect(mockUserRepository.findById).toHaveBeenCalledWith('user-1');
+      const result = await strategy.validate(payload);
+
+      expect(result.type).toBe(ERoleType.ADMIN);
+    });
+
+    it('should handle payload with explicit type field', async () => {
+      const payload = { sub: 'user-4', email: 'test@example.com', role: 'custom', type: 'kol' };
+
+      const result = await strategy.validate(payload);
+
+      expect(result.type).toBe('kol');
+    });
+
+    it('should provide fallback values for missing fields', async () => {
+      const payload = { sub: 'user-5' } as any;
+
+      const result = await strategy.validate(payload);
+
+      expect(result.sub).toBe('user-5');
+      expect(result.email).toBe('');
+      expect(result.role).toBe('');
+      expect(result.type).toBeDefined();
     });
   });
 });

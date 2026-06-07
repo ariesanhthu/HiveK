@@ -4,10 +4,10 @@ import { HandlebarsAdapter } from '@nestjs-modules/mailer/adapters/handlebars.ad
 import { ConfigService } from '@nestjs/config';
 import * as path from 'path';
 import { LOGGER_SERVICE, MAILER_SERVICE } from '@/application/interfaces';
-import { NestLoggerService } from '../nest-logger/nest-logger.service';
 import { STORAGE_SERVICE } from '@/core/interfaces/storage';
 import { CloudinaryStorageService } from '../cloudinary/cloudinary-storage.service';
 import { NestjsMailerService } from '../mailer/nestjs-mailer.service';
+import { WinstonLoggerService } from '../nest-logger/winston-logger.service';
 
 @Global()
 @Module({
@@ -40,7 +40,7 @@ import { NestjsMailerService } from '../mailer/nestjs-mailer.service';
   providers: [
     {
       provide: LOGGER_SERVICE,
-      useClass: NestLoggerService
+      useClass: WinstonLoggerService
     },
     {
       provide: STORAGE_SERVICE,

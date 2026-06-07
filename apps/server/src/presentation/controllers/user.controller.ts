@@ -2,18 +2,20 @@ import { Controller, Get, Post, Patch, Delete, Param, Query, Body, HttpCode, Htt
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { UserGetByIdQuery, UserGetListQuery } from '@/application/queries';
 import { UserCreateCommand, UserUpdateCommand, UserSoftDeleteCommand, UserHardDeleteCommand, UserRestoreCommand } from '@/application/commands';
-import { UserDto, UserFilterDto, UserCreateInputDto, UserUpdateInputDto, SoftDeleteInputDto } from '@/application/dtos';
+import { UserDto, UserFilterDto, SoftDeleteInputDto } from '@/application/dtos';
 import { ApiTags, ApiOperation, ApiBearerAuth, ApiSecurity } from '@nestjs/swagger';
-import { JwtAuthGuard } from '../middleware/guards';
+import { JwtAuthGuard, RolesGuard } from '../middleware/guards';
 import { UseGuards } from '@nestjs/common';
 import { Roles } from '@/presentation/decorators/roles.decorator';
 import { ERoleType } from '@/core/enums';
 import { PaginatedResponseDto } from '@/shared/dtos/pagination.dto';
+import { UserCreateInputDto } from '@/application/commands/user-create/user-create.dto';
+import { UserUpdateInputDto } from '@/application/commands/user-update/user-update.dto';
 
 @ApiTags('users')
 @ApiBearerAuth()
 @ApiSecurity('x-api-key')
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, RolesGuard)
 @Roles(ERoleType.ADMIN)
 @Controller('users')
 export class UserController {

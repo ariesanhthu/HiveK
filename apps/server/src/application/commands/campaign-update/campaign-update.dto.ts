@@ -1,10 +1,7 @@
-import { CampaignDtoSchema } from '@/application/dtos/campaign.dto';
+import { z } from 'zod';
 import { createZodDto } from 'nestjs-zod';
+import { CampaignCreateInputSchema } from '../campaign-create/campaign-create.dto';
 
-export const CampaignUpdateInputDtoSchema = CampaignDtoSchema.omit({
-  id: true,
-  status: true,
-  collaboratorIds: true,
-  rawContents: true,
-}).partial();
-export class CampaignUpdateInputDto extends createZodDto(CampaignUpdateInputDtoSchema) {}
+export const CampaignUpdateInputSchema = CampaignCreateInputSchema.partial();
+
+export class CampaignUpdateInputDto extends createZodDto(CampaignUpdateInputSchema) {}

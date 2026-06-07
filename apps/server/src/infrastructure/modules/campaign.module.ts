@@ -1,55 +1,60 @@
 import { Module } from '@nestjs/common';
-import { MongooseModule } from '@nestjs/mongoose';
 import { CqrsModule } from '@nestjs/cqrs';
-import { CampaignModel, CampaignSchema } from '@/infrastructure/mongo/schemas';
-import { CAMPAIGN_READ_SERVICE } from '@/application/interfaces';
-import { CAMPAIGN_REPOSITORY } from '@/core/interfaces/repositories';
-import { MongoCampaignReadService } from '@/infrastructure/mongo/read-services';
-import { MongoCampaignRepository } from '@/infrastructure/mongo/repositories';
-import { CreateCampaignHandler, UpdateCampaignHandler, CampaignHardDeleteCommandHandler, CampaignSoftDeleteCommandHandler, CampaignRestoreCommandHandler, CampaignUpdateStatusCommandHandler, CampaignInviteCollaboratorCommandHandler, CampaignRevokeCollaboratorCommandHandler } from '@/application/commands';
-import { CampaignGetListHandler, CampaignGetByIdHandler } from '@/application/queries';
-import { CampaignController } from '@/presentation/controllers/campaign.controller';
-import { CampaignResolver } from '@/presentation/resolvers/campaign.resolver';
 
-import { LinkCampaignRawHandler } from '@/application/events';
-
-const Handlers = [
-  CreateCampaignHandler,
-  UpdateCampaignHandler,
+// Commands
+import {
+  CampaignCreateCommandHandler,
+  CampaignUpdateCommandHandler,
   CampaignHardDeleteCommandHandler,
   CampaignSoftDeleteCommandHandler,
   CampaignRestoreCommandHandler,
   CampaignUpdateStatusCommandHandler,
   CampaignInviteCollaboratorCommandHandler,
   CampaignRevokeCollaboratorCommandHandler,
+} from '@/application/commands';
+
+// Queries
+import { CampaignGetListHandler, CampaignGetByIdHandler } from '@/application/queries';
+
+// Events
+import { LinkCampaignRawHandler } from '@/application/events';
+
+// Presentation
+import { CampaignController } from '@/presentation/controllers/campaign.controller';
+import { CampaignResolver } from '@/presentation/resolvers/campaign.resolver';
+
+// Modules
+import { UserModule } from './user.module';
+
+const COMMAND_HANDLERS = [
+  CampaignCreateCommandHandler,
+  CampaignUpdateCommandHandler,
+  CampaignHardDeleteCommandHandler,
+  CampaignSoftDeleteCommandHandler,
+  CampaignRestoreCommandHandler,
+  CampaignUpdateStatusCommandHandler,
+  CampaignInviteCollaboratorCommandHandler,
+  CampaignRevokeCollaboratorCommandHandler,
+];
+
+const QUERY_HANDLERS = [
   CampaignGetListHandler,
   CampaignGetByIdHandler,
+];
+
+const EVENT_HANDLERS = [
   LinkCampaignRawHandler,
 ];
 
-import { UserModule } from './user.module';
-
 @Module({
-  imports: [
-    CqrsModule,
-    UserModule,
-    MongooseModule.forFeature([
-      { name: CampaignModel.name, schema: CampaignSchema },
-    ]),
-  ],
+  imports: [CqrsModule, UserModule],
   controllers: [CampaignController],
   providers: [
-    ...Handlers,
+    ...COMMAND_HANDLERS,
+    ...QUERY_HANDLERS,
+    ...EVENT_HANDLERS,
     CampaignResolver,
-    {
-      provide: CAMPAIGN_READ_SERVICE,
-      useClass: MongoCampaignReadService,
-    },
-    {
-      provide: CAMPAIGN_REPOSITORY,
-      useClass: MongoCampaignRepository,
-    },
   ],
-  exports: [CAMPAIGN_READ_SERVICE, CAMPAIGN_REPOSITORY],
+  exports: [],
 })
-export class CampaignModule { }
+export class CampaignModule {}

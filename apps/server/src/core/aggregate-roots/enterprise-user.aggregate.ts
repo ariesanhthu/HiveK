@@ -40,10 +40,11 @@ export class EnterpriseUserRoot extends UserRoot<EnterpriseUserProps> {
   }
 
   public addEnterprise(enterpriseId: string): void {
-    if (!this.props.enterpriseIds.includes(enterpriseId)) {
-      this.props.enterpriseIds.push(enterpriseId);
-      this.props.updatedAt = new Date();
+    if (this.props.enterpriseIds.includes(enterpriseId)) {
+      return; // Or throw an error if you prefer strictness
     }
+    this.props.enterpriseIds.push(enterpriseId);
+    this.props.updatedAt = new Date();
   }
 
   public revokeEnterprise(enterpriseId: string): void {

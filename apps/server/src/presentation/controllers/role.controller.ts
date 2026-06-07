@@ -9,11 +9,13 @@ import {
   RoleHardDeleteCommand,
   RoleRestoreCommand,
 } from '@/application/commands';
-import { RoleDto, RoleFilterDto, RoleCreateInputDto, RoleUpdateInputDto, SoftDeleteInputDto } from '@/application/dtos';
+import { RoleDto, RoleFilterDto, SoftDeleteInputDto } from '@/application/dtos';
 import { JwtAuthGuard, RolesGuard } from '../middleware/guards';
 import { Roles } from '@/presentation/decorators/roles.decorator';
 import { ERoleType } from '@/core/enums';
 import { PaginatedResponseDto } from '@/shared/dtos/pagination.dto';
+import { RoleCreateInputDto } from '@/application/commands/role-create/role-create.dto';
+import { RoleUpdateInputDto } from '@/application/commands/role-update/role-update.dto';
 
 @ApiTags('roles')
 @ApiBearerAuth()
@@ -48,6 +50,7 @@ export class RoleController {
   @Get()
   @ApiOperation({ summary: 'Get paginated list of roles' })
   async findAll(@Query() filters: RoleFilterDto): Promise<PaginatedResponseDto<RoleDto>> {
+    console.log("RUNNING")
     return this.queryBus.execute<RoleGetListQuery, PaginatedResponseDto<RoleDto>>(
       new RoleGetListQuery(filters),
     );

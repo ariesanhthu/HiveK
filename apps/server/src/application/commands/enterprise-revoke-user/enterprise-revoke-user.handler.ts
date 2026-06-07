@@ -4,7 +4,7 @@ import { USER_REPOSITORY, ENTERPRISE_REPOSITORY, type IUserRepository, type IEnt
 import { EnterpriseRevokeUserCommand } from './enterprise-revoke-user.command';
 import { EnterpriseUserRoot } from '@/core/aggregate-roots';
 import { UserNotFoundException, InvalidUserTypeException, EnterpriseNotFoundException, EnterpriseForbiddenException } from '@/core/exceptions';
-import { IUnitOfWork, UNIT_OF_WORK } from '@/application/interfaces';
+import { type IUnitOfWork, UNIT_OF_WORK } from '@/application/interfaces';
 
 @CommandHandler(EnterpriseRevokeUserCommand)
 export class EnterpriseRevokeUserCommandHandler implements ICommandHandler<EnterpriseRevokeUserCommand, void> {

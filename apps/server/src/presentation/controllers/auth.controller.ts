@@ -1,7 +1,7 @@
 import { Controller, Post, Body, HttpCode, HttpStatus, Get, UseGuards, Res, Req, BadRequestException } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import type { Response, Request } from 'express';
-import { ApiTags, ApiOperation, ApiBearerAuth, ApiSecurity } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiBearerAuth, ApiSecurity, ApiTooManyRequestsResponse } from '@nestjs/swagger';
 import {
   AuthSignInCommand,
   AuthSignUpCommand,
@@ -26,10 +26,12 @@ import { JwtAuthGuard } from '@/presentation/middleware/guards/jwt-auth.guard';
 import { CurrentUser } from '@/presentation/decorators/current-user.decorator';
 import { Public } from '@/presentation/decorators/public.decorator';
 import { AuthGuard } from '@nestjs/passport';
+import { Throttle } from '@nestjs/throttler';
 
 @ApiTags('auth')
 @ApiBearerAuth()
 @ApiSecurity('x-api-key')
+@UseGuards(JwtAuthGuard)
 @Controller('auth')
 export class AuthController {
   constructor(
@@ -75,22 +77,28 @@ export class AuthController {
 
   @Public()
   @Post('sign-up/kol')
-  @ApiOperation({ summary: 'Sign up as KOL' })
+  @Throttle({ default: { limit: 5, ttl: 60000 } })
+  @ApiOperation({ summary: 'Sign up as KOL (Rate limited: 5/min)' })
+  @ApiTooManyRequestsResponse({ description: 'Too many requests' })
   async signUpKOL(@Body() input: AuthSignUpInputDto) {
     return this.commandBus.execute(new AuthSignUpCommand(ERoleType.KOL, input));
   }
 
   @Public()
   @Post('sign-up/enterprise')
-  @ApiOperation({ summary: 'Sign up as Enterprise' })
+  @Throttle({ default: { limit: 5, ttl: 60000 } })
+  @ApiOperation({ summary: 'Sign up as Enterprise (Rate limited: 5/min)' })
+  @ApiTooManyRequestsResponse({ description: 'Too many requests' })
   async signUpEnterprise(@Body() input: AuthSignUpInputDto) {
     return this.commandBus.execute(new AuthSignUpCommand(ERoleType.ENTERPRISE, input));
   }
 
   @Public()
   @Post('sign-in')
+  @Throttle({ default: { limit: 5, ttl: 60000 } })
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'Sign in' })
+  @ApiOperation({ summary: 'Sign in (Rate limited: 5/min)' })
+  @ApiTooManyRequestsResponse({ description: 'Too many requests' })
   async signIn(
     @Body() input: AuthSignInInputDto,
     @Res({ passthrough: true }) response: Response,
@@ -181,8 +189,10 @@ export class AuthController {
 
   @Public()
   @Post('send-otp')
+  @Throttle({ default: { limit: 5, ttl: 60000 } })
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'Send OTP verification code' })
+  @ApiOperation({ summary: 'Send OTP verification code (Rate limited: 5/min)' })
+  @ApiTooManyRequestsResponse({ description: 'Too many requests' })
   async sendOtp(@Body() input: AuthSendOtpInputDto) {
     return this.commandBus.execute(new AuthSendOtpCommand(input));
   }

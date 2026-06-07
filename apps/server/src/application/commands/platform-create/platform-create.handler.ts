@@ -8,7 +8,7 @@ import { PlatformDto } from '@/application/dtos';
 import { PlatformMapper } from '@/application/mappers';
 
 @CommandHandler(PlatformCreateCommand)
-export class CreatePlatformHandler implements ICommandHandler<PlatformCreateCommand, PlatformDto> {
+export class PlatformCreateCommandHandler implements ICommandHandler<PlatformCreateCommand, PlatformDto> {
   constructor(
     @Inject(PLATFORM_REPOSITORY)
     private readonly platformRepository: IPlatformRepository,

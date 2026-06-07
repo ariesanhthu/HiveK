@@ -7,7 +7,7 @@ import { UploadedFileDto } from './uploaded-file.dto';
 
 const BaseUserDtoSchema = z.object({
   id: z.string(),
-  email: z.string().email(),
+  email: z.string(),
   phone: z.string(),
   fullName: z.string(),
   avatar: z.string().nullable(),
@@ -45,38 +45,12 @@ export const UserFilterSchema = CursorPaginationRequestSchema.extend({
   email: z.string().optional(),
   phone: z.string().optional(),
   fullName: z.string().optional(),
-  type: z.nativeEnum(ERoleType).optional(),
+  type: z.enum(ERoleType).optional(),
   roleId: z.string().optional(),
   isEmailVerified: z.preprocess((val) => val === 'true' || val === true, z.boolean()).optional(),
 });
 
 export class UserFilterDto extends createZodDto(UserFilterSchema) {}
-
-export const UserCreateInputSchema = z.object({
-  email: z.string().email(),
-  phone: z.string().default('0000000000'),
-  password: z.string().min(6),
-  fullName: z.string().min(1),
-  avatar: z.string().nullable().optional().default(null),
-  type: z.nativeEnum(ERoleType),
-  roleId: z.string(),
-  isEmailVerified: z.boolean().optional().default(false),
-  enterpriseIds: z.array(z.string()).optional().default([]),
-});
-
-export class UserCreateInputDto extends createZodDto(UserCreateInputSchema) {}
-
-export const UserUpdateInputSchema = z.object({
-  phone: z.string().optional(),
-  password: z.string().min(6).optional(),
-  fullName: z.string().min(1).optional(),
-  avatar: z.string().nullable().optional(),
-  roleId: z.string().optional(),
-  isEmailVerified: z.boolean().optional(),
-  enterpriseIds: z.array(z.string()).optional(),
-});
-
-export class UserUpdateInputDto extends createZodDto(UserUpdateInputSchema) {}
 
 type DistributiveOmit<T, K extends keyof any> = T extends any ? Omit<T, K> : never;
 

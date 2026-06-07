@@ -7,7 +7,7 @@ import { CampaignDto } from '@/application/dtos';
 import { CampaignMapper } from '@/application/mappers';
 
 @CommandHandler(CampaignCreateCommand)
-export class CreateCampaignHandler implements ICommandHandler<CampaignCreateCommand, CampaignDto> {
+export class CampaignCreateCommandHandler implements ICommandHandler<CampaignCreateCommand, CampaignDto> {
   constructor(
     @Inject(CAMPAIGN_REPOSITORY)
     private readonly campaignRepository: ICampaignRepository,

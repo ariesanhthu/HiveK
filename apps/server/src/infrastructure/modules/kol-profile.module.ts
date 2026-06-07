@@ -1,48 +1,40 @@
 import { Module } from '@nestjs/common';
-import { MongooseModule } from '@nestjs/mongoose';
 import { CqrsModule } from '@nestjs/cqrs';
-import { KolProfileModel, KolProfileSchema, PlatformModel, PlatformSchema } from '@/infrastructure/mongo/schemas';
-import { KOL_PROFILE_READ_SERVICE } from '@/application/interfaces';
-import { KOL_PROFILE_REPOSITORY } from '@/core/interfaces/repositories';
-import { MongoKolProfileReadService } from '@/infrastructure/mongo/read-services';
-import { MongoKolProfileRepository } from '@/infrastructure/mongo/repositories';
-import { KolProfileGetListHandler, KolProfileGetByIdHandler, KolProfileGetHandlesDevHandler } from '@/application/queries';
-import { UpdateKolProfileHandler, KolProfileSoftDeleteCommandHandler, KolProfileHardDeleteCommandHandler, KolProfileRestoreCommandHandler, KolProfileVerifyPlatformAccountHandler } from '@/application/commands';
-import { KolProfileController } from '@/presentation/controllers/kol-profile.controller';
-import { KolProfileResolver } from '@/presentation/resolvers/kol-profile.resolver';
 
-const Handlers = [
-  KolProfileGetListHandler,
-  KolProfileGetByIdHandler,
-  KolProfileGetHandlesDevHandler,
-  UpdateKolProfileHandler,
+// Commands
+import {
+  KolProfileUpdateCommandHandler,
   KolProfileSoftDeleteCommandHandler,
   KolProfileHardDeleteCommandHandler,
   KolProfileRestoreCommandHandler,
-  KolProfileVerifyPlatformAccountHandler,
+  KolProfileVerifyPlatformAccountCommandHandler,
+} from '@/application/commands';
+
+// Queries
+import { KolProfileGetListHandler, KolProfileGetByIdHandler, KolProfileGetHandlesDevHandler } from '@/application/queries';
+
+// Presentation
+import { KolProfileController } from '@/presentation/controllers/kol-profile.controller';
+import { KolProfileResolver } from '@/presentation/resolvers/kol-profile.resolver';
+
+const COMMAND_HANDLERS = [
+  KolProfileUpdateCommandHandler,
+  KolProfileSoftDeleteCommandHandler,
+  KolProfileHardDeleteCommandHandler,
+  KolProfileRestoreCommandHandler,
+  KolProfileVerifyPlatformAccountCommandHandler,
+];
+
+const QUERY_HANDLERS = [
+  KolProfileGetListHandler,
+  KolProfileGetByIdHandler,
+  KolProfileGetHandlesDevHandler,
 ];
 
 @Module({
-  imports: [
-    CqrsModule,
-    MongooseModule.forFeature([
-      { name: KolProfileModel.name, schema: KolProfileSchema },
-      { name: PlatformModel.name, schema: PlatformSchema },
-    ]),
-  ],
+  imports: [CqrsModule],
   controllers: [KolProfileController],
-  providers: [
-    ...Handlers,
-    KolProfileResolver,
-    {
-      provide: KOL_PROFILE_READ_SERVICE,
-      useClass: MongoKolProfileReadService,
-    },
-    {
-      provide: KOL_PROFILE_REPOSITORY,
-      useClass: MongoKolProfileRepository,
-    },
-  ],
-  exports: [KOL_PROFILE_READ_SERVICE, KOL_PROFILE_REPOSITORY],
+  providers: [...COMMAND_HANDLERS, ...QUERY_HANDLERS, KolProfileResolver],
+  exports: [],
 })
-export class KolProfileModule { }
+export class KolProfileModule {}

@@ -9,7 +9,9 @@ export class AuthService {
     @Inject(AUTH_JWT_SERVICE)
     private readonly jwtService: IAuthJwtService,
     private readonly configService: ConfigService,
-  ) {}
+  ) {
+    console.log('=== AuthService constructor executed ===');
+  }
 
   normalizeEmail(email: string): string {
     return email.trim().toLowerCase();

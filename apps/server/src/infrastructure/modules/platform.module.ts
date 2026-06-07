@@ -1,50 +1,40 @@
 import { Module } from '@nestjs/common';
-import { MongooseModule } from '@nestjs/mongoose';
 import { CqrsModule } from '@nestjs/cqrs';
-import { PlatformModel, PlatformSchema } from '@/infrastructure/mongo/schemas';
-import { PLATFORM_READ_SERVICE } from '@/application/interfaces';
-import { PLATFORM_REPOSITORY } from '@/core/interfaces/repositories';
-import { MongoPlatformReadService } from '@/infrastructure/mongo/read-services';
-import { MongoPlatformRepository } from '@/infrastructure/mongo/repositories';
-import { CreatePlatformHandler, UpdatePlatformHandler, PlatformSoftDeleteCommandHandler, PlatformHardDeleteCommandHandler, PlatformRestoreCommandHandler } from '@/application/commands';
-import { PlatformGetListHandler, PlatformGetByIdHandler } from '@/application/queries';
-import { PlatformController } from '@/presentation/controllers/platform.controller';
 
-import { LinkPlatformIconHandler } from '@/application/events';
-
-const Handlers = [
-  CreatePlatformHandler,
-  UpdatePlatformHandler,
+import {
+  PlatformCreateCommandHandler,
+  PlatformUpdateCommandHandler,
   PlatformSoftDeleteCommandHandler,
   PlatformHardDeleteCommandHandler,
   PlatformRestoreCommandHandler,
+} from '@/application/commands';
+
+import { PlatformGetListHandler, PlatformGetByIdHandler } from '@/application/queries';
+import { LinkPlatformIconHandler } from '@/application/events';
+import { PlatformController } from '@/presentation/controllers/platform.controller';
+import { UploadedFileModule } from './uploaded-file.module';
+
+const COMMAND_HANDLERS = [
+  PlatformCreateCommandHandler,
+  PlatformUpdateCommandHandler,
+  PlatformSoftDeleteCommandHandler,
+  PlatformHardDeleteCommandHandler,
+  PlatformRestoreCommandHandler,
+];
+
+const QUERY_HANDLERS = [
   PlatformGetListHandler,
   PlatformGetByIdHandler,
+];
+
+const EVENT_HANDLERS = [
   LinkPlatformIconHandler,
 ];
 
-import { UploadedFileModule } from './uploaded-file.module';
-
 @Module({
-  imports: [
-    CqrsModule,
-    UploadedFileModule,
-    MongooseModule.forFeature([
-      { name: PlatformModel.name, schema: PlatformSchema },
-    ]),
-  ],
+  imports: [CqrsModule, UploadedFileModule],
   controllers: [PlatformController],
-  providers: [
-    ...Handlers,
-    {
-      provide: PLATFORM_READ_SERVICE,
-      useClass: MongoPlatformReadService,
-    },
-    {
-      provide: PLATFORM_REPOSITORY,
-      useClass: MongoPlatformRepository,
-    },
-  ],
-  exports: [PLATFORM_READ_SERVICE, PLATFORM_REPOSITORY],
+  providers: [...COMMAND_HANDLERS, ...QUERY_HANDLERS, ...EVENT_HANDLERS],
+  exports: [],
 })
-export class PlatformModule { }
+export class PlatformModule {}

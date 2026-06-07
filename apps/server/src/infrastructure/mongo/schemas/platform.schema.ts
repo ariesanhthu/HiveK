@@ -1,19 +1,20 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Schema as MongooseSchema } from 'mongoose';
 import { PlatformApiStatus } from '@/core/enums/platform-api-status.enum';
+import { softDeletePlugin } from '../utils';
 
 @Schema({
   collection: 'platforms',
   timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' },
 })
 export class PlatformModel {
-  @Prop({ type: MongooseSchema.Types.String, required: true, unique: true, lowercase: true })
+  @Prop({ type: MongooseSchema.Types.String, required: true, unique: true, lowercase: true, trim: true, minlength: 1, maxlength: 100 })
   name: string;
 
-  @Prop({ type: MongooseSchema.Types.String, required: true })
+  @Prop({ type: MongooseSchema.Types.String, required: true, trim: true, match: [/^https?:\/\/.+/, 'Please fill a valid URL'] })
   base_url: string;
 
-  @Prop({ type: MongooseSchema.Types.String, required: true, enum: PlatformApiStatus, default: PlatformApiStatus.STABLE })
+  @Prop({ type: MongooseSchema.Types.String, required: true, enum: Object.values(PlatformApiStatus), default: PlatformApiStatus.STABLE })
   api_status: PlatformApiStatus;
 
   @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'UploadedFileModel', default: null })
@@ -31,3 +32,4 @@ export class PlatformModel {
 
 export type PlatformDocument = HydratedDocument<PlatformModel>;
 export const PlatformSchema = SchemaFactory.createForClass(PlatformModel);
+PlatformSchema.plugin(softDeletePlugin);

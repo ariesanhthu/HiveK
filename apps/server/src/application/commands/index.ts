@@ -138,6 +138,9 @@ export * from './notification-hard-delete/notification-hard-delete.dto';
 // User Create & Update
 export * from './user-create/user-create.command';
 export * from './user-create/user-create.handler';
+export * from './user-check-valid/user-check-valid.command';
+export * from './user-check-valid/user-check-valid.handler';
+export * from './user-check-valid/user-check-valid.dto';
 export * from './user-update/user-update.command';
 export * from './user-update/user-update.handler';
 

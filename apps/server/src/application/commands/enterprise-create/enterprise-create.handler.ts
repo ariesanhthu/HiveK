@@ -6,7 +6,7 @@ import { EnterpriseRoot, EnterpriseUserRoot } from '@/core/aggregate-roots';
 import { EnterpriseCreateCommand } from './enterprise-create.command';
 import { EnterpriseDto } from '@/application/dtos';
 import { EnterpriseMapper } from '@/application/mappers';
-import { IUnitOfWork, UNIT_OF_WORK } from '@/application/interfaces';
+import { type IUnitOfWork, UNIT_OF_WORK } from '@/application/interfaces';
 
 @CommandHandler(EnterpriseCreateCommand)
 export class EnterpriseCreateCommandHandler implements ICommandHandler<EnterpriseCreateCommand, EnterpriseDto> {

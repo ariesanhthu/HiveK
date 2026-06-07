@@ -1,5 +1,5 @@
 import { Command } from '@nestjs/cqrs';
-import { UserUpdateInputDto } from '../../dtos/user.dto';
+import { UserUpdateInputDto } from './user-update.dto';
 
 export class UserUpdateCommand extends Command<void> {
   constructor(

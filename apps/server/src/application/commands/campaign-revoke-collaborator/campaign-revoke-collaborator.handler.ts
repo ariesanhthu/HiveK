@@ -5,7 +5,7 @@ import { CAMPAIGN_REPOSITORY, type ICampaignRepository } from '@/core/interfaces
 import { USER_REPOSITORY, type IUserRepository } from '@/core/interfaces/repositories/user.repository';
 import { MAILER_SERVICE, type IMailerService } from '@/application/interfaces/mailer.interface';
 import { CampaignRevokeCollaboratorCommand } from './campaign-revoke-collaborator.command';
-import { IUnitOfWork, UNIT_OF_WORK } from '@/application/interfaces';
+import { type IUnitOfWork, UNIT_OF_WORK } from '@/application/interfaces';
 
 @CommandHandler(CampaignRevokeCollaboratorCommand)
 export class CampaignRevokeCollaboratorCommandHandler implements ICommandHandler<CampaignRevokeCollaboratorCommand, void> {

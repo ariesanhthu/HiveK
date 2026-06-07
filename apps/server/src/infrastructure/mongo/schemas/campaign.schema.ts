@@ -1,19 +1,20 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument, Schema as MongooseSchema, Types } from 'mongoose';
+import { HydratedDocument, Schema as MongooseSchema } from 'mongoose';
 import { ECampaignStatus } from '@/core/enums/campaign-status.enum';
+import { softDeletePlugin } from '../utils';
 
 @Schema({ _id: false })
 export class PlatformTargetItemModel {
   @Prop({ type: MongooseSchema.Types.String, required: true })
   platformId: string;
 
-  @Prop({ type: MongooseSchema.Types.Number, required: false })
+  @Prop({ type: MongooseSchema.Types.Number, required: false, min: 0 })
   minFollowers?: number;
 
-  @Prop({ type: MongooseSchema.Types.Number, required: false })
+  @Prop({ type: MongooseSchema.Types.Number, required: false, min: 0 })
   maxFollowers?: number;
 
-  @Prop({ type: MongooseSchema.Types.String, required: false })
+  @Prop({ type: MongooseSchema.Types.String, required: false, maxlength: 500 })
   note?: string;
 
   @Prop({ type: MongooseSchema.Types.Map, of: MongooseSchema.Types.Mixed, required: false })
@@ -25,7 +26,7 @@ export class RawContentItemModel {
   @Prop({ type: MongooseSchema.Types.String, required: true })
   fileId: string;
 
-  @Prop({ type: MongooseSchema.Types.String, required: false })
+  @Prop({ type: MongooseSchema.Types.String, required: false, maxlength: 5000 })
   rawContent?: string;
 }
 
@@ -40,13 +41,13 @@ export class CampaignModel {
   @Prop({ required: false, type: MongooseSchema.Types.ObjectId, ref: 'EnterpriseModel', default: null })
   enterprise_id: MongooseSchema.Types.ObjectId | null;
 
-  @Prop({ type: MongooseSchema.Types.Number, required: true })
+  @Prop({ type: MongooseSchema.Types.Number, required: true, min: 0 })
   budget: number;
 
   @Prop({ type: MongooseSchema.Types.Map, of: MongooseSchema.Types.Mixed, required: true })
   financial_target: Record<string, any>;
 
-  @Prop({ type: MongooseSchema.Types.String, required: true })
+  @Prop({ type: MongooseSchema.Types.String, required: true, trim: true, minlength: 1, maxlength: 2000 })
   description: string;
 
   @Prop({ type: [PlatformTargetItemModel], default: [] })
@@ -73,3 +74,4 @@ export class CampaignModel {
 
 export type CampaignDocument = HydratedDocument<CampaignModel>;
 export const CampaignSchema = SchemaFactory.createForClass(CampaignModel);
+CampaignSchema.plugin(softDeletePlugin);

@@ -6,7 +6,7 @@ import { USER_REPOSITORY, type IUserRepository } from '@/core/interfaces/reposit
 import { KOLUserRoot, EnterpriseUserRoot, AdminRoot } from '@/core/aggregate-roots';
 import { ERoleType } from '@/core/enums';
 import { AuthService } from '@/application/services/auth.service';
-import { IUnitOfWork, UNIT_OF_WORK } from '@/application/interfaces';
+import { type IUnitOfWork, UNIT_OF_WORK } from '@/application/interfaces';
 
 @CommandHandler(UserCreateCommand)
 export class UserCreateCommandHandler implements ICommandHandler<UserCreateCommand, string> {

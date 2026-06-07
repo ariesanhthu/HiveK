@@ -1,13 +1,14 @@
 import { ERoleType } from '@/core/enums';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Schema as MongooseSchema } from 'mongoose';
+import { softDeletePlugin } from '../utils';
 
 @Schema({
   collection: 'roles',
   timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' },
 })
 export class RoleModel {
-  @Prop({ type: MongooseSchema.Types.String, required: true, unique: true })
+  @Prop({ type: MongooseSchema.Types.String, required: true, unique: true, trim: true, minlength: 1, maxlength: 100 })
   title: string;
 
   @Prop({ type: [MongooseSchema.Types.String], default: [] })
@@ -28,3 +29,4 @@ export class RoleModel {
 
 export type RoleDocument = HydratedDocument<RoleModel>;
 export const RoleSchema = SchemaFactory.createForClass(RoleModel);
+RoleSchema.plugin(softDeletePlugin);

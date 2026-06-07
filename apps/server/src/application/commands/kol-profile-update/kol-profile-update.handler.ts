@@ -9,7 +9,7 @@ import { KolPlatformInfo } from '@/core/value-objects/kol-platform-info.value-ob
 import { KolProfileEntity } from '@/core/entities/kol-profile.entity';
 
 @CommandHandler(KolProfileUpdateCommand)
-export class UpdateKolProfileHandler implements ICommandHandler<KolProfileUpdateCommand, KolProfileDto> {
+export class KolProfileUpdateCommandHandler implements ICommandHandler<KolProfileUpdateCommand, KolProfileDto> {
   constructor(
     @Inject(KOL_PROFILE_REPOSITORY)
     private readonly kolProfileRepository: IKolProfileRepository,

@@ -1,12 +1,7 @@
 import { z } from 'zod';
 import { createZodDto } from 'nestjs-zod';
-import { PlatformApiStatus } from '@/core/enums/platform-api-status.enum';
+import { PlatformCreateInputSchema } from '../platform-create/platform-create.dto';
 
-export const PlatformUpdateInputDtoSchema = z.object({
-  name: z.string().optional(),
-  baseUrl: z.url().optional(),
-  apiStatus: z.enum(PlatformApiStatus).optional(),
-  icon: z.string().optional(),
-});
+export const PlatformUpdateInputSchema = PlatformCreateInputSchema.partial();
 
-export class PlatformUpdateInputDto extends createZodDto(PlatformUpdateInputDtoSchema) {}
+export class PlatformUpdateInputDto extends createZodDto(PlatformUpdateInputSchema) {}

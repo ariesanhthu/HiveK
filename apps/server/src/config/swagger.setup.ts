@@ -7,7 +7,7 @@ export function setupSwagger(app: INestApplication): void {
 
   const config = new DocumentBuilder()
     .setTitle('HiveK API')
-    .setDescription('The API documentation for the HiveK Platform.')
+    .setDescription('The API documentation for the HiveK Platform.\n\nNOTE: Sensitive endpoints (Sign-In, Sign-Up, OTP) are rate-limited to 5 requests per minute.')
     .setVersion('1.0')
     .addBearerAuth({
       type: 'http',

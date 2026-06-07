@@ -15,7 +15,7 @@ import { KolProfileEntity } from '@/core/entities/kol-profile.entity';
 import { KolPlatformInfo } from '@/core/value-objects/kol-platform-info.value-object';
 
 @CommandHandler(KolProfileVerifyPlatformAccountCommand)
-export class KolProfileVerifyPlatformAccountHandler
+export class KolProfileVerifyPlatformAccountCommandHandler
   implements ICommandHandler<KolProfileVerifyPlatformAccountCommand, KolProfileDto>
 {
   constructor(
