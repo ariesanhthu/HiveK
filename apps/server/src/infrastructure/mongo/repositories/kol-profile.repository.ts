@@ -40,6 +40,17 @@ export class MongoKolProfileRepository implements IKolProfileRepository {
     return doc ? this.mapToDomain(doc) : null;
   }
 
+  async existsByPlatformId(platformId: string): Promise<boolean> {
+    const doc = await this.kolProfileModel.findOne(
+      {
+        'platforms.platform_id': platformId,
+        delete_at: null,
+      },
+      { _id: 1 }
+    ).session(this.session).lean().exec();
+    return !!doc;
+  }
+
   async save(entity: KolProfileEntity): Promise<void> {
     const data = this.mapToPersistence(entity);
 

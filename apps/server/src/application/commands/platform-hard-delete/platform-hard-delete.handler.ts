@@ -1,24 +1,36 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { Inject } from '@nestjs/common';
-import { PlatformNotFoundException } from '@/core/exceptions';
-import { PLATFORM_REPOSITORY, type IPlatformRepository } from '@/core/interfaces/repositories';
+import { PlatformNotFoundException, InvalidOperationException } from '@/core/exceptions';
+import { PLATFORM_REPOSITORY, KOL_PROFILE_REPOSITORY, type IPlatformRepository, type IKolProfileRepository } from '@/core/interfaces/repositories';
 import { PlatformHardDeleteCommand } from './platform-hard-delete.command';
+import { type IUnitOfWork, UNIT_OF_WORK } from '@/application/interfaces';
 
 @CommandHandler(PlatformHardDeleteCommand)
 export class PlatformHardDeleteCommandHandler implements ICommandHandler<PlatformHardDeleteCommand, void> {
   constructor(
     @Inject(PLATFORM_REPOSITORY)
     private readonly platformRepository: IPlatformRepository,
+    @Inject(KOL_PROFILE_REPOSITORY)
+    private readonly kolProfileRepository: IKolProfileRepository,
+    @Inject(UNIT_OF_WORK)
+    private readonly uow: IUnitOfWork,
   ) { }
 
   async execute(command: PlatformHardDeleteCommand): Promise<void> {
-    const { id } = command;
+    await this.uow.execute(async () => {
+        const { id } = command;
 
-    const platform = await this.platformRepository.findById(id);
-    if (!platform) {
-      throw new PlatformNotFoundException(id);
-    }
+        const platform = await this.platformRepository.findById(id);
+        if (!platform) {
+            throw new PlatformNotFoundException(id);
+        }
 
-    await this.platformRepository.delete(id);
+        const hasKols = await this.kolProfileRepository.existsByPlatformId(id);
+        if (hasKols) {
+            throw new InvalidOperationException(`Cannot delete platform. There are KOL profiles associated with it.`);
+        }
+
+        await this.platformRepository.delete(id);
+    });
   }
 }

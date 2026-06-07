@@ -1,11 +1,10 @@
-import { Controller, Get, Post, Patch, Delete, Param, Query, Body, HttpCode, HttpStatus, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Patch, Param, Query, Body, HttpCode, HttpStatus, UseGuards, Delete } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { EnterpriseGetByIdQuery, EnterpriseGetListQuery } from '@/application/queries';
 import {
   EnterpriseCreateCommand,
   EnterpriseUpdateCommand,
   EnterpriseSoftDeleteCommand,
-  EnterpriseHardDeleteCommand,
   EnterpriseRestoreCommand,
   EnterpriseCreateInputDto,
   EnterpriseUpdateInputDto,
@@ -79,14 +78,6 @@ export class EnterpriseController {
     @Query() dto: SoftDeleteInputDto,
   ): Promise<void> {
     return this.commandBus.execute(new EnterpriseSoftDeleteCommand(id, requestedBy, dto.deletedBy));
-  }
-
-  @Delete(':id')
-  @UseGuards(JwtAuthGuard)
-  @HttpCode(HttpStatus.NO_CONTENT)
-  @ApiOperation({ summary: 'Hard delete enterprise' })
-  async hardDelete(@Param('id') id: string): Promise<void> {
-    return this.commandBus.execute(new EnterpriseHardDeleteCommand(id));
   }
 
   @Patch(':id/restore')

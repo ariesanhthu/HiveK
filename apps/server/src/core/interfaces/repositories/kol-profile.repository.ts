@@ -5,6 +5,7 @@ export interface IKolProfileRepository {
   findById(id: string): Promise<Nullable<KolProfileEntity>>;
   findByPlatformInfo(platformId: string, externalId: string): Promise<Nullable<KolProfileEntity>>;
   findByUserId(userId: string): Promise<Nullable<KolProfileEntity>>;
+  existsByPlatformId(platformId: string): Promise<boolean>;
   save(entity: KolProfileEntity): Promise<void>;
   delete(id: string): Promise<void>;
 }

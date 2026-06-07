@@ -1,7 +1,7 @@
-import { Controller, Get, Post, Patch, Delete, Body, Param, Query, HttpCode, HttpStatus, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Patch, Param, Query, Body, HttpCode, HttpStatus, UseGuards } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { ApiTags, ApiOperation, ApiBearerAuth, ApiSecurity } from '@nestjs/swagger';
-import { CampaignCreateCommand, CampaignUpdateCommand, CampaignSoftDeleteCommand, CampaignHardDeleteCommand, CampaignRestoreCommand, CampaignCreateInputDto, CampaignUpdateInputDto } from '@/application/commands';
+import { CampaignCreateCommand, CampaignUpdateCommand, CampaignSoftDeleteCommand, CampaignRestoreCommand, CampaignCreateInputDto, CampaignUpdateInputDto } from '@/application/commands';
 import { CampaignGetListQuery, CampaignGetByIdQuery, CampaignFilterDto } from '@/application/queries';
 import { CampaignDto, SoftDeleteInputDto } from '@/application/dtos';
 import { PaginatedResponseDto } from '@/shared/dtos/pagination.dto';
@@ -66,14 +66,6 @@ export class CampaignController {
     @Query() dto: SoftDeleteInputDto,
   ): Promise<void> {
     return this.commandBus.execute(new CampaignSoftDeleteCommand(id, userId, dto.deletedBy));
-  }
-
-  @Delete(':id')
-  @UseGuards(JwtAuthGuard)
-  @HttpCode(HttpStatus.NO_CONTENT)
-  @ApiOperation({ summary: 'Hard delete campaign' })
-  async hardDelete(@Param('id') id: string): Promise<void> {
-    return this.commandBus.execute(new CampaignHardDeleteCommand(id));
   }
 
   @Patch(':id/restore')

@@ -1,6 +1,6 @@
 import { Injectable, Inject, forwardRef } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, Types, ClientSession } from 'mongoose';
+import { Model, Types, ClientSession, Schema } from 'mongoose';
 import { IUserRepository } from '@/core/interfaces/repositories';
 import { UserRoot, AdminRoot, EnterpriseUserRoot, KOLUserRoot } from '@/core/aggregate-roots';
 import { UserModel, UserDocument } from '../schemas/user.schema';
@@ -35,6 +35,17 @@ export class MongoUserRepository implements IUserRepository {
   async findByEnterpriseId(enterpriseId: string): Promise<UserRoot[]> {
     const docs = await this.userModel.find({ enterprise_ids: new Types.ObjectId(enterpriseId) }).session(this.session).exec();
     return docs.map(doc => this.mapToDomain(doc));
+  }
+
+  async existsByRoleId(roleId: string): Promise<boolean> {
+    const doc = await this.userModel.findOne(
+      {
+        role_id: new Schema.Types.ObjectId(roleId),
+        delete_at: null,
+      },
+      { _id: 1 }
+    ).session(this.session).lean().exec();
+    return !!doc;
   }
 
   async save(user: UserRoot): Promise<void> {

@@ -7,6 +7,7 @@ import { CampaignModel, CampaignDocument } from '../schemas';
 import { Nullable } from '@/core/types';
 import { type IUnitOfWork, UNIT_OF_WORK } from '@/application/interfaces';
 import { MongoUnitOfWork } from '../mongo-uow';
+import { ECampaignStatus } from '@/core/enums';
 
 @Injectable()
 export class MongoCampaignRepository implements ICampaignRepository {
@@ -24,6 +25,23 @@ export class MongoCampaignRepository implements ICampaignRepository {
   async findById(id: string): Promise<Nullable<CampaignRoot>> {
     const doc = await this.campaignModel.findById(id).session(this.session).exec();
     return doc ? this.mapToDomain(doc) : null;
+  }
+
+  async findByEnterpriseId(enterpriseId: string): Promise<CampaignRoot[]> {
+    const docs = await this.campaignModel.find({ enterprise_id: new Schema.Types.ObjectId(enterpriseId) }).session(this.session).exec();
+    return docs.map(doc => this.mapToDomain(doc));
+  }
+
+  async hasActiveCampaigns(enterpriseId: string): Promise<boolean> {
+    const doc = await this.campaignModel.findOne(
+      {
+        enterprise_id: new Schema.Types.ObjectId(enterpriseId),
+        status: { $nin: [ECampaignStatus.COMPLETED, ECampaignStatus.CANCELLED] },
+        delete_at: null,
+      },
+      { _id: 1 }
+    ).session(this.session).lean().exec();
+    return !!doc;
   }
 
   async save(campaign: CampaignRoot): Promise<void> {
@@ -46,9 +64,12 @@ export class MongoCampaignRepository implements ICampaignRepository {
     if (!doc._id) {
       throw new Error('Campaign document ID is missing');
     }
+    if (!doc.enterprise_id) {
+        throw new Error('Campaign enterprise ID is missing');
+    }
     return CampaignRoot.instantiate(doc._id.toString(), {
       ownerId: doc.owner_id.toString(),
-      enterpriseId: doc.enterprise_id ? doc.enterprise_id.toString() : null,
+      enterpriseId: doc.enterprise_id.toString(),
       budget: doc.budget,
       financialTarget: doc.financial_target instanceof Map ? Object.fromEntries(doc.financial_target) : doc.financial_target || {},
       description: doc.description,
@@ -67,13 +88,15 @@ export class MongoCampaignRepository implements ICampaignRepository {
       })),
       deleteAt: doc.delete_at,
       deleteBy: doc.delete_by,
+      createdAt: (doc as any).created_at,
+      updatedAt: (doc as any).updated_at,
     });
   }
 
   private mapToPersistence(campaign: CampaignRoot): Omit<CampaignModel, 'created_at' | 'updated_at'> {
     return {
-      owner_id: new Schema.Types.ObjectId(campaign.ownerId),
-      enterprise_id: campaign.enterpriseId ? new Schema.Types.ObjectId(campaign.enterpriseId) : null,
+      owner_id: new Types.ObjectId(campaign.ownerId) as any,
+      enterprise_id: new Types.ObjectId(campaign.enterpriseId) as any,
       budget: campaign.budget,
       financial_target: campaign.financialTarget,
       description: campaign.description,
