@@ -25,10 +25,11 @@ import { NOTIFICATION_READ_SERVICE } from '@/application/interfaces';
 import { MongoNotificationReadService } from '../mongo/read-services/notification.read-service';
 
 // Command Handlers
-import { SendNotificationCommandHandler } from '@/application/commands/send-notification/send-notification.handler';
-import { MarkNotificationReadCommandHandler } from '@/application/commands/mark-notification-read/mark-notification-read.handler';
-import { MarkAllNotificationsReadCommandHandler } from '@/application/commands/mark-all-notifications-read/mark-all-notifications-read.handler';
+import { NotificationSendCommandHandler } from '@/application/commands/notification-send/notification-send.handler';
+import { NotificationUpdateReadStatusCommandHandler } from '@/application/commands/notification-update-read-status/notification-update-read-status.handler';
 import { NotificationSoftDeleteCommandHandler } from '@/application/commands/notification-soft-delete/notification-soft-delete.handler';
+import { NotificationRestoreCommandHandler } from '@/application/commands/notification-restore/notification-restore.handler';
+import { NotificationHardDeleteCommandHandler } from '@/application/commands/notification-hard-delete/notification-hard-delete.handler';
 
 // Query Handlers
 import { NotificationGetListQueryHandler } from '@/application/queries/notification-get-list/notification-get-list.handler';
@@ -41,10 +42,11 @@ import { EmailNotificationHandler } from '@/application/events/notification-disp
 import { NotificationController } from '@/presentation/controllers/notification.controller';
 
 const COMMAND_HANDLERS = [
-  SendNotificationCommandHandler,
-  MarkNotificationReadCommandHandler,
-  MarkAllNotificationsReadCommandHandler,
+  NotificationSendCommandHandler,
+  NotificationUpdateReadStatusCommandHandler,
   NotificationSoftDeleteCommandHandler,
+  NotificationRestoreCommandHandler,
+  NotificationHardDeleteCommandHandler,
 ];
 
 const QUERY_HANDLERS = [

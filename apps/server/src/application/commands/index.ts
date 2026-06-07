@@ -114,14 +114,20 @@ export * from './uploaded-file-restore/uploaded-file-restore.command';
 export * from './uploaded-file-restore/uploaded-file-restore.handler';
 
 // Notification Commands
-export * from './send-notification/send-notification.command';
-export * from './send-notification/send-notification.handler';
-export * from './mark-notification-read/mark-notification-read.command';
-export * from './mark-notification-read/mark-notification-read.handler';
-export * from './mark-all-notifications-read/mark-all-notifications-read.command';
-export * from './mark-all-notifications-read/mark-all-notifications-read.handler';
+export * from './notification-send/notification-send.command';
+export * from './notification-send/notification-send.handler';
+export * from './notification-update-read-status/notification-update-read-status.command';
+export * from './notification-update-read-status/notification-update-read-status.handler';
+export * from './notification-update-read-status/notification-update-read-status.dto';
 export * from './notification-soft-delete/notification-soft-delete.command';
 export * from './notification-soft-delete/notification-soft-delete.handler';
+export * from './notification-soft-delete/notification-soft-delete.dto';
+export * from './notification-restore/notification-restore.command';
+export * from './notification-restore/notification-restore.handler';
+export * from './notification-restore/notification-restore.dto';
+export * from './notification-hard-delete/notification-hard-delete.command';
+export * from './notification-hard-delete/notification-hard-delete.handler';
+export * from './notification-hard-delete/notification-hard-delete.dto';
 
 // User Create & Update
 export * from './user-create/user-create.command';

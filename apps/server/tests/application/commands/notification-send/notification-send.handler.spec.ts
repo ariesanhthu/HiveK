@@ -1,11 +1,11 @@
-import { SendNotificationCommandHandler } from '@/application/commands/send-notification/send-notification.handler';
-import { SendNotificationCommand } from '@/application/commands/send-notification/send-notification.command';
+import { NotificationSendCommandHandler } from '@/application/commands/notification-send/notification-send.handler';
+import { NotificationSendCommand } from '@/application/commands/notification-send/notification-send.command';
 import { NotificationType, NotificationChannel, ERoleType } from '@/core/enums';
 import { EnterpriseNotFoundException, InvalidOperationException } from '@/core/exceptions';
 import { NotificationDispatchedEvent } from '@/application/events';
 
-describe('SendNotificationCommandHandler', () => {
-  let handler: SendNotificationCommandHandler;
+describe('NotificationSendCommandHandler', () => {
+  let handler: NotificationSendCommandHandler;
   let mockEventBus: any;
   let mockUserModel: any;
   let mockEnterpriseRepository: any;
@@ -24,7 +24,7 @@ describe('SendNotificationCommandHandler', () => {
       findById: jest.fn(),
     };
 
-    handler = new SendNotificationCommandHandler(
+    handler = new NotificationSendCommandHandler(
       mockEventBus as any,
       mockUserModel as any,
       mockEnterpriseRepository as any,
@@ -32,7 +32,7 @@ describe('SendNotificationCommandHandler', () => {
   });
 
   it('should publish NotificationDispatchedEvent for direct broadcast successfully', async () => {
-    const command = new SendNotificationCommand({
+    const command = new NotificationSendCommand({
       type: NotificationType.SYSTEM,
       title: 'Direct Noti',
       content: 'This is direct',
@@ -53,7 +53,7 @@ describe('SendNotificationCommandHandler', () => {
   });
 
   it('should throw BadRequestException if direct broadcast lacks userIds', async () => {
-    const command = new SendNotificationCommand({
+    const command = new NotificationSendCommand({
       type: NotificationType.SYSTEM,
       title: 'Direct Noti',
       content: 'This is direct',
@@ -70,7 +70,7 @@ describe('SendNotificationCommandHandler', () => {
   it('should publish Event for admin broadcast successfully', async () => {
     mockUserModel.exec.mockResolvedValue([{ _id: 'admin-1' }, { _id: 'admin-2' }]);
 
-    const command = new SendNotificationCommand({
+    const command = new NotificationSendCommand({
       type: NotificationType.SYSTEM,
       title: 'Admin Noti',
       content: 'This is admin',
@@ -94,7 +94,7 @@ describe('SendNotificationCommandHandler', () => {
     });
     mockUserModel.exec.mockResolvedValue([{ _id: 'member-1' }]);
 
-    const command = new SendNotificationCommand({
+    const command = new NotificationSendCommand({
       type: NotificationType.SYSTEM,
       title: 'Enterprise Noti',
       content: 'This is enterprise',
@@ -121,7 +121,7 @@ describe('SendNotificationCommandHandler', () => {
   it('should throw NotFoundException if enterprise does not exist', async () => {
     mockEnterpriseRepository.findById.mockResolvedValue(null);
 
-    const command = new SendNotificationCommand({
+    const command = new NotificationSendCommand({
       type: NotificationType.SYSTEM,
       title: 'Enterprise Noti',
       content: 'This is enterprise',

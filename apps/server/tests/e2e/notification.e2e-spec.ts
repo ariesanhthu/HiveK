@@ -7,7 +7,7 @@ import { CommandBus } from '@nestjs/cqrs';
 import { AppModule } from './../../src/app.module';
 import { AUTH_JWT_SERVICE, type IAuthJwtService } from '@/application/interfaces/auth-jwt.interface';
 import { NotificationType, NotificationChannel } from '@/core/enums';
-import { SendNotificationCommand } from '@/application/commands';
+import { NotificationSendCommand } from '@/application/commands';
 import { NotificationModel, UserNotificationModel } from '@/infrastructure/mongo/schemas';
 
 describe('Notification System (e2e)', () => {
@@ -55,10 +55,10 @@ describe('Notification System (e2e)', () => {
       .expect(401);
   });
 
-  it('should flow through the notification lifecycle: fetch, read, and dismiss', async () => {
+  it('should flow through the notification lifecycle: fetch, read status update, and dismiss', async () => {
     // 1. Create a notification for the test user using CommandBus
     await commandBus.execute(
-      new SendNotificationCommand({
+      new NotificationSendCommand({
         type: NotificationType.SYSTEM,
         title: 'E2E Test Notification',
         content: 'This is a test notification payload',
@@ -91,10 +91,11 @@ describe('Notification System (e2e)', () => {
 
     const receiptId = targetNoti.id;
 
-    // 3. PATCH /notifications/:id/read - mark as read
+    // 3. PATCH /notifications/read-status - update read status for specific IDs
     await request(app.getHttpServer())
-      .patch(`/notifications/${receiptId}/read`)
+      .patch('/notifications/read-status')
       .set('Authorization', `Bearer ${authToken}`)
+      .send({ ids: [receiptId], isRead: true })
       .expect(204);
 
     // 4. GET /notifications - verify notification is now isRead = true
@@ -109,10 +110,11 @@ describe('Notification System (e2e)', () => {
     expect(updatedNoti).toBeDefined();
     expect(updatedNoti.isRead).toBe(true);
 
-    // 5. PATCH /notifications/:id/soft-delete - dismiss notification
+    // 5. PATCH /notifications/soft-delete - dismiss notification bulk
     await request(app.getHttpServer())
-      .patch(`/notifications/${receiptId}/soft-delete`)
+      .patch('/notifications/soft-delete')
       .set('Authorization', `Bearer ${authToken}`)
+      .send({ ids: [receiptId] })
       .expect(204);
 
     // 6. GET /notifications - verify notification is no longer in the list
@@ -125,5 +127,39 @@ describe('Notification System (e2e)', () => {
       (n: any) => n.id === receiptId
     );
     expect(finalNoti).toBeUndefined();
+  });
+
+  it('should support mark all update via read-status endpoint without ids', async () => {
+     // Ensure we have at least one notification
+     await commandBus.execute(
+        new NotificationSendCommand({
+          type: NotificationType.SYSTEM,
+          title: 'E2E Test Notification',
+          content: 'Mark all test',
+          channels: [NotificationChannel.IN_APP],
+          audience: {
+            broadcastType: 'direct',
+            userIds: [testUserId],
+          },
+        })
+      );
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
+      // Mark all as read using the unified endpoint
+      await request(app.getHttpServer())
+        .patch('/notifications/read-status')
+        .set('Authorization', `Bearer ${authToken}`)
+        .send({ isRead: true }) // no ids provided
+        .expect(204);
+
+      // Verify all are read
+      const res = await request(app.getHttpServer())
+        .get('/notifications')
+        .set('Authorization', `Bearer ${authToken}`)
+        .expect(200);
+      
+      res.body.data.forEach((n: any) => {
+          expect(n.isRead).toBe(true);
+      });
   });
 });

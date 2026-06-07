@@ -1,15 +1,23 @@
-import { Controller, Get, Patch, Param, Query, HttpCode, HttpStatus, UseGuards } from '@nestjs/common';
+import { Controller, Get, Patch, Delete, Param, Query, Body, HttpCode, HttpStatus, UseGuards } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { ApiTags, ApiOperation, ApiBearerAuth, ApiSecurity } from '@nestjs/swagger';
 import { JwtAuthGuard } from '@/presentation/middleware/guards/jwt-auth.guard';
 import { CurrentUser } from '@/presentation/decorators/current-user.decorator';
 import { NotificationGetListQuery } from '@/application/queries';
 import {
-  MarkNotificationReadCommand,
-  MarkAllNotificationsReadCommand,
+  NotificationUpdateReadStatusCommand,
   NotificationSoftDeleteCommand,
+  NotificationRestoreCommand,
+  NotificationHardDeleteCommand,
+  NotificationUpdateReadStatusDto,
+  NotificationSoftDeleteDto,
+  NotificationRestoreDto,
+  NotificationHardDeleteDto,
 } from '@/application/commands';
-import { NotificationDto, NotificationFilterDto } from '@/application/dtos';
+import {
+  NotificationDto,
+  NotificationFilterDto,
+} from '@/application/dtos';
 import { PaginatedResponseDto } from '@/shared/dtos/pagination.dto';
 
 @ApiTags('notifications')
@@ -33,30 +41,43 @@ export class NotificationController {
     return this.queryBus.execute(new NotificationGetListQuery(filters));
   }
 
-  @Patch('read-all')
+  @Patch('read-status')
   @HttpCode(HttpStatus.NO_CONTENT)
-  @ApiOperation({ summary: 'Mark all notifications for the current user as read' })
-  async readAll(@CurrentUser('sub') userId: string): Promise<void> {
-    return this.commandBus.execute(new MarkAllNotificationsReadCommand(userId));
-  }
-
-  @Patch(':id/read')
-  @HttpCode(HttpStatus.NO_CONTENT)
-  @ApiOperation({ summary: 'Mark a single notification as read' })
-  async markRead(
+  @ApiOperation({ summary: 'Update read/unread status for notifications (all if ids is empty/null)' })
+  async updateReadStatus(
     @CurrentUser('sub') userId: string,
-    @Param('id') id: string,
+    @Body() dto: NotificationUpdateReadStatusDto,
   ): Promise<void> {
-    return this.commandBus.execute(new MarkNotificationReadCommand(id, userId));
+    return this.commandBus.execute(new NotificationUpdateReadStatusCommand(userId, dto.isRead, dto.ids));
   }
 
-  @Patch(':id/soft-delete')
+  @Patch('soft-delete')
   @HttpCode(HttpStatus.NO_CONTENT)
-  @ApiOperation({ summary: 'Soft delete / dismiss a notification' })
+  @ApiOperation({ summary: 'Soft delete / dismiss a list of notifications' })
   async softDelete(
     @CurrentUser('sub') userId: string,
-    @Param('id') id: string,
+    @Body() dto: NotificationSoftDeleteDto,
   ): Promise<void> {
-    return this.commandBus.execute(new NotificationSoftDeleteCommand(id, userId));
+    return this.commandBus.execute(new NotificationSoftDeleteCommand(dto.ids, userId));
+  }
+
+  @Patch('restore')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Restore a list of soft deleted notifications' })
+  async restore(
+    @CurrentUser('sub') userId: string,
+    @Body() dto: NotificationRestoreDto,
+  ): Promise<void> {
+    return this.commandBus.execute(new NotificationRestoreCommand(dto.ids, userId));
+  }
+
+  @Delete('hard-delete')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiOperation({ summary: 'Permanently delete a list of notifications' })
+  async hardDelete(
+    @CurrentUser('sub') userId: string,
+    @Body() dto: NotificationHardDeleteDto,
+  ): Promise<void> {
+    return this.commandBus.execute(new NotificationHardDeleteCommand(dto.ids, userId));
   }
 }

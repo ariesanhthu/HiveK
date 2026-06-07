@@ -5,12 +5,12 @@ import { Model } from 'mongoose';
 import { ERoleType } from '@/core/enums';
 import { UserModel, UserDocument } from '@/infrastructure/mongo/schemas/user.schema';
 import { ENTERPRISE_REPOSITORY, type IEnterpriseRepository } from '@/core/interfaces/repositories';
-import { SendNotificationCommand } from './send-notification.command';
+import { NotificationSendCommand } from './notification-send.command';
 import { NotificationDispatchedEvent } from '@/application/events';
 import { EnterpriseNotFoundException, InvalidOperationException } from '@/core/exceptions';
 
-@CommandHandler(SendNotificationCommand)
-export class SendNotificationCommandHandler implements ICommandHandler<SendNotificationCommand, void> {
+@CommandHandler(NotificationSendCommand)
+export class NotificationSendCommandHandler implements ICommandHandler<NotificationSendCommand, void> {
   constructor(
     private readonly eventBus: EventBus,
     @InjectModel(UserModel.name)
@@ -19,7 +19,7 @@ export class SendNotificationCommandHandler implements ICommandHandler<SendNotif
     private readonly enterpriseRepository: IEnterpriseRepository,
   ) {}
 
-  async execute(command: SendNotificationCommand): Promise<void> {
+  async execute(command: NotificationSendCommand): Promise<void> {
     const { props } = command;
     const recipientIds: string[] = [];
 

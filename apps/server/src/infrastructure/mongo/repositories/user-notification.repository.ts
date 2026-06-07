@@ -44,11 +44,56 @@ export class MongoUserNotificationRepository implements IUserNotificationReposit
     });
   }
 
-  async markAllRead(recipientId: string): Promise<void> {
+  async markAll(recipientId: string, isRead: boolean): Promise<void> {
+    const update = isRead 
+      ? { $set: { is_read: true, read_at: new Date() } }
+      : { $set: { is_read: false, read_at: null } };
+
     await this.userNotificationModel.updateMany(
-      { recipient_id: new Types.ObjectId(recipientId), is_read: false } as any,
-      { $set: { is_read: true, read_at: new Date() } }
+      { recipient_id: new Types.ObjectId(recipientId), is_read: !isRead } as any,
+      update
     ).exec();
+  }
+
+  async updateReadStatus(ids: string[], recipientId: string, isRead: boolean): Promise<void> {
+    const update = isRead 
+      ? { $set: { is_read: true, read_at: new Date() } }
+      : { $set: { is_read: false, read_at: null } };
+
+    await this.userNotificationModel.updateMany(
+      { 
+        _id: { $in: ids.map(id => new Types.ObjectId(id)) },
+        recipient_id: new Types.ObjectId(recipientId)
+      } as any,
+      update
+    ).exec();
+  }
+
+  async softDeleteMany(ids: string[], recipientId: string, deletedBy: string): Promise<void> {
+    await this.userNotificationModel.updateMany(
+      { 
+        _id: { $in: ids.map(id => new Types.ObjectId(id)) },
+        recipient_id: new Types.ObjectId(recipientId)
+      } as any,
+      { $set: { delete_at: new Date(), delete_by: deletedBy } }
+    ).exec();
+  }
+
+  async restoreMany(ids: string[], recipientId: string): Promise<void> {
+    await this.userNotificationModel.updateMany(
+      { 
+        _id: { $in: ids.map(id => new Types.ObjectId(id)) },
+        recipient_id: new Types.ObjectId(recipientId)
+      } as any,
+      { $set: { delete_at: null, delete_by: null } }
+    ).exec();
+  }
+
+  async hardDeleteMany(ids: string[], recipientId: string): Promise<void> {
+    await this.userNotificationModel.deleteMany({
+      _id: { $in: ids.map(id => new Types.ObjectId(id)) },
+      recipient_id: new Types.ObjectId(recipientId)
+    } as any).exec();
   }
 
   private mapToDomain(doc: UserNotificationDocument): UserNotificationRoot {
