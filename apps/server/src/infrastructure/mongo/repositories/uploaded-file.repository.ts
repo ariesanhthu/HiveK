@@ -1,26 +1,34 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Inject } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, ClientSession } from 'mongoose';
 import { IUploadedFileRepository } from '@/core/interfaces/repositories';
 import { UploadedFileRoot } from '@/core/aggregate-roots';
 import { UploadedFileModel, UploadedFileDocument } from '../schemas';
 import { Nullable } from '@/core/types';
 import { TargetType } from '@/core/enums/target-type.enum';
+import { type IUnitOfWork, UNIT_OF_WORK } from '@/application/interfaces';
+import { MongoUnitOfWork } from '../mongo-uow';
 
 @Injectable()
 export class MongoUploadedFileRepository implements IUploadedFileRepository {
   constructor(
     @InjectModel(UploadedFileModel.name)
     private readonly model: Model<UploadedFileDocument>,
+    @Inject(UNIT_OF_WORK)
+    private readonly uow: IUnitOfWork,
   ) {}
 
+  private get session(): ClientSession | undefined {
+    return (this.uow as MongoUnitOfWork).getSession() || undefined;
+  }
+
   async findById(id: string): Promise<Nullable<UploadedFileRoot>> {
-    const doc = await this.model.findById(id).exec();
+    const doc = await this.model.findById(id).session(this.session).exec();
     return doc ? this.mapToDomain(doc) : null;
   }
 
   async findByTarget(targetId: string, targetType: TargetType): Promise<UploadedFileRoot[]> {
-    const docs = await this.model.find({ target_id: targetId, target_type: targetType }).exec();
+    const docs = await this.model.find({ target_id: targetId, target_type: targetType }).session(this.session).exec();
     return docs.map((doc) => this.mapToDomain(doc));
   }
 
@@ -29,15 +37,15 @@ export class MongoUploadedFileRepository implements IUploadedFileRepository {
 
     if (!root.id) {
       const created = new this.model(data);
-      const saved = await created.save();
+      const saved = await created.save({ session: this.session });
       root.setId(saved._id.toString());
     } else {
-      await this.model.findByIdAndUpdate(root.id, data, { upsert: true }).exec();
+      await this.model.findByIdAndUpdate(root.id, data, { upsert: true }).session(this.session).exec();
     }
   }
 
   async delete(id: string): Promise<void> {
-    await this.model.findByIdAndDelete(id).exec();
+    await this.model.findByIdAndDelete(id).session(this.session).exec();
   }
 
   private mapToDomain(doc: UploadedFileDocument): UploadedFileRoot {

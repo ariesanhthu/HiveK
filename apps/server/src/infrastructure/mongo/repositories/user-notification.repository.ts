@@ -1,20 +1,28 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Inject } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, Types } from 'mongoose';
+import { Model, Types, ClientSession } from 'mongoose';
 import { IUserNotificationRepository } from '@/core/interfaces/repositories';
 import { UserNotificationRoot } from '@/core/aggregate-roots';
 import { UserNotificationModel, UserNotificationDocument } from '../schemas';
 import { Nullable } from '@/core/types';
+import { type IUnitOfWork, UNIT_OF_WORK } from '@/application/interfaces';
+import { MongoUnitOfWork } from '../mongo-uow';
 
 @Injectable()
 export class MongoUserNotificationRepository implements IUserNotificationRepository {
   constructor(
     @InjectModel(UserNotificationModel.name)
     private readonly userNotificationModel: Model<UserNotificationDocument>,
+    @Inject(UNIT_OF_WORK)
+    private readonly uow: IUnitOfWork,
   ) {}
 
+  private get session(): ClientSession | undefined {
+    return (this.uow as MongoUnitOfWork).getSession() || undefined;
+  }
+
   async findById(id: string): Promise<Nullable<UserNotificationRoot>> {
-    const doc = await this.userNotificationModel.findById(id).exec();
+    const doc = await this.userNotificationModel.findById(id).session(this.session).exec();
     return doc ? this.mapToDomain(doc) : null;
   }
 
@@ -23,21 +31,21 @@ export class MongoUserNotificationRepository implements IUserNotificationReposit
 
     if (!userNotification.id) {
       const created = new this.userNotificationModel(data);
-      const saved = await created.save();
+      const saved = await created.save({ session: this.session });
       userNotification.setId(saved._id.toString());
     } else {
-      await this.userNotificationModel.findByIdAndUpdate(userNotification.id, data, { upsert: true }).exec();
+      await this.userNotificationModel.findByIdAndUpdate(userNotification.id, data, { upsert: true }).session(this.session).exec();
     }
   }
 
   async delete(id: string): Promise<void> {
-    await this.userNotificationModel.findByIdAndDelete(id).exec();
+    await this.userNotificationModel.findByIdAndDelete(id).session(this.session).exec();
   }
 
   async saveMany(userNotifications: UserNotificationRoot[]): Promise<void> {
     if (userNotifications.length === 0) return;
     const documents = userNotifications.map(un => this.mapToPersistence(un));
-    const result = await this.userNotificationModel.insertMany(documents);
+    const result = await this.userNotificationModel.insertMany(documents, { session: this.session });
     // Assign generated IDs back to aggregates
     userNotifications.forEach((un, idx) => {
       un.setId(result[idx]._id.toString());
@@ -52,7 +60,7 @@ export class MongoUserNotificationRepository implements IUserNotificationReposit
     await this.userNotificationModel.updateMany(
       { recipient_id: new Types.ObjectId(recipientId), is_read: !isRead } as any,
       update
-    ).exec();
+    ).session(this.session).exec();
   }
 
   async updateReadStatus(ids: string[], recipientId: string, isRead: boolean): Promise<void> {
@@ -66,7 +74,7 @@ export class MongoUserNotificationRepository implements IUserNotificationReposit
         recipient_id: new Types.ObjectId(recipientId)
       } as any,
       update
-    ).exec();
+    ).session(this.session).exec();
   }
 
   async softDeleteMany(ids: string[], recipientId: string, deletedBy: string): Promise<void> {
@@ -76,7 +84,7 @@ export class MongoUserNotificationRepository implements IUserNotificationReposit
         recipient_id: new Types.ObjectId(recipientId)
       } as any,
       { $set: { delete_at: new Date(), delete_by: deletedBy } }
-    ).exec();
+    ).session(this.session).exec();
   }
 
   async restoreMany(ids: string[], recipientId: string): Promise<void> {
@@ -86,14 +94,14 @@ export class MongoUserNotificationRepository implements IUserNotificationReposit
         recipient_id: new Types.ObjectId(recipientId)
       } as any,
       { $set: { delete_at: null, delete_by: null } }
-    ).exec();
+    ).session(this.session).exec();
   }
 
   async hardDeleteMany(ids: string[], recipientId: string): Promise<void> {
     await this.userNotificationModel.deleteMany({
       _id: { $in: ids.map(id => new Types.ObjectId(id)) },
       recipient_id: new Types.ObjectId(recipientId)
-    } as any).exec();
+    } as any).session(this.session).exec();
   }
 
   private mapToDomain(doc: UserNotificationDocument): UserNotificationRoot {

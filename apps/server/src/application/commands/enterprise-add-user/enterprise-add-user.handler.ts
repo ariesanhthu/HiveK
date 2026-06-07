@@ -5,6 +5,7 @@ import { EnterpriseAddUserCommand } from './enterprise-add-user.command';
 import { EnterpriseUserRoot } from '@/core/aggregate-roots';
 import { UserNotFoundException, InvalidUserTypeException, EnterpriseNotFoundException, EnterpriseForbiddenException } from '@/core/exceptions';
 import { UserAddedToEnterpriseEvent } from '@/application/events';
+import { IUnitOfWork, UNIT_OF_WORK } from '@/application/interfaces';
 
 @CommandHandler(EnterpriseAddUserCommand)
 export class EnterpriseAddUserCommandHandler implements ICommandHandler<EnterpriseAddUserCommand, void> {
@@ -14,38 +15,42 @@ export class EnterpriseAddUserCommandHandler implements ICommandHandler<Enterpri
     @Inject(ENTERPRISE_REPOSITORY)
     private readonly enterpriseRepository: IEnterpriseRepository,
     private readonly eventBus: EventBus,
+    @Inject(UNIT_OF_WORK)
+    private readonly uow: IUnitOfWork,
   ) {}
 
   async execute(command: EnterpriseAddUserCommand): Promise<void> {
-    const { userId, enterpriseId } = command.input;
-    const { requestedBy } = command;
+    await this.uow.execute(async () => {
+      const { userId, enterpriseId } = command.input;
+      const { requestedBy } = command;
 
-    const enterprise = await this.enterpriseRepository.findById(enterpriseId);
-    if (!enterprise) {
-      throw new EnterpriseNotFoundException(enterpriseId);
-    }
+      const enterprise = await this.enterpriseRepository.findById(enterpriseId);
+      if (!enterprise) {
+        throw new EnterpriseNotFoundException(enterpriseId);
+      }
 
-    if (enterprise.userId !== requestedBy) {
-      throw new EnterpriseForbiddenException();
-    }
+      if (enterprise.userId !== requestedBy) {
+        throw new EnterpriseForbiddenException();
+      }
 
-    const user = await this.userRepository.findById(userId);
-    if (!user) {
-      throw new UserNotFoundException(userId);
-    }
+      const user = await this.userRepository.findById(userId);
+      if (!user) {
+        throw new UserNotFoundException(userId);
+      }
 
-    if (!(user instanceof EnterpriseUserRoot)) {
-      throw new InvalidUserTypeException('User must be an enterprise user to be added to an enterprise');
-    }
+      if (!(user instanceof EnterpriseUserRoot)) {
+        throw new InvalidUserTypeException('User must be an enterprise user to be added to an enterprise');
+      }
 
-    const currentEnterpriseIds = user.enterpriseIds;
-    if (currentEnterpriseIds.includes(enterpriseId)) {
-      return;
-    }
+      const currentEnterpriseIds = user.enterpriseIds;
+      if (currentEnterpriseIds.includes(enterpriseId)) {
+        return;
+      }
 
-    user.addEnterprise(enterpriseId);
-    await this.userRepository.save(user);
+      user.addEnterprise(enterpriseId);
+      await this.userRepository.save(user);
 
-    this.eventBus.publish(new UserAddedToEnterpriseEvent(userId, enterpriseId));
+      this.eventBus.publish(new UserAddedToEnterpriseEvent(userId, enterpriseId));
+    });
   }
 }

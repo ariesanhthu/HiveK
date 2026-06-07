@@ -5,6 +5,7 @@ import { CAMPAIGN_REPOSITORY, type ICampaignRepository } from '@/core/interfaces
 import { USER_REPOSITORY, type IUserRepository } from '@/core/interfaces/repositories/user.repository';
 import { MAILER_SERVICE, type IMailerService } from '@/application/interfaces/mailer.interface';
 import { CampaignRevokeCollaboratorCommand } from './campaign-revoke-collaborator.command';
+import { IUnitOfWork, UNIT_OF_WORK } from '@/application/interfaces';
 
 @CommandHandler(CampaignRevokeCollaboratorCommand)
 export class CampaignRevokeCollaboratorCommandHandler implements ICommandHandler<CampaignRevokeCollaboratorCommand, void> {
@@ -15,37 +16,41 @@ export class CampaignRevokeCollaboratorCommandHandler implements ICommandHandler
     private readonly userRepository: IUserRepository,
     @Inject(MAILER_SERVICE)
     private readonly mailerService: IMailerService,
+    @Inject(UNIT_OF_WORK)
+    private readonly uow: IUnitOfWork,
   ) { }
 
   async execute(command: CampaignRevokeCollaboratorCommand): Promise<void> {
-    const { campaignId, userId, requestedBy } = command;
+    await this.uow.execute(async () => {
+      const { campaignId, userId, requestedBy } = command;
 
-    const campaign = await this.campaignRepository.findById(campaignId);
-    if (!campaign) {
-      throw new CampaignNotFoundException(campaignId);
-    }
+      const campaign = await this.campaignRepository.findById(campaignId);
+      if (!campaign) {
+        throw new CampaignNotFoundException(campaignId);
+      }
 
-    const user = await this.userRepository.findById(userId);
-    if (!user) {
-      throw new UserNotFoundException(userId);
-    }
+      const user = await this.userRepository.findById(userId);
+      if (!user) {
+        throw new UserNotFoundException(userId);
+      }
 
-    campaign.revokeCollaborator(userId, requestedBy);
+      campaign.revokeCollaborator(userId, requestedBy);
 
-    await this.campaignRepository.save(campaign);
+      await this.campaignRepository.save(campaign);
 
-    try {
-      await this.mailerService.sendMail({
-        to: user.email,
-        subject: 'Collaboration Revoked on Campaign',
-        template: 'campaign-collaborator-revoke',
-        context: {
-          campaignId: campaign.id,
-          description: campaign.description,
-        },
-      });
-    } catch (err) {
-      // Avoid failing the transaction if mail server fails
-    }
+      try {
+        await this.mailerService.sendMail({
+          to: user.email,
+          subject: 'Collaboration Revoked on Campaign',
+          template: 'campaign-collaborator-revoke',
+          context: {
+            campaignId: campaign.id,
+            description: campaign.description,
+          },
+        });
+      } catch (err) {
+        // Avoid failing the transaction if mail server fails
+      }
+    });
   }
 }

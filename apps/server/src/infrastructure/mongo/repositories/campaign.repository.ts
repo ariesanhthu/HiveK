@@ -1,20 +1,28 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Inject } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, Schema, Types } from 'mongoose';
+import { Model, Schema, Types, ClientSession } from 'mongoose';
 import { ICampaignRepository } from '@/core/interfaces/repositories';
 import { CampaignRoot } from '@/core/aggregate-roots';
 import { CampaignModel, CampaignDocument } from '../schemas';
 import { Nullable } from '@/core/types';
+import { type IUnitOfWork, UNIT_OF_WORK } from '@/application/interfaces';
+import { MongoUnitOfWork } from '../mongo-uow';
 
 @Injectable()
 export class MongoCampaignRepository implements ICampaignRepository {
   constructor(
     @InjectModel(CampaignModel.name)
     private readonly campaignModel: Model<CampaignDocument>,
+    @Inject(UNIT_OF_WORK)
+    private readonly uow: IUnitOfWork,
   ) { }
 
+  private get session(): ClientSession | undefined {
+    return (this.uow as MongoUnitOfWork).getSession() || undefined;
+  }
+
   async findById(id: string): Promise<Nullable<CampaignRoot>> {
-    const doc = await this.campaignModel.findById(id).exec();
+    const doc = await this.campaignModel.findById(id).session(this.session).exec();
     return doc ? this.mapToDomain(doc) : null;
   }
 
@@ -23,15 +31,15 @@ export class MongoCampaignRepository implements ICampaignRepository {
 
     if (!campaign.id) {
       const created = new this.campaignModel(data);
-      const saved = await created.save();
+      const saved = await created.save({ session: this.session });
       campaign.setId(saved._id.toString());
     } else {
-      await this.campaignModel.findByIdAndUpdate(campaign.id, data, { upsert: true }).exec();
+      await this.campaignModel.findByIdAndUpdate(campaign.id, data, { upsert: true }).session(this.session).exec();
     }
   }
 
   async delete(id: string): Promise<void> {
-    await this.campaignModel.findByIdAndDelete(id).exec();
+    await this.campaignModel.findByIdAndDelete(id).session(this.session).exec();
   }
 
   private mapToDomain(doc: CampaignDocument): CampaignRoot {

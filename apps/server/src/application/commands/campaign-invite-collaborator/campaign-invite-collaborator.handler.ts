@@ -5,6 +5,7 @@ import { CAMPAIGN_REPOSITORY, type ICampaignRepository } from '@/core/interfaces
 import { USER_REPOSITORY, type IUserRepository } from '@/core/interfaces/repositories/user.repository';
 import { MAILER_SERVICE, type IMailerService } from '@/application/interfaces/mailer.interface';
 import { CampaignInviteCollaboratorCommand } from './campaign-invite-collaborator.command';
+import { type IUnitOfWork, UNIT_OF_WORK } from '@/application/interfaces';
 
 @CommandHandler(CampaignInviteCollaboratorCommand)
 export class CampaignInviteCollaboratorCommandHandler implements ICommandHandler<CampaignInviteCollaboratorCommand, void> {
@@ -15,38 +16,42 @@ export class CampaignInviteCollaboratorCommandHandler implements ICommandHandler
     private readonly userRepository: IUserRepository,
     @Inject(MAILER_SERVICE)
     private readonly mailerService: IMailerService,
+    @Inject(UNIT_OF_WORK)
+    private readonly uow: IUnitOfWork,
   ) { }
 
   async execute(command: CampaignInviteCollaboratorCommand): Promise<void> {
-    const { campaignId, userId, requestedBy } = command;
+    await this.uow.execute(async () => {
+      const { campaignId, userId, requestedBy } = command;
 
-    const campaign = await this.campaignRepository.findById(campaignId);
-    if (!campaign) {
-      throw new CampaignNotFoundException(campaignId);
-    }
+      const campaign = await this.campaignRepository.findById(campaignId);
+      if (!campaign) {
+        throw new CampaignNotFoundException(campaignId);
+      }
 
-    const user = await this.userRepository.findById(userId);
-    if (!user) {
-      throw new UserNotFoundException(userId);
-    }
+      const user = await this.userRepository.findById(userId);
+      if (!user) {
+        throw new UserNotFoundException(userId);
+      }
 
-    campaign.inviteCollaborator(userId, requestedBy);
+      campaign.inviteCollaborator(userId, requestedBy);
 
-    await this.campaignRepository.save(campaign);
+      await this.campaignRepository.save(campaign);
 
-    try {
-      await this.mailerService.sendMail({
-        to: user.email,
-        subject: 'Invitation to Collaborate on Campaign',
-        template: 'campaign-collaborator-invite',
-        context: {
-          campaignId: campaign.id,
-          description: campaign.description,
-          budget: campaign.budget,
-        },
-      });
-    } catch (err) {
-      // Avoid failing the transaction if mail server fails
-    }
+      try {
+        await this.mailerService.sendMail({
+          to: user.email,
+          subject: 'Invitation to Collaborate on Campaign',
+          template: 'campaign-collaborator-invite',
+          context: {
+            campaignId: campaign.id,
+            description: campaign.description,
+            budget: campaign.budget,
+          },
+        });
+      } catch (err) {
+        // Avoid failing the transaction if mail server fails
+      }
+    });
   }
 }

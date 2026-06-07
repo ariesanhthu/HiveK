@@ -1,21 +1,29 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Inject } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, Types } from 'mongoose';
+import { Model, Types, ClientSession } from 'mongoose';
 import { IKolProfileRepository } from '@/core/interfaces/repositories';
 import { KolProfileEntity } from '@/core/entities/kol-profile.entity';
 import { KolPlatformInfo } from '@/core/value-objects/kol-platform-info.value-object';
 import { KolProfileModel, KolProfileDocument } from '../schemas';
 import { Nullable } from '@/core/types';
+import { type IUnitOfWork, UNIT_OF_WORK } from '@/application/interfaces';
+import { MongoUnitOfWork } from '../mongo-uow';
 
 @Injectable()
 export class MongoKolProfileRepository implements IKolProfileRepository {
   constructor(
     @InjectModel(KolProfileModel.name)
     private readonly kolProfileModel: Model<KolProfileDocument>,
+    @Inject(UNIT_OF_WORK)
+    private readonly uow: IUnitOfWork,
   ) { }
 
+  private get session(): ClientSession | undefined {
+    return (this.uow as MongoUnitOfWork).getSession() || undefined;
+  }
+
   async findById(id: string): Promise<Nullable<KolProfileEntity>> {
-    const doc = await this.kolProfileModel.findById(id).exec();
+    const doc = await this.kolProfileModel.findById(id).session(this.session).exec();
     return doc ? this.mapToDomain(doc) : null;
   }
 
@@ -23,12 +31,12 @@ export class MongoKolProfileRepository implements IKolProfileRepository {
     const doc = await this.kolProfileModel.findOne({
       'platforms.platform_id': platformId,
       'platforms.external_id': externalId,
-    }).exec();
+    }).session(this.session).exec();
     return doc ? this.mapToDomain(doc) : null;
   }
 
   async findByUserId(userId: string): Promise<Nullable<KolProfileEntity>> {
-    const doc = await this.kolProfileModel.findOne({ user_id: new Types.ObjectId(userId) as any }).exec();
+    const doc = await this.kolProfileModel.findOne({ user_id: new Types.ObjectId(userId) as any }).session(this.session).exec();
     return doc ? this.mapToDomain(doc) : null;
   }
 
@@ -37,15 +45,15 @@ export class MongoKolProfileRepository implements IKolProfileRepository {
 
     if (!entity.id) {
       const created = new this.kolProfileModel(data);
-      const saved = await created.save();
+      const saved = await created.save({ session: this.session });
       entity.setId(saved._id.toString());
     } else {
-      await this.kolProfileModel.findByIdAndUpdate(entity.id, data, { upsert: true }).exec();
+      await this.kolProfileModel.findByIdAndUpdate(entity.id, data, { upsert: true }).session(this.session).exec();
     }
   }
 
   async delete(id: string): Promise<void> {
-    await this.kolProfileModel.findByIdAndDelete(id).exec();
+    await this.kolProfileModel.findByIdAndDelete(id).session(this.session).exec();
   }
 
   private mapToDomain(doc: KolProfileDocument): KolProfileEntity {

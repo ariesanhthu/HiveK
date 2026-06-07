@@ -1,31 +1,39 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Inject, forwardRef } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, Types } from 'mongoose';
+import { Model, Types, ClientSession } from 'mongoose';
 import { IUserRepository } from '@/core/interfaces/repositories';
 import { UserRoot, AdminRoot, EnterpriseUserRoot, KOLUserRoot } from '@/core/aggregate-roots';
 import { UserModel, UserDocument } from '../schemas/user.schema';
 import { Nullable } from '@/core/types';
 import { ERoleType } from '@/core/enums';
+import { type IUnitOfWork, UNIT_OF_WORK } from '@/application/interfaces';
+import { MongoUnitOfWork } from '../mongo-uow';
 
 @Injectable()
 export class MongoUserRepository implements IUserRepository {
   constructor(
     @InjectModel(UserModel.name)
     private readonly userModel: Model<UserDocument>,
+    @Inject(UNIT_OF_WORK)
+    private readonly uow: IUnitOfWork,
   ) { }
 
+  private get session(): ClientSession | undefined {
+    return (this.uow as MongoUnitOfWork).getSession() || undefined;
+  }
+
   async findById(id: string): Promise<Nullable<UserRoot>> {
-    const doc = await this.userModel.findById(id).exec();
+    const doc = await this.userModel.findById(id).session(this.session).exec();
     return doc ? this.mapToDomain(doc) : null;
   }
 
   async findByEmail(email: string): Promise<Nullable<UserRoot>> {
-    const doc = await this.userModel.findOne({ email }).exec();
+    const doc = await this.userModel.findOne({ email }).session(this.session).exec();
     return doc ? this.mapToDomain(doc) : null;
   }
 
   async findByEnterpriseId(enterpriseId: string): Promise<UserRoot[]> {
-    const docs = await this.userModel.find({ enterprise_ids: new Types.ObjectId(enterpriseId) }).exec();
+    const docs = await this.userModel.find({ enterprise_ids: new Types.ObjectId(enterpriseId) }).session(this.session).exec();
     return docs.map(doc => this.mapToDomain(doc));
   }
 
@@ -34,15 +42,15 @@ export class MongoUserRepository implements IUserRepository {
 
     if (!user.id) {
       const created = new this.userModel(data);
-      const saved = await created.save();
+      const saved = await created.save({ session: this.session });
       user.setId(saved._id.toString());
     } else {
-      await this.userModel.findByIdAndUpdate(user.id, data, { upsert: true }).exec();
+      await this.userModel.findByIdAndUpdate(user.id, data, { upsert: true }).session(this.session).exec();
     }
   }
 
   async delete(id: string): Promise<void> {
-    await this.userModel.findByIdAndDelete(id).exec();
+    await this.userModel.findByIdAndDelete(id).session(this.session).exec();
   }
 
   private mapToDomain(doc: UserDocument): UserRoot {

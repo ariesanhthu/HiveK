@@ -1,20 +1,28 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Inject } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, Types } from 'mongoose';
+import { Model, Types, ClientSession } from 'mongoose';
 import { ICampaignParticipantRepository } from '@/core/interfaces/repositories/campaign-participant.repository';
 import { CampaignParticipantRoot } from '@/core/aggregate-roots/campaign-participant.aggregate';
 import { CampaignParticipantModel, CampaignParticipantDocument, CampaignOutputModel } from '../schemas/campaign-participant.schema';
 import { Nullable } from '@/core/types';
+import { type IUnitOfWork, UNIT_OF_WORK } from '@/application/interfaces';
+import { MongoUnitOfWork } from '../mongo-uow';
 
 @Injectable()
 export class MongoCampaignParticipantRepository implements ICampaignParticipantRepository {
   constructor(
     @InjectModel(CampaignParticipantModel.name)
     private readonly participantModel: Model<CampaignParticipantDocument>,
+    @Inject(UNIT_OF_WORK)
+    private readonly uow: IUnitOfWork,
   ) {}
 
+  private get session(): ClientSession | undefined {
+    return (this.uow as MongoUnitOfWork).getSession() || undefined;
+  }
+
   async findById(id: string): Promise<Nullable<CampaignParticipantRoot>> {
-    const doc = await this.participantModel.findById(id).exec();
+    const doc = await this.participantModel.findById(id).session(this.session).exec();
     return doc ? this.mapToDomain(doc) : null;
   }
 
@@ -27,6 +35,7 @@ export class MongoCampaignParticipantRepository implements ICampaignParticipantR
         campaign_id: new Types.ObjectId(campaignId),
         kol_profile_id: new Types.ObjectId(kolProfileId),
       })
+      .session(this.session)
       .exec();
     return doc ? this.mapToDomain(doc) : null;
   }
@@ -36,6 +45,7 @@ export class MongoCampaignParticipantRepository implements ICampaignParticipantR
       .findOne({
         'outputs._id': new Types.ObjectId(outputId),
       })
+      .session(this.session)
       .exec();
     return doc ? this.mapToDomain(doc) : null;
   }
@@ -45,17 +55,18 @@ export class MongoCampaignParticipantRepository implements ICampaignParticipantR
 
     if (!participant.id) {
       const created = new this.participantModel(data);
-      const saved = await created.save();
+      const saved = await created.save({ session: this.session });
       participant.setId(saved._id.toString());
     } else {
       await this.participantModel
         .findByIdAndUpdate(participant.id, data, { upsert: true })
+        .session(this.session)
         .exec();
     }
   }
 
   async delete(id: string): Promise<void> {
-    await this.participantModel.findByIdAndDelete(id).exec();
+    await this.participantModel.findByIdAndDelete(id).session(this.session).exec();
   }
 
   private mapToDomain(doc: CampaignParticipantDocument): CampaignParticipantRoot {

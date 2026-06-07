@@ -1,20 +1,28 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Inject } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, ClientSession } from 'mongoose';
 import { INotificationRepository } from '@/core/interfaces/repositories';
 import { NotificationRoot } from '@/core/aggregate-roots';
 import { NotificationModel, NotificationDocument } from '../schemas';
 import { Nullable } from '@/core/types';
+import { type IUnitOfWork, UNIT_OF_WORK } from '@/application/interfaces';
+import { MongoUnitOfWork } from '../mongo-uow';
 
 @Injectable()
 export class MongoNotificationRepository implements INotificationRepository {
   constructor(
     @InjectModel(NotificationModel.name)
     private readonly notificationModel: Model<NotificationDocument>,
+    @Inject(UNIT_OF_WORK)
+    private readonly uow: IUnitOfWork,
   ) {}
 
+  private get session(): ClientSession | undefined {
+    return (this.uow as MongoUnitOfWork).getSession() || undefined;
+  }
+
   async findById(id: string): Promise<Nullable<NotificationRoot>> {
-    const doc = await this.notificationModel.findById(id).exec();
+    const doc = await this.notificationModel.findById(id).session(this.session).exec();
     return doc ? this.mapToDomain(doc) : null;
   }
 
@@ -23,15 +31,15 @@ export class MongoNotificationRepository implements INotificationRepository {
 
     if (!notification.id) {
       const created = new this.notificationModel(data);
-      const saved = await created.save();
+      const saved = await created.save({ session: this.session });
       notification.setId(saved._id.toString());
     } else {
-      await this.notificationModel.findByIdAndUpdate(notification.id, data, { upsert: true }).exec();
+      await this.notificationModel.findByIdAndUpdate(notification.id, data, { upsert: true }).session(this.session).exec();
     }
   }
 
   async delete(id: string): Promise<void> {
-    await this.notificationModel.findByIdAndDelete(id).exec();
+    await this.notificationModel.findByIdAndDelete(id).session(this.session).exec();
   }
 
   private mapToDomain(doc: NotificationDocument): NotificationRoot {

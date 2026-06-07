@@ -1,25 +1,33 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Inject } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, Types } from 'mongoose';
+import { Model, Types, ClientSession } from 'mongoose';
 import { IEnterpriseRepository } from '@/core/interfaces/repositories';
 import { EnterpriseRoot } from '@/core/aggregate-roots';
 import { EnterpriseModel, EnterpriseDocument } from '../schemas';
 import { Nullable } from '@/core/types';
+import { type IUnitOfWork, UNIT_OF_WORK } from '@/application/interfaces';
+import { MongoUnitOfWork } from '../mongo-uow';
 
 @Injectable()
 export class MongoEnterpriseRepository implements IEnterpriseRepository {
   constructor(
     @InjectModel(EnterpriseModel.name)
     private readonly enterpriseModel: Model<EnterpriseDocument>,
+    @Inject(UNIT_OF_WORK)
+    private readonly uow: IUnitOfWork,
   ) { }
 
+  private get session(): ClientSession | undefined {
+    return (this.uow as MongoUnitOfWork).getSession() || undefined;
+  }
+
   async findById(id: string): Promise<Nullable<EnterpriseRoot>> {
-    const doc = await this.enterpriseModel.findById(id).exec();
+    const doc = await this.enterpriseModel.findById(id).session(this.session).exec();
     return doc ? this.mapToDomain(doc) : null;
   }
 
   async findByUserId(userId: string): Promise<Nullable<EnterpriseRoot>> {
-    const doc = await this.enterpriseModel.findOne({ user_id: new Types.ObjectId(userId) as any }).exec();
+    const doc = await this.enterpriseModel.findOne({ user_id: new Types.ObjectId(userId) as any }).session(this.session).exec();
     return doc ? this.mapToDomain(doc) : null;
   }
 
@@ -28,15 +36,15 @@ export class MongoEnterpriseRepository implements IEnterpriseRepository {
 
     if (!enterprise.id) {
       const created = new this.enterpriseModel(data);
-      const saved = await created.save();
+      const saved = await created.save({ session: this.session });
       enterprise.setId(saved._id.toString());
     } else {
-      await this.enterpriseModel.findByIdAndUpdate(enterprise.id, data, { upsert: true }).exec();
+      await this.enterpriseModel.findByIdAndUpdate(enterprise.id, data, { upsert: true }).session(this.session).exec();
     }
   }
 
   async delete(id: string): Promise<void> {
-    await this.enterpriseModel.findByIdAndDelete(id).exec();
+    await this.enterpriseModel.findByIdAndDelete(id).session(this.session).exec();
   }
 
   private mapToDomain(doc: EnterpriseDocument): EnterpriseRoot {
