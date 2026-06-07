@@ -35,6 +35,7 @@ import {
 import { UploadedFileDto, SoftDeleteInputDto } from '@/application/dtos';
 import { PaginatedResponseDto } from '@/shared/dtos/pagination.dto';
 import { JwtAuthGuard } from '../middleware/guards';
+import { FileUploadValidationPipe } from '../middleware/pipes/file-upload-validation.pipe';
 
 @ApiTags('upload')
 @ApiBearerAuth()
@@ -92,9 +93,9 @@ export class UploadedFileController {
       required: ['file', 'targetType', 'targetId', 'targetField'],
     },
   })
-  @ApiOperation({ summary: 'Upload and create new file' })
+  @ApiOperation({ summary: 'Upload and create new file (Max 25MB, Images/Docs/PDF only)' })
   async create(
-    @UploadedFile() file: Express.Multer.File,
+    @UploadedFile(new FileUploadValidationPipe()) file: Express.Multer.File,
     @Body() input: UploadedFileCreateInputDto,
   ): Promise<UploadedFileDto> {
     if (!file) {
@@ -148,9 +149,9 @@ export class UploadedFileController {
       required: ['files', 'targetType', 'targetId', 'targetField'],
     },
   })
-  @ApiOperation({ summary: 'Upload and create multiple files (limit to 10)' })
+  @ApiOperation({ summary: 'Upload and create multiple files (limit to 10, Max 25MB each)' })
   async createBulk(
-    @UploadedFiles() files: Express.Multer.File[],
+    @UploadedFiles(new FileUploadValidationPipe()) files: Express.Multer.File[],
     @Body() input: UploadedFileCreateInputDto,
   ): Promise<UploadedFileDto[]> {
     if (!files || files.length === 0) {
@@ -171,6 +172,7 @@ export class UploadedFileController {
     );
   }
 
+  /*
   @Patch(':id/soft-delete')
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: 'Soft delete uploaded file' })
@@ -187,6 +189,7 @@ export class UploadedFileController {
   async hardDelete(@Param('id') id: string): Promise<void> {
     return this.commandBus.execute(new UploadedFileDeleteCommand(id));
   }
+  */
 
   @Patch(':id/restore')
   @HttpCode(HttpStatus.OK)

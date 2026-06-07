@@ -1,21 +1,39 @@
 import { EnterpriseCreateCommandHandler } from '@/application/commands/enterprise-create/enterprise-create.handler';
 import { EnterpriseCreateCommand } from '@/application/commands/enterprise-create/enterprise-create.command';
 import { EnterpriseConflictException } from '@/core/exceptions';
+import { EnterpriseUserRoot } from '@/core/aggregate-roots';
+import { ERoleType } from '@/core/enums';
 
 describe('EnterpriseCreateCommandHandler', () => {
   let handler: EnterpriseCreateCommandHandler;
   let mockEnterpriseRepository: any;
+  let mockUserRepository: any;
 
   beforeEach(() => {
     mockEnterpriseRepository = {
       findByUserId: jest.fn(),
       save: jest.fn(),
     };
-    handler = new EnterpriseCreateCommandHandler(mockEnterpriseRepository);
+    mockUserRepository = {
+      findById: jest.fn(),
+      save: jest.fn(),
+    };
+    handler = new EnterpriseCreateCommandHandler(mockEnterpriseRepository, mockUserRepository);
   });
 
-  it('should create enterprise successfully', async () => {
+  it('should create enterprise successfully and associate with user', async () => {
     mockEnterpriseRepository.findByUserId.mockResolvedValue(null);
+    const mockUser = EnterpriseUserRoot.create({
+        email: 'ent@test.com',
+        phone: '123',
+        passwordHash: 'hash',
+        fullName: 'Ent User',
+        type: ERoleType.ENTERPRISE,
+        roleId: 'role-ent',
+        isEmailVerified: true,
+    });
+    mockUser.setId('user-123');
+    mockUserRepository.findById.mockResolvedValue(mockUser);
 
     const input = {
       companyName: 'Test Company',
@@ -34,6 +52,8 @@ describe('EnterpriseCreateCommandHandler', () => {
     expect(result.userId).toBe('user-123');
     expect(mockEnterpriseRepository.findByUserId).toHaveBeenCalledWith('user-123');
     expect(mockEnterpriseRepository.save).toHaveBeenCalled();
+    expect(mockUser.enterpriseIds).toContain(expect.any(String));
+    expect(mockUserRepository.save).toHaveBeenCalledWith(mockUser);
   });
 
   it('should throw ConflictException if enterprise already exists for user', async () => {

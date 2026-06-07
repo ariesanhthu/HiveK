@@ -13,6 +13,7 @@ describe('Enterprise Domain (e2e)', () => {
   let userModel: Model<any>;
 
   const testUserId = '64f7b2c9e8b3c9001f3e4e92';
+  const secondUserId = '64f7b2c9e8b3c9001f3e4e93';
   let authToken: string;
 
   beforeAll(async () => {
@@ -28,19 +29,32 @@ describe('Enterprise Domain (e2e)', () => {
     userModel = app.get<Model<any>>(getModelToken('UserModel'));
 
     // Create user so we can link it
-    await userModel.deleteMany({ _id: new Types.ObjectId(testUserId) });
-    await userModel.collection.insertOne({
-      _id: new Types.ObjectId(testUserId),
-      email: 'enterprise-owner-e2e@hivek.com',
-      full_name: 'Enterprise Owner E2E',
+    await userModel.deleteMany({ _id: { $in: [new Types.ObjectId(testUserId), new Types.ObjectId(secondUserId)] } });
+    
+    const commonUserProps = {
       phone: '0000000000',
       password_hash: 'password123',
       type: 'enterprise',
-      role_id: new Types.ObjectId().toString(),
+      role_id: new Types.ObjectId(),
       is_email_verified: false,
+      enterprise_ids: [],
       created_at: new Date(),
       updated_at: new Date(),
+    };
+
+    await userModel.collection.insertOne({
+      ...commonUserProps,
+      _id: new Types.ObjectId(testUserId),
+      email: 'enterprise-owner-e2e@hivek.com',
+      full_name: 'Enterprise Owner E2E',
     });
+
+    await userModel.collection.insertOne({
+        ...commonUserProps,
+        _id: new Types.ObjectId(secondUserId),
+        email: 'other-user-e2e@hivek.com',
+        full_name: 'Other User E2E',
+      });
 
     // Generate JWT Auth Token
     authToken = jwtService.sign({
@@ -49,12 +63,12 @@ describe('Enterprise Domain (e2e)', () => {
       role: 'enterprise',
     });
 
-    await enterpriseModel.deleteMany({ user_id: testUserId });
+    await enterpriseModel.deleteMany({ user_id: { $in: [testUserId, secondUserId] } });
   });
 
   afterAll(async () => {
-    await enterpriseModel.deleteMany({ user_id: testUserId });
-    await userModel.deleteMany({ _id: new Types.ObjectId(testUserId) });
+    await enterpriseModel.deleteMany({ user_id: { $in: [testUserId, secondUserId] } });
+    await userModel.deleteMany({ _id: { $in: [new Types.ObjectId(testUserId), new Types.ObjectId(secondUserId)] } });
     await app.close();
   });
 
@@ -76,6 +90,10 @@ describe('Enterprise Domain (e2e)', () => {
     expect(createRes.body.companyName).toBe('Enterprise E2E Inc');
     const enterpriseId = createRes.body.id;
 
+    // Verify creator was added to enterprise_ids
+    const creator = await userModel.findById(testUserId);
+    expect(creator.enterprise_ids.map((id: any) => id.toString())).toContain(enterpriseId);
+
     // 2. Update Enterprise Profile
     const updateRes = await request(app.getHttpServer())
       .patch(`/enterprises/${enterpriseId}`)
@@ -96,5 +114,23 @@ describe('Enterprise Domain (e2e)', () => {
 
     expect(getRes.body.companyName).toBe('Enterprise E2E Inc Updated');
     expect(getRes.body.description).toBe('Updated Description');
+
+    // 4. Add another user to enterprise
+    await request(app.getHttpServer())
+        .post(`/enterprises/${enterpriseId}/users/${secondUserId}`)
+        .set('Authorization', `Bearer ${authToken}`)
+        .expect(200);
+    
+    const otherUser = await userModel.findById(secondUserId);
+    expect(otherUser.enterprise_ids.map((id: any) => id.toString())).toContain(enterpriseId);
+
+    // 5. Revoke user from enterprise
+    await request(app.getHttpServer())
+        .delete(`/enterprises/${enterpriseId}/users/${secondUserId}`)
+        .set('Authorization', `Bearer ${authToken}`)
+        .expect(204);
+    
+    const revokedUser = await userModel.findById(secondUserId);
+    expect(revokedUser.enterprise_ids.map((id: any) => id.toString())).not.toContain(enterpriseId);
   });
 });

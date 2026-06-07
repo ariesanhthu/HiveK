@@ -7,7 +7,7 @@ import { KolProfileFilterDto } from '@/application/queries';
 import { KolProfileModel, KolProfileDocument } from '../schemas';
 import { JsonObject, Nullable } from '@/core/types';
 import { PaginatedResponseDto, SortOrder } from '@/shared/dtos/pagination.dto';
-import { parseMongoProjection } from '../utils';
+import { parseMongoProjection, MongoSanitizeUtil } from '../utils';
 
 @Injectable()
 export class MongoKolProfileReadService implements IKolProfileReadService {
@@ -21,10 +21,10 @@ export class MongoKolProfileReadService implements IKolProfileReadService {
     const query: QueryFilter<KolProfileDocument> = {};
 
     if (name) {
-      query.name = { $regex: name, $options: 'i' };
+      query.name = { $regex: MongoSanitizeUtil.escapeRegex(name), $options: 'i' };
     }
     if (location) {
-      query.location = { $regex: location, $options: 'i' };
+      query.location = { $regex: MongoSanitizeUtil.escapeRegex(location), $options: 'i' };
     }
     if (gender) {
       query.gender = gender;
@@ -114,7 +114,7 @@ export class MongoKolProfileReadService implements IKolProfileReadService {
 
   async findByName(name: string): Promise<KolProfileDetailDto[]> {
     const docs = await this.kolProfileModel
-      .find({ name: { $regex: name, $options: 'i' } })
+      .find({ name: { $regex: MongoSanitizeUtil.escapeRegex(name), $options: 'i' } })
       .populate('user_id')
       .lean()
       .exec();

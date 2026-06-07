@@ -9,6 +9,8 @@ import {
   EnterpriseRestoreCommand,
   EnterpriseCreateInputDto,
   EnterpriseUpdateInputDto,
+  EnterpriseAddUserCommand,
+  EnterpriseRevokeUserCommand,
 } from '@/application/commands';
 import { EnterpriseDto, EnterpriseDetailDto, SoftDeleteInputDto } from '@/application/dtos';
 import { ApiTags, ApiOperation, ApiBearerAuth, ApiSecurity } from '@nestjs/swagger';
@@ -72,10 +74,11 @@ export class EnterpriseController {
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: 'Soft delete enterprise' })
   async delete(
+    @CurrentUser('sub') requestedBy: string,
     @Param('id') id: string,
     @Query() dto: SoftDeleteInputDto,
   ): Promise<void> {
-    return this.commandBus.execute(new EnterpriseSoftDeleteCommand(id, dto.deletedBy));
+    return this.commandBus.execute(new EnterpriseSoftDeleteCommand(id, requestedBy, dto.deletedBy));
   }
 
   @Delete(':id')
@@ -91,5 +94,29 @@ export class EnterpriseController {
   @ApiOperation({ summary: 'Restore soft deleted enterprise' })
   async restore(@Param('id') id: string): Promise<void> {
     return this.commandBus.execute(new EnterpriseRestoreCommand(id));
+  }
+
+  @Post(':id/users/:userId')
+  @UseGuards(JwtAuthGuard)
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Add user to enterprise' })
+  async addUser(
+    @CurrentUser('sub') requestedBy: string,
+    @Param('id') enterpriseId: string,
+    @Param('userId') userId: string,
+  ): Promise<void> {
+    return this.commandBus.execute(new EnterpriseAddUserCommand({ enterpriseId, userId }, requestedBy));
+  }
+
+  @Delete(':id/users/:userId')
+  @UseGuards(JwtAuthGuard)
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiOperation({ summary: 'Revoke user from enterprise' })
+  async revokeUser(
+    @CurrentUser('sub') requestedBy: string,
+    @Param('id') enterpriseId: string,
+    @Param('userId') userId: string,
+  ): Promise<void> {
+    return this.commandBus.execute(new EnterpriseRevokeUserCommand({ enterpriseId, userId }, requestedBy));
   }
 }

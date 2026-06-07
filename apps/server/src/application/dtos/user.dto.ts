@@ -7,14 +7,14 @@ import { UploadedFileDto } from './uploaded-file.dto';
 
 const BaseUserDtoSchema = z.object({
   id: z.string(),
-  email: z.email(),
+  email: z.string().email(),
   phone: z.string(),
   fullName: z.string(),
   avatar: z.string().nullable(),
   roleId: z.string(),
   isEmailVerified: z.boolean(),
-  createdAt: z.iso.datetime(),
-  updatedAt: z.iso.datetime(),
+  createdAt: z.string(),
+  updatedAt: z.string(),
 });
 
 export const AdminDtoSchema = BaseUserDtoSchema.extend({
@@ -23,7 +23,7 @@ export const AdminDtoSchema = BaseUserDtoSchema.extend({
 
 export const EnterpriseUserDtoSchema = BaseUserDtoSchema.extend({
   type: z.literal(ERoleType.ENTERPRISE),
-  enterpriseId: z.string(),
+  enterpriseIds: z.array(z.string()),
 });
 
 export const KOLUserDtoSchema = BaseUserDtoSchema.extend({
@@ -61,7 +61,7 @@ export const UserCreateInputSchema = z.object({
   type: z.nativeEnum(ERoleType),
   roleId: z.string(),
   isEmailVerified: z.boolean().optional().default(false),
-  enterpriseId: z.string().optional(),
+  enterpriseIds: z.array(z.string()).optional().default([]),
 });
 
 export class UserCreateInputDto extends createZodDto(UserCreateInputSchema) {}
@@ -73,7 +73,7 @@ export const UserUpdateInputSchema = z.object({
   avatar: z.string().nullable().optional(),
   roleId: z.string().optional(),
   isEmailVerified: z.boolean().optional(),
-  enterpriseId: z.string().optional(),
+  enterpriseIds: z.array(z.string()).optional(),
 });
 
 export class UserUpdateInputDto extends createZodDto(UserUpdateInputSchema) {}
@@ -84,4 +84,3 @@ export type UserDetailDto = DistributiveOmit<UserDto, 'avatar'> & {
   avatar: UploadedFileDto | null;
   role?: RoleDto;
 };
-

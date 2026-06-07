@@ -8,6 +8,7 @@ import { Nullable } from '@/core/types';
 import { ERoleType } from '@/core/enums';
 import { PaginatedResponseDto, SortOrder } from '@/shared/dtos/pagination.dto';
 import { Schema } from 'mongoose';
+import { MongoSanitizeUtil } from '../utils';
 
 @Injectable()
 export class MongoUserReadService implements IUserReadService {
@@ -31,13 +32,13 @@ export class MongoUserReadService implements IUserReadService {
     const query: QueryFilter<UserDocument> = {};
 
     if (email) {
-      query.email = { $regex: email, $options: 'i' };
+      query.email = { $regex: MongoSanitizeUtil.escapeRegex(email), $options: 'i' };
     }
     if (phone) {
-      query.phone = { $regex: phone, $options: 'i' };
+      query.phone = { $regex: MongoSanitizeUtil.escapeRegex(phone), $options: 'i' };
     }
     if (fullName) {
-      query.full_name = { $regex: fullName, $options: 'i' };
+      query.full_name = { $regex: MongoSanitizeUtil.escapeRegex(fullName), $options: 'i' };
     }
     if (type) {
       query.type = type;
@@ -110,18 +111,18 @@ export class MongoUserReadService implements IUserReadService {
         return {
           ...baseFields,
           type: ERoleType.ENTERPRISE,
-          enterpriseId: doc.enterprise_id,
-        };
+          enterpriseIds: doc.enterprise_ids ? doc.enterprise_ids.map((id: any) => id.toString()) : [],
+        } as any;
       case ERoleType.ADMIN:
         return {
           ...baseFields,
           type: ERoleType.ADMIN,
-        };
+        } as any;
       case ERoleType.KOL:
         return {
           ...baseFields,
           type: ERoleType.KOL,
-        };
+        } as any;
       default:
         throw new Error(`Unknown user type: ${doc.type}`);
     }

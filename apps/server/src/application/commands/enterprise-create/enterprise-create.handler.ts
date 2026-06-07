@@ -1,8 +1,8 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { Inject } from '@nestjs/common';
-import { EnterpriseConflictException } from '@/core/exceptions';
-import { ENTERPRISE_REPOSITORY, type IEnterpriseRepository } from '@/core/interfaces/repositories';
-import { EnterpriseRoot } from '@/core/aggregate-roots';
+import { EnterpriseConflictException, UserNotFoundException } from '@/core/exceptions';
+import { ENTERPRISE_REPOSITORY, USER_REPOSITORY, type IEnterpriseRepository, type IUserRepository } from '@/core/interfaces/repositories';
+import { EnterpriseRoot, EnterpriseUserRoot } from '@/core/aggregate-roots';
 import { EnterpriseCreateCommand } from './enterprise-create.command';
 import { EnterpriseDto } from '@/application/dtos';
 import { EnterpriseMapper } from '@/application/mappers';
@@ -12,6 +12,8 @@ export class EnterpriseCreateCommandHandler implements ICommandHandler<Enterpris
   constructor(
     @Inject(ENTERPRISE_REPOSITORY)
     private readonly enterpriseRepository: IEnterpriseRepository,
+    @Inject(USER_REPOSITORY)
+    private readonly userRepository: IUserRepository,
   ) {}
 
   async execute(command: EnterpriseCreateCommand): Promise<EnterpriseDto> {
@@ -35,6 +37,13 @@ export class EnterpriseCreateCommandHandler implements ICommandHandler<Enterpris
     });
 
     await this.enterpriseRepository.save(enterprise);
+
+    // Add enterprise to user's list
+    const user = await this.userRepository.findById(userId);
+    if (user && user instanceof EnterpriseUserRoot) {
+      user.addEnterprise(enterprise.id!);
+      await this.userRepository.save(user);
+    }
 
     return EnterpriseMapper.toDto(enterprise);
   }

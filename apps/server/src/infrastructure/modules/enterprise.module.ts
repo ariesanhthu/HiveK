@@ -2,12 +2,12 @@ import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { CqrsModule } from '@nestjs/cqrs';
 import { EnterpriseController } from '@/presentation/controllers';
-import { EnterpriseGetByIdHandler, EnterpriseGetListQuery, EnterpriseGetListHandler } from '@/application/queries';
+import { EnterpriseGetByIdHandler, EnterpriseGetListHandler } from '@/application/queries';
 import { ENTERPRISE_READ_SERVICE } from '@/application/interfaces';
 import { ENTERPRISE_REPOSITORY } from '@/core/interfaces/repositories';
 import { MongoEnterpriseReadService } from '@/infrastructure/mongo/read-services';
 import { MongoEnterpriseRepository } from '@/infrastructure/mongo/repositories';
-import { EnterpriseDocument, EnterpriseModel, EnterpriseSchema } from '@/infrastructure/mongo/schemas';
+import { EnterpriseModel, EnterpriseSchema } from '@/infrastructure/mongo/schemas';
 
 import {
   EnterpriseCreateCommandHandler,
@@ -15,18 +15,22 @@ import {
   EnterpriseSoftDeleteCommandHandler,
   EnterpriseHardDeleteCommandHandler,
   EnterpriseRestoreCommandHandler,
+  EnterpriseAddUserCommandHandler,
+  EnterpriseRevokeUserCommandHandler,
 } from '@/application/commands';
 
 import { UploadedFileModule } from './uploaded-file.module';
 import { AuthModule } from './auth.module';
+import { UserModule } from './user.module';
 
-import { LinkEnterpriseLogoHandler } from '@/application/events';
+import { LinkEnterpriseLogoHandler, UserAddedToEnterpriseHandler } from '@/application/events';
 
 @Module({
   imports: [
     CqrsModule,
     UploadedFileModule,
     AuthModule,
+    UserModule,
     MongooseModule.forFeature([
       { name: EnterpriseModel.name, schema: EnterpriseSchema },
     ]),
@@ -40,7 +44,10 @@ import { LinkEnterpriseLogoHandler } from '@/application/events';
     EnterpriseSoftDeleteCommandHandler,
     EnterpriseHardDeleteCommandHandler,
     EnterpriseRestoreCommandHandler,
+    EnterpriseAddUserCommandHandler,
+    EnterpriseRevokeUserCommandHandler,
     LinkEnterpriseLogoHandler,
+    UserAddedToEnterpriseHandler,
     {
       provide: ENTERPRISE_READ_SERVICE,
       useClass: MongoEnterpriseReadService,

@@ -8,7 +8,7 @@ import { CampaignDetailDto } from '@/application/dtos';
 import { CampaignFilterDto } from '@/application/queries';
 import { PaginatedResponseDto, SortOrder } from '@/shared/dtos/pagination.dto';
 import { Schema } from 'mongoose';
-import { parseMongoProjection } from '../utils';
+import { parseMongoProjection, MongoSanitizeUtil } from '../utils';
 
 @Injectable()
 export class MongoCampaignReadService implements ICampaignReadService {
@@ -22,7 +22,7 @@ export class MongoCampaignReadService implements ICampaignReadService {
     const query: QueryFilter<CampaignDocument> = {};
 
     if (name) {
-      query.description = { $regex: name, $options: 'i' };
+      query.description = { $regex: MongoSanitizeUtil.escapeRegex(name), $options: 'i' };
     }
 
     if (ownerId) {

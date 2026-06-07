@@ -34,8 +34,8 @@ export class UserUpdateCommandHandler implements ICommandHandler<UserUpdateComma
       anyProps.passwordHash = await this.authService.hashPassword(input.password);
     }
 
-    if (input.enterpriseId !== undefined && user instanceof EnterpriseUserRoot) {
-      anyProps.enterpriseId = input.enterpriseId;
+    if (input.enterpriseIds !== undefined && user instanceof EnterpriseUserRoot) {
+      anyProps.enterpriseIds = input.enterpriseIds;
     }
 
     anyProps.updatedAt = new Date();

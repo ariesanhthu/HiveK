@@ -11,7 +11,7 @@ export class UserMapper {
       email: root.email,
       phone: root.phone,
       fullName: root.fullName,
-      avatar: root.avatar,
+      avatar: root.avatar || null,
       roleId: root.roleId,
       isEmailVerified: root.isEmailVerified,
       createdAt: root.createdAt.toISOString(),
@@ -25,7 +25,7 @@ export class UserMapper {
         return {
           ...baseFields,
           type: ERoleType.ENTERPRISE,
-          enterpriseId: (root as EnterpriseUserRoot).enterpriseId,
+          enterpriseIds: (root as EnterpriseUserRoot).enterpriseIds,
         };
       case ERoleType.ADMIN:
         return {

@@ -3,7 +3,7 @@ import { ERoleType } from '../enums';
 import { Nullable } from '../types';
 
 export interface EnterpriseUserProps extends UserProps {
-  enterpriseId: Nullable<string>;
+  enterpriseIds: string[];
 }
 
 export interface EnterpriseUserCreateProps extends UserCreateProps {
@@ -21,7 +21,7 @@ export class EnterpriseUserRoot extends UserRoot<EnterpriseUserProps> {
     const now = new Date();
     return new EnterpriseUserRoot({
       ...props,
-      enterpriseId: null,
+      enterpriseIds: [],
       googleId: props.googleId || null,
       createdAt: now,
       updatedAt: now,
@@ -35,7 +35,19 @@ export class EnterpriseUserRoot extends UserRoot<EnterpriseUserProps> {
     return new EnterpriseUserRoot(props, id);
   }
 
-  get enterpriseId(): string {
-    return this.props.enterpriseId;
+  get enterpriseIds(): string[] {
+    return [...this.props.enterpriseIds];
+  }
+
+  public addEnterprise(enterpriseId: string): void {
+    if (!this.props.enterpriseIds.includes(enterpriseId)) {
+      this.props.enterpriseIds.push(enterpriseId);
+      this.props.updatedAt = new Date();
+    }
+  }
+
+  public revokeEnterprise(enterpriseId: string): void {
+    this.props.enterpriseIds = this.props.enterpriseIds.filter(id => id !== enterpriseId);
+    this.props.updatedAt = new Date();
   }
 }

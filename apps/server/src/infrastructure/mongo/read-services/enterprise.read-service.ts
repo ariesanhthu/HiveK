@@ -7,6 +7,7 @@ import { Nullable } from '@/core/types';
 import { EnterpriseDetailDto } from '@/application/dtos';
 import { EnterpriseFilterDto } from '@/application/queries/enterprise-get-list/enterprise-get-list.dto';
 import { PaginatedResponseDto, SortOrder } from '@/shared/dtos/pagination.dto';
+import { MongoSanitizeUtil } from '../utils';
 
 @Injectable()
 export class MongoEnterpriseReadService implements IEnterpriseReadService {
@@ -30,10 +31,10 @@ export class MongoEnterpriseReadService implements IEnterpriseReadService {
     const query: QueryFilter<EnterpriseDocument> = {};
 
     if (companyName) {
-      query.company_name = { $regex: companyName, $options: 'i' };
+      query.company_name = { $regex: MongoSanitizeUtil.escapeRegex(companyName), $options: 'i' };
     }
     if (contactEmail) {
-      query.contact_email = { $regex: contactEmail, $options: 'i' };
+      query.contact_email = { $regex: MongoSanitizeUtil.escapeRegex(contactEmail), $options: 'i' };
     }
     if (taxId) {
       query.tax_id = taxId;

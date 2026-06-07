@@ -1,6 +1,6 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { Inject } from '@nestjs/common';
-import { EnterpriseNotFoundException } from '@/core/exceptions';
+import { EnterpriseNotFoundException, EnterpriseForbiddenException } from '@/core/exceptions';
 import { ENTERPRISE_REPOSITORY, type IEnterpriseRepository } from '@/core/interfaces/repositories';
 import { EnterpriseSoftDeleteCommand } from './enterprise-soft-delete.command';
 
@@ -12,11 +12,15 @@ export class EnterpriseSoftDeleteCommandHandler implements ICommandHandler<Enter
   ) { }
 
   async execute(command: EnterpriseSoftDeleteCommand): Promise<void> {
-    const { id, deletedBy } = command;
+    const { id, requestedBy, deletedBy } = command;
 
     const enterprise = await this.enterpriseRepository.findById(id);
     if (!enterprise) {
       throw new EnterpriseNotFoundException(id);
+    }
+
+    if (enterprise.userId !== requestedBy) {
+      throw new EnterpriseForbiddenException();
     }
 
     enterprise.softDelete(deletedBy);

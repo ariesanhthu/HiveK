@@ -35,7 +35,7 @@ describe('UserMapper', () => {
       createdAt: new Date('2026-06-01T00:00:00Z'),
       updatedAt: new Date('2026-06-30T00:00:00Z'),
       type: ERoleType.ENTERPRISE,
-      enterpriseId: 'ent-123',
+      enterpriseIds: ['ent-123'],
     } as any;
 
     const dto = UserMapper.toDto(mockRoot);
@@ -43,7 +43,7 @@ describe('UserMapper', () => {
     expect(dto).toBeDefined();
     expect(dto.id).toBe('user-123');
     expect(dto.type).toBe(ERoleType.ENTERPRISE);
-    expect((dto as any).enterpriseId).toBe('ent-123');
+    expect((dto as any).enterpriseIds).toEqual(['ent-123']);
   });
 
   it('should map Admin UserRoot to UserDto', () => {

@@ -37,7 +37,11 @@ export class CampaignController {
   @Post()
   @UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: 'Create new campaign' })
-  async create(@Body() input: CampaignCreateInputDto): Promise<CampaignDto> {
+  async create(
+    @CurrentUser('sub') userId: string,
+    @Body() input: CampaignCreateInputDto
+  ): Promise<CampaignDto> {
+    input.ownerId = userId;
     return this.commandBus.execute(new CampaignCreateCommand(input));
   }
 
@@ -45,10 +49,11 @@ export class CampaignController {
   @UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: 'Update campaign' })
   async update(
+    @CurrentUser('sub') userId: string,
     @Param('id') id: string,
     @Body() input: CampaignUpdateInputDto,
   ): Promise<CampaignDto> {
-    return this.commandBus.execute(new CampaignUpdateCommand(id, input));
+    return this.commandBus.execute(new CampaignUpdateCommand(id, userId, input));
   }
 
   @Patch(':id/soft-delete')
@@ -56,10 +61,11 @@ export class CampaignController {
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: 'Soft delete campaign' })
   async delete(
+    @CurrentUser('sub') userId: string,
     @Param('id') id: string,
     @Query() dto: SoftDeleteInputDto,
   ): Promise<void> {
-    return this.commandBus.execute(new CampaignSoftDeleteCommand(id, dto.deletedBy));
+    return this.commandBus.execute(new CampaignSoftDeleteCommand(id, userId, dto.deletedBy));
   }
 
   @Delete(':id')
@@ -83,10 +89,11 @@ export class CampaignController {
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Update campaign status' })
   async updateStatus(
+    @CurrentUser('sub') userId: string,
     @Param('id') id: string,
     @Body() input: CampaignUpdateStatusInputDto,
   ): Promise<void> {
-    return this.commandBus.execute(new CampaignUpdateStatusCommand(id, input.status));
+    return this.commandBus.execute(new CampaignUpdateStatusCommand(id, userId, input.status));
   }
 
   @Patch(':id/collaborators/invite')

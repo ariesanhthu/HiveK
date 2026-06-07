@@ -7,4 +7,5 @@ export * from './uploaded-file-created/link-campaign-participant-output-file.han
 export * from './notification-dispatched/notification-dispatched.event';
 export * from './notification-dispatched/in-app-notification.handler';
 export * from './notification-dispatched/email-notification.handler';
-
+export * from './user-added-to-enterprise/user-added-to-enterprise.event';
+export * from './user-added-to-enterprise/user-added-to-enterprise.handler';

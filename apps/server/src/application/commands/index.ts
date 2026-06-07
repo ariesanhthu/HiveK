@@ -96,6 +96,12 @@ export * from './enterprise-hard-delete/enterprise-hard-delete.command';
 export * from './enterprise-hard-delete/enterprise-hard-delete.handler';
 export * from './enterprise-restore/enterprise-restore.command';
 export * from './enterprise-restore/enterprise-restore.handler';
+export * from './enterprise-add-user/enterprise-add-user.command';
+export * from './enterprise-add-user/enterprise-add-user.handler';
+export * from './enterprise-add-user/enterprise-add-user.dto';
+export * from './enterprise-revoke-user/enterprise-revoke-user.command';
+export * from './enterprise-revoke-user/enterprise-revoke-user.handler';
+export * from './enterprise-revoke-user/enterprise-revoke-user.dto';
 
 // Uploaded File Commands
 export * from './uploaded-file-create/uploaded-file-create.command';
@@ -187,7 +193,3 @@ export * from './campaign-invite-collaborator/campaign-invite-collaborator.dto';
 export * from './campaign-revoke-collaborator/campaign-revoke-collaborator.command';
 export * from './campaign-revoke-collaborator/campaign-revoke-collaborator.handler';
 export * from './campaign-revoke-collaborator/campaign-revoke-collaborator.dto';
-
-
-
-

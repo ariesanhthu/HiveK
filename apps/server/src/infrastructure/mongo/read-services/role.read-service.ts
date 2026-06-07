@@ -6,6 +6,7 @@ import { RoleDto, RoleFilterDto } from '@/application/dtos';
 import { RoleDocument, RoleModel } from '../schemas/role.schema';
 import { Nullable, JsonObject } from '@/core/types';
 import { PaginatedResponseDto, SortOrder } from '@/shared/dtos/pagination.dto';
+import { MongoSanitizeUtil } from '../utils';
 
 @Injectable()
 export class MongoRoleReadService implements IRoleReadService {
@@ -29,7 +30,7 @@ export class MongoRoleReadService implements IRoleReadService {
     const query: QueryFilter<RoleDocument> = {};
 
     if (title) {
-      query.title = { $regex: title, $options: 'i' };
+      query.title = { $regex: MongoSanitizeUtil.escapeRegex(title), $options: 'i' };
     }
 
     if (cursor) {

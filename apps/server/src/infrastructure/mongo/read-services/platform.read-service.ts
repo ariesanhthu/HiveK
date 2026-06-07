@@ -7,6 +7,7 @@ import { Nullable } from '@/core/types';
 import { PlatformDetailDto } from '@/application/dtos';
 import { PlatformFilterDto } from '@/application/queries';
 import { PaginatedResponseDto, SortOrder } from '@/shared/dtos/pagination.dto';
+import { MongoSanitizeUtil } from '../utils';
 
 @Injectable()
 export class MongoPlatformReadService implements IPlatformReadService {
@@ -20,7 +21,7 @@ export class MongoPlatformReadService implements IPlatformReadService {
     const query: QueryFilter<PlatformDocument> = {};
 
     if (name) {
-      query.name = { $regex: name, $options: 'i' };
+      query.name = { $regex: MongoSanitizeUtil.escapeRegex(name), $options: 'i' };
     }
 
     if (apiStatus) {

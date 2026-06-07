@@ -1,6 +1,6 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { Inject } from '@nestjs/common';
-import { CampaignNotFoundException } from '@/core/exceptions';
+import { CampaignNotFoundException, CampaignForbiddenException } from '@/core/exceptions';
 import { CAMPAIGN_REPOSITORY, type ICampaignRepository } from '@/core/interfaces/repositories';
 import { CampaignUpdateStatusCommand } from './campaign-update-status.command';
 
@@ -12,11 +12,15 @@ export class CampaignUpdateStatusCommandHandler implements ICommandHandler<Campa
   ) { }
 
   async execute(command: CampaignUpdateStatusCommand): Promise<void> {
-    const { id, status } = command;
+    const { id, requestedBy, status } = command;
 
     const campaign = await this.campaignRepository.findById(id);
     if (!campaign) {
       throw new CampaignNotFoundException(id);
+    }
+
+    if (campaign.ownerId !== requestedBy) {
+      throw new CampaignForbiddenException();
     }
 
     campaign.updateStatus(status);

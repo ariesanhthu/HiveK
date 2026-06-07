@@ -46,6 +46,10 @@ export class UserCreateCommandHandler implements ICommandHandler<UserCreateComma
         user = EnterpriseUserRoot.create({
           ...commonProps,
         });
+        // If enterpriseIds are provided during creation, add them
+        if (input.enterpriseIds && input.enterpriseIds.length > 0) {
+            input.enterpriseIds.forEach(id => (user as EnterpriseUserRoot).addEnterprise(id));
+        }
         break;
       case ERoleType.ADMIN:
         user = AdminRoot.create(commonProps);

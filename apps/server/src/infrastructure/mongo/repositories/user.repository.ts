@@ -24,6 +24,11 @@ export class MongoUserRepository implements IUserRepository {
     return doc ? this.mapToDomain(doc) : null;
   }
 
+  async findByEnterpriseId(enterpriseId: string): Promise<UserRoot[]> {
+    const docs = await this.userModel.find({ enterprise_ids: new Types.ObjectId(enterpriseId) }).exec();
+    return docs.map(doc => this.mapToDomain(doc));
+  }
+
   async save(user: UserRoot): Promise<void> {
     const data = this.mapToPersistence(user);
 
@@ -69,7 +74,7 @@ export class MongoUserRepository implements IUserRepository {
       case ERoleType.ENTERPRISE:
         return EnterpriseUserRoot.instantiate(id, {
           ...props,
-          enterpriseId: (doc as any).enterprise_id ? (doc as any).enterprise_id.toString() : '',
+          enterpriseIds: (doc as any).enterprise_ids ? (doc as any).enterprise_ids.map((eid: any) => eid.toString()) : [],
         } as any);
       case ERoleType.KOL:
         return KOLUserRoot.instantiate(id, props as any);
@@ -78,8 +83,7 @@ export class MongoUserRepository implements IUserRepository {
     }
   }
 
-  private mapToPersistence(user: UserRoot): Omit<UserModel, 'created_at' | 'updated_at'> & { enterprise_id?: Types.ObjectId } {
-    console.log(user);
+  private mapToPersistence(user: UserRoot): Omit<UserModel, 'created_at' | 'updated_at'> & { enterprise_ids?: Types.ObjectId[] } {
     const base = {
       email: user.email,
       phone: (user.props as any).phone,
@@ -96,7 +100,10 @@ export class MongoUserRepository implements IUserRepository {
     };
 
     if (user instanceof EnterpriseUserRoot) {
-      return { ...base, enterprise_id: user.enterpriseId ? new Types.ObjectId(user.enterpriseId) : null };
+      return { 
+        ...base, 
+        enterprise_ids: user.enterpriseIds.map(id => new Types.ObjectId(id)) 
+      };
     }
 
     return base as any;
