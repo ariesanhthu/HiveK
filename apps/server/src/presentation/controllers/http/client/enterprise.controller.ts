@@ -11,6 +11,7 @@ import {
 } from '@/application/commands';
 import { EnterpriseDto, EnterpriseDetailDto } from '@/application/dtos';
 import { ApiTags, ApiOperation, ApiBearerAuth, ApiSecurity } from '@nestjs/swagger';
+import { buildVersionedRoute } from '@presentation/utils';
 import { JwtAuthGuard, RolesGuard } from '@/presentation/middleware/guards';
 import { CurrentUser } from '@/presentation/decorators/current-user.decorator';
 import { Roles } from '@/presentation/decorators/roles.decorator';
@@ -21,7 +22,7 @@ import { ERoleType } from '@/core/enums/role-type.enum';
 @ApiSecurity('x-api-key')
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Roles(ERoleType.ENTERPRISE)
-@Controller('client/enterprises')
+@Controller(buildVersionedRoute('client', 'enterprises', 1))
 export class EnterpriseClientController {
   constructor(
     private readonly commandBus: CommandBus,

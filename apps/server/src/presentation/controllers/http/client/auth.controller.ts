@@ -2,6 +2,7 @@ import { Controller, Post, Body, HttpCode, HttpStatus, Get, UseGuards, Res, Req,
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import type { Response, Request } from 'express';
 import { ApiTags, ApiOperation, ApiBearerAuth, ApiSecurity, ApiTooManyRequestsResponse } from '@nestjs/swagger';
+import { buildVersionedRoute } from '@presentation/utils';
 import {
   AuthSignInCommand,
   AuthSignUpCommand,
@@ -34,7 +35,7 @@ import { UserUpdateInputDto } from '@/application/commands/user-update/user-upda
 @ApiBearerAuth()
 @ApiSecurity('x-api-key')
 @UseGuards(JwtAuthGuard)
-@Controller('client/auth')
+@Controller(buildVersionedRoute('client', 'auth', 1))
 export class AuthClientController {
   constructor(
     private readonly commandBus: CommandBus,

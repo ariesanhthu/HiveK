@@ -1,5 +1,6 @@
 import { INestApplication } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { Request, Response } from 'express';
 // import { patchNestjsSwagger } from 'nestjs-zod';
 
 export function setupSwagger(app: INestApplication): void {
@@ -59,9 +60,6 @@ export function setupSwagger(app: INestApplication): void {
   const clientDocument = { ...fullDocument, paths: clientPaths };
 
   // ---- Setup Swagger UI ----
-  SwaggerModule.setup('hivek/api/admin/docs', app, adminDocument, swaggerCustomOptions);
-  SwaggerModule.setup('hivek/api/client/docs', app, clientDocument, swaggerCustomOptions);
-
-  // const documentFactory = () => SwaggerModule.createDocument(app, config);
-  // SwaggerModule.setup('hivek/api/docs', app, documentFactory, swaggerCustomOptions);
+  SwaggerModule.setup('hivek/admin/docs', app, adminDocument, { ...swaggerCustomOptions, jsonDocumentUrl: 'hivek/admin/docs/openapi-json' });
+  SwaggerModule.setup('hivek/client/docs', app, clientDocument, { ...swaggerCustomOptions, jsonDocumentUrl: 'hivek/client/docs/openapi-json' });
 }

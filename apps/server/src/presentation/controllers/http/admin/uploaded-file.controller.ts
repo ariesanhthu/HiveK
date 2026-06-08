@@ -17,6 +17,7 @@ import {
 } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { ApiTags, ApiOperation, ApiConsumes, ApiBody, ApiBearerAuth, ApiSecurity } from '@nestjs/swagger';
+import { buildVersionedRoute } from '@presentation/utils';
 import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { TargetType } from '@/core/enums/target-type.enum';
 import {
@@ -42,7 +43,7 @@ import { Roles } from '@/presentation/decorators/roles.decorator';
 @ApiSecurity('x-api-key')
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Roles(ERoleType.ADMIN)
-@Controller('admin/upload')
+@Controller(buildVersionedRoute('admin', 'upload', 1))
 export class UploadedFileAdminController {
   constructor(
     private readonly commandBus: CommandBus,

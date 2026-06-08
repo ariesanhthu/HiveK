@@ -1,6 +1,7 @@
 import { Controller, Get, Patch, Delete, Param, Query, Body, HttpCode, HttpStatus, UseGuards } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { ApiTags, ApiOperation, ApiBearerAuth, ApiSecurity } from '@nestjs/swagger';
+import { buildVersionedRoute } from '@presentation/utils';
 import { JwtAuthGuard } from '@/presentation/middleware/guards/jwt-auth.guard';
 import { CurrentUser } from '@/presentation/decorators/current-user.decorator';
 import { NotificationGetListQuery } from '@/application/queries';
@@ -24,7 +25,7 @@ import { PaginatedResponseDto } from '@/application/dtos/pagination.dto';
 @ApiBearerAuth()
 @ApiSecurity('x-api-key')
 @UseGuards(JwtAuthGuard)
-@Controller('client/notifications')
+@Controller(buildVersionedRoute('client', 'notifications', 1))
 export class NotificationClientController {
   constructor(
     private readonly commandBus: CommandBus,

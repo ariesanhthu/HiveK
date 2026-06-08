@@ -3,11 +3,12 @@ import type { Response } from 'express';
 import { ApiTags, ApiOperation, ApiBearerAuth, ApiSecurity } from '@nestjs/swagger';
 import { Public } from '@/presentation/decorators/public.decorator';
 import { AuthGuard } from '@nestjs/passport';
+import { buildVersionedRoute } from '@/presentation/utils/versioned-route.util';
 
 @ApiTags('OAuth')
 @ApiBearerAuth()
 @ApiSecurity('x-api-key')
-@Controller('auth')
+@Controller(buildVersionedRoute('common', 'auth', 1))
 export class OAuthController {
   @Public()
   @Get('google')

@@ -1,6 +1,7 @@
 import { Controller, Get, Query, UseGuards } from '@nestjs/common';
 import { QueryBus } from '@nestjs/cqrs';
 import { ApiTags, ApiOperation, ApiBearerAuth, ApiSecurity } from '@nestjs/swagger';
+import { buildVersionedRoute } from '@presentation/utils';
 import { KpiLogDto } from '@/application/dtos';
 import { PaginatedResponseDto } from '@/application/dtos/pagination.dto';
 import { KpiLogGetListQuery, KpiLogFilterDto } from '@/application/queries';
@@ -13,7 +14,7 @@ import { Roles } from '@/presentation/decorators/roles.decorator';
 @ApiSecurity('x-api-key')
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Roles(ERoleType.ADMIN)
-@Controller('admin/analytics/kpi-logs')
+@Controller(buildVersionedRoute('admin', 'analytics/kpi-logs', 1))
 export class KpiLogAdminController {
   constructor(private readonly queryBus: QueryBus) {}
 

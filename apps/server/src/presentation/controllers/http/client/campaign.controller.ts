@@ -1,6 +1,7 @@
 import { Controller, Get, Post, Patch, Param, Query, Body, HttpCode, HttpStatus, UseGuards } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { ApiTags, ApiOperation, ApiBearerAuth, ApiSecurity } from '@nestjs/swagger';
+import { buildVersionedRoute } from '@presentation/utils';
 import { CampaignCreateCommand, CampaignUpdateCommand, CampaignSoftDeleteCommand, CampaignRestoreCommand, CampaignCreateInputDto, CampaignUpdateInputDto } from '@/application/commands';
 import { CampaignGetListQuery, CampaignGetByIdQuery, CampaignFilterDto } from '@/application/queries';
 import { CampaignDto, SoftDeleteInputDto } from '@/application/dtos';
@@ -15,7 +16,7 @@ import { ERoleType } from '@/core/enums';
 @ApiBearerAuth()
 @ApiSecurity('x-api-key')
 @UseGuards(JwtAuthGuard)
-@Controller('client/campaigns')
+@Controller(buildVersionedRoute('client', 'campaigns', 1))
 export class CampaignClientController {
   constructor(
     private readonly commandBus: CommandBus,

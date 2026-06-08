@@ -13,6 +13,7 @@ import {
 } from '@/application/commands';
 import { EnterpriseDto, EnterpriseDetailDto, SoftDeleteInputDto } from '@/application/dtos';
 import { ApiTags, ApiOperation, ApiBearerAuth, ApiSecurity } from '@nestjs/swagger';
+import { buildVersionedRoute } from '@presentation/utils';
 import { JwtAuthGuard } from '@/presentation/middleware/guards/jwt-auth.guard';
 import { CurrentUser } from '@/presentation/decorators/current-user.decorator';
 import { PaginatedResponseDto } from '@/application/dtos/pagination.dto';
@@ -26,7 +27,7 @@ import { Roles } from '@/presentation/decorators/roles.decorator';
 @ApiSecurity('x-api-key')
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Roles(ERoleType.ADMIN)
-@Controller('admin/enterprises')
+@Controller(buildVersionedRoute('admin', 'enterprises', 1))
 export class EnterpriseAdminController {
   constructor(
     private readonly commandBus: CommandBus,

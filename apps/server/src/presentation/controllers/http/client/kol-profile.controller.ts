@@ -1,6 +1,7 @@
 import { Controller, Get, Param, Query, Body, Patch, Delete, HttpCode, HttpStatus, UseGuards, Req } from '@nestjs/common';
 import { QueryBus, CommandBus } from '@nestjs/cqrs';
 import { ApiTags, ApiOperation, ApiBearerAuth, ApiSecurity } from '@nestjs/swagger';
+import { buildVersionedRoute } from '@presentation/utils';
 import { KolProfileGetListQuery, KolProfileGetByIdQuery, KolProfileGetHandlesDevQuery, KolProfileFilterDto } from '@/application/queries';
 import { KolProfileUpdateCommand, KolProfileHardDeleteCommand, UpdateKolProfileDto } from '@/application/commands';
 import { KolProfileDto } from '@/application/dtos';
@@ -12,7 +13,7 @@ import { AuthGuard } from '@nestjs/passport';
 @ApiTags('CLIENT-kol-profiles')
 @ApiBearerAuth()
 @ApiSecurity('x-api-key')
-@Controller('client/kol-profiles')
+@Controller(buildVersionedRoute('client', 'kol-profiles', 1))
 export class KolProfileClientController {
   constructor(
     private readonly queryBus: QueryBus,

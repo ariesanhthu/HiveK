@@ -2,6 +2,7 @@ import { Controller, Post, Body, HttpCode, HttpStatus, Get, UseGuards, Res, Req,
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import type { Response, Request } from 'express';
 import { ApiTags, ApiOperation, ApiBearerAuth, ApiSecurity, ApiTooManyRequestsResponse } from '@nestjs/swagger';
+import { buildVersionedRoute } from '@presentation/utils';
 import {
   AuthSignInCommand,
   AuthSignOutCommand,
@@ -33,7 +34,7 @@ import { Roles } from '@/presentation/decorators/roles.decorator';
 @ApiSecurity('x-api-key')
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Roles(ERoleType.ADMIN)
-@Controller('admin/auth')
+@Controller(buildVersionedRoute('admin', 'auth', 1))
 export class AuthAdminController {
   constructor(
     private readonly commandBus: CommandBus,

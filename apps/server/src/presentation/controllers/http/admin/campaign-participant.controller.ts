@@ -1,6 +1,7 @@
 import { Controller, Get, Post, Patch, Delete, Body, Param, Query, HttpCode, HttpStatus, UseGuards } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { ApiTags, ApiOperation, ApiBearerAuth, ApiSecurity } from '@nestjs/swagger';
+import { buildVersionedRoute } from '@presentation/utils';
 import {
   CampaignParticipantCreateCommand,
   CampaignParticipantUpdateCommand,
@@ -27,7 +28,7 @@ import { ERoleType } from '@/core/enums/role-type.enum';
 @ApiSecurity('x-api-key')
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Roles(ERoleType.ADMIN)
-@Controller('admin/campaign-participants')
+@Controller(buildVersionedRoute('admin', 'campaign-participants', 1))
 export class CampaignParticipantAdminController {
   constructor(
     private readonly commandBus: CommandBus,

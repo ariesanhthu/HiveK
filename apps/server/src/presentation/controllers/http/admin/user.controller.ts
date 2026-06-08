@@ -4,6 +4,7 @@ import { UserGetByIdQuery, UserGetListQuery } from '@/application/queries';
 import { UserCreateCommand, UserUpdateCommand, UserSoftDeleteCommand, UserHardDeleteCommand, UserRestoreCommand } from '@/application/commands';
 import { UserDto, UserFilterDto, SoftDeleteInputDto } from '@/application/dtos';
 import { ApiTags, ApiOperation, ApiBearerAuth, ApiSecurity } from '@nestjs/swagger';
+import { buildVersionedRoute } from '@presentation/utils';
 import { JwtAuthGuard, RolesGuard } from '@/presentation/middleware/guards';
 import { UseGuards } from '@nestjs/common';
 import { Roles } from '@/presentation/decorators/roles.decorator';
@@ -17,7 +18,7 @@ import { UserUpdateInputDto } from '@/application/commands/user-update/user-upda
 @ApiSecurity('x-api-key')
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Roles(ERoleType.ADMIN)
-@Controller('admin/users')
+@Controller(buildVersionedRoute('admin', 'users', 1))
 export class UserAdminController {
   constructor(
     private readonly commandBus: CommandBus,

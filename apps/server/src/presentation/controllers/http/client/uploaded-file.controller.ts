@@ -12,6 +12,7 @@ import {
 } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { ApiTags, ApiOperation, ApiConsumes, ApiBody, ApiBearerAuth, ApiSecurity } from '@nestjs/swagger';
+import { buildVersionedRoute } from '@presentation/utils';
 import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { TargetType } from '@/core/enums/target-type.enum';
 import {
@@ -30,7 +31,7 @@ import { FileUploadValidationPipe } from '@/presentation/middleware/pipes/file-u
 @ApiBearerAuth()
 @ApiSecurity('x-api-key')
 @UseGuards(JwtAuthGuard)
-@Controller('client/upload')
+@Controller(buildVersionedRoute('client', 'upload', 1))
 export class UploadedFileClientController {
   constructor(
     private readonly commandBus: CommandBus,

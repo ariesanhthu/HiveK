@@ -23,7 +23,7 @@ export function setupApplication(app: INestApplication): void {
   });
 
   // Global Prefix for all routes
-  app.setGlobalPrefix('hivek/api');
+  app.setGlobalPrefix('hivek');
 
   // Apply Global Pipes
   app.useGlobalPipes(new ZodValidationPipe());

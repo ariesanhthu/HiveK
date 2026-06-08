@@ -1,6 +1,7 @@
 import { Controller, Get, Post, Patch, Delete, Param, Query, Body, HttpCode, HttpStatus, UseGuards } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { ApiTags, ApiOperation, ApiBearerAuth, ApiSecurity } from '@nestjs/swagger';
+import { buildVersionedRoute } from '@presentation/utils';
 import { PlatformCreateCommand, PlatformUpdateCommand, PlatformSoftDeleteCommand, PlatformHardDeleteCommand, PlatformRestoreCommand, PlatformCreateInputDto, PlatformUpdateInputDto } from '@/application/commands';
 import { PlatformGetListQuery, PlatformGetByIdQuery, PlatformFilterDto } from '@/application/queries';
 import { PlatformDto, PlatformDetailDto, SoftDeleteInputDto } from '@/application/dtos';
@@ -15,7 +16,7 @@ import { Roles } from '@/presentation/decorators/roles.decorator';
 @ApiSecurity('x-api-key')
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Roles(ERoleType.ADMIN)
-@Controller('admin/platforms')
+@Controller(buildVersionedRoute('admin', 'platforms', 1))
 export class PlatformAdminController {
   constructor(
     private readonly commandBus: CommandBus,

@@ -3,6 +3,7 @@ import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { UserGetByIdQuery, UserGetListQuery } from '@/application/queries';
 import { UserDto, UserFilterDto } from '@/application/dtos';
 import { ApiTags, ApiOperation, ApiBearerAuth, ApiSecurity } from '@nestjs/swagger';
+import { buildVersionedRoute } from '@presentation/utils';
 import { JwtAuthGuard } from '@/presentation/middleware/guards';
 import { UseGuards } from '@nestjs/common';
 import { PaginatedResponseDto } from '@/application/dtos/pagination.dto';
@@ -11,7 +12,7 @@ import { PaginatedResponseDto } from '@/application/dtos/pagination.dto';
 @ApiBearerAuth()
 @ApiSecurity('x-api-key')
 @UseGuards(JwtAuthGuard)
-@Controller('client/users')
+@Controller(buildVersionedRoute('client', 'users', 1))
 export class UserClientController {
   constructor(
     private readonly queryBus: QueryBus,

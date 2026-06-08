@@ -1,6 +1,7 @@
 import { Controller, Get, Post, Patch, Delete, Body, Param, Query, HttpCode, HttpStatus, UseGuards } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { ApiTags, ApiOperation, ApiBearerAuth, ApiSecurity } from '@nestjs/swagger';
+import { buildVersionedRoute } from '@presentation/utils';
 import {
   CampaignParticipantCreateCommand,
   CampaignParticipantUpdateCommand,
@@ -26,7 +27,7 @@ import { Roles } from '@/presentation/decorators/roles.decorator';
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard)
 @ApiSecurity('x-api-key')
-@Controller('client/campaign-participants')
+@Controller(buildVersionedRoute('client', 'campaign-participants', 1))
 export class CampaignParticipantClientController {
   constructor(
     private readonly commandBus: CommandBus,
