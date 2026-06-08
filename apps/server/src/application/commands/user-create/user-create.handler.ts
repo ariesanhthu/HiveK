@@ -7,6 +7,7 @@ import { KOLUserRoot, EnterpriseUserRoot, AdminRoot } from '@/core/aggregate-roo
 import { ERoleType } from '@/core/enums';
 import { AuthService } from '@/application/services/auth.service';
 import { type IUnitOfWork, UNIT_OF_WORK } from '@/application/interfaces';
+import { PhoneNumber } from '@/core/value-objects/phone-number.value-object';
 
 @CommandHandler(UserCreateCommand)
 export class UserCreateCommandHandler implements ICommandHandler<UserCreateCommand, string> {
@@ -32,13 +33,11 @@ export class UserCreateCommandHandler implements ICommandHandler<UserCreateComma
 
       const commonProps = {
         email: normalizedEmail,
-        phone: input.phone || '0000000000',
+        phone: PhoneNumber.create({ value: input.phone }),
         passwordHash,
         fullName: input.fullName,
-        avatar: input.avatar || null,
         type: input.type,
         roleId: input.roleId,
-        isEmailVerified: input.isEmailVerified ?? false,
       };
 
       let user;
@@ -50,10 +49,6 @@ export class UserCreateCommandHandler implements ICommandHandler<UserCreateComma
           user = EnterpriseUserRoot.create({
             ...commonProps,
           });
-          // If enterpriseIds are provided during creation, add them
-          if (input.enterpriseIds && input.enterpriseIds.length > 0) {
-              input.enterpriseIds.forEach(id => (user as EnterpriseUserRoot).addEnterprise(id));
-          }
           break;
         case ERoleType.ADMIN:
           user = AdminRoot.create(commonProps);

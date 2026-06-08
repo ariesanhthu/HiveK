@@ -4,7 +4,7 @@ import { UserGetByIdQuery, UserGetListQuery } from '@/application/queries';
 import { UserCreateCommand, UserUpdateCommand, UserSoftDeleteCommand, UserHardDeleteCommand, UserRestoreCommand } from '@/application/commands';
 import { UserDto, UserFilterDto, SoftDeleteInputDto } from '@/application/dtos';
 import { ApiTags, ApiOperation, ApiBearerAuth, ApiSecurity } from '@nestjs/swagger';
-import { JwtAuthGuard, RolesGuard } from '../middleware/guards';
+import { JwtAuthGuard, RolesGuard } from '@/presentation/middleware/guards';
 import { UseGuards } from '@nestjs/common';
 import { Roles } from '@/presentation/decorators/roles.decorator';
 import { ERoleType } from '@/core/enums';

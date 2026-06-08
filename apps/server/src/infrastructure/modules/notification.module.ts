@@ -10,7 +10,7 @@ import { NotificationHardDeleteCommandHandler } from '@/application/commands/not
 import { NotificationGetListQueryHandler } from '@/application/queries/notification-get-list/notification-get-list.handler';
 import { InAppNotificationHandler } from '@/application/events/notification-dispatched/in-app-notification.handler';
 import { EmailNotificationHandler } from '@/application/events/notification-dispatched/email-notification.handler';
-import { NotificationController } from '@/presentation/controllers/notification.controller';
+import { NotificationController } from '@/presentation/controllers'
 
 const COMMAND_HANDLERS = [
   NotificationSendCommandHandler,

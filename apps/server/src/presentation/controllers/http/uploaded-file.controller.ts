@@ -34,8 +34,8 @@ import {
 } from '@/application/queries';
 import { UploadedFileDto, SoftDeleteInputDto } from '@/application/dtos';
 import { PaginatedResponseDto } from '@/application/dtos/pagination.dto';
-import { JwtAuthGuard } from '../middleware/guards';
-import { FileUploadValidationPipe } from '../middleware/pipes/file-upload-validation.pipe';
+import { JwtAuthGuard } from '@/presentation/middleware/guards';
+import { FileUploadValidationPipe } from '@/presentation/middleware/pipes/file-upload-validation.pipe';
 
 @ApiTags('upload')
 @ApiBearerAuth()

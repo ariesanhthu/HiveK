@@ -1,10 +1,11 @@
 import { BaseAggregateRoot } from '@/core/common/base.aggregate-root';
 import { ERoleType } from '../enums';
 import { Nullable } from '@/core/types';
+import { PhoneNumber } from '@/core/value-objects/phone-number.value-object';
 
 export interface UserProps {
   email: string;
-  phone: string;
+  phone: PhoneNumber;
   passwordHash: string;
   type: ERoleType;
   roleId: string;
@@ -19,8 +20,9 @@ export interface UserProps {
   googleId: Nullable<string>;
 }
 
-export type UserCreateProps = Omit<UserProps, 'createdAt' | 'updatedAt' | 'deleteAt' | 'deleteBy' | 'refreshToken' | 'googleId'> & {
+export type UserCreateProps = Omit<UserProps, 'createdAt' | 'updatedAt' | 'deleteAt' | 'deleteBy' | 'refreshToken' | 'googleId' | 'isEmailVerified' | 'avatar'> & {
   googleId?: Nullable<string>;
+  isEmailVerified?: boolean;
 };
 
 export abstract class UserRoot<T extends UserProps = UserProps> extends BaseAggregateRoot<T> {
@@ -32,7 +34,7 @@ export abstract class UserRoot<T extends UserProps = UserProps> extends BaseAggr
     return this.props.email;
   }
 
-  get phone(): string {
+  get phone(): PhoneNumber {
     return this.props.phone;
   }
 
@@ -84,6 +86,11 @@ export abstract class UserRoot<T extends UserProps = UserProps> extends BaseAggr
     return this.props.googleId;
   }
 
+  public updateFullName(fullName: string): void {
+    this.props.fullName = fullName;
+    this.props.updatedAt = new Date();
+  }
+
   public updateRefreshToken(token: Nullable<string>): void {
     this.props.refreshToken = token;
     this.props.updatedAt = new Date();
@@ -91,6 +98,11 @@ export abstract class UserRoot<T extends UserProps = UserProps> extends BaseAggr
 
   public updatePassword(passwordHash: string): void {
     this.props.passwordHash = passwordHash;
+    this.props.updatedAt = new Date();
+  }
+
+  public updatePhone(phone: PhoneNumber): void {
+    this.props.phone = phone;
     this.props.updatedAt = new Date();
   }
 

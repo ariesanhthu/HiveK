@@ -11,7 +11,7 @@ import {
 
 import { PlatformGetListHandler, PlatformGetByIdHandler } from '@/application/queries';
 import { LinkPlatformIconHandler } from '@/application/events';
-import { PlatformController } from '@/presentation/controllers/platform.controller';
+import { PlatformController } from '@/presentation/controllers'
 import { UploadedFileModule } from './uploaded-file.module';
 
 const COMMAND_HANDLERS = [

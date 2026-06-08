@@ -34,6 +34,7 @@ import {
   MongoUserNotificationRepository,
   MongoUploadedFileRepository,
   MongoOtpRepository,
+  MongoKpiLogRepository,
 } from './repositories';
 
 // Read Service imports
@@ -63,6 +64,7 @@ import {
   USER_NOTIFICATION_REPOSITORY,
   UPLOADED_FILE_REPOSITORY,
   OTP_REPOSITORY,
+  KPI_LOG_REPOSITORY,
 } from '@/core/interfaces/repositories';
 
 // Read Service symbols
@@ -166,6 +168,10 @@ import { RoleSeedService } from './seeding/role-seed.service';
       provide: OTP_REPOSITORY,
       useClass: MongoOtpRepository,
     },
+    {
+      provide: KPI_LOG_REPOSITORY,
+      useClass: MongoKpiLogRepository
+    },
     // All Read Services
     {
       provide: USER_READ_SERVICE,
@@ -224,6 +230,7 @@ import { RoleSeedService } from './seeding/role-seed.service';
     USER_NOTIFICATION_REPOSITORY,
     UPLOADED_FILE_REPOSITORY,
     OTP_REPOSITORY,
+    KPI_LOG_REPOSITORY,
     // Export all read service tokens
     USER_READ_SERVICE,
     ROLE_READ_SERVICE,
@@ -240,4 +247,4 @@ import { RoleSeedService } from './seeding/role-seed.service';
     RoleSeedService,
   ],
 })
-export class MongoModule { }
+export class MongoModule {}

@@ -1,18 +1,17 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { Inject } from '@nestjs/common';
-import { EnterpriseNotFoundException, EnterpriseForbiddenException, UploadedFileNotFoundException } from '@/core/exceptions';
-import { ENTERPRISE_REPOSITORY, type IEnterpriseRepository, UPLOADED_FILE_REPOSITORY, type IUploadedFileRepository } from '@/core/interfaces/repositories';
+import { EnterpriseNotFoundException, EnterpriseForbiddenException } from '@/core/exceptions';
+import { ENTERPRISE_REPOSITORY, type IEnterpriseRepository } from '@/core/interfaces/repositories';
 import { EnterpriseUpdateCommand } from './enterprise-update.command';
 import { EnterpriseDto } from '@/application/dtos';
 import { EnterpriseMapper } from '@/application/mappers';
+import { PhoneNumber } from '@/core/value-objects/phone-number.value-object';
 
 @CommandHandler(EnterpriseUpdateCommand)
 export class EnterpriseUpdateCommandHandler implements ICommandHandler<EnterpriseUpdateCommand, EnterpriseDto> {
   constructor(
     @Inject(ENTERPRISE_REPOSITORY)
     private readonly enterpriseRepository: IEnterpriseRepository,
-    @Inject(UPLOADED_FILE_REPOSITORY)
-    private readonly uploadedFileRepository: IUploadedFileRepository,
   ) {}
 
   async execute(command: EnterpriseUpdateCommand): Promise<EnterpriseDto> {
@@ -27,21 +26,13 @@ export class EnterpriseUpdateCommandHandler implements ICommandHandler<Enterpris
       throw new EnterpriseForbiddenException();
     }
 
-    if (input.logoUrlId) {
-      const fileExists = await this.uploadedFileRepository.findById(input.logoUrlId);
-      if (!fileExists) {
-        throw new UploadedFileNotFoundException(input.logoUrlId);
-      }
-    }
-
     enterprise.update({
       companyName: input.companyName,
       description: input.description,
       contactEmail: input.contactEmail,
-      contactPhone: input.contactPhone,
+      contactPhone: input.contactPhone ? PhoneNumber.create({ value: input.contactPhone }) : undefined,
       website: input.website,
       taxId: input.taxId,
-      logoUrlId: input.logoUrlId,
     });
 
     await this.enterpriseRepository.save(enterprise);

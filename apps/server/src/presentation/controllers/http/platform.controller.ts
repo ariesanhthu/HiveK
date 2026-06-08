@@ -5,7 +5,7 @@ import { PlatformCreateCommand, PlatformUpdateCommand, PlatformSoftDeleteCommand
 import { PlatformGetListQuery, PlatformGetByIdQuery, PlatformFilterDto } from '@/application/queries';
 import { PlatformDto, PlatformDetailDto, SoftDeleteInputDto } from '@/application/dtos';
 import { PaginatedResponseDto } from '@/application/dtos/pagination.dto';
-import { JwtAuthGuard } from '../middleware/guards';
+import { JwtAuthGuard } from '@/presentation/middleware/guards';
 import { Public } from '@/presentation/decorators/public.decorator';
 
 @ApiTags('platforms')

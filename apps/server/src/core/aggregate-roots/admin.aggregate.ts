@@ -19,6 +19,7 @@ export class AdminRoot extends UserRoot<AdminProps> {
     const now = new Date();
     return new AdminRoot({
       ...props,
+      isEmailVerified: false,
       googleId: props.googleId || null,
       createdAt: now,
       updatedAt: now,

@@ -38,7 +38,7 @@ import { TwitterStrategy } from '../auth/strategies/twitter.strategy';
 // Modules
 
 // Controllers
-import { AuthController } from '@/presentation/controllers/auth.controller';
+import { AuthController } from '@/presentation/controllers'
 
 const COMMAND_HANDLERS = [
   AuthSignInCommandHandler,

@@ -21,6 +21,7 @@ export class EnterpriseUserRoot extends UserRoot<EnterpriseUserProps> {
     const now = new Date();
     return new EnterpriseUserRoot({
       ...props,
+      isEmailVerified: props.isEmailVerified ?? false,
       enterpriseIds: [],
       googleId: props.googleId || null,
       createdAt: now,

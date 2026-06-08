@@ -5,7 +5,7 @@ import { KolProfileGetListQuery, KolProfileGetByIdQuery, KolProfileGetHandlesDev
 import { KolProfileUpdateCommand, KolProfileSoftDeleteCommand, KolProfileHardDeleteCommand, KolProfileRestoreCommand, UpdateKolProfileDto } from '@/application/commands';
 import { KolProfileDto, SoftDeleteInputDto } from '@/application/dtos';
 import { PaginatedResponseDto, CursorPaginationRequestDto } from '@/application/dtos/pagination.dto';
-import { JwtAuthGuard, YoutubeAuthGuard, FacebookAuthGuard } from '../middleware/guards';
+import { JwtAuthGuard, YoutubeAuthGuard, FacebookAuthGuard } from '@/presentation/middleware/guards';
 import { Public } from '@/presentation/decorators/public.decorator';
 import { AuthGuard } from '@nestjs/passport';
 

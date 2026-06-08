@@ -14,7 +14,7 @@ import {
 import { KolProfileGetListHandler, KolProfileGetByIdHandler, KolProfileGetHandlesDevHandler } from '@/application/queries';
 
 // Presentation
-import { KolProfileController } from '@/presentation/controllers/kol-profile.controller';
+import { KolProfileController } from '@/presentation/controllers'
 import { KolProfileResolver } from '@/presentation/resolvers/kol-profile.resolver';
 
 const COMMAND_HANDLERS = [

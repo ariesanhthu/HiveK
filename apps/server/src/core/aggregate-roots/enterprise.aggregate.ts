@@ -1,12 +1,13 @@
 import { BaseAggregateRoot } from '@/core/common/base.aggregate-root';
 import { Nullable } from '@/core/types';
+import { PhoneNumber } from '@/core/value-objects/phone-number.value-object';
 
 export interface EnterpriseProps {
   userId: string;
   companyName: string;
   description?: string;
   contactEmail: string;
-  contactPhone?: string;
+  contactPhone?: PhoneNumber;
   website?: string;
   taxId?: string;
   logoUrlId?: string;
@@ -55,7 +56,7 @@ export class EnterpriseRoot extends BaseAggregateRoot<EnterpriseProps> {
     return this.props.contactEmail;
   }
 
-  get contactPhone(): string | undefined {
+  get contactPhone(): PhoneNumber | undefined {
     return this.props.contactPhone;
   }
 

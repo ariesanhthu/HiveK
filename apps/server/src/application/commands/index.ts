@@ -196,3 +196,10 @@ export * from './campaign-invite-collaborator/campaign-invite-collaborator.dto';
 export * from './campaign-revoke-collaborator/campaign-revoke-collaborator.command';
 export * from './campaign-revoke-collaborator/campaign-revoke-collaborator.handler';
 export * from './campaign-revoke-collaborator/campaign-revoke-collaborator.dto';
+
+// KPI Tracking
+export * from './kpi-log-create/kpi-log-create.command';
+export * from './kpi-log-create/kpi-log-create.handler';
+
+export * from './kpi-log-terminate/kpi-log-terminate.command';
+export * from './kpi-log-terminate/kpi-log-terminate.handler';

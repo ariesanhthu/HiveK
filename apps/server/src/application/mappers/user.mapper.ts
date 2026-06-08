@@ -9,7 +9,7 @@ export class UserMapper {
     const baseFields = {
       id: root.id!,
       email: root.email,
-      phone: root.phone,
+      phone: root.phone.value,
       fullName: root.fullName,
       avatar: root.avatar || null,
       roleId: root.roleId,

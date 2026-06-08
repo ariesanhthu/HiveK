@@ -11,6 +11,7 @@ import { AuthSendOtpCommand } from '../auth-send-otp/auth-send-otp.command';
 import { EOtpType } from '@/core/enums/otp-type.enum';
 import { UserConflictException, RoleNotFoundException, InvalidUserTypeException } from '@/core/exceptions';
 import { type IUnitOfWork, UNIT_OF_WORK } from '@/application/interfaces';
+import { PhoneNumber } from '@/core/value-objects/phone-number.value-object';
 
 @CommandHandler(AuthSignUpCommand)
 export class AuthSignUpCommandHandler implements ICommandHandler<AuthSignUpCommand, AuthSignUpOutputDto> {
@@ -43,12 +44,18 @@ export class AuthSignUpCommandHandler implements ICommandHandler<AuthSignUpComma
 
       const passwordHash = await this.authService.hashPassword(input.password);
 
+      const phoneValue = input.phone
+        ? PhoneNumber.create({ value: input.phone })
+        : PhoneNumber.create({ value: '+0000000000' });
+
+      const fullNameValue = input.fullName || 'DEFAULT NAME';
+
       let user;
       const commonProps = {
         email: normalizedEmail,
-        phone: '0000000000',
+        phone: phoneValue,
         passwordHash,
-        fullName: 'DEFAULT NAME',
+        fullName: fullNameValue,
         avatar: null,
         type,
         roleId: defaultRole.id,

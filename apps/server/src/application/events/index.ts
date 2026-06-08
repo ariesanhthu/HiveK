@@ -9,3 +9,6 @@ export * from './notification-dispatched/in-app-notification.handler';
 export * from './notification-dispatched/email-notification.handler';
 export * from './user-added-to-enterprise/user-added-to-enterprise.event';
 export * from './user-added-to-enterprise/user-added-to-enterprise.handler';
+export * from './kpi-tracking/kpi-metrics-updated.event';
+export * from './kpi-tracking/kpi-tracking-terminated.event';
+export * from './kpi-tracking/kpi-tracking-events.handler';

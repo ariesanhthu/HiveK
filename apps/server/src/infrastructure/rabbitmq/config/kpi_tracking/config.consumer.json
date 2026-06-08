@@ -1,0 +1,55 @@
+{
+  "version": "1.0.0",
+  "role": "consumer",
+  "service": "hivek.server",
+  "uses_producer_contract": "./config.producer.json",
+  "connection": {
+    "uri": "{{RABBITMQ_URI}}",
+    "vhost": "/ospvaoft",
+    "heartbeat": 60,
+    "connection_timeout_ms": 10000,
+    "reconnect": {
+      "enabled": true,
+      "initial_delay_ms": 1000,
+      "max_delay_ms": 30000,
+      "factor": 2,
+      "max_retries": -1
+    }
+  },
+  "consume": {
+    "prefetch_count": 10,
+    "no_ack": false,
+    "manual_ack": true,
+    "requeue_on_error": false
+  },
+  "queues": [
+    {
+      "name": "server_kpi_queue",
+      "type": "classic",
+      "options": {
+        "durable": true,
+        "exclusive": false,
+        "autoDelete": false,
+        "arguments": {}
+      },
+      "bindings": [
+        {
+          "exchange": "kpi_exchange",
+          "routing_key": "tracking.success"
+        },
+        {
+          "exchange": "kpi_exchange",
+          "routing_key": "tracking.terminated"
+        }        
+      ]
+    }
+  ],
+  "validation": {
+    "require_exchange_contract_match": true,
+    "match_fields": [
+      "exchange_contract.name",
+      "exchange_contract.type",
+      "exchange_contract.options.durable"
+    ]
+  }
+}

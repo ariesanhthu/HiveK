@@ -8,6 +8,7 @@ import { ERoleType } from '@/core/enums';
 import { KOLUserRoot } from '@/core/aggregate-roots';
 import { AuthService } from '@/application/services/auth.service';
 import { UserDeletedException, RoleNotFoundException } from '@/core/exceptions';
+import { PhoneNumber } from '@/core/value-objects/phone-number.value-object';
 
 @CommandHandler(AuthGoogleSignInCommand)
 export class AuthGoogleSignInCommandHandler implements ICommandHandler<AuthGoogleSignInCommand, AuthGoogleSignInOutputDto> {
@@ -40,13 +41,11 @@ export class AuthGoogleSignInCommandHandler implements ICommandHandler<AuthGoogl
 
       user = KOLUserRoot.create({
         email: normalizedEmail,
-        phone: '0000000000',
+        phone: PhoneNumber.create({ value: '+0000000000' }),
         passwordHash: '',
         fullName: input.displayName || 'Google User',
-        avatar: input.avatarUrl || null,
         type: ERoleType.KOL,
         roleId: defaultRole.id!,
-        isEmailVerified: true,
         googleId: input.googleId,
       });
     }

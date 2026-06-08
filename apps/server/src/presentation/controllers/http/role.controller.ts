@@ -10,7 +10,7 @@ import {
   RoleRestoreCommand,
 } from '@/application/commands';
 import { RoleDto, RoleFilterDto, SoftDeleteInputDto } from '@/application/dtos';
-import { JwtAuthGuard, RolesGuard } from '../middleware/guards';
+import { JwtAuthGuard, RolesGuard } from '@/presentation/middleware/guards';
 import { Roles } from '@/presentation/decorators/roles.decorator';
 import { ERoleType } from '@/core/enums';
 import { PaginatedResponseDto } from '@/application/dtos/pagination.dto';

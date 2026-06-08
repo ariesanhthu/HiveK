@@ -7,6 +7,7 @@ import { UserModel } from '../schemas';
 import { type IUserRepository, USER_REPOSITORY } from '@/core/interfaces/repositories';
 import * as bcrypt from 'bcrypt';
 import { AdminRoot } from '@/core/aggregate-roots';
+import { PhoneNumber } from '@/core/value-objects/phone-number.value-object';
 
 @Injectable()
 export class RoleSeedService implements OnModuleInit {
@@ -83,7 +84,7 @@ export class RoleSeedService implements OnModuleInit {
     const passwordHash = await bcrypt.hash(process.env.ADMIN_PASSWORD, 10);
     const commonProps = {
       email: process.env.ADMIN_EMAIL,
-      phone: '0900000000',
+      phone: PhoneNumber.create({ value: '+0900000000' }),
       passwordHash,
       fullName: 'SUPER ADMIN',
       avatar: null,

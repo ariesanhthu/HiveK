@@ -4,6 +4,8 @@ import { createZodDto } from 'nestjs-zod';
 export const AuthSignUpInputSchema = z.object({
   email: z.email(),
   password: z.string().min(6),
+  phone: z.string().optional(),
+  fullName: z.string().optional(),
 });
 
 export class AuthSignUpInputDto extends createZodDto(AuthSignUpInputSchema) {}

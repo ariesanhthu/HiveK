@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
-import { AuthController } from '@/presentation/controllers/auth.controller';
+import { AuthController } from '@/presentation/controllers';
 import { ERoleType } from '@/core/enums';
 import {
   AuthSignInCommand,

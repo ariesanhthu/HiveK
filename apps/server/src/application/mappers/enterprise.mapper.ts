@@ -9,7 +9,7 @@ export class EnterpriseMapper {
       companyName: root.companyName,
       description: root.description,
       contactEmail: root.contactEmail,
-      contactPhone: root.contactPhone,
+      contactPhone: root.contactPhone?.value,
       website: root.website,
       taxId: root.taxId,
       logoUrlId: root.logoUrlId,

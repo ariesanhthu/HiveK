@@ -1,4 +1,4 @@
-import { Controller, Post, Body, HttpCode, HttpStatus, Get, UseGuards, Res, Req, BadRequestException } from '@nestjs/common';
+import { Controller, Post, Body, HttpCode, HttpStatus, Get, UseGuards, Res, Req, BadRequestException, Patch } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import type { Response, Request } from 'express';
 import { ApiTags, ApiOperation, ApiBearerAuth, ApiSecurity, ApiTooManyRequestsResponse } from '@nestjs/swagger';
@@ -18,7 +18,8 @@ import {
   AuthRefreshTokenInputDto,
   AuthSendOtpInputDto,
   AuthChangePasswordInputDto,
-  AuthVerifyOtpInputDto
+  AuthVerifyOtpInputDto,
+  UserUpdateCommand
 } from '@/application/commands';
 import { AuthGetProfileQuery } from '@/application/queries';
 import { ERoleType } from '@/core/enums';
@@ -27,6 +28,7 @@ import { CurrentUser } from '@/presentation/decorators/current-user.decorator';
 import { Public } from '@/presentation/decorators/public.decorator';
 import { AuthGuard } from '@nestjs/passport';
 import { Throttle } from '@nestjs/throttler';
+import { UserUpdateInputDto } from '@/application/commands/user-update/user-update.dto';
 
 @ApiTags('auth')
 @ApiBearerAuth()
@@ -223,5 +225,16 @@ export class AuthController {
   @ApiOperation({ summary: 'Get current user profile' })
   async getProfile(@CurrentUser('sub') userId: string) {
     return this.queryBus.execute(new AuthGetProfileQuery(userId));
+  }
+
+  @Patch('profile')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Update current user profile' })
+  async updateProfile(
+    @CurrentUser('sub') userId: string,
+    @Body() input: UserUpdateInputDto,
+  ) {
+    return this.commandBus.execute(new UserUpdateCommand(userId, input));
   }
 }

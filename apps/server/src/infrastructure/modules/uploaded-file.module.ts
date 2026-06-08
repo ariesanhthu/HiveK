@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
 import { InfrastructureModule } from './infrastructure.module';
-import { UploadedFileController } from '@/presentation/controllers/uploaded-file.controller';
+import { UploadedFileController } from '@/presentation/controllers'
 
 import {
   UploadedFileCreateCommandHandler,
