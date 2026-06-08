@@ -22,8 +22,6 @@ import { TargetType } from '@/core/enums/target-type.enum';
 import {
   UploadedFileCreateCommand,
   UploadedFileBulkCreateCommand,
-  UploadedFileSoftDeleteCommand,
-  UploadedFileDeleteCommand,
   UploadedFileRestoreCommand,
   UploadedFileCreateInputDto,
 } from '@/application/commands';
@@ -32,17 +30,20 @@ import {
   UploadedFileGetByIdQuery,
   UploadedFileFilterDto,
 } from '@/application/queries';
-import { UploadedFileDto, SoftDeleteInputDto } from '@/application/dtos';
+import { UploadedFileDto } from '@/application/dtos';
 import { PaginatedResponseDto } from '@/application/dtos/pagination.dto';
-import { JwtAuthGuard } from '@/presentation/middleware/guards';
+import { JwtAuthGuard, RolesGuard } from '@/presentation/middleware/guards';
 import { FileUploadValidationPipe } from '@/presentation/middleware/pipes/file-upload-validation.pipe';
+import { ERoleType } from '@/core/enums/role-type.enum';
+import { Roles } from '@/presentation/decorators/roles.decorator';
 
-@ApiTags('upload')
+@ApiTags('ADMIN-upload')
 @ApiBearerAuth()
 @ApiSecurity('x-api-key')
-@UseGuards(JwtAuthGuard)
-@Controller('upload')
-export class UploadedFileController {
+@UseGuards(JwtAuthGuard, RolesGuard)
+@Roles(ERoleType.ADMIN)
+@Controller('admin/upload')
+export class UploadedFileAdminController {
   constructor(
     private readonly commandBus: CommandBus,
     private readonly queryBus: QueryBus,

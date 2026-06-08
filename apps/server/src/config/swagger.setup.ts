@@ -29,7 +29,39 @@ export function setupSwagger(app: INestApplication): void {
       operationSorter: 'alpha',
     },
   };
-    
-  const documentFactory = () => SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('hivek/api/docs', app, documentFactory, swaggerCustomOptions);
+
+  const fullDocument = SwaggerModule.createDocument(app, config);
+
+  fullDocument.tags = fullDocument.tags?.filter(tag => tag.name !== '');
+  for (const path in fullDocument.paths) {
+    for (const method in fullDocument.paths[path]) {
+      (fullDocument as any).paths[path][method].tags =
+        (fullDocument as any).paths[path][method].tags?.filter((tag: string) => tag !== '');
+    }
+  }
+
+
+  // ---- Separate paths ----
+  const isAdminPath = (path: string) => path.includes(`/admin`);
+  const isClientPath = (path: string) => path.includes(`/client`);
+  const isSharedPath = (path: string) => !isAdminPath(path) && !isClientPath(path)
+  const adminPaths = Object.fromEntries(
+    Object.entries(fullDocument.paths).filter(([path]) => isAdminPath(path) || isSharedPath(path)),
+  );
+
+  const clientPaths = Object.fromEntries(
+    Object.entries(fullDocument.paths).filter(([path]) =>
+      isClientPath(path) || (isSharedPath(path))
+    ),
+  );
+
+  const adminDocument = { ...fullDocument, paths: adminPaths };
+  const clientDocument = { ...fullDocument, paths: clientPaths };
+
+  // ---- Setup Swagger UI ----
+  SwaggerModule.setup('hivek/api/admin/docs', app, adminDocument, swaggerCustomOptions);
+  SwaggerModule.setup('hivek/api/client/docs', app, clientDocument, swaggerCustomOptions);
+
+  // const documentFactory = () => SwaggerModule.createDocument(app, config);
+  // SwaggerModule.setup('hivek/api/docs', app, documentFactory, swaggerCustomOptions);
 }

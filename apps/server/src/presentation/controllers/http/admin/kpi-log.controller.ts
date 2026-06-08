@@ -4,13 +4,17 @@ import { ApiTags, ApiOperation, ApiBearerAuth, ApiSecurity } from '@nestjs/swagg
 import { KpiLogDto } from '@/application/dtos';
 import { PaginatedResponseDto } from '@/application/dtos/pagination.dto';
 import { KpiLogGetListQuery, KpiLogFilterDto } from '@/application/queries';
-import { JwtAuthGuard } from '@/presentation/middleware/guards';
+import { JwtAuthGuard, RolesGuard } from '@/presentation/middleware/guards';
+import { ERoleType } from '@/core/enums/role-type.enum';
+import { Roles } from '@/presentation/decorators/roles.decorator';
 
-@ApiTags('analytics')
+@ApiTags('ADMIN-analytics')
 @ApiBearerAuth()
 @ApiSecurity('x-api-key')
-@Controller('analytics/kpi-logs')
-export class KpiLogController {
+@UseGuards(JwtAuthGuard, RolesGuard)
+@Roles(ERoleType.ADMIN)
+@Controller('admin/analytics/kpi-logs')
+export class KpiLogAdminController {
   constructor(private readonly queryBus: QueryBus) {}
 
   @Get()

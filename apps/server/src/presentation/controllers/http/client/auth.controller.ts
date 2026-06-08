@@ -30,53 +30,16 @@ import { AuthGuard } from '@nestjs/passport';
 import { Throttle } from '@nestjs/throttler';
 import { UserUpdateInputDto } from '@/application/commands/user-update/user-update.dto';
 
-@ApiTags('auth')
+@ApiTags('CLIENT-auth')
 @ApiBearerAuth()
 @ApiSecurity('x-api-key')
 @UseGuards(JwtAuthGuard)
-@Controller('auth')
-export class AuthController {
+@Controller('client/auth')
+export class AuthClientController {
   constructor(
     private readonly commandBus: CommandBus,
     private readonly queryBus: QueryBus,
   ) { }
-
-  @Public()
-  @Get('google')
-  @UseGuards(AuthGuard('google'))
-  @ApiOperation({ summary: 'Google OAuth sign-in' })
-  async googleAuth() {
-    return;
-  }
-
-  @Public()
-  @Get('google/callback')
-  @UseGuards(AuthGuard('google'))
-  @ApiOperation({ summary: 'Google OAuth callback' })
-  async googleAuthCallback(
-    @Req() req: any,
-    @Res({ passthrough: true }) response: Response,
-  ) {
-    const result = req.user;
-    if (result && result.accessToken) {
-      response.cookie('access_token', result.accessToken, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'lax',
-        maxAge: 24 * 60 * 60 * 1000, // 1 day
-      });
-    }
-    if (result && result.refreshToken) {
-      response.cookie('refresh_token', result.refreshToken, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'lax',
-        maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-      });
-    }
-    return result;
-  }
-
   @Public()
   @Post('sign-up/kol')
   @Throttle({ default: { limit: 5, ttl: 60000 } })
@@ -168,7 +131,6 @@ export class AuthController {
   }
 
   @Post('sign-out')
-  @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Sign out current user' })
@@ -208,7 +170,6 @@ export class AuthController {
   }
 
   @Post('change-password')
-  @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Change current user password' })
@@ -220,7 +181,6 @@ export class AuthController {
   }
 
   @Get('profile')
-  @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Get current user profile' })
   async getProfile(@CurrentUser('sub') userId: string) {
@@ -228,7 +188,6 @@ export class AuthController {
   }
 
   @Patch('profile')
-  @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Update current user profile' })
   async updateProfile(

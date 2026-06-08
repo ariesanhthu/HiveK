@@ -3,7 +3,6 @@ import { CqrsModule } from '@nestjs/cqrs';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { PassportModule } from '@nestjs/passport';
-import { MongooseModule } from '@nestjs/mongoose';
 
 // Commands
 import {
@@ -23,10 +22,8 @@ import { AuthGetProfileHandler } from '@/application/queries';
 
 // Interfaces
 import { AUTH_JWT_SERVICE } from '@/application/interfaces';
-import { OTP_REPOSITORY } from '@/core/interfaces/repositories';
 
 // Infrastructure
-import { OtpModel, OtpSchema } from '../mongo/schemas/otp.schema';
 import { JwtAuthService } from '../auth/jwt.service';
 import { AuthService } from '@/application/services/auth.service';
 import { JwtStrategy } from '../auth/strategies/jwt.strategy';
@@ -37,8 +34,8 @@ import { TwitterStrategy } from '../auth/strategies/twitter.strategy';
 
 // Modules
 
-// Controllers
-import { AuthController } from '@/presentation/controllers'
+// AdminControllers
+import { AuthAdminController, AuthClientController, OAuthController } from '@/presentation/controllers'
 
 const COMMAND_HANDLERS = [
   AuthSignInCommandHandler,
@@ -76,7 +73,7 @@ const STRATEGIES = [
     CqrsModule,
     PassportModule.register({ defaultStrategy: 'jwt' }),
   ],
-  controllers: [AuthController],
+  controllers: [AuthAdminController, AuthClientController, OAuthController],
   providers: [
     ...COMMAND_HANDLERS,
     ...QUERY_HANDLERS,

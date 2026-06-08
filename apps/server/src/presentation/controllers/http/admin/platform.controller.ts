@@ -5,14 +5,18 @@ import { PlatformCreateCommand, PlatformUpdateCommand, PlatformSoftDeleteCommand
 import { PlatformGetListQuery, PlatformGetByIdQuery, PlatformFilterDto } from '@/application/queries';
 import { PlatformDto, PlatformDetailDto, SoftDeleteInputDto } from '@/application/dtos';
 import { PaginatedResponseDto } from '@/application/dtos/pagination.dto';
-import { JwtAuthGuard } from '@/presentation/middleware/guards';
+import { JwtAuthGuard, RolesGuard } from '@/presentation/middleware/guards';
 import { Public } from '@/presentation/decorators/public.decorator';
+import { ERoleType } from '@/core/enums/role-type.enum';
+import { Roles } from '@/presentation/decorators/roles.decorator';
 
-@ApiTags('platforms')
+@ApiTags('ADMIN-platforms')
 @ApiBearerAuth()
 @ApiSecurity('x-api-key')
-@Controller('platforms')
-export class PlatformController {
+@UseGuards(JwtAuthGuard, RolesGuard)
+@Roles(ERoleType.ADMIN)
+@Controller('admin/platforms')
+export class PlatformAdminController {
   constructor(
     private readonly commandBus: CommandBus,
     private readonly queryBus: QueryBus,

@@ -1,19 +1,19 @@
-import { Controller, Get, Param, Query, Body, Patch, Delete, Post, HttpCode, HttpStatus, UseGuards, Req, Res, Injectable } from '@nestjs/common';
+import { Controller, Get, Param, Query, Body, Patch, Delete, HttpCode, HttpStatus, UseGuards, Req } from '@nestjs/common';
 import { QueryBus, CommandBus } from '@nestjs/cqrs';
 import { ApiTags, ApiOperation, ApiBearerAuth, ApiSecurity } from '@nestjs/swagger';
 import { KolProfileGetListQuery, KolProfileGetByIdQuery, KolProfileGetHandlesDevQuery, KolProfileFilterDto } from '@/application/queries';
-import { KolProfileUpdateCommand, KolProfileSoftDeleteCommand, KolProfileHardDeleteCommand, KolProfileRestoreCommand, UpdateKolProfileDto } from '@/application/commands';
-import { KolProfileDto, SoftDeleteInputDto } from '@/application/dtos';
+import { KolProfileUpdateCommand, KolProfileHardDeleteCommand, UpdateKolProfileDto } from '@/application/commands';
+import { KolProfileDto } from '@/application/dtos';
 import { PaginatedResponseDto, CursorPaginationRequestDto } from '@/application/dtos/pagination.dto';
 import { JwtAuthGuard, YoutubeAuthGuard, FacebookAuthGuard } from '@/presentation/middleware/guards';
 import { Public } from '@/presentation/decorators/public.decorator';
 import { AuthGuard } from '@nestjs/passport';
 
-@ApiTags('kol-profiles')
+@ApiTags('CLIENT-kol-profiles')
 @ApiBearerAuth()
 @ApiSecurity('x-api-key')
-@Controller('kol-profiles')
-export class KolProfileController {
+@Controller('client/kol-profiles')
+export class KolProfileClientController {
   constructor(
     private readonly queryBus: QueryBus,
     private readonly commandBus: CommandBus,
@@ -61,6 +61,7 @@ export class KolProfileController {
     return;
   }
 
+  @Public()
   @Get('verify/twitter/callback')
   @UseGuards(JwtAuthGuard, AuthGuard('twitter'))
   @ApiOperation({ summary: 'Twitter OAuth callback' })
@@ -97,29 +98,11 @@ export class KolProfileController {
     return this.commandBus.execute(new KolProfileUpdateCommand(id, input));
   }
 
-  @Patch(':id/soft-delete')
-  @UseGuards(JwtAuthGuard)
-  @HttpCode(HttpStatus.NO_CONTENT)
-  @ApiOperation({ summary: 'Soft delete KOL profile' })
-  async delete(
-    @Param('id') id: string,
-    @Query() dto: SoftDeleteInputDto,
-  ): Promise<void> {
-    return this.commandBus.execute(new KolProfileSoftDeleteCommand(id, dto.deletedBy));
-  }
-
   @Delete(':id')
   @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: 'Hard delete KOL profile' })
   async hardDelete(@Param('id') id: string): Promise<void> {
     return this.commandBus.execute(new KolProfileHardDeleteCommand(id));
-  }
-
-  @Patch(':id/restore')
-  @UseGuards(JwtAuthGuard)
-  @ApiOperation({ summary: 'Restore soft deleted KOL profile' })
-  async restore(@Param('id') id: string): Promise<void> {
-    return this.commandBus.execute(new KolProfileRestoreCommand(id));
   }
 }

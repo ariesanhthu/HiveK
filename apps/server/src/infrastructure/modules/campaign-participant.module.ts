@@ -9,25 +9,36 @@ import { CampaignParticipantUpdateCommandHandler } from '@/application/commands/
 import { CampaignParticipantGetByIdQueryHandler } from '@/application/queries/campaign-participant-get-by-id/campaign-participant-get-by-id.handler';
 import { CampaignParticipantGetListQueryHandler } from '@/application/queries/campaign-participant-get-list/campaign-participant-get-list.handler';
 import { LinkCampaignParticipantOutputFileHandler } from '@/application/events';
-import { CampaignParticipantController } from '@/presentation/controllers'
+import { CampaignParticipantAdminController, CampaignParticipantClientController } from '@/presentation/controllers'
 import { CampaignParticipantResolver } from '@/presentation/resolvers/campaign-participant.resolver';
 import { CampaignModule } from './campaign.module';
 
-const Handlers = [
+const COMMAND_HANDLERS = [
   CampaignParticipantCreateCommandHandler,
   CampaignParticipantSoftDeleteCommandHandler,
   CampaignParticipantHardDeleteCommandHandler,
   CampaignParticipantRestoreCommandHandler,
-  CampaignParticipantUpdateCommandHandler,
-  CampaignParticipantGetByIdQueryHandler,
-  CampaignParticipantGetListQueryHandler,
-  LinkCampaignParticipantOutputFileHandler,
+  CampaignParticipantUpdateCommandHandler
 ];
+
+const QUERY_HANDLERS = [
+  CampaignParticipantGetByIdQueryHandler,
+  CampaignParticipantGetListQueryHandler
+]
+
+const EVENT_HANDLERS = [
+  LinkCampaignParticipantOutputFileHandler
+]
 
 @Module({
   imports: [CqrsModule, CampaignModule],
-  controllers: [CampaignParticipantController],
-  providers: [...Handlers, CampaignParticipantResolver],
+  controllers: [CampaignParticipantAdminController, CampaignParticipantClientController],
+  providers: [
+    ...COMMAND_HANDLERS, 
+    ...QUERY_HANDLERS, 
+    ...EVENT_HANDLERS, 
+    CampaignParticipantResolver
+  ],
   exports: [],
 })
 export class CampaignParticipantModule {}

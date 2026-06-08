@@ -13,7 +13,7 @@ import {
 
 import { UserGetByIdHandler, UserGetListHandler } from '@/application/queries';
 import { LinkUserAvatarHandler } from '@/application/events';
-import { UserController } from '@/presentation/controllers';
+import { UserAdminController, UserClientController } from '@/presentation/controllers';
 
 const COMMAND_HANDLERS = [
   UserCreateCommandHandler,
@@ -36,7 +36,7 @@ const EVENT_HANDLERS = [
 
 @Module({
   imports: [CqrsModule],
-  controllers: [UserController],
+  controllers: [UserAdminController, UserClientController],
   providers: [...COMMAND_HANDLERS, ...QUERY_HANDLERS, ...EVENT_HANDLERS],
   exports: [],
 })

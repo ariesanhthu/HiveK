@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
 import { InfrastructureModule } from './infrastructure.module';
-import { UploadedFileController } from '@/presentation/controllers'
+import { UploadedFileAdminController, UploadedFileClientController } from '@/presentation/controllers'
 
 import {
   UploadedFileCreateCommandHandler,
@@ -18,20 +18,26 @@ import {
 
 import { UploadService } from '@/application/services';
 
-const Handlers = [
+const COMMAND_HANDLERS = [
   UploadedFileCreateCommandHandler,
   UploadedFileBulkCreateCommandHandler,
   UploadedFileSoftDeleteCommandHandler,
   UploadedFileDeleteCommandHandler,
   UploadedFileRestoreCommandHandler,
-  UploadedFileGetByIdHandler,
-  UploadedFileGetListHandler,
 ];
+
+const QUERY_HANDLERS = [
+  UploadedFileGetByIdHandler,
+  UploadedFileGetListHandler
+]
+
+const EVENT_HANDLERS = [
+]
 
 @Module({
   imports: [CqrsModule, InfrastructureModule],
-  controllers: [UploadedFileController],
-  providers: [...Handlers, UploadService],
+  controllers: [UploadedFileAdminController, UploadedFileClientController],
+  providers: [...COMMAND_HANDLERS, ...QUERY_HANDLERS, ...EVENT_HANDLERS, UploadService],
   exports: [UploadService],
 })
 export class UploadedFileModule {}

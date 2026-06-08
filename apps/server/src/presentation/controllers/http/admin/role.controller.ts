@@ -17,13 +17,13 @@ import { PaginatedResponseDto } from '@/application/dtos/pagination.dto';
 import { RoleCreateInputDto } from '@/application/commands/role-create/role-create.dto';
 import { RoleUpdateInputDto } from '@/application/commands/role-update/role-update.dto';
 
-@ApiTags('roles')
+@ApiTags('ADMIN-roles')
 @ApiBearerAuth()
 @ApiSecurity('x-api-key')
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Roles(ERoleType.ADMIN)
-@Controller('roles')
-export class RoleController {
+@Controller('admin/roles')
+export class RoleAdminController {
   constructor(
     private readonly commandBus: CommandBus,
     private readonly queryBus: QueryBus,

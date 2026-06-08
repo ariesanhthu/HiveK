@@ -20,12 +20,12 @@ import {
 } from '@/application/dtos';
 import { PaginatedResponseDto } from '@/application/dtos/pagination.dto';
 
-@ApiTags('notifications')
+@ApiTags('CLIENT-notifications')
 @ApiBearerAuth()
 @ApiSecurity('x-api-key')
 @UseGuards(JwtAuthGuard)
-@Controller('notifications')
-export class NotificationController {
+@Controller('client/notifications')
+export class NotificationClientController {
   constructor(
     private readonly commandBus: CommandBus,
     private readonly queryBus: QueryBus,

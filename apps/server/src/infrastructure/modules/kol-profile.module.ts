@@ -14,8 +14,9 @@ import {
 import { KolProfileGetListHandler, KolProfileGetByIdHandler, KolProfileGetHandlesDevHandler } from '@/application/queries';
 
 // Presentation
-import { KolProfileController } from '@/presentation/controllers'
+import { KolProfileAdminController, KolProfileClientController } from '@/presentation/controllers'
 import { KolProfileResolver } from '@/presentation/resolvers/kol-profile.resolver';
+import { TestKOLController } from '@/presentation/controllers/http/test.controller';
 
 const COMMAND_HANDLERS = [
   KolProfileUpdateCommandHandler,
@@ -33,7 +34,7 @@ const QUERY_HANDLERS = [
 
 @Module({
   imports: [CqrsModule],
-  controllers: [KolProfileController],
+  controllers: [KolProfileAdminController, KolProfileClientController, TestKOLController],
   providers: [...COMMAND_HANDLERS, ...QUERY_HANDLERS, KolProfileResolver],
   exports: [],
 })

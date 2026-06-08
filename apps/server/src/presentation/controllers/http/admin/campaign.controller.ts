@@ -5,37 +5,37 @@ import { CampaignCreateCommand, CampaignUpdateCommand, CampaignSoftDeleteCommand
 import { CampaignGetListQuery, CampaignGetByIdQuery, CampaignFilterDto } from '@/application/queries';
 import { CampaignDto, SoftDeleteInputDto } from '@/application/dtos';
 import { PaginatedResponseDto } from '@/application/dtos/pagination.dto';
-import { JwtAuthGuard } from '@/presentation/middleware/guards';
+import { JwtAuthGuard, RolesGuard } from '@/presentation/middleware/guards';
 import { CurrentUser } from '@/presentation/decorators/current-user.decorator';
-
 import { CampaignInviteCollaboratorCommand, CampaignRevokeCollaboratorCommand, CampaignUpdateStatusCommand, CampaignUpdateStatusInputDto, CampaignInviteCollaboratorInputDto, CampaignRevokeCollaboratorInputDto } from '@/application/commands';
+import { ERoleType } from '@/core/enums/role-type.enum';
+import { Roles } from '@/presentation/decorators/roles.decorator';
 
-@ApiTags('campaigns')
+@ApiTags('ADMIN-campaigns')
 @ApiBearerAuth()
 @ApiSecurity('x-api-key')
-@Controller('campaigns')
-export class CampaignController {
+@UseGuards(JwtAuthGuard, RolesGuard)
+@Roles(ERoleType.ADMIN)
+@Controller('admin/campaigns')
+export class CampaignAdminController {
   constructor(
     private readonly commandBus: CommandBus,
     private readonly queryBus: QueryBus,
   ) { }
 
   @Get()
-  @UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: 'Get all campaigns' })
   async findAll(@Query() filters: CampaignFilterDto): Promise<PaginatedResponseDto<CampaignDto>> {
     return this.queryBus.execute(new CampaignGetListQuery(filters));
   }
 
   @Get(':id')
-  @UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: 'Get campaign by ID' })
   async findById(@Param('id') id: string): Promise<CampaignDto> {
     return this.queryBus.execute(new CampaignGetByIdQuery(id));
   }
 
   @Post()
-  @UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: 'Create new campaign' })
   async create(
     @CurrentUser('sub') userId: string,
@@ -46,7 +46,6 @@ export class CampaignController {
   }
 
   @Patch(':id')
-  @UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: 'Update campaign' })
   async update(
     @CurrentUser('sub') userId: string,
@@ -57,7 +56,6 @@ export class CampaignController {
   }
 
   @Patch(':id/soft-delete')
-  @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: 'Soft delete campaign' })
   async delete(
@@ -69,7 +67,6 @@ export class CampaignController {
   }
 
   @Patch(':id/restore')
-  @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Restore soft deleted campaign' })
   async restore(@Param('id') id: string): Promise<void> {
@@ -77,7 +74,6 @@ export class CampaignController {
   }
 
   @Patch(':id/status')
-  @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Update campaign status' })
   async updateStatus(
@@ -89,7 +85,6 @@ export class CampaignController {
   }
 
   @Patch(':id/collaborators/invite')
-  @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Invite a collaborator to campaign' })
   async inviteCollaborator(
@@ -101,7 +96,6 @@ export class CampaignController {
   }
 
   @Patch(':id/collaborators/revoke')
-  @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Revoke a collaborator from campaign' })
   async revokeCollaborator(

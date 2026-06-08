@@ -17,27 +17,28 @@ import {
 } from '@/application/queries';
 import { CampaignParticipantDto, SoftDeleteInputDto } from '@/application/dtos';
 import { PaginatedResponseDto } from '@/application/dtos/pagination.dto';
-import { JwtAuthGuard } from '@/presentation/middleware/guards';
+import { JwtAuthGuard, RolesGuard } from '@/presentation/middleware/guards';
 import { Public } from '@/presentation/decorators/public.decorator';
+import { ERoleType } from '@/core/enums';
+import { Roles } from '@/presentation/decorators/roles.decorator';
 
-@ApiTags('campaign-participants')
+@ApiTags('CLIENT-campaign-participants')
 @ApiBearerAuth()
+@UseGuards(JwtAuthGuard)
 @ApiSecurity('x-api-key')
-@Controller('campaign-participants')
-export class CampaignParticipantController {
+@Controller('client/campaign-participants')
+export class CampaignParticipantClientController {
   constructor(
     private readonly commandBus: CommandBus,
     private readonly queryBus: QueryBus,
   ) {}
 
-  @Public()
   @Get()
   @ApiOperation({ summary: 'Get all campaign participants' })
   async findAll(@Query() filters: CampaignParticipantFilterDto): Promise<PaginatedResponseDto<CampaignParticipantDto>> {
     return this.queryBus.execute(new CampaignParticipantGetListQuery(filters));
   }
 
-  @Public()
   @Get(':id')
   @ApiOperation({ summary: 'Get campaign participant by ID' })
   async findById(@Param('id') id: string): Promise<CampaignParticipantDto> {
@@ -45,14 +46,16 @@ export class CampaignParticipantController {
   }
 
   @Post()
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(RolesGuard)
+  @Roles(ERoleType.ENTERPRISE)
   @ApiOperation({ summary: 'Create new campaign participant' })
   async create(@Body() input: CampaignParticipantCreateInputDto): Promise<string> {
     return this.commandBus.execute(new CampaignParticipantCreateCommand(input));
   }
 
   @Patch(':id')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(RolesGuard)
+  @Roles(ERoleType.ENTERPRISE)
   @ApiOperation({ summary: 'Update campaign participant' })
   async update(
     @Param('id') id: string,
@@ -62,7 +65,8 @@ export class CampaignParticipantController {
   }
 
   @Patch(':id/soft-delete')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(RolesGuard)
+  @Roles(ERoleType.ENTERPRISE)
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: 'Soft delete campaign participant' })
   async delete(
@@ -73,7 +77,8 @@ export class CampaignParticipantController {
   }
 
   @Delete(':id')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(RolesGuard)
+  @Roles(ERoleType.ENTERPRISE)
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: 'Hard delete campaign participant' })
   async hardDelete(@Param('id') id: string): Promise<void> {
@@ -81,6 +86,8 @@ export class CampaignParticipantController {
   }
 
   @Public()
+  @UseGuards(RolesGuard)
+  @Roles(ERoleType.ENTERPRISE)
   @Patch(':id/restore')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Restore soft deleted campaign participant' })

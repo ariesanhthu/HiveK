@@ -10,7 +10,7 @@ import {
 } from '@/application/commands';
 
 import { RoleGetByIdQueryHandler, RoleGetListQueryHandler } from '@/application/queries';
-import { RoleController } from '@/presentation/controllers';
+import { RoleAdminController, RoleClientController } from '@/presentation/controllers';
 import { UserModule } from './user.module';
 
 const COMMAND_HANDLERS = [
@@ -28,7 +28,7 @@ const QUERY_HANDLERS = [
 
 @Module({
   imports: [UserModule, CqrsModule],
-  controllers: [RoleController],
+  controllers: [RoleAdminController, RoleClientController],
   providers: [...COMMAND_HANDLERS, ...QUERY_HANDLERS],
   exports: [],
 })

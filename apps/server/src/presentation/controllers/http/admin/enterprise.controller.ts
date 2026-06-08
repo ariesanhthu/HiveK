@@ -17,12 +17,17 @@ import { JwtAuthGuard } from '@/presentation/middleware/guards/jwt-auth.guard';
 import { CurrentUser } from '@/presentation/decorators/current-user.decorator';
 import { PaginatedResponseDto } from '@/application/dtos/pagination.dto';
 import { EnterpriseFilterDto } from '@/application/queries/enterprise-get-list/enterprise-get-list.dto';
+import { ERoleType } from '@/core/enums/role-type.enum';
+import { RolesGuard } from '@/presentation/middleware/guards/roles.guard';
+import { Roles } from '@/presentation/decorators/roles.decorator';
 
-@ApiTags('enterprises')
+@ApiTags('ADMIN-enterprises')
 @ApiBearerAuth()
 @ApiSecurity('x-api-key')
-@Controller('enterprises')
-export class EnterpriseController {
+@UseGuards(JwtAuthGuard, RolesGuard)
+@Roles(ERoleType.ADMIN)
+@Controller('admin/enterprises')
+export class EnterpriseAdminController {
   constructor(
     private readonly commandBus: CommandBus,
     private readonly queryBus: QueryBus,

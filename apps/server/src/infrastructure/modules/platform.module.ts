@@ -11,7 +11,7 @@ import {
 
 import { PlatformGetListHandler, PlatformGetByIdHandler } from '@/application/queries';
 import { LinkPlatformIconHandler } from '@/application/events';
-import { PlatformController } from '@/presentation/controllers'
+import { PlatformAdminController, PlatformClientController } from '@/presentation/controllers'
 import { UploadedFileModule } from './uploaded-file.module';
 
 const COMMAND_HANDLERS = [
@@ -33,7 +33,7 @@ const EVENT_HANDLERS = [
 
 @Module({
   imports: [CqrsModule, UploadedFileModule],
-  controllers: [PlatformController],
+  controllers: [PlatformAdminController, PlatformClientController],
   providers: [...COMMAND_HANDLERS, ...QUERY_HANDLERS, ...EVENT_HANDLERS],
   exports: [],
 })

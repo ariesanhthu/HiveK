@@ -12,13 +12,13 @@ import { PaginatedResponseDto } from '@/application/dtos/pagination.dto';
 import { UserCreateInputDto } from '@/application/commands/user-create/user-create.dto';
 import { UserUpdateInputDto } from '@/application/commands/user-update/user-update.dto';
 
-@ApiTags('users')
+@ApiTags('ADMIN-users')
 @ApiBearerAuth()
 @ApiSecurity('x-api-key')
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Roles(ERoleType.ADMIN)
-@Controller('users')
-export class UserController {
+@Controller('admin/users')
+export class UserAdminController {
   constructor(
     private readonly commandBus: CommandBus,
     private readonly queryBus: QueryBus,

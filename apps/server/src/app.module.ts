@@ -20,12 +20,12 @@ import { CampaignModule } from './infrastructure/modules/campaign.module';
 import { UploadedFileModule } from './infrastructure/modules/uploaded-file.module';
 import { NotificationModule } from './infrastructure/modules/notification.module';
 import { CampaignParticipantModule } from './infrastructure/modules/campaign-participant.module';
-import { TestController } from './presentation/controllers/http/test.controller';
 import { TestRmqHandler } from './presentation/controllers/rmq/test-rmq.controller';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { join } from 'path';
 import { DomainExceptionFilter } from './presentation/middleware/filters/domain-exception.filter';
+import { TestKOLController } from './presentation/controllers/http/test.controller';
 
 @Module({
   imports: [
@@ -60,9 +60,7 @@ import { DomainExceptionFilter } from './presentation/middleware/filters/domain-
       },
     ]),
   ],
-  controllers: [
-    TestController
-  ],
+  controllers: [],
   providers: [
     {
       provide: APP_PIPE,

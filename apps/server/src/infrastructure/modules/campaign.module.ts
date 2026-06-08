@@ -20,7 +20,7 @@ import { CampaignGetListHandler, CampaignGetByIdHandler } from '@/application/qu
 import { LinkCampaignRawHandler } from '@/application/events';
 
 // Presentation
-import { CampaignController } from '@/presentation/controllers'
+import { CampaignAdminController, CampaignClientController } from '@/presentation/controllers'
 import { CampaignResolver } from '@/presentation/resolvers/campaign.resolver';
 
 // Modules
@@ -48,7 +48,7 @@ const EVENT_HANDLERS = [
 
 @Module({
   imports: [CqrsModule, UserModule],
-  controllers: [CampaignController],
+  controllers: [CampaignAdminController, CampaignClientController],
   providers: [
     ...COMMAND_HANDLERS,
     ...QUERY_HANDLERS,
