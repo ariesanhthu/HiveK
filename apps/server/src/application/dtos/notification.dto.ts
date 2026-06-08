@@ -2,7 +2,7 @@ import { z } from 'zod';
 import { createZodDto } from 'nestjs-zod';
 import { NotificationType, TargetType } from '@/core/enums';
 
-import { CursorPaginationRequestSchema } from '@/shared/dtos/pagination.dto';
+import { CursorPaginationRequestSchema } from '@/application/dtos/pagination.dto';
 
 export const NotificationDtoSchema = z.object({
   id: z.string(), // This is the user_notifications._id, used by FE to operate (mark as read / delete)

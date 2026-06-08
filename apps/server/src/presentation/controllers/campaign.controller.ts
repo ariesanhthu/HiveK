@@ -4,7 +4,7 @@ import { ApiTags, ApiOperation, ApiBearerAuth, ApiSecurity } from '@nestjs/swagg
 import { CampaignCreateCommand, CampaignUpdateCommand, CampaignSoftDeleteCommand, CampaignRestoreCommand, CampaignCreateInputDto, CampaignUpdateInputDto } from '@/application/commands';
 import { CampaignGetListQuery, CampaignGetByIdQuery, CampaignFilterDto } from '@/application/queries';
 import { CampaignDto, SoftDeleteInputDto } from '@/application/dtos';
-import { PaginatedResponseDto } from '@/shared/dtos/pagination.dto';
+import { PaginatedResponseDto } from '@/application/dtos/pagination.dto';
 import { JwtAuthGuard } from '../middleware/guards';
 import { CurrentUser } from '../decorators/current-user.decorator';
 

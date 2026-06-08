@@ -5,7 +5,7 @@ import { IRoleReadService } from '@/application/interfaces';
 import { RoleDto, RoleFilterDto } from '@/application/dtos';
 import { RoleDocument, RoleModel } from '../schemas/role.schema';
 import { Nullable, JsonObject } from '@/core/types';
-import { PaginatedResponseDto, SortOrder } from '@/shared/dtos/pagination.dto';
+import { PaginatedResponseDto, SortOrder } from '@/application/dtos/pagination.dto';
 import { MongoSanitizeUtil } from '../utils';
 
 @Injectable()

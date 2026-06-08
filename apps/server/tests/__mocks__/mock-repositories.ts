@@ -9,6 +9,8 @@ export const createMockUserRepository = () => ({
   findById: jest.fn(),
   findByEmail: jest.fn(),
   findAll: jest.fn(),
+  findByEnterpriseId: jest.fn(),
+  existsByRoleId: jest.fn(),
   save: jest.fn(),
   softDelete: jest.fn(),
   hardDelete: jest.fn(),
@@ -18,7 +20,7 @@ export const createMockUserRepository = () => ({
 export const createMockRoleRepository = () => ({
   findById: jest.fn(),
   findAll: jest.fn(),
-  findByName: jest.fn(),
+  findByTitle: jest.fn(),
   save: jest.fn(),
   softDelete: jest.fn(),
   hardDelete: jest.fn(),
@@ -30,9 +32,11 @@ export const createMockCampaignRepository = () => ({
   findAll: jest.fn(),
   findByOwnerId: jest.fn(),
   findByEnterpriseId: jest.fn(),
+  hasActiveCampaigns: jest.fn(),
   save: jest.fn(),
   softDelete: jest.fn(),
   hardDelete: jest.fn(),
+  delete: jest.fn(),
   restore: jest.fn(),
 });
 
@@ -51,10 +55,11 @@ export const createMockCampaignParticipantRepository = () => ({
 export const createMockEnterpriseRepository = () => ({
   findById: jest.fn(),
   findAll: jest.fn(),
-  findByOwnerId: jest.fn(),
+  findByUserId: jest.fn(),
   save: jest.fn(),
   softDelete: jest.fn(),
   hardDelete: jest.fn(),
+  delete: jest.fn(),
   restore: jest.fn(),
 });
 
@@ -62,7 +67,8 @@ export const createMockKolProfileRepository = () => ({
   findById: jest.fn(),
   findAll: jest.fn(),
   findByUserId: jest.fn(),
-  findByPlatform: jest.fn(),
+  findByPlatformInfo: jest.fn(),
+  existsByPlatformId: jest.fn(),
   save: jest.fn(),
   softDelete: jest.fn(),
   hardDelete: jest.fn(),
@@ -72,10 +78,10 @@ export const createMockKolProfileRepository = () => ({
 export const createMockPlatformRepository = () => ({
   findById: jest.fn(),
   findAll: jest.fn(),
-  findByCode: jest.fn(),
   save: jest.fn(),
   softDelete: jest.fn(),
   hardDelete: jest.fn(),
+  delete: jest.fn(),
   restore: jest.fn(),
 });
 
@@ -91,9 +97,11 @@ export const createMockUserNotificationRepository = () => ({
   findByNotificationId: jest.fn(),
   save: jest.fn(),
   saveMany: jest.fn(),
-  markAsRead: jest.fn(),
-  markAllAsRead: jest.fn(),
-  softDelete: jest.fn(),
+  markAll: jest.fn(),
+  updateReadStatus: jest.fn(),
+  softDeleteMany: jest.fn(),
+  restoreMany: jest.fn(),
+  hardDeleteMany: jest.fn(),
 });
 
 export const createMockUploadedFileRepository = () => ({
@@ -107,10 +115,10 @@ export const createMockUploadedFileRepository = () => ({
 });
 
 export const createMockOtpRepository = () => ({
-  findByEmail: jest.fn(),
   findValidOtp: jest.fn(),
   save: jest.fn(),
-  invalidateAll: jest.fn(),
+  deleteByEmailAndType: jest.fn(),
+  findRecentOtp: jest.fn(),
 });
 
 export const createMockKpiLogRepository = () => ({

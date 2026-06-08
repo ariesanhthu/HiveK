@@ -6,17 +6,20 @@ import { Model, Types } from 'mongoose';
 import { AppModule } from './../../src/app.module';
 import { AUTH_JWT_SERVICE, type IAuthJwtService } from '@/application/interfaces/auth-jwt.interface';
 import { ECampaignStatus } from '@/core/enums/campaign-status.enum';
+import { setupApplication } from '@/config/app.setup';
 
 describe('Campaign Participant Domain (e2e)', () => {
   let app: INestApplication;
   let participantModel: Model<any>;
   let campaignModel: Model<any>;
+  let userModel: Model<any>;
   let jwtService: IAuthJwtService;
   let authToken: string;
 
   const mockCampaignId = new Types.ObjectId().toString();
   const mockKolProfileId = new Types.ObjectId().toString();
   const mockPlatformId = new Types.ObjectId().toString();
+  const testAdminId = '64f7b2c9e8b3c9001f3e4e94';
 
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -24,17 +27,34 @@ describe('Campaign Participant Domain (e2e)', () => {
     }).compile();
 
     app = moduleFixture.createNestApplication();
+    setupApplication(app);
     await app.init();
 
     jwtService = app.get<IAuthJwtService>(AUTH_JWT_SERVICE);
     authToken = jwtService.sign({
-      sub: '64f7b2c9e8b3c9001f3e4e94',
+      sub: testAdminId,
       email: 'admin-tester@hivek.com',
       role: 'admin',
     });
 
     participantModel = app.get<Model<any>>(getModelToken('CampaignParticipantModel'));
     campaignModel = app.get<Model<any>>(getModelToken('CampaignModel'));
+    userModel = app.get<Model<any>>(getModelToken('UserModel'));
+
+    // Seed user
+    await userModel.deleteMany({ _id: new Types.ObjectId(testAdminId) });
+    await userModel.collection.insertOne({
+      _id: new Types.ObjectId(testAdminId),
+      email: 'admin-tester@hivek.com',
+      full_name: 'Admin Tester',
+      phone: '+84123456786',
+      password_hash: 'password123',
+      type: 'admin',
+      role_id: new Types.ObjectId().toString(),
+      is_email_verified: true,
+      created_at: new Date(),
+      updated_at: new Date(),
+    });
 
     // Clean up E2E participant documents
     await participantModel.deleteMany({ campaign_id: new Types.ObjectId(mockCampaignId) as any });
@@ -43,13 +63,14 @@ describe('Campaign Participant Domain (e2e)', () => {
     // Seed campaign in FINDING_KOL status
     await campaignModel.create({
       _id: new Types.ObjectId(mockCampaignId),
-      owner_id: new Types.ObjectId('64f7b2c9e8b3c9001f3e4e94'),
+      owner_id: new Types.ObjectId(testAdminId),
+      enterprise_id: new Types.ObjectId('64f7b2c9e8b3c9001f3e4e95'),
       budget: 5000,
       financial_target: {},
       description: 'E2E Campaign for participant testing',
       platform_target: [],
       status: ECampaignStatus.FINDING_KOL,
-      collaborator_ids: ['64f7b2c9e8b3c9001f3e4e94'],
+      collaborator_ids: [testAdminId],
       raw_contents: [],
     });
   });
@@ -57,13 +78,14 @@ describe('Campaign Participant Domain (e2e)', () => {
   afterAll(async () => {
     await participantModel.deleteMany({ campaign_id: new Types.ObjectId(mockCampaignId) as any });
     await campaignModel.deleteMany({ _id: new Types.ObjectId(mockCampaignId) as any });
+    await userModel.deleteMany({ _id: new Types.ObjectId(testAdminId) });
     await app.close();
   });
 
   it('should manage campaign participant lifecycle through controller endpoints', async () => {
     // 1. Create Participant (POST /campaign-participants)
     const createRes = await request(app.getHttpServer())
-      .post('/campaign-participants')
+      .post('/hivek/api/campaign-participants')
       .set('Authorization', `Bearer ${authToken}`)
       .send({
         campaignId: mockCampaignId,
@@ -73,11 +95,10 @@ describe('Campaign Participant Domain (e2e)', () => {
 
     const participantId = createRes.text;
     expect(participantId).toBeDefined();
-    expect(typeof participantId).toBe('string');
 
     // 2. Get Participant by ID (GET /campaign-participants/:id)
     const getRes = await request(app.getHttpServer())
-      .get(`/campaign-participants/${participantId}`)
+      .get(`/hivek/api/campaign-participants/${participantId}`)
       .expect(200);
 
     expect(getRes.body.campaignId).toBe(mockCampaignId);
@@ -86,7 +107,7 @@ describe('Campaign Participant Domain (e2e)', () => {
 
     // 3. Find All/Get List (GET /campaign-participants)
     const listRes = await request(app.getHttpServer())
-      .get('/campaign-participants')
+      .get('/hivek/api/campaign-participants')
       .query({ campaignId: mockCampaignId })
       .expect(200);
 
@@ -95,7 +116,7 @@ describe('Campaign Participant Domain (e2e)', () => {
 
     // 4. Update Participant (PATCH /campaign-participants/:id) - Join Campaign
     await request(app.getHttpServer())
-      .patch(`/campaign-participants/${participantId}`)
+      .patch(`/hivek/api/campaign-participants/${participantId}`)
       .set('Authorization', `Bearer ${authToken}`)
       .send({
         status: 'JOINED',
@@ -104,7 +125,7 @@ describe('Campaign Participant Domain (e2e)', () => {
 
     // 5. Update outputs (PATCH /campaign-participants/:id) - Add a scheduled output
     await request(app.getHttpServer())
-      .patch(`/campaign-participants/${participantId}`)
+      .patch(`/hivek/api/campaign-participants/${participantId}`)
       .set('Authorization', `Bearer ${authToken}`)
       .send({
         outputs: [
@@ -121,7 +142,7 @@ describe('Campaign Participant Domain (e2e)', () => {
 
     // 6. Fail to update outputs if url is missing when direct publishing (isScheduleForPost: false)
     await request(app.getHttpServer())
-      .patch(`/campaign-participants/${participantId}`)
+      .patch(`/hivek/api/campaign-participants/${participantId}`)
       .set('Authorization', `Bearer ${authToken}`)
       .send({
         outputs: [
@@ -137,25 +158,26 @@ describe('Campaign Participant Domain (e2e)', () => {
 
     // 7. Soft Delete (PATCH /campaign-participants/:id/soft-delete)
     await request(app.getHttpServer())
-      .patch(`/campaign-participants/${participantId}/soft-delete`)
+      .patch(`/hivek/api/campaign-participants/${participantId}/soft-delete`)
       .set('Authorization', `Bearer ${authToken}`)
       .query({ deletedBy: 'E2E-Tester' })
       .expect(204);
 
     // 8. Restore (PATCH /campaign-participants/:id/restore)
     await request(app.getHttpServer())
-      .patch(`/campaign-participants/${participantId}/restore`)
+      .patch(`/hivek/api/campaign-participants/${participantId}/restore`)
+      .set('Authorization', `Bearer ${authToken}`)
       .expect(200);
 
     // 9. Hard Delete (DELETE /campaign-participants/:id)
     await request(app.getHttpServer())
-      .delete(`/campaign-participants/${participantId}`)
+      .delete(`/hivek/api/campaign-participants/${participantId}`)
       .set('Authorization', `Bearer ${authToken}`)
       .expect(204);
 
     // 10. Verify Gone (GET /campaign-participants/:id -> returns 404)
     await request(app.getHttpServer())
-      .get(`/campaign-participants/${participantId}`)
+      .get(`/hivek/api/campaign-participants/${participantId}`)
       .expect(404);
   });
 });

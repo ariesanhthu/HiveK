@@ -4,7 +4,7 @@ import { Model, QueryFilter, Schema, Types } from 'mongoose';
 import { INotificationReadService } from '@/application/interfaces';
 import { UserNotificationModel, UserNotificationDocument } from '../schemas';
 import { NotificationDto, NotificationFilterDto } from '@/application/dtos';
-import { PaginatedResponseDto } from '@/shared/dtos/pagination.dto';
+import { PaginatedResponseDto } from '@/application/dtos/pagination.dto';
 import { Nullable } from '@/core/types';
 
 @Injectable()

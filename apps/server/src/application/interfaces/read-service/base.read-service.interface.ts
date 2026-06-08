@@ -1,5 +1,5 @@
 import { Nullable } from '@/core/types';
-import { CursorPaginationRequestDto, PaginatedResponseDto } from '@/shared/dtos/pagination.dto';
+import { CursorPaginationRequestDto, PaginatedResponseDto } from '@/application/dtos/pagination.dto';
 import { ProjectionDto } from '@/application/dtos/projection.dto';
 
 /**

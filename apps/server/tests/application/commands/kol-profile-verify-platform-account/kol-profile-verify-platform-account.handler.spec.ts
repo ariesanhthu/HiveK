@@ -1,10 +1,10 @@
-import { KolProfileVerifyPlatformAccountHandler } from '@/application/commands/kol-profile-verify-platform-account/kol-profile-verify-platform-account.handler';
+import { KolProfileVerifyPlatformAccountCommandHandler } from '@/application/commands/kol-profile-verify-platform-account/kol-profile-verify-platform-account.handler';
 import { KolProfileVerifyPlatformAccountCommand } from '@/application/commands/kol-profile-verify-platform-account/kol-profile-verify-platform-account.command';
 import { KolProfileEntity } from '@/core/entities/kol-profile.entity';
 import { KolPlatformInfo } from '@/core/value-objects/kol-platform-info.value-object';
 
-describe('KolProfileVerifyPlatformAccountHandler', () => {
-  let handler: KolProfileVerifyPlatformAccountHandler;
+describe('KolProfileVerifyPlatformAccountCommandHandler', () => {
+  let handler: KolProfileVerifyPlatformAccountCommandHandler;
   let mockKolProfileRepository: any;
   let mockMqService: any;
 
@@ -19,11 +19,11 @@ describe('KolProfileVerifyPlatformAccountHandler', () => {
       emit: jest.fn(),
       send: jest.fn(),
     };
-    handler = new KolProfileVerifyPlatformAccountHandler(mockKolProfileRepository, mockMqService);
+    handler = new KolProfileVerifyPlatformAccountCommandHandler(mockKolProfileRepository, mockMqService);
   });
 
   it('should link user to existing profile found by platform info', async () => {
-    const mockProfile = KolProfileEntity.create({
+    const mockProfile = KolProfileEntity.instantiate('profile-123', {
       userId: null,
       verificationType: null,
       name: 'Existing KOL',
@@ -34,7 +34,10 @@ describe('KolProfileVerifyPlatformAccountHandler', () => {
       phone: '123456',
       platforms: [],
       isVerified: false,
-    }, 'profile-123');
+      scores: {},
+      deleteAt: null,
+      deleteBy: null,
+    });
 
     mockKolProfileRepository.findByPlatformInfo.mockResolvedValue(mockProfile);
 
@@ -58,7 +61,7 @@ describe('KolProfileVerifyPlatformAccountHandler', () => {
   });
 
   it('should add platform to user\'s existing profile if profile exists by userId', async () => {
-    const mockProfile = KolProfileEntity.create({
+    const mockProfile = KolProfileEntity.instantiate('profile-123', {
       userId: 'user-456',
       verificationType: null,
       name: 'Existing User KOL',
@@ -69,7 +72,10 @@ describe('KolProfileVerifyPlatformAccountHandler', () => {
       phone: '123456',
       platforms: [],
       isVerified: false,
-    }, 'profile-123');
+      scores: {},
+      deleteAt: null,
+      deleteBy: null,
+    });
 
     mockKolProfileRepository.findByPlatformInfo.mockResolvedValue(null);
     mockKolProfileRepository.findByUserId.mockResolvedValue(mockProfile);

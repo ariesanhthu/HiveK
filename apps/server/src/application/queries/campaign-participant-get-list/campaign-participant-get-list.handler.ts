@@ -1,7 +1,7 @@
 import { QueryHandler, IQueryHandler } from '@nestjs/cqrs';
 import { Inject } from '@nestjs/common';
 import { CAMPAIGN_PARTICIPANT_READ_SERVICE, type ICampaignParticipantReadService } from '@/application/interfaces';
-import { PaginatedResponseDto } from '@/shared/dtos/pagination.dto';
+import { PaginatedResponseDto } from '@/application/dtos/pagination.dto';
 import { CampaignParticipantDto } from '@/application/dtos';
 import { CampaignParticipantGetListQuery } from './campaign-participant-get-list.query';
 

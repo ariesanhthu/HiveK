@@ -3,7 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { KolProfileModel, KolProfileDocument, PlatformModel, PlatformDocument } from '@/infrastructure/mongo/schemas';
 import { KolProfileGetHandlesDevQuery } from './kol-profile-get-handles-dev.query';
-import { PaginatedResponseDto, SortOrder } from '@/shared/dtos/pagination.dto';
+import { PaginatedResponseDto, SortOrder } from '@/application/dtos/pagination.dto';
 
 @QueryHandler(KolProfileGetHandlesDevQuery)
 export class KolProfileGetHandlesDevHandler implements IQueryHandler<KolProfileGetHandlesDevQuery, PaginatedResponseDto<any>> {

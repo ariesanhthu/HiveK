@@ -2,6 +2,7 @@ import { Model, Types } from 'mongoose';
 import { MongoCampaignRepository } from '@/infrastructure/mongo/repositories/campaign.repository';
 import { CampaignRoot } from '@/core/aggregate-roots';
 import { ECampaignStatus } from '@/core/enums/campaign-status.enum';
+import { UNIT_OF_WORK } from '@/application/interfaces';
 
 jest.mock('mongoose', () => {
   const actual = jest.requireActual('mongoose');
@@ -18,6 +19,7 @@ jest.mock('mongoose', () => {
 describe('MongoCampaignRepository', () => {
   let repo: MongoCampaignRepository;
   let mockModel: any;
+  let mockUow: any;
 
   const campaignDoc = {
     _id: new Types.ObjectId('camp-123'),
@@ -50,11 +52,18 @@ describe('MongoCampaignRepository', () => {
   beforeEach(() => {
     mockModel = jest.fn();
     mockModel.findById = jest.fn().mockReturnThis();
+    mockModel.find = jest.fn().mockReturnThis();
+    mockModel.findOne = jest.fn().mockReturnThis();
     mockModel.findByIdAndUpdate = jest.fn().mockReturnThis();
     mockModel.findByIdAndDelete = jest.fn().mockReturnThis();
+    mockModel.session = jest.fn().mockReturnThis();
     mockModel.exec = jest.fn();
 
-    repo = new MongoCampaignRepository(mockModel as any);
+    mockUow = {
+        getSession: jest.fn().mockReturnValue(null),
+    };
+
+    repo = new MongoCampaignRepository(mockModel as any, mockUow);
   });
 
   describe('findById', () => {
@@ -113,6 +122,8 @@ describe('MongoCampaignRepository', () => {
         rawContents: [],
         deleteAt: null,
         deleteBy: null,
+        createdAt: new Date(),
+        updatedAt: new Date(),
       });
 
       (mockModel.exec as jest.Mock).mockResolvedValueOnce(undefined);

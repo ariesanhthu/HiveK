@@ -6,7 +6,7 @@ import { UserDetailDto, UserFilterDto } from '@/application/dtos';
 import { UserDocument, UserModel } from '../schemas';
 import { Nullable } from '@/core/types';
 import { ERoleType } from '@/core/enums';
-import { PaginatedResponseDto, SortOrder } from '@/shared/dtos/pagination.dto';
+import { PaginatedResponseDto, SortOrder } from '@/application/dtos/pagination.dto';
 import { Schema } from 'mongoose';
 import { MongoSanitizeUtil } from '../utils';
 

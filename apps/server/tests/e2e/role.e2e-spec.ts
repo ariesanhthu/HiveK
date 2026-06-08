@@ -5,6 +5,7 @@ import { getModelToken } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { AppModule } from './../../src/app.module';
 import { AUTH_JWT_SERVICE, type IAuthJwtService } from '@/application/interfaces/auth-jwt.interface';
+import { setupApplication } from '@/config/app.setup';
 
 describe('Role Domain (e2e)', () => {
   let app: INestApplication;
@@ -20,6 +21,7 @@ describe('Role Domain (e2e)', () => {
     }).compile();
 
     app = moduleFixture.createNestApplication();
+    setupApplication(app);
     await app.init();
 
     jwtService = app.get<IAuthJwtService>(AUTH_JWT_SERVICE);
@@ -54,7 +56,7 @@ describe('Role Domain (e2e)', () => {
 
   it('should block non-admin requests', async () => {
     await request(app.getHttpServer())
-      .get(`/roles/${testRoleId}`)
+      .get(`/hivek/api/roles/${testRoleId}`)
       .set('Authorization', `Bearer ${kolToken}`)
       .expect(403);
   });
@@ -62,7 +64,7 @@ describe('Role Domain (e2e)', () => {
   it('should manage role lifecycle under admin privileges', async () => {
     // 1. Get by ID
     const getRes = await request(app.getHttpServer())
-      .get(`/roles/${testRoleId}`)
+      .get(`/hivek/api/roles/${testRoleId}`)
       .set('Authorization', `Bearer ${adminToken}`)
       .expect(200);
 
@@ -70,7 +72,7 @@ describe('Role Domain (e2e)', () => {
 
     // 2. Create Role
     const createRes = await request(app.getHttpServer())
-      .post('/roles')
+      .post('/hivek/api/roles')
       .set('Authorization', `Bearer ${adminToken}`)
       .send({
         title: 'New E2E Admin Role',
@@ -84,7 +86,7 @@ describe('Role Domain (e2e)', () => {
 
     // 3. Update Role
     await request(app.getHttpServer())
-      .patch(`/roles/${newRoleId}`)
+      .patch(`/hivek/api/roles/${newRoleId}`)
       .set('Authorization', `Bearer ${adminToken}`)
       .send({
         permissions: ['read', 'write'],
@@ -93,7 +95,7 @@ describe('Role Domain (e2e)', () => {
 
     // 4. Get List
     const listRes = await request(app.getHttpServer())
-      .get('/roles')
+      .get('/hivek/api/roles')
       .set('Authorization', `Bearer ${adminToken}`)
       .query({ title: 'New E2E Admin Role' })
       .expect(200);
@@ -104,20 +106,20 @@ describe('Role Domain (e2e)', () => {
 
     // 5. Soft delete
     await request(app.getHttpServer())
-      .patch(`/roles/${testRoleId}/soft-delete`)
+      .patch(`/hivek/api/roles/${testRoleId}/soft-delete`)
       .set('Authorization', `Bearer ${adminToken}`)
       .query({ deletedBy: 'E2E-Admin' })
       .expect(204);
 
     // 6. Restore
     await request(app.getHttpServer())
-      .patch(`/roles/${testRoleId}/restore`)
+      .patch(`/hivek/api/roles/${testRoleId}/restore`)
       .set('Authorization', `Bearer ${adminToken}`)
       .expect(200);
 
     // 7. Hard delete
     await request(app.getHttpServer())
-      .delete(`/roles/${testRoleId}`)
+      .delete(`/hivek/api/roles/${testRoleId}`)
       .set('Authorization', `Bearer ${adminToken}`)
       .expect(204);
 

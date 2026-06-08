@@ -6,7 +6,7 @@ import { IUploadedFileReadService } from '@/application/interfaces';
 import { Nullable } from '@/core/types';
 import { UploadedFileDto } from '@/application/dtos';
 import { UploadedFileFilterDto } from '@/application/queries/uploaded-file-get-list/uploaded-file-get-list.dto';
-import { PaginatedResponseDto, SortOrder } from '@/shared/dtos/pagination.dto';
+import { PaginatedResponseDto, SortOrder } from '@/application/dtos/pagination.dto';
 
 @Injectable()
 export class MongoUploadedFileReadService implements IUploadedFileReadService {

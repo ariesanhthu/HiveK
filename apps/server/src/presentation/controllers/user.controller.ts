@@ -8,7 +8,7 @@ import { JwtAuthGuard, RolesGuard } from '../middleware/guards';
 import { UseGuards } from '@nestjs/common';
 import { Roles } from '@/presentation/decorators/roles.decorator';
 import { ERoleType } from '@/core/enums';
-import { PaginatedResponseDto } from '@/shared/dtos/pagination.dto';
+import { PaginatedResponseDto } from '@/application/dtos/pagination.dto';
 import { UserCreateInputDto } from '@/application/commands/user-create/user-create.dto';
 import { UserUpdateInputDto } from '@/application/commands/user-update/user-update.dto';
 

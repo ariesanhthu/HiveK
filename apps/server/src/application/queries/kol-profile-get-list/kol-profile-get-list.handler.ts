@@ -3,7 +3,7 @@ import { Inject } from '@nestjs/common';
 import { KOL_PROFILE_READ_SERVICE, type IKolProfileReadService } from '@/application/interfaces';
 import { KolProfileDto } from '@/application/dtos';
 import { KolProfileGetListQuery } from './kol-profile-get-list.query';
-import { PaginatedResponseDto } from '@/shared/dtos/pagination.dto';
+import { PaginatedResponseDto } from '@/application/dtos/pagination.dto';
 
 @QueryHandler(KolProfileGetListQuery)
 export class KolProfileGetListHandler implements IQueryHandler<KolProfileGetListQuery, PaginatedResponseDto<KolProfileDto>> {

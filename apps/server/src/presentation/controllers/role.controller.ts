@@ -13,7 +13,7 @@ import { RoleDto, RoleFilterDto, SoftDeleteInputDto } from '@/application/dtos';
 import { JwtAuthGuard, RolesGuard } from '../middleware/guards';
 import { Roles } from '@/presentation/decorators/roles.decorator';
 import { ERoleType } from '@/core/enums';
-import { PaginatedResponseDto } from '@/shared/dtos/pagination.dto';
+import { PaginatedResponseDto } from '@/application/dtos/pagination.dto';
 import { RoleCreateInputDto } from '@/application/commands/role-create/role-create.dto';
 import { RoleUpdateInputDto } from '@/application/commands/role-update/role-update.dto';
 

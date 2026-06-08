@@ -5,7 +5,7 @@ import { IKpiLogReadService } from '@/application/interfaces';
 import { KpiLogDto } from '@/application/dtos';
 import { KpiLogFilterDto } from '@/application/queries';
 import { KpiLogModel, KpiLogDocument } from '../schemas/kpi-log.schema';
-import { PaginatedResponseDto, SortOrder } from '@/shared/dtos/pagination.dto';
+import { PaginatedResponseDto, SortOrder } from '@/application/dtos/pagination.dto';
 import { Nullable } from '@/core/types';
 
 @Injectable()
@@ -62,10 +62,10 @@ export class MongoKpiLogReadService implements IKpiLogReadService {
     return {
       id: doc._id.toString(),
       timestamp: doc.timestamp,
-      participantId: doc.participantId.toString(),
+      participantId: doc.participantId ? doc.participantId.toString() : null,
       metrics: {
         views: doc.metrics?.views || 0,
-        likes: doc.metrics?.likes || 0,
+        likes: doc.metrics?.views || 0,
         comments: doc.metrics?.comments || 0,
         shares: doc.metrics?.shares || 0,
       },

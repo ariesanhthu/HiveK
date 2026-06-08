@@ -3,7 +3,7 @@ import { Inject } from '@nestjs/common';
 import { RoleNotFoundException, InvalidOperationException } from '@/core/exceptions';
 import { ROLE_REPOSITORY, USER_REPOSITORY, type IRoleRepository, type IUserRepository } from '@/core/interfaces/repositories';
 import { RoleSoftDeleteCommand } from './role-soft-delete.command';
-import { IUnitOfWork, UNIT_OF_WORK } from '@/application/interfaces';
+import { type IUnitOfWork, UNIT_OF_WORK } from '@/application/interfaces';
 
 @CommandHandler(RoleSoftDeleteCommand)
 export class RoleSoftDeleteCommandHandler implements ICommandHandler<RoleSoftDeleteCommand, void> {

@@ -1,6 +1,6 @@
 import { EnterpriseGetListHandler } from '@/application/queries/enterprise-get-list/enterprise-get-list.handler';
 import { EnterpriseGetListQuery } from '@/application/queries/enterprise-get-list/enterprise-get-list.query';
-import { PaginatedResponseDto } from '@/shared/dtos/pagination.dto';
+import { PaginatedResponseDto } from '@/application/dtos/pagination.dto';
 
 describe('EnterpriseGetListHandler', () => {
   let handler: EnterpriseGetListHandler;

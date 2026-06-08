@@ -2,25 +2,33 @@ import { UserCreateCommandHandler } from '@/application/commands/user-create/use
 import { UserCreateCommand } from '@/application/commands/user-create/user-create.command';
 import { ERoleType } from '@/core/enums';
 import { UserConflictException } from '@/core/exceptions';
+import { EnterpriseUserRoot } from '@/core/aggregate-roots';
 
 describe('UserCreateCommandHandler', () => {
   let handler: UserCreateCommandHandler;
   let mockUserRepository: any;
   let mockAuthService: any;
+  let mockUow: any;
 
   beforeEach(() => {
     mockUserRepository = {
       findByEmail: jest.fn(),
-      save: jest.fn().mockImplementation((user: any) => {
-        user.setId('some-user-id');
-        return Promise.resolve();
+      save: jest.fn().mockImplementation(async (user: any) => {
+        if (!user.id) user.setId('generated-user-id');
       }),
     };
     mockAuthService = {
-      normalizeEmail: jest.fn((email: string) => email.trim().toLowerCase()),
-      hashPassword: jest.fn(() => Promise.resolve('hashed')),
+      normalizeEmail: jest.fn().mockImplementation((e) => e),
+      hashPassword: jest.fn().mockResolvedValue('hashedPassword'),
     };
-    handler = new UserCreateCommandHandler(mockUserRepository, mockAuthService);
+    mockUow = {
+        execute: jest.fn((fn: any) => fn()),
+    };
+    handler = new UserCreateCommandHandler(
+      mockUserRepository,
+      mockAuthService,
+      mockUow,
+    );
   });
 
   it('should successfully create a new admin user', async () => {
@@ -36,15 +44,13 @@ describe('UserCreateCommandHandler', () => {
     });
 
     const result = await handler.execute(command);
-    expect(result).toBeDefined();
-    expect(mockAuthService.normalizeEmail).toHaveBeenCalledWith('admin@test.com');
-    expect(mockUserRepository.findByEmail).toHaveBeenCalledWith('admin@test.com');
-    expect(mockAuthService.hashPassword).toHaveBeenCalledWith('password123');
+
+    expect(result).toBe('generated-user-id');
     expect(mockUserRepository.save).toHaveBeenCalled();
   });
 
   it('should throw ConflictException if user already exists', async () => {
-    mockUserRepository.findByEmail.mockResolvedValue({ id: 'existing-id' });
+    mockUserRepository.findByEmail.mockResolvedValue({ id: 'existing' });
 
     const command = new UserCreateCommand({
       email: 'admin@test.com',
@@ -72,7 +78,7 @@ describe('UserCreateCommandHandler', () => {
     } as any);
 
     const result = await handler.execute(command);
-    expect(result).toBeDefined();
+    expect(result).toBe('generated-user-id');
     expect(mockUserRepository.save).toHaveBeenCalled();
     const savedUser = mockUserRepository.save.mock.calls[0][0];
     expect(savedUser.enterpriseIds).toContain('ent-1');

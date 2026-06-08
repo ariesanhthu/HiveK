@@ -11,6 +11,7 @@ describe('AuthSignUpCommandHandler', () => {
   let mockRoleReadService: any;
   let mockAuthService: any;
   let mockCommandBus: any;
+  let mockUow: any;
 
   beforeEach(() => {
     mockUserRepository = {
@@ -27,11 +28,15 @@ describe('AuthSignUpCommandHandler', () => {
     mockCommandBus = {
       execute: jest.fn(),
     };
+    mockUow = {
+        execute: jest.fn((fn: any) => fn()),
+    };
     handler = new AuthSignUpCommandHandler(
       mockUserRepository,
       mockRoleReadService,
       mockAuthService,
       mockCommandBus,
+      mockUow,
     );
   });
 

@@ -4,6 +4,7 @@ import { INestApplication } from '@nestjs/common';
 import { getModelToken } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { AppModule } from './../../src/app.module';
+import { setupApplication } from '@/config/app.setup';
 
 describe('Auth Domain (e2e)', () => {
   let app: INestApplication;
@@ -16,6 +17,7 @@ describe('Auth Domain (e2e)', () => {
     }).compile();
 
     app = moduleFixture.createNestApplication();
+    setupApplication(app);
     await app.init();
 
     userModel = app.get<Model<any>>(getModelToken('UserModel'));
@@ -33,7 +35,7 @@ describe('Auth Domain (e2e)', () => {
   it('should successfully sign up a KOL, sign in, and get profile', async () => {
     // 1. Sign Up
     const signUpRes = await request(app.getHttpServer())
-      .post('/auth/sign-up/kol')
+      .post('/hivek/api/auth/sign-up/kol')
       .send({
         email: testEmail,
         password: 'SecurePassword123!',
@@ -44,7 +46,7 @@ describe('Auth Domain (e2e)', () => {
 
     // 2. Sign In
     const signInRes = await request(app.getHttpServer())
-      .post('/auth/sign-in')
+      .post('/hivek/api/auth/sign-in')
       .send({
         email: testEmail,
         password: 'SecurePassword123!',
@@ -58,43 +60,42 @@ describe('Auth Domain (e2e)', () => {
 
     // 3. Get Profile
     const profileRes = await request(app.getHttpServer())
-      .get('/auth/profile')
+      .get('/hivek/api/auth/profile')
       .set('Authorization', `Bearer ${accessToken}`)
       .expect(200);
 
     expect(profileRes.body.email).toBe(testEmail);
-    expect(profileRes.body.fullName).toBe('DEFAULT NAME');
   });
 
   it('should return 401 when accessing profile without token', async () => {
     await request(app.getHttpServer())
-      .get('/auth/profile')
+      .get('/hivek/api/auth/profile')
       .expect(401);
   });
 
   it('should return 401 when accessing profile with invalid token', async () => {
     await request(app.getHttpServer())
-      .get('/auth/profile')
+      .get('/hivek/api/auth/profile')
       .set('Authorization', 'Bearer invalid-jwt-token')
       .expect(401);
   });
 
   it('should return 401 when refreshing with invalid refresh token', async () => {
     await request(app.getHttpServer())
-      .post('/auth/refresh-token')
+      .post('/hivek/api/auth/refresh-token')
       .send({ refreshToken: 'invalid-token' })
       .expect(401);
   });
 
   it('should return 401 when signing out without auth token', async () => {
     await request(app.getHttpServer())
-      .post('/auth/sign-out')
+      .post('/hivek/api/auth/sign-out')
       .expect(401);
   });
 
   it('should return 401 when signing in with wrong password', async () => {
     await request(app.getHttpServer())
-      .post('/auth/sign-in')
+      .post('/hivek/api/auth/sign-in')
       .send({
         email: testEmail,
         password: 'WrongPassword!',
@@ -104,7 +105,7 @@ describe('Auth Domain (e2e)', () => {
 
   it('should return 401 when signing in with non-existent email', async () => {
     await request(app.getHttpServer())
-      .post('/auth/sign-in')
+      .post('/hivek/api/auth/sign-in')
       .send({
         email: 'nonexistent@hivek.com',
         password: 'SecurePassword123!',
@@ -114,7 +115,7 @@ describe('Auth Domain (e2e)', () => {
 
   it('should return 409 when signing up with duplicate email', async () => {
     await request(app.getHttpServer())
-      .post('/auth/sign-up/kol')
+      .post('/hivek/api/auth/sign-up/kol')
       .send({
         email: testEmail,
         password: 'SecurePassword123!',

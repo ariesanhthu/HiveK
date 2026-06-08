@@ -1,5 +1,5 @@
 import { Field, InputType, ObjectType, Int, registerEnumType } from '@nestjs/graphql';
-import { SortOrder } from '@/shared/dtos/pagination.dto';
+import { SortOrder } from '@/application/dtos/pagination.dto';
 import { KolProfileType } from './kol-profile.type';
 import { CampaignType } from './campaign.type';
 import { CampaignParticipantType } from './campaign-participant.type';

@@ -33,7 +33,7 @@ import {
   UploadedFileFilterDto,
 } from '@/application/queries';
 import { UploadedFileDto, SoftDeleteInputDto } from '@/application/dtos';
-import { PaginatedResponseDto } from '@/shared/dtos/pagination.dto';
+import { PaginatedResponseDto } from '@/application/dtos/pagination.dto';
 import { JwtAuthGuard } from '../middleware/guards';
 import { FileUploadValidationPipe } from '../middleware/pipes/file-upload-validation.pipe';
 

@@ -1,5 +1,5 @@
 import { Query } from '@nestjs/cqrs';
-import { PaginatedResponseDto } from '@/shared/dtos/pagination.dto';
+import { PaginatedResponseDto } from '@/application/dtos/pagination.dto';
 import { CampaignParticipantDto } from '@/application/dtos';
 import { CampaignParticipantFilterDto } from './campaign-participant-get-list.dto';
 

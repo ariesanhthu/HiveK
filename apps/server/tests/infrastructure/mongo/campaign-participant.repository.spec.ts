@@ -2,6 +2,7 @@ import { Model, Types } from 'mongoose';
 import { MongoCampaignParticipantRepository } from '@/infrastructure/mongo/repositories/campaign-participant.repository';
 import { CampaignParticipantRoot } from '@/core/aggregate-roots';
 import { EParticipantStatus, EOutputType, EOutputStatus } from '@/core/enums';
+import { UNIT_OF_WORK } from '@/application/interfaces';
 
 jest.mock('mongoose', () => {
   const actual = jest.requireActual('mongoose');
@@ -18,6 +19,7 @@ jest.mock('mongoose', () => {
 describe('MongoCampaignParticipantRepository', () => {
   let repo: MongoCampaignParticipantRepository;
   let mockModel: any;
+  let mockUow: any;
 
   const participantDoc = {
     _id: new Types.ObjectId('participant-123'),
@@ -47,12 +49,18 @@ describe('MongoCampaignParticipantRepository', () => {
   beforeEach(() => {
     mockModel = jest.fn();
     mockModel.findById = jest.fn().mockReturnThis();
+    mockModel.find = jest.fn().mockReturnThis();
     mockModel.findOne = jest.fn().mockReturnThis();
     mockModel.findByIdAndUpdate = jest.fn().mockReturnThis();
     mockModel.findByIdAndDelete = jest.fn().mockReturnThis();
+    mockModel.session = jest.fn().mockReturnThis();
     mockModel.exec = jest.fn();
 
-    repo = new MongoCampaignParticipantRepository(mockModel as any);
+    mockUow = {
+        getSession: jest.fn().mockReturnValue(null),
+    };
+
+    repo = new MongoCampaignParticipantRepository(mockModel as any, mockUow);
   });
 
   describe('findById', () => {
@@ -85,8 +93,8 @@ describe('MongoCampaignParticipantRepository', () => {
       const result = await repo.findByCampaignAndKol('camp-123', 'kol-123');
 
       expect(mockModel.findOne).toHaveBeenCalledWith({
-        campaign_id: expect.objectContaining({ toString: expect.any(Function) }),
-        kol_profile_id: expect.objectContaining({ toString: expect.any(Function) }),
+        campaign_id: expect.any(Object),
+        kol_profile_id: expect.any(Object),
       });
       expect(result).toBeInstanceOf(CampaignParticipantRoot);
     });
@@ -99,7 +107,7 @@ describe('MongoCampaignParticipantRepository', () => {
       const result = await repo.findByOutputId('out-123');
 
       expect(mockModel.findOne).toHaveBeenCalledWith({
-        'outputs._id': expect.objectContaining({ toString: expect.any(Function) }),
+        'outputs._id': expect.any(Object),
       });
       expect(result).toBeInstanceOf(CampaignParticipantRoot);
     });

@@ -2,7 +2,7 @@ import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { Inject } from '@nestjs/common';
 import { ENTERPRISE_READ_SERVICE, type IEnterpriseReadService } from '@/application/interfaces';
 import { EnterpriseDetailDto } from '@/application/dtos';
-import { PaginatedResponseDto } from '@/shared/dtos/pagination.dto';
+import { PaginatedResponseDto } from '@/application/dtos/pagination.dto';
 import { EnterpriseGetListQuery } from './enterprise-get-list.query';
 
 @QueryHandler(EnterpriseGetListQuery)

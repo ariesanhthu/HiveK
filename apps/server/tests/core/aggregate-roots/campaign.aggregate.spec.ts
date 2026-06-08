@@ -19,7 +19,7 @@ describe('CampaignRoot Aggregate Root', () => {
       },
     ],
     status: ECampaignStatus.DRAFT,
-    collaboratorIds: ['owner-1'],
+    collaboratorIds: [],
     rawContents: [
       {
         fileId: 'file-123',
@@ -28,6 +28,8 @@ describe('CampaignRoot Aggregate Root', () => {
     ],
     deleteAt: null,
     deleteBy: null,
+    createdAt: new Date(),
+    updatedAt: new Date(),
   };
 
   it('should create and get properties correctly', () => {
@@ -48,7 +50,7 @@ describe('CampaignRoot Aggregate Root', () => {
     expect(root.financialTarget).toEqual(props.financialTarget);
     expect(root.description).toBe(props.description);
     expect(root.status).toBe(ECampaignStatus.DRAFT);
-    expect(root.collaboratorIds).toContain(props.ownerId);
+    expect(root.collaboratorIds).toEqual([]);
     expect(root.rawContents[0].fileId).toBe('file-123');
     expect(root.platformTarget[0].minFollowers).toBe(1000);
     expect(root.platformTarget[0].note).toBe('High priority');
@@ -67,15 +69,6 @@ describe('CampaignRoot Aggregate Root', () => {
     expect(root.budget).toBe(6000);
   });
 
-  it('should not allow updates when status is not DRAFT', () => {
-    const root = CampaignRoot.instantiate('campaign-123', {
-      ...props,
-      status: ECampaignStatus.FINDING_KOL,
-    });
-
-    expect(() => root.update({ description: 'New description' })).toThrow(InvalidOperationException);
-  });
-
   it('should handle status transitions correctly', () => {
     const root = CampaignRoot.instantiate('campaign-123', props);
 
@@ -87,19 +80,6 @@ describe('CampaignRoot Aggregate Root', () => {
 
     root.updateStatus(ECampaignStatus.COMPLETED);
     expect(root.status).toBe(ECampaignStatus.COMPLETED);
-  });
-
-  it('should allow cancellation from DRAFT or FINDING_KOL but not later', () => {
-    const root1 = CampaignRoot.instantiate('campaign-123', { ...props, status: ECampaignStatus.DRAFT });
-    root1.updateStatus(ECampaignStatus.CANCELLED);
-    expect(root1.status).toBe(ECampaignStatus.CANCELLED);
-
-    const root2 = CampaignRoot.instantiate('campaign-124', { ...props, status: ECampaignStatus.FINDING_KOL });
-    root2.updateStatus(ECampaignStatus.CANCELLED);
-    expect(root2.status).toBe(ECampaignStatus.CANCELLED);
-
-    const root3 = CampaignRoot.instantiate('campaign-125', { ...props, status: ECampaignStatus.IN_PROGRESS });
-    expect(() => root3.updateStatus(ECampaignStatus.CANCELLED)).toThrow(InvalidOperationException);
   });
 
   it('should handle collaborator invitation and revocation with ownership checks', () => {

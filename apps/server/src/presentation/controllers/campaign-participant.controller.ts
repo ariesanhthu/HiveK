@@ -16,7 +16,7 @@ import {
   CampaignParticipantFilterDto,
 } from '@/application/queries';
 import { CampaignParticipantDto, SoftDeleteInputDto } from '@/application/dtos';
-import { PaginatedResponseDto } from '@/shared/dtos/pagination.dto';
+import { PaginatedResponseDto } from '@/application/dtos/pagination.dto';
 import { JwtAuthGuard } from '../middleware/guards';
 import { Public } from '@/presentation/decorators/public.decorator';
 

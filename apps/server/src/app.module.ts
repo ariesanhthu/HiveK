@@ -10,7 +10,7 @@ import { WebSocketModule } from '@/infrastructure/websocket/websocket.module';
 import { APP_PIPE, APP_GUARD, APP_FILTER } from '@nestjs/core';
 import { ZodValidationPipe } from 'nestjs-zod';
 import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
-import { RolesGuard, GqlThrottlerGuard, ApiKeyGuard } from './presentation/middleware/guards';
+import { GqlThrottlerGuard, ApiKeyGuard } from './presentation/middleware/guards';
 import { NestConfigModule } from './infrastructure/nest-config/nest-config.module';
 import { InfrastructureModule } from './infrastructure/modules/infrastructure.module';
 import { PlatformModule } from './infrastructure/modules/platform.module';

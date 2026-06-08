@@ -6,7 +6,7 @@ import { KolProfileDetailDto } from '@/application/dtos';
 import { KolProfileFilterDto } from '@/application/queries';
 import { KolProfileModel, KolProfileDocument } from '../schemas';
 import { JsonObject, Nullable } from '@/core/types';
-import { PaginatedResponseDto, SortOrder } from '@/shared/dtos/pagination.dto';
+import { PaginatedResponseDto, SortOrder } from '@/application/dtos/pagination.dto';
 import { parseMongoProjection, MongoSanitizeUtil } from '../utils';
 
 @Injectable()

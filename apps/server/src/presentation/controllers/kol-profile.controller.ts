@@ -4,7 +4,7 @@ import { ApiTags, ApiOperation, ApiBearerAuth, ApiSecurity } from '@nestjs/swagg
 import { KolProfileGetListQuery, KolProfileGetByIdQuery, KolProfileGetHandlesDevQuery, KolProfileFilterDto } from '@/application/queries';
 import { KolProfileUpdateCommand, KolProfileSoftDeleteCommand, KolProfileHardDeleteCommand, KolProfileRestoreCommand, UpdateKolProfileDto } from '@/application/commands';
 import { KolProfileDto, SoftDeleteInputDto } from '@/application/dtos';
-import { PaginatedResponseDto, CursorPaginationRequestDto } from '@/shared/dtos/pagination.dto';
+import { PaginatedResponseDto, CursorPaginationRequestDto } from '@/application/dtos/pagination.dto';
 import { JwtAuthGuard, YoutubeAuthGuard, FacebookAuthGuard } from '../middleware/guards';
 import { Public } from '@/presentation/decorators/public.decorator';
 import { AuthGuard } from '@nestjs/passport';

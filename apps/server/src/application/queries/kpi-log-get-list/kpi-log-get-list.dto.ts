@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { createZodDto } from 'nestjs-zod';
-import { CursorPaginationRequestSchema } from '@/shared/dtos/pagination.dto';
+import { CursorPaginationRequestSchema } from '@/application/dtos/pagination.dto';
 
 export const KpiLogFilterSchema = CursorPaginationRequestSchema.extend({
   participantId: z.string().optional(),

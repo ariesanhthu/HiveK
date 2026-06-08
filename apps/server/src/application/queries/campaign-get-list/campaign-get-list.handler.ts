@@ -3,7 +3,7 @@ import { Inject } from '@nestjs/common';
 import { CAMPAIGN_READ_SERVICE, type ICampaignReadService } from '@/application/interfaces';
 import { CampaignDto } from '@/application/dtos';
 import { CampaignGetListQuery } from './campaign-get-list.query';
-import { PaginatedResponseDto } from '@/shared/dtos/pagination.dto';
+import { PaginatedResponseDto } from '@/application/dtos/pagination.dto';
 
 @QueryHandler(CampaignGetListQuery)
 export class CampaignGetListHandler implements IQueryHandler<CampaignGetListQuery, PaginatedResponseDto<CampaignDto>> {

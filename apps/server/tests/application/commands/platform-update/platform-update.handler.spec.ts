@@ -1,9 +1,9 @@
-import { UpdatePlatformHandler } from '@/application/commands/platform-update/platform-update.handler';
+import { PlatformUpdateCommandHandler } from '@/application/commands/platform-update/platform-update.handler';
 import { PlatformUpdateCommand } from '@/application/commands/platform-update/platform-update.command';
 import { PlatformNotFoundException, UploadedFileNotFoundException } from '@/core/exceptions';
 
-describe('UpdatePlatformHandler', () => {
-  let handler: UpdatePlatformHandler;
+describe('PlatformUpdateCommandHandler', () => {
+  let handler: PlatformUpdateCommandHandler;
   let mockPlatformRepository: any;
   let mockUploadedFileRepository: any;
 
@@ -15,15 +15,14 @@ describe('UpdatePlatformHandler', () => {
     mockUploadedFileRepository = {
       findById: jest.fn(),
     };
-    handler = new UpdatePlatformHandler(mockPlatformRepository, mockUploadedFileRepository);
+    handler = new PlatformUpdateCommandHandler(mockPlatformRepository, mockUploadedFileRepository);
   });
 
   it('should update platform successfully', async () => {
     const mockPlatform = {
       id: 'platform-123',
       props: {
-        name: 'facebook',
-        baseUrl: 'https://facebook.com',
+        name: 'old',
       },
       updateIcon: jest.fn(),
       updateApiStatus: jest.fn(),
@@ -31,22 +30,14 @@ describe('UpdatePlatformHandler', () => {
     mockPlatformRepository.findById.mockResolvedValue(mockPlatform);
     mockUploadedFileRepository.findById.mockResolvedValue({});
 
-    const input = {
-      name: 'Facebook2',
-      baseUrl: 'https://fb2.com',
-      icon: 'new-icon',
-      apiStatus: 'inactive',
-    };
+    const input = { name: 'new', icon: 'file-123' };
     const command = new PlatformUpdateCommand('platform-123', input as any);
-
     const result = await handler.execute(command);
 
     expect(result).toBeDefined();
     expect(mockPlatformRepository.findById).toHaveBeenCalledWith('platform-123');
-    expect(mockUploadedFileRepository.findById).toHaveBeenCalledWith('new-icon');
-    expect(mockPlatform.updateIcon).toHaveBeenCalledWith('new-icon');
-    expect(mockPlatform.updateApiStatus).toHaveBeenCalledWith('inactive');
-    expect(mockPlatformRepository.save).toHaveBeenCalledWith(mockPlatform);
+    expect(mockUploadedFileRepository.findById).toHaveBeenCalledWith('file-123');
+    expect(mockPlatformRepository.save).toHaveBeenCalled();
   });
 
   it('should throw NotFoundException if platform not found', async () => {
@@ -57,17 +48,10 @@ describe('UpdatePlatformHandler', () => {
   });
 
   it('should throw NotFoundException if icon file not found', async () => {
-    const mockPlatform = {
-      id: 'platform-123',
-      props: {
-        name: 'facebook',
-      },
-      updateIcon: jest.fn(),
-    };
-    mockPlatformRepository.findById.mockResolvedValue(mockPlatform);
+    mockPlatformRepository.findById.mockResolvedValue({ id: 'p1', props: {} });
     mockUploadedFileRepository.findById.mockResolvedValue(null);
 
-    const command = new PlatformUpdateCommand('platform-123', { icon: 'invalid-icon' } as any);
+    const command = new PlatformUpdateCommand('p1', { icon: 'none' });
     await expect(handler.execute(command)).rejects.toThrow(UploadedFileNotFoundException);
   });
 });

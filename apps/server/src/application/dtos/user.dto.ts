@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { createZodDto } from 'nestjs-zod';
 import { ERoleType } from '@/core/enums';
-import { CursorPaginationRequestSchema } from '@/shared/dtos/pagination.dto';
+import { CursorPaginationRequestSchema } from '@/application/dtos/pagination.dto';
 import { RoleDto } from './role.dto';
 import { UploadedFileDto } from './uploaded-file.dto';
 

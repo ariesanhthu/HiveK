@@ -8,17 +8,23 @@ describe('EnterpriseCreateCommandHandler', () => {
   let handler: EnterpriseCreateCommandHandler;
   let mockEnterpriseRepository: any;
   let mockUserRepository: any;
+  let mockUow: any;
 
   beforeEach(() => {
     mockEnterpriseRepository = {
       findByUserId: jest.fn(),
-      save: jest.fn(),
+      save: jest.fn().mockImplementation(async (ent: any) => {
+        if (!ent.id) ent.setId('generated-ent-id');
+      }),
     };
     mockUserRepository = {
       findById: jest.fn(),
       save: jest.fn(),
     };
-    handler = new EnterpriseCreateCommandHandler(mockEnterpriseRepository, mockUserRepository);
+    mockUow = {
+        execute: jest.fn((fn: any) => fn()),
+    };
+    handler = new EnterpriseCreateCommandHandler(mockEnterpriseRepository, mockUserRepository, mockUow);
   });
 
   it('should create enterprise successfully and associate with user', async () => {
@@ -52,7 +58,7 @@ describe('EnterpriseCreateCommandHandler', () => {
     expect(result.userId).toBe('user-123');
     expect(mockEnterpriseRepository.findByUserId).toHaveBeenCalledWith('user-123');
     expect(mockEnterpriseRepository.save).toHaveBeenCalled();
-    expect(mockUser.enterpriseIds).toContain(expect.any(String));
+    expect(mockUser.enterpriseIds).toContain('generated-ent-id');
     expect(mockUserRepository.save).toHaveBeenCalledWith(mockUser);
   });
 

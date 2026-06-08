@@ -6,7 +6,7 @@ import { ICampaignParticipantReadService } from '@/application/interfaces';
 import { Nullable } from '@/core/types';
 import { CampaignParticipantDto } from '@/application/dtos';
 import { CampaignParticipantFilterDto } from '@/application/queries/campaign-participant-get-list/campaign-participant-get-list.dto';
-import { PaginatedResponseDto, SortOrder } from '@/shared/dtos/pagination.dto';
+import { PaginatedResponseDto, SortOrder } from '@/application/dtos/pagination.dto';
 import { parseMongoProjection } from '../utils';
 
 @Injectable()
@@ -187,8 +187,8 @@ export class MongoCampaignParticipantReadService implements ICampaignParticipant
 
     return {
       id: doc._id.toString(),
-      campaignId: campaignDoc && typeof campaignDoc === 'object' && campaignDoc._id ? campaignDoc._id.toString() : doc.campaign_id.toString(),
-      kolProfileId: kolProfileDoc && typeof kolProfileDoc === 'object' && kolProfileDoc._id ? kolProfileDoc._id.toString() : doc.kol_profile_id.toString(),
+      campaignId: campaignDoc && typeof campaignDoc === 'object' && campaignDoc._id ? campaignDoc._id.toString() : (doc.campaign_id ? doc.campaign_id.toString() : null),
+      kolProfileId: kolProfileDoc && typeof kolProfileDoc === 'object' && kolProfileDoc._id ? kolProfileDoc._id.toString() : (doc.kol_profile_id ? doc.kol_profile_id.toString() : null),
       status: doc.status,
       joinedAt: doc.joined_at ? (doc.joined_at instanceof Date ? doc.joined_at.toISOString() : doc.joined_at) : null,
       createdAt: doc.created_at ? (doc.created_at instanceof Date ? doc.created_at.toISOString() : doc.created_at) : new Date().toISOString(),

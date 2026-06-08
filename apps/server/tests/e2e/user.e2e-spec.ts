@@ -5,6 +5,7 @@ import { getModelToken } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { AppModule } from './../../src/app.module';
 import { AUTH_JWT_SERVICE, type IAuthJwtService } from '@/application/interfaces/auth-jwt.interface';
+import { setupApplication } from '@/config/app.setup';
 
 describe('User Domain (e2e)', () => {
   let app: INestApplication;
@@ -20,6 +21,7 @@ describe('User Domain (e2e)', () => {
     }).compile();
 
     app = moduleFixture.createNestApplication();
+    setupApplication(app);
     await app.init();
 
     jwtService = app.get<IAuthJwtService>(AUTH_JWT_SERVICE);
@@ -42,11 +44,12 @@ describe('User Domain (e2e)', () => {
       _id: new Types.ObjectId(testUserId),
       email: 'user-e2e@hivek.com',
       full_name: 'User E2E',
-      phone: '0000000000',
+      phone: '+84123456789',
       password_hash: 'password123',
       type: 'kol',
       role_id: new Types.ObjectId().toString(),
       is_email_verified: false,
+      enterprise_ids: [],
       created_at: new Date(),
       updated_at: new Date(),
     });
@@ -60,7 +63,7 @@ describe('User Domain (e2e)', () => {
 
   it('should block non-admin requests', async () => {
     await request(app.getHttpServer())
-      .get(`/users/${testUserId}`)
+      .get(`/hivek/api/users/${testUserId}`)
       .set('Authorization', `Bearer ${kolToken}`)
       .expect(403);
   });
@@ -68,7 +71,7 @@ describe('User Domain (e2e)', () => {
   it('should manage user lifecycle under admin privileges', async () => {
     // 1. Get by ID
     const getRes = await request(app.getHttpServer())
-      .get(`/users/${testUserId}`)
+      .get(`/hivek/api/users/${testUserId}`)
       .set('Authorization', `Bearer ${adminToken}`)
       .expect(200);
 
@@ -76,11 +79,11 @@ describe('User Domain (e2e)', () => {
 
     // 2. Create User
     const createRes = await request(app.getHttpServer())
-      .post('/users')
+      .post('/hivek/api/users')
       .set('Authorization', `Bearer ${adminToken}`)
       .send({
         email: 'new-admin-e2e@hivek.com',
-        phone: '0901234567',
+        phone: '+84901234567',
         password: 'SecurePassword123!',
         fullName: 'New Admin E2E',
         type: 'admin',
@@ -93,7 +96,7 @@ describe('User Domain (e2e)', () => {
 
     // 3. Update User
     await request(app.getHttpServer())
-      .patch(`/users/${newUserId}`)
+      .patch(`/hivek/api/users/${newUserId}`)
       .set('Authorization', `Bearer ${adminToken}`)
       .send({
         fullName: 'Updated Admin E2E',
@@ -102,7 +105,7 @@ describe('User Domain (e2e)', () => {
 
     // 4. Get List
     const listRes = await request(app.getHttpServer())
-      .get('/users')
+      .get('/hivek/api/users')
       .set('Authorization', `Bearer ${adminToken}`)
       .query({ email: 'new-admin-e2e' })
       .expect(200);
@@ -113,26 +116,26 @@ describe('User Domain (e2e)', () => {
 
     // 5. Soft delete
     await request(app.getHttpServer())
-      .patch(`/users/${testUserId}/soft-delete`)
+      .patch(`/hivek/api/users/${testUserId}/soft-delete`)
       .set('Authorization', `Bearer ${adminToken}`)
       .query({ deletedBy: 'E2E-Admin' })
       .expect(204);
 
     // 6. Restore
     await request(app.getHttpServer())
-      .patch(`/users/${testUserId}/restore`)
+      .patch(`/hivek/api/users/${testUserId}/restore`)
       .set('Authorization', `Bearer ${adminToken}`)
       .expect(200);
 
     // 7. Hard delete
     await request(app.getHttpServer())
-      .delete(`/users/${testUserId}`)
+      .delete(`/hivek/api/users/${testUserId}`)
       .set('Authorization', `Bearer ${adminToken}`)
       .expect(204);
 
     // 8. Get by ID - should return 404 (since query handler throws UserNotFoundException)
     await request(app.getHttpServer())
-      .get(`/users/${testUserId}`)
+      .get(`/hivek/api/users/${testUserId}`)
       .set('Authorization', `Bearer ${adminToken}`)
       .expect(404);
 

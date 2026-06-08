@@ -6,7 +6,7 @@ import { ICampaignReadService } from '@/application/interfaces';
 import { Nullable } from '@/core/types';
 import { CampaignDetailDto } from '@/application/dtos';
 import { CampaignFilterDto } from '@/application/queries';
-import { PaginatedResponseDto, SortOrder } from '@/shared/dtos/pagination.dto';
+import { PaginatedResponseDto, SortOrder } from '@/application/dtos/pagination.dto';
 import { Schema } from 'mongoose';
 import { parseMongoProjection, MongoSanitizeUtil } from '../utils';
 

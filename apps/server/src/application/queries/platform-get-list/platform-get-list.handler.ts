@@ -2,7 +2,7 @@ import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { Inject } from '@nestjs/common';
 import { PLATFORM_READ_SERVICE, type IPlatformReadService } from '@/application/interfaces';
 import { PlatformDetailDto } from '@/application/dtos';
-import { PaginatedResponseDto } from '@/shared/dtos/pagination.dto';
+import { PaginatedResponseDto } from '@/application/dtos/pagination.dto';
 import { PlatformGetListQuery } from './platform-get-list.query';
 
 @QueryHandler(PlatformGetListQuery)

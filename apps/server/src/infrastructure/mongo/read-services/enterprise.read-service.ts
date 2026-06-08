@@ -6,7 +6,7 @@ import { EnterpriseModel, type EnterpriseDocument } from '../schemas/enterprise.
 import { Nullable } from '@/core/types';
 import { EnterpriseDetailDto } from '@/application/dtos';
 import { EnterpriseFilterDto } from '@/application/queries/enterprise-get-list/enterprise-get-list.dto';
-import { PaginatedResponseDto, SortOrder } from '@/shared/dtos/pagination.dto';
+import { PaginatedResponseDto, SortOrder } from '@/application/dtos/pagination.dto';
 import { MongoSanitizeUtil } from '../utils';
 
 @Injectable()

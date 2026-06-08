@@ -18,7 +18,7 @@ import {
   NotificationDto,
   NotificationFilterDto,
 } from '@/application/dtos';
-import { PaginatedResponseDto } from '@/shared/dtos/pagination.dto';
+import { PaginatedResponseDto } from '@/application/dtos/pagination.dto';
 
 @ApiTags('notifications')
 @ApiBearerAuth()

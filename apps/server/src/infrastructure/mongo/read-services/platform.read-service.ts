@@ -6,7 +6,7 @@ import { IPlatformReadService } from '@/application/interfaces';
 import { Nullable } from '@/core/types';
 import { PlatformDetailDto } from '@/application/dtos';
 import { PlatformFilterDto } from '@/application/queries';
-import { PaginatedResponseDto, SortOrder } from '@/shared/dtos/pagination.dto';
+import { PaginatedResponseDto, SortOrder } from '@/application/dtos/pagination.dto';
 import { MongoSanitizeUtil } from '../utils';
 
 @Injectable()
