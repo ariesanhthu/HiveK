@@ -14,6 +14,7 @@ export interface CampaignOutput {
   status: EOutputStatus;
   url: Nullable<string>;
   postedAt: Nullable<Date>;
+  isTrackingActive: boolean;
 }
 
 export interface CampaignParticipantProps {
@@ -121,10 +122,11 @@ export class CampaignParticipantRoot extends BaseAggregateRoot<CampaignParticipa
   }
 
   public addOutput(
-    output: Omit<CampaignOutput, 'status' | 'url' | 'postedAt'> & {
+    output: Omit<CampaignOutput, 'status' | 'url' | 'postedAt' | 'isTrackingActive'> & {
       status?: EOutputStatus;
       url?: Nullable<string>;
       postedAt?: Nullable<Date>;
+      isTrackingActive?: boolean;
     },
   ): void {
     const status = output.isScheduleForPost
@@ -133,6 +135,7 @@ export class CampaignParticipantRoot extends BaseAggregateRoot<CampaignParticipa
 
     const url = output.isScheduleForPost ? null : output.url || null;
     const postedAt = output.isScheduleForPost ? null : output.postedAt || new Date();
+    const isTrackingActive = output.isTrackingActive !== undefined ? output.isTrackingActive : (status === EOutputStatus.PUBLISHED && !!url);
 
     if (!output.isScheduleForPost && !url) {
       throw new InvalidOperationException('Published output requires a URL');
@@ -143,6 +146,7 @@ export class CampaignParticipantRoot extends BaseAggregateRoot<CampaignParticipa
       status,
       url,
       postedAt,
+      isTrackingActive,
     });
     this.props.updatedAt = new Date();
   }
@@ -156,6 +160,16 @@ export class CampaignParticipantRoot extends BaseAggregateRoot<CampaignParticipa
     output.status = EOutputStatus.PUBLISHED;
     output.url = url;
     output.postedAt = new Date();
+    output.isTrackingActive = true;
+    this.props.updatedAt = new Date();
+  }
+
+  public updateTrackingStatus(outputId: string, isActive: boolean): void {
+    const output = this.props.outputs.find((o) => o.id === outputId);
+    if (!output) {
+      throw new InvalidOperationException(`Output with ID '${outputId}' not found`);
+    }
+    output.isTrackingActive = isActive;
     this.props.updatedAt = new Date();
   }
 

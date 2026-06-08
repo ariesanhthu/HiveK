@@ -35,6 +35,9 @@ export class CampaignOutputModel {
 
   @Prop({ type: MongooseSchema.Types.Date, default: null })
   posted_at: Date | null;
+
+  @Prop({ type: MongooseSchema.Types.Boolean, default: false })
+  is_tracking_active: boolean;
 }
 
 export const CampaignOutputSchema = SchemaFactory.createForClass(CampaignOutputModel);

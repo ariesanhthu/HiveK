@@ -9,7 +9,7 @@ import { CampaignParticipantUpdateCommandHandler } from '@/application/commands/
 import { CampaignParticipantGetByIdQueryHandler } from '@/application/queries/campaign-participant-get-by-id/campaign-participant-get-by-id.handler';
 import { CampaignParticipantGetListQueryHandler } from '@/application/queries/campaign-participant-get-list/campaign-participant-get-list.handler';
 import { LinkCampaignParticipantOutputFileHandler } from '@/application/events';
-import { CampaignParticipantController } from '@/presentation/controllers/campaign-participant.controller';
+import { CampaignParticipantController } from '@/presentation/controllers'
 import { CampaignParticipantResolver } from '@/presentation/resolvers/campaign-participant.resolver';
 import { CampaignModule } from './campaign.module';
 

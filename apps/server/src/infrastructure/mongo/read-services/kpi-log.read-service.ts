@@ -24,11 +24,11 @@ export class MongoKpiLogReadService implements IKpiLogReadService {
     const { cursor, limit = 10, sort = SortOrder.DESC, participantId, outputId, startTime, endTime } = filters;
     const query: QueryFilter<KpiLogDocument> = {};
     if (participantId) {
-      query.participantId = new Schema.Types.ObjectId(participantId);
+      query.participantId = new Types.ObjectId(participantId);
     }
 
     if (outputId) {
-      query.outputId = new Schema.Types.ObjectId(outputId);
+      query.outputId = new Types.ObjectId(outputId);
     }
 
     if (startTime || endTime) {

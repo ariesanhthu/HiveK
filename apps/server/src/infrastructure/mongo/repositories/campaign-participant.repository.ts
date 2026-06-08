@@ -91,6 +91,7 @@ export class MongoCampaignParticipantRepository implements ICampaignParticipantR
         status: o.status,
         url: o.url,
         postedAt: o.posted_at,
+        isTrackingActive: o.is_tracking_active || false,
       })),
       deleteAt: doc.delete_at || null,
       deleteBy: doc.delete_by || null,
@@ -115,6 +116,7 @@ export class MongoCampaignParticipantRepository implements ICampaignParticipantR
           status: o.status,
           url: o.url,
           posted_at: o.postedAt,
+          is_tracking_active: o.isTrackingActive,
         };
         return item;
       }),

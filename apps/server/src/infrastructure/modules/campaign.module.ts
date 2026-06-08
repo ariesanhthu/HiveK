@@ -20,7 +20,7 @@ import { CampaignGetListHandler, CampaignGetByIdHandler } from '@/application/qu
 import { LinkCampaignRawHandler } from '@/application/events';
 
 // Presentation
-import { CampaignController } from '@/presentation/controllers/campaign.controller';
+import { CampaignController } from '@/presentation/controllers'
 import { CampaignResolver } from '@/presentation/resolvers/campaign.resolver';
 
 // Modules

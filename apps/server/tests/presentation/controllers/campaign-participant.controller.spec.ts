@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
-import { CampaignParticipantController } from '@/presentation/controllers/campaign-participant.controller';
+import { CampaignParticipantController } from '@/presentation/controllers';
 import {
   CampaignParticipantCreateCommand,
   CampaignParticipantUpdateCommand,

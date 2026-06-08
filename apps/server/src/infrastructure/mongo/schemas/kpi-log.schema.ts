@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document, Schema as MongooseSchema } from 'mongoose';
+import { Document, Schema as MongooseSchema, Types } from 'mongoose';
 
 export type KpiLogDocument = KpiLogModel & Document;
 
@@ -18,10 +18,10 @@ export class KpiLogModel {
   timestamp: Date;
 
   @Prop({ required: true, type: MongooseSchema.Types.ObjectId, ref: 'CampaignParticipantModel' })
-  participantId: MongooseSchema.Types.ObjectId;
+  participantId: Types.ObjectId;
 
   @Prop({ type: MongooseSchema.Types.ObjectId, default: null })
-  outputId: MongooseSchema.Types.ObjectId | null;
+  outputId: Types.ObjectId | null;
 
   @Prop({
     type: {

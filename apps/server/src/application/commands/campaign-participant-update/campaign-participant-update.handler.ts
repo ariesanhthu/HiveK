@@ -2,6 +2,7 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { Inject } from '@nestjs/common';
 import { Types } from 'mongoose';
 import { CAMPAIGN_PARTICIPANT_REPOSITORY, type ICampaignParticipantRepository } from '@/core/interfaces/repositories/campaign-participant.repository';
+import { MESSAGE_QUEUE_SERVICE, type IMessageQueueService } from '@/application/interfaces';
 import { CampaignParticipantNotFoundException, InvalidOperationException } from '@/core/exceptions';
 import { EParticipantStatus, EOutputStatus } from '@/core/enums';
 import { CampaignParticipantUpdateCommand } from './campaign-participant-update.command';
@@ -12,6 +13,8 @@ export class CampaignParticipantUpdateCommandHandler implements ICommandHandler<
   constructor(
     @Inject(CAMPAIGN_PARTICIPANT_REPOSITORY)
     private readonly participantRepository: ICampaignParticipantRepository,
+    @Inject(MESSAGE_QUEUE_SERVICE)
+    private readonly messageQueueService: IMessageQueueService,
   ) {}
 
   async execute(command: CampaignParticipantUpdateCommand): Promise<void> {
@@ -34,6 +37,8 @@ export class CampaignParticipantUpdateCommandHandler implements ICommandHandler<
       }
     }
 
+    const trackingEventsToEmit: any[] = [];
+
     if (input.outputs) {
       const mappedOutputs: CampaignOutput[] = input.outputs.map((o) => {
         const outputId = o.id || new Types.ObjectId().toString();
@@ -48,6 +53,18 @@ export class CampaignParticipantUpdateCommandHandler implements ICommandHandler<
           throw new InvalidOperationException('Published output requires a URL');
         }
 
+        const isNewlyPublished = status === EOutputStatus.PUBLISHED && url && (!existingOutput || existingOutput.status !== EOutputStatus.PUBLISHED || !existingOutput.isTrackingActive);
+
+        if (isNewlyPublished) {
+          trackingEventsToEmit.push({
+            campaignId: participant.campaignId,
+            participantId: participant.id,
+            outputId,
+            url,
+            platformId: o.platformId || (existingOutput ? existingOutput.platformId : ''),
+          });
+        }
+
         return {
           id: outputId,
           platformId: o.platformId || (existingOutput ? existingOutput.platformId : ''),
@@ -59,6 +76,7 @@ export class CampaignParticipantUpdateCommandHandler implements ICommandHandler<
           status,
           url,
           postedAt: existingOutput && existingOutput.status === EOutputStatus.PUBLISHED ? existingOutput.postedAt : postedAt,
+          isTrackingActive: existingOutput ? existingOutput.isTrackingActive : (status === EOutputStatus.PUBLISHED),
         };
       });
 
@@ -66,5 +84,9 @@ export class CampaignParticipantUpdateCommandHandler implements ICommandHandler<
     }
 
     await this.participantRepository.save(participant);
+
+    for (const event of trackingEventsToEmit) {
+      this.messageQueueService.emit('tracking.start', event);
+    }
   }
 }
