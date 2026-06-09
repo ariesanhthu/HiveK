@@ -100,7 +100,7 @@ export class MongoCampaignRepository implements ICampaignRepository {
       budget: campaign.budget,
       financial_target: campaign.financialTarget,
       description: campaign.description,
-      platform_target: campaign.platformTarget.map((p) => ({
+      platform_target: campaign.platformTarget?.map((p) => ({
         platformId: p.platformId,
         minFollowers: p.minFollowers,
         maxFollowers: p.maxFollowers,
@@ -109,7 +109,7 @@ export class MongoCampaignRepository implements ICampaignRepository {
       })),
       status: campaign.status,
       collaborator_ids: campaign.collaboratorIds,
-      raw_contents: campaign.rawContents.map((r) => ({
+      raw_contents: campaign.rawContents?.map((r) => ({
         fileId: r.fileId,
         rawContent: r.rawContent,
       })),

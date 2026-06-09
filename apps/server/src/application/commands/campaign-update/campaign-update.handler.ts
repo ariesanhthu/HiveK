@@ -26,24 +26,20 @@ export class CampaignUpdateCommandHandler implements ICommandHandler<CampaignUpd
       throw new CampaignForbiddenException();
     }
 
-    const updateProps: any = {};
-    if (input.ownerId) updateProps.ownerId = input.ownerId;
-    if (input.enterpriseId !== undefined) updateProps.enterpriseId = input.enterpriseId;
-    if (input.budget !== undefined) updateProps.budget = input.budget;
-    if (input.financialTarget) updateProps.financialTarget = input.financialTarget;
-    if (input.description) updateProps.description = input.description;
-
-    if (input.platformTarget) {
-      updateProps.platformTarget = input.platformTarget.map((item) => ({
+    const campaignUpdateProps = {
+      ...(input.budget !== undefined ? { budget: input.budget } : {}),
+      ...(input.financialTarget !== undefined ? { financialTarget: input.financialTarget } : {}),
+      ...(input.description !== undefined ? { description: input.description } : {}),
+      ...(input.platformTarget !== undefined ? { platformTarget: input.platformTarget.map((item) => ({
         platformId: item.platformId,
         minFollowers: item.minFollowers,
         maxFollowers: item.maxFollowers,
         note: item.note,
         others: item.others,
-      }));
-    }
+      })) } : {}),
+    };
 
-    campaign.update(updateProps);
+    campaign.update(campaignUpdateProps);
 
     await this.campaignRepository.save(campaign);
 

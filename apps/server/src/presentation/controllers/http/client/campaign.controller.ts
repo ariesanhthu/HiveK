@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Patch, Param, Query, Body, HttpCode, HttpStatus, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Patch, Param, Query, Body, HttpCode, HttpStatus, UseGuards, Delete } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { ApiTags, ApiOperation, ApiBearerAuth, ApiSecurity } from '@nestjs/swagger';
 import { buildVersionedRoute } from '@presentation/utils';
@@ -94,29 +94,29 @@ export class CampaignClientController {
     return this.commandBus.execute(new CampaignUpdateStatusCommand(id, userId, input.status));
   }
 
-  @Patch(':id/collaborators/invite')
+  @Post(':id/collaborators/invite')
   @UseGuards(RolesGuard)
   @Roles(ERoleType.ENTERPRISE)
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'Invite a collaborator to campaign' })
+  @ApiOperation({ summary: 'Invite collaborators to campaign' })
   async inviteCollaborator(
     @CurrentUser('sub') requestedBy: string,
     @Param('id') id: string,
     @Body() input: CampaignInviteCollaboratorInputDto,
   ): Promise<void> {
-    return this.commandBus.execute(new CampaignInviteCollaboratorCommand(id, input.userId, requestedBy));
+    return this.commandBus.execute(new CampaignInviteCollaboratorCommand(id, input, requestedBy));
   }
 
-  @Patch(':id/collaborators/revoke')
+  @Delete(':id/collaborators/revoke')
   @UseGuards(RolesGuard)
   @Roles(ERoleType.ENTERPRISE)
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'Revoke a collaborator from campaign' })
+  @ApiOperation({ summary: 'Revoke collaborators from campaign' })
   async revokeCollaborator(
     @CurrentUser('sub') requestedBy: string,
     @Param('id') id: string,
     @Body() input: CampaignRevokeCollaboratorInputDto,
   ): Promise<void> {
-    return this.commandBus.execute(new CampaignRevokeCollaboratorCommand(id, input.userId, requestedBy));
+    return this.commandBus.execute(new CampaignRevokeCollaboratorCommand(id, input, requestedBy));
   }
 }

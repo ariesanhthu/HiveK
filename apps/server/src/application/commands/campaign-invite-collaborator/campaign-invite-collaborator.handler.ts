@@ -22,35 +22,41 @@ export class CampaignInviteCollaboratorCommandHandler implements ICommandHandler
 
   async execute(command: CampaignInviteCollaboratorCommand): Promise<void> {
     await this.uow.execute(async () => {
-      const { campaignId, userId, requestedBy } = command;
+      const { campaignId, dto, requestedBy } = command;
 
       const campaign = await this.campaignRepository.findById(campaignId);
       if (!campaign) {
         throw new CampaignNotFoundException(campaignId);
       }
 
-      const user = await this.userRepository.findById(userId);
-      if (!user) {
-        throw new UserNotFoundException(userId);
+      const users = await this.userRepository.findByIds(dto.memberIds);
+      if (users.length !== dto.memberIds.length) {
+        const foundIds = new Set(users.map(u => u.id));
+        const missingIds = dto.memberIds.filter(id => !foundIds.has(id));
+        throw new UserNotFoundException(missingIds.join(', '));
       }
 
-      campaign.inviteCollaborator(userId, requestedBy);
+      for (const userId of dto.memberIds) {
+        campaign.inviteCollaborator(userId, requestedBy);
+      }
 
       await this.campaignRepository.save(campaign);
 
-      try {
-        await this.mailerService.sendMail({
-          to: user.email,
-          subject: 'Invitation to Collaborate on Campaign',
-          template: 'campaign-collaborator-invite',
-          context: {
-            campaignId: campaign.id,
-            description: campaign.description,
-            budget: campaign.budget,
-          },
-        });
-      } catch (err) {
-        // Avoid failing the transaction if mail server fails
+      for (const user of users) {
+        try {
+          await this.mailerService.sendMail({
+            to: user.email,
+            subject: 'Invitation to Collaborate on Campaign',
+            template: 'campaign-collaborator-invite',
+            context: {
+              campaignId: campaign.id,
+              description: campaign.description,
+              budget: campaign.budget,
+            },
+          });
+        } catch {
+          // Avoid failing the transaction if mail server fails
+        }
       }
     });
   }

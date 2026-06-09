@@ -6,6 +6,7 @@ import { EnterpriseUserRoot } from '@/core/aggregate-roots';
 import { UserNotFoundException, InvalidUserTypeException, EnterpriseNotFoundException, EnterpriseForbiddenException } from '@/core/exceptions';
 import { UserAddedToEnterpriseEvent } from '@/application/events';
 import { type IUnitOfWork, UNIT_OF_WORK } from '@/application/interfaces';
+import { ERoleType } from '@/core/enums';
 
 @CommandHandler(EnterpriseAddUserCommand)
 export class EnterpriseAddUserCommandHandler implements ICommandHandler<EnterpriseAddUserCommand, void> {
@@ -21,8 +22,7 @@ export class EnterpriseAddUserCommandHandler implements ICommandHandler<Enterpri
 
   async execute(command: EnterpriseAddUserCommand): Promise<void> {
     await this.uow.execute(async () => {
-      const { userId, enterpriseId } = command.input;
-      const { requestedBy } = command;
+      const { requestedBy, input, enterpriseId } = command;
 
       const enterprise = await this.enterpriseRepository.findById(enterpriseId);
       if (!enterprise) {
@@ -33,24 +33,22 @@ export class EnterpriseAddUserCommandHandler implements ICommandHandler<Enterpri
         throw new EnterpriseForbiddenException();
       }
 
-      const user = await this.userRepository.findById(userId);
-      if (!user) {
-        throw new UserNotFoundException(userId);
+      const users = await this.userRepository.findByIds(input.memberIds);
+      if (users.length !== input.memberIds.length) {
+        const foundIds = new Set(users.map(u => u.id));
+        const missingIds = input.memberIds.filter(id => !foundIds.has(id));
+        throw new UserNotFoundException(missingIds.join(', '));
       }
 
-      if (!(user instanceof EnterpriseUserRoot)) {
-        throw new InvalidUserTypeException('User must be an enterprise user to be added to an enterprise');
+
+      for (const user of users) {
+        if (user.type !== ERoleType.ENTERPRISE || !(user instanceof EnterpriseUserRoot)) {
+          throw new InvalidUserTypeException('User must be an enterprise user to be added to an enterprise');
+        }
+        user.addEnterprise(enterpriseId);
+        await this.userRepository.save(user);
+        this.eventBus.publish(new UserAddedToEnterpriseEvent(user.id, enterpriseId));
       }
-
-      const currentEnterpriseIds = user.enterpriseIds;
-      if (currentEnterpriseIds.includes(enterpriseId)) {
-        return;
-      }
-
-      user.addEnterprise(enterpriseId);
-      await this.userRepository.save(user);
-
-      this.eventBus.publish(new UserAddedToEnterpriseEvent(userId, enterpriseId));
     });
   }
 }

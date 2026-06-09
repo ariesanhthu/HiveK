@@ -30,6 +30,15 @@ export class MongoUserRepository implements IUserRepository {
     return doc ? this.mapToDomain(doc) : null;
   }
 
+  async findByIds(ids: string[]): Promise<UserRoot[]> {
+    const objectIds = ids.map(id => new Types.ObjectId(id));
+    const docs = await this.userModel
+      .find({ _id: { $in: objectIds } })
+      .session(this.session)
+      .exec();
+    return docs.map(doc => this.mapToDomain(doc));
+  }
+
   async findByEmail(email: string): Promise<Nullable<UserRoot>> {
     const doc = await this.userModel.findOne({ email }).session(this.session).exec();
     return doc ? this.mapToDomain(doc) : null;

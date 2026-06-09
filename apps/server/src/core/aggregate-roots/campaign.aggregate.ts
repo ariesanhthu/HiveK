@@ -32,7 +32,9 @@ export interface CampaignProps {
   updatedAt: Date;
 }
 
-export type CampaignCreateProps = Omit<CampaignProps, 'status' | 'collaboratorIds' | 'deleteAt' | 'deleteBy' | 'createdAt' | 'updatedAt'>;
+export type CampaignCreateProps = Omit<CampaignProps, 'status' | 'collaboratorIds' | 'deleteAt' | 'deleteBy' | 'createdAt' | 'updatedAt'> & {
+  financialTarget?: JsonObject;
+};
 
 export class CampaignRoot extends BaseAggregateRoot<CampaignProps> {
   private constructor(props: CampaignProps, id?: string) {
@@ -43,6 +45,7 @@ export class CampaignRoot extends BaseAggregateRoot<CampaignProps> {
     const now = new Date();
     return new CampaignRoot({
       ...props,
+      financialTarget: props.financialTarget || {},
       status: ECampaignStatus.DRAFT,
       collaboratorIds: [],
       deleteAt: null,

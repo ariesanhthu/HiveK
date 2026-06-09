@@ -22,34 +22,40 @@ export class CampaignRevokeCollaboratorCommandHandler implements ICommandHandler
 
   async execute(command: CampaignRevokeCollaboratorCommand): Promise<void> {
     await this.uow.execute(async () => {
-      const { campaignId, userId, requestedBy } = command;
+      const { campaignId, dto, requestedBy } = command;
 
       const campaign = await this.campaignRepository.findById(campaignId);
       if (!campaign) {
         throw new CampaignNotFoundException(campaignId);
       }
 
-      const user = await this.userRepository.findById(userId);
-      if (!user) {
-        throw new UserNotFoundException(userId);
+      const users = await this.userRepository.findByIds(dto.memberIds);
+      if (users.length !== dto.memberIds.length) {
+        const foundIds = new Set(users.map(u => u.id));
+        const missingIds = dto.memberIds.filter(id => !foundIds.has(id));
+        throw new UserNotFoundException(missingIds.join(', '));
       }
 
-      campaign.revokeCollaborator(userId, requestedBy);
+      for (const userId of dto.memberIds) {
+        campaign.revokeCollaborator(userId, requestedBy);
+      }
 
       await this.campaignRepository.save(campaign);
 
-      try {
-        await this.mailerService.sendMail({
-          to: user.email,
-          subject: 'Collaboration Revoked on Campaign',
-          template: 'campaign-collaborator-revoke',
-          context: {
-            campaignId: campaign.id,
-            description: campaign.description,
-          },
-        });
-      } catch (err) {
-        // Avoid failing the transaction if mail server fails
+      for (const user of users) {
+        try {
+          await this.mailerService.sendMail({
+            to: user.email,
+            subject: 'Collaboration Revoked on Campaign',
+            template: 'campaign-collaborator-revoke',
+            context: {
+              campaignId: campaign.id,
+              description: campaign.description,
+            },
+          });
+        } catch {
+          // Avoid failing the transaction if mail server fails
+        }
       }
     });
   }

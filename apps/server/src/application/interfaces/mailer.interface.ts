@@ -1,7 +1,7 @@
 import { JsonObject } from "@/core/types";
 
 export interface ISendMailOptions {
-  to: string;
+  to: string | string[];
   subject: string;
   template?: string; // Name of the handlebars template file (without extension)
   context?: JsonObject; // Context variables for the template

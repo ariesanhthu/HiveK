@@ -8,6 +8,8 @@ import {
   EnterpriseUpdateInputDto,
   EnterpriseAddUserCommand,
   EnterpriseRevokeUserCommand,
+  EnterpriseAddUserInputDto,
+  EnterpriseRevokeUserInputDto,
 } from '@/application/commands';
 import { EnterpriseDto, EnterpriseDetailDto } from '@/application/dtos';
 import { ApiTags, ApiOperation, ApiBearerAuth, ApiSecurity } from '@nestjs/swagger';
@@ -57,27 +59,27 @@ export class EnterpriseClientController {
     return enterprise;
   }
 
-  @Post(':id/users/:userId')
+  @Post(':id/members')
   @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Add user to enterprise' })
   async addUser(
     @CurrentUser('sub') requestedBy: string,
     @Param('id') enterpriseId: string,
-    @Param('userId') userId: string,
+    @Body() dto: EnterpriseAddUserInputDto,
   ): Promise<void> {
-    return this.commandBus.execute(new EnterpriseAddUserCommand({ enterpriseId, userId }, requestedBy));
+    return this.commandBus.execute(new EnterpriseAddUserCommand(enterpriseId, dto, requestedBy));
   }
 
-  @Delete(':id/users/:userId')
+  @Delete(':id/members')
   @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
-  @ApiOperation({ summary: 'Revoke user from enterprise' })
-  async revokeUser(
+  @ApiOperation({ summary: 'Remove user from enterprise' })
+  async removeUser(
     @CurrentUser('sub') requestedBy: string,
     @Param('id') enterpriseId: string,
-    @Param('userId') userId: string,
+    @Body() dto: EnterpriseRevokeUserInputDto,
   ): Promise<void> {
-    return this.commandBus.execute(new EnterpriseRevokeUserCommand({ enterpriseId, userId }, requestedBy));
+    return this.commandBus.execute(new EnterpriseRevokeUserCommand(enterpriseId, dto, requestedBy));
   }
 }

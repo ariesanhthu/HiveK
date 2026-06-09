@@ -5,6 +5,7 @@ import { EnterpriseRevokeUserCommand } from './enterprise-revoke-user.command';
 import { EnterpriseUserRoot } from '@/core/aggregate-roots';
 import { UserNotFoundException, InvalidUserTypeException, EnterpriseNotFoundException, EnterpriseForbiddenException } from '@/core/exceptions';
 import { type IUnitOfWork, UNIT_OF_WORK } from '@/application/interfaces';
+import { ERoleType } from '@/core/enums';
 
 @CommandHandler(EnterpriseRevokeUserCommand)
 export class EnterpriseRevokeUserCommandHandler implements ICommandHandler<EnterpriseRevokeUserCommand, void> {
@@ -19,8 +20,8 @@ export class EnterpriseRevokeUserCommandHandler implements ICommandHandler<Enter
 
   async execute(command: EnterpriseRevokeUserCommand): Promise<void> {
     await this.uow.execute(async () => {
-      const { userId, enterpriseId } = command.input;
-      const { requestedBy } = command;
+      const { input, enterpriseId, requestedBy } = command;
+      const { memberIds } = input;
 
       const enterprise = await this.enterpriseRepository.findById(enterpriseId);
       if (!enterprise) {
@@ -31,17 +32,21 @@ export class EnterpriseRevokeUserCommandHandler implements ICommandHandler<Enter
         throw new EnterpriseForbiddenException();
       }
 
-      const user = await this.userRepository.findById(userId);
-      if (!user) {
-        throw new UserNotFoundException(userId);
+      const users = await this.userRepository.findByIds(memberIds);
+      if (users.length !== memberIds.length) {
+        const foundIds = new Set(users.map(u => u.id));
+        const missingIds = memberIds.filter(id => !foundIds.has(id));
+        throw new UserNotFoundException(missingIds.join(', '));
       }
 
-      if (!(user instanceof EnterpriseUserRoot)) {
-        throw new InvalidUserTypeException('User must be an enterprise user to be revoked from an enterprise');
-      }
 
-      user.revokeEnterprise(enterpriseId);
-      await this.userRepository.save(user);
+      for (const user of users) {
+        if (user.type !== ERoleType.ENTERPRISE || !(user instanceof EnterpriseUserRoot)) {
+          throw new InvalidUserTypeException('User must be an enterprise user to be revoked from an enterprise');
+        }
+        user.revokeEnterprise(enterpriseId);
+        await this.userRepository.save(user);
+      }
     });
   }
 }
