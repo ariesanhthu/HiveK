@@ -8,7 +8,7 @@ import {
   ConnectedSocket,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
-import { Logger, Inject } from '@nestjs/common';
+import { Inject } from '@nestjs/common';
 import { AUTH_JWT_SERVICE } from '@/application/interfaces/auth-jwt.interface';
 import type { IAuthJwtService } from '@/application/interfaces/auth-jwt.interface';
 import { LOGGER_SERVICE } from '@/application/interfaces/logger.interface';

@@ -4,7 +4,7 @@ import { INestApplication } from '@nestjs/common';
 import { getModelToken } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { AppModule } from './../../src/app.module';
-import { setupApplication } from '@/config/app.setup';
+import { setupApplication } from '@/infrastructure/nest-config/app.setup';
 
 describe('Auth Domain (e2e)', () => {
   let app: INestApplication;

@@ -1,6 +1,5 @@
-import { Injectable, Logger, BadRequestException } from "@nestjs/common";
-import { ConfigService } from "@nestjs/config";
-import { Transport, RmqOptions } from "@nestjs/microservices";
+import { Injectable, Logger, BadRequestException, Inject } from "@nestjs/common";
+import { RmqOptions, Transport } from "@nestjs/microservices";
 import * as fs from "fs";
 import * as path from "path";
 import { getRmqUri } from "../rabbitmq/rmq.env";
@@ -8,10 +7,19 @@ import {
   RabbitMQProducerConfig,
   RabbitMQConsumerConfig,
 } from "./types/rabbitmq.types";
+import { type ILoggerService, LOGGER_SERVICE } from "@/application";
+import { ConfigService } from "@nestjs/config";
 
 @Injectable()
-export class NestConfigService extends ConfigService {
-  private readonly logger = new Logger(NestConfigService.name);
+export class RabbitMQFactoryService {
+
+  constructor(
+    @Inject(LOGGER_SERVICE)
+    private loggerService: ILoggerService,
+    private configService: ConfigService
+  ) {
+    this.loggerService.setContext(RabbitMQFactoryService.name);
+  }
 
   /**
    * Read and parse RabbitMQ Producer configuration from JSON file
@@ -22,7 +30,7 @@ export class NestConfigService extends ConfigService {
   readRMQProducerConfig(filePath: string): RabbitMQProducerConfig {
     try {
       const resolvedPath = this.resolvePath(filePath);
-      this.logger.debug(`Reading RMQ producer config from: ${resolvedPath}`);
+      this.loggerService.debug(`Reading RMQ producer config from: ${resolvedPath}`);
 
       const fileContent = fs.readFileSync(resolvedPath, "utf-8");
       const rawConfig = JSON.parse(fileContent);
@@ -34,14 +42,14 @@ export class NestConfigService extends ConfigService {
         );
       }
 
-      this.logger.log(`✓ RMQ producer config loaded successfully`);
+      this.loggerService.log(`✓ RMQ producer config loaded successfully`);
       return config;
     } catch (error) {
       if (error instanceof BadRequestException) {
         throw error;
       }
       const message = error instanceof Error ? error.message : String(error);
-      this.logger.error(`Failed to read RMQ producer config: ${message}`);
+      this.loggerService.error(`Failed to read RMQ producer config: ${message}`);
       throw new BadRequestException(`Failed to read RMQ producer config: ${message}`);
     }
   }
@@ -55,7 +63,7 @@ export class NestConfigService extends ConfigService {
   readRMQConsumerConfig(filePath: string): RabbitMQConsumerConfig {
     try {
       const resolvedPath = this.resolvePath(filePath);
-      this.logger.debug(`Reading RMQ consumer config from: ${resolvedPath}`);
+      this.loggerService.debug(`Reading RMQ consumer config from: ${resolvedPath}`);
 
       const fileContent = fs.readFileSync(resolvedPath, "utf-8");
       const rawConfig = JSON.parse(fileContent);
@@ -67,14 +75,14 @@ export class NestConfigService extends ConfigService {
         );
       }
 
-      this.logger.log(`✓ RMQ consumer config loaded successfully`);
+      this.loggerService.log(`✓ RMQ consumer config loaded successfully`);
       return config;
     } catch (error) {
       if (error instanceof BadRequestException) {
         throw error;
       }
       const message = error instanceof Error ? error.message : String(error);
-      this.logger.error(`Failed to read RMQ consumer config: ${message}`);
+      this.loggerService.error(`Failed to read RMQ consumer config: ${message}`);
       throw new BadRequestException(`Failed to read RMQ consumer config: ${message}`);
     }
   }
@@ -199,4 +207,21 @@ export class NestConfigService extends ConfigService {
       bindings: queue.bindings,
     }));
   }
+
+  getRmqUri(): string {
+    const RMQ_USER = this.configService.get<string>("RMQ_USER");
+    const RMQ_PASSWORD = this.configService.get<string>("RMQ_PASSWORD");
+    const RMQ_HOST = this.configService.get<string>("RMQ_HOST");
+    const RMQ_PORT = this.configService.get<number>("RMQ_PORT");
+    const RMQ_VHOST = this.configService.get<string>("RMQ_VHOST");
+
+    if (!RMQ_USER || !RMQ_PASSWORD || !RMQ_HOST) {
+      throw new Error('Missing required RabbitMQ env vars (RMQ_USER, RMQ_PASSWORD, RMQ_HOST)');
+    }
+
+    const portPart = RMQ_PORT ? `:${RMQ_PORT}` : '';
+    const vhostPart = RMQ_VHOST ? `/${encodeURIComponent(RMQ_VHOST)}` : '';
+
+    return `amqps://${encodeURIComponent(RMQ_USER)}:${encodeURIComponent(RMQ_PASSWORD)}@${RMQ_HOST}${portPart}${vhostPart}`;
+  };
 }

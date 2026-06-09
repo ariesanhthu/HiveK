@@ -5,7 +5,7 @@ import { getModelToken } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { AppModule } from './../../src/app.module';
 import { AUTH_JWT_SERVICE, type IAuthJwtService } from '@/application/interfaces/auth-jwt.interface';
-import { setupApplication } from '@/config/app.setup';
+import { setupApplication } from '@/infrastructure/nest-config/app.setup';
 
 describe('Enterprise Domain (e2e)', () => {
   let app: INestApplication;
@@ -130,18 +130,18 @@ describe('Enterprise Domain (e2e)', () => {
     });
 
     await request(app.getHttpServer())
-        .post(`/hivek/api/enterprises/${enterpriseId}/users/${secondUserId}`)
-        .set('Authorization', `Bearer ${authToken}`)
-        .expect(200);
+      .post(`/hivek/api/enterprises/${enterpriseId}/users/${secondUserId}`)
+      .set('Authorization', `Bearer ${authToken}`)
+      .expect(200);
 
     const otherUser = await userModel.findById(secondUserId);
     expect(otherUser.enterprise_ids.map((id: any) => id.toString())).toContain(enterpriseId);
 
     // 6. Revoke User from Enterprise
     await request(app.getHttpServer())
-        .delete(`/hivek/api/enterprises/${enterpriseId}/users/${secondUserId}`)
-        .set('Authorization', `Bearer ${authToken}`)
-        .expect(204);
+      .delete(`/hivek/api/enterprises/${enterpriseId}/users/${secondUserId}`)
+      .set('Authorization', `Bearer ${authToken}`)
+      .expect(204);
 
     const revokedUser = await userModel.findById(secondUserId);
     expect(revokedUser.enterprise_ids.map((id: any) => id.toString())).not.toContain(enterpriseId);

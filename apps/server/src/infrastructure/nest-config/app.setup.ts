@@ -3,7 +3,7 @@ import { ZodValidationPipe } from 'nestjs-zod';
 import helmet from 'helmet';
 import { LoggingInterceptor } from '@/presentation/middleware/interceptors/logging.interceptor';
 import { HttpExceptionFilter } from '@/presentation/middleware/filters/http-exception.filter';
-import { NestConfigService } from '@infrastructure/nest-config/nest-config.service';
+import { RabbitMQFactoryService } from '@infrastructure/rabbitmq';
 
 export function setupApplication(app: INestApplication): void {
   // Apply Security Headers
@@ -44,9 +44,9 @@ function sleep(ms: number): Promise<void> {
 
 /**
  * Setup RabbitMQ microservice consumer
- * Loads config from file via NestConfigService and connects microservice
+ * Loads config from file via RabbitMQFactoryService and connects microservice
  * @param app - NestJS application instance
- * @param nestConfigService - Configuration service for loading RabbitMQ config
+ * @param rabbitmqFactory - Configuration service for loading RabbitMQ config
  * @param maxRetries - Maximum number of retries (-1 = infinite)
  * @param initialDelayMs - Initial delay before first retry
  * @param maxDelayMs - Maximum delay between retries
@@ -54,7 +54,7 @@ function sleep(ms: number): Promise<void> {
  */
 export async function setupRabbitMQMicroservice(
   app: INestApplication,
-  nestConfigService: NestConfigService,
+  rabbitmqFactory: RabbitMQFactoryService,
   configPath: string,
   maxRetries: number = -1,
   initialDelayMs: number = 1000,
@@ -70,12 +70,12 @@ export async function setupRabbitMQMicroservice(
       logger.debug(`Attempting to connect RabbitMQ microservice (attempt ${retries + 1})...`);
 
       // Load consumer config from file
-      const consumerConfig = nestConfigService.readRMQConsumerConfig(
+      const consumerConfig = rabbitmqFactory.readRMQConsumerConfig(
         configPath
       );
 
       // Convert consumer config to NestJS microservice options
-      const microserviceOptions = nestConfigService.toNestJSMicroserviceOptions(consumerConfig);
+      const microserviceOptions = rabbitmqFactory.toNestJSMicroserviceOptions(consumerConfig);
 
       app.connectMicroservice(microserviceOptions);
       await app.startAllMicroservices();

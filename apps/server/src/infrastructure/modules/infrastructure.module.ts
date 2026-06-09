@@ -1,17 +1,18 @@
 import { Global, Module } from '@nestjs/common';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/adapters/handlebars.adapter';
-import { ConfigService } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import * as path from 'path';
 import { LOGGER_SERVICE, MAILER_SERVICE } from '@/application/interfaces';
 import { STORAGE_SERVICE } from '@/core/interfaces/storage';
-import { CloudinaryStorageService } from '../cloudinary/cloudinary-storage.service';
-import { NestjsMailerService } from '../mailer/nestjs-mailer.service';
-import { WinstonLoggerService } from '../nest-logger/winston-logger.service';
+import { CloudinaryStorageService } from '../cloudinary';
+import { NestjsMailerService } from '../mailer';
+import { WinstonLoggerService } from '../logger';
 
 @Global()
 @Module({
   imports: [
+    ConfigModule.forRoot({ isGlobal: true }),
     MailerModule.forRootAsync({
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({

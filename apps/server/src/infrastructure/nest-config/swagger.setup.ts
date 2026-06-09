@@ -1,11 +1,7 @@
 import { INestApplication } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { Request, Response } from 'express';
-// import { patchNestjsSwagger } from 'nestjs-zod';
 
 export function setupSwagger(app: INestApplication): void {
-  // patchNestjsSwagger();
-
   const config = new DocumentBuilder()
     .setTitle('HiveK API')
     .setDescription('The API documentation for the HiveK Platform.\n\nNOTE: Sensitive endpoints (Sign-In, Sign-Up, OTP) are rate-limited to 5 requests per minute.')

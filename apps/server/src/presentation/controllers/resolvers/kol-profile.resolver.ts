@@ -6,7 +6,7 @@ import { KolProfileType } from '@/infrastructure/graphql/types/kol-profile.type'
 import { KolProfileFilterInput, KolProfileResponse } from '@/infrastructure/graphql/types/pagination.type';
 import { KolProfileGetByIdQuery, KolProfileGetListQuery, KolProfileFilterDto } from '@/application/queries';
 import { ProjectionDto } from '@/application/dtos/projection.dto';
-import { Public } from '../decorators/public.decorator';
+import { Public } from '@presentation/decorators/public.decorator';
 
 @Resolver(() => KolProfileType)
 export class KolProfileResolver {

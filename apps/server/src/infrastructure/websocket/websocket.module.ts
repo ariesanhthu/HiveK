@@ -1,5 +1,5 @@
 import { Global, Module } from '@nestjs/common';
-import { WebSocketGateway } from './websocket.gateway';
+import { WebSocketGateway } from '@/presentation/controllers';
 import { WebSocketService } from './websocket.service';
 import { WEBSOCKET_SERVICE } from '@/application/interfaces';
 import { AuthModule } from '../modules/auth.module';

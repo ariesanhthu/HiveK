@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { WebSocketGateway } from './websocket.gateway';
+import { WebSocketGateway } from '../../presentation/controllers/websocket/websocket.gateway';
 import { IWebSocketService } from '@/application/interfaces';
 
 @Injectable()

@@ -6,7 +6,7 @@ import { Model, Types } from 'mongoose';
 import { AppModule } from './../../src/app.module';
 import { STORAGE_SERVICE } from '@/core/interfaces/storage';
 import { AUTH_JWT_SERVICE, type IAuthJwtService } from '@/application/interfaces/auth-jwt.interface';
-import { setupApplication } from '@/config/app.setup';
+import { setupApplication } from '@/infrastructure/nest-config/app.setup';
 
 describe('Uploaded File Domain (e2e)', () => {
   let app: INestApplication;

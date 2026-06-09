@@ -11,7 +11,6 @@ import { APP_PIPE, APP_GUARD, APP_FILTER } from '@nestjs/core';
 import { ZodValidationPipe } from 'nestjs-zod';
 import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 import { GqlThrottlerGuard, ApiKeyGuard } from './presentation/middleware/guards';
-import { NestConfigModule } from './infrastructure/nest-config/nest-config.module';
 import { InfrastructureModule } from './infrastructure/modules/infrastructure.module';
 import { PlatformModule } from './infrastructure/modules/platform.module';
 import { KolProfileModule } from './infrastructure/modules/kol-profile.module';
@@ -30,7 +29,6 @@ import { TestKOLController } from './presentation/controllers/http/test.controll
 @Module({
   imports: [
     // ConfigModule.forRoot({ isGlobal: true }),
-    NestConfigModule,
     InfrastructureModule,
     MongoModule,
     UserModule,

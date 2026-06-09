@@ -31,3 +31,11 @@ export * from './rmq/test-rmq.controller';
 
 // OAuth Controllers
 export * from './http/oauth.controller';
+
+// Resolvers Controllers
+export * from './resolvers/campaign.resolver';
+export * from './resolvers/campaign-participant.resolver';
+export * from './resolvers/kol-profile.resolver';
+
+// WebSocket Controllers
+export * from './websocket/websocket.gateway';

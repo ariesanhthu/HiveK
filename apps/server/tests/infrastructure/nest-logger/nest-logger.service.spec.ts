@@ -1,4 +1,4 @@
-import { NestLoggerService } from '@/infrastructure/nest-logger/nest-logger.service';
+import { NestLoggerService } from '@/infrastructure/logger/nest-logger.service';
 
 describe('NestLoggerService', () => {
   let logger: NestLoggerService;

@@ -1,5 +1,5 @@
 import * as amqp from 'amqplib';
-import { RabbitMQProducerConfig } from '@infrastructure/nest-config/types/rabbitmq.types';
+import { RabbitMQProducerConfig } from '@/infrastructure/rabbitmq/types/rabbitmq.types';
 import { randomUUID } from 'crypto';
 import { ILoggerService } from '@/application/interfaces';
 import { Logger } from '@nestjs/common';
@@ -67,7 +67,7 @@ export class RawRabbitMQProducerClient {
       const errorMessage = error instanceof Error ? error.message : String(error);
       this.logger.error(`Failed to connect to RabbitMQ: ${errorMessage}. Retrying in background...`);
       this.isConnected = false;
-      
+
       // Start background reconnection since the initial attempt failed
       this.reconnectWithBackoff();
     }

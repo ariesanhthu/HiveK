@@ -1,9 +1,7 @@
 import { Injectable, Inject } from '@nestjs/common';
 import { MailerService as NestMailService } from '@nestjs-modules/mailer';
-import { MAILER_SERVICE } from '@/application/interfaces/mailer.interface';
-import type { IMailerService, ISendMailOptions } from '@/application/interfaces/mailer.interface';
-import { LOGGER_SERVICE } from '@/application/interfaces/logger.interface';
-import type { ILoggerService } from '@/application/interfaces/logger.interface';
+import type { IMailerService, ISendMailOptions, ILoggerService } from '@/application/interfaces';
+import { LOGGER_SERVICE } from '@/application/interfaces';
 
 @Injectable()
 export class NestjsMailerService implements IMailerService {

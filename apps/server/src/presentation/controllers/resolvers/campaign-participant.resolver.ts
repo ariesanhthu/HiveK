@@ -5,11 +5,9 @@ import type { GraphQLResolveInfo } from 'graphql';
 import graphqlFields from 'graphql-fields';
 import { CampaignParticipantType } from '@/infrastructure/graphql/types/campaign-participant.type';
 import { CampaignParticipantFilterInput, CampaignParticipantResponse } from '@/infrastructure/graphql/types/pagination.type';
-import { CampaignParticipantGetByIdQuery, CampaignParticipantGetListQuery, CampaignParticipantFilterDto } from '@/application/queries';
+import { CampaignParticipantGetByIdQuery, CampaignParticipantGetListQuery } from '@/application/queries';
 import { ProjectionDto } from '@/application/dtos/projection.dto';
-import { JwtAuthGuard, RolesGuard } from '../middleware/guards';
-import { Roles } from '../decorators/roles.decorator';
-import { ERoleType } from '@/core/enums';
+import { JwtAuthGuard, RolesGuard } from '@presentation/middleware/guards';
 
 @Resolver(() => CampaignParticipantType)
 @UseGuards(JwtAuthGuard, RolesGuard)

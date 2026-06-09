@@ -24,13 +24,15 @@ import { AuthGetProfileHandler } from '@/application/queries';
 import { AUTH_JWT_SERVICE } from '@/application/interfaces';
 
 // Infrastructure
-import { JwtAuthService } from '../auth/jwt.service';
 import { AuthService } from '@/application/services/auth.service';
-import { JwtStrategy } from '../auth/strategies/jwt.strategy';
-import { GoogleStrategy } from '../auth/strategies/google.strategy';
-import { YoutubeStrategy } from '../auth/strategies/youtube.strategy';
-import { FacebookStrategy } from '../auth/strategies/facebook.strategy';
-import { TwitterStrategy } from '../auth/strategies/twitter.strategy';
+import { 
+  JwtAuthService, 
+  JwtStrategy, 
+  GoogleStrategy, 
+  YoutubeStrategy, 
+  FacebookStrategy, 
+  TwitterStrategy 
+} from '@infrastructure/auth';
 
 // Modules
 

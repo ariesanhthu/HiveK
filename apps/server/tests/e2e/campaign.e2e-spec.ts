@@ -5,7 +5,7 @@ import { getModelToken } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { AppModule } from './../../src/app.module';
 import { AUTH_JWT_SERVICE, type IAuthJwtService } from '@/application/interfaces/auth-jwt.interface';
-import { setupApplication } from '@/config/app.setup';
+import { setupApplication } from '@/infrastructure/nest-config/app.setup';
 
 describe('Campaign Domain (e2e)', () => {
   let app: INestApplication;

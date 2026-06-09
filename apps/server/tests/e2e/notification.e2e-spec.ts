@@ -9,7 +9,7 @@ import { AUTH_JWT_SERVICE, type IAuthJwtService } from '@/application/interfaces
 import { NotificationType, NotificationChannel } from '@/core/enums';
 import { NotificationSendCommand } from '@/application/commands';
 import { NotificationModel, UserNotificationModel } from '@/infrastructure/mongo/schemas';
-import { setupApplication } from '@/config/app.setup';
+import { setupApplication } from '@/infrastructure/nest-config/app.setup';
 
 describe('Notification System (e2e)', () => {
   let app: INestApplication;
@@ -150,36 +150,36 @@ describe('Notification System (e2e)', () => {
   });
 
   it('should support mark all update via read-status endpoint without ids', async () => {
-     // Ensure we have at least one notification
-     await commandBus.execute(
-        new NotificationSendCommand({
-          type: NotificationType.SYSTEM,
-          title: 'E2E Test Notification',
-          content: 'Mark all test',
-          channels: [NotificationChannel.IN_APP],
-          audience: {
-            broadcastType: 'direct',
-            userIds: [testUserId],
-          },
-        })
-      );
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+    // Ensure we have at least one notification
+    await commandBus.execute(
+      new NotificationSendCommand({
+        type: NotificationType.SYSTEM,
+        title: 'E2E Test Notification',
+        content: 'Mark all test',
+        channels: [NotificationChannel.IN_APP],
+        audience: {
+          broadcastType: 'direct',
+          userIds: [testUserId],
+        },
+      })
+    );
+    await new Promise((resolve) => setTimeout(resolve, 1000));
 
-      // Mark all as read using the unified endpoint
-      await request(app.getHttpServer())
-        .patch('/hivek/api/notifications/read-status')
-        .set('Authorization', `Bearer ${authToken}`)
-        .send({ isRead: true }) // no ids provided
-        .expect(204);
+    // Mark all as read using the unified endpoint
+    await request(app.getHttpServer())
+      .patch('/hivek/api/notifications/read-status')
+      .set('Authorization', `Bearer ${authToken}`)
+      .send({ isRead: true }) // no ids provided
+      .expect(204);
 
-      // Verify all are read
-      const res = await request(app.getHttpServer())
-        .get('/hivek/api/notifications')
-        .set('Authorization', `Bearer ${authToken}`)
-        .expect(200);
-      
-      res.body.data.forEach((n: any) => {
-          expect(n.isRead).toBe(true);
-      });
+    // Verify all are read
+    const res = await request(app.getHttpServer())
+      .get('/hivek/api/notifications')
+      .set('Authorization', `Bearer ${authToken}`)
+      .expect(200);
+
+    res.body.data.forEach((n: any) => {
+      expect(n.isRead).toBe(true);
+    });
   });
 });

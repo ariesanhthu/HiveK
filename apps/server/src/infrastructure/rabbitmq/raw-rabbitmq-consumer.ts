@@ -1,5 +1,5 @@
 import * as amqp from 'amqplib';
-import { RabbitMQConsumerConfig } from '@infrastructure/nest-config/types/rabbitmq.types';
+import { RabbitMQConsumerConfig } from '@/infrastructure/rabbitmq/types/rabbitmq.types';
 import { ILoggerService } from '@/application/interfaces';
 import { RmqHandlerRegistry } from './rmq-consumer.registry';
 
@@ -8,7 +8,7 @@ import { RmqHandlerRegistry } from './rmq-consumer.registry';
  * Handles topology setup (exchanges, queues, bindings) and message consumption
  */
 export class RawRabbitMQConsumerClient {
-  private connection: amqp.Connection | null | any  = null;
+  private connection: amqp.Connection | null | any = null;
   private channel: amqp.Channel | null = null;
   private isConnected = false;
   private connectionAttempts = 0;
@@ -45,7 +45,7 @@ export class RawRabbitMQConsumerClient {
       });
 
       this.channel = await this.connection.createChannel();
-      
+
       this.channel.on('error', (error) => {
         this.logger.error(`RabbitMQ Consumer Channel Error: ${error.message}`);
         this.isConnected = false;
@@ -67,7 +67,7 @@ export class RawRabbitMQConsumerClient {
       const errorMessage = error instanceof Error ? error.message : String(error);
       this.logger.error(`Failed to start RabbitMQ Consumer: ${errorMessage}. Retrying in background...`);
       this.isConnected = false;
-      
+
       // Start background reconnection
       this.reconnectWithBackoff();
     }
@@ -138,7 +138,7 @@ export class RawRabbitMQConsumerClient {
 
     for (const queueConfig of this.config.queues) {
       const handlers = RmqHandlerRegistry.getHandlersForQueue(queueConfig.name);
-      
+
       if (handlers.length === 0) {
         this.logger.warn(`No handlers registered for queue "${queueConfig.name}"`);
         continue;
@@ -170,7 +170,7 @@ export class RawRabbitMQConsumerClient {
 
     const content = msg.content.toString();
     const routingKey = msg.fields.routingKey;
-    
+
     try {
       const parsedMessage = JSON.parse(content);
       // NestJS protocol check: messages from our producer have { pattern: routingKey, data: ... }
@@ -182,7 +182,7 @@ export class RawRabbitMQConsumerClient {
       if (handler) {
         this.logger.debug(`Routing message with pattern "${pattern}" to ${handler.methodName}`);
         await handler.callback.apply(handler.target, [data, msg]);
-        
+
         if (!this.config.consume.no_ack && this.config.consume.manual_ack) {
           this.channel.ack(msg);
         }
@@ -196,7 +196,7 @@ export class RawRabbitMQConsumerClient {
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : String(error);
       this.logger.error(`Error handling RMQ message from ${queueName}: ${errorMessage}`);
-      
+
       if (!this.config.consume.no_ack) {
         this.channel.nack(msg, false, this.config.consume.requeue_on_error);
       }
@@ -209,7 +209,7 @@ export class RawRabbitMQConsumerClient {
   private matchPattern(handlerPattern: string, incomingPattern: string): boolean {
     if (handlerPattern === incomingPattern) return true;
     if (handlerPattern === '*') return true;
-    
+
     // Support simple topic wildcard (strip.pattern.*)
     const regex = new RegExp('^' + handlerPattern.replace(/\./g, '\\.').replace(/\*/g, '[^.]+') + '$');
     return regex.test(incomingPattern);
