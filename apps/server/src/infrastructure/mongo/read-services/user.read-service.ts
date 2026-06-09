@@ -107,18 +107,18 @@ export class MongoUserReadService implements IUserReadService {
     };
 
     switch (doc.type) {
-      case ERoleType.ENTERPRISE:
+      case 'EnterpriseUserModel': //ERoleType.ENTERPRISE:
         return {
           ...baseFields,
           type: ERoleType.ENTERPRISE,
           enterpriseIds: doc.enterprise_ids ? doc.enterprise_ids.map((id: any) => id.toString()) : [],
         } as any;
-      case ERoleType.ADMIN:
+      case 'AdminUserModel': //ERoleType.ADMIN:
         return {
           ...baseFields,
           type: ERoleType.ADMIN,
         } as any;
-      case ERoleType.KOL:
+      case 'KOLUserModel': //ERoleType.KOL:
         return {
           ...baseFields,
           type: ERoleType.KOL,

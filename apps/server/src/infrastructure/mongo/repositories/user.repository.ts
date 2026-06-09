@@ -1,9 +1,9 @@
-import { Injectable, Inject, forwardRef } from '@nestjs/common';
+import { Injectable, Inject } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types, ClientSession, Schema } from 'mongoose';
 import { IUserRepository } from '@/core/interfaces/repositories';
 import { UserRoot, AdminRoot, EnterpriseUserRoot, KOLUserRoot } from '@/core/aggregate-roots';
-import { UserModel, UserDocument } from '../schemas/user.schema';
+import { UserModel, UserDocument, EnterpriseUserModel, EnterpriseUserDocument } from '../schemas/user.schema';
 import { Nullable } from '@/core/types';
 import { ERoleType } from '@/core/enums';
 import { PhoneNumberVO } from '@/core/value-objects/phone-number.value-object';
@@ -15,6 +15,8 @@ export class MongoUserRepository implements IUserRepository {
   constructor(
     @InjectModel(UserModel.name)
     private readonly userModel: Model<UserDocument>,
+    @InjectModel(EnterpriseUserModel.name)
+    private readonly enterpriseUserModel: Model<EnterpriseUserDocument>,
     @Inject(UNIT_OF_WORK)
     private readonly uow: IUnitOfWork,
   ) { }
@@ -51,13 +53,24 @@ export class MongoUserRepository implements IUserRepository {
 
   async save(user: UserRoot): Promise<void> {
     const data = this.mapToPersistence(user);
+    const isEnterprise = user instanceof EnterpriseUserRoot || user.type === ERoleType.ENTERPRISE;
 
     if (!user.id) {
-      const created = new this.userModel(data);
-      const saved = await created.save({ session: this.session });
-      user.setId(saved._id.toString());
+      if (isEnterprise) {
+        const created = new this.enterpriseUserModel(data);
+        const saved = await created.save({ session: this.session });
+        user.setId(saved._id.toString());
+      } else {
+        const created = new this.userModel(data);
+        const saved = await created.save({ session: this.session });
+        user.setId(saved._id.toString());
+      }
     } else {
-      await this.userModel.findByIdAndUpdate(user.id, data, { upsert: true }).session(this.session).exec();
+      if (isEnterprise) {
+        await this.enterpriseUserModel.findByIdAndUpdate(user.id, data, { upsert: true }).session(this.session).exec();
+      } else {
+        await this.userModel.findByIdAndUpdate(user.id, data, { upsert: true }).session(this.session).exec();
+      }
     }
   }
 
@@ -89,29 +102,35 @@ export class MongoUserRepository implements IUserRepository {
     const id = doc._id.toString();
 
     switch (doc.type) {
-      case ERoleType.ADMIN:
-        return AdminRoot.instantiate(id, props as any);
-      case ERoleType.ENTERPRISE:
+      case 'AdminUserModel': //ERoleType.ADMIN:
+        return AdminRoot.instantiate(id, {
+          ...props,
+          type: ERoleType.ADMIN,
+        });
+      case 'EnterpriseUserModel': //ERoleType.ENTERPRISE:
         return EnterpriseUserRoot.instantiate(id, {
           ...props,
+          type: ERoleType.ENTERPRISE,
           enterpriseIds: (doc as any).enterprise_ids ? (doc as any).enterprise_ids.map((eid: any) => eid.toString()) : [],
-        } as any);
-      case ERoleType.KOL:
-        return KOLUserRoot.instantiate(id, props as any);
+        });
+      case 'KOLUserModel': //ERoleType.KOL:
+        return KOLUserRoot.instantiate(id, {
+          ...props,
+          type: ERoleType.KOL,
+        });
       default:
         throw new Error(`Unknown user type: ${doc.type}`);
     }
   }
 
-  private mapToPersistence(user: UserRoot): Omit<UserModel, 'created_at' | 'updated_at'> & { enterprise_ids?: Types.ObjectId[] } {
+  private mapToPersistence(user: UserRoot): any {
     const base = {
       email: user.email,
       phone: user.phone.value,
       password_hash: user.passwordHash,
       full_name: user.fullName,
-      avatar: user.avatar ? new Types.ObjectId(user.avatar) as any : null,
-      type: user.type,
-      role_id: new Types.ObjectId(user.roleId) as any,
+      avatar: user.avatar ? new Types.ObjectId(user.avatar) : null,
+      role_id: new Types.ObjectId(user.roleId),
       is_email_verified: user.isEmailVerified,
       delete_at: user.deleteAt,
       delete_by: user.deleteBy,
@@ -119,13 +138,13 @@ export class MongoUserRepository implements IUserRepository {
       google_id: user.googleId,
     };
 
-    if (user instanceof EnterpriseUserRoot) {
+    if (user instanceof EnterpriseUserRoot || user.type === ERoleType.ENTERPRISE) {
       return {
         ...base,
-        enterprise_ids: user.enterpriseIds.map(id => new Types.ObjectId(id))
+        enterprise_ids: (user as EnterpriseUserRoot).enterpriseIds.map(id => new Types.ObjectId(id)),
       };
     }
 
-    return base as any;
+    return base;
   }
 }

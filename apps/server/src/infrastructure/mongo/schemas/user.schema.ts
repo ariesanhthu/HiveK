@@ -35,7 +35,7 @@ export class UserModel {
   @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'UploadedFileModel', required: false, default: null })
   avatar: MongooseSchema.Types.ObjectId | null;
 
-  type: ERoleType;
+  type: string;
 
   @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'RoleModel', required: true })
   role_id: MongooseSchema.Types.ObjectId;
@@ -52,7 +52,7 @@ export class UserModel {
   @Prop({ type: MongooseSchema.Types.String, default: null })
   refresh_token: string | null;
 
-  @Prop({ type: MongooseSchema.Types.String, default: null, unique: true, sparse: true })
+  @Prop({ type: MongooseSchema.Types.String, default: null })
   google_id: string | null;
 
   created_at: Date;
@@ -76,6 +76,7 @@ export class EnterpriseUserModel extends UserModel {
   enterprise_ids: MongooseSchema.Types.ObjectId[];
 }
 export const EnterpriseUserSchema = SchemaFactory.createForClass(EnterpriseUserModel);
+export type EnterpriseUserDocument = HydratedDocument<EnterpriseUserModel>;
 EnterpriseUserSchema.plugin(softDeletePlugin);
 
 @Schema()
