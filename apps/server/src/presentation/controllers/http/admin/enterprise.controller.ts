@@ -90,6 +90,7 @@ export class EnterpriseAdminController {
 
   @Patch(':id/restore')
   @UseGuards(JwtAuthGuard)
+  @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: 'Restore soft deleted enterprise' })
   async restore(@Param('id') id: string): Promise<void> {
     return this.commandBus.execute(new EnterpriseRestoreCommand(id));
@@ -97,7 +98,7 @@ export class EnterpriseAdminController {
 
   @Post(':id/members')
   @UseGuards(JwtAuthGuard)
-  @HttpCode(HttpStatus.OK)
+  @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: 'Add user to enterprise' })
   async addUser(
     @CurrentUser('sub') requestedBy: string,

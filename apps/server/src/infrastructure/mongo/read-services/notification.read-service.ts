@@ -54,6 +54,8 @@ export class MongoNotificationReadService implements INotificationReadService {
     return new PaginatedResponseDto(
       results.map((doc) => this.mapToDto(doc)),
       nextCursor,
+      hasNextPage,
+      limit,
     );
   }
 

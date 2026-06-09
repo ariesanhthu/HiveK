@@ -69,21 +69,20 @@ export class CampaignParticipantAdminController {
     @Param('id') id: string,
     @Query() dto: SoftDeleteInputDto,
   ): Promise<void> {
-    return this.commandBus.execute(new CampaignParticipantSoftDeleteCommand(id, dto.deletedBy));
+    await this.commandBus.execute(new CampaignParticipantSoftDeleteCommand(id, dto.deletedBy));
   }
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: 'Hard delete campaign participant' })
   async hardDelete(@Param('id') id: string): Promise<void> {
-    return this.commandBus.execute(new CampaignParticipantHardDeleteCommand(id));
+    await this.commandBus.execute(new CampaignParticipantHardDeleteCommand(id));
   }
 
-  @Public()
   @Patch(':id/restore')
-  @HttpCode(HttpStatus.OK)
+  @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: 'Restore soft deleted campaign participant' })
   async restore(@Param('id') id: string): Promise<void> {
-    return this.commandBus.execute(new CampaignParticipantRestoreCommand(id));
+    await this.commandBus.execute(new CampaignParticipantRestoreCommand(id));
   }
 }

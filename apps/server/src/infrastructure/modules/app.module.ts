@@ -6,9 +6,9 @@ import { RoleModule } from '@/infrastructure/modules/role.module';
 import { AuthModule } from '@/infrastructure/modules/auth.module';
 import { RabbitMQModule } from '@/infrastructure/rabbitmq/rabbitmq.module';
 import { WebSocketModule } from '@/infrastructure/websocket/websocket.module';
-import { APP_PIPE, APP_GUARD, APP_FILTER } from '@nestjs/core';
+import { APP_PIPE, APP_GUARD, APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
 import { ZodValidationPipe } from 'nestjs-zod';
-import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
+import { ThrottlerModule } from '@nestjs/throttler';
 import { GqlThrottlerGuard, ApiKeyGuard } from '../../presentation/middleware/guards';
 import { InfrastructureModule } from './infrastructure.module';
 import { PlatformModule } from './platform.module';
@@ -19,9 +19,9 @@ import { UploadedFileModule } from './uploaded-file.module';
 import { NotificationModule } from './notification.module';
 import { CampaignParticipantModule } from './campaign-participant.module';
 import { TestRmqHandler } from '../../presentation/controllers/rmq/test-rmq.controller';
-import { GraphQLModule } from '@nestjs/graphql';
-import { DomainExceptionFilter } from '../../presentation/middleware/filters/domain-exception.filter';
 import { GraphqlModule } from '../graphql';
+import { HttpExceptionFilter } from '@/presentation/middleware/filters';
+import { LoggingInterceptor, TransformInterceptor } from '@/presentation/middleware/interceptors';
 
 @Module({
   imports: [
@@ -53,11 +53,19 @@ import { GraphqlModule } from '../graphql';
   providers: [
     {
       provide: APP_PIPE,
-      useValue: ZodValidationPipe
+      useClass: ZodValidationPipe
     },
     {
       provide: APP_FILTER,
-      useClass: DomainExceptionFilter,
+      useClass: HttpExceptionFilter
+    },
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: LoggingInterceptor
+    },
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: TransformInterceptor
     },
     {
       provide: APP_GUARD,

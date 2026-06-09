@@ -51,6 +51,8 @@ export class MongoRoleReadService implements IRoleReadService {
     return new PaginatedResponseDto(
       results.map((doc) => this.mapToDto(doc)),
       nextCursor,
+      hasNextPage,
+      limit,
     );
   }
 

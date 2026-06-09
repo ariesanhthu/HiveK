@@ -75,7 +75,7 @@ export class CampaignClientController {
   @Patch(':id/restore')
   @UseGuards(RolesGuard)
   @Roles(ERoleType.ENTERPRISE)
-  @HttpCode(HttpStatus.OK)
+  @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: 'Restore soft deleted campaign' })
   async restore(@Param('id') id: string): Promise<void> {
     return this.commandBus.execute(new CampaignRestoreCommand(id));
@@ -84,7 +84,7 @@ export class CampaignClientController {
   @Patch(':id/status')
   @UseGuards(RolesGuard)
   @Roles(ERoleType.ENTERPRISE)
-  @HttpCode(HttpStatus.OK)
+  @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: 'Update campaign status' })
   async updateStatus(
     @CurrentUser('sub') userId: string,
@@ -97,7 +97,7 @@ export class CampaignClientController {
   @Post(':id/collaborators/invite')
   @UseGuards(RolesGuard)
   @Roles(ERoleType.ENTERPRISE)
-  @HttpCode(HttpStatus.OK)
+  @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: 'Invite collaborators to campaign' })
   async inviteCollaborator(
     @CurrentUser('sub') requestedBy: string,
@@ -110,7 +110,7 @@ export class CampaignClientController {
   @Delete(':id/collaborators/revoke')
   @UseGuards(RolesGuard)
   @Roles(ERoleType.ENTERPRISE)
-  @HttpCode(HttpStatus.OK)
+  @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: 'Revoke collaborators from campaign' })
   async revokeCollaborator(
     @CurrentUser('sub') requestedBy: string,

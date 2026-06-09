@@ -114,15 +114,15 @@ export class AuthAdminController {
 
   @Post('sign-out')
   @ApiBearerAuth()
-  @HttpCode(HttpStatus.OK)
+  @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: 'Sign out current user' })
   async signOut(
     @CurrentUser('sub') userId: string,
     @Res({ passthrough: true }) response: Response,
-  ) {
+  ): Promise<void> {
     response.clearCookie('access_token');
     response.clearCookie('refresh_token');
-    return this.commandBus.execute(new AuthSignOutCommand(userId));
+    await this.commandBus.execute(new AuthSignOutCommand(userId));
   }
 
   @Public()

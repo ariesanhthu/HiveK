@@ -63,6 +63,8 @@ export class MongoEnterpriseReadService implements IEnterpriseReadService {
     return new PaginatedResponseDto(
       results.map((doc) => this.mapToDto(doc)),
       nextCursor,
+      hasNextPage,
+      limit,
     );
   }
 

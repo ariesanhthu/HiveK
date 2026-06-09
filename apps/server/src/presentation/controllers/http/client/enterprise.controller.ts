@@ -61,7 +61,7 @@ export class EnterpriseClientController {
 
   @Post(':id/members')
   @UseGuards(JwtAuthGuard)
-  @HttpCode(HttpStatus.OK)
+  @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: 'Add user to enterprise' })
   async addUser(
     @CurrentUser('sub') requestedBy: string,

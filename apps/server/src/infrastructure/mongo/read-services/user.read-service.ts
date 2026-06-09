@@ -70,6 +70,8 @@ export class MongoUserReadService implements IUserReadService {
     return new PaginatedResponseDto(
       results.map((doc) => this.mapToDto(doc)),
       nextCursor,
+      hasNextPage,
+      limit,
     );
   }
 

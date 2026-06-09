@@ -52,6 +52,6 @@ export class KolProfileGetHandlesDevHandler implements IQueryHandler<KolProfileG
       return mappedDoc;
     });
 
-    return new PaginatedResponseDto(mappedResults, nextCursor);
+    return new PaginatedResponseDto(mappedResults, nextCursor, hasNextPage, mappedResults.length);
   }
 }

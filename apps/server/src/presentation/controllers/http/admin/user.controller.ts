@@ -78,7 +78,7 @@ export class UserAdminController {
   }
 
   @Patch(':id/restore')
-  @HttpCode(HttpStatus.OK)
+  @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: 'Restore soft deleted user' })
   async restore(@Param('id') id: string): Promise<void> {
     await this.commandBus.execute(new UserRestoreCommand(id));

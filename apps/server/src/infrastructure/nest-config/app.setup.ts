@@ -1,8 +1,8 @@
 import { INestApplication, Logger } from '@nestjs/common';
 import { ZodValidationPipe } from 'nestjs-zod';
 import helmet from 'helmet';
-import { LoggingInterceptor } from '@/presentation/middleware/interceptors/logging.interceptor';
-import { HttpExceptionFilter } from '@/presentation/middleware/filters/http-exception.filter';
+import { LoggingInterceptor, TransformInterceptor } from '@/presentation/middleware/interceptors';
+import { HttpExceptionFilter } from '@/presentation/middleware/filters';
 import { RabbitMQFactoryService } from '@infrastructure/rabbitmq';
 
 export function setupApplication(app: INestApplication): void {
@@ -25,14 +25,17 @@ export function setupApplication(app: INestApplication): void {
   // Global Prefix for all routes
   app.setGlobalPrefix('hivek');
 
-  // Apply Global Pipes
-  app.useGlobalPipes(new ZodValidationPipe());
+  // // Apply Global Pipes
+  // app.useGlobalPipes(new ZodValidationPipe());
 
-  // Apply Global Interceptors
-  app.useGlobalInterceptors(new LoggingInterceptor());
+  // // Apply Global Interceptors
+  // app.useGlobalInterceptors(
+  //   new LoggingInterceptor(),
+  //   new TransformInterceptor(),
+  // );
 
-  // Apply Global Filters
-  app.useGlobalFilters(new HttpExceptionFilter());
+  // // Apply Global Filters (single catch-all filter handles all exceptions)
+  // app.useGlobalFilters(new HttpExceptionFilter());
 }
 
 /**

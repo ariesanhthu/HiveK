@@ -75,7 +75,7 @@ export class PlatformAdminController {
 
   @Public()
   @Patch(':id/restore')
-  @HttpCode(HttpStatus.OK)
+  @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: 'Restore soft deleted platform' })
   async restore(@Param('id') id: string): Promise<void> {
     return this.commandBus.execute(new PlatformRestoreCommand(id));

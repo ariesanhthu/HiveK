@@ -1,6 +1,23 @@
 import { ExceptionFilter, Catch, ArgumentsHost, HttpStatus } from '@nestjs/common';
 import { Response } from 'express';
 import { DomainException, NotFoundDomainException, ConflictDomainException, ForbiddenDomainException, UnauthorizedDomainException, BadRequestDomainException } from '@/core/exceptions';
+import { ApiResponseHelper } from '@/presentation/utils/api-response.helper';
+
+const ERROR_CODE_MAP: Record<string, string> = {
+  NotFoundDomainException: 'NOT_FOUND',
+  ConflictDomainException: 'CONFLICT',
+  ForbiddenDomainException: 'FORBIDDEN',
+  UnauthorizedDomainException: 'UNAUTHORIZED',
+  BadRequestDomainException: 'BAD_REQUEST',
+};
+
+const STATUS_MAP: Record<string, HttpStatus> = {
+  NotFoundDomainException: HttpStatus.NOT_FOUND,
+  ConflictDomainException: HttpStatus.CONFLICT,
+  ForbiddenDomainException: HttpStatus.FORBIDDEN,
+  UnauthorizedDomainException: HttpStatus.UNAUTHORIZED,
+  BadRequestDomainException: HttpStatus.BAD_REQUEST,
+};
 
 @Catch(DomainException)
 export class DomainExceptionFilter implements ExceptionFilter {
@@ -11,25 +28,11 @@ export class DomainExceptionFilter implements ExceptionFilter {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
 
-    let status = HttpStatus.BAD_REQUEST;
+    const exceptionName = exception.constructor.name;
+    const status = STATUS_MAP[exceptionName] ?? HttpStatus.BAD_REQUEST;
+    const code = ERROR_CODE_MAP[exceptionName] ?? 'DOMAIN_ERROR';
+    const errorResponse = ApiResponseHelper.error(code, exception.message);
 
-    if (exception instanceof NotFoundDomainException) {
-      status = HttpStatus.NOT_FOUND;
-    } else if (exception instanceof ConflictDomainException) {
-      status = HttpStatus.CONFLICT;
-    } else if (exception instanceof ForbiddenDomainException) {
-      status = HttpStatus.FORBIDDEN;
-    } else if (exception instanceof UnauthorizedDomainException) {
-      status = HttpStatus.UNAUTHORIZED;
-    } else if (exception instanceof BadRequestDomainException) {
-      status = HttpStatus.BAD_REQUEST;
-    }
-
-    response.status(status).json({
-      statusCode: status,
-      message: exception.message,
-      error: exception.name,
-      timestamp: new Date().toISOString(),
-    });
+    response.status(status).json(errorResponse);
   }
 }

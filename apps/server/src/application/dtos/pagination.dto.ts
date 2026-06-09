@@ -16,10 +16,14 @@ export class CursorPaginationRequestDto extends createZodDto(CursorPaginationReq
 
 export class PaginatedResponseDto<T> {
   cursor: string | null;
+  hasNext: boolean;
+  limit: number;
   data: T[];
 
-  constructor(data: T[], nextCursor: string | null = null) {
+  constructor(data: T[], nextCursor: string | null = null, hasNext: boolean, limit: number) {
     this.data = data;
     this.cursor = nextCursor;
+    this.hasNext = hasNext;
+    this.limit = limit;
   }
 }

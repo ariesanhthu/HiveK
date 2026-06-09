@@ -42,7 +42,7 @@ export class NotificationClientController {
     return this.queryBus.execute(new NotificationGetListQuery(filters));
   }
 
-  @Patch('read-status')
+  @Patch('status')
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: 'Update read/unread status for notifications (all if ids is empty/null)' })
   async updateReadStatus(
@@ -63,7 +63,7 @@ export class NotificationClientController {
   }
 
   @Patch('restore')
-  @HttpCode(HttpStatus.OK)
+  @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: 'Restore a list of soft deleted notifications' })
   async restore(
     @CurrentUser('sub') userId: string,

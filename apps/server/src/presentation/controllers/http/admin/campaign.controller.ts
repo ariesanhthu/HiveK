@@ -64,46 +64,46 @@ export class CampaignAdminController {
     @Param('id') id: string,
     @Query() dto: SoftDeleteInputDto,
   ): Promise<void> {
-    return this.commandBus.execute(new CampaignSoftDeleteCommand(id, userId, dto.deletedBy));
+    await this.commandBus.execute(new CampaignSoftDeleteCommand(id, userId, dto.deletedBy));
   }
 
   @Patch(':id/restore')
-  @HttpCode(HttpStatus.OK)
+  @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: 'Restore soft deleted campaign' })
   async restore(@Param('id') id: string): Promise<void> {
-    return this.commandBus.execute(new CampaignRestoreCommand(id));
+    await this.commandBus.execute(new CampaignRestoreCommand(id));
   }
 
   @Patch(':id/status')
-  @HttpCode(HttpStatus.OK)
+  @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: 'Update campaign status' })
   async updateStatus(
     @CurrentUser('sub') userId: string,
     @Param('id') id: string,
     @Body() input: CampaignUpdateStatusInputDto,
   ): Promise<void> {
-    return this.commandBus.execute(new CampaignUpdateStatusCommand(id, userId, input.status));
+    await this.commandBus.execute(new CampaignUpdateStatusCommand(id, userId, input.status));
   }
 
   @Post(':id/collaborators')
-  @HttpCode(HttpStatus.OK)
+  @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: 'Invite collaborators to campaign' })
   async inviteCollaborator(
     @CurrentUser('sub') requestedBy: string,
     @Param('id') id: string,
     @Body() input: CampaignInviteCollaboratorInputDto,
   ): Promise<void> {
-    return this.commandBus.execute(new CampaignInviteCollaboratorCommand(id, input, requestedBy));
+    await this.commandBus.execute(new CampaignInviteCollaboratorCommand(id, input, requestedBy));
   }
 
   @Delete(':id/collaborators')
-  @HttpCode(HttpStatus.OK)
+  @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: 'Revoke collaborators from campaign' })
   async revokeCollaborator(
     @CurrentUser('sub') requestedBy: string,
     @Param('id') id: string,
     @Body() input: CampaignRevokeCollaboratorInputDto,
   ): Promise<void> {
-    return this.commandBus.execute(new CampaignRevokeCollaboratorCommand(id, input, requestedBy));
+    await this.commandBus.execute(new CampaignRevokeCollaboratorCommand(id, input, requestedBy));
   }
 }

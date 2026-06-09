@@ -86,11 +86,10 @@ export class CampaignParticipantClientController {
     return this.commandBus.execute(new CampaignParticipantHardDeleteCommand(id));
   }
 
-  @Public()
   @UseGuards(RolesGuard)
   @Roles(ERoleType.ENTERPRISE)
   @Patch(':id/restore')
-  @HttpCode(HttpStatus.OK)
+  @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: 'Restore soft deleted campaign participant' })
   async restore(@Param('id') id: string): Promise<void> {
     return this.commandBus.execute(new CampaignParticipantRestoreCommand(id));

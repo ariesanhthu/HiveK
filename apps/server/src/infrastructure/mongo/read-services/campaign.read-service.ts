@@ -113,6 +113,8 @@ export class MongoCampaignReadService implements ICampaignReadService {
     return new PaginatedResponseDto(
       results.map((doc: any) => this.mapToDto(doc)),
       nextCursor,
+      hasNextPage,
+      limit,    
     );
   }
 

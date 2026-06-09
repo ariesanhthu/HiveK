@@ -13,4 +13,7 @@
   - `kolProfiles`
 - Access the GraphQL endpoint to test queries in the playground or with Postman:
   - `hivek/graphql`
+- Auth uses access token and refresh token:
+  - Send the access token in the `Authorization` header as `Bearer <token>`.
+  - Refresh token can be handled by cookie or by header, depending on the client flow.
 - Swagger covers most HTTP controllers, while GraphQL is currently a focused option for the query-heavy domains above.

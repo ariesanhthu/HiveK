@@ -57,6 +57,8 @@ export class MongoUploadedFileReadService implements IUploadedFileReadService {
     return new PaginatedResponseDto(
       results.map((doc) => this.mapToDto(doc)),
       nextCursor,
+      hasNextPage,
+      limit,
     );
   }
 

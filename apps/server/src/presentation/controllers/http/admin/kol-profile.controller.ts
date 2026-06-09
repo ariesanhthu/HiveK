@@ -62,6 +62,7 @@ export class KolProfileAdminController {
 
   @Patch(':id/restore')
   @UseGuards(JwtAuthGuard)
+  @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: 'Restore soft deleted KOL profile' })
   async restore(@Param('id') id: string): Promise<void> {
     return this.commandBus.execute(new KolProfileRestoreCommand(id));

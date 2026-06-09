@@ -82,7 +82,7 @@ export class RoleAdminController {
   }
 
   @Patch(':id/restore')
-  @HttpCode(HttpStatus.OK)
+  @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: 'Restore soft deleted role' })
   async restore(@Param('id') id: string): Promise<void> {
     await this.commandBus.execute(new RoleRestoreCommand(id));

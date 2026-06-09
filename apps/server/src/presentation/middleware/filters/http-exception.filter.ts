@@ -1,54 +1,97 @@
+import { ExceptionFilter, Catch, ArgumentsHost, HttpStatus, HttpException } from '@nestjs/common';
+import { Response } from 'express';
 import {
-  ExceptionFilter,
-  Catch,
-  ArgumentsHost,
-  HttpException,
-  HttpStatus,
-  Logger,
-} from '@nestjs/common';
-import { Request, Response } from 'express';
+  DomainException,
+  NotFoundDomainException,
+  ConflictDomainException,
+  ForbiddenDomainException,
+  UnauthorizedDomainException,
+  BadRequestDomainException,
+} from '@/core/exceptions';
+import { ApiResponseHelper } from '@/presentation/utils/api-response.helper';
+
+type ErrorDetail = { field?: string; message: string };
 
 @Catch()
 export class HttpExceptionFilter implements ExceptionFilter {
-  private readonly logger = new Logger(HttpExceptionFilter.name);
+  private readonly logger = console;
 
   catch(exception: any, host: ArgumentsHost) {
-    if (typeof host.getType === 'function' && host.getType() as string === 'graphql') {
+    if (typeof host.getType === 'function' && (host.getType() as string) === 'graphql') {
       throw exception;
     }
+
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
-    const request = ctx.getRequest<Request>();
+    const request = ctx.getRequest();
 
-    const status =
-      exception instanceof HttpException
-        ? exception.getStatus()
-        : HttpStatus.INTERNAL_SERVER_ERROR;
-
-    const body =
-      exception instanceof HttpException
-        ? exception.getResponse()
-        : { message: (exception as Error).message || 'Internal server error' };
-
-    const errorResponse = {
-      statusCode: status,
-      timestamp: new Date().toISOString(),
-      path: request.url,
-      method: request.method,
-      error: typeof body === 'string' ? { message: body } : body,
-    };
-
-    if (status >= 500) {
-      this.logger.error(
-        `${request.method} ${request.url} ${status} - Error: ${exception.message || exception}`,
-        exception.stack,
-      );
-    } else {
-      this.logger.warn(
-        `${request.method} ${request.url} ${status} - Client Error: ${JSON.stringify(body)}`,
-      );
+    // ---------- DOMAIN EXCEPTIONS (checked first) ----------
+    if (exception instanceof DomainException) {
+      const { status, code } = this.mapDomainException(exception);
+      const body = ApiResponseHelper.error(code, exception.message);
+      this.logger.warn(`[HttpExceptionFilter] ${request.method} ${request.url} ${status} - ${code}: ${exception.message}`);
+      return response.status(status).json(body);
     }
 
-    response.status(status).json(errorResponse);
+    // ---------- HTTP EXCEPTIONS (NestJS built-in) ----------
+    if (exception instanceof HttpException) {
+      const status = exception.getStatus();
+      const res = exception.getResponse();
+      const message = typeof res === 'string' ? res : (res as any).message || exception.message;
+      const code = this.httpStatusToCode(status);
+      const details = this.extractDetails(res);
+      const body = ApiResponseHelper.error(code, message, details);
+
+      if (status >= 500) {
+        this.logger.error(`[HttpExceptionFilter] ${request.method} ${request.url} ${status} - ${exception.message}`, exception.stack);
+      } else {
+        this.logger.warn(`[HttpExceptionFilter] ${request.method} ${request.url} ${status} - ${code}: ${message}`);
+      }
+      return response.status(status).json(body);
+    }
+
+    // ---------- UNHANDLED ERRORS ----------
+    const message = exception?.message || 'Internal server error';
+    this.logger.error(`[HttpExceptionFilter] ${request.method} ${request.url} 500 - ${message}`, exception?.stack);
+    return response.status(HttpStatus.INTERNAL_SERVER_ERROR).json(
+      ApiResponseHelper.error('INTERNAL_ERROR', message),
+    );
+  }
+
+  private mapDomainException(exception: DomainException): { status: HttpStatus; code: string } {
+    if (exception instanceof NotFoundDomainException) return { status: HttpStatus.NOT_FOUND, code: 'NOT_FOUND' };
+    if (exception instanceof ConflictDomainException) return { status: HttpStatus.CONFLICT, code: 'CONFLICT' };
+    if (exception instanceof ForbiddenDomainException) return { status: HttpStatus.FORBIDDEN, code: 'FORBIDDEN' };
+    if (exception instanceof UnauthorizedDomainException) return { status: HttpStatus.UNAUTHORIZED, code: 'UNAUTHORIZED' };
+    if (exception instanceof BadRequestDomainException) return { status: HttpStatus.BAD_REQUEST, code: 'BAD_REQUEST' };
+    return { status: HttpStatus.BAD_REQUEST, code: 'DOMAIN_ERROR' };
+  }
+
+  private httpStatusToCode(status: number): string {
+    const map: Record<number, string> = {
+      [HttpStatus.BAD_REQUEST]: 'BAD_REQUEST',
+      [HttpStatus.UNAUTHORIZED]: 'UNAUTHORIZED',
+      [HttpStatus.FORBIDDEN]: 'FORBIDDEN',
+      [HttpStatus.NOT_FOUND]: 'NOT_FOUND',
+      [HttpStatus.CONFLICT]: 'CONFLICT',
+      [HttpStatus.TOO_MANY_REQUESTS]: 'RATE_LIMITED',
+      [HttpStatus.HTTP_VERSION_NOT_SUPPORTED]: 'HTTP_VERSION_NOT_SUPPORTED',
+    };
+    return map[status] || 'INTERNAL_ERROR';
+  }
+
+  private extractDetails(res: string | object): ErrorDetail[] | undefined {
+    if (typeof res !== 'object' || res === null) return undefined;
+    const body = res as Record<string, any>;
+    if (Array.isArray(body.errors)) {
+      return body.errors.map((e: any) => ({
+        field: e.property || e.field || e.path,
+        message: typeof e === 'string' ? e : e.constraints ? Object.values(e.constraints).join('; ') : e.message,
+      }));
+    }
+    if (Array.isArray(body.message)) {
+      return body.message.map((msg: string) => ({ message: msg }));
+    }
+    return undefined;
   }
 }

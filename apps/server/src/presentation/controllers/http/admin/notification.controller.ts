@@ -67,7 +67,7 @@ export class NotificationAdminController {
   }
 
   @Patch('restore')
-  @HttpCode(HttpStatus.OK)
+  @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: 'Restore a list of soft deleted notifications' })
   async restore(
     @CurrentUser('sub') userId: string,

@@ -58,6 +58,8 @@ export class MongoKolProfileReadService implements IKolProfileReadService {
     return new PaginatedResponseDto(
       results.map((doc) => this.mapToDto(doc)),
       nextCursor,
+      hasNextPage,
+      limit,
     );
   }
 
