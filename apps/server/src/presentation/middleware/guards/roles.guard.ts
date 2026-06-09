@@ -3,6 +3,7 @@ import { Reflector } from '@nestjs/core';
 import { GqlExecutionContext } from '@nestjs/graphql';
 import { ERoleType } from '@/core/enums';
 import { ROLES_KEY } from '../../decorators/roles.decorator';
+import { IS_PUBLIC_KEY } from '@/presentation/decorators/public.decorator';
 
 @Injectable()
 export class RolesGuard implements CanActivate {
@@ -23,6 +24,14 @@ export class RolesGuard implements CanActivate {
       request = ctx.getContext().req;
     } else {
       request = context.switchToHttp().getRequest();
+    }
+
+    const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
+      context.getHandler(),
+      context.getClass(),
+    ]);
+    if (isPublic) {
+      return true;
     }
     
     const user = request?.user;

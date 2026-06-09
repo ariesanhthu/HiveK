@@ -19,8 +19,6 @@ import type { ILoggerService } from '@/application/interfaces/logger.interface';
   namespace: 'hivek',
 })
 export class WebSocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
-  @WebSocketServer() server: Server;
-
   constructor(
     @Inject(AUTH_JWT_SERVICE)
     private readonly jwtService: IAuthJwtService,
@@ -58,6 +56,6 @@ export class WebSocketGateway implements OnGatewayConnection, OnGatewayDisconnec
   @SubscribeMessage('ping')
   handlePing(@MessageBody() data: any, @ConnectedSocket() client: Socket) {
     this.logger.log(`Received ping from ${client.id}: ${JSON.stringify(data)}`);
-    return { event: 'pong', data };
+    return { event: 'pong', data: `This is your message: ${JSON.stringify(data)}` };
   }
 }
