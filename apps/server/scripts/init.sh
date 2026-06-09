@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 
-# Domain scaffolding script
-# Usage: ./add-domain.sh domain <DomainName>
+# Scaffolding script
+# Usage: ./init.sh <domain|command|query> <Name>
 
 set -e
 
-if [ "$1" != "domain" ] || [ -z "$2" ]; then
-  echo "Usage: $0 domain <DomainName>"
+if [ -z "$2" ] || { [ "$1" != "domain" ] && [ "$1" != "command" ] && [ "$1" != "query" ]; }; then
+  echo "Usage: $0 <domain|command|query> <Name>"
   exit 1
 fi
 
@@ -33,6 +33,7 @@ CLASS_NAME=$(to_pascal "$DOMAIN_NAME")
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROOT="$SCRIPT_DIR/../src"
 
+if [ "$1" = "domain" ]; then
 # ------------------------------------------------------------
 # 1. Core aggregate root
 AGG_PATH="$ROOT/core/aggregate-roots/${KABAB}.aggregate.ts"
@@ -288,6 +289,101 @@ if [ -f "$CTRL_INDEX" ]; then
     echo "export * from './${KABAB}.controller';" >> "$CTRL_INDEX"
     echo "Updated controller index"
   fi
+fi
+fi
+
+if [ "$1" = "command" ]; then
+  CMD_PATH="$ROOT/application/commands/${KABAB}"
+  mkdir -p "$CMD_PATH"
+  cat > "${CMD_PATH}/${KABAB}.dto.ts" <<EOF
+import { z } from 'zod';
+import { createZodDto } from 'nestjs-zod';
+
+export const ${CLASS_NAME}Schema = z.object({
+  // TODO: define input fields
+}).strict();
+
+export class ${CLASS_NAME}Dto extends createZodDto(${CLASS_NAME}Schema) {}
+EOF
+  cat > "${CMD_PATH}/${KABAB}.command.ts" <<EOF
+import { Command } from '@nestjs/cqrs';
+import { ${CLASS_NAME}Dto } from './${KABAB}.dto';
+
+export class ${CLASS_NAME}Command extends Command<any> {
+  constructor(public readonly input: ${CLASS_NAME}Dto) {
+    super();
+  }
+}
+EOF
+  cat > "${CMD_PATH}/${KABAB}.handler.ts" <<EOF
+import { ICommandHandler, CommandHandler } from '@nestjs/cqrs';
+import { ${CLASS_NAME}Command } from './${KABAB}.command';
+
+@CommandHandler(${CLASS_NAME}Command)
+export class ${CLASS_NAME}CommandHandler implements ICommandHandler<${CLASS_NAME}Command, any> {
+  async execute(command: ${CLASS_NAME}Command): Promise<any> {
+    // TODO: implement command handling
+    return {};
+  }
+}
+EOF
+  CMD_INDEX="$ROOT/application/commands/index.ts"
+  if [ -f "$CMD_INDEX" ]; then
+    for file in dto command handler; do
+      if ! grep -q "export \* from './${KABAB}/${KABAB}.${file}';" "$CMD_INDEX"; then
+        echo "export * from './${KABAB}/${KABAB}.${file}';" >> "$CMD_INDEX"
+      fi
+    done
+  fi
+  echo "Scaffolding for ${DOMAIN_NAME} (${1}) completed."
+  exit 0
+fi
+
+if [ "$1" = "query" ]; then
+  QUERY_PATH="$ROOT/application/queries/${KABAB}"
+  mkdir -p "$QUERY_PATH"
+  cat > "${QUERY_PATH}/${KABAB}.dto.ts" <<EOF
+import { z } from 'zod';
+import { createZodDto } from 'nestjs-zod';
+
+export const ${CLASS_NAME}Schema = z.object({
+  // TODO: define input fields
+}).strict();
+
+export class ${CLASS_NAME}Dto extends createZodDto(${CLASS_NAME}Schema) {}
+EOF
+  cat > "${QUERY_PATH}/${KABAB}.query.ts" <<EOF
+import { Query } from '@nestjs/cqrs';
+import { ${CLASS_NAME}Dto } from './${KABAB}.dto';
+
+export class ${CLASS_NAME}Query extends Query<any> {
+  constructor(public readonly input: ${CLASS_NAME}Dto) {
+    super();
+  }
+}
+EOF
+  cat > "${QUERY_PATH}/${KABAB}.handler.ts" <<EOF
+import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
+import { ${CLASS_NAME}Query } from './${KABAB}.query';
+
+@QueryHandler(${CLASS_NAME}Query)
+export class ${CLASS_NAME}QueryHandler implements IQueryHandler<${CLASS_NAME}Query, any> {
+  async execute(query: ${CLASS_NAME}Query): Promise<any> {
+    // TODO: implement query handling
+    return {};
+  }
+}
+EOF
+  QUERY_INDEX="$ROOT/application/queries/index.ts"
+  if [ -f "$QUERY_INDEX" ]; then
+    for file in dto query handler; do
+      if ! grep -q "export \* from './${KABAB}/${KABAB}.${file}';" "$QUERY_INDEX"; then
+        echo "export * from './${KABAB}/${KABAB}.${file}';" >> "$QUERY_INDEX"
+      fi
+    done
+  fi
+  echo "Scaffolding for ${DOMAIN_NAME} (${1}) completed."
+  exit 0
 fi
 
 echo "Domain scaffolding for ${DOMAIN_NAME} completed."

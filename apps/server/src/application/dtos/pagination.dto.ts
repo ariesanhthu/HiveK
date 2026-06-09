@@ -10,7 +10,7 @@ export const CursorPaginationRequestSchema = z.object({
   cursor: z.string().optional().nullable(),
   limit: z.coerce.number().min(1).max(100).default(10),
   sort: z.enum(SortOrder).default(SortOrder.DESC),
-});
+}).strict();
 
 export class CursorPaginationRequestDto extends createZodDto(CursorPaginationRequestSchema) {}
 

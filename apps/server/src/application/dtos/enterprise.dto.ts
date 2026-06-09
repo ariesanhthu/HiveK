@@ -16,7 +16,7 @@ export const EnterpriseDtoSchema = z.object({
   isVerified: z.boolean(),
   createdAt: z.string(),
   updatedAt: z.string(),
-});
+}).strict();
 
 export class EnterpriseDto extends createZodDto(EnterpriseDtoSchema) {}
 

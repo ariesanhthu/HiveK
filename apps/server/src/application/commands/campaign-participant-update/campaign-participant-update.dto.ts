@@ -10,11 +10,11 @@ export const CampaignOutputInputSchema = z.object({
   isScheduleForPost: z.boolean(),
   scheduledAt: z.string().datetime().nullable().optional(),
   url: z.string().url().nullable().optional(),
-});
+}).strict();
 
 export const CampaignParticipantUpdateInputSchema = z.object({
   status: z.enum(EParticipantStatus).optional(),
   outputs: z.array(CampaignOutputInputSchema).optional(),
-});
+}).strict();
 
 export class CampaignParticipantUpdateInputDto extends createZodDto(CampaignParticipantUpdateInputSchema) {}

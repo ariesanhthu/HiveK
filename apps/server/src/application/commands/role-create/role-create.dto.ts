@@ -5,7 +5,7 @@ import { ERoleType } from '@/core/enums';
 export const RoleCreateInputSchema = z.object({
   title: z.string().min(1).max(100).trim(),
   permissions: z.array(z.string()),
-  type: z.nativeEnum(ERoleType),
-});
+  type: z.enum(ERoleType),
+}).strict();
 
 export class RoleCreateInputDto extends createZodDto(RoleCreateInputSchema) {}

@@ -203,3 +203,6 @@ export * from './kpi-log-create/kpi-log-create.handler';
 
 export * from './kpi-log-terminate/kpi-log-terminate.command';
 export * from './kpi-log-terminate/kpi-log-terminate.handler';
+export * from './enterprise-verify/enterprise-verify.dto';
+export * from './enterprise-verify/enterprise-verify.command';
+export * from './enterprise-verify/enterprise-verify.handler';

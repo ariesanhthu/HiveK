@@ -9,7 +9,7 @@ export const KolPlatformInfoDtoSchema = z.object({
   avgEngagement: z.number().nonnegative(),
   topTags: z.array(z.string()),
   categories: z.array(z.string()),
-});
+}).strict();
 
 export const KolProfileDtoSchema = z.object({
   id: z.string(),
@@ -19,12 +19,12 @@ export const KolProfileDtoSchema = z.object({
   location: z.string(),
   gender: z.string(),
   bio: z.string(),
-  email: z.string().email(),
+  email: z.email(),
   phone: z.string(),
   platforms: z.array(KolPlatformInfoDtoSchema),
   isVerified: z.boolean(),
   scores: z.record(z.string(), z.any()).optional(),
-});
+}).strict();
 
 import { UserDto } from './user.dto';
 

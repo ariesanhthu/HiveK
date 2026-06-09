@@ -13,7 +13,7 @@ export const CampaignCreateInputSchema = z.object({
     maxFollowers: z.number().nonnegative().optional(),
     note: z.string().max(500).optional(),
     others: z.record(z.string(), z.any()).optional(),
-  })).optional().default([]),
+  }).strict()).optional().default([]),
 }).strict();
 
 export class CampaignCreateInputDto extends createZodDto(CampaignCreateInputSchema) {}

@@ -10,12 +10,12 @@ export const PlatformTargetItemDtoSchema = z.object({
   maxFollowers: z.number().optional(),
   note: z.string().optional(),
   others: z.record(z.string(), z.any()).optional(),
-});
+}).strict();
 
 export const RawContentItemDtoSchema = z.object({
   fileId: z.string(),
   rawContent: z.string().optional(),
-});
+}).strict();
 
 export const CampaignDtoSchema = z.object({
   id: z.string(),
@@ -25,10 +25,10 @@ export const CampaignDtoSchema = z.object({
   financialTarget: z.record(z.string(), z.any()),
   description: z.string(),
   platformTarget: z.array(PlatformTargetItemDtoSchema),
-  status: z.nativeEnum(ECampaignStatus),
+  status: z.enum(ECampaignStatus),
   collaboratorIds: z.array(z.string()),
   rawContents: z.array(RawContentItemDtoSchema),
-});
+}).strict();
 
 export class CampaignDto extends createZodDto(CampaignDtoSchema) {}
 
