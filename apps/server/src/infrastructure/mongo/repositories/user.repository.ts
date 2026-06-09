@@ -15,7 +15,7 @@ export class MongoUserRepository implements IUserRepository {
   constructor(
     @InjectModel(UserModel.name)
     private readonly userModel: Model<UserDocument>,
-    @InjectModel(EnterpriseUserModel.name)
+    @InjectModel(ERoleType.ADMIN)
     private readonly enterpriseUserModel: Model<EnterpriseUserDocument>,
     @Inject(UNIT_OF_WORK)
     private readonly uow: IUnitOfWork,
@@ -63,7 +63,7 @@ export class MongoUserRepository implements IUserRepository {
   async save(user: UserRoot): Promise<void> {
     const data = this.mapToPersistence(user);
     const isEnterprise = user instanceof EnterpriseUserRoot || user.type === ERoleType.ENTERPRISE;
-
+    console.log(data);
     if (!user.id) {
       if (isEnterprise) {
         const created = new this.enterpriseUserModel(data);
@@ -76,9 +76,9 @@ export class MongoUserRepository implements IUserRepository {
       }
     } else {
       if (isEnterprise) {
-        await this.enterpriseUserModel.findByIdAndUpdate(user.id, data, { upsert: true }).session(this.session).exec();
+        await this.enterpriseUserModel.findByIdAndUpdate(user.id, data).session(this.session).exec();
       } else {
-        await this.userModel.findByIdAndUpdate(user.id, data, { upsert: true }).session(this.session).exec();
+        await this.userModel.findByIdAndUpdate(user.id, data).session(this.session).exec();
       }
     }
   }
@@ -111,18 +111,18 @@ export class MongoUserRepository implements IUserRepository {
     const id = doc._id.toString();
 
     switch (doc.type) {
-      case 'AdminUserModel': //ERoleType.ADMIN:
+      case ERoleType.ADMIN:
         return AdminRoot.instantiate(id, {
           ...props,
           type: ERoleType.ADMIN,
         });
-      case 'EnterpriseUserModel': //ERoleType.ENTERPRISE:
+      case ERoleType.ENTERPRISE:
         return EnterpriseUserRoot.instantiate(id, {
           ...props,
           type: ERoleType.ENTERPRISE,
           enterpriseIds: (doc as any).enterprise_ids ? (doc as any).enterprise_ids.map((eid: any) => eid.toString()) : [],
         });
-      case 'KOLUserModel': //ERoleType.KOL:
+      case ERoleType.KOL:
         return KOLUserRoot.instantiate(id, {
           ...props,
           type: ERoleType.KOL,
@@ -134,6 +134,7 @@ export class MongoUserRepository implements IUserRepository {
 
   private mapToPersistence(user: UserRoot): any {
     const base = {
+      _id: user.id ? new Types.ObjectId(user.id) : undefined,
       email: user.email,
       phone: user.phone.value,
       password_hash: user.passwordHash,

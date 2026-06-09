@@ -82,6 +82,7 @@ import {
 } from '@/application/interfaces';
 
 import { RoleSeedService } from './seeding/role-seed.service';
+import { ERoleType } from '@/core/enums';
 
 @Global()
 @Module({
@@ -99,9 +100,9 @@ import { RoleSeedService } from './seeding/role-seed.service';
         name: UserModel.name,
         schema: UserSchema,
         discriminators: [
-          { name: AdminModel.name, schema: AdminSchema },
-          { name: EnterpriseUserModel.name, schema: EnterpriseUserSchema },
-          { name: KOLUserModel.name, schema: KOLUserSchema },
+          { name: ERoleType.ADMIN, schema: AdminSchema },
+          { name: ERoleType.ENTERPRISE, schema: EnterpriseUserSchema },
+          { name: ERoleType.KOL, schema: KOLUserSchema },
         ],
       },
       { name: RoleModel.name, schema: RoleSchema },

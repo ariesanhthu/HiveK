@@ -46,7 +46,7 @@ export class AuthSignUpCommandHandler implements ICommandHandler<AuthSignUpComma
 
       const phoneValue = input.phone
         ? PhoneNumberVO.create({ value: input.phone })
-        : PhoneNumberVO.create({ value: '+0000000000' });
+        : PhoneNumberVO.create({ value: '+84000000000' });
 
       const fullNameValue = input.fullName || 'DEFAULT NAME';
 
