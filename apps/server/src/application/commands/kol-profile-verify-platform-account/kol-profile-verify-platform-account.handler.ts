@@ -12,18 +12,17 @@ import { KolProfileVerifyPlatformAccountCommand } from './kol-profile-verify-pla
 import { KolProfileDto } from '@/application/dtos';
 import { KolProfileMapper } from '@/application/mappers/kol-profile.mapper';
 import { KolProfileEntity } from '@/core/entities/kol-profile.entity';
-import { KolPlatformInfo } from '@/core/value-objects/kol-platform-info.value-object';
+import { KolPlatformInfoVO } from '@/core/value-objects/kol-platform-info.value-object';
 
 @CommandHandler(KolProfileVerifyPlatformAccountCommand)
 export class KolProfileVerifyPlatformAccountCommandHandler
-  implements ICommandHandler<KolProfileVerifyPlatformAccountCommand, KolProfileDto>
-{
+  implements ICommandHandler<KolProfileVerifyPlatformAccountCommand, KolProfileDto> {
   constructor(
     @Inject(KOL_PROFILE_REPOSITORY)
     private readonly kolProfileRepository: IKolProfileRepository,
     @Inject(MESSAGE_QUEUE_SERVICE)
     private readonly mqService: IMessageQueueService,
-  ) {}
+  ) { }
 
   async execute(command: KolProfileVerifyPlatformAccountCommand): Promise<KolProfileDto> {
     const { userId, platformId, externalId, uniqueId, displayName, email } =
@@ -43,7 +42,7 @@ export class KolProfileVerifyPlatformAccountCommandHandler
       // 2. Check if the user already has a profile
       profile = await this.kolProfileRepository.findByUserId(userId);
 
-      const newPlatform = KolPlatformInfo.create({
+      const newPlatform = KolPlatformInfoVO.create({
         platformId,
         uniqueId,
         externalId,

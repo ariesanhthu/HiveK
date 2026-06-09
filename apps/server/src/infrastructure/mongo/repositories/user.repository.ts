@@ -6,7 +6,7 @@ import { UserRoot, AdminRoot, EnterpriseUserRoot, KOLUserRoot } from '@/core/agg
 import { UserModel, UserDocument } from '../schemas/user.schema';
 import { Nullable } from '@/core/types';
 import { ERoleType } from '@/core/enums';
-import { PhoneNumber } from '@/core/value-objects/phone-number.value-object';
+import { PhoneNumberVO } from '@/core/value-objects/phone-number.value-object';
 import { type IUnitOfWork, UNIT_OF_WORK } from '@/application/interfaces';
 import { MongoUnitOfWork } from '../mongo-uow';
 
@@ -71,7 +71,7 @@ export class MongoUserRepository implements IUserRepository {
     }
     const props = {
       email: doc.email,
-      phone: PhoneNumber.create({ value: doc.phone }),
+      phone: PhoneNumberVO.create({ value: doc.phone }),
       passwordHash: doc.password_hash,
       fullName: doc.full_name,
       avatar: doc.avatar ? doc.avatar.toString() : undefined,
@@ -120,9 +120,9 @@ export class MongoUserRepository implements IUserRepository {
     };
 
     if (user instanceof EnterpriseUserRoot) {
-      return { 
-        ...base, 
-        enterprise_ids: user.enterpriseIds.map(id => new Types.ObjectId(id)) 
+      return {
+        ...base,
+        enterprise_ids: user.enterpriseIds.map(id => new Types.ObjectId(id))
       };
     }
 

@@ -7,7 +7,7 @@ import { EnterpriseCreateCommand } from './enterprise-create.command';
 import { EnterpriseDto } from '@/application/dtos';
 import { EnterpriseMapper } from '@/application/mappers';
 import { type IUnitOfWork, UNIT_OF_WORK } from '@/application/interfaces';
-import { PhoneNumber } from '@/core/value-objects/phone-number.value-object';
+import { PhoneNumberVO } from '@/core/value-objects/phone-number.value-object';
 
 @CommandHandler(EnterpriseCreateCommand)
 export class EnterpriseCreateCommandHandler implements ICommandHandler<EnterpriseCreateCommand, EnterpriseDto> {
@@ -18,7 +18,7 @@ export class EnterpriseCreateCommandHandler implements ICommandHandler<Enterpris
     private readonly userRepository: IUserRepository,
     @Inject(UNIT_OF_WORK)
     private readonly uow: IUnitOfWork,
-  ) {}
+  ) { }
 
   async execute(command: EnterpriseCreateCommand): Promise<EnterpriseDto> {
     return this.uow.execute(async () => {
@@ -34,7 +34,7 @@ export class EnterpriseCreateCommandHandler implements ICommandHandler<Enterpris
         companyName: input.companyName,
         description: input.description,
         contactEmail: input.contactEmail,
-        contactPhone: input.contactPhone ? PhoneNumber.create({ value: input.contactPhone }) : undefined,
+        contactPhone: input.contactPhone ? PhoneNumberVO.create({ value: input.contactPhone }) : undefined,
         website: input.website ?? null,
         taxId: input.taxId ?? null,
         isVerified: false,

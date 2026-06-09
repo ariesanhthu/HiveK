@@ -1,7 +1,7 @@
 import { KolProfileVerifyPlatformAccountCommandHandler } from '@/application/commands/kol-profile-verify-platform-account/kol-profile-verify-platform-account.handler';
 import { KolProfileVerifyPlatformAccountCommand } from '@/application/commands/kol-profile-verify-platform-account/kol-profile-verify-platform-account.command';
 import { KolProfileEntity } from '@/core/entities/kol-profile.entity';
-import { KolPlatformInfo } from '@/core/value-objects/kol-platform-info.value-object';
+import { KolPlatformInfoVO } from '@/core/value-objects/kol-platform-info.value-object';
 
 describe('KolProfileVerifyPlatformAccountCommandHandler', () => {
   let handler: KolProfileVerifyPlatformAccountCommandHandler;

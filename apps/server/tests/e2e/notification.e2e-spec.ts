@@ -4,7 +4,7 @@ import { INestApplication } from '@nestjs/common';
 import { getModelToken } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { CommandBus } from '@nestjs/cqrs';
-import { AppModule } from './../../src/app.module';
+import { AppModule } from '../../src/infrastructure/modules/app.module';
 import { AUTH_JWT_SERVICE, type IAuthJwtService } from '@/application/interfaces/auth-jwt.interface';
 import { NotificationType, NotificationChannel } from '@/core/enums';
 import { NotificationSendCommand } from '@/application/commands';

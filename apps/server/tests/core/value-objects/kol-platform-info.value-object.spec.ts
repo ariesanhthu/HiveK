@@ -1,4 +1,4 @@
-import { KolPlatformInfo } from '@core/value-objects/kol-platform-info.value-object';
+import { KolPlatformInfoVO } from '@core/value-objects/kol-platform-info.value-object';
 
 describe('KolPlatformInfo Value Object', () => {
   const props1 = {
@@ -22,7 +22,7 @@ describe('KolPlatformInfo Value Object', () => {
   };
 
   it('should create a valid KolPlatformInfo object and get its properties', () => {
-    const platformInfo = KolPlatformInfo.create(props1);
+    const platformInfo = KolPlatformInfoVO.create(props1);
 
     expect(platformInfo).toBeDefined();
     expect(platformInfo.platformId).toBe(props1.platformId);
@@ -35,9 +35,9 @@ describe('KolPlatformInfo Value Object', () => {
   });
 
   it('should compare equality correctly based on properties', () => {
-    const vo1 = KolPlatformInfo.create(props1);
-    const vo2 = KolPlatformInfo.create({ ...props1 });
-    const vo3 = KolPlatformInfo.create(props2);
+    const vo1 = KolPlatformInfoVO.create(props1);
+    const vo2 = KolPlatformInfoVO.create({ ...props1 });
+    const vo3 = KolPlatformInfoVO.create(props2);
 
     // Same properties
     expect(vo1.equals(vo2)).toBe(true);

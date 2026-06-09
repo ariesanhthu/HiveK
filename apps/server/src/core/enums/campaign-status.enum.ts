@@ -1,7 +1,7 @@
 export enum ECampaignStatus {
-  DRAFT = 'DRAFT',
-  FINDING_KOL = 'FINDING_KOL',
-  IN_PROGRESS = 'IN_PROGRESS',
-  COMPLETED = 'COMPLETED',
-  CANCELLED = 'CANCELLED',
+  DRAFT = 'draft',
+  FINDING_KOL = 'finding_kol',
+  IN_PROGRESS = 'in_progress',
+  COMPLETED = 'completed',
+  CANCELLED = 'cancelled',
 }

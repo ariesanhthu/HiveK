@@ -7,7 +7,7 @@ import { KOLUserRoot, EnterpriseUserRoot, AdminRoot } from '@/core/aggregate-roo
 import { ERoleType } from '@/core/enums';
 import { AuthService } from '@/application/services/auth.service';
 import { type IUnitOfWork, UNIT_OF_WORK } from '@/application/interfaces';
-import { PhoneNumber } from '@/core/value-objects/phone-number.value-object';
+import { PhoneNumberVO } from '@/core/value-objects/phone-number.value-object';
 
 @CommandHandler(UserCreateCommand)
 export class UserCreateCommandHandler implements ICommandHandler<UserCreateCommand, string> {
@@ -17,7 +17,7 @@ export class UserCreateCommandHandler implements ICommandHandler<UserCreateComma
     private readonly authService: AuthService,
     @Inject(UNIT_OF_WORK)
     private readonly uow: IUnitOfWork,
-  ) {}
+  ) { }
 
   async execute(command: UserCreateCommand): Promise<string> {
     return this.uow.execute(async () => {
@@ -33,7 +33,7 @@ export class UserCreateCommandHandler implements ICommandHandler<UserCreateComma
 
       const commonProps = {
         email: normalizedEmail,
-        phone: PhoneNumber.create({ value: input.phone }),
+        phone: PhoneNumberVO.create({ value: input.phone }),
         passwordHash,
         fullName: input.fullName,
         type: input.type,

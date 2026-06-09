@@ -5,7 +5,7 @@ import { KOL_PROFILE_REPOSITORY, type IKolProfileRepository } from '@/core/inter
 import { KolProfileUpdateCommand } from './kol-profile-update.command';
 import { KolProfileDto } from '@/application/dtos';
 import { KolProfileMapper } from '@/application/mappers/kol-profile.mapper';
-import { KolPlatformInfo } from '@/core/value-objects/kol-platform-info.value-object';
+import { KolPlatformInfoVO } from '@/core/value-objects/kol-platform-info.value-object';
 import { KolProfileEntity } from '@/core/entities/kol-profile.entity';
 
 @CommandHandler(KolProfileUpdateCommand)
@@ -30,7 +30,7 @@ export class KolProfileUpdateCommandHandler implements ICommandHandler<KolProfil
         props.isVerified = value as boolean;
       } else if (key === 'platforms' && Array.isArray(value)) {
         props.platforms = value.map((p: any) =>
-          KolPlatformInfo.create({
+          KolPlatformInfoVO.create({
             platformId: p.platformId ?? p.platform_id,
             uniqueId: p.uniqueId ?? p.handle ?? '',
             externalId: p.externalId ?? p.external_id,

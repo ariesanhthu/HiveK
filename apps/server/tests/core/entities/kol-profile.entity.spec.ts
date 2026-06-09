@@ -1,5 +1,5 @@
 import { KolProfileEntity, KolProfileProps } from '@core/entities/kol-profile.entity';
-import { KolPlatformInfo } from '@core/value-objects/kol-platform-info.value-object';
+import { KolPlatformInfoVO } from '@core/value-objects/kol-platform-info.value-object';
 
 describe('KolProfileEntity', () => {
   const createDefaultProps = (): KolProfileProps => ({
@@ -18,8 +18,8 @@ describe('KolProfileEntity', () => {
     deleteBy: null,
   });
 
-  const createPlatform = (platformId: string, externalId: string) => 
-    KolPlatformInfo.create({
+  const createPlatform = (platformId: string, externalId: string) =>
+    KolPlatformInfoVO.create({
       platformId,
       uniqueId: externalId,
       externalId,

@@ -1,5 +1,4 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
 import { MongoModule } from '@/infrastructure/mongo/mongo.module';
 import { EnterpriseModule } from '@/infrastructure/modules/enterprise.module';
 import { UserModule } from '@/infrastructure/modules/user.module';
@@ -10,21 +9,19 @@ import { WebSocketModule } from '@/infrastructure/websocket/websocket.module';
 import { APP_PIPE, APP_GUARD, APP_FILTER } from '@nestjs/core';
 import { ZodValidationPipe } from 'nestjs-zod';
 import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
-import { GqlThrottlerGuard, ApiKeyGuard } from './presentation/middleware/guards';
-import { InfrastructureModule } from './infrastructure/modules/infrastructure.module';
-import { PlatformModule } from './infrastructure/modules/platform.module';
-import { KolProfileModule } from './infrastructure/modules/kol-profile.module';
-import { AnalyticsModule } from './infrastructure/modules/analytics.module';
-import { CampaignModule } from './infrastructure/modules/campaign.module';
-import { UploadedFileModule } from './infrastructure/modules/uploaded-file.module';
-import { NotificationModule } from './infrastructure/modules/notification.module';
-import { CampaignParticipantModule } from './infrastructure/modules/campaign-participant.module';
-import { TestRmqHandler } from './presentation/controllers/rmq/test-rmq.controller';
+import { GqlThrottlerGuard, ApiKeyGuard } from '../../presentation/middleware/guards';
+import { InfrastructureModule } from './infrastructure.module';
+import { PlatformModule } from './platform.module';
+import { KolProfileModule } from './kol-profile.module';
+import { AnalyticsModule } from './analytics.module';
+import { CampaignModule } from './campaign.module';
+import { UploadedFileModule } from './uploaded-file.module';
+import { NotificationModule } from './notification.module';
+import { CampaignParticipantModule } from './campaign-participant.module';
+import { TestRmqHandler } from '../../presentation/controllers/rmq/test-rmq.controller';
 import { GraphQLModule } from '@nestjs/graphql';
-import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
-import { join } from 'path';
-import { DomainExceptionFilter } from './presentation/middleware/filters/domain-exception.filter';
-import { TestKOLController } from './presentation/controllers/http/test.controller';
+import { DomainExceptionFilter } from '../../presentation/middleware/filters/domain-exception.filter';
+import { GraphqlModule } from '../graphql';
 
 @Module({
   imports: [
@@ -44,13 +41,7 @@ import { TestKOLController } from './presentation/controllers/http/test.controll
     NotificationModule,
     RabbitMQModule,
     WebSocketModule,
-    GraphQLModule.forRoot<ApolloDriverConfig>({
-      path: '/hivek/graphql',
-      driver: ApolloDriver,
-      autoSchemaFile: join(process.cwd(), 'src/infrastructure/graphql/schema.gql'),
-      playground: true,
-      context: ({ req, res }) => ({ req, res }),
-    }),
+    GraphqlModule,
     ThrottlerModule.forRoot([
       {
         ttl: 60000, // 1 minute

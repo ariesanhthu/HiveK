@@ -1,11 +1,11 @@
 import { BaseAggregateRoot } from '@/core/common/base.aggregate-root';
 import { ERoleType } from '../enums';
 import { Nullable } from '@/core/types';
-import { PhoneNumber } from '@/core/value-objects/phone-number.value-object';
+import { PhoneNumberVO } from '@/core/value-objects/phone-number.value-object';
 
 export interface UserProps {
   email: string;
-  phone: PhoneNumber;
+  phone: PhoneNumberVO;
   passwordHash: string;
   type: ERoleType;
   roleId: string;
@@ -34,7 +34,7 @@ export abstract class UserRoot<T extends UserProps = UserProps> extends BaseAggr
     return this.props.email;
   }
 
-  get phone(): PhoneNumber {
+  get phone(): PhoneNumberVO {
     return this.props.phone;
   }
 
@@ -101,7 +101,7 @@ export abstract class UserRoot<T extends UserProps = UserProps> extends BaseAggr
     this.props.updatedAt = new Date();
   }
 
-  public updatePhone(phone: PhoneNumber): void {
+  public updatePhone(phone: PhoneNumberVO): void {
     this.props.phone = phone;
     this.props.updatedAt = new Date();
   }

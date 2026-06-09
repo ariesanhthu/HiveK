@@ -1,5 +1,5 @@
 import { BaseEntity } from '../common/base.entity';
-import { KolPlatformInfo } from '../value-objects/kol-platform-info.value-object';
+import { KolPlatformInfoVO } from '../value-objects/kol-platform-info.value-object';
 import { Nullable } from '@/core/types';
 
 export interface KolProfileProps {
@@ -11,7 +11,7 @@ export interface KolProfileProps {
   bio?: string;
   email: string; // Flattened contact
   phone?: string; // Flattened contact
-  platforms: KolPlatformInfo[];
+  platforms: KolPlatformInfoVO[];
   isVerified: boolean;
   scores?: Record<string, any>;
   deleteAt: Nullable<Date>;
@@ -73,7 +73,7 @@ export class KolProfileEntity extends BaseEntity<KolProfileProps> {
     return this.props.phone;
   }
 
-  get platforms(): KolPlatformInfo[] {
+  get platforms(): KolPlatformInfoVO[] {
     return this.props.platforms;
   }
 
@@ -99,7 +99,7 @@ export class KolProfileEntity extends BaseEntity<KolProfileProps> {
     this.props.isVerified = true;
   }
 
-  public addPlatform(platform: KolPlatformInfo): void {
+  public addPlatform(platform: KolPlatformInfoVO): void {
     if (!this.props.platforms) {
       this.props.platforms = [];
     }

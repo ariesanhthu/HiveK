@@ -5,7 +5,7 @@ import { IEnterpriseRepository } from '@/core/interfaces/repositories';
 import { EnterpriseRoot } from '@/core/aggregate-roots';
 import { EnterpriseModel, EnterpriseDocument } from '../schemas';
 import { Nullable } from '@/core/types';
-import { PhoneNumber } from '@/core/value-objects/phone-number.value-object';
+import { PhoneNumberVO } from '@/core/value-objects/phone-number.value-object';
 import { type IUnitOfWork, UNIT_OF_WORK } from '@/application/interfaces';
 import { MongoUnitOfWork } from '../mongo-uow';
 
@@ -57,7 +57,7 @@ export class MongoEnterpriseRepository implements IEnterpriseRepository {
       companyName: doc.company_name,
       description: doc.description || undefined,
       contactEmail: doc.contact_email,
-      contactPhone: doc.contact_phone ? PhoneNumber.create({ value: doc.contact_phone }) : undefined,
+      contactPhone: doc.contact_phone ? PhoneNumberVO.create({ value: doc.contact_phone }) : undefined,
       website: doc.website || undefined,
       taxId: doc.tax_id || undefined,
       logoUrlId: doc.logo_url_id ? doc.logo_url_id.toString() : undefined,

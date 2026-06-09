@@ -3,7 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types, ClientSession } from 'mongoose';
 import { IKolProfileRepository } from '@/core/interfaces/repositories';
 import { KolProfileEntity } from '@/core/entities/kol-profile.entity';
-import { KolPlatformInfo } from '@/core/value-objects/kol-platform-info.value-object';
+import { KolPlatformInfoVO } from '@/core/value-objects/kol-platform-info.value-object';
 import { KolProfileModel, KolProfileDocument } from '../schemas';
 import { Nullable } from '@/core/types';
 import { type IUnitOfWork, UNIT_OF_WORK } from '@/application/interfaces';
@@ -69,7 +69,7 @@ export class MongoKolProfileRepository implements IKolProfileRepository {
 
   private mapToDomain(doc: KolProfileDocument): KolProfileEntity {
     const platforms = (doc.platforms || []).map((p: any) =>
-      KolPlatformInfo.create({
+      KolPlatformInfoVO.create({
         platformId: p.platform_id,
         uniqueId: p.uniqueId ?? p.handle ?? '',
         externalId: p.external_id,

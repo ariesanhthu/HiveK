@@ -3,7 +3,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import { getModelToken } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { AppModule } from './../../src/app.module';
+import { AppModule } from '../../src/infrastructure/modules/app.module';
 import { setupApplication } from '@/infrastructure/nest-config/app.setup';
 
 describe('Auth Domain (e2e)', () => {

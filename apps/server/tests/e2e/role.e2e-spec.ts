@@ -3,7 +3,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import { getModelToken } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
-import { AppModule } from './../../src/app.module';
+import { AppModule } from '../../src/infrastructure/modules/app.module';
 import { AUTH_JWT_SERVICE, type IAuthJwtService } from '@/application/interfaces/auth-jwt.interface';
 import { setupApplication } from '@/infrastructure/nest-config/app.setup';
 
