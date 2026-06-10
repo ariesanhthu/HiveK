@@ -48,6 +48,11 @@ export function ChartContainer({
 }: ChartContainerProps) {
   const uniqueId = React.useId();
   const chartId = `chart-${id ?? uniqueId.replaceAll(":", "")}`;
+  const [isMounted, setIsMounted] = React.useState(false);
+
+  React.useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   return (
     <ChartContext.Provider value={{ config }}>
@@ -61,9 +66,13 @@ export function ChartContainer({
         {...props}
       >
         <ChartStyle id={chartId} config={config} />
-        <RechartsPrimitive.ResponsiveContainer minWidth={0} minHeight={96} debounce={50}>
-          {children}
-        </RechartsPrimitive.ResponsiveContainer>
+        {isMounted ? (
+          <RechartsPrimitive.ResponsiveContainer minWidth={0} minHeight={96} debounce={50}>
+            {children}
+          </RechartsPrimitive.ResponsiveContainer>
+        ) : (
+          <div aria-hidden className="h-full min-h-24 w-full" />
+        )}
       </div>
     </ChartContext.Provider>
   );

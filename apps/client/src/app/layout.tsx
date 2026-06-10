@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import React from "react";
+import { AppProviders } from "@/app/providers";
 import "../styles/globals.css";
 
 const inter = Inter({
@@ -32,11 +33,12 @@ export default function RootLayout({ children }: RootLayoutProps) {
       <body
         className={`${inter.variable} bg-background-light text-foreground antialiased dark:bg-background-dark dark:text-foreground`}
       >
-        <div className="relative flex min-h-screen w-full flex-col overflow-x-hidden">
-          {children}
-        </div>
+        <AppProviders>
+          <div className="relative flex min-h-screen w-full flex-col overflow-x-hidden">
+            {children}
+          </div>
+        </AppProviders>
       </body>
     </html>
   );
 }
-
