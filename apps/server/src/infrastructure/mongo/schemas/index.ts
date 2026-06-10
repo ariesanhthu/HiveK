@@ -10,4 +10,5 @@ export * from './notification.schema';
 export * from './user-notification.schema';
 export * from './otp.schema';
 export * from './campaign-participant.schema';
+export * from './outbox.schema';
 

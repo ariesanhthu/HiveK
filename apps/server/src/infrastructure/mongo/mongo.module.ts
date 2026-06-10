@@ -19,6 +19,7 @@ import {
   UploadedFileModel, UploadedFileSchema,
   OtpModel, OtpSchema,
   KpiLogModel, KpiLogSchema,
+  OutboxModel, OutboxSchema,
 } from './schemas';
 
 // Repository imports
@@ -35,6 +36,7 @@ import {
   MongoUploadedFileRepository,
   MongoOtpRepository,
   MongoKpiLogRepository,
+  MongoOutboxRepository,
 } from './repositories';
 
 // Read Service imports
@@ -65,6 +67,7 @@ import {
   UPLOADED_FILE_REPOSITORY,
   OTP_REPOSITORY,
   KPI_LOG_REPOSITORY,
+  OUTBOX_REPOSITORY,
 } from '@/core/interfaces/repositories';
 
 // Read Service symbols
@@ -116,6 +119,7 @@ import { ERoleType } from '@/core/enums';
       { name: UploadedFileModel.name, schema: UploadedFileSchema },
       { name: OtpModel.name, schema: OtpSchema },
       { name: KpiLogModel.name, schema: KpiLogSchema },
+      { name: OutboxModel.name, schema: OutboxSchema },
     ]),
   ],
   providers: [
@@ -172,6 +176,10 @@ import { ERoleType } from '@/core/enums';
     {
       provide: KPI_LOG_REPOSITORY,
       useClass: MongoKpiLogRepository
+    },
+    {
+      provide: OUTBOX_REPOSITORY,
+      useClass: MongoOutboxRepository,
     },
     // All Read Services
     {
@@ -232,6 +240,7 @@ import { ERoleType } from '@/core/enums';
     UPLOADED_FILE_REPOSITORY,
     OTP_REPOSITORY,
     KPI_LOG_REPOSITORY,
+    OUTBOX_REPOSITORY,
     // Export all read service tokens
     USER_READ_SERVICE,
     ROLE_READ_SERVICE,

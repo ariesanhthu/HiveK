@@ -35,9 +35,11 @@ import {
 } from '@infrastructure/auth';
 
 // Modules
+import { OutboxModule } from './outbox.module';
 
 // AdminControllers
 import { AuthAdminController, AuthClientController, OAuthController } from '@/presentation/controllers'
+import { AuthUserRmqController } from '@/presentation/controllers/rmq/auth-user.rmq.controller';
 
 const COMMAND_HANDLERS = [
   AuthSignInCommandHandler,
@@ -74,17 +76,20 @@ const STRATEGIES = [
     }),
     CqrsModule,
     PassportModule.register({ defaultStrategy: 'jwt' }),
+    OutboxModule,
   ],
   controllers: [AuthAdminController, AuthClientController, OAuthController],
   providers: [
     ...COMMAND_HANDLERS,
     ...QUERY_HANDLERS,
-    ...STRATEGIES,JwtStrategy,
+    ...STRATEGIES,
+    JwtStrategy,
     AuthService,
     {
       provide: AUTH_JWT_SERVICE,  
       useClass: JwtAuthService,
     },
+    AuthUserRmqController
   ],
   exports: [JwtStrategy,  AUTH_JWT_SERVICE, AuthService],
 })

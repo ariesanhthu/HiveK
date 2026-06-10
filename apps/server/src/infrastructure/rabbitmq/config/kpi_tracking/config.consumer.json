@@ -40,7 +40,39 @@
         {
           "exchange": "kpi_exchange",
           "routing_key": "tracking.terminated"
-        }        
+        }
+      ]
+    },
+    {
+      "name": "auth_user_queue",
+      "type": "classic",
+      "options": {
+        "durable": true,
+        "exclusive": false,
+        "autoDelete": false,
+        "arguments": {}
+      },
+      "bindings": [
+        {
+          "exchange": "kpi_exchange",
+          "routing_key": "auth.user.registered"
+        }
+      ]
+    },
+    {
+      "name": "auth_email_queue",
+      "type": "classic",
+      "options": {
+        "durable": true,
+        "exclusive": false,
+        "autoDelete": false,
+        "arguments": {}
+      },
+      "bindings": [
+        {
+          "exchange": "kpi_exchange",
+          "routing_key": "auth.email.send.otp"
+        }
       ]
     }
   ],

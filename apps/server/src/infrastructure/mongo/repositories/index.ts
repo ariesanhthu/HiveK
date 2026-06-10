@@ -9,6 +9,7 @@ export * from './notification.repository';
 export * from './user-notification.repository';
 export * from './otp.repository';
 export * from './campaign-participant.repository';
+export * from './outbox.repository';
 export * from './kpi-log.repository';
 
 

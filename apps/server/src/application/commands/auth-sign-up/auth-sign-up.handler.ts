@@ -1,4 +1,4 @@
-import { CommandHandler, ICommandHandler, CommandBus } from '@nestjs/cqrs';
+import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { AuthSignUpCommand } from './auth-sign-up.command';
 import { AuthSignUpOutputDto } from './auth-sign-up.dto';
 import { Inject } from '@nestjs/common';
@@ -7,8 +7,7 @@ import { USER_REPOSITORY, type IUserRepository } from '@/core/interfaces/reposit
 import { KOLUserRoot, EnterpriseUserRoot, AdminRoot } from '@/core/aggregate-roots';
 import { ERoleType } from '@/core/enums';
 import { AuthService } from '@/application/services/auth.service';
-import { AuthSendOtpCommand } from '../auth-send-otp/auth-send-otp.command';
-import { EOtpType } from '@/core/enums/otp-type.enum';
+import { OutboxService } from '@/application/services/outbox.service';
 import { UserConflictException, RoleNotFoundException, InvalidUserTypeException } from '@/core/exceptions';
 import { type IUnitOfWork, UNIT_OF_WORK } from '@/application/interfaces';
 import { PhoneNumberVO } from '@/core/value-objects/phone-number.value-object';
@@ -21,7 +20,7 @@ export class AuthSignUpCommandHandler implements ICommandHandler<AuthSignUpComma
     @Inject(ROLE_READ_SERVICE)
     private readonly roleReadService: IRoleReadService,
     private readonly authService: AuthService,
-    private readonly commandBus: CommandBus,
+    private readonly outboxService: OutboxService,
     @Inject(UNIT_OF_WORK)
     private readonly uow: IUnitOfWork,
   ) { }
@@ -80,16 +79,14 @@ export class AuthSignUpCommandHandler implements ICommandHandler<AuthSignUpComma
 
       await this.userRepository.save(user);
 
-      try {
-        await this.commandBus.execute(
-          new AuthSendOtpCommand({
-            email: normalizedEmail,
-            type: EOtpType.CREATE_ACCOUNT,
-          }),
-        );
-      } catch (error) {
-        // Do not block signup if OTP dispatch fails
-      }
+      // Enqueue "user registered" event via Outbox.
+      // This is atomic with user creation.
+      await this.outboxService.enqueue('auth.user.registered', {
+        userId: user.id!,
+        email: normalizedEmail,
+        type: type,
+        fullName: fullNameValue,
+      });
 
       return { userId: user.id! };
     });

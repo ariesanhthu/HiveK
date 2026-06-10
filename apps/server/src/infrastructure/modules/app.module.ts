@@ -22,11 +22,14 @@ import { TestRmqHandler } from '../../presentation/controllers/rmq/test-rmq.cont
 import { GraphqlModule } from '../graphql';
 import { HttpExceptionFilter } from '@/presentation/middleware/filters';
 import { LoggingInterceptor, TransformInterceptor } from '@/presentation/middleware/interceptors';
+import { ScheduleModule } from '@nestjs/schedule';
+import { OutboxModule } from './outbox.module';
 
 @Module({
   imports: [
     // ConfigModule.forRoot({ isGlobal: true }),
     InfrastructureModule,
+    ScheduleModule.forRoot(),
     MongoModule,
     UserModule,
     EnterpriseModule,
@@ -39,6 +42,7 @@ import { LoggingInterceptor, TransformInterceptor } from '@/presentation/middlew
     CampaignParticipantModule,
     UploadedFileModule,
     NotificationModule,
+    OutboxModule,
     RabbitMQModule,
     WebSocketModule,
     GraphqlModule,
@@ -75,7 +79,7 @@ import { LoggingInterceptor, TransformInterceptor } from '@/presentation/middlew
       provide: APP_GUARD,
       useClass: GqlThrottlerGuard,
     },
-    TestRmqHandler
+    TestRmqHandler,
   ],
 })
 export class AppModule {}

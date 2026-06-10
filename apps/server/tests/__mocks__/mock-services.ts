@@ -1,5 +1,6 @@
 import { jest } from '@jest/globals';
 import { AuthService } from '@/application/services/auth.service';
+import { OutboxService } from '@/application/services/outbox.service';
 import { type IUnitOfWork } from '@/application/interfaces/uow.interface';
 import { CommandBus, QueryBus, EventBus } from '@nestjs/cqrs';
 import { ConfigService } from '@nestjs/config';
@@ -17,6 +18,11 @@ export const createMockAuthService = (): jest.Mocked<Partial<AuthService>> => ({
     accessToken: 'mock-access-token',
     refreshToken: 'mock-refresh-token',
   }),
+});
+
+export const createMockOutboxService = (): jest.Mocked<Partial<OutboxService>> => ({
+  enqueue: jest.fn().mockResolvedValue(undefined),
+  enqueueMany: jest.fn().mockResolvedValue(undefined),
 });
 
 export const createMockJwtService = (): jest.Mocked<Partial<IAuthJwtService>> => ({
