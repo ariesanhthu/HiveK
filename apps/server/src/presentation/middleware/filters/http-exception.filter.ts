@@ -37,7 +37,8 @@ export class HttpExceptionFilter implements ExceptionFilter {
     if (exception instanceof HttpException) {
       const status = exception.getStatus();
       const res = exception.getResponse();
-      const message = typeof res === 'string' ? res : (res as any).message || exception.message;
+      const rawMessage = typeof res === 'string' ? res : (res as any).message || exception.message;
+      const message = Array.isArray(rawMessage) ? rawMessage.join(',') : rawMessage;
       const code = this.httpStatusToCode(status);
       const details = this.extractDetails(res);
       const body = ApiResponseHelper.error(code, message, details);

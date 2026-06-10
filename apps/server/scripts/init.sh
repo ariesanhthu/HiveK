@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 
 # Scaffolding script
-# Usage: ./init.sh <domain|command|query> <Name>
+# Usage: ./init.sh <domain|command|query|vo|enum> <Name>
 
 set -e
 
-if [ -z "$2" ] || { [ "$1" != "domain" ] && [ "$1" != "command" ] && [ "$1" != "query" ]; }; then
-  echo "Usage: $0 <domain|command|query> <Name>"
+if [ -z "$2" ] || { [ "$1" != "domain" ] && [ "$1" != "command" ] && [ "$1" != "query" ] && [ "$1" != "vo" ] && [ "$1" != "enum" ]; }; then
+  echo "Usage: $0 <domain|command|query|vo|enum> <Name>"
   exit 1
 fi
 
@@ -382,6 +382,80 @@ EOF
       fi
     done
   fi
+  echo "Scaffolding for ${DOMAIN_NAME} (${1}) completed."
+  exit 0
+fi
+
+if [ "$1" = "vo" ]; then
+  VO_DIR="$ROOT/core/value-objects"
+  VO_PATH="$VO_DIR/${KABAB}.value-object.ts"
+  mkdir -p "$VO_DIR"
+  if [ -e "$VO_PATH" ]; then
+    echo "Value object already exists: $VO_PATH"
+  else
+    cat > "$VO_PATH" <<EOF
+import { BaseValueObject } from '@core/common/base.value-object';
+
+export interface ${CLASS_NAME}Props {
+  value: string;
+}
+
+export class ${CLASS_NAME}VO extends BaseValueObject<${CLASS_NAME}Props> {
+  private constructor(props: ${CLASS_NAME}Props) {
+    super(props);
+  }
+
+  public static create(props: ${CLASS_NAME}Props): ${CLASS_NAME}VO {
+    return new ${CLASS_NAME}VO(props);
+  }
+
+  get value(): string {
+    return this.props.value;
+  }
+}
+EOF
+    echo "Created value object: $VO_PATH"
+  fi
+
+  VO_INDEX="$ROOT/core/value-objects/index.ts"
+  if [ -f "$VO_INDEX" ]; then
+    if ! grep -q "export \* from './${KABAB}.value-object';" "$VO_INDEX"; then
+      echo "export * from './${KABAB}.value-object';" >> "$VO_INDEX"
+      echo "Updated value object index"
+    fi
+  else
+    cat > "$VO_INDEX" <<EOF
+export * from './${KABAB}.value-object';
+EOF
+    echo "Created value object index"
+  fi
+
+  echo "Scaffolding for ${DOMAIN_NAME} (${1}) completed."
+  exit 0
+fi
+
+if [ "$1" = "enum" ]; then
+  ENUM_DIR="$ROOT/core/enums"
+  ENUM_PATH="$ENUM_DIR/${KABAB}.enum.ts"
+  mkdir -p "$ENUM_DIR"
+  if [ -e "$ENUM_PATH" ]; then
+    echo "Enum already exists: $ENUM_PATH"
+  else
+    cat > "$ENUM_PATH" <<EOF
+export enum ${CLASS_NAME} {
+}
+EOF
+    echo "Created enum: $ENUM_PATH"
+  fi
+
+  ENUM_INDEX="$ROOT/core/enums/index.ts"
+  if [ -f "$ENUM_INDEX" ]; then
+    if ! grep -q "export \* from './${KABAB}.enum';" "$ENUM_INDEX"; then
+      echo "export * from './${KABAB}.enum';" >> "$ENUM_INDEX"
+      echo "Updated enum index"
+    fi
+  fi
+
   echo "Scaffolding for ${DOMAIN_NAME} (${1}) completed."
   exit 0
 fi

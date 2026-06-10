@@ -15,6 +15,7 @@ describe('Uploaded File Domain (e2e)', () => {
   let jwtService: IAuthJwtService;
   let authToken: string;
   const testAdminId = '64f7b2c9e8b3c9001f3e4e94';
+  const API_KEY = process.env.API_KEY || 'HiveK_ApiKey';
 
   const mockStorageService = {
     upload: jest.fn().mockResolvedValue({
@@ -60,6 +61,7 @@ describe('Uploaded File Domain (e2e)', () => {
       type: 'admin',
       role_id: new Types.ObjectId().toString(),
       is_email_verified: true,
+      enterprise_ids: [],
       created_at: new Date(),
       updated_at: new Date(),
     });
@@ -77,39 +79,46 @@ describe('Uploaded File Domain (e2e)', () => {
   it('should upload a file and manage its lifecycle', async () => {
     // 1. Upload File
     const uploadRes = await request(app.getHttpServer())
-      .post('/hivek/api/upload')
+      .post('/hivek/admin/v1/upload')
+      .set('x-api-key', API_KEY)
       .set('Authorization', `Bearer ${authToken}`)
       .attach('file', Buffer.from('fake image content'), 'test_avatar.jpg')
-      .field('targetType', 'CAMPAIGN')
+      .field('targetType', 'campaign')
       .field('targetId', '64f7b2c9e8b3c9001f3e4e94')
       .field('targetField', 'banner')
       .expect(201);
 
-    expect(uploadRes.body.url).toBe('https://cloudinary.com/test-file.jpg');
-    const fileId = uploadRes.body.id;
+    expect(uploadRes.body.success).toBe(true);
+    expect(uploadRes.body.data.url).toBe('https://cloudinary.com/test-file.jpg');
+    const fileId = uploadRes.body.data.id;
 
     // 2. Get uploaded file metadata
     const getRes = await request(app.getHttpServer())
-      .get(`/hivek/api/upload/${fileId}`)
+      .get(`/hivek/admin/v1/upload/${fileId}`)
+      .set('x-api-key', API_KEY)
       .set('Authorization', `Bearer ${authToken}`)
       .expect(200);
 
-    expect(getRes.body.url).toBe('https://cloudinary.com/test-file.jpg');
+    expect(getRes.body.success).toBe(true);
+    expect(getRes.body.data.url).toBe('https://cloudinary.com/test-file.jpg');
 
     // 3. Find All uploaded files
     const listRes = await request(app.getHttpServer())
-      .get('/hivek/api/upload')
+      .get('/hivek/admin/v1/upload')
+      .set('x-api-key', API_KEY)
       .set('Authorization', `Bearer ${authToken}`)
       .query({ targetId: '64f7b2c9e8b3c9001f3e4e94' })
       .expect(200);
 
+    expect(listRes.body.success).toBe(true);
     expect(listRes.body.data).toBeDefined();
     expect(listRes.body.data.length).toBeGreaterThanOrEqual(1);
 
     // 4. Restore
     await request(app.getHttpServer())
-      .patch(`/hivek/api/upload/${fileId}/restore`)
+      .patch(`/hivek/admin/v1/upload/${fileId}/restore`)
+      .set('x-api-key', API_KEY)
       .set('Authorization', `Bearer ${authToken}`)
-      .expect(200);
+      .expect(204);
   });
 });

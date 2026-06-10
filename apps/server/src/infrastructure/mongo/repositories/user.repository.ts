@@ -3,7 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types, ClientSession, Schema } from 'mongoose';
 import { IUserRepository } from '@/core/interfaces/repositories';
 import { UserRoot, AdminRoot, EnterpriseUserRoot, KOLUserRoot } from '@/core/aggregate-roots';
-import { UserModel, UserDocument, EnterpriseUserModel, EnterpriseUserDocument } from '../schemas/user.schema';
+import { UserModel, UserDocument, EnterpriseUserModel, EnterpriseUserDocument, AdminUserDocument, KOLUserDocument } from '../schemas/user.schema';
 import { Nullable } from '@/core/types';
 import { ERoleType } from '@/core/enums';
 import { PhoneNumberVO } from '@/core/value-objects/phone-number.value-object';
@@ -15,8 +15,12 @@ export class MongoUserRepository implements IUserRepository {
   constructor(
     @InjectModel(UserModel.name)
     private readonly userModel: Model<UserDocument>,
-    @InjectModel(ERoleType.ADMIN)
+    @InjectModel(ERoleType.ENTERPRISE)
     private readonly enterpriseUserModel: Model<EnterpriseUserDocument>,
+    @InjectModel(ERoleType.ADMIN)
+    private readonly adminUserModel: Model<AdminUserDocument>,
+    @InjectModel(ERoleType.KOL)
+    private readonly kolUserModel: Model<KOLUserDocument>,
     @Inject(UNIT_OF_WORK)
     private readonly uow: IUnitOfWork,
   ) { }
@@ -62,24 +66,27 @@ export class MongoUserRepository implements IUserRepository {
 
   async save(user: UserRoot): Promise<void> {
     const data = this.mapToPersistence(user);
-    const isEnterprise = user instanceof EnterpriseUserRoot || user.type === ERoleType.ENTERPRISE;
-    console.log(data);
+    let model: Model<EnterpriseUserDocument> | Model<AdminUserDocument> | Model<KOLUserDocument>
+    switch (user.type) {
+      case ERoleType.ENTERPRISE:
+        model = this.enterpriseUserModel;
+        break;
+      case ERoleType.ADMIN:
+        model = this.adminUserModel;
+        break;
+      case ERoleType.KOL:
+        model = this.kolUserModel;
+        break;
+      default:
+        throw new Error(`Unknown user type: ${user.type}`);
+    }
+
     if (!user.id) {
-      if (isEnterprise) {
-        const created = new this.enterpriseUserModel(data);
-        const saved = await created.save({ session: this.session });
-        user.setId(saved._id.toString());
-      } else {
-        const created = new this.userModel(data);
-        const saved = await created.save({ session: this.session });
-        user.setId(saved._id.toString());
-      }
+      const created = new model(data);
+      const saved = await created.save({ session: this.session });
+      user.setId(saved._id.toString());
     } else {
-      if (isEnterprise) {
-        await this.enterpriseUserModel.findByIdAndUpdate(user.id, data).session(this.session).exec();
-      } else {
-        await this.userModel.findByIdAndUpdate(user.id, data).session(this.session).exec();
-      }
+      await (model as Model<UserDocument>).findByIdAndUpdate(new Types.ObjectId(user.id), data).session(this.session).exec();
     }
   }
 

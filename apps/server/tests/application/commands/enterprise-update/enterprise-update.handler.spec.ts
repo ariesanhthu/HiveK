@@ -5,17 +5,13 @@ import { EnterpriseNotFoundException, EnterpriseForbiddenException } from '@/cor
 describe('EnterpriseUpdateCommandHandler', () => {
   let handler: EnterpriseUpdateCommandHandler;
   let mockEnterpriseRepository: any;
-  let mockUploadedFileRepository: any;
 
   beforeEach(() => {
     mockEnterpriseRepository = {
       findById: jest.fn(),
       save: jest.fn(),
     };
-    mockUploadedFileRepository = {
-      findById: jest.fn(),
-    };
-    handler = new EnterpriseUpdateCommandHandler(mockEnterpriseRepository, mockUploadedFileRepository);
+    handler = new EnterpriseUpdateCommandHandler(mockEnterpriseRepository);
   });
 
   it('should update enterprise successfully if owned by current user', async () => {
@@ -25,7 +21,7 @@ describe('EnterpriseUpdateCommandHandler', () => {
       companyName: 'Old Name',
       description: 'Old Description',
       contactEmail: 'old@test.com',
-      contactPhone: '0000000000',
+      contactPhone: '+840000000000',
       website: 'https://old.com',
       taxId: 'TAXOLD',
       logoUrlId: 'logo-old',
@@ -36,12 +32,10 @@ describe('EnterpriseUpdateCommandHandler', () => {
     };
 
     mockEnterpriseRepository.findById.mockResolvedValue(mockEnterprise);
-    mockUploadedFileRepository.findById.mockResolvedValue({});
 
     const input = {
       companyName: 'New Name',
       description: 'New Description',
-      logoUrlId: 'logo-new',
     };
 
     const command = new EnterpriseUpdateCommand('ent-123', 'user-123', input);
@@ -49,11 +43,9 @@ describe('EnterpriseUpdateCommandHandler', () => {
 
     expect(result).toBeDefined();
     expect(mockEnterpriseRepository.findById).toHaveBeenCalledWith('ent-123');
-    expect(mockUploadedFileRepository.findById).toHaveBeenCalledWith('logo-new');
     expect(mockEnterprise.update).toHaveBeenCalledWith(expect.objectContaining({
       companyName: 'New Name',
       description: 'New Description',
-      logoUrlId: 'logo-new',
     }));
     expect(mockEnterpriseRepository.save).toHaveBeenCalledWith(mockEnterprise);
   });

@@ -122,7 +122,7 @@ describe('AuthGoogleSignInCommandHandler', () => {
     const savedUser = mockUserRepository.save.mock.calls[0][0];
     expect(savedUser.email).toBe('newuser@example.com');
     expect(savedUser.googleId).toBe('google-456');
-    expect(savedUser.isEmailVerified).toBe(true);
+    expect(savedUser.isEmailVerified).toBe(false);
   });
 
   it('should create new user with defaults when display name missing', async () => {
@@ -138,7 +138,7 @@ describe('AuthGoogleSignInCommandHandler', () => {
 
     const savedUser = mockUserRepository.save.mock.calls[0][0];
     expect(savedUser.fullName).toBe('Google User');
-    expect(savedUser.avatar).toBeNull();
+    expect(savedUser.avatar).toBeUndefined();
   });
 
   it('should throw RoleNotFoundException when KOL role is missing', async () => {

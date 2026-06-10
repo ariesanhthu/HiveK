@@ -68,6 +68,7 @@ UserSchema.plugin(softDeletePlugin);
 @Schema()
 export class AdminModel extends UserModel {}
 export const AdminSchema = SchemaFactory.createForClass(AdminModel);
+export type AdminUserDocument = HydratedDocument<AdminModel>;
 AdminSchema.plugin(softDeletePlugin);
 
 @Schema()
@@ -82,4 +83,5 @@ EnterpriseUserSchema.plugin(softDeletePlugin);
 @Schema()
 export class KOLUserModel extends UserModel {}
 export const KOLUserSchema = SchemaFactory.createForClass(KOLUserModel);
+export type KOLUserDocument = HydratedDocument<KOLUserModel>;
 KOLUserSchema.plugin(softDeletePlugin);

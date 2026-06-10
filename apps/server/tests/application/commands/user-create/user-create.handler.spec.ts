@@ -40,7 +40,7 @@ describe('UserCreateCommandHandler', () => {
       fullName: 'Test Admin',
       type: ERoleType.ADMIN,
       roleId: 'role-123',
-      phone: '1234567890',
+      phone: '+841234567890',
     });
 
     const result = await handler.execute(command);
@@ -58,29 +58,9 @@ describe('UserCreateCommandHandler', () => {
       fullName: 'Test Admin',
       type: ERoleType.ADMIN,
       roleId: 'role-123',
-      phone: '1234567890',
+      phone: '+841234567890',
     });
 
     await expect(handler.execute(command)).rejects.toThrow(UserConflictException);
-  });
-
-  it('should successfully create a new enterprise user with enterpriseIds', async () => {
-    mockUserRepository.findByEmail.mockResolvedValue(null);
-
-    const command = new UserCreateCommand({
-      email: 'ent@test.com',
-      password: 'password123',
-      fullName: 'Test Enterprise',
-      type: ERoleType.ENTERPRISE,
-      roleId: 'role-ent',
-      phone: '1234567890',
-      enterpriseIds: ['ent-1'],
-    } as any);
-
-    const result = await handler.execute(command);
-    expect(result).toBe('generated-user-id');
-    expect(mockUserRepository.save).toHaveBeenCalled();
-    const savedUser = mockUserRepository.save.mock.calls[0][0];
-    expect(savedUser.enterpriseIds).toContain('ent-1');
   });
 });

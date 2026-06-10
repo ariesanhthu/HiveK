@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { QueryBus } from '@nestjs/cqrs';
 import type { GraphQLResolveInfo } from 'graphql';
-import { KolProfileResolver } from '@/presentation/resolvers/kol-profile.resolver';
+import { KolProfileResolver } from '@/presentation/controllers/resolvers/kol-profile.resolver';
 import { KolProfileGetByIdQuery } from '@/application/queries';
 import { ProjectionDto } from '@/application/dtos/projection.dto';
 import graphqlFields from 'graphql-fields';

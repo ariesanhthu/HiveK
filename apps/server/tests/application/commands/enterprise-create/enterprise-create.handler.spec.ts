@@ -31,7 +31,7 @@ describe('EnterpriseCreateCommandHandler', () => {
     mockEnterpriseRepository.findByUserId.mockResolvedValue(null);
     const mockUser = EnterpriseUserRoot.create({
         email: 'ent@test.com',
-        phone: '123',
+        phone: '+84123456789',
         passwordHash: 'hash',
         fullName: 'Ent User',
         type: ERoleType.ENTERPRISE,
@@ -45,7 +45,7 @@ describe('EnterpriseCreateCommandHandler', () => {
       companyName: 'Test Company',
       description: 'Test Description',
       contactEmail: 'contact@test.com',
-      contactPhone: '1234567890',
+      contactPhone: '+841234567890',
       website: 'https://test.com',
       taxId: 'TAX123',
     };

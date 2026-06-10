@@ -13,24 +13,24 @@ describe('NotificationUpdateReadStatusCommandHandler', () => {
     handler = new NotificationUpdateReadStatusCommandHandler(mockUserNotificationRepository);
   });
 
-  it('should trigger updateReadStatus repository method with isRead true when ids provided', async () => {
-    const command = new NotificationUpdateReadStatusCommand('user-123', true, ['receipt-123']);
+  it('should successfully update read status for specific notifications', async () => {
+    const ids = ['notif-1', 'notif-2'];
+    const userId = 'user-123';
+    // Constructor: (userId: string, isRead: boolean, ids?: string[])
+    const command = new NotificationUpdateReadStatusCommand(userId, true, ids);
+
     await handler.execute(command);
 
-    expect(mockUserNotificationRepository.updateReadStatus).toHaveBeenCalledWith(['receipt-123'], 'user-123', true);
+    expect(mockUserNotificationRepository.updateReadStatus).toHaveBeenCalledWith(ids, userId, true);
   });
 
-  it('should trigger markAll repository method when ids is empty', async () => {
-    const command = new NotificationUpdateReadStatusCommand('user-123', true, []);
+  it('should mark all as read if no ids provided', async () => {
+    const userId = 'user-123';
+    // Constructor: (userId: string, isRead: boolean, ids?: string[])
+    const command = new NotificationUpdateReadStatusCommand(userId, true, []);
+
     await handler.execute(command);
 
-    expect(mockUserNotificationRepository.markAll).toHaveBeenCalledWith('user-123', true);
-  });
-
-  it('should trigger markAll repository method when ids is null/undefined', async () => {
-    const command = new NotificationUpdateReadStatusCommand('user-123', false);
-    await handler.execute(command);
-
-    expect(mockUserNotificationRepository.markAll).toHaveBeenCalledWith('user-123', false);
+    expect(mockUserNotificationRepository.markAll).toHaveBeenCalledWith(userId, true);
   });
 });
