@@ -1,9 +1,10 @@
-import { Module } from '@nestjs/common';
+import { Global, Module } from '@nestjs/common';
 import { OutboxService } from '@/application/services/outbox.service';
 import { OutboxProcessorService } from '@/application/services/outbox-processor.service';
 import { MongoModule } from '../mongo/mongo.module';
 import { RabbitMQModule } from '../rabbitmq/rabbitmq.module';
 
+@Global()
 @Module({
   imports: [
     MongoModule,

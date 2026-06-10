@@ -24,6 +24,8 @@ import {
     NotificationClientController 
 } from '@/presentation/controllers'
 
+import { EmailRmqController } from '@/presentation/controllers';
+
 const COMMAND_HANDLERS = [
   NotificationSendCommandHandler,
   NotificationUpdateReadStatusCommandHandler,
@@ -39,7 +41,7 @@ const EVENT_HANDLERS = [InAppNotificationHandler, EmailNotificationHandler];
 @Module({
   imports: [CqrsModule, EnterpriseModule],
   controllers: [NotificationAdminController, NotificationClientController],
-  providers: [...COMMAND_HANDLERS, ...QUERY_HANDLERS, ...EVENT_HANDLERS],
+  providers: [...COMMAND_HANDLERS, ...QUERY_HANDLERS, ...EVENT_HANDLERS, EmailRmqController],
   exports: [],
 })
 export class NotificationModule {}

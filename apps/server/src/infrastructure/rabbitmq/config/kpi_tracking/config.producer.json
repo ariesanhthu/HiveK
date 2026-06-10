@@ -27,8 +27,10 @@
   "routes": {
     "tracking.start": "tracking.start",
     "tracking.stop": "tracking.stop",
-    "auth.email.send.otp": "auth.email.send.otp",
-    "auth.user.registered": "auth.user.registered"
+    "email.send": "email.send",
+    "auth.user.registered": "auth.user.registered",
+    "enterprise.user.added": "enterprise.user.added",
+    "enterprise.user.revoked": "enterprise.user.revoked"
   },
   "publish": {
     "persistent": true,

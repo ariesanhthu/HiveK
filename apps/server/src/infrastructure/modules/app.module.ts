@@ -79,7 +79,7 @@ import { OutboxModule } from './outbox.module';
       provide: APP_GUARD,
       useClass: GqlThrottlerGuard,
     },
-    TestRmqHandler,
+    TestRmqHandler
   ],
 })
 export class AppModule {}

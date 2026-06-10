@@ -3,27 +3,26 @@ import { EnterpriseAddUserCommand } from '@/application/commands/enterprise-add-
 import { EnterpriseUserRoot, EnterpriseRoot } from '@/core/aggregate-roots';
 import { ERoleType } from '@/core/enums';
 import { UserNotFoundException, InvalidUserTypeException, EnterpriseNotFoundException, EnterpriseForbiddenException } from '@/core/exceptions';
-import { UserAddedToEnterpriseEvent } from '@/application/events';
 import { createMockUserRepository, createMockEnterpriseRepository } from '../../../__mocks__/mock-repositories';
-import { createMockUnitOfWork, createMockEventBus } from '../../../__mocks__/mock-services';
+import { createMockUnitOfWork, createMockOutboxService } from '../../../__mocks__/mock-services';
 
 describe('EnterpriseAddUserCommandHandler', () => {
   let handler: EnterpriseAddUserCommandHandler;
   let mockUserRepository: ReturnType<typeof createMockUserRepository>;
   let mockEnterpriseRepository: ReturnType<typeof createMockEnterpriseRepository>;
-  let mockEventBus: ReturnType<typeof createMockEventBus>;
+  let mockOutboxService: ReturnType<typeof createMockOutboxService>;
   let mockUow: ReturnType<typeof createMockUnitOfWork>;
 
   beforeEach(() => {
     mockUserRepository = createMockUserRepository();
     mockEnterpriseRepository = createMockEnterpriseRepository();
-    mockEventBus = createMockEventBus();
+    mockOutboxService = createMockOutboxService();
     mockUow = createMockUnitOfWork();
 
     handler = new EnterpriseAddUserCommandHandler(
         mockUserRepository, 
         mockEnterpriseRepository, 
-        mockEventBus as any, 
+        mockOutboxService as any,
         mockUow
     );
   });
@@ -64,7 +63,7 @@ describe('EnterpriseAddUserCommandHandler', () => {
   };
 
   describe('Happy Paths', () => {
-    it('should add user to enterprise successfully and publish event', async () => {
+    it('should add user to enterprise successfully and enqueue outbox event', async () => {
       const enterprise = createMockEnterprise();
       mockEnterpriseRepository.findById.mockResolvedValue(enterprise);
       
@@ -76,7 +75,10 @@ describe('EnterpriseAddUserCommandHandler', () => {
 
       expect(member.enterpriseIds).toContain(enterpriseId);
       expect(mockUserRepository.saveMany).toHaveBeenCalledWith([member]);
-      expect(mockEventBus.publish).toHaveBeenCalledWith(expect.any(UserAddedToEnterpriseEvent));
+      expect(mockOutboxService.enqueueMany).toHaveBeenCalledWith([expect.objectContaining({
+        topic: 'enterprise_user_added',
+        payload: expect.objectContaining({ userId: memberId })
+      })]);
     });
 
     it('should filter out users who are already members', async () => {
@@ -91,9 +93,11 @@ describe('EnterpriseAddUserCommandHandler', () => {
         await handler.execute(command);
   
         expect(memberNew.enterpriseIds).toContain(enterpriseId);
-        expect(mockUserRepository.saveMany).toHaveBeenCalledWith([memberNew]); // Only 'new' should be saved
-        expect(mockEventBus.publish).toHaveBeenCalledTimes(1);
-        expect(mockEventBus.publish).toHaveBeenCalledWith(expect.objectContaining({ userId: 'new' }));
+        expect(mockUserRepository.saveMany).toHaveBeenCalledWith([memberNew]); 
+        expect(mockOutboxService.enqueueMany).toHaveBeenCalledWith([expect.objectContaining({
+            topic: 'enterprise_user_added',
+            payload: expect.objectContaining({ userId: 'new' })
+        })]);
     });
   });
 

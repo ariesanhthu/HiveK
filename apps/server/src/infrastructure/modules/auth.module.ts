@@ -39,7 +39,7 @@ import { OutboxModule } from './outbox.module';
 
 // AdminControllers
 import { AuthAdminController, AuthClientController, OAuthController } from '@/presentation/controllers'
-import { AuthUserRmqController } from '@/presentation/controllers/rmq/auth-user.rmq.controller';
+import { AuthUserRmqController } from '@/presentation/controllers';
 
 const COMMAND_HANDLERS = [
   AuthSignInCommandHandler,

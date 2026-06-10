@@ -4,6 +4,7 @@ import { USER_REPOSITORY, ENTERPRISE_REPOSITORY, type IUserRepository, type IEnt
 import { EnterpriseRevokeUserCommand } from './enterprise-revoke-user.command';
 import { EnterpriseUserRoot } from '@/core/aggregate-roots';
 import { UserNotFoundException, InvalidUserTypeException, EnterpriseNotFoundException, EnterpriseForbiddenException } from '@/core/exceptions';
+import { OutboxService } from '@/application/services/outbox.service';
 import { type IUnitOfWork, UNIT_OF_WORK } from '@/application/interfaces';
 import { ERoleType } from '@/core/enums';
 
@@ -14,6 +15,7 @@ export class EnterpriseRevokeUserCommandHandler implements ICommandHandler<Enter
     private readonly userRepository: IUserRepository,
     @Inject(ENTERPRISE_REPOSITORY)
     private readonly enterpriseRepository: IEnterpriseRepository,
+    private readonly outboxService: OutboxService,
     @Inject(UNIT_OF_WORK)
     private readonly uow: IUnitOfWork,
   ) {}
@@ -54,6 +56,16 @@ export class EnterpriseRevokeUserCommandHandler implements ICommandHandler<Enter
 
       if (usersToUpdate.length > 0) {
         await this.userRepository.saveMany(usersToUpdate);
+
+        // Enqueue outbox messages for revoked users
+        await this.outboxService.enqueueMany(usersToUpdate.map(user => ({
+            topic: 'enterprise.user.revoked',
+            payload: {
+                userId: user.id!,
+                enterpriseId,
+                companyName: enterprise.companyName,
+            }
+        })));
       }
     });
   }

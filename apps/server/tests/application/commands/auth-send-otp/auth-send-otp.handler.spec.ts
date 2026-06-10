@@ -3,24 +3,24 @@ import { AuthSendOtpCommand } from '@/application/commands/auth-send-otp/auth-se
 import { EOtpType } from '@/core/enums/otp-type.enum';
 import { OtpRateLimitException } from '@/core/exceptions';
 import { createMockOtpRepository } from '../../../__mocks__/mock-repositories';
-import { createMockAuthService, createMockMailerService, createMockUnitOfWork } from '../../../__mocks__/mock-services';
+import { createMockAuthService, createMockOutboxService, createMockUnitOfWork } from '../../../__mocks__/mock-services';
 
 describe('AuthSendOtpCommandHandler', () => {
   let handler: AuthSendOtpCommandHandler;
   let mockOtpRepository: ReturnType<typeof createMockOtpRepository>;
-  let mockMailerService: ReturnType<typeof createMockMailerService>;
+  let mockOutboxService: ReturnType<typeof createMockOutboxService>;
   let mockAuthService: ReturnType<typeof createMockAuthService>;
   let mockUow: ReturnType<typeof createMockUnitOfWork>;
 
   beforeEach(() => {
     mockOtpRepository = createMockOtpRepository();
-    mockMailerService = createMockMailerService();
+    mockOutboxService = createMockOutboxService();
     mockAuthService = createMockAuthService();
     mockUow = createMockUnitOfWork();
 
     handler = new AuthSendOtpCommandHandler(
       mockOtpRepository,
-      mockMailerService as any,
+      mockOutboxService as any,
       mockAuthService as any,
       mockUow,
     );
@@ -52,9 +52,9 @@ describe('AuthSendOtpCommandHandler', () => {
         expect.any(Date),
       );
       
-      expect(mockMailerService.sendMail).toHaveBeenCalledWith(expect.objectContaining({
-        to: 'user@example.com',
-        subject: expect.stringContaining('HiveK Verification Code'),
+      expect(mockOutboxService.enqueue).toHaveBeenCalledWith('email_send', expect.objectContaining({
+        email: 'user@example.com',
+        type,
       }));
       expect(mockUow.execute).toHaveBeenCalled();
     });
@@ -69,7 +69,7 @@ describe('AuthSendOtpCommandHandler', () => {
 
       await expect(handler.execute(command)).rejects.toThrow(OtpRateLimitException);
       expect(mockOtpRepository.save).not.toHaveBeenCalled();
-      expect(mockMailerService.sendMail).not.toHaveBeenCalled();
+      expect(mockOutboxService.enqueue).not.toHaveBeenCalled();
     });
   });
 });

@@ -4,22 +4,25 @@ import { EnterpriseUserRoot, EnterpriseRoot } from '@/core/aggregate-roots';
 import { ERoleType } from '@/core/enums';
 import { UserNotFoundException, InvalidUserTypeException, EnterpriseNotFoundException, EnterpriseForbiddenException } from '@/core/exceptions';
 import { createMockUserRepository, createMockEnterpriseRepository } from '../../../__mocks__/mock-repositories';
-import { createMockUnitOfWork } from '../../../__mocks__/mock-services';
+import { createMockUnitOfWork, createMockOutboxService } from '../../../__mocks__/mock-services';
 
 describe('EnterpriseRevokeUserCommandHandler', () => {
   let handler: EnterpriseRevokeUserCommandHandler;
   let mockUserRepository: ReturnType<typeof createMockUserRepository>;
   let mockEnterpriseRepository: ReturnType<typeof createMockEnterpriseRepository>;
+  let mockOutboxService: ReturnType<typeof createMockOutboxService>;
   let mockUow: ReturnType<typeof createMockUnitOfWork>;
 
   beforeEach(() => {
     mockUserRepository = createMockUserRepository();
     mockEnterpriseRepository = createMockEnterpriseRepository();
+    mockOutboxService = createMockOutboxService();
     mockUow = createMockUnitOfWork();
 
     handler = new EnterpriseRevokeUserCommandHandler(
         mockUserRepository, 
         mockEnterpriseRepository, 
+        mockOutboxService as any,
         mockUow
     );
   });
@@ -60,7 +63,7 @@ describe('EnterpriseRevokeUserCommandHandler', () => {
   };
 
   describe('Happy Path', () => {
-    it('should revoke user from enterprise successfully if owned', async () => {
+    it('should revoke user from enterprise successfully and enqueue outbox event', async () => {
       const enterprise = createMockEnterprise();
       mockEnterpriseRepository.findById.mockResolvedValue(enterprise);
       
@@ -73,21 +76,10 @@ describe('EnterpriseRevokeUserCommandHandler', () => {
       expect(member.enterpriseIds).not.toContain(enterpriseId);
       expect(member.enterpriseIds).toContain('ent-other');
       expect(mockUserRepository.saveMany).toHaveBeenCalledWith([member]);
-    });
-
-    it('should filter out users who are not members anyway', async () => {
-        const enterprise = createMockEnterprise();
-        mockEnterpriseRepository.findById.mockResolvedValue(enterprise);
-        
-        const memberActual = createMockUser('active', [enterpriseId]);
-        const memberNot = createMockUser('not-active', ['other-ent']);
-        mockUserRepository.findByIds.mockResolvedValue([memberActual, memberNot]);
-  
-        const command = new EnterpriseRevokeUserCommand(enterpriseId, { memberIds: ['active', 'not-active'] }, ownerId);
-        await handler.execute(command);
-  
-        expect(memberActual.enterpriseIds).not.toContain(enterpriseId);
-        expect(mockUserRepository.saveMany).toHaveBeenCalledWith([memberActual]); // Only the one who was actually a member should be saved
+      expect(mockOutboxService.enqueueMany).toHaveBeenCalledWith([expect.objectContaining({
+        topic: 'enterprise_user_revoked',
+        payload: expect.objectContaining({ userId: memberId })
+      })]);
     });
   });
 

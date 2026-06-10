@@ -1,10 +1,10 @@
-import { CommandHandler, ICommandHandler, EventBus } from '@nestjs/cqrs';
+import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { Inject } from '@nestjs/common';
 import { USER_REPOSITORY, ENTERPRISE_REPOSITORY, type IUserRepository, type IEnterpriseRepository } from '@/core/interfaces/repositories';
 import { EnterpriseAddUserCommand } from './enterprise-add-user.command';
 import { EnterpriseUserRoot } from '@/core/aggregate-roots';
 import { UserNotFoundException, InvalidUserTypeException, EnterpriseNotFoundException, EnterpriseForbiddenException } from '@/core/exceptions';
-import { UserAddedToEnterpriseEvent } from '@/application/events';
+import { OutboxService } from '@/application/services/outbox.service';
 import { type IUnitOfWork, UNIT_OF_WORK } from '@/application/interfaces';
 import { ERoleType } from '@/core/enums';
 
@@ -15,7 +15,7 @@ export class EnterpriseAddUserCommandHandler implements ICommandHandler<Enterpri
     private readonly userRepository: IUserRepository,
     @Inject(ENTERPRISE_REPOSITORY)
     private readonly enterpriseRepository: IEnterpriseRepository,
-    private readonly eventBus: EventBus,
+    private readonly outboxService: OutboxService,
     @Inject(UNIT_OF_WORK)
     private readonly uow: IUnitOfWork,
   ) {}
@@ -55,9 +55,16 @@ export class EnterpriseAddUserCommandHandler implements ICommandHandler<Enterpri
 
       if (usersToUpdate.length > 0) {
         await this.userRepository.saveMany(usersToUpdate);
-        for (const user of usersToUpdate) {
-          this.eventBus.publish(new UserAddedToEnterpriseEvent(user.id!, enterpriseId));
-        }
+        
+        // Enqueue outbox messages for added users
+        await this.outboxService.enqueueMany(usersToUpdate.map(user => ({
+            topic: 'enterprise.user.added',
+            payload: {
+                userId: user.id!,
+                enterpriseId,
+                companyName: enterprise.companyName,
+            }
+        })));
       }
     });
   }

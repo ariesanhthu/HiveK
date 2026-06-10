@@ -3,8 +3,8 @@ import { Inject } from '@nestjs/common';
 import { AuthSendOtpCommand } from './auth-send-otp.command';
 import { AuthSendOtpOutputDto } from './auth-send-otp.dto';
 import { OTP_REPOSITORY, type IOtpRepository } from '@/core/interfaces/repositories/otp.repository';
-import { MAILER_SERVICE, type IMailerService } from '@/application/interfaces/mailer.interface';
 import { AuthService } from '@/application/services/auth.service';
+import { OutboxService } from '@/application/services/outbox.service';
 import { EOtpType } from '@/core/enums/otp-type.enum';
 import { OtpRateLimitException } from '@/core/exceptions';
 import { type IUnitOfWork, UNIT_OF_WORK } from '@/application/interfaces';
@@ -15,8 +15,7 @@ export class AuthSendOtpCommandHandler implements ICommandHandler<AuthSendOtpCom
   constructor(
     @Inject(OTP_REPOSITORY)
     private readonly otpRepository: IOtpRepository,
-    @Inject(MAILER_SERVICE)
-    private readonly mailerService: IMailerService,
+    private readonly outboxService: OutboxService,
     private readonly authService: AuthService,
     @Inject(UNIT_OF_WORK)
     private readonly uow: IUnitOfWork,
@@ -44,31 +43,11 @@ export class AuthSendOtpCommandHandler implements ICommandHandler<AuthSendOtpCom
       // Save new OTP
       await this.otpRepository.save(normalizedEmail, code, input.type, expiresAt);
 
-      // Map enum type to user-friendly purpose label
-      let purpose = '';
-      switch (input.type) {
-        case EOtpType.CREATE_ACCOUNT:
-          purpose = 'Create Account';
-          break;
-        case EOtpType.RESET_PASSWORD:
-          purpose = 'Reset Password';
-          break;
-        case EOtpType.CHANGE_PASSWORD:
-          purpose = 'Change Password';
-          break;
-        default:
-          purpose = 'Verify Account';
-      }
-
-      // Send email synchronously (called within background worker context)
-      await this.mailerService.sendMail({
-        to: normalizedEmail,
-        subject: `HiveK Verification Code - ${purpose}`,
-        template: 'otp',
-        context: {
-          code,
-          purpose,
-        },
+      // Enqueue email dispatch via Outbox pattern
+      await this.outboxService.enqueue('email.send', {
+        email: normalizedEmail,
+        code,
+        type: input.type,
       });
 
       return { success: true };
