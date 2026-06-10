@@ -1,0 +1,1 @@
+"""Crawler adapters for social platform mock and real data."""
