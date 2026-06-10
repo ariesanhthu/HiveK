@@ -90,6 +90,10 @@ export class MongoUserRepository implements IUserRepository {
     }
   }
 
+  async saveMany(users: UserRoot[]): Promise<void> {
+    await Promise.all(users.map(u => this.save(u)));
+  }
+
   async delete(id: string): Promise<void> {
     await this.userModel.findByIdAndDelete(id).session(this.session).exec();
   }

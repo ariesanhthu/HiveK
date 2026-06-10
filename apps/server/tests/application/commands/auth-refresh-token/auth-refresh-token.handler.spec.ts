@@ -2,93 +2,100 @@ import { AuthRefreshTokenCommandHandler } from '@/application/commands/auth-refr
 import { AuthRefreshTokenCommand } from '@/application/commands/auth-refresh-token/auth-refresh-token.command';
 import { ERoleType } from '@/core/enums';
 import { InvalidRefreshTokenException, UserNotFoundException } from '@/core/exceptions';
+import { createMockUserRepository } from '../../../__mocks__/mock-repositories';
+import { createMockAuthService, createMockJwtService } from '../../../__mocks__/mock-services';
 
 describe('AuthRefreshTokenCommandHandler', () => {
   let handler: AuthRefreshTokenCommandHandler;
-  let mockUserRepository: any;
-  let mockJwtService: any;
-  let mockAuthService: any;
+  let mockUserRepository: ReturnType<typeof createMockUserRepository>;
+  let mockJwtService: ReturnType<typeof createMockJwtService>;
+  let mockAuthService: ReturnType<typeof createMockAuthService>;
 
   beforeEach(() => {
-    mockUserRepository = {
-      findById: jest.fn(),
-      save: jest.fn(),
-    };
-    mockJwtService = {
-      verify: jest.fn(),
-    };
-    mockAuthService = {
-      generateTokens: jest.fn(),
-    };
+    mockUserRepository = createMockUserRepository();
+    mockJwtService = createMockJwtService();
+    mockAuthService = createMockAuthService();
+
     handler = new AuthRefreshTokenCommandHandler(
       mockUserRepository,
-      mockJwtService,
+      mockJwtService as any,
       mockAuthService as any,
     );
   });
 
-  it('should successfully refresh token', async () => {
-    const command = new AuthRefreshTokenCommand({ refreshToken: 'validRefreshToken' });
-    const mockUser = {
-      id: 'user-123',
-      email: 'test@example.com',
-      roleId: 'role-123',
-      type: ERoleType.KOL,
-      refreshToken: 'validRefreshToken',
-      updateRefreshToken: jest.fn(),
-    } as any;
-
-    mockJwtService.verify.mockReturnValue({ sub: 'user-123' });
-    mockUserRepository.findById.mockResolvedValue(mockUser);
-    mockAuthService.generateTokens.mockResolvedValue({
-      accessToken: 'newAccessToken',
-      refreshToken: 'newRefreshToken',
-    });
-
-    const result = await handler.execute(command);
-
-    expect(result).toEqual({
-      accessToken: 'newAccessToken',
-      refreshToken: 'newRefreshToken',
-    });
-    expect(mockJwtService.verify).toHaveBeenCalledWith('validRefreshToken');
-    expect(mockUserRepository.findById).toHaveBeenCalledWith('user-123');
-    expect(mockAuthService.generateTokens).toHaveBeenCalledWith({
-      sub: 'user-123',
-      email: 'test@example.com',
-      role: 'role-123',
-      type: ERoleType.KOL,
-    });
-    expect(mockUserRepository.save).toHaveBeenCalledWith(mockUser);
+  const createMockUser = (overrides = {}) => ({
+    id: 'user-123',
+    email: 'test@example.com',
+    roleId: 'role-123',
+    type: ERoleType.KOL,
+    refreshToken: 'valid-token',
+    updateRefreshToken: jest.fn(),
+    ...overrides,
   });
 
-  it('should throw error if token verification fails', async () => {
-    const command = new AuthRefreshTokenCommand({ refreshToken: 'invalidRefreshToken' });
-    mockJwtService.verify.mockImplementation(() => {
-      throw new Error('jwt expired');
+  describe('Happy Paths', () => {
+    it('should successfully refresh tokens', async () => {
+      const input = { refreshToken: 'valid-token' };
+      const command = new AuthRefreshTokenCommand(input);
+      const mockUser = createMockUser();
+
+      mockJwtService.verify!.mockReturnValue({ sub: 'user-123' } as any);
+      mockUserRepository.findById.mockResolvedValue(mockUser as any);
+      mockAuthService.generateTokens!.mockResolvedValue({
+        accessToken: 'new-at',
+        refreshToken: 'new-rt',
+      });
+
+      const result = await handler.execute(command);
+
+      expect(result).toEqual({
+        accessToken: 'new-at',
+        refreshToken: 'new-rt',
+      });
+      expect(mockJwtService.verify).toHaveBeenCalledWith('valid-token');
+      expect(mockUserRepository.findById).toHaveBeenCalledWith('user-123');
+      expect(mockAuthService.generateTokens).toHaveBeenCalledWith({
+        sub: 'user-123',
+        email: 'test@example.com',
+        role: 'role-123',
+        type: ERoleType.KOL,
+      });
+      expect(mockUser.updateRefreshToken).toHaveBeenCalledWith('new-rt');
+      expect(mockUserRepository.save).toHaveBeenCalledWith(mockUser);
+    });
+  });
+
+  describe('Sad Paths', () => {
+    it('should throw InvalidRefreshTokenException if JWT verification fails', async () => {
+      const input = { refreshToken: 'invalid' };
+      const command = new AuthRefreshTokenCommand(input);
+
+      mockJwtService.verify!.mockImplementation(() => { throw new Error('expired'); });
+
+      await expect(handler.execute(command)).rejects.toThrow(InvalidRefreshTokenException);
+      expect(mockUserRepository.findById).not.toHaveBeenCalled();
     });
 
-    await expect(handler.execute(command)).rejects.toThrow(InvalidRefreshTokenException);
-  });
+    it('should throw UserNotFoundException if user in token does not exist', async () => {
+      const input = { refreshToken: 'valid-token' };
+      const command = new AuthRefreshTokenCommand(input);
 
-  it('should throw error if user is not found', async () => {
-    const command = new AuthRefreshTokenCommand({ refreshToken: 'validRefreshToken' });
-    mockJwtService.verify.mockReturnValue({ sub: 'user-123' });
-    mockUserRepository.findById.mockResolvedValue(null);
+      mockJwtService.verify!.mockReturnValue({ sub: 'nonexistent' } as any);
+      mockUserRepository.findById.mockResolvedValue(null);
 
-    await expect(handler.execute(command)).rejects.toThrow(UserNotFoundException);
-  });
+      await expect(handler.execute(command)).rejects.toThrow(UserNotFoundException);
+    });
 
-  it('should throw error if refresh token does not match persisted token', async () => {
-    const command = new AuthRefreshTokenCommand({ refreshToken: 'differentRefreshToken' });
-    const mockUser = {
-      id: 'user-123',
-      refreshToken: 'validRefreshToken',
-    } as any;
+    it('should throw InvalidRefreshTokenException if token does not match stored token', async () => {
+      const input = { refreshToken: 'old-token' };
+      const command = new AuthRefreshTokenCommand(input);
+      const mockUser = createMockUser({ refreshToken: 'current-token' });
 
-    mockJwtService.verify.mockReturnValue({ sub: 'user-123' });
-    mockUserRepository.findById.mockResolvedValue(mockUser);
+      mockJwtService.verify!.mockReturnValue({ sub: 'user-123' } as any);
+      mockUserRepository.findById.mockResolvedValue(mockUser as any);
 
-    await expect(handler.execute(command)).rejects.toThrow(InvalidRefreshTokenException);
+      await expect(handler.execute(command)).rejects.toThrow(InvalidRefreshTokenException);
+      expect(mockAuthService.generateTokens).not.toHaveBeenCalled();
+    });
   });
 });

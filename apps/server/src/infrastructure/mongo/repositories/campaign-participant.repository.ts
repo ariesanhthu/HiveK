@@ -58,11 +58,12 @@ export class MongoCampaignParticipantRepository implements ICampaignParticipantR
       const saved = await created.save({ session: this.session });
       participant.setId(saved._id.toString());
     } else {
-      await this.participantModel
-        .findByIdAndUpdate(participant.id, data, { upsert: true })
-        .session(this.session)
-        .exec();
+      await this.participantModel.findByIdAndUpdate(participant.id, data, { upsert: true }).session(this.session).exec();
     }
+  }
+
+  async saveMany(participants: CampaignParticipantRoot[]): Promise<void> {
+    await Promise.all(participants.map(p => this.save(p)));
   }
 
   async delete(id: string): Promise<void> {

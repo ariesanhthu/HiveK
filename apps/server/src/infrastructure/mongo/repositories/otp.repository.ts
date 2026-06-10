@@ -1,7 +1,7 @@
 import { Injectable, Inject } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, ClientSession } from 'mongoose';
-import { IOtpRepository } from '@/core/interfaces/repositories/otp.repository';
+import { IOtpRepository, IOtpSaveManyInput } from '@/core/interfaces/repositories/otp.repository';
 import { OtpModel, OtpDocument } from '../schemas/otp.schema';
 import { EOtpType } from '@/core/enums/otp-type.enum';
 import { type IUnitOfWork, UNIT_OF_WORK } from '@/application/interfaces';
@@ -28,6 +28,16 @@ export class MongoOtpRepository implements IOtpRepository {
       expired_at: expiresAt,
     });
     await created.save({ session: this.session });
+  }
+
+  async saveMany(inputs: IOtpSaveManyInput[]): Promise<void> {
+    const docs = inputs.map(input => ({
+      email: input.email,
+      code: input.code,
+      type: input.type,
+      expired_at: input.expiresAt,
+    }));
+    await this.otpModel.insertMany(docs, { session: this.session });
   }
 
   async findValidOtp(email: string, code: string, type: EOtpType): Promise<any | null> {

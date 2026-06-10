@@ -40,14 +40,24 @@ export class EnterpriseAddUserCommandHandler implements ICommandHandler<Enterpri
         throw new UserNotFoundException(missingIds.join(', '));
       }
 
+      const usersToUpdate: EnterpriseUserRoot[] = [];
 
       for (const user of users) {
         if (user.type !== ERoleType.ENTERPRISE || !(user instanceof EnterpriseUserRoot)) {
           throw new InvalidUserTypeException('User must be an enterprise user to be added to an enterprise');
         }
-        user.addEnterprise(enterpriseId);
-        await this.userRepository.save(user);
-        this.eventBus.publish(new UserAddedToEnterpriseEvent(user.id, enterpriseId));
+
+        if (!user.enterpriseIds.includes(enterpriseId)) {
+          user.addEnterprise(enterpriseId);
+          usersToUpdate.push(user);
+        }
+      }
+
+      if (usersToUpdate.length > 0) {
+        await this.userRepository.saveMany(usersToUpdate);
+        for (const user of usersToUpdate) {
+          this.eventBus.publish(new UserAddedToEnterpriseEvent(user.id!, enterpriseId));
+        }
       }
     });
   }

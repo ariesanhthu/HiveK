@@ -39,13 +39,21 @@ export class EnterpriseRevokeUserCommandHandler implements ICommandHandler<Enter
         throw new UserNotFoundException(missingIds.join(', '));
       }
 
+      const usersToUpdate: EnterpriseUserRoot[] = [];
 
       for (const user of users) {
         if (user.type !== ERoleType.ENTERPRISE || !(user instanceof EnterpriseUserRoot)) {
           throw new InvalidUserTypeException('User must be an enterprise user to be revoked from an enterprise');
         }
-        user.revokeEnterprise(enterpriseId);
-        await this.userRepository.save(user);
+        
+        if (user.enterpriseIds.includes(enterpriseId)) {
+          user.revokeEnterprise(enterpriseId);
+          usersToUpdate.push(user);
+        }
+      }
+
+      if (usersToUpdate.length > 0) {
+        await this.userRepository.saveMany(usersToUpdate);
       }
     });
   }

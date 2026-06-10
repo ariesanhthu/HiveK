@@ -56,6 +56,10 @@ export class MongoCampaignRepository implements ICampaignRepository {
     }
   }
 
+  async saveMany(campaigns: CampaignRoot[]): Promise<void> {
+    await Promise.all(campaigns.map(c => this.save(c)));
+  }
+
   async delete(id: string): Promise<void> {
     await this.campaignModel.findByIdAndDelete(id).session(this.session).exec();
   }

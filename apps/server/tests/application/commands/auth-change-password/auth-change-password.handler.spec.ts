@@ -1,95 +1,92 @@
 import { AuthChangePasswordCommandHandler } from '@/application/commands/auth-change-password/auth-change-password.handler';
 import { AuthChangePasswordCommand } from '@/application/commands/auth-change-password/auth-change-password.command';
-import { UserNotFoundException } from '@/core/exceptions';
+import { EOtpType } from '@/core/enums/otp-type.enum';
+import { UserNotFoundException, InvalidOperationException, InvalidPasswordException } from '@/core/exceptions';
+import { createMockUserRepository, createMockOtpRepository } from '../../../__mocks__/mock-repositories';
+import { createMockAuthService } from '../../../__mocks__/mock-services';
 
 describe('AuthChangePasswordCommandHandler', () => {
   let handler: AuthChangePasswordCommandHandler;
-  let mockUserRepository: any;
-  let mockOtpRepository: any;
-  let mockAuthService: any;
+  let mockUserRepository: ReturnType<typeof createMockUserRepository>;
+  let mockOtpRepository: ReturnType<typeof createMockOtpRepository>;
+  let mockAuthService: ReturnType<typeof createMockAuthService>;
 
   beforeEach(() => {
-    mockUserRepository = {
-      findById: jest.fn(),
-      save: jest.fn(),
-    };
-    mockOtpRepository = {
-      findValidOtp: jest.fn().mockResolvedValue({}),
-      deleteByEmailAndType: jest.fn(),
-    };
-    mockAuthService = {
-      comparePassword: jest.fn(),
-      hashPassword: jest.fn(),
-    };
-    handler = new AuthChangePasswordCommandHandler(mockUserRepository, mockOtpRepository, mockAuthService);
+    mockUserRepository = createMockUserRepository();
+    mockOtpRepository = createMockOtpRepository();
+    mockAuthService = createMockAuthService();
+
+    handler = new AuthChangePasswordCommandHandler(
+      mockUserRepository,
+      mockOtpRepository,
+      mockAuthService as any,
+    );
   });
 
-  it('should successfully change password when old password matches', async () => {
-    const mockUser = {
-      id: 'user-123',
-      email: 'user@example.com',
-      passwordHash: 'old-hashed-password',
-      props: {
-        passwordHash: 'old-hashed-password',
-      },
-      updatePassword: jest.fn().mockImplementation((passwordHash: string) => {
-        mockUser.passwordHash = passwordHash;
-        mockUser.props.passwordHash = passwordHash;
-      }),
-    };
-    mockUserRepository.findById.mockResolvedValue(mockUser);
-    mockAuthService.comparePassword.mockResolvedValue(true);
-    mockAuthService.hashPassword.mockResolvedValue('new-hashed-password');
-
-    const command = new AuthChangePasswordCommand('user-123', {
-      oldPassword: 'oldPassword123',
-      newPassword: 'newPassword123',
-      otpCode: '123456',
-    });
-
-    const result = await handler.execute(command);
-
-    expect(result).toEqual({ success: true });
-    expect(mockUserRepository.findById).toHaveBeenCalledWith('user-123');
-    expect(mockOtpRepository.findValidOtp).toHaveBeenCalledWith('user@example.com', '123456', 'change_password');
-    expect(mockAuthService.comparePassword).toHaveBeenCalledWith('oldPassword123', 'old-hashed-password');
-    expect(mockAuthService.hashPassword).toHaveBeenCalledWith('newPassword123');
-    expect(mockUser.updatePassword).toHaveBeenCalledWith('new-hashed-password');
-    expect(mockUser.props.passwordHash).toBe('new-hashed-password');
-    expect(mockUserRepository.save).toHaveBeenCalledWith(mockUser);
-    expect(mockOtpRepository.deleteByEmailAndType).toHaveBeenCalledWith('user@example.com', 'change_password');
+  const createMockUser = (overrides = {}) => ({
+    id: 'user-123',
+    email: 'user@example.com',
+    passwordHash: 'old-hashed',
+    updatePassword: jest.fn(),
+    ...overrides,
   });
 
-  it('should throw UserNotFoundException when user does not exist', async () => {
-    mockUserRepository.findById.mockResolvedValue(null);
+  describe('Happy Path', () => {
+    it('should successfully change password', async () => {
+      const userId = 'user-123';
+      const input = {
+        oldPassword: 'oldPassword123',
+        newPassword: 'newPassword123',
+        otpCode: '123456',
+      };
+      const command = new AuthChangePasswordCommand(userId, input);
+      const mockUser = createMockUser();
 
-    const command = new AuthChangePasswordCommand('invalid-user', {
-      oldPassword: 'oldPassword123',
-      newPassword: 'newPassword123',
-      otpCode: '123456',
+      mockUserRepository.findById.mockResolvedValue(mockUser as any);
+      mockOtpRepository.findValidOtp.mockResolvedValue({ id: 'otp-id' } as any);
+      mockAuthService.comparePassword!.mockResolvedValue(true);
+      mockAuthService.hashPassword!.mockResolvedValue('new-hashed');
+
+      const result = await handler.execute(command);
+
+      expect(result).toEqual({ success: true });
+      expect(mockUserRepository.findById).toHaveBeenCalledWith(userId);
+      expect(mockOtpRepository.findValidOtp).toHaveBeenCalledWith('user@example.com', '123456', EOtpType.CHANGE_PASSWORD);
+      expect(mockAuthService.comparePassword).toHaveBeenCalledWith('oldPassword123', 'old-hashed');
+      expect(mockAuthService.hashPassword).toHaveBeenCalledWith('newPassword123');
+      expect(mockUser.updatePassword).toHaveBeenCalledWith('new-hashed');
+      expect(mockUserRepository.save).toHaveBeenCalledWith(mockUser);
+      expect(mockOtpRepository.deleteByEmailAndType).toHaveBeenCalledWith('user@example.com', EOtpType.CHANGE_PASSWORD);
     });
-
-    await expect(handler.execute(command)).rejects.toThrow(UserNotFoundException);
   });
 
-  it('should throw error when old password does not match', async () => {
-    const mockUser = {
-      id: 'user-123',
-      email: 'user@example.com',
-      passwordHash: 'old-hashed-password',
-      updatePassword: jest.fn(),
-    };
-    mockUserRepository.findById.mockResolvedValue(mockUser);
-    mockAuthService.comparePassword.mockResolvedValue(false);
+  describe('Sad Paths', () => {
+    it('should throw UserNotFoundException if user does not exist', async () => {
+      const command = new AuthChangePasswordCommand('none', { oldPassword: 'a', newPassword: 'b', otpCode: '1' });
+      mockUserRepository.findById.mockResolvedValue(null);
 
-    const command = new AuthChangePasswordCommand('user-123', {
-      oldPassword: 'wrongOldPassword',
-      newPassword: 'newPassword123',
-      otpCode: '123456',
+      await expect(handler.execute(command)).rejects.toThrow(UserNotFoundException);
     });
 
-    await expect(handler.execute(command)).rejects.toThrow('Invalid old password');
+    it('should throw InvalidOperationException if OTP is invalid', async () => {
+      const mockUser = createMockUser();
+      const command = new AuthChangePasswordCommand('user-123', { oldPassword: 'a', newPassword: 'b', otpCode: 'wrong' });
+
+      mockUserRepository.findById.mockResolvedValue(mockUser as any);
+      mockOtpRepository.findValidOtp.mockResolvedValue(null);
+
+      await expect(handler.execute(command)).rejects.toThrow(InvalidOperationException);
+    });
+
+    it('should throw InvalidPasswordException if old password does not match', async () => {
+      const mockUser = createMockUser();
+      const command = new AuthChangePasswordCommand('user-123', { oldPassword: 'wrong', newPassword: 'b', otpCode: '123456' });
+
+      mockUserRepository.findById.mockResolvedValue(mockUser as any);
+      mockOtpRepository.findValidOtp.mockResolvedValue({ id: 'otp' } as any);
+      mockAuthService.comparePassword!.mockResolvedValue(false);
+
+      await expect(handler.execute(command)).rejects.toThrow(InvalidPasswordException);
+    });
   });
 });
-
-

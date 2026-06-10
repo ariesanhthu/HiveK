@@ -1,17 +1,15 @@
 import { EnterpriseVerifyCommandHandler } from '@/application/commands/enterprise-verify/enterprise-verify.handler';
 import { EnterpriseVerifyCommand } from '@/application/commands/enterprise-verify/enterprise-verify.command';
-import { EnterpriseRoot } from '@/core/aggregate-roots/enterprise.aggregate';
+import { EnterpriseRoot } from '@/core/aggregate-roots';
 import { EnterpriseNotFoundException } from '@/core/exceptions';
+import { createMockEnterpriseRepository } from '../../../__mocks__/mock-repositories';
 
 describe('EnterpriseVerifyCommandHandler', () => {
   let handler: EnterpriseVerifyCommandHandler;
-  let mockEnterpriseRepository: any;
+  let mockEnterpriseRepository: ReturnType<typeof createMockEnterpriseRepository>;
 
   beforeEach(() => {
-    mockEnterpriseRepository = {
-      findById: jest.fn(),
-      save: jest.fn(),
-    };
+    mockEnterpriseRepository = createMockEnterpriseRepository();
     handler = new EnterpriseVerifyCommandHandler(mockEnterpriseRepository);
   });
 
@@ -21,7 +19,6 @@ describe('EnterpriseVerifyCommandHandler', () => {
     return EnterpriseRoot.instantiate(enterpriseId, {
       userId: 'user-123',
       companyName: 'Test Ent',
-      description: 'Desc',
       contactEmail: 'test@ent.com',
       isVerified: false,
       createdAt: new Date(),
@@ -31,21 +28,26 @@ describe('EnterpriseVerifyCommandHandler', () => {
     });
   };
 
-  it('should successfully verify enterprise', async () => {
-    const enterprise = createMockEnterprise();
-    mockEnterpriseRepository.findById.mockResolvedValue(enterprise);
+  describe('Happy Path', () => {
+    it('should successfully verify enterprise', async () => {
+      const enterprise = createMockEnterprise();
+      mockEnterpriseRepository.findById.mockResolvedValue(enterprise);
 
-    const command = new EnterpriseVerifyCommand({ enterpriseId }, 'admin-123');
-    await handler.execute(command);
+      const command = new EnterpriseVerifyCommand({ enterpriseId }, 'admin-123');
+      await handler.execute(command);
 
-    expect(enterprise.isVerified).toBe(true);
-    expect(mockEnterpriseRepository.save).toHaveBeenCalledWith(enterprise);
+      expect(enterprise.isVerified).toBe(true);
+      expect(mockEnterpriseRepository.save).toHaveBeenCalledWith(enterprise);
+    });
   });
 
-  it('should throw EnterpriseNotFoundException if enterprise does not exist', async () => {
-    mockEnterpriseRepository.findById.mockResolvedValue(null);
-    const command = new EnterpriseVerifyCommand({ enterpriseId }, 'admin-123');
+  describe('Sad Path', () => {
+    it('should throw EnterpriseNotFoundException if enterprise does not exist', async () => {
+      mockEnterpriseRepository.findById.mockResolvedValue(null);
+      const command = new EnterpriseVerifyCommand({ enterpriseId }, 'admin-123');
 
-    await expect(handler.execute(command)).rejects.toThrow(EnterpriseNotFoundException);
+      await expect(handler.execute(command)).rejects.toThrow(EnterpriseNotFoundException);
+      expect(mockEnterpriseRepository.save).not.toHaveBeenCalled();
+    });
   });
 });
