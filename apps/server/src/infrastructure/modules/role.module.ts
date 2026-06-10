@@ -1,23 +1,35 @@
 import { Module } from '@nestjs/common';
-import { MongooseModule } from '@nestjs/mongoose';
-import { RoleModel, RoleSchema } from '@/infrastructure/mongo/schemas';
-import { ROLE_READ_SERVICE } from '@/application/interfaces';
-import { MongoRoleReadService } from '@/infrastructure/mongo/read-services';
-import { RoleSeedService } from '@/infrastructure/mongo/seeding/role-seed.service';
+import { CqrsModule } from '@nestjs/cqrs';
+
+import {
+  RoleCreateCommandHandler,
+  RoleUpdateCommandHandler,
+  RoleSoftDeleteCommandHandler,
+  RoleHardDeleteCommandHandler,
+  RoleRestoreCommandHandler,
+} from '@/application/commands';
+
+import { RoleGetByIdQueryHandler, RoleGetListQueryHandler } from '@/application/queries';
+import { RoleAdminController, RoleClientController } from '@/presentation/controllers';
+import { UserModule } from './user.module';
+
+const COMMAND_HANDLERS = [
+  RoleCreateCommandHandler,
+  RoleUpdateCommandHandler,
+  RoleSoftDeleteCommandHandler,
+  RoleHardDeleteCommandHandler,
+  RoleRestoreCommandHandler,
+];
+
+const QUERY_HANDLERS = [
+  RoleGetByIdQueryHandler,
+  RoleGetListQueryHandler,
+];
 
 @Module({
-  imports: [
-    MongooseModule.forFeature([
-      { name: RoleModel.name, schema: RoleSchema },
-    ]),
-  ],
-  providers: [
-    {
-      provide: ROLE_READ_SERVICE,
-      useClass: MongoRoleReadService,
-    },
-    RoleSeedService,
-  ],
-  exports: [ROLE_READ_SERVICE, MongooseModule],
+  imports: [UserModule, CqrsModule],
+  controllers: [RoleAdminController, RoleClientController],
+  providers: [...COMMAND_HANDLERS, ...QUERY_HANDLERS],
+  exports: [],
 })
 export class RoleModule {}

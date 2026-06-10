@@ -3,3 +3,11 @@ export * from './user.schema';
 export * from './role.schema';
 export * from './kol-profile.schema';
 export * from './platform.schema';
+export * from './campaign.schema';
+export * from './kpi-log.schema';
+export * from './uploaded-file.schema';
+export * from './notification.schema';
+export * from './user-notification.schema';
+export * from './otp.schema';
+export * from './campaign-participant.schema';
+

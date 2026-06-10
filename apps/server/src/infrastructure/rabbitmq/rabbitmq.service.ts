@@ -1,7 +1,7 @@
 import { Injectable, Inject, Logger } from '@nestjs/common';
 import { IMessageQueueService } from '@application/interfaces';
 import { RawRabbitMQProducerClient } from './raw-rabbitmq-producer';
-import type { RabbitMQProducerConfig } from '@infrastructure/nest-config/types/rabbitmq.types';
+import type { RabbitMQProducerConfig } from '@/infrastructure/rabbitmq/types/rabbitmq.types';
 
 export const RABBITMQ_PRODUCER_CLIENT = 'RABBITMQ_PRODUCER_CLIENT';
 export const RABBITMQ_CONFIG = 'RABBITMQ_CONFIG';
@@ -15,7 +15,7 @@ export class RabbitMQService implements IMessageQueueService {
     private readonly producer: RawRabbitMQProducerClient,
     @Inject(RABBITMQ_CONFIG)
     private readonly config: RabbitMQProducerConfig,
-  ) {}
+  ) { }
 
   /**
    * Emit event to RabbitMQ exchange with routing key

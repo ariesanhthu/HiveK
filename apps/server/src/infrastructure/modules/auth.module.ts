@@ -1,35 +1,70 @@
-import { Module } from '@nestjs/common';
+import { Module, Global } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
-import { 
-  SignInCommandHandler, 
-  SignUpCommandHandler, 
-  SignOutCommandHandler, 
-  ResetPasswordCommandHandler 
-} from '@/application/auth/commands/handlers';
-import { GetProfileQueryHandler } from '@/application/auth/queries/get-profile.query';
-import { AUTH_JWT_SERVICE } from '@/application/interfaces';
-import { USER_REPOSITORY } from '@/core/interfaces';
-import { JwtAuthService } from '../auth/jwt.service';
-import { MongoUserRepository } from '../mongo/repositories';
-import { UserModule } from './user.module';
-import { RoleModule } from './role.module';
-import { AuthController } from '@/presentation/controllers/auth.controller';
+import { PassportModule } from '@nestjs/passport';
 
-const Handlers = [
-  SignInCommandHandler,
-  SignUpCommandHandler,
-  SignOutCommandHandler,
-  ResetPasswordCommandHandler,
-  GetProfileQueryHandler,
+// Commands
+import {
+  AuthSignInCommandHandler,
+  AuthSignUpCommandHandler,
+  AuthSignOutCommandHandler,
+  AuthResetPasswordCommandHandler,
+  AuthRefreshTokenCommandHandler,
+  AuthGoogleSignInCommandHandler,
+  AuthSendOtpCommandHandler,
+  AuthChangePasswordCommandHandler,
+  AuthVerifyOtpCommandHandler,
+} from '@/application/commands';
+
+// Queries
+import { AuthGetProfileHandler } from '@/application/queries';
+
+// Interfaces
+import { AUTH_JWT_SERVICE } from '@/application/interfaces';
+
+// Infrastructure
+import { AuthService } from '@/application/services/auth.service';
+import { 
+  JwtAuthService, 
+  JwtStrategy, 
+  GoogleStrategy, 
+  YoutubeStrategy, 
+  FacebookStrategy, 
+  TwitterStrategy 
+} from '@infrastructure/auth';
+
+// Modules
+
+// AdminControllers
+import { AuthAdminController, AuthClientController, OAuthController } from '@/presentation/controllers'
+
+const COMMAND_HANDLERS = [
+  AuthSignInCommandHandler,
+  AuthSignUpCommandHandler,
+  AuthSignOutCommandHandler,
+  AuthResetPasswordCommandHandler,
+  AuthRefreshTokenCommandHandler,
+  AuthGoogleSignInCommandHandler,
+  AuthSendOtpCommandHandler,
+  AuthChangePasswordCommandHandler,
+  AuthVerifyOtpCommandHandler,
 ];
 
+const QUERY_HANDLERS = [
+  AuthGetProfileHandler,
+];
+
+const STRATEGIES = [
+  GoogleStrategy,
+  YoutubeStrategy,
+  FacebookStrategy,
+  TwitterStrategy,
+];
+
+@Global()
 @Module({
   imports: [
-    CqrsModule,
-    UserModule,
-    RoleModule,
     JwtModule.registerAsync({
       inject: [ConfigService],
       useFactory: (config: ConfigService) => ({
@@ -37,19 +72,23 @@ const Handlers = [
         signOptions: { expiresIn: '1d' },
       }),
     }),
+    CqrsModule,
+    PassportModule.register({ defaultStrategy: 'jwt' }),
   ],
-  controllers: [AuthController],
+  controllers: [AuthAdminController, AuthClientController, OAuthController],
   providers: [
-    ...Handlers,
+    ...COMMAND_HANDLERS,
+    ...QUERY_HANDLERS,
+    ...STRATEGIES,JwtStrategy,
+    AuthService,
     {
-      provide: AUTH_JWT_SERVICE,
+      provide: AUTH_JWT_SERVICE,  
       useClass: JwtAuthService,
     },
-    {
-      provide: USER_REPOSITORY,
-      useClass: MongoUserRepository,
-    },
   ],
-  exports: [AUTH_JWT_SERVICE, USER_REPOSITORY],
+  exports: [JwtStrategy,  AUTH_JWT_SERVICE, AuthService],
 })
-export class AuthModule {}
+export class AuthModule {
+  constructor(
+  ) {}
+}

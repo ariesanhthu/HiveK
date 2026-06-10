@@ -10,4 +10,5 @@ dependencies = [
     "motor>=3.7.1",
     "pydantic>=2.13.1",
     "python-dotenv>=1.2.2",
+    "yt-dlp>=2026.3.3",
 ]

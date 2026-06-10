@@ -1,18 +1,19 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, QueryFilter } from 'mongoose';
 import { IRoleReadService } from '@/application/interfaces';
-import { RoleDto, RoleFilterDto } from '@/application/role/dtos';
+import { RoleDto, RoleFilterDto } from '@/application/dtos';
 import { RoleDocument, RoleModel } from '../schemas/role.schema';
-import { Nullable, JsonRecord } from '@/shared/types';
-import { PaginatedResponseDto, SortOrder } from '@/shared/dtos/pagination.dto';
+import { Nullable, JsonObject } from '@/core/types';
+import { PaginatedResponseDto, SortOrder } from '@/application/dtos/pagination.dto';
+import { MongoSanitizeUtil } from '../utils';
 
 @Injectable()
 export class MongoRoleReadService implements IRoleReadService {
   constructor(
     @InjectModel(RoleModel.name)
     private readonly roleModel: Model<RoleDocument>,
-  ) {}
+  ) { }
 
   async findById(id: string): Promise<Nullable<RoleDto>> {
     const doc = await this.roleModel.findById(id).lean().exec();
@@ -25,14 +26,11 @@ export class MongoRoleReadService implements IRoleReadService {
   }
 
   async findAll(filters: RoleFilterDto = {} as any): Promise<PaginatedResponseDto<RoleDto>> {
-    const { cursor, limit = 10, sort = SortOrder.DESC, title, isBlocked } = filters;
-    const query: any = {};
+    const { cursor, limit = 10, sort = SortOrder.DESC, title } = filters;
+    const query: QueryFilter<RoleDocument> = {};
 
     if (title) {
-      query.title = { $regex: title, $options: 'i' };
-    }
-    if (isBlocked !== undefined) {
-      query.is_blocked = isBlocked;
+      query.title = { $regex: MongoSanitizeUtil.escapeRegex(title), $options: 'i' };
     }
 
     if (cursor) {
@@ -53,6 +51,8 @@ export class MongoRoleReadService implements IRoleReadService {
     return new PaginatedResponseDto(
       results.map((doc) => this.mapToDto(doc)),
       nextCursor,
+      hasNextPage,
+      limit,
     );
   }
 
@@ -61,7 +61,7 @@ export class MongoRoleReadService implements IRoleReadService {
       id: doc._id.toString(),
       title: doc.title,
       permissions: doc.permissions,
-      isBlocked: doc.is_blocked,
+      type: doc.type,
       createdAt: doc.created_at,
       updatedAt: doc.updated_at,
     };

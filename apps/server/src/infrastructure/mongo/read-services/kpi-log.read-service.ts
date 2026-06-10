@@ -1,18 +1,19 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, QueryFilter, Schema, Types } from 'mongoose';
 import { IKpiLogReadService } from '@/application/interfaces';
-import { KpiLogDto, KpiLogFilterDto } from '@/application/analytics/dtos/kpi-log.dto';
+import { KpiLogDto } from '@/application/dtos';
+import { KpiLogFilterDto } from '@/application/queries';
 import { KpiLogModel, KpiLogDocument } from '../schemas/kpi-log.schema';
-import { PaginatedResponseDto, SortOrder } from '@/shared/dtos/pagination.dto';
-import { Nullable } from '@/shared/types';
+import { PaginatedResponseDto, SortOrder } from '@/application/dtos/pagination.dto';
+import { Nullable } from '@/core/types';
 
 @Injectable()
 export class MongoKpiLogReadService implements IKpiLogReadService {
   constructor(
     @InjectModel(KpiLogModel.name)
     private readonly kpiLogModel: Model<KpiLogDocument>,
-  ) {}
+  ) { }
 
   async findById(id: string): Promise<Nullable<KpiLogDto>> {
     const doc = await this.kpiLogModel.findById(id).lean().exec();
@@ -20,11 +21,14 @@ export class MongoKpiLogReadService implements IKpiLogReadService {
   }
 
   async findAll(filters: KpiLogFilterDto = {} as any): Promise<PaginatedResponseDto<KpiLogDto>> {
-    const { cursor, limit = 10, sort = SortOrder.DESC, participantId, startTime, endTime } = filters;
-    const query: any = {};
-
+    const { cursor, limit = 10, sort = SortOrder.DESC, participantId, outputId, startTime, endTime } = filters;
+    const query: QueryFilter<KpiLogDocument> = {};
     if (participantId) {
-      query.participantId = participantId;
+      query.participantId = new Types.ObjectId(participantId);
+    }
+
+    if (outputId) {
+      query.outputId = new Types.ObjectId(outputId);
     }
 
     if (startTime || endTime) {
@@ -51,6 +55,8 @@ export class MongoKpiLogReadService implements IKpiLogReadService {
     return new PaginatedResponseDto(
       results.map((doc) => this.mapToDto(doc)),
       nextCursor,
+      hasNextPage,
+      limit,
     );
   }
 
@@ -58,10 +64,10 @@ export class MongoKpiLogReadService implements IKpiLogReadService {
     return {
       id: doc._id.toString(),
       timestamp: doc.timestamp,
-      participantId: doc.participantId.toString(),
+      participantId: doc.participantId ? doc.participantId.toString() : null,
       metrics: {
         views: doc.metrics?.views || 0,
-        likes: doc.metrics?.likes || 0,
+        likes: doc.metrics?.views || 0,
         comments: doc.metrics?.comments || 0,
         shares: doc.metrics?.shares || 0,
       },

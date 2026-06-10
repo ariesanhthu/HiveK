@@ -1,38 +1,40 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, QueryFilter, Types } from 'mongoose';
 import { IEnterpriseReadService } from '@/application/interfaces';
 import { EnterpriseModel, type EnterpriseDocument } from '../schemas/enterprise.schema';
-import { Nullable } from '@/shared/types';
-import { EnterpriseDto, EnterpriseFilterDto } from '@/application/enterprises/dtos';
-import { PaginatedResponseDto, SortOrder } from '@/shared/dtos/pagination.dto';
+import { Nullable } from '@/core/types';
+import { EnterpriseDetailDto } from '@/application/dtos';
+import { EnterpriseFilterDto } from '@/application/queries/enterprise-get-list/enterprise-get-list.dto';
+import { PaginatedResponseDto, SortOrder } from '@/application/dtos/pagination.dto';
+import { MongoSanitizeUtil } from '../utils';
 
 @Injectable()
 export class MongoEnterpriseReadService implements IEnterpriseReadService {
   constructor(
     @InjectModel(EnterpriseModel.name)
     private readonly enterpriseModel: Model<EnterpriseDocument>,
-  ) {}
+  ) { }
 
-  async findById(id: string): Promise<Nullable<EnterpriseDto>> {
-    const doc = await this.enterpriseModel.findById(id).lean().exec();
+  async findById(id: string): Promise<Nullable<EnterpriseDetailDto>> {
+    const doc = await this.enterpriseModel.findById(id).populate('user_id').populate('logo_url_id').lean().exec();
     return doc ? this.mapToDto(doc) : null;
   }
 
-  async findByUserId(userId: string): Promise<Nullable<EnterpriseDto>> {
-    const doc = await this.enterpriseModel.findOne({ user_id: userId }).lean().exec();
+  async findByUserId(userId: string): Promise<Nullable<EnterpriseDetailDto>> {
+    const doc = await this.enterpriseModel.findOne({ user_id: new Types.ObjectId(userId) as any }).populate('user_id').populate('logo_url_id').lean().exec();
     return doc ? this.mapToDto(doc) : null;
   }
 
-  async findAll(filters: EnterpriseFilterDto = {} as any): Promise<PaginatedResponseDto<EnterpriseDto>> {
+  async findAll(filters: EnterpriseFilterDto = {} as any): Promise<PaginatedResponseDto<EnterpriseDetailDto>> {
     const { cursor, limit = 10, sort = SortOrder.DESC, companyName, contactEmail, taxId, isVerified } = filters;
-    const query: any = {};
+    const query: QueryFilter<EnterpriseDocument> = {};
 
     if (companyName) {
-      query.company_name = { $regex: companyName, $options: 'i' };
+      query.company_name = { $regex: MongoSanitizeUtil.escapeRegex(companyName), $options: 'i' };
     }
     if (contactEmail) {
-      query.contact_email = { $regex: contactEmail, $options: 'i' };
+      query.contact_email = { $regex: MongoSanitizeUtil.escapeRegex(contactEmail), $options: 'i' };
     }
     if (taxId) {
       query.tax_id = taxId;
@@ -49,6 +51,8 @@ export class MongoEnterpriseReadService implements IEnterpriseReadService {
       .find(query)
       .sort({ _id: sort === SortOrder.DESC ? -1 : 1 })
       .limit(limit + 1)
+      .populate('user_id')
+      .populate('logo_url_id')
       .lean()
       .exec();
 
@@ -59,23 +63,48 @@ export class MongoEnterpriseReadService implements IEnterpriseReadService {
     return new PaginatedResponseDto(
       results.map((doc) => this.mapToDto(doc)),
       nextCursor,
+      hasNextPage,
+      limit,
     );
   }
 
-  private mapToDto(doc: any): EnterpriseDto {
+  private mapToDto(doc: any): EnterpriseDetailDto {
     return {
       id: doc._id.toString(),
-      userId: doc.user_id,
+      userId: doc.user_id && typeof doc.user_id === 'object' && doc.user_id._id ? doc.user_id._id.toString() : doc.user_id?.toString() || '',
       companyName: doc.company_name,
       description: doc.description,
       contactEmail: doc.contact_email,
       contactPhone: doc.contact_phone,
       website: doc.website,
       taxId: doc.tax_id,
-      logoUrl: doc.logo_url,
+      logoUrlId: doc.logo_url_id && typeof doc.logo_url_id === 'object' && doc.logo_url_id._id ? {
+        id: doc.logo_url_id._id.toString(),
+        url: doc.logo_url_id.url,
+        publicId: doc.logo_url_id.public_id,
+        size: doc.logo_url_id.size,
+        format: doc.logo_url_id.format,
+        title: doc.logo_url_id.title,
+        targetType: doc.logo_url_id.target_type,
+        targetId: doc.logo_url_id.target_id,
+        targetField: doc.logo_url_id.target_field,
+        createdAt: doc.logo_url_id.created_at,
+        updatedAt: doc.logo_url_id.updated_at,
+      } : null,
       isVerified: doc.is_verified,
       createdAt: doc.created_at,
       updatedAt: doc.updated_at,
+      user: doc.user_id && typeof doc.user_id === 'object' && doc.user_id._id ? {
+        id: doc.user_id._id.toString(),
+        email: doc.user_id.email,
+        phone: doc.user_id.phone,
+        fullName: doc.user_id.full_name,
+        roleId: doc.user_id.role_id ? doc.user_id.role_id.toString() : '',
+        isEmailVerified: doc.user_id.is_email_verified,
+        type: doc.user_id.type,
+        createdAt: doc.user_id.created_at,
+        updatedAt: doc.user_id.updated_at,
+      } as any : undefined,
     };
   }
 }

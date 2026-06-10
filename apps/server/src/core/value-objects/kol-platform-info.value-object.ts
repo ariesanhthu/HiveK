@@ -2,7 +2,7 @@ import { BaseValueObject } from '../common/base.value-object';
 
 export interface KolPlatformInfoProps {
   platformId: string;
-  handle: string;
+  uniqueId: string;
   externalId: string;
   followerCount: number;
   avgEngagement: number;
@@ -13,22 +13,22 @@ export interface KolPlatformInfoProps {
 /**
  * Value object representing influencer data on a specific social platform.
  */
-export class KolPlatformInfo extends BaseValueObject<KolPlatformInfoProps> {
+export class KolPlatformInfoVO extends BaseValueObject<KolPlatformInfoProps> {
   private constructor(props: KolPlatformInfoProps) {
     super(props);
   }
 
-  public static create(props: KolPlatformInfoProps): KolPlatformInfo {
+  public static create(props: KolPlatformInfoProps): KolPlatformInfoVO {
     // Add validation if needed
-    return new KolPlatformInfo(props);
+    return new KolPlatformInfoVO(props);
   }
 
   get platformId(): string {
     return this.props.platformId;
   }
 
-  get handle(): string {
-    return this.props.handle;
+  get uniqueId(): string {
+    return this.props.uniqueId;
   }
 
   get externalId(): string {

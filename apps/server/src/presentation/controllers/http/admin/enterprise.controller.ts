@@ -1,0 +1,122 @@
+import { Controller, Get, Post, Patch, Param, Query, Body, HttpCode, HttpStatus, UseGuards, Delete } from '@nestjs/common';
+import { CommandBus, QueryBus } from '@nestjs/cqrs';
+import { EnterpriseGetByIdQuery, EnterpriseGetListQuery } from '@/application/queries';
+import {
+  EnterpriseCreateCommand,
+  EnterpriseUpdateCommand,
+  EnterpriseSoftDeleteCommand,
+  EnterpriseRestoreCommand,
+  EnterpriseCreateInputDto,
+  EnterpriseUpdateInputDto,
+  EnterpriseAddUserCommand,
+  EnterpriseRevokeUserCommand,
+  EnterpriseAddUserInputDto,
+  EnterpriseRevokeUserInputDto,
+} from '@/application/commands';
+import { EnterpriseDto, EnterpriseDetailDto, SoftDeleteInputDto } from '@/application/dtos';
+import { ApiTags, ApiOperation, ApiBearerAuth, ApiSecurity } from '@nestjs/swagger';
+import { buildVersionedRoute } from '@presentation/utils';
+import { JwtAuthGuard } from '@/presentation/middleware/guards/jwt-auth.guard';
+import { CurrentUser } from '@/presentation/decorators/current-user.decorator';
+import { PaginatedResponseDto } from '@/application/dtos/pagination.dto';
+import { EnterpriseFilterDto } from '@/application/queries/enterprise-get-list/enterprise-get-list.dto';
+import { ERoleType } from '@/core/enums/role-type.enum';
+import { RolesGuard } from '@/presentation/middleware/guards/roles.guard';
+import { Roles } from '@/presentation/decorators/roles.decorator';
+
+@ApiTags('ADMIN-enterprises')
+@ApiBearerAuth()
+@ApiSecurity('x-api-key')
+@UseGuards(JwtAuthGuard, RolesGuard)
+@Roles(ERoleType.ADMIN)
+@Controller(buildVersionedRoute('admin', 'enterprises', 1))
+export class EnterpriseAdminController {
+  constructor(
+    private readonly commandBus: CommandBus,
+    private readonly queryBus: QueryBus,
+  ) { }
+
+  @Post()
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Create new enterprise profile' })
+  async create(
+    @CurrentUser('sub') userId: string,
+    @Body() input: EnterpriseCreateInputDto,
+  ): Promise<EnterpriseDto> {
+    return this.commandBus.execute(new EnterpriseCreateCommand(userId, input));
+  }
+
+  @Patch(':id')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Update enterprise profile' })
+  async update(
+    @Param('id') id: string,
+    @CurrentUser('sub') userId: string,
+    @Body() input: EnterpriseUpdateInputDto,
+  ): Promise<EnterpriseDto> {
+    return this.commandBus.execute(new EnterpriseUpdateCommand(id, userId, input));
+  }
+
+  @Get()
+  @UseGuards(JwtAuthGuard)
+  @ApiOperation({ summary: 'Get list of enterprises' })
+  async getList(@Query() filters: EnterpriseFilterDto): Promise<PaginatedResponseDto<EnterpriseDetailDto>> {
+    return this.queryBus.execute(new EnterpriseGetListQuery(filters));
+  }
+
+  @Get(':id')
+  @UseGuards(JwtAuthGuard)
+  @ApiOperation({ summary: 'Get enterprise by ID' })
+  async getById(@Param('id') id: string): Promise<EnterpriseDetailDto> {
+    const enterprise = await this.queryBus.execute<EnterpriseGetByIdQuery, EnterpriseDetailDto>(
+      new EnterpriseGetByIdQuery(id),
+    );
+    return enterprise;
+  }
+
+  @Patch(':id/soft-delete')
+  @UseGuards(JwtAuthGuard)
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiOperation({ summary: 'Soft delete enterprise' })
+  async delete(
+    @CurrentUser('sub') requestedBy: string,
+    @Param('id') id: string,
+    @Query() dto: SoftDeleteInputDto,
+  ): Promise<void> {
+    return this.commandBus.execute(new EnterpriseSoftDeleteCommand(id, requestedBy, dto.deletedBy));
+  }
+
+  @Patch(':id/restore')
+  @UseGuards(JwtAuthGuard)
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiOperation({ summary: 'Restore soft deleted enterprise' })
+  async restore(@Param('id') id: string): Promise<void> {
+    return this.commandBus.execute(new EnterpriseRestoreCommand(id));
+  }
+
+  @Post(':id/members')
+  @UseGuards(JwtAuthGuard)
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiOperation({ summary: 'Add user to enterprise' })
+  async addUser(
+    @CurrentUser('sub') requestedBy: string,
+    @Param('id') enterpriseId: string,
+    @Body() dto: EnterpriseAddUserInputDto,
+  ): Promise<void> {
+    return this.commandBus.execute(new EnterpriseAddUserCommand(enterpriseId, dto, requestedBy));
+  }
+
+  @Delete(':id/members')
+  @UseGuards(JwtAuthGuard)
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiOperation({ summary: 'Remove user from enterprise' })
+  async removeUser(
+    @CurrentUser('sub') requestedBy: string,
+    @Param('id') enterpriseId: string,
+    @Body() dto: EnterpriseRevokeUserInputDto,
+  ): Promise<void> {
+    return this.commandBus.execute(new EnterpriseRevokeUserCommand(enterpriseId, dto, requestedBy));
+  }
+}

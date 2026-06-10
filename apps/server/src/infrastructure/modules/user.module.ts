@@ -1,47 +1,43 @@
 import { Module } from '@nestjs/common';
-import { MongooseModule } from '@nestjs/mongoose';
 import { CqrsModule } from '@nestjs/cqrs';
-import { UserController } from '@/presentation/controllers';
-import { GetUserQueryHandler } from '@/application/users/queries';
-import { UpdateProfileCommandHandler } from '@/application/users/commands/handlers';
-import { USER_READ_SERVICE } from '@/application/interfaces';
-import { USER_REPOSITORY } from '@/core/interfaces';
-import { MongoUserReadService } from '@/infrastructure/mongo/read-services';
-import { MongoUserRepository } from '@/infrastructure/mongo/repositories';
-import { 
-  UserModel, UserSchema, 
-  AdminModel, AdminSchema,
-  EnterpriseUserModel, EnterpriseUserSchema,
-  KOLUserModel, KOLUserSchema
-} from '@/infrastructure/mongo/schemas';
+
+import {
+  UserCreateCommandHandler,
+  UserUpdateCommandHandler,
+  UserUpdateProfileCommandHandler,
+  UserSoftDeleteCommandHandler,
+  UserHardDeleteCommandHandler,
+  UserRestoreCommandHandler,
+  UserCheckValidCommandHandler,
+} from '@/application/commands';
+
+import { UserGetByIdHandler, UserGetListHandler } from '@/application/queries';
+import { LinkUserAvatarHandler } from '@/application/events';
+import { UserAdminController, UserClientController } from '@/presentation/controllers';
+
+const COMMAND_HANDLERS = [
+  UserCreateCommandHandler,
+  UserUpdateCommandHandler,
+  UserUpdateProfileCommandHandler,
+  UserSoftDeleteCommandHandler,
+  UserHardDeleteCommandHandler,
+  UserRestoreCommandHandler,
+  UserCheckValidCommandHandler
+];
+
+const QUERY_HANDLERS = [
+  UserGetByIdHandler,
+  UserGetListHandler,
+];
+
+const EVENT_HANDLERS = [
+  LinkUserAvatarHandler,
+];
 
 @Module({
-  imports: [
-    MongooseModule.forFeature([
-      { 
-        name: UserModel.name, 
-        schema: UserSchema,
-        discriminators: [
-          { name: AdminModel.name, schema: AdminSchema },
-          { name: EnterpriseUserModel.name, schema: EnterpriseUserSchema },
-          { name: KOLUserModel.name, schema: KOLUserSchema },
-        ]
-      },
-    ]),
-  ],
-  // controllers: [UserController],
-  providers: [
-    GetUserQueryHandler,
-    UpdateProfileCommandHandler,
-    {
-      provide: USER_READ_SERVICE,
-      useClass: MongoUserReadService,
-    },
-    {
-      provide: USER_REPOSITORY,
-      useClass: MongoUserRepository,
-    },
-  ],
-  exports: [USER_READ_SERVICE, USER_REPOSITORY, MongooseModule],
+  imports: [CqrsModule],
+  controllers: [UserAdminController, UserClientController],
+  providers: [...COMMAND_HANDLERS, ...QUERY_HANDLERS, ...EVENT_HANDLERS],
+  exports: [],
 })
 export class UserModule {}

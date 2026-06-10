@@ -1,5 +1,6 @@
-import { JsonRecord, Nullable } from "@/shared/types/utility.type";
-import { CursorPaginationRequestDto, PaginatedResponseDto } from "@/shared/dtos/pagination.dto";
+import { Nullable } from '@/core/types';
+import { CursorPaginationRequestDto, PaginatedResponseDto } from '@/application/dtos/pagination.dto';
+import { ProjectionDto } from '@/application/dtos/projection.dto';
 
 /**
  * Base Read Service Interface.
@@ -11,10 +12,10 @@ export interface IBaseReadService<DTO, Filters extends CursorPaginationRequestDt
   /**
    * Fetches a single read-optimized DTO by id.
    */
-  findById(id: string): Promise<Nullable<DTO>>;
+  findById(id: string, projection?: ProjectionDto): Promise<Nullable<DTO>>;
 
   /**
    * Fetches a paginated response of read-optimized DTOs based on filters and cursor.
    */
-  findAll(filters?: Filters): Promise<PaginatedResponseDto<DTO>>;
+  findAll(filters?: Filters, projection?: ProjectionDto): Promise<PaginatedResponseDto<DTO>>;
 }

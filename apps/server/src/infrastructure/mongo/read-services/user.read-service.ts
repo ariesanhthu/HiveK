@@ -1,48 +1,50 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, QueryFilter } from 'mongoose';
 import { IUserReadService } from '@/application/interfaces';
-import { UserDto, UserFilterDto } from '@/application/users/dtos';
+import { UserDetailDto, UserFilterDto } from '@/application/dtos';
 import { UserDocument, UserModel } from '../schemas';
-import { Nullable } from '@/shared/types';
-import { UserType } from '@/core/enums';
-import { PaginatedResponseDto, SortOrder } from '@/shared/dtos/pagination.dto';
+import { Nullable } from '@/core/types';
+import { ERoleType } from '@/core/enums';
+import { PaginatedResponseDto, SortOrder } from '@/application/dtos/pagination.dto';
+import { Schema } from 'mongoose';
+import { MongoSanitizeUtil } from '../utils';
 
 @Injectable()
 export class MongoUserReadService implements IUserReadService {
   constructor(
     @InjectModel(UserModel.name)
     private readonly userModel: Model<UserDocument>,
-  ) {}
+  ) { }
 
-  async findById(id: string): Promise<Nullable<UserDto>> {
-    const doc = await this.userModel.findById(id).lean().exec();
+  async findById(id: string): Promise<Nullable<UserDetailDto>> {
+    const doc = await this.userModel.findById(id).populate('role_id').populate('avatar').lean().exec();
     return doc ? this.mapToDto(doc) : null;
   }
 
-  async findByEmail(email: string): Promise<Nullable<UserDto>> {
-    const doc = await this.userModel.findOne({ email }).lean().exec();
+  async findByEmail(email: string): Promise<Nullable<UserDetailDto>> {
+    const doc = await this.userModel.findOne({ email }).populate('role_id').populate('avatar').lean().exec();
     return doc ? this.mapToDto(doc) : null;
   }
 
-  async findAll(filters: UserFilterDto = {} as any): Promise<PaginatedResponseDto<UserDto>> {
+  async findAll(filters: UserFilterDto = {} as any): Promise<PaginatedResponseDto<UserDetailDto>> {
     const { cursor, limit = 10, sort = SortOrder.DESC, email, phone, fullName, type, roleId, isEmailVerified } = filters;
-    const query: any = {};
+    const query: QueryFilter<UserDocument> = {};
 
     if (email) {
-      query.email = { $regex: email, $options: 'i' };
+      query.email = { $regex: MongoSanitizeUtil.escapeRegex(email), $options: 'i' };
     }
     if (phone) {
-      query.phone = { $regex: phone, $options: 'i' };
+      query.phone = { $regex: MongoSanitizeUtil.escapeRegex(phone), $options: 'i' };
     }
     if (fullName) {
-      query.full_name = { $regex: fullName, $options: 'i' };
+      query.full_name = { $regex: MongoSanitizeUtil.escapeRegex(fullName), $options: 'i' };
     }
     if (type) {
       query.type = type;
     }
     if (roleId) {
-      query.role_id = roleId;
+      query.role_id = new Schema.Types.ObjectId(roleId);
     }
     if (isEmailVerified !== undefined) {
       query.is_email_verified = isEmailVerified;
@@ -56,6 +58,8 @@ export class MongoUserReadService implements IUserReadService {
       .find(query)
       .sort({ _id: sort === SortOrder.DESC ? -1 : 1 })
       .limit(limit + 1)
+      .populate('role_id')
+      .populate('avatar')
       .lean()
       .exec();
 
@@ -66,38 +70,61 @@ export class MongoUserReadService implements IUserReadService {
     return new PaginatedResponseDto(
       results.map((doc) => this.mapToDto(doc)),
       nextCursor,
+      hasNextPage,
+      limit,
     );
   }
 
-  private mapToDto(doc: any): UserDto {
+  private mapToDto(doc: any): UserDetailDto {
     const baseFields = {
       id: doc._id.toString(),
       email: doc.email,
       phone: doc.phone,
       fullName: doc.full_name,
-      roleId: doc.role_id,
+      roleId: doc.role_id && typeof doc.role_id === 'object' && doc.role_id._id ? doc.role_id._id.toString() : doc.role_id?.toString() || '',
       isEmailVerified: doc.is_email_verified,
       createdAt: doc.created_at,
       updatedAt: doc.updated_at,
+      role: doc.role_id && typeof doc.role_id === 'object' && doc.role_id._id ? {
+        id: doc.role_id._id.toString(),
+        title: doc.role_id.title,
+        permissions: doc.role_id.permissions,
+        type: doc.role_id.type,
+        createdAt: doc.role_id.created_at,
+        updatedAt: doc.role_id.updated_at,
+      } : undefined,
+      avatar: doc.avatar && typeof doc.avatar === 'object' && doc.avatar._id ? {
+        id: doc.avatar._id.toString(),
+        url: doc.avatar.url,
+        publicId: doc.avatar.public_id,
+        size: doc.avatar.size,
+        format: doc.avatar.format,
+        title: doc.avatar.title,
+        targetType: doc.avatar.target_type,
+        targetId: doc.avatar.target_id,
+        targetField: doc.avatar.target_field,
+        createdAt: doc.avatar.created_at,
+        updatedAt: doc.avatar.updated_at,
+      } : null,
     };
 
     switch (doc.type) {
-      case UserType.ENTERPRISE:
+      case ERoleType.ENTERPRISE:
         return {
           ...baseFields,
-          type: UserType.ENTERPRISE,
-          enterpriseId: doc.enterprise_id,
-        };
-      case UserType.ADMIN:
+          type: ERoleType.ENTERPRISE,
+          enterpriseIds: doc.enterprise_ids ? doc.enterprise_ids.map((id: any) => id.toString()) : [],
+        } as any;
+      case ERoleType.ADMIN:
         return {
           ...baseFields,
-          type: UserType.ADMIN,
-        };
-      case UserType.KOL:
+          type: ERoleType.ADMIN,
+        } as any;
+      case ERoleType.KOL:
         return {
           ...baseFields,
-          type: UserType.KOL,
-        };
+          type: ERoleType.KOL,
+        } as any;
       default:
         throw new Error(`Unknown user type: ${doc.type}`);
     }

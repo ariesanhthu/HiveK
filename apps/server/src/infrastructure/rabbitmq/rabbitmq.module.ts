@@ -1,37 +1,37 @@
 import { Global, Module, Logger, OnModuleDestroy, Inject, OnApplicationBootstrap } from '@nestjs/common';
 import { RabbitMQService, RABBITMQ_PRODUCER_CLIENT, RABBITMQ_CONFIG } from './rabbitmq.service';
 import { LOGGER_SERVICE, MESSAGE_QUEUE_SERVICE } from '@application/interfaces';
-import { NestConfigService } from '@infrastructure/nest-config/nest-config.service';
-import { NestConfigModule } from '@infrastructure/nest-config/nest-config.module';
 import { RawRabbitMQProducerClient } from './raw-rabbitmq-producer';
 import { RawRabbitMQConsumerClient } from './raw-rabbitmq-consumer';
 import { ModulesContainer, MetadataScanner, Reflector } from '@nestjs/core';
 import { RMQ_HANDLER_METADATA, RmqHandlerOptions, RmqHandlerRegistry } from './rmq-consumer.registry';
+import { RabbitMQFactoryService } from './rabiitmq-factory.service';
 
 export const RABBITMQ_CONSUMER_CONFIG = Symbol('RABBITMQ_CONSUMER_CONFIG');
 export const RABBITMQ_CONSUMER_CLIENT = Symbol('RABBITMQ_CONSUMER_CLIENT');
 
 @Global()
 @Module({
-  imports: [NestConfigModule],
+  imports: [],
   providers: [
     MetadataScanner,
     Reflector,
+    RabbitMQFactoryService,
     // Provider for RabbitMQ Producer Config
     {
       provide: RABBITMQ_CONFIG,
-      useFactory: (nestConfigService: NestConfigService) => {
-        return nestConfigService.readRMQProducerConfig('rmq/rmq.producer.minimal.json');
+      useFactory: (nestConfigService: RabbitMQFactoryService) => {
+        return nestConfigService.readRMQProducerConfig('kpi_tracking/config.producer.json');
       },
-      inject: [NestConfigService],
+      inject: [RabbitMQFactoryService],
     },
     // Provider for RabbitMQ Consumer Config
     {
       provide: RABBITMQ_CONSUMER_CONFIG,
-      useFactory: (nestConfigService: NestConfigService) => {
-        return nestConfigService.readRMQConsumerConfig('rmq/rmq.consumer.minimal.json');
+      useFactory: (nestConfigService: RabbitMQFactoryService) => {
+        return nestConfigService.readRMQConsumerConfig('kpi_tracking/config.consumer.json');
       },
-      inject: [NestConfigService],
+      inject: [RabbitMQFactoryService],
     },
     // Provider for Raw RabbitMQ Producer Client
     {

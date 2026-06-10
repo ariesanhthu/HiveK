@@ -1,28 +1,30 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, QueryFilter } from 'mongoose';
 import { IKolProfileReadService } from '@/application/interfaces';
-import { KolProfileDto, KolProfileFilterDto } from '@/application/kol-profiles/dtos';
+import { KolProfileDetailDto } from '@/application/dtos';
+import { KolProfileFilterDto } from '@/application/queries';
 import { KolProfileModel, KolProfileDocument } from '../schemas';
-import { JsonRecord, Nullable } from '@/shared/types';
-import { PaginatedResponseDto, SortOrder } from '@/shared/dtos/pagination.dto';
+import { JsonObject, Nullable } from '@/core/types';
+import { PaginatedResponseDto, SortOrder } from '@/application/dtos/pagination.dto';
+import { parseMongoProjection, MongoSanitizeUtil } from '../utils';
 
 @Injectable()
 export class MongoKolProfileReadService implements IKolProfileReadService {
   constructor(
     @InjectModel(KolProfileModel.name)
     private readonly kolProfileModel: Model<KolProfileDocument>,
-  ) {}
+  ) { }
 
-  async findAll(filters: KolProfileFilterDto = {} as any): Promise<PaginatedResponseDto<KolProfileDto>> {
+  async findAll(filters: KolProfileFilterDto = {} as any): Promise<PaginatedResponseDto<KolProfileDetailDto>> {
     const { cursor, limit = 10, sort = SortOrder.DESC, name, location, gender, isVerified, categories, tags } = filters;
-    const query: any = {};
+    const query: QueryFilter<KolProfileDocument> = {};
 
     if (name) {
-      query.name = { $regex: name, $options: 'i' };
+      query.name = { $regex: MongoSanitizeUtil.escapeRegex(name), $options: 'i' };
     }
     if (location) {
-      query.location = { $regex: location, $options: 'i' };
+      query.location = { $regex: MongoSanitizeUtil.escapeRegex(location), $options: 'i' };
     }
     if (gender) {
       query.gender = gender;
@@ -45,6 +47,7 @@ export class MongoKolProfileReadService implements IKolProfileReadService {
       .find(query)
       .sort({ _id: sort === SortOrder.DESC ? -1 : 1 })
       .limit(limit + 1)
+      .populate('user_id')
       .lean()
       .exec();
 
@@ -55,30 +58,76 @@ export class MongoKolProfileReadService implements IKolProfileReadService {
     return new PaginatedResponseDto(
       results.map((doc) => this.mapToDto(doc)),
       nextCursor,
+      hasNextPage,
+      limit,
     );
   }
 
-  async findById(id: string): Promise<Nullable<KolProfileDto>> {
-    const doc = await this.kolProfileModel.findById(id).lean().exec();
+  async findById(id: string, projection?: any): Promise<Nullable<KolProfileDetailDto>> {
+    let queryBuilder: any = this.kolProfileModel.findById(id);
+
+    if (projection) {
+      const { select, populate } = parseMongoProjection(projection, {
+        allowedFields: [
+          'id', 'userId', 'verificationType', 'name', 'location',
+          'gender', 'bio', 'email', 'phone', 'platforms', 'isVerified', 'scores'
+        ],
+        fieldMap: {
+          userId: 'user_id',
+          verificationType: 'verification_type',
+          isVerified: 'is_verified',
+        },
+        populate: {
+          user: {
+            path: 'user_id',
+            select: ['email', 'phone', 'fullName', 'roleId', 'type'],
+            fieldMap: {
+              fullName: 'full_name',
+              roleId: 'role_id',
+            },
+          },
+          platforms: {
+            path: 'platforms.platform_id',
+            select: ['name', 'baseUrl', 'apiStatus', 'icon'],
+          },
+        },
+      });
+
+      if (select) {
+        queryBuilder = queryBuilder.select(select);
+      }
+      if (populate && populate.length > 0) {
+        populate.forEach((opt) => {
+          queryBuilder = queryBuilder.populate(opt);
+        });
+      }
+    } else {
+      queryBuilder = queryBuilder.populate('user_id');
+    }
+
+    const doc = await queryBuilder.lean().exec();
     return doc ? this.mapToDto(doc) : null;
   }
 
-  async findByEmail(email: string): Promise<Nullable<KolProfileDto>> {
-    const doc = await this.kolProfileModel.findOne({ email }).lean().exec();
+  async findByEmail(email: string): Promise<Nullable<KolProfileDetailDto>> {
+    const doc = await this.kolProfileModel.findOne({ email }).populate('user_id').lean().exec();
     return doc ? this.mapToDto(doc) : null;
   }
 
-  async findByName(name: string): Promise<KolProfileDto[]> {
+  async findByName(name: string): Promise<KolProfileDetailDto[]> {
     const docs = await this.kolProfileModel
-      .find({ name: { $regex: name, $options: 'i' } })
+      .find({ name: { $regex: MongoSanitizeUtil.escapeRegex(name), $options: 'i' } })
+      .populate('user_id')
       .lean()
       .exec();
     return docs.map((doc) => this.mapToDto(doc));
   }
 
-  private mapToDto(doc: any): KolProfileDto {
+  private mapToDto(doc: any): KolProfileDetailDto {
     return {
       id: doc._id.toString(),
+      userId: doc.user_id && typeof doc.user_id === 'object' && doc.user_id._id ? doc.user_id._id.toString() : doc.user_id?.toString() || null,
+      verificationType: doc.verification_type ?? null,
       name: doc.name,
       location: doc.location,
       gender: doc.gender,
@@ -86,15 +135,34 @@ export class MongoKolProfileReadService implements IKolProfileReadService {
       email: doc.email,
       phone: doc.phone,
       isVerified: doc.is_verified,
+      scores: doc.scores || {},
       platforms: (doc.platforms || []).map((p: any) => ({
-        platformId: p.platform_id,
-        handle: p.handle,
+        platformId: p.platform_id && typeof p.platform_id === 'object' && p.platform_id._id ? p.platform_id._id.toString() : p.platform_id?.toString() || '',
+        platform: p.platform_id && typeof p.platform_id === 'object' && p.platform_id._id ? {
+          id: p.platform_id._id.toString(),
+          name: p.platform_id.name,
+          baseUrl: p.platform_id.base_url || p.platform_id.baseUrl || '',
+          apiStatus: p.platform_id.api_status || p.platform_id.apiStatus || '',
+          icon: p.platform_id.icon ? p.platform_id.icon.toString() : null,
+        } : undefined,
+        uniqueId: p.uniqueId ?? p.handle ?? '',
         externalId: p.external_id,
         followerCount: p.follower_count,
         avgEngagement: p.avg_engagement,
         topTags: p.top_tags,
         categories: p.categories,
       })),
+      user: doc.user_id && typeof doc.user_id === 'object' && doc.user_id._id ? {
+        id: doc.user_id._id.toString(),
+        email: doc.user_id.email,
+        phone: doc.user_id.phone,
+        fullName: doc.user_id.full_name,
+        roleId: doc.user_id.role_id ? doc.user_id.role_id.toString() : '',
+        isEmailVerified: doc.user_id.is_email_verified,
+        type: doc.user_id.type,
+        createdAt: doc.user_id.created_at,
+        updatedAt: doc.user_id.updated_at,
+      } as any : undefined,
     };
   }
 }

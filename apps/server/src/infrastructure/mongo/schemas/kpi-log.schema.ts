@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document, Schema as MongooseSchema } from 'mongoose';
+import { Document, Schema as MongooseSchema, Types } from 'mongoose';
 
 export type KpiLogDocument = KpiLogModel & Document;
 
@@ -14,18 +14,21 @@ export type KpiLogDocument = KpiLogModel & Document;
   versionKey: false,
 })
 export class KpiLogModel {
-  @Prop({ required: true, type: Date })
+  @Prop({ required: true, type: MongooseSchema.Types.Date })
   timestamp: Date;
 
-  @Prop({ required: true, type: MongooseSchema.Types.ObjectId })
-  participantId: MongooseSchema.Types.ObjectId;
+  @Prop({ required: true, type: MongooseSchema.Types.ObjectId, ref: 'CampaignParticipantModel' })
+  participantId: Types.ObjectId;
+
+  @Prop({ type: MongooseSchema.Types.ObjectId, default: null })
+  outputId: Types.ObjectId | null;
 
   @Prop({
     type: {
-      views: { type: Number, default: 0 },
-      likes: { type: Number, default: 0 },
-      comments: { type: Number, default: 0 },
-      shares: { type: Number, default: 0 },
+      views: { type: MongooseSchema.Types.Number, default: 0 },
+      likes: { type: MongooseSchema.Types.Number, default: 0 },
+      comments: { type: MongooseSchema.Types.Number, default: 0 },
+      shares: { type: MongooseSchema.Types.Number, default: 0 },
     },
     _id: false,
   })
@@ -35,6 +38,12 @@ export class KpiLogModel {
     comments: number;
     shares: number;
   };
+
+  @Prop({ type: MongooseSchema.Types.Date, default: null })
+  delete_at: Date | null;
+
+  @Prop({ type: MongooseSchema.Types.String, default: null })
+  delete_by: string | null;
 }
 
 export const KpiLogSchema = SchemaFactory.createForClass(KpiLogModel);

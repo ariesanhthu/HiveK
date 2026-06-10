@@ -1,0 +1,227 @@
+import { Injectable, Logger, BadRequestException, Inject } from "@nestjs/common";
+import { RmqOptions, Transport } from "@nestjs/microservices";
+import * as fs from "fs";
+import * as path from "path";
+import { getRmqUri } from "../rabbitmq/rmq.env";
+import {
+  RabbitMQProducerConfig,
+  RabbitMQConsumerConfig,
+} from "./types/rabbitmq.types";
+import { type ILoggerService, LOGGER_SERVICE } from "@/application";
+import { ConfigService } from "@nestjs/config";
+
+@Injectable()
+export class RabbitMQFactoryService {
+
+  constructor(
+    @Inject(LOGGER_SERVICE)
+    private loggerService: ILoggerService,
+    private configService: ConfigService
+  ) {
+    this.loggerService.setContext(RabbitMQFactoryService.name);
+  }
+
+  /**
+   * Read and parse RabbitMQ Producer configuration from JSON file
+   * @param filePath - Path to producer config JSON file (can be relative or absolute)
+   * @returns Parsed producer configuration object
+   * @throws BadRequestException if file not found or invalid JSON
+   */
+  readRMQProducerConfig(filePath: string): RabbitMQProducerConfig {
+    try {
+      const resolvedPath = this.resolvePath(filePath);
+      this.loggerService.debug(`Reading RMQ producer config from: ${resolvedPath}`);
+
+      const fileContent = fs.readFileSync(resolvedPath, "utf-8");
+      const rawConfig = JSON.parse(fileContent);
+      const config = this.replacePlaceholders(rawConfig) as RabbitMQProducerConfig;
+
+      if (config.role !== "producer") {
+        throw new BadRequestException(
+          `Invalid producer config: expected role "producer", got "${config.role}"`
+        );
+      }
+
+      this.loggerService.log(`✓ RMQ producer config loaded successfully`);
+      return config;
+    } catch (error) {
+      if (error instanceof BadRequestException) {
+        throw error;
+      }
+      const message = error instanceof Error ? error.message : String(error);
+      this.loggerService.error(`Failed to read RMQ producer config: ${message}`);
+      throw new BadRequestException(`Failed to read RMQ producer config: ${message}`);
+    }
+  }
+
+  /**
+   * Read and parse RabbitMQ Consumer configuration from JSON file
+   * @param filePath - Path to consumer config JSON file (can be relative or absolute)
+   * @returns Parsed consumer configuration object
+   * @throws BadRequestException if file not found or invalid JSON
+   */
+  readRMQConsumerConfig(filePath: string): RabbitMQConsumerConfig {
+    try {
+      const resolvedPath = this.resolvePath(filePath);
+      this.loggerService.debug(`Reading RMQ consumer config from: ${resolvedPath}`);
+
+      const fileContent = fs.readFileSync(resolvedPath, "utf-8");
+      const rawConfig = JSON.parse(fileContent);
+      const config = this.replacePlaceholders(rawConfig) as RabbitMQConsumerConfig;
+
+      if (config.role !== "consumer") {
+        throw new BadRequestException(
+          `Invalid consumer config: expected role "consumer", got "${config.role}"`
+        );
+      }
+
+      this.loggerService.log(`✓ RMQ consumer config loaded successfully`);
+      return config;
+    } catch (error) {
+      if (error instanceof BadRequestException) {
+        throw error;
+      }
+      const message = error instanceof Error ? error.message : String(error);
+      this.loggerService.error(`Failed to read RMQ consumer config: ${message}`);
+      throw new BadRequestException(`Failed to read RMQ consumer config: ${message}`);
+    }
+  }
+
+  /**
+   * Resolve file path - handle relative paths based on config directory
+   * @param filePath - File path to resolve
+   * @returns Absolute file path
+   */
+  private resolvePath(filePath: string): string {
+    // Resolve relative to the RabbitMQ config directory (src/infrastructure/rabbitmq/config)
+    if (path.isAbsolute(filePath)) {
+      return filePath;
+    }
+    const configDir = path.join(__dirname, "../..", "infrastructure", "rabbitmq", "config");
+    return path.join(configDir, filePath);
+  }
+
+  /** Replace placeholder {{RABBITMQ_URI}} with actual URI from env */
+  private replacePlaceholders<T>(obj: T): T {
+    const json = JSON.stringify(obj);
+    const replaced = json.replace(/"\{\{RABBITMQ_URI\}\}"/g, `"${getRmqUri()}"`);
+    return JSON.parse(replaced) as T;
+  }
+
+
+  /**
+   * Convert RabbitMQ Producer config to NestJS ClientProxy options (for clients/producers)
+   * Maps available config fields to NestJS RmqOptions
+   * @param config - Producer configuration object
+   * @returns NestJS ClientOptions for ClientsModule.register()
+   */
+  toNestJSClientOptions(config: RabbitMQProducerConfig): RmqOptions {
+    const firstRoutingKey = Object.values(config.routes)[0];
+    return {
+      transport: Transport.RMQ,
+      options: {
+        urls: [config.connection.uri],
+        // queue: config.exchange_contract.name,
+        exchange: config.exchange_contract.name,
+        exchangeType: config.exchange_contract.type,
+        routingKey: firstRoutingKey || config.exchange_contract.name,
+        persistent: config.publish.persistent,
+        noAssert: false,
+        maxConnectionAttempts: Math.max(
+          config.connection.reconnect.max_retries,
+          1
+        ),
+        socketOptions: {
+          heartbeat: config.connection.heartbeat,
+        },
+        queueOptions: {
+          durable: config.exchange_contract.options.durable,
+        },
+      },
+    };
+  }
+
+  /**
+   * Convert RabbitMQ Consumer config to NestJS MicroserviceOptions (for microservice transport)
+   * Maps available config fields to NestJS RmqOptions
+   * @param config - Consumer configuration object
+   * @returns NestJS MicroserviceOptions for app.connectMicroservice()
+   */
+  toNestJSMicroserviceOptions(config: RabbitMQConsumerConfig): RmqOptions {
+    const primaryQueue = config.queues[0];
+    const primaryBinding = primaryQueue?.bindings[0];
+
+    if (!primaryQueue) {
+      throw new BadRequestException("Consumer config must have at least one queue");
+    }
+
+    return {
+      transport: Transport.RMQ,
+      options: {
+        urls: [config.connection.uri],
+        queue: primaryQueue.name,
+        exchange: primaryBinding?.exchange || primaryQueue.name,
+        exchangeType: "direct", // Always use "direct" for explicit bindings
+        // routingKey: routingKey, // NestJS uses this for the queue declaration
+        prefetchCount: config.consume.prefetch_count,
+        isGlobalPrefetchCount: false,
+        noAck: config.consume.no_ack,
+        noAssert: false, // Important: false so RabbitMQ doesn't skip assertion
+        maxConnectionAttempts: Math.max(
+          config.connection.reconnect.max_retries,
+          1
+        ),
+        socketOptions: {
+          heartbeat: config.connection.heartbeat,
+        },
+        queueOptions: {
+          durable: primaryQueue.options.durable,
+          arguments: primaryQueue.options.arguments,
+        },
+      },
+    };
+  }
+
+  /**
+   * Convert Producer config to RMQ exchange declaration for explicit setup
+   * @param config - Producer configuration object
+   * @returns Object with exchange name, type, and options
+   */
+  toRMQExchangeDeclaration(config: RabbitMQProducerConfig) {
+    return {
+      exchange: config.exchange_contract.name,
+      type: config.exchange_contract.type,
+      options: config.exchange_contract.options,
+    };
+  }
+
+  /**
+   * Convert Consumer queues to RMQ queue/binding declarations for explicit setup
+   * @param config - Consumer configuration object
+   * @returns Array of objects with queue name, options, and bindings
+   */
+  toRMQQueueDeclarations(config: RabbitMQConsumerConfig) {
+    return config.queues.map((queue) => ({
+      queue: queue.name,
+      options: queue.options,
+      bindings: queue.bindings,
+    }));
+  }
+
+  getRmqUri(): string {
+    const RMQ_USER = this.configService.get<string>("RMQ_USER");
+    const RMQ_PASSWORD = this.configService.get<string>("RMQ_PASSWORD");
+    const RMQ_HOST = this.configService.get<string>("RMQ_HOST");
+    const RMQ_PORT = this.configService.get<number>("RMQ_PORT");
+    const RMQ_VHOST = this.configService.get<string>("RMQ_VHOST");
+
+    if (!RMQ_USER || !RMQ_PASSWORD || !RMQ_HOST) {
+      throw new Error('Missing required RabbitMQ env vars (RMQ_USER, RMQ_PASSWORD, RMQ_HOST)');
+    }
+
+    const portPart = RMQ_PORT ? `:${RMQ_PORT}` : '';
+    const vhostPart = RMQ_VHOST ? `/${encodeURIComponent(RMQ_VHOST)}` : '';
+
+    return `amqps://${encodeURIComponent(RMQ_USER)}:${encodeURIComponent(RMQ_PASSWORD)}@${RMQ_HOST}${portPart}${vhostPart}`;
+  };
+}

@@ -1,0 +1,16 @@
+services:
+  server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: hivek-server
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env
+    environment:
+      - HOST=0.0.0.0
+      - PORT=3000
+      # - NODE_ENV=production
+    restart: none
+

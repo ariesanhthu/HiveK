@@ -1,8 +1,13 @@
-import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
+import { Inject, Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { RoleModel } from '../schemas/role.schema';
-import { UserType } from '@/core/enums/user-type.enum';
+import { ERoleType } from '@/core/enums';
+import { UserModel } from '../schemas';
+import { type IUserRepository, USER_REPOSITORY } from '@/core/interfaces/repositories';
+import * as bcrypt from 'bcrypt';
+import { AdminRoot } from '@/core/aggregate-roots';
+import { PhoneNumberVO } from '@/core/value-objects/phone-number.value-object';
 
 @Injectable()
 export class RoleSeedService implements OnModuleInit {
@@ -11,10 +16,18 @@ export class RoleSeedService implements OnModuleInit {
   constructor(
     @InjectModel(RoleModel.name)
     private readonly roleModel: Model<RoleModel>,
-  ) {}
+    @InjectModel(UserModel.name)
+    private readonly userModel: Model<UserModel>,
+    @Inject(USER_REPOSITORY)
+    private readonly userRepository: IUserRepository,
+  ) { }
 
   async onModuleInit() {
+    if (process.env.SEEDING === '0') {
+      return;
+    }
     await this.seedRoles();
+    await this.seedUsers();
   }
 
   private async seedRoles() {
@@ -29,53 +42,19 @@ export class RoleSeedService implements OnModuleInit {
     const defaultRoles = [
       // ADMIN ROLES
       {
-        title: `${UserType.ADMIN}_SUPER`,
+        title: `${ERoleType.ADMIN}`,
         permissions: ['*'],
-        is_blocked: false,
+        type: ERoleType.ADMIN,
       },
       {
-        title: `${UserType.ADMIN}_MANAGER`,
-        permissions: ['manage_users', 'manage_enterprises', 'view_reports'],
-        is_blocked: false,
+        title: `${ERoleType.ENTERPRISE}`,
+        permissions: ['*'],
+        type: ERoleType.ENTERPRISE,
       },
       {
-        title: `${UserType.ADMIN}_VIEWER`,
-        permissions: ['view_all'],
-        is_blocked: false,
-      },
-
-      // ENTERPRISE ROLES
-      {
-        title: `${UserType.ENTERPRISE}_OWNER`,
-        permissions: ['enterprise_full_access', 'manage_team', 'manage_billing'],
-        is_blocked: false,
-      },
-      {
-        title: `${UserType.ENTERPRISE}_MANAGER`,
-        permissions: ['manage_campaigns', 'view_analytics', 'manage_members'],
-        is_blocked: false,
-      },
-      {
-        title: `${UserType.ENTERPRISE}_MEMBER`,
-        permissions: ['view_campaigns', 'view_analytics'],
-        is_blocked: false,
-      },
-
-      // KOL ROLES
-      {
-        title: `${UserType.KOL}_PRO`,
-        permissions: ['kol_full_access', 'advanced_analytics', 'premium_features'],
-        is_blocked: false,
-      },
-      {
-        title: `${UserType.KOL}_BASIC`,
-        permissions: ['view_jobs', 'apply_jobs', 'basic_analytics'],
-        is_blocked: false,
-      },
-      {
-        title: `${UserType.KOL}_GUEST`,
-        permissions: ['view_public_jobs'],
-        is_blocked: false,
+        title: `${ERoleType.KOL}`,
+        permissions: ['*'],
+        type: ERoleType.KOL,
       },
     ];
 
@@ -85,5 +64,36 @@ export class RoleSeedService implements OnModuleInit {
     } catch (error) {
       this.logger.error('Failed to seed default roles:', error);
     }
+  }
+
+  private async seedUsers() {
+    const count = await this.userModel.countDocuments({
+      email: process.env.ADMIN_EMAIL,
+    });
+    if (count > 0) {
+      this.logger.log('Users already seeded. Skipping...');
+      return;
+    }
+    const roles = await this.roleModel.find();
+    const adminRole = roles.find(r => r.type === ERoleType.ADMIN);
+    if (!adminRole) {
+      throw new Error('No admin role found in system');
+    }
+
+    let user;
+    const passwordHash = await bcrypt.hash(process.env.ADMIN_PASSWORD, 10);
+    const commonProps = {
+      email: process.env.ADMIN_EMAIL,
+      phone: PhoneNumberVO.create({ value: '+0900000000' }),
+      passwordHash,
+      fullName: 'SUPER ADMIN',
+      avatar: null,
+      type: ERoleType.ADMIN,
+      roleId: adminRole.id,
+      isEmailVerified: true,
+    };
+
+    user = AdminRoot.create(commonProps);
+    await this.userRepository.save(user);
   }
 }

@@ -1,7 +1,6 @@
 import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
-import { setupSwagger } from './config/swagger.setup';
-import { setupApplication } from './config/app.setup';
+import { AppModule } from './infrastructure/modules/app.module';
+import { setupApplication, setupSwagger } from '@infrastructure/nest-config';
 import { Logger } from '@nestjs/common';
 
 async function bootstrap() {
@@ -17,7 +16,8 @@ async function bootstrap() {
 
   Logger.log(`==========================================================`);
   Logger.log(`🚀 Application is running on: http://${host}:${port}/hivek/api`);
-  Logger.log(`📖 Swagger docs available at: http://localhost:${port}/hivek/api/docs`);
+  Logger.log(`📖 Swagger admin docs available at: http://${host}:${port}/hivek/api/admin/docs`);
+  Logger.log(`📖 Swagger client docs available at: http://${host}:${port}/hivek/api/client/docs`);
   Logger.log(`==========================================================`);
 }
 bootstrap();

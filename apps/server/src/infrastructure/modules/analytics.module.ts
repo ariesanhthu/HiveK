@@ -1,25 +1,35 @@
 import { Module } from '@nestjs/common';
-import { MongooseModule } from '@nestjs/mongoose';
 import { CqrsModule } from '@nestjs/cqrs';
-import { KpiLogModel, KpiLogSchema } from '../mongo/schemas/kpi-log.schema';
-import { KPI_LOG_READ_SERVICE } from '@/application/interfaces';
-import { MongoKpiLogReadService } from '../mongo/read-services/kpi-log.read-service';
-import { GetKpiLogsHandler } from '@/application/analytics/queries/get-kpi-logs.handler';
-import { KpiLogController } from '@/presentation/controllers/kpi-log.controller';
+
+import { KpiLogCreateCommandHandler, KpiLogTerminateCommandHandler } from '@/application/commands';
+import { KpiLogGetListHandler } from '@/application/queries';
+import { KpiMetricsUpdatedWsHandler, KpiTrackingTerminatedWsHandler } from '@/application/events';
+
+import { KpiLogAdminController, KpiLogRmqController } from '@/presentation/controllers'
+
+const COMMAND_HANDLERS = [
+  KpiLogCreateCommandHandler,
+  KpiLogTerminateCommandHandler
+];
+
+const QUERY_HANDLERS = [
+  KpiLogGetListHandler
+]
+
+const EVENT_HANDLERS = [
+  KpiMetricsUpdatedWsHandler,
+  KpiTrackingTerminatedWsHandler
+]
 
 @Module({
-  imports: [
-    CqrsModule,
-    MongooseModule.forFeature([{ name: KpiLogModel.name, schema: KpiLogSchema }]),
-  ],
-  controllers: [KpiLogController],
+  imports: [CqrsModule],
+  controllers: [KpiLogAdminController],
   providers: [
-    {
-      provide: KPI_LOG_READ_SERVICE,
-      useClass: MongoKpiLogReadService,
-    },
-    GetKpiLogsHandler,
+    KpiLogRmqController,
+    ...COMMAND_HANDLERS,
+    ...QUERY_HANDLERS,
+    ...EVENT_HANDLERS
   ],
-  exports: [KPI_LOG_READ_SERVICE],
+  exports: [],
 })
 export class AnalyticsModule {}
