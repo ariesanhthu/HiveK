@@ -13,3 +13,4 @@ export * from './kpi-tracking/kpi-tracking-events.handler';
 export * from './send-verification-email-requested.event';
 export * from './notify-enterprise-invitation-email.event';
 export * from './notify-enterprise-revocation-email.event';
+export * from './notify-kol-campaign-invitation.event';

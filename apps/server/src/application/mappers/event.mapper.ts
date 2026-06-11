@@ -1,6 +1,6 @@
 import { DomainEvent, IntegrationEvent } from '@/core/common';
-import { EntityHardDeletedEvent, UserSignedUpEvent, VerificationOtpCreatedEvent, UserAddedToEnterpriseEvent, UserRevokedFromEnterpriseEvent } from '@/core/events';
-import { SendVerificationEmailRequestedEvent, NotifyEnterpriseInvitationEvent, NotifyEnterpriseRevocationEvent } from '../events';
+import { EntityHardDeletedEvent, UserSignedUpEvent, VerificationOtpCreatedEvent, UserAddedToEnterpriseEvent, UserRevokedFromEnterpriseEvent, CampaignParticipantCreatedEvent } from '@/core/events';
+import { SendVerificationEmailRequestedEvent, NotifyEnterpriseInvitationEvent, NotifyEnterpriseRevocationEvent, NotifyKolCampaignInvitationEvent } from '../events';
 
 export class EventMapper {
   /**
@@ -18,6 +18,8 @@ export class EventMapper {
         return EventMapper.mapUserAddedToEnterpriseEvent(event as UserAddedToEnterpriseEvent);
       case event instanceof UserRevokedFromEnterpriseEvent:
         return EventMapper.mapUserRevokedFromEnterpriseEvent(event as UserRevokedFromEnterpriseEvent);
+      case event instanceof CampaignParticipantCreatedEvent:
+        return EventMapper.mapCampaignParticipantCreatedEvent(event as CampaignParticipantCreatedEvent);
       default:
         return [];
     }
@@ -84,6 +86,24 @@ export class EventMapper {
       {
         exchange: 'kpi_exchange',
         routingKey: 'notification.enterprise_revocation',
+      }
+    );
+    return [e];
+  }
+
+  private static mapCampaignParticipantCreatedEvent(event: CampaignParticipantCreatedEvent): IntegrationEvent[] {
+    const e = new NotifyKolCampaignInvitationEvent(
+      {
+        campaignParticipantId: event.payload.campaignParticipantId,
+        campaignId: event.payload.campaignId,
+        kolProfileId: event.payload.kolProfileId,
+        kolEmail: event.payload.kolEmail,
+        campaignName: event.payload.campaignName,
+      },
+      undefined,
+      {
+        exchange: 'kpi_exchange',
+        routingKey: 'notification.kol_campaign_invitation',
       }
     );
     return [e];

@@ -3,8 +3,7 @@ import { EventsHandler, IEventHandler } from '@nestjs/cqrs';
 import { KpiMetricsUpdatedEvent } from './kpi-metrics-updated.event';
 import { KpiTrackingTerminatedEvent } from './kpi-tracking-terminated.event';
 import { WEBSOCKET_SERVICE, type IWebSocketService } from '@/application/interfaces';
-import { KPI_LOG_REPOSITORY, type IKpiLogRepository } from '@/core/interfaces/repositories';
-import { CAMPAIGN_PARTICIPANT_REPOSITORY, type ICampaignParticipantRepository } from '@/core/interfaces/repositories';
+import { KPI_LOG_REPOSITORY, type IKpiLogRepository, CAMPAIGN_REPOSITORY, type ICampaignRepository } from '@/core/interfaces/repositories';
 
 @EventsHandler(KpiMetricsUpdatedEvent)
 export class KpiMetricsUpdatedWsHandler implements IEventHandler<KpiMetricsUpdatedEvent> {
@@ -15,14 +14,17 @@ export class KpiMetricsUpdatedWsHandler implements IEventHandler<KpiMetricsUpdat
     private readonly websocketService: IWebSocketService,
     @Inject(KPI_LOG_REPOSITORY)
     private readonly kpiLogRepository: IKpiLogRepository,
-    @Inject(CAMPAIGN_PARTICIPANT_REPOSITORY)
-    private readonly participantRepository: ICampaignParticipantRepository,
+    @Inject(CAMPAIGN_REPOSITORY)
+    private readonly campaignRepository: ICampaignRepository,
   ) {}
 
   async handle(event: KpiMetricsUpdatedEvent) {
     const { participantId, kpiLogId } = event;
 
-    const participant = await this.participantRepository.findById(participantId);
+    const campaign = await this.campaignRepository.findByParticipantId(participantId);
+    if (!campaign) return;
+
+    const participant = campaign.participants.find(p => p.id === participantId);
     if (!participant) return;
 
     const kpiLog = await this.kpiLogRepository.findById(kpiLogId);
@@ -31,7 +33,7 @@ export class KpiMetricsUpdatedWsHandler implements IEventHandler<KpiMetricsUpdat
     // Notify the KOL
     this.websocketService.emitToUser(participant.kolProfileId, 'kpi_metrics_updated', {
       participantId,
-      campaignId: participant.campaignId,
+      campaignId: campaign.id!,
       kpiLog: {
         id: kpiLog.id,
         timestamp: kpiLog.timestamp,
@@ -50,20 +52,23 @@ export class KpiTrackingTerminatedWsHandler implements IEventHandler<KpiTracking
   constructor(
     @Inject(WEBSOCKET_SERVICE)
     private readonly websocketService: IWebSocketService,
-    @Inject(CAMPAIGN_PARTICIPANT_REPOSITORY)
-    private readonly participantRepository: ICampaignParticipantRepository,
+    @Inject(CAMPAIGN_REPOSITORY)
+    private readonly campaignRepository: ICampaignRepository,
   ) {}
 
   async handle(event: KpiTrackingTerminatedEvent) {
     const { participantId, outputId } = event;
 
-    const participant = await this.participantRepository.findById(participantId);
+    const campaign = await this.campaignRepository.findByParticipantId(participantId);
+    if (!campaign) return;
+
+    const participant = campaign.participants.find(p => p.id === participantId);
     if (!participant) return;
 
     // Notify the KOL
     this.websocketService.emitToUser(participant.kolProfileId, 'kpi_tracking_terminated', {
       participantId,
-      campaignId: participant.campaignId,
+      campaignId: campaign.id!,
       outputId,
     });
 

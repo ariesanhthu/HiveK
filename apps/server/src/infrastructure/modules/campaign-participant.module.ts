@@ -6,7 +6,8 @@ import {
   CampaignParticipantSoftDeleteCommandHandler,
   CampaignParticipantHardDeleteCommandHandler,
   CampaignParticipantRestoreCommandHandler,
-  CampaignParticipantUpdateCommandHandler 
+  CampaignParticipantUpdateCommandHandler,
+  CampaignParticipantUpdateStatusCommandHandler
 } 
 from '@/application/commands';
 
@@ -30,7 +31,8 @@ const COMMAND_HANDLERS = [
   CampaignParticipantSoftDeleteCommandHandler,
   CampaignParticipantHardDeleteCommandHandler,
   CampaignParticipantRestoreCommandHandler,
-  CampaignParticipantUpdateCommandHandler
+  CampaignParticipantUpdateCommandHandler,
+  CampaignParticipantUpdateStatusCommandHandler
 ];
 
 const QUERY_HANDLERS = [

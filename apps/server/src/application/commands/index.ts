@@ -185,6 +185,9 @@ export * from './campaign-participant-restore/campaign-participant-restore.handl
 export * from './campaign-participant-update/campaign-participant-update.command';
 export * from './campaign-participant-update/campaign-participant-update.handler';
 export * from './campaign-participant-update/campaign-participant-update.dto';
+export * from './campaign-participant-update-status/campaign-participant-update-status.command';
+export * from './campaign-participant-update-status/campaign-participant-update-status.handler';
+export * from './campaign-participant-update-status/campaign-participant-update-status.dto';
 
 // Campaign Update Status and Collaborator Commands
 export * from './campaign-update-status/campaign-update-status.command';

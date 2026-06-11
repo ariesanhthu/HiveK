@@ -1,6 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument, Schema as MongooseSchema } from 'mongoose';
+import { HydratedDocument, Schema as MongooseSchema, Types } from 'mongoose';
 import { ECampaignStatus } from '@/core/enums/campaign-status.enum';
+import { EParticipantStatus, EOutputStatus, EOutputType, ESchedulePostStatus } from '@/core/enums';
 import { softDeletePlugin } from '../utils';
 
 @Schema({ _id: false })
@@ -29,6 +30,147 @@ export class RawContentItemModel {
   @Prop({ type: String, required: false, maxlength: 5000 })
   rawContent?: string;
 }
+
+@Schema({ timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } })
+export class CampaignParticipantSubModel {
+  _id: Types.ObjectId;
+
+  @Prop({ required: true, type: MongooseSchema.Types.ObjectId, ref: 'KolProfileModel' })
+  kol_profile_id: Types.ObjectId;
+
+  @Prop({ required: true, type: String, enum: Object.values(EParticipantStatus) })
+  status: EParticipantStatus;
+
+  @Prop({ type: Date, default: null })
+  joined_at: Date | null;
+
+  @Prop({ type: Date, default: null })
+  delete_at: Date | null;
+
+  @Prop({ type: String, default: null })
+  delete_by: string | null;
+}
+export const CampaignParticipantSubSchema = SchemaFactory.createForClass(CampaignParticipantSubModel);
+
+@Schema({ timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } })
+export class CampaignKOLOutputSubModel {
+  _id: Types.ObjectId;
+
+  @Prop({ required: true, type: MongooseSchema.Types.ObjectId })
+  campaign_participant_id: Types.ObjectId;
+
+  @Prop({ required: true, type: MongooseSchema.Types.ObjectId, ref: 'PlatformModel' })
+  platform_id: Types.ObjectId;
+
+  @Prop({ type: String, default: null })
+  unique_id: string | null;
+
+  @Prop({ required: true, type: String, enum: Object.values(EOutputType) })
+  output_type: EOutputType;
+
+  @Prop({ required: true, type: String })
+  title: string;
+
+  @Prop({ required: true, type: Boolean })
+  is_schedule_for_post: boolean;
+
+  @Prop({ type: Date, default: null })
+  scheduled_at: Date | null;
+
+  @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'UploadedFileModel', default: null })
+  file_id: Types.ObjectId | null;
+
+  @Prop({ required: true, type: String, enum: Object.values(EOutputStatus) })
+  status: EOutputStatus;
+
+  @Prop({ type: String, default: null })
+  url: string | null;
+
+  @Prop({ type: Date, default: null })
+  posted_at: Date | null;
+
+  @Prop({ type: Boolean, default: false })
+  is_tracking_active: boolean;
+}
+export const CampaignKOLOutputSubSchema = SchemaFactory.createForClass(CampaignKOLOutputSubModel);
+
+@Schema({ timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } })
+export class CampaignEnterpriseOutputSubModel {
+  _id: Types.ObjectId;
+
+  @Prop({ required: true, type: MongooseSchema.Types.ObjectId, ref: 'PlatformModel' })
+  platform_id: Types.ObjectId;
+
+  @Prop({ type: String, default: null })
+  unique_id: string | null;
+
+  @Prop({ required: true, type: String, enum: Object.values(EOutputType) })
+  output_type: EOutputType;
+
+  @Prop({ required: true, type: String })
+  title: string;
+
+  @Prop({ required: true, type: Boolean })
+  is_schedule_for_post: boolean;
+
+  @Prop({ type: Date, default: null })
+  scheduled_at: Date | null;
+
+  @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'UploadedFileModel', default: null })
+  file_id: Types.ObjectId | null;
+
+  @Prop({ required: true, type: String, enum: Object.values(EOutputStatus) })
+  status: EOutputStatus;
+
+  @Prop({ type: String, default: null })
+  url: string | null;
+
+  @Prop({ type: Date, default: null })
+  posted_at: Date | null;
+
+  @Prop({ type: Boolean, default: false })
+  is_tracking_active: boolean;
+}
+export const CampaignEnterpriseOutputSubSchema = SchemaFactory.createForClass(CampaignEnterpriseOutputSubModel);
+
+@Schema({ timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } })
+export class SchedulePostModel {
+  @Prop({ required: true, type: Date })
+  scheduled_time: Date;
+
+  @Prop({ required: true, type: MongooseSchema.Types.ObjectId, ref: 'PlatformModel' })
+  platform_id: Types.ObjectId;
+
+  @Prop({ required: true, type: String, enum: Object.values(ESchedulePostStatus) })
+  status: ESchedulePostStatus;
+
+  @Prop({ type: [CampaignKOLOutputSubSchema], default: [] })
+  campaign_kol_outputs: CampaignKOLOutputSubModel[];
+
+  @Prop({ type: [CampaignEnterpriseOutputSubSchema], default: [] })
+  campaign_enterprise_outputs: CampaignEnterpriseOutputSubModel[];
+}
+export const SchedulePostSchema = SchemaFactory.createForClass(SchedulePostModel);
+
+@Schema({ _id: false })
+export class ScheduleDayModel {
+  @Prop({ required: true, type: Date })
+  date: Date;
+
+  @Prop({ type: String, required: false })
+  label?: string;
+
+  @Prop({ type: [SchedulePostSchema], default: [] })
+  posts: SchedulePostModel[];
+}
+export const ScheduleDaySchema = SchemaFactory.createForClass(ScheduleDayModel);
+
+@Schema({ timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } })
+export class CampaignScheduleModel {
+  @Prop({ type: [ScheduleDaySchema], default: [] })
+  timeline: ScheduleDayModel[];
+}
+export const CampaignScheduleSchema = SchemaFactory.createForClass(CampaignScheduleModel);
 
 @Schema({
   collection: 'campaigns',
@@ -67,6 +209,12 @@ export class CampaignModel {
 
   @Prop({ type: String, default: null })
   delete_by: string | null;
+
+  @Prop({ type: [CampaignParticipantSubSchema], default: [] })
+  participants: CampaignParticipantSubModel[];
+
+  @Prop({ type: CampaignScheduleSchema, required: false })
+  schedule?: CampaignScheduleModel;
 
   created_at: Date;
   updated_at: Date;
