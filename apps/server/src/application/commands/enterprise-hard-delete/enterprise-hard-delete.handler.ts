@@ -4,6 +4,8 @@ import { EnterpriseNotFoundException, EnterpriseForbiddenException, InvalidOpera
 import { ENTERPRISE_REPOSITORY, CAMPAIGN_REPOSITORY, type IEnterpriseRepository, type ICampaignRepository } from '@/core/interfaces/repositories';
 import { EnterpriseHardDeleteCommand } from './enterprise-hard-delete.command';
 import { type IUnitOfWork, UNIT_OF_WORK } from '@/application/interfaces';
+import { OutboxService } from '@/application/services/outbox.service';
+import { EventMapper } from '@/application/mappers';
 
 @CommandHandler(EnterpriseHardDeleteCommand)
 export class EnterpriseHardDeleteCommandHandler implements ICommandHandler<EnterpriseHardDeleteCommand, void> {
@@ -12,6 +14,7 @@ export class EnterpriseHardDeleteCommandHandler implements ICommandHandler<Enter
     private readonly enterpriseRepository: IEnterpriseRepository,
     @Inject(CAMPAIGN_REPOSITORY)
     private readonly campaignRepository: ICampaignRepository,
+    private readonly outboxService: OutboxService,
     @Inject(UNIT_OF_WORK)
     private readonly uow: IUnitOfWork,
   ) { }
@@ -35,6 +38,9 @@ export class EnterpriseHardDeleteCommandHandler implements ICommandHandler<Enter
             throw new InvalidOperationException(`Cannot delete enterprise with active campaigns. Please complete or cancel them first.`);
         }
 
+        // Register hard delete event
+        enterprise.markForHardDelete();
+
         // Hard delete: remove all associated campaigns first
         const campaigns = await this.campaignRepository.findByEnterpriseId(id);
         for (const campaign of campaigns) {
@@ -42,6 +48,17 @@ export class EnterpriseHardDeleteCommandHandler implements ICommandHandler<Enter
         }
 
         await this.enterpriseRepository.delete(id);
+
+        const events = EventMapper.mapToIntegrationEvents(enterprise.domainEvents);
+        if (events.length > 0) {
+          await this.outboxService.enqueueMany(events.map(event => ({
+            eventType: event.eventType,
+            payload: event.payload,
+            metadata: event.metadata,
+            transport: event.transport,
+            maxRetry: 5,
+          })));
+        }
     });
   }
 }

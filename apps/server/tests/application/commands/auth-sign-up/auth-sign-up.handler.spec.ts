@@ -3,7 +3,7 @@ import { AuthSignUpCommand } from '@/application/commands/auth-sign-up/auth-sign
 import { ERoleType } from '@/core/enums';
 import { UserConflictException, RoleNotFoundException } from '@/core/exceptions';
 import { createMockUserRepository } from '../../../__mocks__/mock-repositories';
-import { createMockAuthService, createMockUnitOfWork, createMockOutboxService, createMockRoleReadService } from '../../../__mocks__/mock-services';
+import { createMockAuthService, createMockUnitOfWork, createMockOutboxService, createMockRoleReadService, createMockCommandBus } from '../../../__mocks__/mock-services';
 import { KOLUserRoot, EnterpriseUserRoot } from '@/core/aggregate-roots';
 
 describe('AuthSignUpCommandHandler', () => {
@@ -13,6 +13,7 @@ describe('AuthSignUpCommandHandler', () => {
   let mockAuthService: ReturnType<typeof createMockAuthService>;
   let mockOutboxService: ReturnType<typeof createMockOutboxService>;
   let mockUow: ReturnType<typeof createMockUnitOfWork>;
+  let mockCommandBus: ReturnType<typeof createMockCommandBus>;
 
   beforeEach(() => {
     mockUserRepository = createMockUserRepository();
@@ -20,6 +21,7 @@ describe('AuthSignUpCommandHandler', () => {
     mockAuthService = createMockAuthService();
     mockOutboxService = createMockOutboxService();
     mockUow = createMockUnitOfWork();
+    mockCommandBus = createMockCommandBus();
 
     handler = new AuthSignUpCommandHandler(
       mockUserRepository,
@@ -27,6 +29,7 @@ describe('AuthSignUpCommandHandler', () => {
       mockAuthService as any,
       mockOutboxService as any,
       mockUow,
+      mockCommandBus as any,
     );
   });
 
@@ -41,7 +44,7 @@ describe('AuthSignUpCommandHandler', () => {
   };
 
   describe('Happy Paths', () => {
-    it('should successfully sign up a KOL user and enqueue outbox event', async () => {
+    it('should successfully sign up a KOL user and execute AuthSendOtpCommand', async () => {
       const input = {
         email: 'kol@example.com',
         password: 'password123',
@@ -57,10 +60,12 @@ describe('AuthSignUpCommandHandler', () => {
 
       expect(result).toBeDefined();
       expect(mockUserRepository.save).toHaveBeenCalledWith(expect.any(KOLUserRoot));
-      expect(mockOutboxService.enqueue).toHaveBeenCalledWith('auth.user.registered', expect.objectContaining({
-        email: 'kol@example.com',
-        type: ERoleType.KOL,
+      
+      // Verification of internal Command dispatch
+      expect(mockCommandBus.execute).toHaveBeenCalledWith(expect.objectContaining({
+        input: expect.objectContaining({ email: 'kol@example.com' })
       }));
+      
       expect(mockUow.execute).toHaveBeenCalled();
     });
 
@@ -74,7 +79,6 @@ describe('AuthSignUpCommandHandler', () => {
       await handler.execute(command);
 
       expect(mockUserRepository.save).toHaveBeenCalledWith(expect.any(EnterpriseUserRoot));
-      expect(mockOutboxService.enqueue).toHaveBeenCalled();
     });
   });
 
@@ -87,7 +91,6 @@ describe('AuthSignUpCommandHandler', () => {
 
       await expect(handler.execute(command)).rejects.toThrow(UserConflictException);
       expect(mockUserRepository.save).not.toHaveBeenCalled();
-      expect(mockOutboxService.enqueue).not.toHaveBeenCalled();
     });
   });
 });

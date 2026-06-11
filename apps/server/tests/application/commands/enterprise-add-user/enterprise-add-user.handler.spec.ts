@@ -63,7 +63,7 @@ describe('EnterpriseAddUserCommandHandler', () => {
   };
 
   describe('Happy Paths', () => {
-    it('should add user to enterprise successfully and enqueue outbox event', async () => {
+    it('should successfully add user to enterprise and enqueue integration events', async () => {
       const enterprise = createMockEnterprise();
       mockEnterpriseRepository.findById.mockResolvedValue(enterprise);
       
@@ -75,13 +75,26 @@ describe('EnterpriseAddUserCommandHandler', () => {
 
       expect(member.enterpriseIds).toContain(enterpriseId);
       expect(mockUserRepository.saveMany).toHaveBeenCalledWith([member]);
-      expect(mockOutboxService.enqueueMany).toHaveBeenCalledWith([expect.objectContaining({
-        topic: 'enterprise_user_added',
-        payload: expect.objectContaining({ userId: memberId })
-      })]);
+      
+      // Verification of Integration Event enqueuing
+      expect(mockOutboxService.enqueueMany).toHaveBeenCalledWith(
+        expect.arrayContaining([
+          expect.objectContaining({
+            eventType: 'EnterpriseUserAdded',
+            payload: expect.objectContaining({
+              userId: memberId,
+              enterpriseId,
+            }),
+            transport: expect.objectContaining({
+                routingKey: 'enterprise.user.added'
+            })
+          })
+        ])
+      );
+      expect(mockUow.execute).toHaveBeenCalled();
     });
 
-    it('should filter out users who are already members', async () => {
+    it('should filter out users who are already members and not enqueue redundant events', async () => {
         const enterprise = createMockEnterprise();
         mockEnterpriseRepository.findById.mockResolvedValue(enterprise);
         
@@ -94,10 +107,18 @@ describe('EnterpriseAddUserCommandHandler', () => {
   
         expect(memberNew.enterpriseIds).toContain(enterpriseId);
         expect(mockUserRepository.saveMany).toHaveBeenCalledWith([memberNew]); 
-        expect(mockOutboxService.enqueueMany).toHaveBeenCalledWith([expect.objectContaining({
-            topic: 'enterprise_user_added',
-            payload: expect.objectContaining({ userId: 'new' })
-        })]);
+        
+        expect(mockOutboxService.enqueueMany).toHaveBeenCalledWith(
+            expect.arrayContaining([
+                expect.objectContaining({
+                    eventType: 'EnterpriseUserAdded',
+                    payload: expect.objectContaining({ userId: 'new' })
+                })
+            ])
+        );
+        // Ensure 'existing' user did not trigger an event
+        const call = (mockOutboxService.enqueueMany as jest.Mock).mock.calls[0][0];
+        expect(call).toHaveLength(1);
     });
   });
 
@@ -114,6 +135,27 @@ describe('EnterpriseAddUserCommandHandler', () => {
       
       const command = new EnterpriseAddUserCommand(enterpriseId, { memberIds: [memberId] }, 'wrong-owner');
       await expect(handler.execute(command)).rejects.toThrow(EnterpriseForbiddenException);
+    });
+
+    it('should throw UserNotFoundException if some users are missing', async () => {
+        const enterprise = createMockEnterprise();
+        mockEnterpriseRepository.findById.mockResolvedValue(enterprise);
+        mockUserRepository.findByIds.mockResolvedValue([]); // Missing all
+  
+        const command = new EnterpriseAddUserCommand(enterpriseId, { memberIds: [memberId] }, ownerId);
+        await expect(handler.execute(command)).rejects.toThrow(UserNotFoundException);
+    });
+
+    it('should throw InvalidUserTypeException if user is not an enterprise type', async () => {
+        const enterprise = createMockEnterprise();
+        mockEnterpriseRepository.findById.mockResolvedValue(enterprise);
+        
+        const kolUser = createMockUser('kol');
+        (kolUser as any).props.type = ERoleType.KOL;
+        mockUserRepository.findByIds.mockResolvedValue([kolUser]);
+  
+        const command = new EnterpriseAddUserCommand(enterpriseId, { memberIds: ['kol'] }, ownerId);
+        await expect(handler.execute(command)).rejects.toThrow(InvalidUserTypeException);
     });
   });
 });

@@ -2,6 +2,7 @@ import { Injectable, Inject } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { OUTBOX_REPOSITORY, type IOutboxRepository } from '@/core/interfaces/repositories';
 import { MESSAGE_QUEUE_SERVICE, type IMessageQueueService, UNIT_OF_WORK, type IUnitOfWork, LOGGER_SERVICE, type ILoggerService } from '@/application/interfaces';
+import { OutboxEntity } from '@/core/entities/outbox.entity';
 
 @Injectable()
 export class OutboxProcessorService {
@@ -51,22 +52,27 @@ export class OutboxProcessorService {
     }
   }
 
-  private async dispatch(message: any) {
+  private async dispatch(message: OutboxEntity) {
     try {
-      this.logger.debug(`Processing outbox message: ${message.id}`, undefined, { topic: message.topic });
+      this.logger.debug(`Processing outbox message: ${message.id}`, undefined, { eventType: message.eventType });
 
       // 1. Mark as processing to prevent other instances/concurrency issues
       message.markAsProcessing();
       await this.outboxRepository.save(message);
 
       // 2. Dispatch to RabbitMQ
-      await (this.mqService.emit)(message.topic, message.payload);
+      if (message.transport && message.transport.routingKey) {
+        await (this.mqService.emit)(message.transport.routingKey, message.payload);
+      } else {
+        // Do not send if transport is not defined
+        this.logger.debug('No transport defined for message', undefined, { messageId: message.id, eventType: message.eventType });
+      }
 
       // 3. Mark as done
       message.markAsDone();
       await this.outboxRepository.save(message);
       
-      this.logger.log(`Successfully dispatched outbox message ${message.id} to topic ${message.topic}`);
+      this.logger.log(`Successfully dispatched outbox message ${message.id} for eventType ${message.eventType}`);
     } catch (error) {
       const reason = error instanceof Error ? error.message : String(error);
       this.logger.warn(`Failed to dispatch outbox message ${message.id}: ${reason}`, undefined, { 

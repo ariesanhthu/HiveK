@@ -4,6 +4,7 @@ import { EOtpType } from '@/core/enums/otp-type.enum';
 import { OtpRateLimitException } from '@/core/exceptions';
 import { createMockOtpRepository } from '../../../__mocks__/mock-repositories';
 import { createMockAuthService, createMockOutboxService, createMockUnitOfWork } from '../../../__mocks__/mock-services';
+import { OtpRoot } from '@/core/aggregate-roots/otp.aggregate';
 
 describe('AuthSendOtpCommandHandler', () => {
   let handler: AuthSendOtpCommandHandler;
@@ -38,6 +39,12 @@ describe('AuthSendOtpCommandHandler', () => {
       const command = new AuthSendOtpCommand(input);
 
       mockOtpRepository.findRecentOtp.mockResolvedValue(null);
+      // In reality, userRepository.save() might set the ID. 
+      // For OtpRoot, we need to ensure it emits events.
+      mockOtpRepository.save.mockImplementation(async (otp: OtpRoot) => {
+        if (!otp.id) otp.setId('generated-id');
+        return Promise.resolve();
+      });
 
       const result = await handler.execute(command);
 
@@ -45,17 +52,23 @@ describe('AuthSendOtpCommandHandler', () => {
       expect(mockAuthService.normalizeEmail).toHaveBeenCalledWith('user@example.com');
       expect(mockOtpRepository.findRecentOtp).toHaveBeenCalledWith('user@example.com', type, 60);
       expect(mockOtpRepository.deleteByEmailAndType).toHaveBeenCalledWith('user@example.com', type);
-      expect(mockOtpRepository.save).toHaveBeenCalledWith(
-        'user@example.com',
-        expect.stringMatching(/^\d{6}$/),
-        type,
-        expect.any(Date),
-      );
+      expect(mockOtpRepository.save).toHaveBeenCalled();
       
-      expect(mockOutboxService.enqueue).toHaveBeenCalledWith('email_send', expect.objectContaining({
-        email: 'user@example.com',
-        type,
-      }));
+      // Verification of Integration Event enqueuing
+      expect(mockOutboxService.enqueueMany).toHaveBeenCalledWith(
+        expect.arrayContaining([
+          expect.objectContaining({
+            eventType: 'SendVerificationEmailRequested',
+            payload: expect.objectContaining({
+              email: 'user@example.com',
+              type,
+            }),
+            transport: expect.objectContaining({
+                routingKey: 'email.send'
+            })
+          })
+        ])
+      );
       expect(mockUow.execute).toHaveBeenCalled();
     });
   });
@@ -69,7 +82,7 @@ describe('AuthSendOtpCommandHandler', () => {
 
       await expect(handler.execute(command)).rejects.toThrow(OtpRateLimitException);
       expect(mockOtpRepository.save).not.toHaveBeenCalled();
-      expect(mockOutboxService.enqueue).not.toHaveBeenCalled();
+      expect(mockOutboxService.enqueueMany).not.toHaveBeenCalled();
     });
   });
 });

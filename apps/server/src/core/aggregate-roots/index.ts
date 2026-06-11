@@ -10,3 +10,4 @@ export * from './uploaded-file.aggregate';
 export * from './notification.aggregate';
 export * from './user-notification.aggregate';
 export * from './campaign-participant.aggregate';
+export * from './otp.aggregate';

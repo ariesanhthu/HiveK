@@ -63,8 +63,10 @@ export class MongoOutboxRepository implements IOutboxRepository {
         throw new Error('Outbox document ID is missing');
     }
     return OutboxEntity.instantiate(doc._id.toString(), {
-      topic: doc.topic,
+      eventType: doc.event_type,
       payload: doc.payload,
+      metadata: doc.metadata || null,
+      transport: doc.transport || null,
       status: doc.status,
       retryCount: doc.retry_count,
       maxRetry: doc.max_retry,
@@ -76,8 +78,10 @@ export class MongoOutboxRepository implements IOutboxRepository {
 
   private mapToPersistence(entity: OutboxEntity): Partial<OutboxModel> {
     return {
-      topic: entity.topic,
+      event_type: entity.eventType,
       payload: entity.payload,
+      metadata: entity.metadata || undefined,
+      transport: entity.transport || undefined,
       status: entity.status,
       retry_count: entity.retryCount,
       max_retry: entity.maxRetry,

@@ -20,3 +20,8 @@ While enhancing the test suite for the Auth domain, the following observations w
 - **`EnterpriseCreateCommandHandler`**: If the user is not found or is not an `EnterpriseUserRoot`, the enterprise is still created but not associated with the user. This results in an orphaned enterprise profile.
 - **`EnterpriseAddUserCommandHandler` & `EnterpriseRevokeUserCommandHandler`**: These handlers iterate over users and call `userRepository.save(user)` multiple times within a loop. While wrapped in `UnitOfWork`, it might be more efficient to perform batch updates if the repository supports it.
 - **`EnterpriseAddUserCommandHandler`**: If a user in the list is already part of the enterprise, it still calls `save` and publishes a `UserAddedToEnterpriseEvent` (though `user.addEnterprise` should handle the state check). It might be better to filter out existing members first to avoid redundant events.
+
+## 5. UploadedFile Domain Observations
+- **`UploadedFileCreateCommandHandler`**: Automatically normalizes `targetField` to camelCase. This is helpful but should be consistent across all commands that handle target fields.
+- **`UploadedFileDeleteCommandHandler`**: Physically deletes the file from storage. If this fails, the DB record is not deleted, but the handler throws an error. This is correct for consistency, but the storage service could potentially leave orphaned files if DB deletion fails after storage deletion (though usually DB deletion is the final step).
+

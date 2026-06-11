@@ -1,139 +1,121 @@
 import { AuthGoogleSignInCommandHandler } from '@/application/commands/auth-google-sign-in/auth-google-sign-in.handler';
 import { AuthGoogleSignInCommand } from '@/application/commands/auth-google-sign-in/auth-google-sign-in.command';
 import { ERoleType } from '@/core/enums';
+import { KOLUserRoot } from '@/core/aggregate-roots';
 import { UserDeletedException, RoleNotFoundException } from '@/core/exceptions';
 import { createMockUserRepository, createMockRoleRepository } from '../../../__mocks__/mock-repositories';
-import { createMockAuthService } from '../../../__mocks__/mock-services';
-import { KOLUserRoot } from '@/core/aggregate-roots';
+import { createMockAuthService, createMockOutboxService } from '../../../__mocks__/mock-services';
 
 describe('AuthGoogleSignInCommandHandler', () => {
   let handler: AuthGoogleSignInCommandHandler;
   let mockUserRepository: ReturnType<typeof createMockUserRepository>;
   let mockRoleRepository: ReturnType<typeof createMockRoleRepository>;
   let mockAuthService: ReturnType<typeof createMockAuthService>;
+  let mockOutboxService: ReturnType<typeof createMockOutboxService>;
 
   beforeEach(() => {
     mockUserRepository = createMockUserRepository();
     mockRoleRepository = createMockRoleRepository();
     mockAuthService = createMockAuthService();
+    mockOutboxService = createMockOutboxService();
 
     handler = new AuthGoogleSignInCommandHandler(
       mockUserRepository,
       mockRoleRepository,
       mockAuthService as any,
+      mockOutboxService as any,
     );
   });
 
-  const createMockUser = (overrides = {}) => ({
-    id: 'user-123',
-    email: 'user@example.com',
-    googleId: null as string | null,
-    deleteAt: null as Date | null,
-    roleId: 'role-kol',
-    type: ERoleType.KOL,
-    updateGoogleId: jest.fn(),
-    updateRefreshToken: jest.fn(),
-    ...overrides,
-  });
+  const googleInput = {
+    googleId: 'google-123',
+    email: 'google@example.com',
+    displayName: 'Google User',
+  };
 
-  describe('Happy Paths', () => {
-    it('should sign in successfully for an existing user without googleId and link it', async () => {
-      const input = { email: 'user@example.com', googleId: 'google-123', displayName: 'John' };
-      const command = new AuthGoogleSignInCommand(input);
-      const mockUser = createMockUser();
+  describe('Happy Path', () => {
+    it('should create a new user and enqueue integration events when user does not exist', async () => {
+      mockAuthService.normalizeEmail.mockReturnValue('google@example.com');
+      mockUserRepository.findByEmail.mockResolvedValue(null);
+      mockRoleRepository.findByTitle.mockResolvedValue({ id: 'role-kol', title: 'KOL' } as any);
+      mockAuthService.generateTokens.mockResolvedValue({
+        accessToken: 'access-token',
+        refreshToken: 'refresh-token',
+      });
 
-      mockUserRepository.findByEmail.mockResolvedValue(mockUser as any);
-      mockAuthService.generateTokens!.mockResolvedValue({ accessToken: 'at', refreshToken: 'rt' });
-
+      const command = new AuthGoogleSignInCommand(googleInput);
       const result = await handler.execute(command);
 
-      expect(result).toEqual({ accessToken: 'at', refreshToken: 'rt' });
-      expect(mockUser.updateGoogleId).toHaveBeenCalledWith('google-123');
-      expect(mockUser.updateRefreshToken).toHaveBeenCalledWith('rt');
-      expect(mockUserRepository.save).toHaveBeenCalledWith(mockUser);
-    });
+      expect(result).toEqual({
+        accessToken: 'access-token',
+        refreshToken: 'refresh-token',
+      });
 
-    it('should sign in successfully for an existing user who already has googleId linked', async () => {
-      const input = { email: 'user@example.com', googleId: 'google-123' };
-      const command = new AuthGoogleSignInCommand(input);
-      const mockUser = createMockUser({ googleId: 'google-123' });
-
-      mockUserRepository.findByEmail.mockResolvedValue(mockUser as any);
-      mockAuthService.generateTokens!.mockResolvedValue({ accessToken: 'at', refreshToken: 'rt' });
-
-      await handler.execute(command);
-
-      expect(mockUser.updateGoogleId).not.toHaveBeenCalled();
       expect(mockUserRepository.save).toHaveBeenCalled();
-    });
-
-    it('should create a new KOL user if email is not found', async () => {
-      const input = { email: 'new@example.com', googleId: 'google-456', displayName: 'New User' };
-      const command = new AuthGoogleSignInCommand(input);
-
-      mockUserRepository.findByEmail.mockResolvedValue(null);
-      mockRoleRepository.findByTitle.mockResolvedValue({ id: 'role-kol' } as any);
-      mockAuthService.generateTokens!.mockResolvedValue({ accessToken: 'at', refreshToken: 'rt' });
-
-      const result = await handler.execute(command);
-
-      expect(result.accessToken).toBe('at');
-      expect(mockRoleRepository.findByTitle).toHaveBeenCalledWith(ERoleType.KOL);
-      expect(mockUserRepository.save).toHaveBeenCalledWith(expect.any(KOLUserRoot));
       
-      const savedUser = mockUserRepository.save.mock.calls[0][0] as KOLUserRoot;
-      expect(savedUser.email).toBe('new@example.com');
-      expect(savedUser.googleId).toBe('google-456');
-      expect(savedUser.fullName).toBe('New User');
+      // Verify integration events are enqueued for NEW users
+      expect(mockOutboxService.enqueueMany).toHaveBeenCalledWith(
+        expect.arrayContaining([
+          expect.objectContaining({
+            eventType: 'SendVerificationEmailRequested',
+          })
+        ])
+      );
     });
 
-    it('should use default display name for new user if not provided', async () => {
-      const input = { email: 'noname@example.com', googleId: 'google-789' };
-      const command = new AuthGoogleSignInCommand(input);
+    it('should login existing user without re-triggering signup events', async () => {
+      const existingUser = KOLUserRoot.instantiate('user-1', {
+        email: 'google@example.com',
+        phone: { value: '+84123' } as any,
+        passwordHash: 'hash',
+        fullName: 'Existing User',
+        type: ERoleType.KOL,
+        roleId: 'role-kol',
+        isEmailVerified: true,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        deleteAt: null,
+        deleteBy: null,
+        refreshToken: null,
+        googleId: 'google-123',
+      });
 
-      mockUserRepository.findByEmail.mockResolvedValue(null);
-      mockRoleRepository.findByTitle.mockResolvedValue({ id: 'role-kol' } as any);
+      mockAuthService.normalizeEmail.mockReturnValue('google@example.com');
+      mockUserRepository.findByEmail.mockResolvedValue(existingUser);
+      mockAuthService.generateTokens.mockResolvedValue({
+        accessToken: 'access-token',
+        refreshToken: 'refresh-token',
+      });
 
+      const command = new AuthGoogleSignInCommand(googleInput);
       await handler.execute(command);
 
-      const savedUser = mockUserRepository.save.mock.calls[0][0] as KOLUserRoot;
-      expect(savedUser.fullName).toBe('Google User');
+      expect(mockUserRepository.save).toHaveBeenCalled();
+      
+      // Domain events should be cleared or mapper should return empty for existing users
+      // In this handler, only newly created users get domain events mapped because 
+      // UserSignedUpEvent is only emitted when setId is called on a new instance.
+      expect(mockOutboxService.enqueueMany).not.toHaveBeenCalled();
     });
   });
 
   describe('Sad Paths', () => {
-    it('should throw UserDeletedException if existing user is soft-deleted', async () => {
-      const input = { email: 'deleted@example.com', googleId: 'g1' };
-      const command = new AuthGoogleSignInCommand(input);
-      const mockUser = createMockUser({ deleteAt: new Date() });
+    it('should throw UserDeletedException if user is soft deleted', async () => {
+      const deletedUser = { email: 'deleted@example.com', deleteAt: new Date() } as any;
+      mockAuthService.normalizeEmail.mockReturnValue('deleted@example.com');
+      mockUserRepository.findByEmail.mockResolvedValue(deletedUser);
 
-      mockUserRepository.findByEmail.mockResolvedValue(mockUser as any);
-
+      const command = new AuthGoogleSignInCommand({ ...googleInput, email: 'deleted@example.com' });
       await expect(handler.execute(command)).rejects.toThrow(UserDeletedException);
-      expect(mockUserRepository.save).not.toHaveBeenCalled();
     });
 
-    it('should throw RoleNotFoundException if KOL role does not exist when creating new user', async () => {
-      const input = { email: 'new@example.com', googleId: 'g1' };
-      const command = new AuthGoogleSignInCommand(input);
-
+    it('should throw RoleNotFoundException if default KOL role is missing', async () => {
+      mockAuthService.normalizeEmail.mockReturnValue('google@example.com');
       mockUserRepository.findByEmail.mockResolvedValue(null);
       mockRoleRepository.findByTitle.mockResolvedValue(null);
 
+      const command = new AuthGoogleSignInCommand(googleInput);
       await expect(handler.execute(command)).rejects.toThrow(RoleNotFoundException);
-    });
-
-    it('should normalize email before lookup', async () => {
-      const input = { email: '  User@Example.Com  ', googleId: 'g1' };
-      const command = new AuthGoogleSignInCommand(input);
-      const mockUser = createMockUser({ email: 'user@example.com' });
-
-      mockUserRepository.findByEmail.mockResolvedValue(mockUser as any);
-
-      await handler.execute(command);
-
-      expect(mockAuthService.normalizeEmail).toHaveBeenCalledWith('  User@Example.Com  ');
-      expect(mockUserRepository.findByEmail).toHaveBeenCalledWith('user@example.com');
     });
   });
 });

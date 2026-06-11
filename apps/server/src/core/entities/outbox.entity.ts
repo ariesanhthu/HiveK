@@ -3,8 +3,10 @@ import { EOutboxStatus } from '../enums';
 import { Nullable } from '@/core/types';
 
 export interface OutboxProps {
-  topic: string;
+  eventType: string;
   payload: any;
+  metadata: Nullable<Record<string, unknown>>;
+  transport: Nullable<Record<string, unknown>>;
   status: EOutboxStatus;
   retryCount: number;
   maxRetry: number;
@@ -38,12 +40,20 @@ export class OutboxEntity extends BaseEntity<OutboxProps> {
     return new OutboxEntity(props, id);
   }
 
-  get topic(): string {
-    return this.props.topic;
+  get eventType(): string {
+    return this.props.eventType;
   }
 
   get payload(): any {
     return this.props.payload;
+  }
+
+  get metadata(): Nullable<Record<string, unknown>> {
+    return this.props.metadata;
+  }
+
+  get transport(): Nullable<Record<string, unknown>> {
+    return this.props.transport;
   }
 
   get status(): EOutboxStatus {

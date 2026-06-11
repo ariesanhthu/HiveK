@@ -18,11 +18,19 @@ export class OutboxService {
    * Enqueue a message to be dispatched asynchronously via the Outbox pattern.
    * This should be called within a UnitOfWork/Transaction context to guarantee atomicity.
    */
-  async enqueue(topic: string, payload: any, maxRetry: number = 5): Promise<void> {
-    this.logger.debug(`Enqueuing outbox message for topic: ${topic}`, undefined, { payload });
+  async enqueue(
+    eventType: string,
+    payload: any,
+    metadata?: Record<string, unknown>,
+    transport?: Record<string, unknown>,
+    maxRetry: number = 5,
+  ): Promise<void> {
+    this.logger.debug(`Enqueuing outbox message for eventType: ${eventType}`, undefined, { payload });
     const outbox = OutboxEntity.create({
-      topic,
+      eventType,
       payload,
+      metadata: metadata ?? null,
+      transport: transport ?? null,
       maxRetry,
     });
 
@@ -33,11 +41,21 @@ export class OutboxService {
   /**
    * Bulk enqueue multiple messages.
    */
-  async enqueueMany(messages: Array<{ topic: string; payload: any; maxRetry?: number }>): Promise<void> {
+  async enqueueMany(
+    messages: Array<{
+      eventType: string;
+      payload: any;
+      metadata?: Record<string, unknown>;
+      transport?: Record<string, unknown>;
+      maxRetry?: number;
+    }>,
+  ): Promise<void> {
     this.logger.debug(`Bulk enqueuing ${messages.length} outbox messages`);
     const entities = messages.map(msg => OutboxEntity.create({
-      topic: msg.topic,
+      eventType: msg.eventType,
       payload: msg.payload,
+      metadata: msg.metadata ?? null,
+      transport: msg.transport ?? null,
       maxRetry: msg.maxRetry,
     }));
 

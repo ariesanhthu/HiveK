@@ -8,7 +8,13 @@ import { EOutboxStatus } from '@/core/enums';
 })
 export class OutboxModel {
   @Prop({ type: MongooseSchema.Types.String, required: true })
-  topic: string;
+  event_type: string;
+
+  @Prop({ type: MongooseSchema.Types.Mixed, required: false })
+  metadata?: any;
+
+  @Prop({ type: MongooseSchema.Types.Mixed, required: false })
+  transport?: any;
 
   @Prop({ type: MongooseSchema.Types.Mixed, required: true })
   payload: any;

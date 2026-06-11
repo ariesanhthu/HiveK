@@ -9,6 +9,7 @@ The **Core** layer is the heart of the system. It contains **pure domain logic**
 | **Aggregate Roots** | `aggregate-roots/` | Entry points for the application. Encapsulate a cluster of related entities and value objects and enforce invariants. |
 | **Entities** | `entities/` | Objects with a stable identity (`id`). Simple data holders used by aggregates. |
 | **Value Objects** | `value-objects/` | Immutable objects compared by their values, not by identity. |
+| **Domain Events** | `events/` | Objects representing something significant that has happened in the domain (e.g., `EntityHardDeletedEvent`). |
 | **Domain Exceptions** | `exceptions/` | Specific error types representing business rule violations. |
 | **Interfaces** | `interfaces/` | Contracts that outer layers must implement (repository interfaces, storage service contracts). |
 | **Base Classes** | `common/` | Reusable abstract classes (`BaseEntity`, `BaseAggregateRoot`, `BaseValueObject`, `BaseRepository`) providing common functionality. |
@@ -24,6 +25,7 @@ All files in the core layer use **kebab-case** with a typed suffix:
 | Aggregate Root | `<name>.aggregate.ts` | `campaign.aggregate.ts` |
 | Entity | `<name>.entity.ts` | `kol-profile.entity.ts` |
 | Value Object | `<name>.value-object.ts` | `kol-platform-info.value-object.ts` |
+| Domain Event | `<name>.domain-event.ts` | `entity-hard-deleted.domain-event.ts` |
 | Enum | `<name>.enum.ts` | `campaign-status.enum.ts` |
 | Exception | `<name>.exception.ts` | `campaign.exception.ts` |
 | Base Class | `base.<name>.ts` | `base.aggregate-root.ts` |
@@ -35,6 +37,7 @@ All files in the core layer use **kebab-case** with a typed suffix:
 | Aggregate Root | `{Domain}Root` | `CampaignRoot`, `UserRoot` |
 | Entity | `{EntityName}` | `KolProfile`, `KpiLog` |
 | Value Object | `{Name}VO` | `KolPlatformInfoVO`, `PhoneNumberVO` |
+| Domain Event | `{Name}Event` | `EntityHardDeletedEvent` |
 | Enum | `E{Name}` | `ECampaignStatus`, `EParticipantStatus` |
 | Exception | `{Domain}Exception` | `CampaignException`, `UserException` |
 | Repository Interface | `I{Name}Repository` | `ICampaignRepository` |
@@ -70,64 +73,27 @@ export const CAMPAIGN_REPOSITORY = Symbol('CampaignRepository');
 4. **Single Responsibility** – Each class has one clear responsibility (e.g., an aggregate manages its own invariants, a repository only persists aggregates).
 5. **Dependency Inversion** – The core defines *interfaces*; concrete implementations live in the Infrastructure layer.
 6. **Early Return** – Avoid deep if/else nesting; fail fast on invalid state.
+7. **Domain Events & Outbox** – Aggregates can register internal domain events. These events are extracted by the Application layer and persisted to the Outbox atomically within the same transaction to trigger side-effects (Reliable Event-Driven Architecture).
 
 ## Current Folder Structure
 
 ```
 core/
 ├── aggregate-roots/
-│   ├── index.ts
-│   ├── admin.aggregate.ts
-│   ├── campaign.aggregate.ts
-│   ├── campaign-participant.aggregate.ts
-│   ├── enterprise.aggregate.ts
-│   ├── enterprise-user.aggregate.ts
-│   ├── kol-user.aggregate.ts
-│   ├── notification.aggregate.ts
-│   ├── platform.aggregate.ts
-│   ├── role.aggregate.ts
-│   ├── uploaded-file.aggregate.ts
-│   ├── user.aggregate.ts
-│   └── user-notification.aggregate.ts
 ├── common/
 │   ├── base.aggregate-root.ts
 │   ├── base.entity.ts
 │   ├── base.repository.interface.ts
 │   ├── base.value-object.ts
+│   ├── domain-event.interface.ts
 │   └── index.ts
 ├── entities/
-│   ├── index.ts
-│   ├── kol-profile.entity.ts
-│   └── kpi-log.entity.ts
 ├── enums/
-│   ├── index.ts
-│   ├── campaign-participant.enums.ts
-│   ├── campaign-status.enum.ts
-│   ├── notification-channel.enum.ts
-│   ├── notification-type.enum.ts
-│   ├── otp-type.enum.ts
-│   ├── platform-api-status.enum.ts
-│   ├── role-type.enum.ts
-│   └── target-type.enum.ts
+├── events/          # Internal Domain Events
 ├── exceptions/
-│   ├── index.ts
-│   ├── auth.exception.ts
-│   ├── campaign.exception.ts
-│   ├── enterprise.exception.ts
-│   ├── general.exception.ts
-│   ├── notification.exception.ts
-│   ├── platform.exception.ts
-│   ├── role.exception.ts
-│   ├── uploaded-file.exception.ts
-│   └── user.exception.ts
 ├── interfaces/
-│   ├── repositories/
-│   └── storage/
-├── types/           # Shared TypeScript types
+├── types/
 └── value-objects/
-    ├── index.ts
-    ├── kol-platform-info.value-object.ts
-    └── phone-number.value-object.ts
 ```
 
 ## How to use it
@@ -160,7 +126,60 @@ export class CampaignRoot extends BaseAggregateRoot {
 }
 ```
 
-The above class contains **no NestJS decorators**, no database calls, and can be unit‑tested in isolation.
+## Domain Events, Integration Events, & Mappers
+
+Our architecture distinguishes cleanly between internal business facts (Domain Events) and asynchronous external communication (Integration Events), wired together by the `EventMapper`.
+
+### 1. Domain Events
+A **Domain Event** represents an important business fact that occurred inside a domain boundary. It reflects domain language and business behavior.
+
+* **Base Class**: `DomainEvent<T>` (found in `src/core/common/base.domain-event.ts`)
+* **Naming**: The class is named `{Action}Event` (e.g., `UserSignUpEvent`, `VerificationOtpCreatedEvent`), and its `eventType` property matches the class name without the `Event` suffix (e.g., `eventType = 'UserSignUp'`).
+* **Characteristics**:
+  * Internal to the application/domain.
+  * Encapsulated and raised directly by aggregate roots (`BaseAggregateRoot.addDomainEvent`).
+  * Purely business-logic focused, containing no infrastructure dependencies.
+
+### 2. Integration Events
+An **Integration Event** represents communication intended for external systems, messaging brokers (RabbitMQ), or asynchronous background processors.
+
+* **Base Class**: `IntegrationEvent<T>` (found in `src/core/common/base.integration-event.ts`)
+* **Characteristics**:
+  * Public communication contract.
+  * Contains stable, versioned schemas with standard metadata (e.g., `correlationId`, `causationId`) and transport details (e.g., `exchange`, `routingKey`).
+  * Written to outbox tables and dispatched via message queues.
+
+### 3. Event Mapper
+The **Event Mapper** (`src/application/mappers/event.mapper.ts`) translates internal Domain Events into one or many public Integration Events. 
+
+* Isolates the core domain model from public contract schemas.
+* Provides `mapToIntegrationEvent` and `mapToIntegrationEvents` mapping entry points.
+
+---
+
+## Example: Domain Events & Outbox Lifecycle
+
+1. **Register**: The aggregate root registers an event internally.
+2. **Commit**: The handler runs within a Unit of Work transaction.
+3. **Map & Enqueue**: The handler fetches the domain events, uses the `EventMapper` to convert them into Integration Events, enqueues them into the `OutboxService` inside the same transaction, and clears the aggregate's domain events queue.
+
+```ts
+// src/core/aggregate-roots/enterprise.aggregate.ts
+export class EnterpriseRoot extends BaseAggregateRoot<EnterpriseProps> {
+  // ...
+  public markForHardDelete(): void {
+    this.addDomainEvent(new EntityHardDeletedEvent(
+      this.id!,
+      {
+        entityId: this.id!,
+        targetType: TargetType.ENTERPRISE,
+      }
+    ));
+  }
+}
+```
+
+The aggregate root contains **no NestJS decorators**, no database calls, and can be unit‑tested in isolation.
 
 ---
 

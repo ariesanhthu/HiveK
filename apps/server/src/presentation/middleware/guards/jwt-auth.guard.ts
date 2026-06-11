@@ -1,4 +1,4 @@
-import { ExecutionContext, Injectable } from '@nestjs/common';
+import { ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { AuthGuard } from '@nestjs/passport';
 import { GqlExecutionContext } from '@nestjs/graphql';
@@ -18,17 +18,33 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
     return context.switchToHttp().getRequest();
   }
 
+  override handleRequest(err: any, user: any, info: any, context: ExecutionContext, status?: any) {
+    if (user) {
+      return user;
+    }
+    const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
+      context.getHandler(),
+      context.getClass(),
+    ]);
+    if (isPublic) {
+      return null;
+    }
+    throw err || new UnauthorizedException();
+  }
+
   override canActivate(context: ExecutionContext) {
     const type = typeof context.getType === 'function' ? (context.getType() as string) : 'http';
+    let req: any;
+    
     if (type === 'http' && typeof context.switchToHttp === 'function') {
-      const req = context.switchToHttp().getRequest();
+      req = context.switchToHttp().getRequest();
       // Bypass authentication for GraphQL playground GET requests
       if (req && req.method === 'GET' && (req.url?.includes('/graphql') || req.url?.includes('/hivek/graphql'))) {
         return true;
       }
     } else if (type === 'graphql') {
       const ctx = GqlExecutionContext.create(context);
-      const req = ctx.getContext().req;
+      req = ctx.getContext().req;
       // Bypass authentication for schema introspection queries
       if (req?.body?.operationName === 'IntrospectionQuery' || req?.body?.query?.includes('__schema')) {
         return true;
@@ -39,9 +55,13 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
       context.getHandler(),
       context.getClass(),
     ]);
-    if (isPublic) {
+
+    const hasToken = !!req?.headers?.authorization;
+
+    if (isPublic && !hasToken) {
       return true;
     }
+
     return super.canActivate(context);
   }
 }

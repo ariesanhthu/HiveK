@@ -7,6 +7,7 @@ import { UserNotFoundException, InvalidUserTypeException, EnterpriseNotFoundExce
 import { OutboxService } from '@/application/services/outbox.service';
 import { type IUnitOfWork, UNIT_OF_WORK } from '@/application/interfaces';
 import { ERoleType } from '@/core/enums';
+import { EventMapper } from '@/application/mappers';
 
 @CommandHandler(EnterpriseRevokeUserCommand)
 export class EnterpriseRevokeUserCommandHandler implements ICommandHandler<EnterpriseRevokeUserCommand, void> {
@@ -57,15 +58,16 @@ export class EnterpriseRevokeUserCommandHandler implements ICommandHandler<Enter
       if (usersToUpdate.length > 0) {
         await this.userRepository.saveMany(usersToUpdate);
 
-        // Enqueue outbox messages for revoked users
-        await this.outboxService.enqueueMany(usersToUpdate.map(user => ({
-            topic: 'enterprise.user.revoked',
-            payload: {
-                userId: user.id!,
-                enterpriseId,
-                companyName: enterprise.companyName,
-            }
-        })));
+        const events = EventMapper.mapToIntegrationEvents(usersToUpdate.flatMap(user => user.domainEvents));
+        if (events.length > 0) {
+          await this.outboxService.enqueueMany(events.map(event => ({
+            eventType: event.eventType,
+            payload: event.payload,
+            metadata: event.metadata,
+            transport: event.transport,
+            maxRetry: 5,
+          })));
+        }
       }
     });
   }

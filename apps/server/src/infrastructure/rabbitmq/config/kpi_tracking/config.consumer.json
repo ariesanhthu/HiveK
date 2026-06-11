@@ -44,7 +44,7 @@
       ]
     },
     {
-      "name": "auth_user_queue",
+      "name": "notification_queue",
       "type": "classic",
       "options": {
         "durable": true,
@@ -55,43 +55,15 @@
       "bindings": [
         {
           "exchange": "kpi_exchange",
-          "routing_key": "auth.user.registered"
-        }
-      ]
-    },
-    {
-      "name": "enterprise_user_queue",
-      "type": "classic",
-      "options": {
-        "durable": true,
-        "exclusive": false,
-        "autoDelete": false,
-        "arguments": {}
-      },
-      "bindings": [
-        {
-          "exchange": "kpi_exchange",
-          "routing_key": "enterprise.user.added"
+          "routing_key": "notification.verification_otp"
         },
         {
           "exchange": "kpi_exchange",
-          "routing_key": "enterprise.user.revoked"
-        }
-      ]
-    },
-    {
-      "name": "email_queue",
-      "type": "classic",
-      "options": {
-        "durable": true,
-        "exclusive": false,
-        "autoDelete": false,
-        "arguments": {}
-      },
-      "bindings": [
+          "routing_key": "notification.enterprise_invitation"
+        },
         {
           "exchange": "kpi_exchange",
-          "routing_key": "email.send"
+          "routing_key": "notification.enterprise_revocation"
         }
       ]
     }

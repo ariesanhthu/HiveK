@@ -3,22 +3,25 @@ import { EnterpriseHardDeleteCommand } from '@/application/commands/enterprise-h
 import { EnterpriseNotFoundException, EnterpriseForbiddenException, InvalidOperationException } from '@/core/exceptions';
 import { EnterpriseRoot } from '@/core/aggregate-roots';
 import { createMockEnterpriseRepository, createMockCampaignRepository } from '../../../__mocks__/mock-repositories';
-import { createMockUnitOfWork } from '../../../__mocks__/mock-services';
+import { createMockUnitOfWork, createMockOutboxService } from '../../../__mocks__/mock-services';
 
 describe('EnterpriseHardDeleteCommandHandler', () => {
   let handler: EnterpriseHardDeleteCommandHandler;
   let mockEnterpriseRepository: ReturnType<typeof createMockEnterpriseRepository>;
   let mockCampaignRepository: ReturnType<typeof createMockCampaignRepository>;
+  let mockOutboxService: ReturnType<typeof createMockOutboxService>;
   let mockUow: ReturnType<typeof createMockUnitOfWork>;
 
   beforeEach(() => {
     mockEnterpriseRepository = createMockEnterpriseRepository();
     mockCampaignRepository = createMockCampaignRepository();
+    mockOutboxService = createMockOutboxService();
     mockUow = createMockUnitOfWork();
     
     handler = new EnterpriseHardDeleteCommandHandler(
         mockEnterpriseRepository, 
         mockCampaignRepository, 
+        mockOutboxService as any,
         mockUow
     );
   });
@@ -38,7 +41,7 @@ describe('EnterpriseHardDeleteCommandHandler', () => {
   });
 
   describe('Happy Path', () => {
-    it('should hard delete enterprise and its campaigns successfully', async () => {
+    it('should hard delete enterprise and enqueue domain events to outbox', async () => {
       const enterprise = createMockEnterprise();
       mockEnterpriseRepository.findById.mockResolvedValue(enterprise);
       mockCampaignRepository.hasActiveCampaigns.mockResolvedValue(false);
@@ -49,6 +52,12 @@ describe('EnterpriseHardDeleteCommandHandler', () => {
 
       expect(mockCampaignRepository.delete).toHaveBeenCalledWith('camp-1');
       expect(mockEnterpriseRepository.delete).toHaveBeenCalledWith(enterpriseId);
+      
+      // Verify domain event was enqueued
+      expect(mockOutboxService.enqueueMany).toHaveBeenCalledWith([expect.objectContaining({
+        topic: 'entity.hard.deleted',
+        payload: expect.objectContaining({ entityId: enterpriseId })
+      })]);
     });
   });
 
@@ -74,7 +83,7 @@ describe('EnterpriseHardDeleteCommandHandler', () => {
 
       const command = new EnterpriseHardDeleteCommand(enterpriseId, userId);
       await expect(handler.execute(command)).rejects.toThrow(InvalidOperationException);
-      expect(mockEnterpriseRepository.delete).not.toHaveBeenCalled();
+      expect(mockOutboxService.enqueueMany).not.toHaveBeenCalled();
     });
   });
 });

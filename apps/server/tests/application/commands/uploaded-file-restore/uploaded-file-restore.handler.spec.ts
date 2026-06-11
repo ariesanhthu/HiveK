@@ -1,33 +1,54 @@
 import { UploadedFileRestoreCommandHandler } from '@/application/commands/uploaded-file-restore/uploaded-file-restore.handler';
 import { UploadedFileRestoreCommand } from '@/application/commands/uploaded-file-restore/uploaded-file-restore.command';
 import { UploadedFileNotFoundException } from '@/core/exceptions';
+import { UploadedFileRoot } from '@/core/aggregate-roots';
+import { TargetType } from '@/core/enums';
+import { createMockUploadedFileRepository } from '../../../__mocks__/mock-repositories';
 
 describe('UploadedFileRestoreCommandHandler', () => {
   let handler: UploadedFileRestoreCommandHandler;
-  let mockRepository: any;
+  let mockRepository: ReturnType<typeof createMockUploadedFileRepository>;
 
   beforeEach(() => {
-    mockRepository = {
-      findById: jest.fn(),
-      save: jest.fn(),
-    };
+    mockRepository = createMockUploadedFileRepository();
     handler = new UploadedFileRestoreCommandHandler(mockRepository);
   });
 
-  it('should restore a soft-deleted file', async () => {
-    const file = { id: 'file-1', restore: jest.fn() };
-    mockRepository.findById.mockResolvedValue(file);
-
-    await handler.execute(new UploadedFileRestoreCommand('file-1'));
-
-    expect(file.restore).toHaveBeenCalled();
-    expect(mockRepository.save).toHaveBeenCalledWith(file);
+  const fileId = 'file-123';
+  const createMockFile = () => UploadedFileRoot.instantiate(fileId, {
+    url: 'http://test.com/file.jpg',
+    publicId: 'pub-123',
+    size: 1000,
+    format: 'jpg',
+    title: 'Test File',
+    targetType: TargetType.USER,
+    targetId: 'user-1',
+    targetField: 'avatar',
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    deleteAt: new Date(),
+    deleteBy: 'user-1',
   });
 
-  it('should throw UploadedFileNotFoundException when file not found', async () => {
-    mockRepository.findById.mockResolvedValue(null);
+  describe('Happy Path', () => {
+    it('should restore a soft-deleted file', async () => {
+      const file = createMockFile();
+      mockRepository.findById.mockResolvedValue(file);
 
-    await expect(handler.execute(new UploadedFileRestoreCommand('nonexistent'))).rejects.toThrow(UploadedFileNotFoundException);
-    expect(mockRepository.save).not.toHaveBeenCalled();
+      await handler.execute(new UploadedFileRestoreCommand(fileId));
+
+      expect(file.deleteAt).toBeNull();
+      expect(file.deleteBy).toBeNull();
+      expect(mockRepository.save).toHaveBeenCalledWith(file);
+    });
+  });
+
+  describe('Sad Path', () => {
+    it('should throw UploadedFileNotFoundException when file not found', async () => {
+      mockRepository.findById.mockResolvedValue(null);
+
+      await expect(handler.execute(new UploadedFileRestoreCommand('nonexistent'))).rejects.toThrow(UploadedFileNotFoundException);
+      expect(mockRepository.save).not.toHaveBeenCalled();
+    });
   });
 });

@@ -77,7 +77,7 @@ describe('EnterpriseRevokeUserCommandHandler', () => {
       expect(member.enterpriseIds).toContain('ent-other');
       expect(mockUserRepository.saveMany).toHaveBeenCalledWith([member]);
       expect(mockOutboxService.enqueueMany).toHaveBeenCalledWith([expect.objectContaining({
-        topic: 'enterprise_user_revoked',
+        topic: 'enterprise.user.revoked',
         payload: expect.objectContaining({ userId: memberId })
       })]);
     });

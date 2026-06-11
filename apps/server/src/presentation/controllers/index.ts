@@ -28,7 +28,7 @@ export * from './http/client/user.controller';
 export * from './rmq/kpi-log.rmq.controller';
 export * from './rmq/test-rmq.controller';
 export * from './rmq/enterprise-user.rmq.controller'
-export * from './rmq/email-queue.rmq.controller'
+export * from './rmq/notification.rmq.controller'
 export * from './rmq/auth-user.rmq.controller'
 
 

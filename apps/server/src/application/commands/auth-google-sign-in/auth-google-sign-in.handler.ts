@@ -9,6 +9,8 @@ import { KOLUserRoot } from '@/core/aggregate-roots';
 import { AuthService } from '@/application/services/auth.service';
 import { UserDeletedException, RoleNotFoundException } from '@/core/exceptions';
 import { PhoneNumberVO } from '@/core/value-objects/phone-number.value-object';
+import { OutboxService } from '@/application/services/outbox.service';
+import { EventMapper } from '@/application/mappers';
 
 @CommandHandler(AuthGoogleSignInCommand)
 export class AuthGoogleSignInCommandHandler implements ICommandHandler<AuthGoogleSignInCommand, AuthGoogleSignInOutputDto> {
@@ -18,6 +20,7 @@ export class AuthGoogleSignInCommandHandler implements ICommandHandler<AuthGoogl
     @Inject(ROLE_REPOSITORY)
     private readonly roleRepository: IRoleRepository,
     private readonly authService: AuthService,
+    private readonly outboxService: OutboxService,
   ) { }
 
   async execute(command: AuthGoogleSignInCommand): Promise<AuthGoogleSignInOutputDto> {
@@ -61,6 +64,17 @@ export class AuthGoogleSignInCommandHandler implements ICommandHandler<AuthGoogl
 
     user.updateRefreshToken(refreshToken);
     await this.userRepository.save(user);
+
+    const events = EventMapper.mapToIntegrationEvents(user.domainEvents);
+    if (events.length > 0) {
+      await this.outboxService.enqueueMany(events.map(event => ({
+        eventType: event.eventType,
+        payload: event.payload,
+        metadata: event.metadata,
+        transport: event.transport,
+        maxRetry: 5,
+      })));
+    }
 
     return { accessToken, refreshToken };
   }

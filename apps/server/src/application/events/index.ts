@@ -10,3 +10,6 @@ export * from './notification-dispatched/email-notification.handler';
 export * from './kpi-tracking/kpi-metrics-updated.event';
 export * from './kpi-tracking/kpi-tracking-terminated.event';
 export * from './kpi-tracking/kpi-tracking-events.handler';
+export * from './send-verification-email-requested.event';
+export * from './notify-enterprise-invitation-email.event';
+export * from './notify-enterprise-revocation-email.event';

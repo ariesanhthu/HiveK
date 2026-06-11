@@ -7,3 +7,4 @@ export * from './otp-type.enum';
 export * from './campaign-participant.enums';
 export * from './campaign-status.enum';
 export * from './outbox-status.enum';
+export * from './aggregate-type.enum';

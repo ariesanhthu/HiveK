@@ -1,62 +1,87 @@
 import { UploadedFileDeleteCommandHandler } from '@/application/commands/uploaded-file-delete/uploaded-file-delete.handler';
 import { UploadedFileDeleteCommand } from '@/application/commands/uploaded-file-delete/uploaded-file-delete.command';
 import { UploadedFileNotFoundException } from '@/core/exceptions';
+import { UploadedFileRoot } from '@/core/aggregate-roots';
+import { TargetType } from '@/core/enums';
+import { createMockUploadedFileRepository } from '../../../__mocks__/mock-repositories';
+import { createMockStorageService, createMockAuthService } from '../../../__mocks__/mock-services';
+import { UploadService } from '@/application/services';
 
 describe('UploadedFileDeleteCommandHandler', () => {
   let handler: UploadedFileDeleteCommandHandler;
-  let mockRepository: any;
-  let mockStorageService: any;
-  let mockUploadService: any;
+  let mockRepository: ReturnType<typeof createMockUploadedFileRepository>;
+  let mockStorageService: ReturnType<typeof createMockStorageService>;
+  let uploadService: UploadService;
 
   beforeEach(() => {
-    mockRepository = {
-      findById: jest.fn(),
-      delete: jest.fn(),
-    };
-    mockStorageService = {
-      delete: jest.fn().mockResolvedValue(undefined),
-    };
-    mockUploadService = {
-      getResourceType: jest.fn().mockReturnValue('image'),
-    };
-    handler = new UploadedFileDeleteCommandHandler(mockRepository, mockStorageService, mockUploadService);
+    mockRepository = createMockUploadedFileRepository();
+    mockStorageService = createMockStorageService();
+    uploadService = new UploadService();
+
+    handler = new UploadedFileDeleteCommandHandler(
+        mockRepository, 
+        mockStorageService as any, 
+        uploadService
+    );
   });
 
-  it('should delete a file from storage and DB', async () => {
-    const file = { id: 'file-1', publicId: 'pub-123', format: 'jpg' };
-    mockRepository.findById.mockResolvedValue(file);
-
-    await handler.execute(new UploadedFileDeleteCommand('file-1'));
-
-    expect(mockUploadService.getResourceType).toHaveBeenCalledWith('jpg');
-    expect(mockStorageService.delete).toHaveBeenCalledWith('pub-123', { resourceType: 'image' });
-    expect(mockRepository.delete).toHaveBeenCalledWith('file-1');
+  const fileId = 'file-123';
+  const createMockFile = () => UploadedFileRoot.instantiate(fileId, {
+    url: 'http://test.com/file.jpg',
+    publicId: 'pub-123',
+    size: 1000,
+    format: 'jpg',
+    title: 'Test File',
+    targetType: TargetType.USER,
+    targetId: 'user-1',
+    targetField: 'avatar',
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    deleteAt: null,
+    deleteBy: null,
   });
 
-  it('should skip storage deletion if publicId is empty', async () => {
-    const file = { id: 'file-2', publicId: '', format: 'png' };
-    mockRepository.findById.mockResolvedValue(file);
+  describe('Happy Paths', () => {
+    it('should delete a file from storage and DB', async () => {
+      const file = createMockFile();
+      mockRepository.findById.mockResolvedValue(file);
 
-    await handler.execute(new UploadedFileDeleteCommand('file-2'));
+      await handler.execute(new UploadedFileDeleteCommand(fileId));
 
-    expect(mockStorageService.delete).not.toHaveBeenCalled();
-    expect(mockRepository.delete).toHaveBeenCalledWith('file-2');
+      expect(mockStorageService.delete).toHaveBeenCalledWith('pub-123', { resourceType: 'image' });
+      expect(mockRepository.delete).toHaveBeenCalledWith(fileId);
+    });
+
+    it('should skip storage deletion if publicId is missing', async () => {
+      const file = UploadedFileRoot.instantiate(fileId, {
+        ...createMockFile().props,
+        publicId: '',
+      });
+      mockRepository.findById.mockResolvedValue(file);
+
+      await handler.execute(new UploadedFileDeleteCommand(fileId));
+
+      expect(mockStorageService.delete).not.toHaveBeenCalled();
+      expect(mockRepository.delete).toHaveBeenCalledWith(fileId);
+    });
   });
 
-  it('should throw UploadedFileNotFoundException when file not found', async () => {
-    mockRepository.findById.mockResolvedValue(null);
+  describe('Sad Paths', () => {
+    it('should throw UploadedFileNotFoundException when file not found', async () => {
+      mockRepository.findById.mockResolvedValue(null);
 
-    await expect(handler.execute(new UploadedFileDeleteCommand('nonexistent'))).rejects.toThrow(UploadedFileNotFoundException);
-    expect(mockRepository.delete).not.toHaveBeenCalled();
-    expect(mockStorageService.delete).not.toHaveBeenCalled();
-  });
+      await expect(handler.execute(new UploadedFileDeleteCommand('nonexistent'))).rejects.toThrow(UploadedFileNotFoundException);
+      expect(mockRepository.delete).not.toHaveBeenCalled();
+      expect(mockStorageService.delete).not.toHaveBeenCalled();
+    });
 
-  it('should propagate storage deletion failure', async () => {
-    const file = { id: 'file-3', publicId: 'pub-456', format: 'jpg' };
-    mockRepository.findById.mockResolvedValue(file);
-    mockStorageService.delete.mockRejectedValue(new Error('Storage unreachable'));
+    it('should propagate storage deletion failure', async () => {
+      const file = createMockFile();
+      mockRepository.findById.mockResolvedValue(file);
+      mockStorageService.delete.mockRejectedValue(new Error('Storage unreachable'));
 
-    await expect(handler.execute(new UploadedFileDeleteCommand('file-3'))).rejects.toThrow('Storage unreachable');
-    expect(mockRepository.delete).not.toHaveBeenCalled();
+      await expect(handler.execute(new UploadedFileDeleteCommand(fileId))).rejects.toThrow('Storage unreachable');
+      expect(mockRepository.delete).not.toHaveBeenCalled();
+    });
   });
 });
