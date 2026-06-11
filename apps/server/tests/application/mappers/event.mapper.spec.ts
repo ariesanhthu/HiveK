@@ -27,7 +27,7 @@ describe('EventMapper', () => {
       }));
       expect(integrationEvents[0].transport).toEqual({
         exchange: 'kpi_exchange',
-        routingKey: 'email.send',
+        routingKey: 'notification.verification_otp',
       });
     });
 
@@ -43,7 +43,7 @@ describe('EventMapper', () => {
     });
 
     it('should return empty array for EntityHardDeletedEvent (currently unmapped)', () => {
-      const domainEvent = new EntityHardDeletedEvent({
+      const domainEvent = new EntityHardDeletedEvent('ent-1', {
         entityId: 'ent-1',
         targetType: TargetType.USER,
       });

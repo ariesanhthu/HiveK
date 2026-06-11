@@ -8,7 +8,10 @@ describe('MongoOtpRepository', () => {
   let mockUow: any;
 
   beforeEach(() => {
-    mockModel = jest.fn();
+    mockModel = jest.fn().mockImplementation((data) => ({
+      ...data,
+      save: jest.fn().mockResolvedValue({ _id: 'generated-id' }),
+    }));
     mockModel.findOne = jest.fn().mockReturnThis();
     mockModel.findOneAndUpdate = jest.fn().mockReturnThis();
     mockModel.deleteMany = jest.fn().mockReturnThis();
@@ -37,8 +40,28 @@ describe('MongoOtpRepository', () => {
 
       await repo.save(otp);
 
+      // Verify findOneAndUpdate is NOT called for NEW otps
+      expect(mockModel.findOneAndUpdate).not.toHaveBeenCalled();
+      expect(mockModel).toHaveBeenCalled();
+    });
+
+    it('should update existing otp', async () => {
+      (mockModel.exec as jest.Mock).mockResolvedValueOnce({});
+
+      const expiresAt = new Date();
+      const otp = OtpRoot.instantiate('existing-id', {
+        email: 'test@test.com',
+        code: '123456',
+        type: EOtpType.CREATE_ACCOUNT,
+        expiresAt,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      });
+
+      await repo.save(otp);
+
       expect(mockModel.findOneAndUpdate).toHaveBeenCalledWith(
-        { _id: otp.id },
+        { _id: 'existing-id' },
         {
           $set: {
             email: 'test@test.com',

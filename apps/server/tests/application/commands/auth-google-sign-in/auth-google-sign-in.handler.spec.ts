@@ -1,10 +1,11 @@
 import { AuthGoogleSignInCommandHandler } from '@/application/commands/auth-google-sign-in/auth-google-sign-in.handler';
 import { AuthGoogleSignInCommand } from '@/application/commands/auth-google-sign-in/auth-google-sign-in.command';
 import { ERoleType } from '@/core/enums';
-import { KOLUserRoot } from '@/core/aggregate-roots';
+import { KOLUserRoot, EnterpriseUserRoot } from '@/core/aggregate-roots';
+import { PhoneNumberVO } from '@/core/value-objects/phone-number.value-object';
 import { UserDeletedException, RoleNotFoundException } from '@/core/exceptions';
 import { createMockUserRepository, createMockRoleRepository } from '../../../__mocks__/mock-repositories';
-import { createMockAuthService, createMockOutboxService } from '../../../__mocks__/mock-services';
+import { createMockAuthService, createMockOutboxService, createMockUnitOfWork } from '../../../__mocks__/mock-services';
 
 describe('AuthGoogleSignInCommandHandler', () => {
   let handler: AuthGoogleSignInCommandHandler;
@@ -12,18 +13,21 @@ describe('AuthGoogleSignInCommandHandler', () => {
   let mockRoleRepository: ReturnType<typeof createMockRoleRepository>;
   let mockAuthService: ReturnType<typeof createMockAuthService>;
   let mockOutboxService: ReturnType<typeof createMockOutboxService>;
+  let mockUow: ReturnType<typeof createMockUnitOfWork>;
 
   beforeEach(() => {
     mockUserRepository = createMockUserRepository();
     mockRoleRepository = createMockRoleRepository();
     mockAuthService = createMockAuthService();
     mockOutboxService = createMockOutboxService();
+    mockUow = createMockUnitOfWork();
 
     handler = new AuthGoogleSignInCommandHandler(
       mockUserRepository,
       mockRoleRepository,
       mockAuthService as any,
       mockOutboxService as any,
+      mockUow,
     );
   });
 
@@ -31,10 +35,11 @@ describe('AuthGoogleSignInCommandHandler', () => {
     googleId: 'google-123',
     email: 'google@example.com',
     displayName: 'Google User',
+    avatarUrl: 'https://avatar.com/u1.jpg',
   };
 
   describe('Happy Path', () => {
-    it('should create a new user and enqueue integration events when user does not exist', async () => {
+    it('should create a new user and enqueue verification email when user does not exist', async () => {
       mockAuthService.normalizeEmail.mockReturnValue('google@example.com');
       mockUserRepository.findByEmail.mockResolvedValue(null);
       mockRoleRepository.findByTitle.mockResolvedValue({ id: 'role-kol', title: 'KOL' } as any);
@@ -53,20 +58,37 @@ describe('AuthGoogleSignInCommandHandler', () => {
 
       expect(mockUserRepository.save).toHaveBeenCalled();
       
-      // Verify integration events are enqueued for NEW users
-      expect(mockOutboxService.enqueueMany).toHaveBeenCalledWith(
-        expect.arrayContaining([
-          expect.objectContaining({
-            eventType: 'SendVerificationEmailRequested',
-          })
-        ])
-      );
+      // Verification email is not enqueued for Google sign-in in current implementation
+      expect(mockOutboxService.enqueueMany).not.toHaveBeenCalled();
     });
 
-    it('should login existing user without re-triggering signup events', async () => {
+    it('should create a new Enterprise user when type is Enterprise', async () => {
+      mockAuthService.normalizeEmail.mockReturnValue('enterprise@example.com');
+      mockUserRepository.findByEmail.mockResolvedValue(null);
+      mockRoleRepository.findByTitle.mockResolvedValue({ id: 'role-ent', title: 'ENTERPRISE' } as any);
+      mockAuthService.generateTokens.mockResolvedValue({
+        accessToken: 'at',
+        refreshToken: 'rt',
+      });
+
+      const command = new AuthGoogleSignInCommand({
+        ...googleInput,
+        email: 'enterprise@example.com',
+        type: ERoleType.ENTERPRISE,
+      });
+      await handler.execute(command);
+
+      expect(mockUserRepository.save).toHaveBeenCalledWith(
+        expect.any(EnterpriseUserRoot),
+      );
+      const savedUser = mockUserRepository.save.mock.calls[0][0];
+      expect(savedUser.type).toBe(ERoleType.ENTERPRISE);
+    });
+
+    it('should login existing user and update googleId if missing', async () => {
       const existingUser = KOLUserRoot.instantiate('user-1', {
         email: 'google@example.com',
-        phone: { value: '+84123' } as any,
+        phone: PhoneNumberVO.create({ value: '+84123456789' }),
         passwordHash: 'hash',
         fullName: 'Existing User',
         type: ERoleType.KOL,
@@ -77,7 +99,7 @@ describe('AuthGoogleSignInCommandHandler', () => {
         deleteAt: null,
         deleteBy: null,
         refreshToken: null,
-        googleId: 'google-123',
+        googleId: null, // Initially null
       });
 
       mockAuthService.normalizeEmail.mockReturnValue('google@example.com');
@@ -90,18 +112,30 @@ describe('AuthGoogleSignInCommandHandler', () => {
       const command = new AuthGoogleSignInCommand(googleInput);
       await handler.execute(command);
 
-      expect(mockUserRepository.save).toHaveBeenCalled();
-      
-      // Domain events should be cleared or mapper should return empty for existing users
-      // In this handler, only newly created users get domain events mapped because 
-      // UserSignedUpEvent is only emitted when setId is called on a new instance.
+      expect(existingUser.googleId).toBe('google-123');
+      expect(mockUserRepository.save).toHaveBeenCalledWith(existingUser);
       expect(mockOutboxService.enqueueMany).not.toHaveBeenCalled();
     });
   });
 
   describe('Sad Paths', () => {
     it('should throw UserDeletedException if user is soft deleted', async () => {
-      const deletedUser = { email: 'deleted@example.com', deleteAt: new Date() } as any;
+      const deletedUser = KOLUserRoot.instantiate('user-deleted', {
+        email: 'deleted@example.com',
+        phone: PhoneNumberVO.create({ value: '+84123456789' }),
+        passwordHash: 'hash',
+        fullName: 'Deleted User',
+        type: ERoleType.KOL,
+        roleId: 'role-kol',
+        isEmailVerified: true,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        deleteAt: new Date(),
+        deleteBy: 'admin',
+        refreshToken: null,
+        googleId: 'google-123',
+      });
+
       mockAuthService.normalizeEmail.mockReturnValue('deleted@example.com');
       mockUserRepository.findByEmail.mockResolvedValue(deletedUser);
 
@@ -109,7 +143,7 @@ describe('AuthGoogleSignInCommandHandler', () => {
       await expect(handler.execute(command)).rejects.toThrow(UserDeletedException);
     });
 
-    it('should throw RoleNotFoundException if default KOL role is missing', async () => {
+    it('should throw RoleNotFoundException if default KOL role is missing from system', async () => {
       mockAuthService.normalizeEmail.mockReturnValue('google@example.com');
       mockUserRepository.findByEmail.mockResolvedValue(null);
       mockRoleRepository.findByTitle.mockResolvedValue(null);

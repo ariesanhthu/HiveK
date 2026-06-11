@@ -80,14 +80,17 @@ describe('EnterpriseAddUserCommandHandler', () => {
       expect(mockOutboxService.enqueueMany).toHaveBeenCalledWith(
         expect.arrayContaining([
           expect.objectContaining({
-            eventType: 'EnterpriseUserAdded',
+            eventType: 'NotifyEnterpriseInvitationEmail',
             payload: expect.objectContaining({
               userId: memberId,
               enterpriseId,
+              enterpriseName: 'Enterprise',
             }),
             transport: expect.objectContaining({
-                routingKey: 'enterprise.user.added'
-            })
+                exchange: 'kpi_exchange',
+                routingKey: 'notification.enterprise_invitation'
+            }),
+            maxRetry: 5
           })
         ])
       );
@@ -111,7 +114,7 @@ describe('EnterpriseAddUserCommandHandler', () => {
         expect(mockOutboxService.enqueueMany).toHaveBeenCalledWith(
             expect.arrayContaining([
                 expect.objectContaining({
-                    eventType: 'EnterpriseUserAdded',
+                    eventType: 'NotifyEnterpriseInvitationEmail',
                     payload: expect.objectContaining({ userId: 'new' })
                 })
             ])

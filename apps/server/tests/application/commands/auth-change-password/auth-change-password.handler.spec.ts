@@ -37,7 +37,7 @@ describe('AuthChangePasswordCommandHandler', () => {
     otpCode: '123456',
   };
 
-  const existingUser = KOLUserRoot.instantiate(userId, {
+  const createTestUser = () => KOLUserRoot.instantiate(userId, {
     email: 'change@example.com',
     phone: { value: '+84123' } as any,
     passwordHash: 'old-hash',
@@ -54,7 +54,8 @@ describe('AuthChangePasswordCommandHandler', () => {
   });
 
   describe('Happy Path', () => {
-    it('should successfully change password when current password and OTP are valid', async () => {
+    it('should successfully change password and clear OTP', async () => {
+      const existingUser = createTestUser();
       mockUserRepository.findById.mockResolvedValue(existingUser);
       mockOtpRepository.findValidOtp.mockResolvedValue({ code: '123456' } as any);
       mockAuthService.comparePassword!.mockResolvedValue(true);
@@ -77,23 +78,28 @@ describe('AuthChangePasswordCommandHandler', () => {
 
       const command = new AuthChangePasswordCommand(userId, changeInput);
       await expect(handler.execute(command)).rejects.toThrow(UserNotFoundException);
+      expect(mockUserRepository.save).not.toHaveBeenCalled();
     });
 
-    it('should throw InvalidOperationException if OTP is invalid', async () => {
+    it('should throw InvalidOperationException if OTP is invalid or expired', async () => {
+      const existingUser = createTestUser();
       mockUserRepository.findById.mockResolvedValue(existingUser);
       mockOtpRepository.findValidOtp.mockResolvedValue(null);
 
       const command = new AuthChangePasswordCommand(userId, changeInput);
       await expect(handler.execute(command)).rejects.toThrow(InvalidOperationException);
+      expect(mockUserRepository.save).not.toHaveBeenCalled();
     });
 
     it('should throw InvalidPasswordException if old password does not match', async () => {
+      const existingUser = createTestUser();
       mockUserRepository.findById.mockResolvedValue(existingUser);
       mockOtpRepository.findValidOtp.mockResolvedValue({ code: '123456' } as any);
       mockAuthService.comparePassword!.mockResolvedValue(false);
 
       const command = new AuthChangePasswordCommand(userId, changeInput);
       await expect(handler.execute(command)).rejects.toThrow(InvalidPasswordException);
+      expect(mockUserRepository.save).not.toHaveBeenCalled();
     });
   });
 });

@@ -59,7 +59,15 @@ describe('MongoUserRepository', () => {
           useValue: mockUserModel,
         },
         {
+          provide: getModelToken(ERoleType.ENTERPRISE),
+          useValue: mockUserModel,
+        },
+        {
           provide: getModelToken(ERoleType.ADMIN),
+          useValue: mockUserModel,
+        },
+        {
+          provide: getModelToken(ERoleType.KOL),
           useValue: mockUserModel,
         },
         {

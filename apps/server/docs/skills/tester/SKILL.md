@@ -26,3 +26,5 @@ Generate a comprehensive Jest test suite for the hidden Handler based strictly o
 Provide *only* clean, production-grade TypeScript code using `@nestjs/testing` and `jest`. 
 - Assert final states and exact errors (`toThrow`). 
 - Avoid testing internal implementation details or matching line-by-line code. Focus on inputs vs. outputs.
+- Do not directly fix or correct the code for the handler, if the test is failing because of source code issues, just summary the issues.
+- After testing the code, provide improvements suggestions if needed.

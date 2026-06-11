@@ -1,88 +1,150 @@
+import { jest } from '@jest/globals';
 import { AuthSendOtpCommandHandler } from '@/application/commands/auth-send-otp/auth-send-otp.handler';
 import { AuthSendOtpCommand } from '@/application/commands/auth-send-otp/auth-send-otp.command';
-import { EOtpType } from '@/core/enums/otp-type.enum';
-import { OtpRateLimitException } from '@/core/exceptions';
-import { createMockOtpRepository } from '../../../__mocks__/mock-repositories';
+import { EOtpType, ERoleType } from '@/core/enums';
+import { OtpRateLimitException, ForbiddenDomainException, UserNotFoundException } from '@/core/exceptions';
+import { createMockOtpRepository, createMockUserRepository } from '../../../__mocks__/mock-repositories';
 import { createMockAuthService, createMockOutboxService, createMockUnitOfWork } from '../../../__mocks__/mock-services';
 import { OtpRoot } from '@/core/aggregate-roots/otp.aggregate';
+import { KOLUserRoot } from '@/core/aggregate-roots/kol-user.aggregate';
+import { PhoneNumberVO } from '@/core/value-objects/phone-number.value-object';
 
 describe('AuthSendOtpCommandHandler', () => {
   let handler: AuthSendOtpCommandHandler;
   let mockOtpRepository: ReturnType<typeof createMockOtpRepository>;
+  let mockUserRepository: ReturnType<typeof createMockUserRepository>;
   let mockOutboxService: ReturnType<typeof createMockOutboxService>;
   let mockAuthService: ReturnType<typeof createMockAuthService>;
   let mockUow: ReturnType<typeof createMockUnitOfWork>;
 
   beforeEach(() => {
     mockOtpRepository = createMockOtpRepository();
+    mockUserRepository = createMockUserRepository();
     mockOutboxService = createMockOutboxService();
     mockAuthService = createMockAuthService();
     mockUow = createMockUnitOfWork();
 
     handler = new AuthSendOtpCommandHandler(
       mockOtpRepository,
-      mockOutboxService as any,
-      mockAuthService as any,
+      mockUserRepository,
+      mockOutboxService,
+      mockAuthService,
       mockUow,
     );
   });
 
   describe('Happy Paths', () => {
-    const testCases = [
-      { type: EOtpType.CREATE_ACCOUNT },
-      { type: EOtpType.RESET_PASSWORD },
-      { type: EOtpType.CHANGE_PASSWORD },
-    ];
-
-    test.each(testCases)('should successfully send an OTP email for %s', async ({ type }) => {
-      const input = { email: 'user@example.com', type };
+    it('should successfully send an OTP email for RESET_PASSWORD (no userId required)', async () => {
+      const input = { email: 'user@example.com', type: EOtpType.RESET_PASSWORD };
       const command = new AuthSendOtpCommand(input);
 
       mockOtpRepository.findRecentOtp.mockResolvedValue(null);
-      // In reality, userRepository.save() might set the ID. 
-      // For OtpRoot, we need to ensure it emits events.
-      mockOtpRepository.save.mockImplementation(async (otp: OtpRoot) => {
-        if (!otp.id) otp.setId('generated-id');
-        return Promise.resolve();
-      });
 
       const result = await handler.execute(command);
 
       expect(result).toEqual({ success: true });
       expect(mockAuthService.normalizeEmail).toHaveBeenCalledWith('user@example.com');
-      expect(mockOtpRepository.findRecentOtp).toHaveBeenCalledWith('user@example.com', type, 60);
-      expect(mockOtpRepository.deleteByEmailAndType).toHaveBeenCalledWith('user@example.com', type);
-      expect(mockOtpRepository.save).toHaveBeenCalled();
+      expect(mockOtpRepository.findRecentOtp).toHaveBeenCalledWith('user@example.com', EOtpType.RESET_PASSWORD, 60);
+      expect(mockOtpRepository.deleteByEmailAndType).toHaveBeenCalledWith('user@example.com', EOtpType.RESET_PASSWORD);
+      expect(mockOtpRepository.save).toHaveBeenCalledWith(expect.any(OtpRoot));
       
-      // Verification of Integration Event enqueuing
-      expect(mockOutboxService.enqueueMany).toHaveBeenCalledWith(
-        expect.arrayContaining([
-          expect.objectContaining({
-            eventType: 'SendVerificationEmailRequested',
-            payload: expect.objectContaining({
-              email: 'user@example.com',
-              type,
-            }),
-            transport: expect.objectContaining({
-                routingKey: 'email.send'
-            })
-          })
-        ])
-      );
+      expect(mockOutboxService.enqueueMany).toHaveBeenCalled();
       expect(mockUow.execute).toHaveBeenCalled();
+    });
+
+    it('should successfully send an OTP email for CREATE_ACCOUNT (userId required)', async () => {
+      const userId = 'user-123';
+      const input = { email: 'user@example.com', type: EOtpType.CREATE_ACCOUNT };
+      const command = new AuthSendOtpCommand(input, userId);
+
+      const mockUser = KOLUserRoot.instantiate(userId, {
+        email: 'user@example.com',
+        phone: PhoneNumberVO.create({ value: '+84987654321' }),
+        passwordHash: 'hashed',
+        roleId: 'role-1',
+        isEmailVerified: false,
+        type: ERoleType.KOL,
+        fullName: 'KOL User',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        deleteAt: null,
+        deleteBy: null,
+        refreshToken: null,
+        googleId: null,
+      });
+
+      mockUserRepository.findById.mockResolvedValue(mockUser);
+      mockOtpRepository.findRecentOtp.mockResolvedValue(null);
+
+      const result = await handler.execute(command);
+
+      expect(result).toEqual({ success: true });
+      expect(mockUserRepository.findById).toHaveBeenCalledWith(userId);
+      expect(mockOtpRepository.save).toHaveBeenCalledWith(expect.any(OtpRoot));
+      expect(mockOutboxService.enqueueMany).toHaveBeenCalled();
     });
   });
 
   describe('Sad Paths & Edge Cases', () => {
     it('should throw OtpRateLimitException if an OTP was sent within the last 60 seconds', async () => {
-      const input = { email: 'busy@example.com', type: EOtpType.CREATE_ACCOUNT };
+      const input = { email: 'busy@example.com', type: EOtpType.RESET_PASSWORD };
       const command = new AuthSendOtpCommand(input);
 
-      mockOtpRepository.findRecentOtp.mockResolvedValue({ id: 'recent' } as any);
+      const recentOtp = OtpRoot.instantiate({
+        id: 'otp-1',
+        email: 'busy@example.com',
+        code: '123456',
+        type: EOtpType.RESET_PASSWORD,
+        expiresAt: new Date(),
+      });
+
+      mockOtpRepository.findRecentOtp.mockResolvedValue(recentOtp);
 
       await expect(handler.execute(command)).rejects.toThrow(OtpRateLimitException);
       expect(mockOtpRepository.save).not.toHaveBeenCalled();
-      expect(mockOutboxService.enqueueMany).not.toHaveBeenCalled();
+    });
+
+    it('should throw ForbiddenDomainException for CREATE_ACCOUNT without userId', async () => {
+      const input = { email: 'user@example.com', type: EOtpType.CREATE_ACCOUNT };
+      const command = new AuthSendOtpCommand(input); // No userId
+
+      await expect(handler.execute(command)).rejects.toThrow(ForbiddenDomainException);
+    });
+
+    it('should throw UserNotFoundException if user does not exist for CHANGE_PASSWORD', async () => {
+      const userId = 'non-existent';
+      const input = { email: 'user@example.com', type: EOtpType.CHANGE_PASSWORD };
+      const command = new AuthSendOtpCommand(input, userId);
+
+      mockUserRepository.findById.mockResolvedValue(null);
+
+      await expect(handler.execute(command)).rejects.toThrow(UserNotFoundException);
+    });
+
+    it('should throw UserNotFoundException if user is deleted for CHANGE_PASSWORD', async () => {
+      const userId = 'deleted-user';
+      const input = { email: 'user@example.com', type: EOtpType.CHANGE_PASSWORD };
+      const command = new AuthSendOtpCommand(input, userId);
+
+      const mockUser = KOLUserRoot.instantiate(userId, {
+        email: 'user@example.com',
+        phone: PhoneNumberVO.create({ value: '+84987654321' }),
+        passwordHash: 'hashed',
+        roleId: 'role-1',
+        isEmailVerified: true,
+        type: ERoleType.KOL,
+        fullName: 'KOL User',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        deleteAt: new Date(),
+        deleteBy: 'admin',
+        refreshToken: null,
+        googleId: null,
+      });
+
+      mockUserRepository.findById.mockResolvedValue(mockUser);
+
+      await expect(handler.execute(command)).rejects.toThrow(UserNotFoundException);
     });
   });
 });

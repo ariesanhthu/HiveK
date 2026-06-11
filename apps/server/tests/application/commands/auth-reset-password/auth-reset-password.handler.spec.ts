@@ -1,10 +1,12 @@
 import { AuthResetPasswordCommandHandler } from '@/application/commands/auth-reset-password/auth-reset-password.handler';
 import { AuthResetPasswordCommand } from '@/application/commands/auth-reset-password/auth-reset-password.command';
 import { EOtpType, ERoleType } from '@/core/enums';
-import { KOLUserRoot } from '@/core/aggregate-roots';
+import { KOLUserRoot } from '@/core/aggregate-roots/kol-user.aggregate';
+import { OtpRoot } from '@/core/aggregate-roots/otp.aggregate';
 import { UserNotFoundException, InvalidOperationException } from '@/core/exceptions';
 import { createMockUserRepository, createMockOtpRepository } from '../../../__mocks__/mock-repositories';
 import { createMockAuthService, createMockOutboxService, createMockUnitOfWork } from '../../../__mocks__/mock-services';
+import { PhoneNumberVO } from '@/core/value-objects/phone-number.value-object';
 
 describe('AuthResetPasswordCommandHandler', () => {
   let handler: AuthResetPasswordCommandHandler;
@@ -24,8 +26,8 @@ describe('AuthResetPasswordCommandHandler', () => {
     handler = new AuthResetPasswordCommandHandler(
       mockUserRepository,
       mockOtpRepository,
-      mockAuthService as any,
-      mockOutboxService as any,
+      mockAuthService,
+      mockOutboxService,
       mockUow,
     );
   });
@@ -36,9 +38,9 @@ describe('AuthResetPasswordCommandHandler', () => {
     newPassword: 'newPassword123',
   };
 
-  const existingUser = KOLUserRoot.instantiate('user-1', {
+  const createExistingUser = () => KOLUserRoot.instantiate('user-1', {
     email: 'reset@example.com',
-    phone: { value: '+84123' } as any,
+    phone: PhoneNumberVO.create({ value: '+84123456789' }),
     passwordHash: 'old-hash',
     fullName: 'Test User',
     type: ERoleType.KOL,
@@ -52,19 +54,31 @@ describe('AuthResetPasswordCommandHandler', () => {
     googleId: null,
   });
 
+  const createMockOtp = () => OtpRoot.instantiate('otp-1', {
+    email: 'reset@example.com',
+    code: '123456',
+    type: EOtpType.RESET_PASSWORD,
+    expiresAt: new Date(Date.now() + 10000),
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  });
+
   describe('Happy Path', () => {
     it('should successfully reset password when OTP is valid', async () => {
+      const user = createExistingUser();
+      const otp = createMockOtp();
+      
       mockAuthService.normalizeEmail.mockReturnValue('reset@example.com');
-      mockUserRepository.findByEmail.mockResolvedValue(existingUser);
-      mockOtpRepository.findValidOtp.mockResolvedValue({ code: '123456' } as any);
-      mockAuthService.hashPassword!.mockResolvedValue('new-hash');
+      mockUserRepository.findByEmail.mockResolvedValue(user);
+      mockOtpRepository.findValidOtp.mockResolvedValue(otp);
+      mockAuthService.hashPassword.mockResolvedValue('new-hash');
 
       const command = new AuthResetPasswordCommand(resetInput);
       const result = await handler.execute(command);
 
       expect(result).toEqual({ success: true });
-      expect(existingUser.passwordHash).toBe('new-hash');
-      expect(mockUserRepository.save).toHaveBeenCalledWith(existingUser);
+      expect(user.passwordHash).toBe('new-hash');
+      expect(mockUserRepository.save).toHaveBeenCalledWith(user);
       expect(mockOtpRepository.deleteByEmailAndType).toHaveBeenCalledWith('reset@example.com', EOtpType.RESET_PASSWORD);
       expect(mockUow.execute).toHaveBeenCalled();
     });
@@ -80,8 +94,9 @@ describe('AuthResetPasswordCommandHandler', () => {
     });
 
     it('should throw InvalidOperationException if OTP is invalid', async () => {
+      const user = createExistingUser();
       mockAuthService.normalizeEmail.mockReturnValue('reset@example.com');
-      mockUserRepository.findByEmail.mockResolvedValue(existingUser);
+      mockUserRepository.findByEmail.mockResolvedValue(user);
       mockOtpRepository.findValidOtp.mockResolvedValue(null);
 
       const command = new AuthResetPasswordCommand(resetInput);

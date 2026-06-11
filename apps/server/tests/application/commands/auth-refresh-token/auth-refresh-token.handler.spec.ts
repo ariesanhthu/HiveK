@@ -4,6 +4,8 @@ import { ERoleType } from '@/core/enums';
 import { InvalidRefreshTokenException, UserNotFoundException } from '@/core/exceptions';
 import { createMockUserRepository } from '../../../__mocks__/mock-repositories';
 import { createMockAuthService, createMockJwtService } from '../../../__mocks__/mock-services';
+import { KOLUserRoot } from '@/core/aggregate-roots/kol-user.aggregate';
+import { PhoneNumberVO } from '@/core/value-objects/phone-number.value-object';
 
 describe('AuthRefreshTokenCommandHandler', () => {
   let handler: AuthRefreshTokenCommandHandler;
@@ -18,20 +20,28 @@ describe('AuthRefreshTokenCommandHandler', () => {
 
     handler = new AuthRefreshTokenCommandHandler(
       mockUserRepository,
-      mockJwtService as any,
-      mockAuthService as any,
+      mockJwtService,
+      mockAuthService,
     );
   });
 
-  const createMockUser = (overrides = {}) => ({
-    id: 'user-123',
-    email: 'test@example.com',
-    roleId: 'role-123',
-    type: ERoleType.KOL,
-    refreshToken: 'valid-token',
-    updateRefreshToken: jest.fn(),
-    ...overrides,
-  });
+  const createMockUser = (overrides: { id?: string; refreshToken?: string } = {}) => {
+    return KOLUserRoot.instantiate(overrides.id || 'user-123', {
+      email: 'test@example.com',
+      phone: PhoneNumberVO.create({ value: '+1234567890' }),
+      passwordHash: 'hashed-password',
+      type: ERoleType.KOL,
+      roleId: 'role-123',
+      isEmailVerified: true,
+      fullName: 'Test User',
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      deleteAt: null,
+      deleteBy: null,
+      refreshToken: overrides.refreshToken || 'valid-token',
+      googleId: null,
+    });
+  };
 
   describe('Happy Paths', () => {
     it('should successfully refresh tokens', async () => {
@@ -39,9 +49,9 @@ describe('AuthRefreshTokenCommandHandler', () => {
       const command = new AuthRefreshTokenCommand(input);
       const mockUser = createMockUser();
 
-      mockJwtService.verify!.mockReturnValue({ sub: 'user-123' } as any);
-      mockUserRepository.findById.mockResolvedValue(mockUser as any);
-      mockAuthService.generateTokens!.mockResolvedValue({
+      mockJwtService.verify.mockReturnValue({ sub: 'user-123', email: 'test@example.com', role: 'role-123', type: ERoleType.KOL });
+      mockUserRepository.findById.mockResolvedValue(mockUser);
+      mockAuthService.generateTokens.mockResolvedValue({
         accessToken: 'new-at',
         refreshToken: 'new-rt',
       });
@@ -60,7 +70,7 @@ describe('AuthRefreshTokenCommandHandler', () => {
         role: 'role-123',
         type: ERoleType.KOL,
       });
-      expect(mockUser.updateRefreshToken).toHaveBeenCalledWith('new-rt');
+      expect(mockUser.refreshToken).toBe('new-rt');
       expect(mockUserRepository.save).toHaveBeenCalledWith(mockUser);
     });
   });
@@ -70,7 +80,7 @@ describe('AuthRefreshTokenCommandHandler', () => {
       const input = { refreshToken: 'invalid' };
       const command = new AuthRefreshTokenCommand(input);
 
-      mockJwtService.verify!.mockImplementation(() => { throw new Error('expired'); });
+      mockJwtService.verify.mockImplementation(() => { throw new Error('expired'); });
 
       await expect(handler.execute(command)).rejects.toThrow(InvalidRefreshTokenException);
       expect(mockUserRepository.findById).not.toHaveBeenCalled();
@@ -80,7 +90,7 @@ describe('AuthRefreshTokenCommandHandler', () => {
       const input = { refreshToken: 'valid-token' };
       const command = new AuthRefreshTokenCommand(input);
 
-      mockJwtService.verify!.mockReturnValue({ sub: 'nonexistent' } as any);
+      mockJwtService.verify.mockReturnValue({ sub: 'nonexistent', email: '', role: '', type: ERoleType.KOL });
       mockUserRepository.findById.mockResolvedValue(null);
 
       await expect(handler.execute(command)).rejects.toThrow(UserNotFoundException);
@@ -91,8 +101,8 @@ describe('AuthRefreshTokenCommandHandler', () => {
       const command = new AuthRefreshTokenCommand(input);
       const mockUser = createMockUser({ refreshToken: 'current-token' });
 
-      mockJwtService.verify!.mockReturnValue({ sub: 'user-123' } as any);
-      mockUserRepository.findById.mockResolvedValue(mockUser as any);
+      mockJwtService.verify.mockReturnValue({ sub: 'user-123', email: 'test@example.com', role: 'role-123', type: ERoleType.KOL });
+      mockUserRepository.findById.mockResolvedValue(mockUser);
 
       await expect(handler.execute(command)).rejects.toThrow(InvalidRefreshTokenException);
       expect(mockAuthService.generateTokens).not.toHaveBeenCalled();

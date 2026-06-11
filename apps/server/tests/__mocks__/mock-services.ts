@@ -10,7 +10,7 @@ import { type IRoleReadService, type IAuthJwtService, type IMailerService, type 
  * Centralized mock factories for all application service interfaces.
  */
 
-export const createMockAuthService = (): jest.Mocked<Partial<AuthService>> => ({
+export const createMockAuthService = (): jest.Mocked<AuthService> => ({
   normalizeEmail: jest.fn((email: string) => email.trim().toLowerCase()),
   hashPassword: jest.fn().mockResolvedValue('$2b$10$hashedPasswordString'),
   comparePassword: jest.fn(),
@@ -18,16 +18,24 @@ export const createMockAuthService = (): jest.Mocked<Partial<AuthService>> => ({
     accessToken: 'mock-access-token',
     refreshToken: 'mock-refresh-token',
   }),
+  jwtService: {} as any,
+  configService: {} as any,
 });
 
-export const createMockOutboxService = (): jest.Mocked<Partial<OutboxService>> => ({
+export const createMockOutboxService = (): jest.Mocked<OutboxService> => ({
   enqueue: jest.fn().mockResolvedValue(undefined),
   enqueueMany: jest.fn().mockResolvedValue(undefined),
 });
 
-export const createMockJwtService = (): jest.Mocked<Partial<IAuthJwtService>> => ({
+export const createMockJwtService = (): jest.Mocked<IAuthJwtService> => ({
   sign: jest.fn().mockReturnValue('mock-signed-jwt-token'),
   verify: jest.fn().mockReturnValue({ sub: 'user-1', email: 'test@test.com', role: 'role-1', type: 'kol' } as any),
+  decode: jest.fn(),
+  extractTokenFromHeader: jest.fn(),
+  extractTokenFromCookie: jest.fn(),
+  verifyAuthHeader: jest.fn(),
+  verifyHandshake: jest.fn(),
+  verifyRequest: jest.fn(),
 });
 
 export const createMockLoggerService = () => ({
