@@ -10,7 +10,7 @@ export const RoleDtoSchema = z.object({
   type: z.enum(ERoleType),
   createdAt: z.iso.datetime(),
   updatedAt: z.iso.datetime(),
-});
+}).strict();
 
 export class RoleDto extends createZodDto(RoleDtoSchema) {}
 

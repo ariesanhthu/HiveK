@@ -38,6 +38,10 @@ export class MongoNotificationRepository implements INotificationRepository {
     }
   }
 
+  async saveMany(notifications: NotificationRoot[]): Promise<void> {
+    await Promise.all(notifications.map(n => this.save(n)));
+  }
+
   async delete(id: string): Promise<void> {
     await this.notificationModel.findByIdAndDelete(id).session(this.session).exec();
   }

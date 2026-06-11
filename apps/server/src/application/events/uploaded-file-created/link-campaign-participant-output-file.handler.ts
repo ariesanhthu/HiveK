@@ -1,14 +1,14 @@
 import { EventsHandler, IEventHandler } from '@nestjs/cqrs';
 import { Inject } from '@nestjs/common';
-import { CAMPAIGN_PARTICIPANT_REPOSITORY, type ICampaignParticipantRepository } from '@/core/interfaces/repositories/campaign-participant.repository';
+import { CAMPAIGN_REPOSITORY, type ICampaignRepository } from '@/core/interfaces/repositories/campaign.repository';
 import { TargetType } from '@/core/enums/target-type.enum';
 import { UploadedFileCreatedEvent } from './uploaded-file-created.event';
 
 @EventsHandler(UploadedFileCreatedEvent)
 export class LinkCampaignParticipantOutputFileHandler implements IEventHandler<UploadedFileCreatedEvent> {
   constructor(
-    @Inject(CAMPAIGN_PARTICIPANT_REPOSITORY)
-    private readonly participantRepository: ICampaignParticipantRepository,
+    @Inject(CAMPAIGN_REPOSITORY)
+    private readonly campaignRepository: ICampaignRepository,
   ) {}
 
   async handle(event: UploadedFileCreatedEvent): Promise<void> {
@@ -21,12 +21,12 @@ export class LinkCampaignParticipantOutputFileHandler implements IEventHandler<U
       return;
     }
 
-    const participant = await this.participantRepository.findByOutputId(event.targetId);
-    if (!participant) {
+    const campaign = await this.campaignRepository.findByOutputId(event.targetId);
+    if (!campaign) {
       return;
     }
 
-    participant.setOutputFileId(event.targetId, event.fileId);
-    await this.participantRepository.save(participant);
+    campaign.setOutputFileId(event.targetId, event.fileId);
+    await this.campaignRepository.save(campaign);
   }
 }

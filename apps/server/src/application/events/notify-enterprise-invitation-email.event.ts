@@ -1,0 +1,20 @@
+import { IntegrationEvent } from '@/core/common/base.integration-event';
+
+export interface NotifyEnterpriseInvitationPayload {
+  userId: string;
+  userEmail: string;
+  enterpriseName: string;
+  enterpriseId: string;
+}
+
+export class NotifyEnterpriseInvitationEvent extends IntegrationEvent<NotifyEnterpriseInvitationPayload> {
+  public readonly eventType = 'NotifyEnterpriseInvitationEmail';
+
+  constructor(
+    payload: NotifyEnterpriseInvitationPayload,
+    metadata?: any,
+    transport?: any,
+  ) {
+    super(payload, metadata, transport);
+  }
+}

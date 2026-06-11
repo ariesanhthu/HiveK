@@ -14,6 +14,6 @@ export const UploadedFileDtoSchema = z.object({
   targetField: z.string(),
   createdAt: z.date(),
   updatedAt: z.date(),
-});
+}).strict();
 
 export class UploadedFileDto extends createZodDto(UploadedFileDtoSchema) {}

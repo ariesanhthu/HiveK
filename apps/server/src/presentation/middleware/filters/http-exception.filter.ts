@@ -1,4 +1,4 @@
-import { ExceptionFilter, Catch, ArgumentsHost, HttpStatus, HttpException } from '@nestjs/common';
+import { ExceptionFilter, Catch, ArgumentsHost, HttpStatus, HttpException, Inject } from '@nestjs/common';
 import { Response } from 'express';
 import {
   DomainException,
@@ -9,12 +9,18 @@ import {
   BadRequestDomainException,
 } from '@/core/exceptions';
 import { ApiResponseHelper } from '@/presentation/utils/api-response.helper';
+import { type ILoggerService, LOGGER_SERVICE } from '@/application';
 
 type ErrorDetail = { field?: string; message: string };
 
 @Catch()
 export class HttpExceptionFilter implements ExceptionFilter {
-  private readonly logger = console;
+  constructor (
+    @Inject(LOGGER_SERVICE)
+    private readonly logger: ILoggerService,
+  ) {
+    this.logger.setContext(HttpExceptionFilter.name)
+  }
 
   catch(exception: any, host: ArgumentsHost) {
     if (typeof host.getType === 'function' && (host.getType() as string) === 'graphql') {
@@ -29,7 +35,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
     if (exception instanceof DomainException) {
       const { status, code } = this.mapDomainException(exception);
       const body = ApiResponseHelper.error(code, exception.message);
-      this.logger.warn(`[HttpExceptionFilter] ${request.method} ${request.url} ${status} - ${code}: ${exception.message}`);
+      this.logger.warn(`${request.method} ${request.url} ${status} - ${code}: ${exception.message}`);
       return response.status(status).json(body);
     }
 
@@ -37,22 +43,23 @@ export class HttpExceptionFilter implements ExceptionFilter {
     if (exception instanceof HttpException) {
       const status = exception.getStatus();
       const res = exception.getResponse();
-      const message = typeof res === 'string' ? res : (res as any).message || exception.message;
+      const rawMessage = typeof res === 'string' ? res : (res as any).message || exception.message;
+      const message = Array.isArray(rawMessage) ? rawMessage.join(',') : rawMessage;
       const code = this.httpStatusToCode(status);
       const details = this.extractDetails(res);
       const body = ApiResponseHelper.error(code, message, details);
 
       if (status >= 500) {
-        this.logger.error(`[HttpExceptionFilter] ${request.method} ${request.url} ${status} - ${exception.message}`, exception.stack);
+        this.logger.error(`${request.method} ${request.url} ${status} - ${exception.message}`, exception.stack);
       } else {
-        this.logger.warn(`[HttpExceptionFilter] ${request.method} ${request.url} ${status} - ${code}: ${message}`);
+        this.logger.warn(`${request.method} ${request.url} ${status} - ${code}: ${message}`);
       }
       return response.status(status).json(body);
     }
 
     // ---------- UNHANDLED ERRORS ----------
     const message = exception?.message || 'Internal server error';
-    this.logger.error(`[HttpExceptionFilter] ${request.method} ${request.url} 500 - ${message}`, exception?.stack);
+    this.logger.error(`${request.method} ${request.url} 500 - ${message}`, exception?.stack);
     return response.status(HttpStatus.INTERNAL_SERVER_ERROR).json(
       ApiResponseHelper.error('INTERNAL_ERROR', message),
     );

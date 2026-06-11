@@ -1,6 +1,6 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { Inject } from '@nestjs/common';
-import { EnterpriseConflictException, UserNotFoundException } from '@/core/exceptions';
+import { EnterpriseConflictException, UserNotFoundException, InvalidUserTypeException } from '@/core/exceptions';
 import { ENTERPRISE_REPOSITORY, USER_REPOSITORY, type IEnterpriseRepository, type IUserRepository } from '@/core/interfaces/repositories';
 import { EnterpriseRoot, EnterpriseUserRoot } from '@/core/aggregate-roots';
 import { EnterpriseCreateCommand } from './enterprise-create.command';
@@ -24,6 +24,15 @@ export class EnterpriseCreateCommandHandler implements ICommandHandler<Enterpris
     return this.uow.execute(async () => {
       const { userId, input } = command;
 
+      const user = await this.userRepository.findById(userId);
+      if (!user) {
+        throw new UserNotFoundException(userId);
+      }
+
+      if (!(user instanceof EnterpriseUserRoot)) {
+        throw new InvalidUserTypeException('User must be an enterprise user to create an enterprise profile');
+      }
+
       const existing = await this.enterpriseRepository.findByUserId(userId);
       if (existing) {
         throw new EnterpriseConflictException('User already has an enterprise profile');
@@ -42,12 +51,8 @@ export class EnterpriseCreateCommandHandler implements ICommandHandler<Enterpris
 
       await this.enterpriseRepository.save(enterprise);
 
-      // Add enterprise to user's list
-      const user = await this.userRepository.findById(userId);
-      if (user && user instanceof EnterpriseUserRoot) {
-        user.addEnterprise(enterprise.id!);
-        await this.userRepository.save(user);
-      }
+      user.addEnterprise(enterprise.id!);
+      await this.userRepository.save(user);
 
       return EnterpriseMapper.toDto(enterprise);
     });

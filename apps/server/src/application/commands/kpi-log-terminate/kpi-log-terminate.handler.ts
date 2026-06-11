@@ -1,6 +1,6 @@
 import { CommandHandler, ICommandHandler, EventBus } from '@nestjs/cqrs';
 import { Inject, Logger } from '@nestjs/common';
-import { CAMPAIGN_PARTICIPANT_REPOSITORY, type ICampaignParticipantRepository } from '@/core/interfaces/repositories/campaign-participant.repository';
+import { CAMPAIGN_REPOSITORY, type ICampaignRepository } from '@/core/interfaces/repositories/campaign.repository';
 import { KpiLogTerminateCommand } from './kpi-log-terminate.command';
 import { type IUnitOfWork, UNIT_OF_WORK } from '@/application/interfaces';
 import { KpiTrackingTerminatedEvent } from '@/application/events';
@@ -10,8 +10,8 @@ export class KpiLogTerminateCommandHandler implements ICommandHandler<KpiLogTerm
   private readonly logger = new Logger(KpiLogTerminateCommandHandler.name);
 
   constructor(
-    @Inject(CAMPAIGN_PARTICIPANT_REPOSITORY)
-    private readonly participantRepository: ICampaignParticipantRepository,
+    @Inject(CAMPAIGN_REPOSITORY)
+    private readonly campaignRepository: ICampaignRepository,
     private readonly eventBus: EventBus,
     @Inject(UNIT_OF_WORK)
     private readonly uow: IUnitOfWork,
@@ -26,20 +26,20 @@ export class KpiLogTerminateCommandHandler implements ICommandHandler<KpiLogTerm
         return;
       }
 
-      const participant = await this.participantRepository.findById(payload.participantId);
-      if (!participant) {
-        this.logger.error(`Participant ${payload.participantId} not found for termination event`);
+      const campaign = await this.campaignRepository.findByParticipantId(payload.participantId);
+      if (!campaign) {
+        this.logger.error(`Campaign for Participant ${payload.participantId} not found for termination event`);
         return;
       }
 
       try {
-        participant.updateTrackingStatus(payload.outputId, false);
-        await this.participantRepository.save(participant);
+        campaign.updateTrackingStatus(payload.outputId, false);
+        await this.campaignRepository.save(campaign);
         this.logger.log(`Terminated tracking for output ${payload.outputId} of participant ${payload.participantId}`);
       } catch (e) {
         this.logger.error(`Error terminating tracking: ${e.message}`);
       }
-      
+
       this.eventBus.publish(new KpiTrackingTerminatedEvent(payload.participantId, payload.outputId));
     });
   }

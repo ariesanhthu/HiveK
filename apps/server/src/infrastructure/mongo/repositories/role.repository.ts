@@ -43,6 +43,10 @@ export class MongoRoleRepository implements IRoleRepository {
     }
   }
 
+  async saveMany(roles: RoleRoot[]): Promise<void> {
+    await Promise.all(roles.map(r => this.save(r)));
+  }
+
   async delete(id: string): Promise<void> {
     await this.roleModel.findByIdAndDelete(id).session(this.session).exec();
   }

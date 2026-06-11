@@ -1,78 +1,69 @@
 import { EnterpriseUpdateCommandHandler } from '@/application/commands/enterprise-update/enterprise-update.handler';
 import { EnterpriseUpdateCommand } from '@/application/commands/enterprise-update/enterprise-update.command';
 import { EnterpriseNotFoundException, EnterpriseForbiddenException } from '@/core/exceptions';
+import { EnterpriseRoot } from '@/core/aggregate-roots';
+import { createMockEnterpriseRepository } from '../../../__mocks__/mock-repositories';
 
 describe('EnterpriseUpdateCommandHandler', () => {
   let handler: EnterpriseUpdateCommandHandler;
-  let mockEnterpriseRepository: any;
-  let mockUploadedFileRepository: any;
+  let mockEnterpriseRepository: ReturnType<typeof createMockEnterpriseRepository>;
 
   beforeEach(() => {
-    mockEnterpriseRepository = {
-      findById: jest.fn(),
-      save: jest.fn(),
-    };
-    mockUploadedFileRepository = {
-      findById: jest.fn(),
-    };
-    handler = new EnterpriseUpdateCommandHandler(mockEnterpriseRepository, mockUploadedFileRepository);
+    mockEnterpriseRepository = createMockEnterpriseRepository();
+    handler = new EnterpriseUpdateCommandHandler(mockEnterpriseRepository);
   });
 
-  it('should update enterprise successfully if owned by current user', async () => {
-    const mockEnterprise = {
-      userId: 'user-123',
-      id: 'ent-123',
-      companyName: 'Old Name',
-      description: 'Old Description',
-      contactEmail: 'old@test.com',
-      contactPhone: '0000000000',
-      website: 'https://old.com',
-      taxId: 'TAXOLD',
-      logoUrlId: 'logo-old',
-      isVerified: false,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-      update: jest.fn(),
-    };
+  const enterpriseId = 'ent-123';
+  const userId = 'user-123';
 
-    mockEnterpriseRepository.findById.mockResolvedValue(mockEnterprise);
-    mockUploadedFileRepository.findById.mockResolvedValue({});
-
-    const input = {
-      companyName: 'New Name',
-      description: 'New Description',
-      logoUrlId: 'logo-new',
-    };
-
-    const command = new EnterpriseUpdateCommand('ent-123', 'user-123', input);
-    const result = await handler.execute(command);
-
-    expect(result).toBeDefined();
-    expect(mockEnterpriseRepository.findById).toHaveBeenCalledWith('ent-123');
-    expect(mockUploadedFileRepository.findById).toHaveBeenCalledWith('logo-new');
-    expect(mockEnterprise.update).toHaveBeenCalledWith(expect.objectContaining({
-      companyName: 'New Name',
-      description: 'New Description',
-      logoUrlId: 'logo-new',
-    }));
-    expect(mockEnterpriseRepository.save).toHaveBeenCalledWith(mockEnterprise);
+  const createMockEnterprise = () => EnterpriseRoot.instantiate(enterpriseId, {
+    userId: userId,
+    companyName: 'Old Company',
+    contactEmail: 'old@test.com',
+    isVerified: true,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    deleteAt: null,
+    deleteBy: null,
   });
 
-  it('should throw NotFoundException if enterprise not found', async () => {
-    mockEnterpriseRepository.findById.mockResolvedValue(null);
+  describe('Happy Path', () => {
+    it('should update enterprise successfully if owned by current user', async () => {
+      const enterprise = createMockEnterprise();
+      mockEnterpriseRepository.findById.mockResolvedValue(enterprise);
 
-    const command = new EnterpriseUpdateCommand('ent-123', 'user-123', {});
-    await expect(handler.execute(command)).rejects.toThrow(EnterpriseNotFoundException);
+      const input = {
+        companyName: 'New Company',
+        description: 'New Description',
+        contactEmail: 'new@test.com',
+      };
+
+      const command = new EnterpriseUpdateCommand(enterpriseId, userId, input);
+      const result = await handler.execute(command);
+
+      expect(result).toBeDefined();
+      expect(result.companyName).toBe('New Company');
+      expect(enterprise.companyName).toBe('New Company');
+      expect(enterprise.description).toBe('New Description');
+      expect(mockEnterpriseRepository.save).toHaveBeenCalledWith(enterprise);
+    });
   });
 
-  it('should throw ForbiddenException if enterprise not owned by user', async () => {
-    const mockEnterprise = {
-      userId: 'user-other',
-      id: 'ent-123',
-    };
-    mockEnterpriseRepository.findById.mockResolvedValue(mockEnterprise);
+  describe('Sad Paths', () => {
+    it('should throw EnterpriseNotFoundException if enterprise not found', async () => {
+      mockEnterpriseRepository.findById.mockResolvedValue(null);
 
-    const command = new EnterpriseUpdateCommand('ent-123', 'user-123', {});
-    await expect(handler.execute(command)).rejects.toThrow(EnterpriseForbiddenException);
+      const command = new EnterpriseUpdateCommand(enterpriseId, userId, {});
+      await expect(handler.execute(command)).rejects.toThrow(EnterpriseNotFoundException);
+    });
+
+    it('should throw EnterpriseForbiddenException if enterprise not owned by user', async () => {
+      const enterprise = createMockEnterprise();
+      mockEnterpriseRepository.findById.mockResolvedValue(enterprise);
+
+      const command = new EnterpriseUpdateCommand(enterpriseId, 'wrong-user', {});
+      await expect(handler.execute(command)).rejects.toThrow(EnterpriseForbiddenException);
+      expect(mockEnterpriseRepository.save).not.toHaveBeenCalled();
+    });
   });
 });

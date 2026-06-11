@@ -15,7 +15,7 @@ const BaseUserDtoSchema = z.object({
   isEmailVerified: z.boolean(),
   createdAt: z.string(),
   updatedAt: z.string(),
-});
+}).strict();
 
 export const AdminDtoSchema = BaseUserDtoSchema.extend({
   type: z.literal(ERoleType.ADMIN),

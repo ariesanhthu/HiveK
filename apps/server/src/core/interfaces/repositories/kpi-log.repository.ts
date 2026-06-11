@@ -4,6 +4,7 @@ import { KpiLogEntity } from '@/core/entities/kpi-log.entity';
 export interface IKpiLogRepository {
   findById(id: string): Promise<Nullable<KpiLogEntity>>;
   save(entity: KpiLogEntity): Promise<void>;
+  saveMany(entities: KpiLogEntity[]): Promise<void>;
   delete(id: string): Promise<void>;
 }
 

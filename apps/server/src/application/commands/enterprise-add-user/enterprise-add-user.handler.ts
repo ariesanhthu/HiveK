@@ -1,12 +1,13 @@
-import { CommandHandler, ICommandHandler, EventBus } from '@nestjs/cqrs';
+import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { Inject } from '@nestjs/common';
 import { USER_REPOSITORY, ENTERPRISE_REPOSITORY, type IUserRepository, type IEnterpriseRepository } from '@/core/interfaces/repositories';
 import { EnterpriseAddUserCommand } from './enterprise-add-user.command';
 import { EnterpriseUserRoot } from '@/core/aggregate-roots';
 import { UserNotFoundException, InvalidUserTypeException, EnterpriseNotFoundException, EnterpriseForbiddenException } from '@/core/exceptions';
-import { UserAddedToEnterpriseEvent } from '@/application/events';
+import { OutboxService } from '@/application/services/outbox.service';
 import { type IUnitOfWork, UNIT_OF_WORK } from '@/application/interfaces';
 import { ERoleType } from '@/core/enums';
+import { EventMapper } from '@/application/mappers';
 
 @CommandHandler(EnterpriseAddUserCommand)
 export class EnterpriseAddUserCommandHandler implements ICommandHandler<EnterpriseAddUserCommand, void> {
@@ -15,7 +16,7 @@ export class EnterpriseAddUserCommandHandler implements ICommandHandler<Enterpri
     private readonly userRepository: IUserRepository,
     @Inject(ENTERPRISE_REPOSITORY)
     private readonly enterpriseRepository: IEnterpriseRepository,
-    private readonly eventBus: EventBus,
+    private readonly outboxService: OutboxService,
     @Inject(UNIT_OF_WORK)
     private readonly uow: IUnitOfWork,
   ) {}
@@ -40,14 +41,32 @@ export class EnterpriseAddUserCommandHandler implements ICommandHandler<Enterpri
         throw new UserNotFoundException(missingIds.join(', '));
       }
 
+      const usersToUpdate: EnterpriseUserRoot[] = [];
 
       for (const user of users) {
         if (user.type !== ERoleType.ENTERPRISE || !(user instanceof EnterpriseUserRoot)) {
           throw new InvalidUserTypeException('User must be an enterprise user to be added to an enterprise');
         }
-        user.addEnterprise(enterpriseId);
-        await this.userRepository.save(user);
-        this.eventBus.publish(new UserAddedToEnterpriseEvent(user.id, enterpriseId));
+
+        if (!user.enterpriseIds.includes(enterpriseId)) {
+          user.addEnterprise(enterpriseId);
+          usersToUpdate.push(user);
+        }
+      }
+
+      if (usersToUpdate.length > 0) {
+        await this.userRepository.saveMany(usersToUpdate);
+        
+        const events = EventMapper.mapToIntegrationEvents(usersToUpdate.flatMap(user => user.domainEvents));
+        if (events.length > 0) {
+          await this.outboxService.enqueueMany(events.map(event => ({
+            eventType: event.eventType,
+            payload: event.payload,
+            metadata: event.metadata,
+            transport: event.transport,
+            maxRetry: 5,
+          })));
+        }
       }
     });
   }

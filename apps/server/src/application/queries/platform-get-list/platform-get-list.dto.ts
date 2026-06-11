@@ -5,7 +5,7 @@ import { PlatformApiStatus } from '@/core/enums';
 
 export const PlatformFilterSchema = CursorPaginationRequestSchema.extend({
   name: z.string().optional(),
-  apiStatus: z.nativeEnum(PlatformApiStatus).optional(),
+  apiStatus: z.enum(PlatformApiStatus).optional(),
 });
 
 export class PlatformFilterDto extends createZodDto(PlatformFilterSchema) {}

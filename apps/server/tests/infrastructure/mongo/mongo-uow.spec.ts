@@ -18,48 +18,6 @@ describe('MongoUnitOfWork', () => {
     uow = new MongoUnitOfWork(mockConnection);
   });
 
-  describe('startTransaction', () => {
-    it('should start a new session and transaction', async () => {
-      await uow.startTransaction();
-
-      expect(mockConnection.startSession).toHaveBeenCalled();
-      expect(mockSession.startTransaction).toHaveBeenCalled();
-      expect(uow.getSession()).toBe(mockSession);
-    });
-  });
-
-  describe('commitTransaction', () => {
-    it('should commit and end session', async () => {
-      await uow.startTransaction();
-      await uow.commitTransaction();
-
-      expect(mockSession.commitTransaction).toHaveBeenCalled();
-      expect(mockSession.endSession).toHaveBeenCalled();
-      expect(uow.getSession()).toBeNull();
-    });
-
-    it('should do nothing when no active session', async () => {
-      await uow.commitTransaction();
-      expect(mockSession.commitTransaction).not.toHaveBeenCalled();
-    });
-  });
-
-  describe('rollbackTransaction', () => {
-    it('should abort and end session', async () => {
-      await uow.startTransaction();
-      await uow.rollbackTransaction();
-
-      expect(mockSession.abortTransaction).toHaveBeenCalled();
-      expect(mockSession.endSession).toHaveBeenCalled();
-      expect(uow.getSession()).toBeNull();
-    });
-
-    it('should do nothing when no active session', async () => {
-      await uow.rollbackTransaction();
-      expect(mockSession.abortTransaction).not.toHaveBeenCalled();
-    });
-  });
-
   describe('execute', () => {
     it('should run operation within transaction and commit', async () => {
       const operation = jest.fn().mockResolvedValue('result');
@@ -67,6 +25,7 @@ describe('MongoUnitOfWork', () => {
       const result = await uow.execute(operation);
 
       expect(result).toBe('result');
+      expect(mockConnection.startSession).toHaveBeenCalled();
       expect(mockSession.startTransaction).toHaveBeenCalled();
       expect(operation).toHaveBeenCalled();
       expect(mockSession.commitTransaction).toHaveBeenCalled();
@@ -77,9 +36,25 @@ describe('MongoUnitOfWork', () => {
       const operation = jest.fn().mockRejectedValue(new Error('Operation failed'));
 
       await expect(uow.execute(operation)).rejects.toThrow('Operation failed');
+      expect(mockConnection.startSession).toHaveBeenCalled();
       expect(mockSession.startTransaction).toHaveBeenCalled();
       expect(mockSession.abortTransaction).toHaveBeenCalled();
       expect(mockSession.endSession).toHaveBeenCalled();
+    });
+
+    it('should reuse existing session for nested execute calls', async () => {
+      const innerOperation = jest.fn().mockResolvedValue('inner');
+      const outerOperation = jest.fn().mockImplementation(async () => {
+        return await uow.execute(innerOperation);
+      });
+
+      const result = await uow.execute(outerOperation);
+
+      expect(result).toBe('inner');
+      // Should only start session once
+      expect(mockConnection.startSession).toHaveBeenCalledTimes(1);
+      expect(outerOperation).toHaveBeenCalled();
+      expect(innerOperation).toHaveBeenCalled();
     });
   });
 
@@ -88,9 +63,24 @@ describe('MongoUnitOfWork', () => {
       expect(uow.getSession()).toBeNull();
     });
 
-    it('should return session after startTransaction', async () => {
-      await uow.startTransaction();
-      expect(uow.getSession()).toBe(mockSession);
+    it('should return session during execute', async () => {
+      await uow.execute(async () => {
+        expect(uow.getSession()).toBe(mockSession);
+      });
+    });
+  });
+
+  describe('manual transaction methods (deprecated)', () => {
+    it('startTransaction should throw error', async () => {
+      await expect(uow.startTransaction()).rejects.toThrow('Use execute() instead');
+    });
+
+    it('commitTransaction should throw error', async () => {
+      await expect(uow.commitTransaction()).rejects.toThrow('Use execute() instead');
+    });
+
+    it('rollbackTransaction should throw error', async () => {
+      await expect(uow.rollbackTransaction()).rejects.toThrow('Use execute() instead');
     });
   });
 });

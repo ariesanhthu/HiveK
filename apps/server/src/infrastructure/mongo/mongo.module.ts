@@ -13,12 +13,12 @@ import {
   PlatformModel, PlatformSchema,
   KolProfileModel, KolProfileSchema,
   CampaignModel, CampaignSchema,
-  CampaignParticipantModel, CampaignParticipantSchema,
   NotificationModel, NotificationSchema,
   UserNotificationModel, UserNotificationSchema,
   UploadedFileModel, UploadedFileSchema,
   OtpModel, OtpSchema,
   KpiLogModel, KpiLogSchema,
+  OutboxModel, OutboxSchema,
 } from './schemas';
 
 // Repository imports
@@ -29,12 +29,12 @@ import {
   MongoPlatformRepository,
   MongoKolProfileRepository,
   MongoCampaignRepository,
-  MongoCampaignParticipantRepository,
   MongoNotificationRepository,
   MongoUserNotificationRepository,
   MongoUploadedFileRepository,
   MongoOtpRepository,
   MongoKpiLogRepository,
+  MongoOutboxRepository,
 } from './repositories';
 
 // Read Service imports
@@ -59,12 +59,12 @@ import {
   PLATFORM_REPOSITORY,
   KOL_PROFILE_REPOSITORY,
   CAMPAIGN_REPOSITORY,
-  CAMPAIGN_PARTICIPANT_REPOSITORY,
   NOTIFICATION_REPOSITORY,
   USER_NOTIFICATION_REPOSITORY,
   UPLOADED_FILE_REPOSITORY,
   OTP_REPOSITORY,
   KPI_LOG_REPOSITORY,
+  OUTBOX_REPOSITORY,
 } from '@/core/interfaces/repositories';
 
 // Read Service symbols
@@ -110,12 +110,12 @@ import { ERoleType } from '@/core/enums';
       { name: PlatformModel.name, schema: PlatformSchema },
       { name: KolProfileModel.name, schema: KolProfileSchema },
       { name: CampaignModel.name, schema: CampaignSchema },
-      { name: CampaignParticipantModel.name, schema: CampaignParticipantSchema },
       { name: NotificationModel.name, schema: NotificationSchema },
       { name: UserNotificationModel.name, schema: UserNotificationSchema },
       { name: UploadedFileModel.name, schema: UploadedFileSchema },
       { name: OtpModel.name, schema: OtpSchema },
       { name: KpiLogModel.name, schema: KpiLogSchema },
+      { name: OutboxModel.name, schema: OutboxSchema },
     ]),
   ],
   providers: [
@@ -150,10 +150,6 @@ import { ERoleType } from '@/core/enums';
       useClass: MongoCampaignRepository,
     },
     {
-      provide: CAMPAIGN_PARTICIPANT_REPOSITORY,
-      useClass: MongoCampaignParticipantRepository,
-    },
-    {
       provide: NOTIFICATION_REPOSITORY,
       useClass: MongoNotificationRepository,
     },
@@ -172,6 +168,10 @@ import { ERoleType } from '@/core/enums';
     {
       provide: KPI_LOG_REPOSITORY,
       useClass: MongoKpiLogRepository
+    },
+    {
+      provide: OUTBOX_REPOSITORY,
+      useClass: MongoOutboxRepository,
     },
     // All Read Services
     {
@@ -226,12 +226,12 @@ import { ERoleType } from '@/core/enums';
     PLATFORM_REPOSITORY,
     KOL_PROFILE_REPOSITORY,
     CAMPAIGN_REPOSITORY,
-    CAMPAIGN_PARTICIPANT_REPOSITORY,
     NOTIFICATION_REPOSITORY,
     USER_NOTIFICATION_REPOSITORY,
     UPLOADED_FILE_REPOSITORY,
     OTP_REPOSITORY,
     KPI_LOG_REPOSITORY,
+    OUTBOX_REPOSITORY,
     // Export all read service tokens
     USER_READ_SERVICE,
     ROLE_READ_SERVICE,

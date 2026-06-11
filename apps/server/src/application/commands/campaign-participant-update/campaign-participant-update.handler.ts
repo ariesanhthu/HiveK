@@ -1,18 +1,18 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { Inject } from '@nestjs/common';
 import { Types } from 'mongoose';
-import { CAMPAIGN_PARTICIPANT_REPOSITORY, type ICampaignParticipantRepository } from '@/core/interfaces/repositories/campaign-participant.repository';
+import { CAMPAIGN_REPOSITORY, type ICampaignRepository } from '@/core/interfaces/repositories/campaign.repository';
 import { MESSAGE_QUEUE_SERVICE, type IMessageQueueService } from '@/application/interfaces';
 import { CampaignParticipantNotFoundException, InvalidOperationException } from '@/core/exceptions';
 import { EParticipantStatus, EOutputStatus } from '@/core/enums';
 import { CampaignParticipantUpdateCommand } from './campaign-participant-update.command';
-import { CampaignOutput } from '@/core/aggregate-roots/campaign-participant.aggregate';
+import { CampaignKOLOutputEntity } from '@/core/entities';
 
 @CommandHandler(CampaignParticipantUpdateCommand)
 export class CampaignParticipantUpdateCommandHandler implements ICommandHandler<CampaignParticipantUpdateCommand, void> {
   constructor(
-    @Inject(CAMPAIGN_PARTICIPANT_REPOSITORY)
-    private readonly participantRepository: ICampaignParticipantRepository,
+    @Inject(CAMPAIGN_REPOSITORY)
+    private readonly campaignRepository: ICampaignRepository,
     @Inject(MESSAGE_QUEUE_SERVICE)
     private readonly messageQueueService: IMessageQueueService,
   ) {}
@@ -20,29 +20,45 @@ export class CampaignParticipantUpdateCommandHandler implements ICommandHandler<
   async execute(command: CampaignParticipantUpdateCommand): Promise<void> {
     const { id, input } = command;
 
-    const participant = await this.participantRepository.findById(id);
+    const campaign = await this.campaignRepository.findByParticipantId(id);
+    if (!campaign) {
+      throw new CampaignParticipantNotFoundException(id);
+    }
+
+    const participant = campaign.participants.find(p => p.id === id);
     if (!participant) {
       throw new CampaignParticipantNotFoundException(id);
     }
 
     if (input.status) {
       if (input.status === EParticipantStatus.JOINED && participant.status === EParticipantStatus.PENDING_APPROVAL) {
-        participant.join();
+        campaign.joinParticipant(participant.kolProfileId);
       } else if (input.status === EParticipantStatus.REJECTED) {
-        participant.reject();
+        campaign.rejectParticipant(participant.kolProfileId);
       } else if (input.status === EParticipantStatus.COMPLETED) {
-        participant.complete();
+        campaign.completeParticipant(participant.kolProfileId);
       } else {
-        participant.update({ status: input.status });
+        participant.updateStatus(input.status);
       }
     }
 
     const trackingEventsToEmit: any[] = [];
 
+    const findExistingOutput = (outputId: string) => {
+      if (!campaign.props.schedule?.timeline) return null;
+      for (const day of campaign.props.schedule.timeline) {
+        for (const post of day.posts) {
+          const found = post.campaignKOLOutputs.find(x => x.id === outputId);
+          if (found) return found;
+        }
+      }
+      return null;
+    };
+
     if (input.outputs) {
-      const mappedOutputs: CampaignOutput[] = input.outputs.map((o) => {
+      const mappedOutputs: CampaignKOLOutputEntity[] = input.outputs.map((o) => {
         const outputId = o.id || new Types.ObjectId().toString();
-        const existingOutput = o.id ? participant.outputs.find((x) => x.id === o.id) : null;
+        const existingOutput = o.id ? findExistingOutput(o.id) : null;
         const fileId = existingOutput ? existingOutput.fileId : null;
 
         const status = o.isScheduleForPost ? EOutputStatus.SCHEDULED : EOutputStatus.PUBLISHED;
@@ -57,7 +73,7 @@ export class CampaignParticipantUpdateCommandHandler implements ICommandHandler<
 
         if (isNewlyPublished) {
           trackingEventsToEmit.push({
-            campaignId: participant.campaignId,
+            campaignId: campaign.id!,
             participantId: participant.id,
             outputId,
             url,
@@ -65,9 +81,10 @@ export class CampaignParticipantUpdateCommandHandler implements ICommandHandler<
           });
         }
 
-        return {
-          id: outputId,
+        return CampaignKOLOutputEntity.instantiate(outputId, {
+          campaignParticipantId: participant.id,
           platformId: o.platformId || (existingOutput ? existingOutput.platformId : ''),
+          uniqueId: existingOutput ? (existingOutput.uniqueId || null) : null,
           outputType: o.outputType,
           title: o.title,
           isScheduleForPost: o.isScheduleForPost,
@@ -77,13 +94,15 @@ export class CampaignParticipantUpdateCommandHandler implements ICommandHandler<
           url,
           postedAt: existingOutput && existingOutput.status === EOutputStatus.PUBLISHED ? existingOutput.postedAt : postedAt,
           isTrackingActive: existingOutput ? existingOutput.isTrackingActive : (status === EOutputStatus.PUBLISHED),
-        };
+          createdAt: existingOutput ? existingOutput.createdAt : new Date(),
+          updatedAt: new Date(),
+        });
       });
 
-      participant.updateOutputs(mappedOutputs);
+      campaign.updateKOLOutputs(participant.id, mappedOutputs);
     }
 
-    await this.participantRepository.save(participant);
+    await this.campaignRepository.save(campaign);
 
     for (const event of trackingEventsToEmit) {
       this.messageQueueService.emit('tracking.start', event);

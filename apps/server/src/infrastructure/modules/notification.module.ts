@@ -2,27 +2,29 @@ import { Module } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
 import { EnterpriseModule } from './enterprise.module';
 
-import { 
-    NotificationSendCommandHandler,
-    NotificationUpdateReadStatusCommandHandler,
-    NotificationSoftDeleteCommandHandler,
-    NotificationRestoreCommandHandler,
-    NotificationHardDeleteCommandHandler,
+import {
+  NotificationSendCommandHandler,
+  NotificationUpdateReadStatusCommandHandler,
+  NotificationSoftDeleteCommandHandler,
+  NotificationRestoreCommandHandler,
+  NotificationHardDeleteCommandHandler,
 } from '@/application/commands';
 
-import { 
-    NotificationGetListQueryHandler 
+import {
+  NotificationGetListQueryHandler
 } from '@/application/queries';
 
-import { 
-    InAppNotificationHandler, 
-    EmailNotificationHandler 
+import {
+  InAppNotificationHandler,
+  EmailNotificationHandler
 } from '@/application/events';
 
-import { 
-    NotificationAdminController, 
-    NotificationClientController 
+import {
+  NotificationAdminController,
+  NotificationClientController
 } from '@/presentation/controllers'
+
+import { NotificationRmqController } from '@/presentation/controllers';
 
 const COMMAND_HANDLERS = [
   NotificationSendCommandHandler,
@@ -39,7 +41,7 @@ const EVENT_HANDLERS = [InAppNotificationHandler, EmailNotificationHandler];
 @Module({
   imports: [CqrsModule, EnterpriseModule],
   controllers: [NotificationAdminController, NotificationClientController],
-  providers: [...COMMAND_HANDLERS, ...QUERY_HANDLERS, ...EVENT_HANDLERS],
+  providers: [...COMMAND_HANDLERS, ...QUERY_HANDLERS, ...EVENT_HANDLERS, NotificationRmqController],
   exports: [],
 })
-export class NotificationModule {}
+export class NotificationModule { }

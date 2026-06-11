@@ -15,7 +15,8 @@ import {
 
 import { UploadedFileModule } from './uploaded-file.module';
 import { UserModule } from './user.module';
-import { LinkEnterpriseLogoHandler, UserAddedToEnterpriseHandler } from '@/application/events';
+import { LinkEnterpriseLogoHandler } from '@/application/events';
+import { EnterpriseUserRmqController } from '@/presentation/controllers';
 
 const COMMAND_HANDLERS = [
   EnterpriseCreateCommandHandler,
@@ -34,7 +35,6 @@ const QUERY_HANDLERS = [
 
 const EVENT_HANDLERS = [
   LinkEnterpriseLogoHandler,
-  UserAddedToEnterpriseHandler
 ]
 
 @Module({
@@ -43,7 +43,8 @@ const EVENT_HANDLERS = [
   providers: [
     ...COMMAND_HANDLERS,
     ...QUERY_HANDLERS,
-    ...EVENT_HANDLERS
+    ...EVENT_HANDLERS,
+    EnterpriseUserRmqController,
   ],
   exports: [],
 })

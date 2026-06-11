@@ -13,7 +13,7 @@ export const CampaignOutputDtoSchema = z.object({
   status: z.enum(EOutputStatus),
   url: z.string().nullable(),
   postedAt: z.string().nullable(),
-});
+}).strict();
 
 import { CampaignDetailDto } from './campaign.dto';
 import { KolProfileDetailDto } from './kol-profile.dto';
@@ -34,7 +34,7 @@ export const CampaignParticipantDtoSchema = z.object({
   createdAt: z.string(),
   updatedAt: z.string(),
   outputs: z.array(CampaignOutputDtoSchema),
-});
+}).strict();
 
 export class CampaignParticipantDto extends createZodDto(CampaignParticipantDtoSchema) {
   campaign?: CampaignDetailDto;

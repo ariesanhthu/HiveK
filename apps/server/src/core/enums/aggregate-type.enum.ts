@@ -1,0 +1,15 @@
+export enum EAggregateType {
+  ADMIN = 'admin',
+  CAMPAIGN_PARTICIPANT = 'campaign_participant',
+  CAMPAIGN = 'campaign',
+  ENTERPRISE_USER = 'enterprise_user',
+  ENTERPRISE = 'enterprise',
+  KOL_USER = 'kol_user',
+  NOTIFICATION = 'notification',
+  PLATFORM = 'platform',
+  ROLE = 'role',
+  UPLOADED_FILE = 'uploaded_file',
+  USER_NOTIFICATION = 'user_notification',
+  USER = 'user',
+  OTP = 'otp',
+}

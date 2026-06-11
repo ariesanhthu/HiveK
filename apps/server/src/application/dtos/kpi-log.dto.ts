@@ -9,7 +9,7 @@ export const KpiLogSchema = z.object({
     likes: z.number(),
     comments: z.number(),
     shares: z.number(),
-  }),
-});
+  }).strict(),
+}).strict();
 
 export type KpiLogDto = z.infer<typeof KpiLogSchema>;

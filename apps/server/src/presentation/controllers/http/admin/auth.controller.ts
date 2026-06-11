@@ -50,7 +50,7 @@ export class AuthAdminController {
     @Body() input: AuthSignInInputDto,
     @Res({ passthrough: true }) response: Response,
   ) {
-    const result = await this.commandBus.execute(new AuthSignInCommand(input));
+    const result = await this.commandBus.execute(new AuthSignInCommand(input, true));
     if (result && result.accessToken) {
       response.cookie('access_token', result.accessToken, {
         httpOnly: true,

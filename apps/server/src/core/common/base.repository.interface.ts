@@ -20,6 +20,11 @@ export interface IBaseRepository<Aggregate extends BaseAggregateRoot<unknown>> {
   save(aggregate: Aggregate): Promise<void>;
 
   /**
+   * Saves multiple aggregate roots.
+   */
+  saveMany(aggregates: Aggregate[]): Promise<void>;
+
+  /**
    * Deletes an aggregate root by its ID.
    */
   delete(id: string): Promise<void>;

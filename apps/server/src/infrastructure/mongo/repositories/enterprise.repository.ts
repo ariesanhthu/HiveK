@@ -44,6 +44,10 @@ export class MongoEnterpriseRepository implements IEnterpriseRepository {
     }
   }
 
+  async saveMany(enterprises: EnterpriseRoot[]): Promise<void> {
+    await Promise.all(enterprises.map(e => this.save(e)));
+  }
+
   async delete(id: string): Promise<void> {
     await this.enterpriseModel.findByIdAndDelete(id).session(this.session).exec();
   }

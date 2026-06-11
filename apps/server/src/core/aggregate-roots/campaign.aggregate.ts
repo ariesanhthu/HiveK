@@ -1,7 +1,20 @@
 import { BaseAggregateRoot } from '@/core/common/base.aggregate-root';
 import { JsonObject, Nullable } from '@/core/types';
 import { ECampaignStatus } from '@/core/enums/campaign-status.enum';
+import { EParticipantStatus, EOutputStatus, EOutputType, ESchedulePostStatus } from '@/core/enums';
 import { InvalidOperationException } from '@/core/exceptions';
+import { CampaignParticipantCreatedEvent } from '../events/campaign-participant-created.domain-event';
+import {
+  CampaignParticipantEntity,
+  CampaignKOLOutputEntity,
+  CampaignEnterpriseOutputEntity,
+} from '../entities';
+
+function generateId(): string {
+  const timestamp = Math.floor(Date.now() / 1000).toString(16).padStart(8, '0');
+  const random = Array.from({ length: 16 }, () => Math.floor(Math.random() * 16).toString(16)).join('');
+  return timestamp + random;
+}
 
 export interface PlatformTargetItem {
   platformId: string;
@@ -16,9 +29,31 @@ export interface RawContentItem {
   rawContent?: string;
 }
 
+export interface SchedulePost {
+  scheduledTime: Date;
+  platformId: string;
+  status: ESchedulePostStatus;
+  campaignKOLOutputs: CampaignKOLOutputEntity[];
+  campaignEnterpriseOutputs: CampaignEnterpriseOutputEntity[];
+  createdAt?: Date;
+  updatedAt?: Date;
+}
+
+export interface ScheduleDay {
+  date: Date;
+  label?: string;
+  posts: SchedulePost[];
+}
+
+export interface CampaignSchedule {
+  timeline: ScheduleDay[];
+  createdAt?: Date;
+  updatedAt?: Date;
+}
+
 export interface CampaignProps {
   ownerId: string;
-  enterpriseId: string; // Now mandatory
+  enterpriseId: string;
   budget: number;
   financialTarget: JsonObject;
   description: string;
@@ -30,9 +65,11 @@ export interface CampaignProps {
   deleteBy: Nullable<string>;
   createdAt: Date;
   updatedAt: Date;
+  schedule?: CampaignSchedule;
+  participants: CampaignParticipantEntity[];
 }
 
-export type CampaignCreateProps = Omit<CampaignProps, 'status' | 'collaboratorIds' | 'deleteAt' | 'deleteBy' | 'createdAt' | 'updatedAt'> & {
+export type CampaignCreateProps = Omit<CampaignProps, 'status' | 'collaboratorIds' | 'deleteAt' | 'deleteBy' | 'createdAt' | 'updatedAt' | 'participants'> & {
   financialTarget?: JsonObject;
 };
 
@@ -52,6 +89,7 @@ export class CampaignRoot extends BaseAggregateRoot<CampaignProps> {
       deleteBy: null,
       createdAt: now,
       updatedAt: now,
+      participants: [],
     });
   }
 
@@ -111,6 +149,14 @@ export class CampaignRoot extends BaseAggregateRoot<CampaignProps> {
     return this.props.updatedAt;
   }
 
+  get schedule(): CampaignSchedule | undefined {
+    return this.props.schedule;
+  }
+
+  get participants(): CampaignParticipantEntity[] {
+    return this.props.participants;
+  }
+
   public update(props: Partial<Omit<CampaignProps, 'status' | 'collaboratorIds' | 'createdAt' | 'updatedAt'>>): void {
     Object.assign(this.props, props);
     this.props.updatedAt = new Date();
@@ -122,6 +168,27 @@ export class CampaignRoot extends BaseAggregateRoot<CampaignProps> {
   }
 
   public softDelete(deletedBy: string): void {
+    // Invariant Guard: Check if any participant is in JOINED or COMPLETED status
+    const hasActiveParticipants = this.props.participants.some(
+      p => p.status === EParticipantStatus.JOINED || p.status === EParticipantStatus.COMPLETED
+    );
+    if (hasActiveParticipants) {
+      throw new InvalidOperationException('Cannot delete campaign with joined or completed participants');
+    }
+
+    // Invariant Guard: Check if any output is PUBLISHED
+    if (this.props.schedule?.timeline) {
+      for (const day of this.props.schedule.timeline) {
+        for (const post of day.posts) {
+          const hasPublishedOutputs = post.campaignKOLOutputs.some(o => o.status === EOutputStatus.PUBLISHED) ||
+            post.campaignEnterpriseOutputs.some(o => o.status === EOutputStatus.PUBLISHED);
+          if (hasPublishedOutputs) {
+            throw new InvalidOperationException('Cannot delete campaign with published outputs');
+          }
+        }
+      }
+    }
+
     this.props.deleteAt = new Date();
     this.props.deleteBy = deletedBy;
     this.props.updatedAt = new Date();
@@ -156,6 +223,269 @@ export class CampaignRoot extends BaseAggregateRoot<CampaignProps> {
       throw new InvalidOperationException('User is not a collaborator in this campaign');
     }
     this.props.collaboratorIds.splice(index, 1);
+    this.props.updatedAt = new Date();
+  }
+
+  // Schedule management
+  public updateSchedule(schedule: CampaignSchedule): void {
+    this.props.schedule = schedule;
+    this.props.updatedAt = new Date();
+  }
+
+  // Participant management
+  public addParticipant(kolProfileId: string, kolEmail?: string): string {
+    const existing = this.props.participants.find(p => p.kolProfileId === kolProfileId);
+    if (existing) {
+      throw new InvalidOperationException('KOL is already a participant of this campaign');
+    }
+
+    const now = new Date();
+    const participantId = generateId();
+
+    const participant = CampaignParticipantEntity.create({
+      kolProfileId,
+      status: EParticipantStatus.PENDING_APPROVAL,
+      joinedAt: null,
+    }, participantId);
+
+    this.props.participants.push(participant);
+    this.props.updatedAt = now;
+
+    this.addDomainEvent(
+      new CampaignParticipantCreatedEvent(participantId, {
+        campaignParticipantId: participantId,
+        campaignId: this.id!,
+        kolProfileId,
+        kolEmail,
+        campaignName: this.props.description,
+      })
+    );
+
+    return participantId;
+  }
+
+  public joinParticipant(kolProfileId: string): void {
+    const p = this.props.participants.find(x => x.kolProfileId === kolProfileId);
+    if (!p) {
+      throw new InvalidOperationException('Participant not found');
+    }
+    if (p.status !== EParticipantStatus.PENDING_APPROVAL) {
+      throw new InvalidOperationException('Can only join when status is PENDING_APPROVAL');
+    }
+    p.join();
+    this.props.updatedAt = new Date();
+  }
+
+  public rejectParticipant(kolProfileId: string): void {
+    const p = this.props.participants.find(x => x.kolProfileId === kolProfileId);
+    if (!p) {
+      throw new InvalidOperationException('Participant not found');
+    }
+    if (p.status !== EParticipantStatus.PENDING_APPROVAL && p.status !== EParticipantStatus.JOINED) {
+      throw new InvalidOperationException('Can only reject when status is PENDING_APPROVAL or JOINED');
+    }
+
+    // Invariant Guard: Check if the KOL has any PUBLISHED outputs in the schedule
+    if (this.props.schedule?.timeline) {
+      for (const day of this.props.schedule.timeline) {
+        for (const post of day.posts) {
+          const published = post.campaignKOLOutputs.some(
+            o => o.campaignParticipantId === p.id && o.status === EOutputStatus.PUBLISHED
+          );
+          if (published) {
+            throw new InvalidOperationException('Cannot reject participant with published outputs');
+          }
+        }
+      }
+    }
+
+    p.reject();
+    this.props.updatedAt = new Date();
+  }
+
+  public completeParticipant(kolProfileId: string): void {
+    const p = this.props.participants.find(x => x.kolProfileId === kolProfileId);
+    if (!p) {
+      throw new InvalidOperationException('Participant not found');
+    }
+    if (p.status !== EParticipantStatus.JOINED) {
+      throw new InvalidOperationException('Can only complete when status is JOINED');
+    }
+    p.complete();
+    this.props.updatedAt = new Date();
+  }
+
+  public removeParticipant(participantId: string): void {
+    const idx = this.props.participants.findIndex(p => p.id === participantId);
+    if (idx === -1) {
+      throw new InvalidOperationException('Participant not found');
+    }
+    const p = this.props.participants[idx];
+    if (p.status !== EParticipantStatus.REJECTED) {
+      throw new InvalidOperationException('Can only remove participant when status is REJECTED');
+    }
+    this.props.participants.splice(idx, 1);
+    this.props.updatedAt = new Date();
+  }
+
+  public restoreParticipant(participantId: string): void {
+    const p = this.props.participants.find(x => x.id === participantId);
+    if (!p) {
+      throw new InvalidOperationException('Participant not found');
+    }
+    p.restore();
+    this.props.updatedAt = new Date();
+  }
+
+  public softDeleteParticipant(participantId: string, deletedBy: string): void {
+    const p = this.props.participants.find(x => x.id === participantId);
+    if (!p) {
+      throw new InvalidOperationException('Participant not found');
+    }
+    p.softDelete(deletedBy);
+    this.props.updatedAt = new Date();
+  }
+
+  // Output / Deliverable Management in schedule
+  public setOutputFileId(outputId: string, fileId: string): void {
+    let found = false;
+    if (this.props.schedule?.timeline) {
+      for (const day of this.props.schedule.timeline) {
+        for (const post of day.posts) {
+          const kolOutput = post.campaignKOLOutputs.find(o => o.id === outputId);
+          if (kolOutput) {
+            kolOutput.setFileId(fileId);
+            found = true;
+            break;
+          }
+          const entOutput = post.campaignEnterpriseOutputs.find(o => o.id === outputId);
+          if (entOutput) {
+            entOutput.setFileId(fileId);
+            found = true;
+            break;
+          }
+        }
+        if (found) break;
+      }
+    }
+    if (!found) {
+      throw new InvalidOperationException(`Output with ID '${outputId}' not found in campaign schedule`);
+    }
+    this.props.updatedAt = new Date();
+  }
+
+  public publishOutput(outputId: string, url: string): void {
+    let found = false;
+    if (this.props.schedule?.timeline) {
+      for (const day of this.props.schedule.timeline) {
+        for (const post of day.posts) {
+          const kolOutput = post.campaignKOLOutputs.find(o => o.id === outputId);
+          if (kolOutput) {
+            kolOutput.publish(url);
+            found = true;
+            break;
+          }
+          const entOutput = post.campaignEnterpriseOutputs.find(o => o.id === outputId);
+          if (entOutput) {
+            entOutput.publish(url);
+            found = true;
+            break;
+          }
+        }
+        if (found) break;
+      }
+    }
+    if (!found) {
+      throw new InvalidOperationException(`Output with ID '${outputId}' not found in campaign schedule`);
+    }
+    this.props.updatedAt = new Date();
+  }
+
+  public updateTrackingStatus(outputId: string, isTrackingActive: boolean): void {
+    let found = false;
+    if (this.props.schedule?.timeline) {
+      for (const day of this.props.schedule.timeline) {
+        for (const post of day.posts) {
+          const kolOutput = post.campaignKOLOutputs.find(o => o.id === outputId);
+          if (kolOutput) {
+            kolOutput.updateTrackingStatus(isTrackingActive);
+            found = true;
+            break;
+          }
+          const entOutput = post.campaignEnterpriseOutputs.find(o => o.id === outputId);
+          if (entOutput) {
+            entOutput.updateTrackingStatus(isTrackingActive);
+            found = true;
+            break;
+          }
+        }
+        if (found) break;
+      }
+    }
+    if (!found) {
+      throw new InvalidOperationException(`Output with ID '${outputId}' not found in campaign schedule`);
+    }
+    this.props.updatedAt = new Date();
+  }
+
+  public updateKOLOutputs(campaignParticipantId: string, outputs: CampaignKOLOutputEntity[]): void {
+    const participant = this.props.participants.find(p => p.id === campaignParticipantId);
+    if (!participant) {
+      throw new InvalidOperationException('Participant not found');
+    }
+
+    if (!this.props.schedule) {
+      this.props.schedule = { timeline: [] };
+    }
+
+    // First, remove all existing outputs for this campaignParticipantId across all posts in the schedule
+    for (const day of this.props.schedule.timeline) {
+      for (const post of day.posts) {
+        post.campaignKOLOutputs = post.campaignKOLOutputs.filter(
+          o => o.campaignParticipantId !== campaignParticipantId
+        );
+      }
+    }
+
+    // Now, insert the updated outputs into the schedule.
+    for (const output of outputs) {
+      if (output.campaignParticipantId !== campaignParticipantId) {
+        throw new InvalidOperationException('Output does not belong to this participant');
+      }
+
+      const scheduledTime = output.scheduledAt || new Date();
+      const platformId = output.platformId;
+
+      // Find or create the ScheduleDay
+      const dateOnly = new Date(scheduledTime);
+      dateOnly.setHours(0, 0, 0, 0);
+
+      let day = this.props.schedule.timeline.find(
+        d => new Date(d.date).setHours(0, 0, 0, 0) === dateOnly.getTime()
+      );
+      if (!day) {
+        day = { date: dateOnly, posts: [] };
+        this.props.schedule.timeline.push(day);
+      }
+
+      // Find or create the SchedulePost on that day
+      let post = day.posts.find(
+        p => p.platformId === platformId && new Date(p.scheduledTime).getTime() === new Date(scheduledTime).getTime()
+      );
+      if (!post) {
+        post = {
+          scheduledTime,
+          platformId,
+          status: ESchedulePostStatus.DRAFT,
+          campaignKOLOutputs: [],
+          campaignEnterpriseOutputs: [],
+        };
+        day.posts.push(post);
+      }
+
+      post.campaignKOLOutputs.push(output);
+    }
+
     this.props.updatedAt = new Date();
   }
 }

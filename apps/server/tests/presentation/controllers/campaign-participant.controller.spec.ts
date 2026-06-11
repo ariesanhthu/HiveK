@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
-import { CampaignParticipantController } from '@/presentation/controllers';
+import { CampaignParticipantClientController } from '@/presentation/controllers/http/client/campaign-participant.controller';
 import {
   CampaignParticipantCreateCommand,
   CampaignParticipantUpdateCommand,
@@ -13,8 +13,8 @@ import {
   CampaignParticipantGetListQuery,
 } from '@/application/queries';
 
-describe('CampaignParticipantController', () => {
-  let controller: CampaignParticipantController;
+describe('CampaignParticipantClientController', () => {
+  let controller: CampaignParticipantClientController;
   let mockCommandBus: any;
   let mockQueryBus: any;
 
@@ -27,14 +27,14 @@ describe('CampaignParticipantController', () => {
     };
 
     const module: TestingModule = await Test.createTestingModule({
-      controllers: [CampaignParticipantController],
+      controllers: [CampaignParticipantClientController],
       providers: [
         { provide: CommandBus, useValue: mockCommandBus },
         { provide: QueryBus, useValue: mockQueryBus },
       ],
     }).compile();
 
-    controller = module.get<CampaignParticipantController>(CampaignParticipantController);
+    controller = module.get<CampaignParticipantClientController>(CampaignParticipantClientController);
   });
 
   it('should be defined', () => {
@@ -46,9 +46,9 @@ describe('CampaignParticipantController', () => {
       const input = { campaignId: 'camp-123', kolProfileId: 'kol-123' };
       mockCommandBus.execute.mockResolvedValue('new-participant-id');
 
-      const result = await controller.create(input);
+      const result = await controller.create(input as any);
 
-      expect(mockCommandBus.execute).toHaveBeenCalledWith(new CampaignParticipantCreateCommand(input));
+      expect(mockCommandBus.execute).toHaveBeenCalledWith(new CampaignParticipantCreateCommand(input as any));
       expect(result).toBe('new-participant-id');
     });
   });
@@ -74,11 +74,7 @@ describe('CampaignParticipantController', () => {
 
       const result = await controller.findAll(query as any);
 
-      expect(mockQueryBus.execute).toHaveBeenCalledWith(new CampaignParticipantGetListQuery({
-        campaignId: 'camp-123',
-        page: 1,
-        limit: 10,
-      }));
+      expect(mockQueryBus.execute).toHaveBeenCalledWith(new CampaignParticipantGetListQuery(query as any));
       expect(result).toEqual(mockList);
     });
   });
@@ -89,9 +85,9 @@ describe('CampaignParticipantController', () => {
       const input = { status: 'JOINED' as any };
       mockCommandBus.execute.mockResolvedValue(undefined);
 
-      await controller.update(id, input);
+      await controller.update(id, input as any);
 
-      expect(mockCommandBus.execute).toHaveBeenCalledWith(new CampaignParticipantUpdateCommand(id, input));
+      expect(mockCommandBus.execute).toHaveBeenCalledWith(new CampaignParticipantUpdateCommand(id, input as any));
     });
   });
 

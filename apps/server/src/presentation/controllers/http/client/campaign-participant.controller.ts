@@ -8,8 +8,10 @@ import {
   CampaignParticipantSoftDeleteCommand,
   CampaignParticipantHardDeleteCommand,
   CampaignParticipantRestoreCommand,
+  CampaignParticipantUpdateStatusCommand,
   CampaignParticipantCreateInputDto,
   CampaignParticipantUpdateInputDto,
+  CampaignParticipantUpdateStatusInputDto,
 } from '@/application/commands';
 import {
   CampaignParticipantGetByIdQuery,
@@ -22,6 +24,7 @@ import { JwtAuthGuard, RolesGuard } from '@/presentation/middleware/guards';
 import { Public } from '@/presentation/decorators/public.decorator';
 import { ERoleType } from '@/core/enums';
 import { Roles } from '@/presentation/decorators/roles.decorator';
+import { CurrentUser } from '@/presentation/decorators/current-user.decorator';
 
 @ApiTags('CLIENT-campaign-participants')
 @ApiBearerAuth()
@@ -93,5 +96,18 @@ export class CampaignParticipantClientController {
   @ApiOperation({ summary: 'Restore soft deleted campaign participant' })
   async restore(@Param('id') id: string): Promise<void> {
     return this.commandBus.execute(new CampaignParticipantRestoreCommand(id));
+  }
+
+  @Patch(':id/status')
+  @UseGuards(RolesGuard)
+  @Roles(ERoleType.KOL)
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiOperation({ summary: 'Update campaign participant status by KOL' })
+  async updateStatus(
+    @Param('id') id: string,
+    @CurrentUser('sub') userId: string,
+    @Body() input: CampaignParticipantUpdateStatusInputDto,
+  ): Promise<void> {
+    return this.commandBus.execute(new CampaignParticipantUpdateStatusCommand(id, userId, input));
   }
 }

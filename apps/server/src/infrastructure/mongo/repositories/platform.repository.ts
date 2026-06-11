@@ -43,6 +43,10 @@ export class MongoPlatformRepository implements IPlatformRepository {
     }
   }
 
+  async saveMany(platforms: PlatformRoot[]): Promise<void> {
+    await Promise.all(platforms.map(p => this.save(p)));
+  }
+
   async delete(id: string): Promise<void> {
     await this.platformModel.findByIdAndDelete(id).session(this.session).exec();
   }

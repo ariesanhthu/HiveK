@@ -1,8 +1,9 @@
 import { UserUpdateCommandHandler } from '@/application/commands/user-update/user-update.handler';
 import { UserUpdateCommand } from '@/application/commands/user-update/user-update.command';
 import { UserNotFoundException } from '@/core/exceptions';
-import { EnterpriseUserRoot } from '@/core/aggregate-roots';
+import { KOLUserRoot } from '@/core/aggregate-roots';
 import { ERoleType } from '@/core/enums';
+import { PhoneNumberVO } from '@/core/value-objects/phone-number.value-object';
 
 describe('UserUpdateCommandHandler', () => {
   let handler: UserUpdateCommandHandler;
@@ -21,46 +22,31 @@ describe('UserUpdateCommandHandler', () => {
   });
 
   it('should successfully update user properties', async () => {
-    const mockUser = {
-      id: 'user-123',
-      props: {
-        fullName: 'Old Name',
-        phone: '123',
-        updatedAt: new Date(),
-      },
-    };
+    const mockUser = KOLUserRoot.instantiate('user-123', {
+      email: 'test@example.com',
+      phone: PhoneNumberVO.create({ value: '+84123456789' }),
+      passwordHash: 'hash',
+      fullName: 'Old Name',
+      type: ERoleType.KOL,
+      roleId: 'role-1',
+      isEmailVerified: true,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      deleteAt: null,
+      deleteBy: null,
+      refreshToken: null,
+      googleId: null,
+    } as any);
     mockUserRepository.findById.mockResolvedValue(mockUser);
 
     const command = new UserUpdateCommand('user-123', {
       fullName: 'New Name',
-      phone: '456',
+      phone: '+84456789012',
     });
 
     await handler.execute(command);
-    expect(mockUser.props.fullName).toBe('New Name');
-    expect(mockUser.props.phone).toBe('456');
-    expect(mockUserRepository.save).toHaveBeenCalledWith(mockUser);
-  });
-
-  it('should successfully update enterpriseIds for enterprise user', async () => {
-    const mockUser = EnterpriseUserRoot.create({
-        email: 'ent@test.com',
-        phone: '123',
-        passwordHash: 'hash',
-        fullName: 'Ent User',
-        type: ERoleType.ENTERPRISE,
-        roleId: 'role-ent',
-        isEmailVerified: true,
-    });
-    mockUser.setId('user-123');
-    mockUserRepository.findById.mockResolvedValue(mockUser);
-
-    const command = new UserUpdateCommand('user-123', {
-      enterpriseIds: ['ent-1', 'ent-2'],
-    });
-
-    await handler.execute(command);
-    expect(mockUser.enterpriseIds).toEqual(['ent-1', 'ent-2']);
+    expect(mockUser.fullName).toBe('New Name');
+    expect(mockUser.phone.value).toBe('+84456789012');
     expect(mockUserRepository.save).toHaveBeenCalledWith(mockUser);
   });
 

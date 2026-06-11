@@ -4,8 +4,10 @@ import { USER_REPOSITORY, ENTERPRISE_REPOSITORY, type IUserRepository, type IEnt
 import { EnterpriseRevokeUserCommand } from './enterprise-revoke-user.command';
 import { EnterpriseUserRoot } from '@/core/aggregate-roots';
 import { UserNotFoundException, InvalidUserTypeException, EnterpriseNotFoundException, EnterpriseForbiddenException } from '@/core/exceptions';
+import { OutboxService } from '@/application/services/outbox.service';
 import { type IUnitOfWork, UNIT_OF_WORK } from '@/application/interfaces';
 import { ERoleType } from '@/core/enums';
+import { EventMapper } from '@/application/mappers';
 
 @CommandHandler(EnterpriseRevokeUserCommand)
 export class EnterpriseRevokeUserCommandHandler implements ICommandHandler<EnterpriseRevokeUserCommand, void> {
@@ -14,6 +16,7 @@ export class EnterpriseRevokeUserCommandHandler implements ICommandHandler<Enter
     private readonly userRepository: IUserRepository,
     @Inject(ENTERPRISE_REPOSITORY)
     private readonly enterpriseRepository: IEnterpriseRepository,
+    private readonly outboxService: OutboxService,
     @Inject(UNIT_OF_WORK)
     private readonly uow: IUnitOfWork,
   ) {}
@@ -39,13 +42,32 @@ export class EnterpriseRevokeUserCommandHandler implements ICommandHandler<Enter
         throw new UserNotFoundException(missingIds.join(', '));
       }
 
+      const usersToUpdate: EnterpriseUserRoot[] = [];
 
       for (const user of users) {
         if (user.type !== ERoleType.ENTERPRISE || !(user instanceof EnterpriseUserRoot)) {
           throw new InvalidUserTypeException('User must be an enterprise user to be revoked from an enterprise');
         }
-        user.revokeEnterprise(enterpriseId);
-        await this.userRepository.save(user);
+        
+        if (user.enterpriseIds.includes(enterpriseId)) {
+          user.revokeEnterprise(enterpriseId);
+          usersToUpdate.push(user);
+        }
+      }
+
+      if (usersToUpdate.length > 0) {
+        await this.userRepository.saveMany(usersToUpdate);
+
+        const events = EventMapper.mapToIntegrationEvents(usersToUpdate.flatMap(user => user.domainEvents));
+        if (events.length > 0) {
+          await this.outboxService.enqueueMany(events.map(event => ({
+            eventType: event.eventType,
+            payload: event.payload,
+            metadata: event.metadata,
+            transport: event.transport,
+            maxRetry: 5,
+          })));
+        }
       }
     });
   }

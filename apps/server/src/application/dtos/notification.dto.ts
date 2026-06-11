@@ -15,7 +15,7 @@ export const NotificationDtoSchema = z.object({
   isRead: z.boolean(),
   readAt: z.string().nullable().optional(),
   createdAt: z.string(),
-});
+}).strict();
 
 export class NotificationDto extends createZodDto(NotificationDtoSchema) {}
 

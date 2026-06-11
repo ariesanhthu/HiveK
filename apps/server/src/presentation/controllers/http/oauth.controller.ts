@@ -2,7 +2,7 @@ import { Controller, Get, UseGuards, Res, Req } from '@nestjs/common';
 import type { Response } from 'express';
 import { ApiTags, ApiOperation, ApiBearerAuth, ApiSecurity } from '@nestjs/swagger';
 import { Public } from '@/presentation/decorators/public.decorator';
-import { AuthGuard } from '@nestjs/passport';
+import { GoogleAuthGuard } from '@/presentation/middleware/guards';
 import { buildVersionedRoute } from '@/presentation/utils/versioned-route.util';
 
 @ApiTags('OAuth')
@@ -12,7 +12,7 @@ import { buildVersionedRoute } from '@/presentation/utils/versioned-route.util';
 export class OAuthController {
   @Public()
   @Get('google')
-  @UseGuards(AuthGuard('google'))
+  @UseGuards(GoogleAuthGuard)
   @ApiOperation({ summary: 'Google OAuth sign-in' })
   async googleAuth() {
     return;
@@ -20,7 +20,7 @@ export class OAuthController {
 
   @Public()
   @Get('google/callback')
-  @UseGuards(AuthGuard('google'))
+  @UseGuards(GoogleAuthGuard)
   @ApiOperation({ summary: 'Google OAuth callback' })
   async googleAuthCallback(
     @Req() req: any,

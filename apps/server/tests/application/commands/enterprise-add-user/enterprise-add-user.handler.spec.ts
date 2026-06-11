@@ -1,109 +1,164 @@
 import { EnterpriseAddUserCommandHandler } from '@/application/commands/enterprise-add-user/enterprise-add-user.handler';
 import { EnterpriseAddUserCommand } from '@/application/commands/enterprise-add-user/enterprise-add-user.command';
-import { EnterpriseUserRoot } from '@/core/aggregate-roots';
+import { EnterpriseUserRoot, EnterpriseRoot } from '@/core/aggregate-roots';
 import { ERoleType } from '@/core/enums';
 import { UserNotFoundException, InvalidUserTypeException, EnterpriseNotFoundException, EnterpriseForbiddenException } from '@/core/exceptions';
-import { UserAddedToEnterpriseEvent } from '@/application/events';
+import { createMockUserRepository, createMockEnterpriseRepository } from '../../../__mocks__/mock-repositories';
+import { createMockUnitOfWork, createMockOutboxService } from '../../../__mocks__/mock-services';
 
 describe('EnterpriseAddUserCommandHandler', () => {
   let handler: EnterpriseAddUserCommandHandler;
-  let mockUserRepository: any;
-  let mockEnterpriseRepository: any;
-  let mockEventBus: any;
-  let mockUow: any;
+  let mockUserRepository: ReturnType<typeof createMockUserRepository>;
+  let mockEnterpriseRepository: ReturnType<typeof createMockEnterpriseRepository>;
+  let mockOutboxService: ReturnType<typeof createMockOutboxService>;
+  let mockUow: ReturnType<typeof createMockUnitOfWork>;
 
   beforeEach(() => {
-    mockUserRepository = {
-      findById: jest.fn(),
-      save: jest.fn(),
-    };
-    mockEnterpriseRepository = {
-        findById: jest.fn(),
-    };
-    mockEventBus = {
-      publish: jest.fn(),
-    };
-    mockUow = {
-        execute: jest.fn((fn: any) => fn()),
-    };
+    mockUserRepository = createMockUserRepository();
+    mockEnterpriseRepository = createMockEnterpriseRepository();
+    mockOutboxService = createMockOutboxService();
+    mockUow = createMockUnitOfWork();
+
     handler = new EnterpriseAddUserCommandHandler(
         mockUserRepository, 
         mockEnterpriseRepository, 
-        mockEventBus, 
+        mockOutboxService as any,
         mockUow
     );
   });
 
-  it('should add user to enterprise successfully and publish event', async () => {
-    const mockUser = EnterpriseUserRoot.create({
-      email: 'test@ent.com',
-      phone: '123',
-      passwordHash: 'hash',
-      fullName: 'Test User',
-      type: ERoleType.ENTERPRISE,
-      roleId: 'role-1',
-      isEmailVerified: true,
+  const enterpriseId = 'ent-123';
+  const ownerId = 'owner-123';
+  const memberId = 'member-123';
+
+  const createMockEnterprise = () => EnterpriseRoot.instantiate(enterpriseId, {
+    userId: ownerId,
+    companyName: 'Test Ent',
+    contactEmail: 'test@ent.com',
+    isVerified: true,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    deleteAt: null,
+    deleteBy: null,
+  });
+
+  const createMockUser = (id: string, entIds: string[] = []) => {
+    const user = EnterpriseUserRoot.instantiate(id, {
+        email: `test-${id}@ent.com`,
+        phone: { value: '+84000000000' } as any,
+        passwordHash: 'hash',
+        fullName: 'Test User',
+        type: ERoleType.ENTERPRISE,
+        roleId: 'role-1',
+        isEmailVerified: true,
+        enterpriseIds: entIds,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        deleteAt: null,
+        deleteBy: null,
+        refreshToken: null,
+        googleId: null,
     });
-    mockUser.setId('user-123');
-    mockUserRepository.findById.mockResolvedValue(mockUser);
-    
-    mockEnterpriseRepository.findById.mockResolvedValue({ id: 'ent-1', userId: 'owner-123' });
+    return user;
+  };
 
-    const command = new EnterpriseAddUserCommand({ userId: 'user-123', enterpriseId: 'ent-1' }, 'owner-123');
-    await handler.execute(command);
+  describe('Happy Paths', () => {
+    it('should successfully add user to enterprise and enqueue integration events', async () => {
+      const enterprise = createMockEnterprise();
+      mockEnterpriseRepository.findById.mockResolvedValue(enterprise);
+      
+      const member = createMockUser(memberId);
+      mockUserRepository.findByIds.mockResolvedValue([member]);
 
-    expect(mockUser.enterpriseIds).toContain('ent-1');
-    expect(mockUserRepository.save).toHaveBeenCalledWith(mockUser);
-    expect(mockEventBus.publish).toHaveBeenCalledWith(expect.any(UserAddedToEnterpriseEvent));
+      const command = new EnterpriseAddUserCommand(enterpriseId, { memberIds: [memberId] }, ownerId);
+      await handler.execute(command);
+
+      expect(member.enterpriseIds).toContain(enterpriseId);
+      expect(mockUserRepository.saveMany).toHaveBeenCalledWith([member]);
+      
+      // Verification of Integration Event enqueuing
+      expect(mockOutboxService.enqueueMany).toHaveBeenCalledWith(
+        expect.arrayContaining([
+          expect.objectContaining({
+            eventType: 'NotifyEnterpriseInvitationEmail',
+            payload: expect.objectContaining({
+              userId: memberId,
+              enterpriseId,
+              enterpriseName: 'Enterprise',
+            }),
+            transport: expect.objectContaining({
+                exchange: 'kpi_exchange',
+                routingKey: 'notification.enterprise_invitation'
+            }),
+            maxRetry: 5
+          })
+        ])
+      );
+      expect(mockUow.execute).toHaveBeenCalled();
+    });
+
+    it('should filter out users who are already members and not enqueue redundant events', async () => {
+        const enterprise = createMockEnterprise();
+        mockEnterpriseRepository.findById.mockResolvedValue(enterprise);
+        
+        const memberNew = createMockUser('new');
+        const memberExisting = createMockUser('existing', [enterpriseId]);
+        mockUserRepository.findByIds.mockResolvedValue([memberNew, memberExisting]);
+  
+        const command = new EnterpriseAddUserCommand(enterpriseId, { memberIds: ['new', 'existing'] }, ownerId);
+        await handler.execute(command);
+  
+        expect(memberNew.enterpriseIds).toContain(enterpriseId);
+        expect(mockUserRepository.saveMany).toHaveBeenCalledWith([memberNew]); 
+        
+        expect(mockOutboxService.enqueueMany).toHaveBeenCalledWith(
+            expect.arrayContaining([
+                expect.objectContaining({
+                    eventType: 'NotifyEnterpriseInvitationEmail',
+                    payload: expect.objectContaining({ userId: 'new' })
+                })
+            ])
+        );
+        // Ensure 'existing' user did not trigger an event
+        const call = (mockOutboxService.enqueueMany as jest.Mock).mock.calls[0][0];
+        expect(call).toHaveLength(1);
+    });
   });
 
-  it('should throw ForbiddenException if requester is not owner', async () => {
-    mockEnterpriseRepository.findById.mockResolvedValue({ id: 'ent-1', userId: 'owner-123' });
+  describe('Sad Paths', () => {
+    it('should throw EnterpriseNotFoundException if enterprise does not exist', async () => {
+      mockEnterpriseRepository.findById.mockResolvedValue(null);
+      const command = new EnterpriseAddUserCommand(enterpriseId, { memberIds: [memberId] }, ownerId);
+      await expect(handler.execute(command)).rejects.toThrow(EnterpriseNotFoundException);
+    });
 
-    const command = new EnterpriseAddUserCommand({ userId: 'user-123', enterpriseId: 'ent-1' }, 'wrong-user');
-    await expect(handler.execute(command)).rejects.toThrow(EnterpriseForbiddenException);
-  });
+    it('should throw EnterpriseForbiddenException if requester is not the owner', async () => {
+      const enterprise = createMockEnterprise();
+      mockEnterpriseRepository.findById.mockResolvedValue(enterprise);
+      
+      const command = new EnterpriseAddUserCommand(enterpriseId, { memberIds: [memberId] }, 'wrong-owner');
+      await expect(handler.execute(command)).rejects.toThrow(EnterpriseForbiddenException);
+    });
 
-  it('should ignore if user is already in the enterprise', async () => {
-    const mockUser = EnterpriseUserRoot.instantiate('user-123', {
-      email: 'test@ent.com',
-      phone: '123',
-      passwordHash: 'hash',
-      fullName: 'Test User',
-      type: ERoleType.ENTERPRISE,
-      roleId: 'role-1',
-      isEmailVerified: true,
-      enterpriseIds: ['ent-1'],
-      createdAt: new Date(),
-      updatedAt: new Date(),
-      deleteAt: null,
-      deleteBy: null,
-      refreshToken: null,
-      googleId: null,
-    } as any);
-    mockUserRepository.findById.mockResolvedValue(mockUser);
-    mockEnterpriseRepository.findById.mockResolvedValue({ id: 'ent-1', userId: 'owner-123' });
+    it('should throw UserNotFoundException if some users are missing', async () => {
+        const enterprise = createMockEnterprise();
+        mockEnterpriseRepository.findById.mockResolvedValue(enterprise);
+        mockUserRepository.findByIds.mockResolvedValue([]); // Missing all
+  
+        const command = new EnterpriseAddUserCommand(enterpriseId, { memberIds: [memberId] }, ownerId);
+        await expect(handler.execute(command)).rejects.toThrow(UserNotFoundException);
+    });
 
-    const command = new EnterpriseAddUserCommand({ userId: 'user-123', enterpriseId: 'ent-1' }, 'owner-123');
-    await handler.execute(command);
-
-    expect(mockUserRepository.save).not.toHaveBeenCalled();
-    expect(mockEventBus.publish).not.toHaveBeenCalled();
-  });
-
-  it('should throw UserNotFoundException if user does not exist', async () => {
-    mockEnterpriseRepository.findById.mockResolvedValue({ id: 'ent-1', userId: 'owner-123' });
-    mockUserRepository.findById.mockResolvedValue(null);
-    const command = new EnterpriseAddUserCommand({ userId: 'none', enterpriseId: 'ent-1' }, 'owner-123');
-    await expect(handler.execute(command)).rejects.toThrow(UserNotFoundException);
-  });
-
-  it('should throw InvalidUserTypeException if user is not ENTERPRISE type', async () => {
-    mockEnterpriseRepository.findById.mockResolvedValue({ id: 'ent-1', userId: 'owner-123' });
-    const mockUser = { type: ERoleType.KOL } as any;
-    mockUserRepository.findById.mockResolvedValue(mockUser);
-
-    const command = new EnterpriseAddUserCommand({ userId: 'user-kol', enterpriseId: 'ent-1' }, 'owner-123');
-    await expect(handler.execute(command)).rejects.toThrow(InvalidUserTypeException);
+    it('should throw InvalidUserTypeException if user is not an enterprise type', async () => {
+        const enterprise = createMockEnterprise();
+        mockEnterpriseRepository.findById.mockResolvedValue(enterprise);
+        
+        const kolUser = createMockUser('kol');
+        (kolUser as any).props.type = ERoleType.KOL;
+        mockUserRepository.findByIds.mockResolvedValue([kolUser]);
+  
+        const command = new EnterpriseAddUserCommand(enterpriseId, { memberIds: ['kol'] }, ownerId);
+        await expect(handler.execute(command)).rejects.toThrow(InvalidUserTypeException);
+    });
   });
 });

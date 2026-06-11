@@ -173,10 +173,12 @@ export class RawRabbitMQConsumerClient {
 
     try {
       const parsedMessage = JSON.parse(content);
+      this.logger.debug(`Routing message with content "${parsedMessage.pattern}"`);
       // NestJS protocol check: messages from our producer have { pattern: routingKey, data: ... }
       const pattern = parsedMessage.pattern || routingKey;
       const data = parsedMessage.data !== undefined ? parsedMessage.data : parsedMessage;
 
+      this.logger.debug(`All handlers: ${handlers.map((h) => h.pattern).join(', ')}`);
       const handler = handlers.find((h) => this.matchPattern(h.pattern, pattern));
 
       if (handler) {
