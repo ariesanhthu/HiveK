@@ -1,7 +1,7 @@
 // HTTP Admin Controllers
 export * from './http/admin/auth.controller';
 export * from './http/admin/campaign.controller';
-export * from './http/admin/campaign-participant.controller';
+
 export * from './http/admin/enterprise.controller';
 export * from './http/admin/kol-profile.controller';
 export * from './http/admin/kpi-log.controller';
@@ -14,7 +14,7 @@ export * from './http/admin/user.controller';
 // HTTP Client Controllers
 export * from './http/client/auth.controller';
 export * from './http/client/campaign.controller';
-export * from './http/client/campaign-participant.controller';
+
 export * from './http/client/enterprise.controller';
 export * from './http/client/kol-profile.controller';
 export * from './http/client/kpi-log.controller';

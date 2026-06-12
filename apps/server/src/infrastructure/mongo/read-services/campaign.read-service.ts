@@ -46,7 +46,8 @@ export class MongoCampaignReadService implements ICampaignReadService {
       const { select, populate } = parseMongoProjection(projection, {
         allowedFields: [
           'id', 'ownerId', 'enterpriseId', 'budget', 'financialTarget',
-          'description', 'platformTarget', 'status', 'collaboratorIds', 'rawContents'
+          'description', 'platformTarget', 'status', 'collaboratorIds', 'rawContents',
+          'schedule', 'participants'
         ],
         fieldMap: {
           ownerId: 'owner_id',
@@ -125,7 +126,8 @@ export class MongoCampaignReadService implements ICampaignReadService {
       const { select, populate } = parseMongoProjection(projection, {
         allowedFields: [
           'id', 'ownerId', 'enterpriseId', 'budget', 'financialTarget',
-          'description', 'platformTarget', 'status', 'collaboratorIds', 'rawContents'
+          'description', 'platformTarget', 'status', 'collaboratorIds', 'rawContents',
+          'schedule', 'participants'
         ],
         fieldMap: {
           ownerId: 'owner_id',
@@ -207,6 +209,52 @@ export class MongoCampaignReadService implements ICampaignReadService {
       rawContents: (doc.raw_contents || []).map((r: any) => ({
         fileId: r.fileId,
         rawContent: r.rawContent,
+      })),
+      schedule: doc.schedule ? {
+        timeline: (doc.schedule.timeline || []).map((day: any) => ({
+          date: day.date,
+          label: day.label,
+          posts: (day.posts || []).map((post: any) => ({
+            scheduledTime: post.scheduledTime,
+            platformId: post.platformId,
+            status: post.status,
+            campaignKOLOutputs: (post.campaignKOLOutputs || []).map((o: any) => ({
+              id: o._id?.toString() || o.id?.toString(),
+              campaignParticipantId: o.campaignParticipantId?.toString(),
+              platformId: o.platformId?.toString(),
+              uniqueId: o.uniqueId,
+              outputType: o.outputType,
+              title: o.title,
+              isScheduleForPost: o.isScheduleForPost,
+              scheduledAt: o.scheduledAt,
+              fileId: o.fileId?.toString() || null,
+              status: o.status,
+              url: o.url,
+              postedAt: o.postedAt,
+              isTrackingActive: o.isTrackingActive,
+            })),
+            campaignEnterpriseOutputs: (post.campaignEnterpriseOutputs || []).map((o: any) => ({
+              id: o._id?.toString() || o.id?.toString(),
+              platformId: o.platformId?.toString(),
+              uniqueId: o.uniqueId,
+              outputType: o.outputType,
+              title: o.title,
+              isScheduleForPost: o.isScheduleForPost,
+              scheduledAt: o.scheduledAt,
+              fileId: o.fileId?.toString() || null,
+              status: o.status,
+              url: o.url,
+              postedAt: o.postedAt,
+              isTrackingActive: o.isTrackingActive,
+            })),
+          })),
+        })),
+      } : undefined,
+      participants: (doc.participants || []).map((p: any) => ({
+        id: p._id?.toString() || p.id?.toString(),
+        kolProfileId: p.kolProfileId?.toString(),
+        status: p.status,
+        joinedAt: p.joinedAt,
       })),
       owner: doc.owner_id && typeof doc.owner_id === 'object' && doc.owner_id._id ? {
         id: doc.owner_id._id.toString(),

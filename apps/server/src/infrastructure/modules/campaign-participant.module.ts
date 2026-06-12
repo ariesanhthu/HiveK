@@ -19,8 +19,6 @@ import {
 import { LinkCampaignParticipantOutputFileHandler } from '@/application/events';
 
 import { 
-  CampaignParticipantAdminController,
-  CampaignParticipantClientController,
   CampaignParticipantResolver
 } from '@/presentation/controllers'
 
@@ -46,7 +44,7 @@ const EVENT_HANDLERS = [
 
 @Module({
   imports: [CqrsModule, CampaignModule],
-  controllers: [CampaignParticipantAdminController, CampaignParticipantClientController],
+  controllers: [],
   providers: [
     ...COMMAND_HANDLERS, 
     ...QUERY_HANDLERS, 

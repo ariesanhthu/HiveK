@@ -2,7 +2,23 @@ import { Controller, Get, Post, Patch, Param, Query, Body, HttpCode, HttpStatus,
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { ApiTags, ApiOperation, ApiBearerAuth, ApiSecurity } from '@nestjs/swagger';
 import { buildVersionedRoute } from '@presentation/utils';
-import { CampaignCreateCommand, CampaignUpdateCommand, CampaignSoftDeleteCommand, CampaignRestoreCommand, CampaignCreateInputDto, CampaignUpdateInputDto } from '@/application/commands';
+import {
+  CampaignCreateCommand,
+  CampaignUpdateCommand,
+  CampaignSoftDeleteCommand,
+  CampaignRestoreCommand,
+  CampaignCreateInputDto,
+  CampaignUpdateInputDto,
+  CampaignParticipantCreateCommand,
+  CampaignParticipantUpdateCommand,
+  CampaignParticipantSoftDeleteCommand,
+  CampaignParticipantHardDeleteCommand,
+  CampaignParticipantRestoreCommand,
+  CampaignParticipantUpdateStatusCommand,
+  CampaignParticipantCreateInputDto,
+  CampaignParticipantUpdateInputDto,
+  CampaignParticipantUpdateStatusInputDto,
+} from '@/application/commands';
 import { CampaignGetListQuery, CampaignGetByIdQuery, CampaignFilterDto } from '@/application/queries';
 import { CampaignDto, SoftDeleteInputDto } from '@/application/dtos';
 import { PaginatedResponseDto } from '@/application/dtos/pagination.dto';
@@ -118,5 +134,94 @@ export class CampaignClientController {
     @Body() input: CampaignRevokeCollaboratorInputDto,
   ): Promise<void> {
     return this.commandBus.execute(new CampaignRevokeCollaboratorCommand(id, input, requestedBy));
+  }
+
+  // --- Campaign Participant Routes ---
+
+  // @Get(':campaignId/participants')
+  // @ApiOperation({ summary: 'Get all campaign participants' })
+  // async findAllParticipants(@Query() filters: CampaignParticipantFilterDto): Promise<PaginatedResponseDto<CampaignParticipantDto>> {
+  //   return this.queryBus.execute(new CampaignParticipantGetListQuery(filters));
+  // }
+
+  // @Get(':campaignId/participants/:participantId')
+  // @ApiOperation({ summary: 'Get campaign participant by ID' })
+  // async findParticipantById(@Param('participantId') participantId: string): Promise<CampaignParticipantDto> {
+  //   return this.queryBus.execute(new CampaignParticipantGetByIdQuery(participantId));
+  // }
+
+  @Post(':campaignId/participants')
+  @UseGuards(RolesGuard)
+  @Roles(ERoleType.ENTERPRISE)
+  @ApiOperation({ summary: 'Create new campaign participant' })
+  async createParticipant(
+    @Param('campaignId') campaignId: string,
+    @Body() input: CampaignParticipantCreateInputDto,
+  ): Promise<string> {
+    input.campaignId = campaignId;
+    return this.commandBus.execute(new CampaignParticipantCreateCommand(input));
+  }
+
+  @Patch(':campaignId/participants/:participantId')
+  @UseGuards(RolesGuard)
+  @Roles(ERoleType.ENTERPRISE)
+  @ApiOperation({ summary: 'Update campaign participant' })
+  async updateParticipant(
+    @Param('campaignId') campaignId: string,
+    @Param('participantId') participantId: string,
+    @Body() input: CampaignParticipantUpdateInputDto,
+  ): Promise<void> {
+    return this.commandBus.execute(new CampaignParticipantUpdateCommand(participantId, input));
+  }
+
+  @Patch(':campaignId/participants/:participantId/soft-delete')
+  @UseGuards(RolesGuard)
+  @Roles(ERoleType.ENTERPRISE)
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiOperation({ summary: 'Soft delete campaign participant' })
+  async deleteParticipant(
+    @Param('campaignId') campaignId: string,
+    @Param('participantId') participantId: string,
+    @Query() dto: SoftDeleteInputDto,
+  ): Promise<void> {
+    return this.commandBus.execute(new CampaignParticipantSoftDeleteCommand(participantId, dto.deletedBy));
+  }
+
+  @Delete(':campaignId/participants/:participantId')
+  @UseGuards(RolesGuard)
+  @Roles(ERoleType.ENTERPRISE)
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiOperation({ summary: 'Hard delete campaign participant' })
+  async hardDeleteParticipant(
+    @Param('campaignId') campaignId: string,
+    @Param('participantId') participantId: string,
+  ): Promise<void> {
+    return this.commandBus.execute(new CampaignParticipantHardDeleteCommand(participantId));
+  }
+
+  @UseGuards(RolesGuard)
+  @Roles(ERoleType.ENTERPRISE)
+  @Patch(':campaignId/participants/:participantId/restore')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiOperation({ summary: 'Restore soft deleted campaign participant' })
+  async restoreParticipant(
+    @Param('campaignId') campaignId: string,
+    @Param('participantId') participantId: string,
+  ): Promise<void> {
+    return this.commandBus.execute(new CampaignParticipantRestoreCommand(participantId));
+  }
+
+  @Patch(':campaignId/participants/:participantId/status')
+  @UseGuards(RolesGuard)
+  @Roles(ERoleType.KOL)
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiOperation({ summary: 'Update campaign participant status by KOL' })
+  async updateParticipantStatus(
+    @Param('campaignId') campaignId: string,
+    @Param('participantId') participantId: string,
+    @CurrentUser('sub') userId: string,
+    @Body() input: CampaignParticipantUpdateStatusInputDto,
+  ): Promise<void> {
+    return this.commandBus.execute(new CampaignParticipantUpdateStatusCommand(participantId, userId, input));
   }
 }
