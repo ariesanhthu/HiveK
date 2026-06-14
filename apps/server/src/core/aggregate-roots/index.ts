@@ -10,3 +10,5 @@ export * from './uploaded-file.aggregate';
 export * from './notification.aggregate';
 export * from './user-notification.aggregate';
 export * from './otp.aggregate';
+export * from './campaign-proposal.aggregate';
+export * from './public-review.aggregate';

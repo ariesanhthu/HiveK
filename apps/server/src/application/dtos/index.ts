@@ -10,4 +10,6 @@ export * from './uploaded-file.dto';
 export * from './notification.dto';
 export * from './campaign-participant.dto';
 export * from './projection.dto';
+export * from './proposal.dto';
+export * from './review.dto';
 

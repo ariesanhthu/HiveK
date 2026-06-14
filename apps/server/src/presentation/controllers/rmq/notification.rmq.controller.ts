@@ -5,7 +5,7 @@ import type { NotifyEnterpriseInvitationPayload, SendVerificationEmailRequestedP
 import { CommandBus } from '@nestjs/cqrs';
 import { NotificationSendCommand } from '@/application';
 import { NotificationChannel, NotificationType } from '@/core/enums';
-import { toDate } from '@/shared/utils';
+import { toDate } from '@/shared/date';
 
 @Controller()
 export class NotificationRmqController {

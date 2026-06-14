@@ -18,6 +18,8 @@ import { CampaignModule } from './campaign.module';
 import { UploadedFileModule } from './uploaded-file.module';
 import { NotificationModule } from './notification.module';
 import { CampaignParticipantModule } from './campaign-participant.module';
+import { CampaignProposalModule } from './campaign-proposal.module';
+import { PublicReviewModule } from './public-review.module';
 import { TestRmqHandler } from '../../presentation/controllers/rmq/test-rmq.controller';
 import { GraphqlModule } from '../graphql';
 import { HttpExceptionFilter } from '@/presentation/middleware/filters';
@@ -42,6 +44,8 @@ import { OutboxModule } from './outbox.module';
     CampaignParticipantModule,
     UploadedFileModule,
     NotificationModule,
+    CampaignProposalModule,
+    PublicReviewModule,
     OutboxModule,
     RabbitMQModule,
     WebSocketModule,

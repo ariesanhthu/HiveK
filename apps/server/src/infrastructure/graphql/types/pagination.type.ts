@@ -3,6 +3,8 @@ import { SortOrder } from '@/application/dtos/pagination.dto';
 import { KolProfileType } from './kol-profile.type';
 import { CampaignType } from './campaign.type';
 import { CampaignParticipantType } from './campaign-participant.type';
+import { CampaignProposalType } from './proposal.type';
+import { PublicReviewType } from './review.type';
 
 registerEnumType(SortOrder, {
   name: 'SortOrder',
@@ -90,4 +92,40 @@ export class CampaignParticipantResponse {
 
   @Field(() => [CampaignParticipantType])
   data: CampaignParticipantType[];
+}
+
+@InputType()
+export class CampaignProposalFilterInput extends BasePaginationInput {
+  @Field({ nullable: true })
+  campaignId?: string;
+
+  @Field({ nullable: true })
+  status?: string;
+}
+
+@ObjectType()
+export class CampaignProposalResponse {
+  @Field({ nullable: true })
+  cursor: string | null;
+
+  @Field(() => [CampaignProposalType])
+  data: CampaignProposalType[];
+}
+
+@InputType()
+export class PublicReviewFilterInput extends BasePaginationInput {
+  @Field({ nullable: true })
+  proposalId?: string;
+
+  @Field({ nullable: true })
+  status?: string;
+}
+
+@ObjectType()
+export class PublicReviewResponse {
+  @Field({ nullable: true })
+  cursor: string | null;
+
+  @Field(() => [PublicReviewType])
+  data: PublicReviewType[];
 }

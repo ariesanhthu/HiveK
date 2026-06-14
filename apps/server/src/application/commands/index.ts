@@ -209,3 +209,33 @@ export * from './kpi-log-terminate/kpi-log-terminate.handler';
 export * from './enterprise-verify/enterprise-verify.dto';
 export * from './enterprise-verify/enterprise-verify.command';
 export * from './enterprise-verify/enterprise-verify.handler';
+
+// Campaign Proposal Commands
+export * from './proposal-create/proposal-create.command';
+export * from './proposal-create/proposal-create.handler';
+export * from './proposal-create/proposal-create.dto';
+export * from './proposal-update/proposal-update.command';
+export * from './proposal-update/proposal-update.handler';
+export * from './proposal-update/proposal-update.dto';
+export * from './proposal-update-status/proposal-update-status.command';
+export * from './proposal-update-status/proposal-update-status.handler';
+export * from './proposal-update-status/proposal-update-status.dto';
+export * from './proposal-update-metrics/proposal-update-metrics.command';
+export * from './proposal-update-metrics/proposal-update-metrics.handler';
+export * from './proposal-update-metrics/proposal-update-metrics.dto';
+export * from './proposal-soft-delete/proposal-soft-delete.command';
+export * from './proposal-soft-delete/proposal-soft-delete.handler';
+export * from './proposal-restore/proposal-restore.command';
+export * from './proposal-restore/proposal-restore.handler';
+
+// Public Review Commands
+export * from './review-create/review-create.command';
+export * from './review-create/review-create.handler';
+export * from './review-create/review-create.dto';
+export * from './review-moderate/review-moderate.command';
+export * from './review-moderate/review-moderate.handler';
+export * from './review-moderate/review-moderate.dto';
+export * from './review-soft-delete/review-soft-delete.command';
+export * from './review-soft-delete/review-soft-delete.handler';
+export * from './review-restore/review-restore.command';
+export * from './review-restore/review-restore.handler';
