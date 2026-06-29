@@ -37,6 +37,7 @@ import { JwtAuthGuard, RolesGuard } from '@/presentation/middleware/guards';
 import { FileUploadValidationPipe } from '@/presentation/middleware/pipes/file-upload-validation.pipe';
 import { ERoleType } from '@/core/enums/role-type.enum';
 import { Roles } from '@/presentation/decorators/roles.decorator';
+import { isEmpty } from '@/shared/utils';
 
 @ApiTags('ADMIN-upload')
 @ApiBearerAuth()
@@ -156,7 +157,7 @@ export class UploadedFileAdminController {
     @UploadedFiles(new FileUploadValidationPipe()) files: Express.Multer.File[],
     @Body() input: UploadedFileCreateInputDto,
   ): Promise<UploadedFileDto[]> {
-    if (!files || files.length === 0) {
+    if (isEmpty(files)) {
       throw new BadRequestException('At least one file is required');
     }
     if (files.length > 10) {

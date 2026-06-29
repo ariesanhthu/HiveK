@@ -50,12 +50,12 @@ import { OutboxModule } from './outbox.module';
     RabbitMQModule,
     WebSocketModule,
     GraphqlModule,
-    ThrottlerModule.forRoot([
-      {
-        ttl: 60000, // 1 minute
-        limit: 60, // 60 requests per TTL
-      },
-    ]),
+    // ThrottlerModule.forRoot([
+    //   {
+    //     ttl: 60000, // 1 minute
+    //     limit: 60, // 60 requests per TTL
+    //   },
+    // ]),
   ],
   controllers: [],
   providers: [
@@ -79,10 +79,10 @@ import { OutboxModule } from './outbox.module';
       provide: APP_GUARD,
       useClass: ApiKeyGuard,
     },
-    {
-      provide: APP_GUARD,
-      useClass: GqlThrottlerGuard,
-    },
+    // {
+    //   provide: APP_GUARD,
+    //   useClass: GqlThrottlerGuard,
+    // },
     TestRmqHandler
   ],
 })

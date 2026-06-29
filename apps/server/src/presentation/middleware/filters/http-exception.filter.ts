@@ -10,6 +10,7 @@ import {
 } from '@/core/exceptions';
 import { ApiResponseHelper } from '@/presentation/utils/api-response.helper';
 import { type ILoggerService, LOGGER_SERVICE } from '@/application';
+import { isFunction, isObject, isString } from '@/shared/utils';
 
 type ErrorDetail = { field?: string; message: string };
 
@@ -23,7 +24,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
   }
 
   catch(exception: any, host: ArgumentsHost) {
-    if (typeof host.getType === 'function' && (host.getType() as string) === 'graphql') {
+    if (isFunction(host.getType) && (host.getType() as string) === 'graphql') {
       throw exception;
     }
 
@@ -43,7 +44,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
     if (exception instanceof HttpException) {
       const status = exception.getStatus();
       const res = exception.getResponse();
-      const rawMessage = typeof res === 'string' ? res : (res as any).message || exception.message;
+      const rawMessage = isString(res) ? res : (res as any).message || exception.message;
       const message = Array.isArray(rawMessage) ? rawMessage.join(',') : rawMessage;
       const code = this.httpStatusToCode(status);
       const details = this.extractDetails(res);
@@ -88,12 +89,12 @@ export class HttpExceptionFilter implements ExceptionFilter {
   }
 
   private extractDetails(res: string | object): ErrorDetail[] | undefined {
-    if (typeof res !== 'object' || res === null) return undefined;
+    if (!isObject(res)) return undefined;
     const body = res as Record<string, any>;
     if (Array.isArray(body.errors)) {
       return body.errors.map((e: any) => ({
         field: e.property || e.field || e.path,
-        message: typeof e === 'string' ? e : e.constraints ? Object.values(e.constraints).join('; ') : e.message,
+        message: isString(e) ? e : e.constraints ? Object.values(e.constraints).join('; ') : e.message,
       }));
     }
     if (Array.isArray(body.message)) {

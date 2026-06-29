@@ -8,6 +8,7 @@ import { type IUserRepository, USER_REPOSITORY } from '@/core/interfaces/reposit
 import * as bcrypt from 'bcrypt';
 import { AdminRoot } from '@/core/aggregate-roots';
 import { PhoneNumberVO } from '@/core/value-objects/phone-number.value-object';
+import { env } from '@/shared/utils';
 
 @Injectable()
 export class RoleSeedService implements OnModuleInit {
@@ -23,7 +24,7 @@ export class RoleSeedService implements OnModuleInit {
   ) { }
 
   async onModuleInit() {
-    if (process.env.SEEDING === '0') {
+    if (env('SEEDING', '1') === '0') {
       return;
     }
     await this.seedRoles();
@@ -68,7 +69,7 @@ export class RoleSeedService implements OnModuleInit {
 
   private async seedUsers() {
     const count = await this.userModel.countDocuments({
-      email: process.env.ADMIN_EMAIL,
+      email: env('ADMIN_EMAIL'),
     });
     if (count > 0) {
       this.logger.log('Users already seeded. Skipping...');
@@ -81,9 +82,9 @@ export class RoleSeedService implements OnModuleInit {
     }
 
     let user;
-    const passwordHash = await bcrypt.hash(process.env.ADMIN_PASSWORD, 10);
+    const passwordHash = await bcrypt.hash(env('ADMIN_PASSWORD'), 10);
     const commonProps = {
-      email: process.env.ADMIN_EMAIL,
+      email: env('ADMIN_EMAIL'),
       phone: PhoneNumberVO.create({ value: '+0900000000' }),
       passwordHash,
       fullName: 'SUPER ADMIN',

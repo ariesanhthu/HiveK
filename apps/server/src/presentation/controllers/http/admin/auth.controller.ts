@@ -28,6 +28,7 @@ import { Throttle } from '@nestjs/throttler';
 import { UserUpdateInputDto } from '@/application/commands/user-update/user-update.dto';
 import { RolesGuard } from '@/presentation/middleware/guards';
 import { Roles } from '@/presentation/decorators/roles.decorator';
+import { env } from '@/shared/utils';
 
 @ApiTags('ADMIN-auth')
 @ApiBearerAuth()
@@ -54,7 +55,7 @@ export class AuthAdminController {
     if (result && result.accessToken) {
       response.cookie('access_token', result.accessToken, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
+        secure: env('NODE_ENV', 'development') === 'production',
         sameSite: 'lax',
         maxAge: 24 * 60 * 60 * 1000, // 1 day
       });
@@ -62,7 +63,7 @@ export class AuthAdminController {
     if (result && result.refreshToken) {
       response.cookie('refresh_token', result.refreshToken, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
+        secure: env('NODE_ENV', 'development') === 'production',
         sameSite: 'lax',
         maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
       });
@@ -96,7 +97,7 @@ export class AuthAdminController {
     if (result && result.accessToken) {
       response.cookie('access_token', result.accessToken, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
+        secure: env('NODE_ENV', 'development') === 'production',
         sameSite: 'lax',
         maxAge: 24 * 60 * 60 * 1000, // 1 day
       });
@@ -104,7 +105,7 @@ export class AuthAdminController {
     if (result && result.refreshToken) {
       response.cookie('refresh_token', result.refreshToken, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
+        secure: env('NODE_ENV', 'development') === 'production',
         sameSite: 'lax',
         maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
       });

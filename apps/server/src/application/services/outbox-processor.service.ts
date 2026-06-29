@@ -3,6 +3,7 @@ import { Cron, CronExpression } from '@nestjs/schedule';
 import { OUTBOX_REPOSITORY, type IOutboxRepository } from '@/core/interfaces/repositories';
 import { MESSAGE_QUEUE_SERVICE, type IMessageQueueService, UNIT_OF_WORK, type IUnitOfWork, LOGGER_SERVICE, type ILoggerService } from '@/application/interfaces';
 import { OutboxEntity } from '@/core/entities/outbox.entity';
+import { errorMessage, toError } from '@/shared/utils';
 
 @Injectable()
 export class OutboxProcessorService {
@@ -46,7 +47,7 @@ export class OutboxProcessorService {
         await this.dispatch(message);
       }
     } catch (error) {
-      this.logger.error('Error during outbox processing batch', error instanceof Error ? error.stack : String(error));
+      this.logger.error('Error during outbox processing batch', toError(error).stack);
     } finally {
       this.isProcessing = false;
     }
@@ -74,7 +75,7 @@ export class OutboxProcessorService {
       
       this.logger.log(`Successfully dispatched outbox message ${message.id} for eventType ${message.eventType}`);
     } catch (error) {
-      const reason = error instanceof Error ? error.message : String(error);
+      const reason = errorMessage(error);
       this.logger.warn(`Failed to dispatch outbox message ${message.id}: ${reason}`, undefined, { 
         retryCount: message.retryCount,
         maxRetry: message.maxRetry 

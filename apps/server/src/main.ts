@@ -2,6 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './infrastructure/modules/app.module';
 import { setupApplication, setupSwagger } from '@infrastructure/nest-config';
 import { Logger } from '@nestjs/common';
+import { env, envInt } from '@/shared/utils';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -10,8 +11,8 @@ async function bootstrap() {
   setupSwagger(app);
 
   // Start HTTP server first (prioritize HTTP availability)
-  const host = process.env.HOST ?? '[IP_ADDRESS]';
-  const port = process.env.PORT ?? 3000;
+  const host = env('HOST', '[IP_ADDRESS]');
+  const port = envInt('PORT', 3000);
   await app.listen(port, host);
 
   Logger.log(`==========================================================`);

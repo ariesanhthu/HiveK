@@ -2,6 +2,7 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { Inject } from '@nestjs/common';
 import { USER_NOTIFICATION_REPOSITORY, type IUserNotificationRepository } from '@/core/interfaces/repositories';
 import { NotificationUpdateReadStatusCommand } from './notification-update-read-status.command';
+import { isEmpty } from '@/shared/utils';
 
 @CommandHandler(NotificationUpdateReadStatusCommand)
 export class NotificationUpdateReadStatusCommandHandler implements ICommandHandler<NotificationUpdateReadStatusCommand, void> {
@@ -13,7 +14,7 @@ export class NotificationUpdateReadStatusCommandHandler implements ICommandHandl
   async execute(command: NotificationUpdateReadStatusCommand): Promise<void> {
     const { ids, userId, isRead } = command;
     
-    if (!ids || ids.length === 0) {
+    if (isEmpty(ids)) {
       await this.userNotificationRepository.markAll(userId, isRead);
     } else {
       await this.userNotificationRepository.updateReadStatus(ids, userId, isRead);

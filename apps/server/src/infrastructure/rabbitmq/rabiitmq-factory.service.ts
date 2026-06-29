@@ -9,6 +9,7 @@ import {
 } from "./types/rabbitmq.types";
 import { type ILoggerService, LOGGER_SERVICE } from "@/application";
 import { ConfigService } from "@nestjs/config";
+import { errorMessage } from "@/shared/utils";
 
 @Injectable()
 export class RabbitMQFactoryService {
@@ -48,9 +49,9 @@ export class RabbitMQFactoryService {
       if (error instanceof BadRequestException) {
         throw error;
       }
-      const message = error instanceof Error ? error.message : String(error);
-      this.loggerService.error(`Failed to read RMQ producer config: ${message}`);
-      throw new BadRequestException(`Failed to read RMQ producer config: ${message}`);
+      const msg = errorMessage(error);
+      this.loggerService.error(`Failed to read RMQ producer config: ${msg}`);
+      throw new BadRequestException(`Failed to read RMQ producer config: ${msg}`);
     }
   }
 
@@ -81,9 +82,9 @@ export class RabbitMQFactoryService {
       if (error instanceof BadRequestException) {
         throw error;
       }
-      const message = error instanceof Error ? error.message : String(error);
-      this.loggerService.error(`Failed to read RMQ consumer config: ${message}`);
-      throw new BadRequestException(`Failed to read RMQ consumer config: ${message}`);
+      const msg = errorMessage(error);
+      this.loggerService.error(`Failed to read RMQ consumer config: ${msg}`);
+      throw new BadRequestException(`Failed to read RMQ consumer config: ${msg}`);
     }
   }
 

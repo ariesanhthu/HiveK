@@ -2,7 +2,7 @@
  * Safely converts an input value (Date, string, number, etc.) to a Date object.
  * Returns null if the value is invalid or cannot be parsed.
  */
-export function toDate(value: any): Date | null {
+export function toDate(value: unknown): Date | null {
   if (value === null || value === undefined) {
     return null;
   }

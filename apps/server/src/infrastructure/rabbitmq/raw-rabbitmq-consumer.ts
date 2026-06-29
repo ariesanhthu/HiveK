@@ -2,6 +2,7 @@ import * as amqp from 'amqplib';
 import { RabbitMQConsumerConfig } from '@/infrastructure/rabbitmq/types/rabbitmq.types';
 import { ILoggerService } from '@/application/interfaces';
 import { RmqHandlerRegistry } from './rmq-consumer.registry';
+import { errorMessage } from '@/shared/utils';
 
 /**
  * Raw RabbitMQ Consumer Client using amqplib
@@ -64,8 +65,7 @@ export class RawRabbitMQConsumerClient {
       this.connectionAttempts = 0;
       this.logger.log(`✅ RabbitMQ Consumer connected and listeners started`);
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : String(error);
-      this.logger.error(`Failed to start RabbitMQ Consumer: ${errorMessage}. Retrying in background...`);
+      this.logger.error(`Failed to start RabbitMQ Consumer: ${errorMessage(error)}. Retrying in background...`);
       this.isConnected = false;
 
       // Start background reconnection
@@ -89,8 +89,7 @@ export class RawRabbitMQConsumerClient {
       this.isConnected = false;
       this.logger.log('RabbitMQ Consumer disconnected');
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : String(error);
-      this.logger.error(`Error disconnecting RabbitMQ Consumer: ${errorMessage}`);
+      this.logger.error(`Error disconnecting RabbitMQ Consumer: ${errorMessage(error)}`);
     }
   }
 
@@ -196,8 +195,7 @@ export class RawRabbitMQConsumerClient {
         }
       }
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : String(error);
-      this.logger.error(`Error handling RMQ message from ${queueName}: ${errorMessage}`);
+      this.logger.error(`Error handling RMQ message from ${queueName}: ${errorMessage(error)}`);
 
       if (!this.config.consume.no_ack) {
         this.channel.nack(msg, false, this.config.consume.requeue_on_error);

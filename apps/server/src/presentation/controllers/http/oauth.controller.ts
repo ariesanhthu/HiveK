@@ -4,6 +4,7 @@ import { ApiTags, ApiOperation, ApiBearerAuth, ApiSecurity } from '@nestjs/swagg
 import { Public } from '@/presentation/decorators/public.decorator';
 import { GoogleAuthGuard } from '@/presentation/middleware/guards';
 import { buildVersionedRoute } from '@/presentation/utils/versioned-route.util';
+import { env } from '@/shared/utils';
 
 @ApiTags('OAuth')
 @ApiBearerAuth()
@@ -30,7 +31,7 @@ export class OAuthController {
     if (result && result.accessToken) {
       response.cookie('access_token', result.accessToken, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
+        secure: env('NODE_ENV', 'development') === 'production',
         sameSite: 'lax',
         maxAge: 24 * 60 * 60 * 1000, // 1 day
       });
@@ -38,7 +39,7 @@ export class OAuthController {
     if (result && result.refreshToken) {
       response.cookie('refresh_token', result.refreshToken, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
+        secure: env('NODE_ENV', 'development') === 'production',
         sameSite: 'lax',
         maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
       });

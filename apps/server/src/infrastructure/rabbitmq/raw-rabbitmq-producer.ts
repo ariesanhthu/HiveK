@@ -3,6 +3,7 @@ import { RabbitMQProducerConfig } from '@/infrastructure/rabbitmq/types/rabbitmq
 import { randomUUID } from 'crypto';
 import { ILoggerService } from '@/application/interfaces';
 import { Logger } from '@nestjs/common';
+import { errorMessage } from '@/shared/utils';
 
 /**
  * Raw RabbitMQ Producer Client using amqplib
@@ -64,8 +65,7 @@ export class RawRabbitMQProducerClient {
       this.connectionAttempts = 0;
       this.logger.log(`✅ Connected to RabbitMQ successfully`);
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : String(error);
-      this.logger.error(`Failed to connect to RabbitMQ: ${errorMessage}. Retrying in background...`);
+      this.logger.error(`Failed to connect to RabbitMQ: ${errorMessage(error)}. Retrying in background...`);
       this.isConnected = false;
 
       // Start background reconnection since the initial attempt failed
@@ -89,8 +89,7 @@ export class RawRabbitMQProducerClient {
       this.isConnected = false;
       this.logger.log('Disconnected from RabbitMQ');
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : String(error);
-      this.logger.error(`Error disconnecting from RabbitMQ: ${errorMessage}`);
+      this.logger.error(`Error disconnecting from RabbitMQ: ${errorMessage(error)}`);
     }
   }
 
@@ -151,8 +150,7 @@ export class RawRabbitMQProducerClient {
         );
       });
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : String(error);
-      this.logger.error(`Error publishing message: ${errorMessage}`);
+      this.logger.error(`Error publishing message: ${errorMessage(error)}`);
       throw error;
     }
   }
@@ -178,8 +176,7 @@ export class RawRabbitMQProducerClient {
         `Exchange "${name}" (${type}) declared successfully`
       );
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : String(error);
-      this.logger.error(`Failed to declare exchange: ${errorMessage}`);
+      this.logger.error(`Failed to declare exchange: ${errorMessage(error)}`);
       throw error;
     }
   }
@@ -248,8 +245,7 @@ export class RawRabbitMQProducerClient {
       const json = JSON.stringify(message);
       return Buffer.from(json, 'utf-8');
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : String(error);
-      this.logger.error(`Failed to encode message: ${errorMessage}`);
+      this.logger.error(`Failed to encode message: ${errorMessage(error)}`);
       throw error;
     }
   }

@@ -3,6 +3,7 @@ import { Reflector } from '@nestjs/core';
 import { AuthGuard } from '@nestjs/passport';
 import { GqlExecutionContext } from '@nestjs/graphql';
 import { IS_PUBLIC_KEY } from '../../decorators/public.decorator';
+import { isFunction } from '@/shared/utils';
 
 @Injectable()
 export class JwtAuthGuard extends AuthGuard('jwt') {
@@ -11,7 +12,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
   }
 
   override getRequest(context: ExecutionContext) {
-    if (typeof context.getType === 'function' && context.getType() as string === 'graphql') {
+    if (isFunction(context.getType) && context.getType() as string === 'graphql') {
       const ctx = GqlExecutionContext.create(context);
       return ctx.getContext().req;
     }
@@ -33,10 +34,10 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
   }
 
   override canActivate(context: ExecutionContext) {
-    const type = typeof context.getType === 'function' ? (context.getType() as string) : 'http';
+    const type = isFunction(context.getType) ? (context.getType() as string) : 'http';
     let req: any;
     
-    if (type === 'http' && typeof context.switchToHttp === 'function') {
+    if (type === 'http' && isFunction(context.switchToHttp)) {
       req = context.switchToHttp().getRequest();
       // Bypass authentication for GraphQL playground GET requests
       if (req && req.method === 'GET' && (req.url?.includes('/graphql') || req.url?.includes('/hivek/graphql'))) {

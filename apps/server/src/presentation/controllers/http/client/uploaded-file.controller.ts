@@ -26,6 +26,7 @@ import {
 import { UploadedFileDto } from '@/application/dtos';
 import { JwtAuthGuard } from '@/presentation/middleware/guards';
 import { FileUploadValidationPipe } from '@/presentation/middleware/pipes/file-upload-validation.pipe';
+import { isEmpty } from '@/shared/utils';
 
 @ApiTags('CLIENT-upload')
 @ApiBearerAuth()
@@ -137,7 +138,7 @@ export class UploadedFileClientController {
     @UploadedFiles(new FileUploadValidationPipe()) files: Express.Multer.File[],
     @Body() input: UploadedFileCreateInputDto,
   ): Promise<UploadedFileDto[]> {
-    if (!files || files.length === 0) {
+    if (isEmpty(files)) {
       throw new BadRequestException('At least one file is required');
     }
     if (files.length > 10) {
