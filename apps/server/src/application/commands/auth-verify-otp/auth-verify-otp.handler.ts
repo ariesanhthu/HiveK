@@ -7,9 +7,8 @@ import { OTP_REPOSITORY, type IOtpRepository } from '@/core/interfaces/repositor
 import { AuthService } from '@/application/services/auth.service';
 import { EOtpType } from '@/core/enums/otp-type.enum';
 import { UserNotFoundException, InvalidOperationException } from '@/core/exceptions';
-import { type IUnitOfWork, UNIT_OF_WORK } from '@/application/interfaces';
-import { OutboxService } from '@/application/services/outbox.service';
-import { EventMapper } from '@/application/mappers';
+import { type IUnitOfWork, UNIT_OF_WORK, EVENT_SERVICE } from '@/application/interfaces';
+import type { IEventService } from '@/application/interfaces';
 
 @CommandHandler(AuthVerifyOtpCommand)
 export class AuthVerifyOtpCommandHandler implements ICommandHandler<AuthVerifyOtpCommand, AuthVerifyOtpOutputDto> {
@@ -19,7 +18,8 @@ export class AuthVerifyOtpCommandHandler implements ICommandHandler<AuthVerifyOt
     @Inject(OTP_REPOSITORY)
     private readonly otpRepository: IOtpRepository,
     private readonly authService: AuthService,
-    private readonly outboxService: OutboxService,
+    @Inject(EVENT_SERVICE)
+    private readonly eventService: IEventService,
     @Inject(UNIT_OF_WORK)
     private readonly uow: IUnitOfWork,
   ) {}
@@ -49,16 +49,7 @@ export class AuthVerifyOtpCommandHandler implements ICommandHandler<AuthVerifyOt
 
       await this.otpRepository.deleteByEmailAndType(normalizedEmail, EOtpType.CREATE_ACCOUNT);
 
-      const events = EventMapper.mapToIntegrationEvents(user.domainEvents);
-      if (events.length > 0) {
-        await this.outboxService.enqueueMany(events.map(event => ({
-          eventType: event.eventType,
-          payload: event.payload,
-          metadata: event.metadata,
-          transport: event.transport,
-          maxRetry: 5,
-        })));
-      }
+      await this.eventService.publishEvents(user);
 
       return { success: true };
     });

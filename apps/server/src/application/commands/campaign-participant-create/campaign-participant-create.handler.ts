@@ -5,9 +5,8 @@ import { KOL_PROFILE_REPOSITORY, type IKolProfileRepository } from '@/core/inter
 import { InvalidOperationException, CampaignNotFoundException, UserNotFoundException } from '@/core/exceptions';
 import { CampaignParticipantCreateCommand } from './campaign-participant-create.command';
 import { ECampaignStatus } from '@/core/enums/campaign-status.enum';
-import { OutboxService } from '@/application/services/outbox.service';
-import { type IUnitOfWork, UNIT_OF_WORK } from '@/application/interfaces';
-import { EventMapper } from '@/application/mappers';
+import { type IUnitOfWork, UNIT_OF_WORK, EVENT_SERVICE } from '@/application/interfaces';
+import type { IEventService } from '@/application/interfaces';
 
 @CommandHandler(CampaignParticipantCreateCommand)
 export class CampaignParticipantCreateCommandHandler implements ICommandHandler<CampaignParticipantCreateCommand, string> {
@@ -16,7 +15,8 @@ export class CampaignParticipantCreateCommandHandler implements ICommandHandler<
     private readonly campaignRepository: ICampaignRepository,
     @Inject(KOL_PROFILE_REPOSITORY)
     private readonly kolProfileRepository: IKolProfileRepository,
-    private readonly outboxService: OutboxService,
+    @Inject(EVENT_SERVICE)
+    private readonly eventService: IEventService,
     @Inject(UNIT_OF_WORK)
     private readonly uow: IUnitOfWork,
   ) {}
@@ -54,17 +54,7 @@ export class CampaignParticipantCreateCommandHandler implements ICommandHandler<
 
       await this.campaignRepository.save(campaign);
 
-      const events = EventMapper.mapToIntegrationEvents(campaign.domainEvents);
-      if (events.length > 0) {
-        await this.outboxService.enqueueMany(events.map(event => ({
-          eventType: event.eventType,
-          payload: event.payload,
-          metadata: event.metadata,
-          transport: event.transport,
-          maxRetry: 5,
-        })));
-      }
-      campaign.clearDomainEvents();
+      await this.eventService.publishEvents(campaign);
     });
 
     return participantId;

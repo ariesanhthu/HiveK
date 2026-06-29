@@ -34,9 +34,6 @@ import {
   TwitterStrategy 
 } from '@infrastructure/auth';
 
-// Modules
-import { OutboxModule } from './outbox.module';
-
 // AdminControllers
 import { AuthAdminController, AuthClientController, OAuthController } from '@/presentation/controllers'
 import { AuthUserRmqController } from '@/presentation/controllers';
@@ -76,7 +73,6 @@ const STRATEGIES = [
     }),
     CqrsModule,
     PassportModule.register({ defaultStrategy: 'jwt' }),
-    OutboxModule,
   ],
   controllers: [AuthAdminController, AuthClientController, OAuthController],
   providers: [

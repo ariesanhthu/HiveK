@@ -21,3 +21,5 @@ export * from './web-socket.interface';
 export * from './mailer.interface';
 export * from './post-scheduler.interface';
 export * from './cache.interface';
+export * from './event-service.interface';
+export * from './domain-event-mapper.interface';

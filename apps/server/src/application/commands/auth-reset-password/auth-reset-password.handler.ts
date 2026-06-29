@@ -7,9 +7,8 @@ import { type IOtpRepository } from '@/core/interfaces/repositories/otp.reposito
 import { AuthService } from '@/application/services/auth.service';
 import { UserNotFoundException, InvalidOperationException } from '@/core/exceptions';
 import { EOtpType } from '@/core/enums/otp-type.enum';
-import { type IUnitOfWork, UNIT_OF_WORK } from '@/application/interfaces';
-import { OutboxService } from '@/application/services/outbox.service';
-import { EventMapper } from '@/application/mappers';
+import { type IUnitOfWork, UNIT_OF_WORK, EVENT_SERVICE } from '@/application/interfaces';
+import type { IEventService } from '@/application/interfaces';
 
 @CommandHandler(AuthResetPasswordCommand)
 export class AuthResetPasswordCommandHandler implements ICommandHandler<AuthResetPasswordCommand, AuthResetPasswordOutputDto> {
@@ -19,7 +18,8 @@ export class AuthResetPasswordCommandHandler implements ICommandHandler<AuthRese
     @Inject(OTP_REPOSITORY)
     private readonly otpRepository: IOtpRepository,
     private readonly authService: AuthService,
-    private readonly outboxService: OutboxService,
+    @Inject(EVENT_SERVICE)
+    private readonly eventService: IEventService,
     @Inject(UNIT_OF_WORK)
     private readonly uow: IUnitOfWork,
   ) {}
@@ -51,16 +51,7 @@ export class AuthResetPasswordCommandHandler implements ICommandHandler<AuthRese
 
       await this.otpRepository.deleteByEmailAndType(normalizedEmail, EOtpType.RESET_PASSWORD);
 
-      const events = EventMapper.mapToIntegrationEvents(user.domainEvents);
-      if (events.length > 0) {
-        await this.outboxService.enqueueMany(events.map(event => ({
-          eventType: event.eventType,
-          payload: event.payload,
-          metadata: event.metadata,
-          transport: event.transport,
-          maxRetry: 5,
-        })));
-      }
+      await this.eventService.publishEvents(user);
 
       return { success: true };
     });

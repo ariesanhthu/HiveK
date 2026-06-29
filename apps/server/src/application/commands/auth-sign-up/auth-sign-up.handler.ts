@@ -7,11 +7,10 @@ import { USER_REPOSITORY, type IUserRepository } from '@/core/interfaces/reposit
 import { KOLUserRoot, EnterpriseUserRoot, AdminRoot } from '@/core/aggregate-roots';
 import { EOtpType, ERoleType } from '@/core/enums';
 import { AuthService } from '@/application/services/auth.service';
-import { OutboxService } from '@/application/services/outbox.service';
 import { UserConflictException, RoleNotFoundException, InvalidUserTypeException } from '@/core/exceptions';
-import { type IUnitOfWork, UNIT_OF_WORK } from '@/application/interfaces';
+import { type IUnitOfWork, UNIT_OF_WORK, EVENT_SERVICE } from '@/application/interfaces';
+import type { IEventService } from '@/application/interfaces';
 import { PhoneNumberVO } from '@/core/value-objects/phone-number.value-object';
-import { EventMapper } from '@/application/mappers';
 import { AuthSendOtpCommand } from '@/application/commands';
 
 @CommandHandler(AuthSignUpCommand)
@@ -22,7 +21,8 @@ export class AuthSignUpCommandHandler implements ICommandHandler<AuthSignUpComma
     @Inject(ROLE_READ_SERVICE)
     private readonly roleReadService: IRoleReadService,
     private readonly authService: AuthService,
-    private readonly outboxService: OutboxService,
+    @Inject(EVENT_SERVICE)
+    private readonly eventService: IEventService,
     @Inject(UNIT_OF_WORK)
     private readonly uow: IUnitOfWork,
     private readonly commandBus: CommandBus,
@@ -50,28 +50,22 @@ export class AuthSignUpCommandHandler implements ICommandHandler<AuthSignUpComma
         ? PhoneNumberVO.create({ value: input.phone })
         : PhoneNumberVO.create({ value: '+84000000000' });
 
-      const fullNameValue = input.fullName || 'DEFAULT NAME';
-
-      let user;
       const commonProps = {
         email: normalizedEmail,
         phone: phoneValue,
         passwordHash,
-        fullName: fullNameValue,
-        avatar: null,
+        fullName: input.fullName || 'DEFAULT NAME',
         type,
-        roleId: defaultRole.id,
-        isEmailVerified: false,
+        roleId: defaultRole.id!,
       };
 
+      let user;
       switch (type) {
         case ERoleType.KOL:
           user = KOLUserRoot.create(commonProps);
           break;
         case ERoleType.ENTERPRISE:
-          user = EnterpriseUserRoot.create({
-            ...commonProps,
-          });
+          user = EnterpriseUserRoot.create(commonProps);
           break;
         case ERoleType.ADMIN:
           user = AdminRoot.create(commonProps);
@@ -84,16 +78,7 @@ export class AuthSignUpCommandHandler implements ICommandHandler<AuthSignUpComma
       console.log("Created user")
       await this.commandBus.execute(new AuthSendOtpCommand({ email: normalizedEmail, type: EOtpType.CREATE_ACCOUNT }));
 
-      const events = EventMapper.mapToIntegrationEvents(user.domainEvents);
-
-      // Enqueue email dispatch via Outbox pattern
-      await this.outboxService.enqueueMany(events.map(event => ({
-        eventType: event.eventType,
-        payload: event.payload,
-        metadata: event.metadata,
-        transport: event.transport,
-        maxRetry: 5,
-      })));
+      await this.eventService.publishEvents(user);
 
       return { userId: user.id! };
     });

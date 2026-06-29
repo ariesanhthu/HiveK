@@ -38,7 +38,6 @@ import {
   MongoUploadedFileRepository,
   MongoOtpRepository,
   MongoKpiLogRepository,
-  MongoOutboxRepository,
 } from './repositories';
 
 // Read Service imports
@@ -68,7 +67,6 @@ import {
   UPLOADED_FILE_REPOSITORY,
   OTP_REPOSITORY,
   KPI_LOG_REPOSITORY,
-  OUTBOX_REPOSITORY,
   PUBLIC_REVIEW_REPOSITORY,
   CAMPAIGN_PROPOSAL_REPOSITORY,
 } from '@/core/interfaces/repositories';
@@ -182,10 +180,6 @@ import { MongoCampaignProposalReadService } from './read-services/campaign-propo
       useClass: MongoKpiLogRepository
     },
     {
-      provide: OUTBOX_REPOSITORY,
-      useClass: MongoOutboxRepository,
-    },
-    {
       provide: PUBLIC_REVIEW_REPOSITORY,
       useClass: MongoPublicReviewRepository,
     },
@@ -259,7 +253,6 @@ import { MongoCampaignProposalReadService } from './read-services/campaign-propo
     UPLOADED_FILE_REPOSITORY,
     OTP_REPOSITORY,
     KPI_LOG_REPOSITORY,
-    OUTBOX_REPOSITORY,
     CAMPAIGN_PROPOSAL_REPOSITORY,
     PUBLIC_REVIEW_REPOSITORY,
     // Export all read service tokens

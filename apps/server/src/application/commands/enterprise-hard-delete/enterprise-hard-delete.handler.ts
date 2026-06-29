@@ -3,9 +3,8 @@ import { Inject } from '@nestjs/common';
 import { EnterpriseNotFoundException, EnterpriseForbiddenException, InvalidOperationException } from '@/core/exceptions';
 import { ENTERPRISE_REPOSITORY, CAMPAIGN_REPOSITORY, type IEnterpriseRepository, type ICampaignRepository } from '@/core/interfaces/repositories';
 import { EnterpriseHardDeleteCommand } from './enterprise-hard-delete.command';
-import { type IUnitOfWork, UNIT_OF_WORK } from '@/application/interfaces';
-import { OutboxService } from '@/application/services/outbox.service';
-import { EventMapper } from '@/application/mappers';
+import { type IUnitOfWork, UNIT_OF_WORK, EVENT_SERVICE } from '@/application/interfaces';
+import type { IEventService } from '@/application/interfaces';
 
 @CommandHandler(EnterpriseHardDeleteCommand)
 export class EnterpriseHardDeleteCommandHandler implements ICommandHandler<EnterpriseHardDeleteCommand, void> {
@@ -14,7 +13,8 @@ export class EnterpriseHardDeleteCommandHandler implements ICommandHandler<Enter
     private readonly enterpriseRepository: IEnterpriseRepository,
     @Inject(CAMPAIGN_REPOSITORY)
     private readonly campaignRepository: ICampaignRepository,
-    private readonly outboxService: OutboxService,
+    @Inject(EVENT_SERVICE)
+    private readonly eventService: IEventService,
     @Inject(UNIT_OF_WORK)
     private readonly uow: IUnitOfWork,
   ) { }
@@ -49,16 +49,7 @@ export class EnterpriseHardDeleteCommandHandler implements ICommandHandler<Enter
 
         await this.enterpriseRepository.delete(id);
 
-        const events = EventMapper.mapToIntegrationEvents(enterprise.domainEvents);
-        if (events.length > 0) {
-          await this.outboxService.enqueueMany(events.map(event => ({
-            eventType: event.eventType,
-            payload: event.payload,
-            metadata: event.metadata,
-            transport: event.transport,
-            maxRetry: 5,
-          })));
-        }
+        await this.eventService.publishEvents(enterprise);
     });
   }
 }

@@ -4,11 +4,10 @@ import { AuthSendOtpCommand } from './auth-send-otp.command';
 import { AuthSendOtpOutputDto } from './auth-send-otp.dto';
 import { OTP_REPOSITORY, USER_REPOSITORY, type IOtpRepository, type IUserRepository } from '@/core/interfaces/repositories';
 import { AuthService } from '@/application/services/auth.service';
-import { OutboxService } from '@/application/services/outbox.service';
 import { OtpRoot } from '@/core/aggregate-roots/otp.aggregate';
-import { OtpRateLimitException, InvalidOperationException, UserNotFoundException, ForbiddenDomainException } from '@/core/exceptions';
-import { type IUnitOfWork, UNIT_OF_WORK } from '@/application/interfaces';
-import { EventMapper } from '@/application/mappers';
+import { OtpRateLimitException, ForbiddenDomainException, UserNotFoundException } from '@/core/exceptions';
+import { type IUnitOfWork, UNIT_OF_WORK, EVENT_SERVICE } from '@/application/interfaces';
+import type { IEventService } from '@/application/interfaces';
 import { EOtpType } from '@/core/enums';
 
 @CommandHandler(AuthSendOtpCommand)
@@ -18,7 +17,8 @@ export class AuthSendOtpCommandHandler implements ICommandHandler<AuthSendOtpCom
     private readonly otpRepository: IOtpRepository,
     @Inject(USER_REPOSITORY)
     private readonly userRepository: IUserRepository,
-    private readonly outboxService: OutboxService,
+    @Inject(EVENT_SERVICE)
+    private readonly eventService: IEventService,
     private readonly authService: AuthService,
     @Inject(UNIT_OF_WORK)
     private readonly uow: IUnitOfWork,
@@ -63,16 +63,7 @@ export class AuthSendOtpCommandHandler implements ICommandHandler<AuthSendOtpCom
       });
       await this.otpRepository.save(otp);
 
-      const events = EventMapper.mapToIntegrationEvents(otp.domainEvents);
-
-      // Enqueue email dispatch via Outbox pattern
-      await this.outboxService.enqueueMany(events.map(event => ({
-        eventType: event.eventType,
-        payload: event.payload,
-        metadata: event.metadata,
-        transport: event.transport,
-        maxRetry: 5,
-      })));
+      await this.eventService.publishEvents(otp);
 
       return { success: true };
     });

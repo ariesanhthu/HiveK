@@ -25,14 +25,16 @@ import { GraphqlModule } from '../graphql';
 import { HttpExceptionFilter } from '@/presentation/middleware/filters';
 import { LoggingInterceptor, TransformInterceptor } from '@/presentation/middleware/interceptors';
 import { ScheduleModule } from '@nestjs/schedule';
-import { OutboxModule } from './outbox.module';
 import { RedisCacheModule } from '../cache/redis/redis-cache.module';
+import { EventsModule } from '../events/events.module';
+import { EventEmitterModule } from '@nestjs/event-emitter';
 
 @Module({
   imports: [
     // ConfigModule.forRoot({ isGlobal: true }),
     InfrastructureModule,
     ScheduleModule.forRoot(),
+    EventEmitterModule.forRoot(),
     MongoModule,
     UserModule,
     EnterpriseModule,
@@ -47,11 +49,11 @@ import { RedisCacheModule } from '../cache/redis/redis-cache.module';
     NotificationModule,
     CampaignProposalModule,
     PublicReviewModule,
-    OutboxModule,
     RabbitMQModule,
     WebSocketModule,
     GraphqlModule,
     RedisCacheModule,
+    EventsModule,
     // ThrottlerModule.forRoot([
     //   {
     //     ttl: 60000, // 1 minute
