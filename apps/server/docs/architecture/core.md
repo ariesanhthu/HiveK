@@ -73,7 +73,7 @@ export const CAMPAIGN_REPOSITORY = Symbol('CampaignRepository');
 4. **Single Responsibility** – Each class has one clear responsibility (e.g., an aggregate manages its own invariants, a repository only persists aggregates).
 5. **Dependency Inversion** – The core defines *interfaces*; concrete implementations live in the Infrastructure layer.
 6. **Early Return** – Avoid deep if/else nesting; fail fast on invalid state.
-7. **Domain Events & Outbox** – Aggregates can register internal domain events. These events are extracted by the Application layer and persisted to the Outbox atomically within the same transaction to trigger side-effects (Reliable Event-Driven Architecture).
+7. **Domain Events & Outbox** – Aggregates can register internal domain events. These events are published using the `IEventService`, which maps them to Integration Events and persists them as Outbox entries atomically within the same transaction to trigger side-effects asynchronously (Reliable Event-Driven Architecture).
 
 ## Current Folder Structure
 
@@ -161,7 +161,7 @@ The **Event Mapper** (`src/application/mappers/event.mapper.ts`) translates inte
 
 1. **Register**: The aggregate root registers an event internally.
 2. **Commit**: The handler runs within a Unit of Work transaction.
-3. **Map & Enqueue**: The handler fetches the domain events, uses the `EventMapper` to convert them into Integration Events, enqueues them into the `OutboxService` inside the same transaction, and clears the aggregate's domain events queue.
+3. **Publish**: The handler calls `await this.eventService.publishEvents(aggregate)`. The infrastructure `EventService` automatically extracts the domain events, delegates to the `DomainEventMapper` to map them into Integration Events, saves them to MongoDB outbox records in the same transaction session, and triggers immediate processing.
 
 ```ts
 // src/core/aggregate-roots/enterprise.aggregate.ts
