@@ -13,6 +13,17 @@ services:
       timeout: 5s
       retries: 5
 
+  redis:
+    image: redis:7-alpine
+    command: redis-server --requirepass root@123
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "root@123", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
   # mongodb:
   #   image: mongo:latest
   #   ports:
@@ -24,3 +35,7 @@ services:
 
 # volumes:
 #   mongodb_data:
+
+networks:
+  default:
+    name: hivek-network

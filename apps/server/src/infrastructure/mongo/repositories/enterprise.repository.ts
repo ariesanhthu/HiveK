@@ -6,8 +6,10 @@ import { EnterpriseRoot } from '@/core/aggregate-roots';
 import { EnterpriseModel, EnterpriseDocument } from '../schemas';
 import { Nullable } from '@/core/types';
 import { PhoneNumberVO } from '@/core/value-objects/phone-number.value-object';
-import { type IUnitOfWork, UNIT_OF_WORK } from '@/application/interfaces';
+import { type IUnitOfWork, UNIT_OF_WORK, CACHE_SERVICE } from '@/application/interfaces';
+import type { ICacheService } from '@/application/interfaces';
 import { MongoUnitOfWork } from '../mongo-uow';
+import { CacheKeyUtil } from '@/shared/utils/cache-key.util';
 
 @Injectable()
 export class MongoEnterpriseRepository implements IEnterpriseRepository {
@@ -16,6 +18,8 @@ export class MongoEnterpriseRepository implements IEnterpriseRepository {
     private readonly enterpriseModel: Model<EnterpriseDocument>,
     @Inject(UNIT_OF_WORK)
     private readonly uow: IUnitOfWork,
+    @Inject(CACHE_SERVICE)
+    private readonly cacheService: ICacheService,
   ) { }
 
   private get session(): ClientSession | undefined {
@@ -42,6 +46,8 @@ export class MongoEnterpriseRepository implements IEnterpriseRepository {
     } else {
       await this.enterpriseModel.findByIdAndUpdate(enterprise.id, data, { upsert: true }).session(this.session).exec();
     }
+
+    await this.invalidateCache(enterprise.id!, enterprise.userId);
   }
 
   async saveMany(enterprises: EnterpriseRoot[]): Promise<void> {
@@ -49,7 +55,23 @@ export class MongoEnterpriseRepository implements IEnterpriseRepository {
   }
 
   async delete(id: string): Promise<void> {
-    await this.enterpriseModel.findByIdAndDelete(id).session(this.session).exec();
+    const doc = await this.enterpriseModel.findById(id).session(this.session).exec();
+    if (doc) {
+      await this.enterpriseModel.findByIdAndDelete(id).session(this.session).exec();
+      await this.invalidateCache(id, doc.user_id ? doc.user_id.toString() : '');
+    }
+  }
+
+  private async invalidateCache(id: string, userId: string): Promise<void> {
+    const domain = 'enterprise';
+    const invalidations = [
+      this.cacheService.del(CacheKeyUtil.id(domain, id)),
+      this.cacheService.delByPattern(CacheKeyUtil.listPattern(domain)),
+    ];
+    if (userId) {
+      invalidations.push(this.cacheService.del(CacheKeyUtil.custom(domain, `userId:${userId}`)));
+    }
+    await Promise.all(invalidations);
   }
 
   private mapToDomain(doc: EnterpriseDocument): EnterpriseRoot {

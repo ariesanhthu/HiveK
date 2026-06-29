@@ -26,6 +26,7 @@ import { HttpExceptionFilter } from '@/presentation/middleware/filters';
 import { LoggingInterceptor, TransformInterceptor } from '@/presentation/middleware/interceptors';
 import { ScheduleModule } from '@nestjs/schedule';
 import { OutboxModule } from './outbox.module';
+import { RedisCacheModule } from '../cache/redis/redis-cache.module';
 
 @Module({
   imports: [
@@ -50,6 +51,7 @@ import { OutboxModule } from './outbox.module';
     RabbitMQModule,
     WebSocketModule,
     GraphqlModule,
+    RedisCacheModule,
     // ThrottlerModule.forRoot([
     //   {
     //     ttl: 60000, // 1 minute
