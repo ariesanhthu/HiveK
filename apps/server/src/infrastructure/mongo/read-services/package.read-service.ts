@@ -1,0 +1,123 @@
+import { Injectable } from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model, QueryFilter } from 'mongoose';
+import { PackageDocument, PackageModel } from '../schemas';
+import { IPackageReadService } from '@/application/interfaces';
+import { PackageFilterDto } from '@/application/queries';
+import { Nullable } from '@/core/types';
+import { PackageResponseDto, PackageFeatureDto, PackageVariantDto, PackageQuotaDto } from '@/application/dtos';
+import { PaginatedResponseDto, SortOrder } from '@/application/dtos/pagination.dto';
+
+@Injectable()
+export class MongoPackageReadService implements IPackageReadService {
+  constructor(
+    @InjectModel(PackageModel.name)
+    private readonly model: Model<PackageDocument>,
+  ) {}
+
+  async findAll(filters: PackageFilterDto = {} as any): Promise<PaginatedResponseDto<PackageResponseDto>> {
+    const { cursor, limit = 10, sort = SortOrder.DESC, code, status, type, scope, enterpriseId } = filters;
+    const query: any = {};
+
+    if (code) query.code = code;
+    if (status) query.status = status;
+    if (type) query.type = type;
+    if (scope) query.scope = scope;
+    if (enterpriseId) query.enterprise_id = enterpriseId;
+
+    if (cursor) {
+      query._id = sort === SortOrder.DESC ? { $lt: cursor } : { $gt: cursor };
+    }
+
+    const docs = await this.model
+      .find(query)
+      .sort({ _id: sort === SortOrder.DESC ? -1 : 1 })
+      .limit(limit + 1)
+      .lean()
+      .exec();
+
+    const hasNextPage = docs.length > limit;
+    const results = hasNextPage ? docs.slice(0, limit) : docs;
+    const nextCursor = hasNextPage ? results[results.length - 1]._id.toString() : null;
+
+    return new PaginatedResponseDto(
+      results.map((doc) => this.mapToDto(doc)),
+      nextCursor,
+      hasNextPage,
+      limit,
+    );
+  }
+
+  async findById(id: string): Promise<Nullable<PackageResponseDto>> {
+    const doc = await this.model.findById(id).lean().exec();
+    return doc ? this.mapToDto(doc) : null;
+  }
+
+  async findByCode(code: string): Promise<PackageResponseDto[]> {
+    const docs = await this.model.find({ code }).lean().exec();
+    return docs.map((doc) => this.mapToDto(doc));
+  }
+
+  async findByType(type: string): Promise<PackageResponseDto[]> {
+    const docs = await this.model.find({ type, status: 'active' } as any).lean().exec();
+    return docs.map((doc) => this.mapToDto(doc));
+  }
+
+  async findPublicPackages(): Promise<PackageResponseDto[]> {
+    const docs = await this.model.find({ scope: 'public', status: 'active' } as any).lean().exec();
+    return docs.map((doc) => this.mapToDto(doc));
+  }
+
+  async findByEnterpriseId(enterpriseId: string): Promise<PackageResponseDto[]> {
+    const docs = await this.model.find({ enterprise_id: enterpriseId, status: 'active' } as any).lean().exec();
+    return docs.map((doc) => this.mapToDto(doc));
+  }
+
+  private mapToDto(doc: any): PackageResponseDto {
+    const baseQuotas: Record<string, number> = {};
+    if (doc.base_quotas) {
+      for (const q of doc.base_quotas) {
+        baseQuotas[q.code] = q.limit;
+      }
+    }
+
+    const variants: PackageVariantDto[] = (doc.variants || []).map((v: any) => {
+      const extraQuotas: Record<string, number> = {};
+      if (v.extra_quotas) {
+        for (const q of v.extra_quotas) {
+          extraQuotas[q.code] = q.limit;
+        }
+      }
+      return {
+        id: v._id ? v._id.toString() : '',
+        title: v.title,
+        durationMonths: v.duration_months,
+        price: v.price,
+        priceAfterDiscount: v.price_after_discount,
+        tax: v.tax,
+        currency: v.currency,
+        extraQuotas,
+      };
+    });
+
+    return {
+      id: doc._id.toString(),
+      code: doc.code,
+      name: doc.name,
+      description: doc.description,
+      type: doc.type,
+      scope: doc.scope,
+      enterpriseId: doc.enterprise_id || null,
+      status: doc.status,
+      features: (doc.features || []).map((f: any) => ({
+        code: f.code,
+        permissions: f.permissions || [],
+      })),
+      baseQuotas,
+      variants,
+      createdAt: doc.created_at || new Date(),
+      updatedAt: doc.updated_at || new Date(),
+      activatedAt: doc.activated_at || undefined,
+    };
+  }
+}

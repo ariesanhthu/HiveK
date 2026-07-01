@@ -10,3 +10,7 @@ export * from './general.exception';
 export * from './auth.exception';
 export * from './proposal.exception';
 export * from './review.exception';
+export * from './bill.exception';
+export * from './package.exception';
+export * from './payment-provider.exception';
+export * from './payment.exception';

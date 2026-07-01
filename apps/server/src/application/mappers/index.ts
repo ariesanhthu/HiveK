@@ -8,3 +8,8 @@ export * from './uploaded-file.mapper';
 export * from './event.mapper';
 export * from './proposal.mapper';
 export * from './review.mapper';
+export * from './package.mapper';
+export * from './bill.mapper';
+export * from './payment-provider.mapper';
+export * from './payment.mapper';
+export * from './subscription.mapper';

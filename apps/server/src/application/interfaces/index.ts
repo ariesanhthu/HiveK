@@ -10,6 +10,9 @@ export * from './read-service/proposal.read-service.interface';
 export * from './read-service/review.read-service.interface';
 export * from './read-service/notification.read-service.interface';
 export * from './read-service/campaign-participant.read-service.interface';
+export * from './read-service/package.read-service.interface';
+export * from './read-service/bill.read-service.interface';
+export * from './read-service/payment-provider.read-service.interface';
 
 export * from './uow.interface';
 

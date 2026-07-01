@@ -1,4 +1,4 @@
-import { createHash, randomBytes, createCipheriv, createDecipheriv } from 'crypto';
+import { createHash, randomBytes, createCipheriv, createDecipheriv, createHmac, randomUUID } from 'crypto';
 
 /**
  * Hashes a string using the specified algorithm (default SHA-256).
@@ -98,4 +98,16 @@ export function decrypt(encryptedText: string, key: string): string {
   let decrypted = decipher.update(encrypted, 'hex', 'utf-8');
   decrypted += decipher.final('utf-8');
   return decrypted;
+}
+
+export function hashSHA256(data: string, secretKey: string): string {
+  return createHmac('sha256', secretKey).update(data).digest('hex');
+}
+
+export function hashSHA512(data: string, secretKey: string): string {
+  return createHmac('sha512', secretKey).update(data).digest('hex');
+}
+
+export function generateUUID(): string {
+  return randomUUID();
 }

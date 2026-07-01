@@ -1,6 +1,24 @@
 import { DomainEvent, IntegrationEvent } from '@/core/common';
-import { EntityHardDeletedEvent, UserSignedUpEvent, VerificationOtpCreatedEvent, UserAddedToEnterpriseEvent, UserRevokedFromEnterpriseEvent, CampaignParticipantCreatedEvent } from '@/core/events';
-import { SendVerificationEmailRequestedEvent, NotifyEnterpriseInvitationEvent, NotifyEnterpriseRevocationEvent, NotifyKolCampaignInvitationEvent } from '../events';
+import {
+  EntityHardDeletedEvent,
+  UserSignedUpEvent,
+  VerificationOtpCreatedEvent,
+  UserAddedToEnterpriseEvent,
+  UserRevokedFromEnterpriseEvent,
+  CampaignParticipantCreatedEvent,
+  SubscriptionUpdatedEvent,
+  PaymentAuthorizedEvent,
+  PaymentCompletedEvent,
+} from '@/core/events';
+import {
+  SendVerificationEmailRequestedEvent,
+  NotifyEnterpriseInvitationEvent,
+  NotifyEnterpriseRevocationEvent,
+  NotifyKolCampaignInvitationEvent,
+  CapturePaymentRequestEvent,
+  RequestAuthUpdateSubscriptionEvent,
+  UpdateSubscriptionEvent,
+} from '../events';
 
 export class EventMapper {
   /**
@@ -20,6 +38,29 @@ export class EventMapper {
         return EventMapper.mapUserRevokedFromEnterpriseEvent(event as UserRevokedFromEnterpriseEvent);
       case event instanceof CampaignParticipantCreatedEvent:
         return EventMapper.mapCampaignParticipantCreatedEvent(event as CampaignParticipantCreatedEvent);
+      case event instanceof PaymentAuthorizedEvent:
+        return [new CapturePaymentRequestEvent((event as PaymentAuthorizedEvent).payload)];
+      case event instanceof PaymentCompletedEvent:
+        return [new UpdateSubscriptionEvent((event as PaymentCompletedEvent).payload)];
+      case event instanceof SubscriptionUpdatedEvent: {
+        const e = event as SubscriptionUpdatedEvent;
+        return [
+          new RequestAuthUpdateSubscriptionEvent(
+            {
+              id: e.payload.subscriptionHistoryId,
+              enterprise_id: e.payload.enterpriseId,
+              permission: e.payload.details.newPermissions,
+              quota: e.payload.details.newQuotas.unmarshal,
+              timestamp: new Date().toISOString(),
+            },
+            undefined,
+            {
+              topic: 'payment.subscription.auth.updated',
+              key: e.payload.subscriptionHistoryId,
+            }
+          ),
+        ];
+      }
       default:
         return [];
     }

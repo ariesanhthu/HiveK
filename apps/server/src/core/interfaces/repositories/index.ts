@@ -11,5 +11,11 @@ export * from './otp.repository';
 export * from './kpi-log.repository';
 export * from './campaign-proposal.repository';
 export * from './public-review.repository';
+export * from './bill.repository';
+export * from './package.repository';
+export * from './payment-provider.repository';
+export * from './payment.repository';
+export * from './subscription-history.repository';
+export * from './subscription.repository';
 
 

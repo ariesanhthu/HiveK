@@ -12,4 +12,10 @@ export * from './campaign-participant.dto';
 export * from './projection.dto';
 export * from './proposal.dto';
 export * from './review.dto';
+export * from './package.dto';
+export * from './bill.dto';
+export * from './payment-provider.dto';
+export * from './payment.dto';
+export * from './subscription.dto';
+export * from './subscription-history.dto';
 

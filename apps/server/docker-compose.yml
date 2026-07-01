@@ -13,11 +13,11 @@ services:
       - PORT=3000
       - REDIS_HOST=redis
       # - NODE_ENV=production
-    deploy:
-          resources:
-            limits:
-              cpus: '4.0'    # Chỉ cho phép NestJS dùng tối đa 1 Core CPU
-              memory: 1G  # Chỉ cho phép dùng tối đa 512MB RAM
+    # deploy:
+    #       resources:
+    #         limits:
+    #           cpus: '4.0'    # Chỉ cho phép NestJS dùng tối đa 1 Core CPU
+    #           memory: 1G  # Chỉ cho phép dùng tối đa 512MB RAM
     restart: none
 
 networks:

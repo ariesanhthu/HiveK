@@ -12,4 +12,8 @@ export enum EAggregateType {
   USER_NOTIFICATION = 'user_notification',
   USER = 'user',
   OTP = 'otp',
+  BILL = 'bill',
+  PACKAGE = 'package',
+  PAYMENT = 'payment',
+  SUBSCRIPTION = 'subscription',
 }

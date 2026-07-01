@@ -12,3 +12,8 @@ export * from './user-notification.aggregate';
 export * from './otp.aggregate';
 export * from './campaign-proposal.aggregate';
 export * from './public-review.aggregate';
+export * from './bill.aggregate';
+export * from './package.aggregate';
+export * from './payment.aggregate';
+export * from './subscription.aggregate';
+export * from './subscription-history.aggregate';

@@ -1,0 +1,340 @@
+[
+  {
+    "_id": "payment:ManagePaymentProvider",
+    "name": "Manage Payment Provider",
+    "service": "payment",
+    "can": true,
+    "action": "manage",
+    "subject": "PaymentProvider",
+    "domain": "SGOD",
+    "fields": ["*"],
+    "conditions": {
+      "belong": { "$in": ["SGODAdmin"] }
+    }
+  },
+  {
+    "_id": "payment:CreatePaymentProvider",
+    "name": "Create Payment Provider",
+    "service": "payment",
+    "can": true,
+    "action": "create",
+    "subject": "PaymentProvider",
+    "domain": "SGOD",
+    "fields": ["*"],
+    "conditions": {
+      "belong": { "$in": ["SGODAdmin"] }
+    }
+  },
+  {
+    "_id": "payment:ReadPaymentProvider",
+    "name": "Read Payment Provider",
+    "service": "payment",
+    "can": true,
+    "action": "read",
+    "subject": "PaymentProvider",
+    "domain": "SGOD",
+    "fields": ["*"],
+    "conditions": {
+      "belong": { "$in": ["SGODAdmin", "SGODUser"] }
+    }
+  },
+  {
+    "_id": "payment:UpdatePaymentProvider",
+    "name": "Update Payment Provider",
+    "service": "payment",
+    "can": true,
+    "action": "update",
+    "subject": "PaymentProvider",
+    "domain": "SGOD",
+    "fields": ["*"],
+    "conditions": {
+      "belong": { "$in": ["SGODAdmin"] }
+    }
+  },
+  {
+    "_id": "payment:DeletePaymentProvider",
+    "name": "Delete Payment Provider",
+    "service": "payment",
+    "can": true,
+    "action": "delete",
+    "subject": "PaymentProvider",
+    "domain": "SGOD",
+    "fields": ["*"],
+    "conditions": {
+      "belong": { "$in": ["SGODAdmin"] }
+    }
+  },
+  {
+    "_id": "payment:ReadAllWallets",
+    "name": "Read All Wallets",
+    "service": "payment",
+    "can": true,
+    "action": "read",
+    "subject": "Wallet",
+    "domain": "SGOD",
+    "fields": ["*"],
+    "conditions": {
+      "belong": { "$in": ["SGODAdmin", "SGODUser"] }
+    }
+  },
+  {
+    "_id": "payment:ManageWallet",
+    "name": "Manage Any Wallet",
+    "service": "payment",
+    "can": true,
+    "action": "manage",
+    "subject": "Wallet",
+    "domain": "SGOD",
+    "fields": ["*"],
+    "conditions": {
+      "belong": { "$in": ["SGODAdmin"] }
+    }
+  },
+  {
+    "_id": "payment:FreezeWallet",
+    "name": "Freeze Wallet",
+    "service": "payment",
+    "can": true,
+    "action": "freeze_wallet",
+    "subject": "Wallet",
+    "domain": "SGOD",
+    "fields": ["*"],
+    "conditions": {
+      "belong": { "$in": ["SGODAdmin"] }
+    }
+  },
+  {
+    "_id": "payment:UnfreezeWallet",
+    "name": "Unfreeze Wallet",
+    "service": "payment",
+    "can": true,
+    "action": "unfreeze_wallet",
+    "subject": "Wallet",
+    "domain": "SGOD",
+    "fields": ["*"],
+    "conditions": {
+      "belong": { "$in": ["SGODAdmin"] }
+    }
+  },
+  {
+    "_id": "payment:ReadAllTransactions",
+    "name": "Read All Transactions",
+    "service": "payment",
+    "can": true,
+    "action": "read",
+    "subject": "Transaction",
+    "domain": "SGOD",
+    "fields": ["*"],
+    "conditions": {
+      "belong": { "$in": ["SGODAdmin", "SGODUser"] }
+    }
+  },
+  {
+    "_id": "payment:CreateTransaction",
+    "name": "Create Transaction (platform operations)",
+    "service": "payment",
+    "can": true,
+    "action": "create",
+    "subject": "Transaction",
+    "domain": "SGOD",
+    "fields": ["*"],
+    "conditions": {
+      "belong": { "$in": ["SGODAdmin"] }
+    }
+  },
+  {
+    "_id": "payment:RefundTransaction",
+    "name": "Refund Transaction",
+    "service": "payment",
+    "can": true,
+    "action": "refund",
+    "subject": "Transaction",
+    "domain": "SGOD",
+    "fields": ["*"],
+    "conditions": {
+      "belong": { "$in": ["SGODAdmin"] }
+    }
+  },
+  {
+    "_id": "payment:PartialRefundTransaction",
+    "name": "Partial Refund Transaction",
+    "service": "payment",
+    "can": true,
+    "action": "partial_refund",
+    "subject": "Transaction",
+    "domain": "SGOD",
+    "fields": ["*"],
+    "conditions": {
+      "belong": { "$in": ["SGODAdmin"] }
+    }
+  },
+  {
+    "_id": "payment:CancelTransaction",
+    "name": "Cancel Transaction",
+    "service": "payment",
+    "can": true,
+    "action": "cancel_transaction",
+    "subject": "Transaction",
+    "domain": "SGOD",
+    "fields": ["*"],
+    "conditions": {
+      "belong": { "$in": ["SGODAdmin"] }
+    }
+  },
+  {
+    "_id": "payment:ReadAllBills",
+    "name": "Read All Bills",
+    "service": "payment",
+    "can": true,
+    "action": "read",
+    "subject": "Bill",
+    "domain": "SGOD",
+    "fields": ["*"],
+    "conditions": {
+      "belong": { "$in": ["SGODAdmin", "SGODUser"] }
+    }
+  },
+  {
+    "_id": "payment:CreateBill",
+    "name": "Create Bill (platform operations)",
+    "service": "payment",
+    "can": true,
+    "action": "create",
+    "subject": "Bill",
+    "domain": "SGOD",
+    "fields": ["*"],
+    "conditions": {
+      "belong": { "$in": ["SGODAdmin"] }
+    }
+  },
+  {
+    "_id": "payment:ManageBill",
+    "name": "Manage Any Bill",
+    "service": "payment",
+    "can": true,
+    "action": "manage",
+    "subject": "Bill",
+    "domain": "SGOD",
+    "fields": ["*"],
+    "conditions": {
+      "belong": { "$in": ["SGODAdmin"] }
+    }
+  },
+  {
+    "_id": "payment:CancelBill",
+    "name": "Cancel Bill",
+    "service": "payment",
+    "can": true,
+    "action": "cancel_bill",
+    "subject": "Bill",
+    "domain": "SGOD",
+    "fields": ["*"],
+    "conditions": {
+      "belong": { "$in": ["SGODAdmin"] }
+    }
+  },
+  {
+    "_id": "payment:ReadAllSubscriptions",
+    "name": "Read All Subscriptions",
+    "service": "payment",
+    "can": true,
+    "action": "read",
+    "subject": "Subscription",
+    "domain": "SGOD",
+    "fields": ["*"],
+    "conditions": {
+      "belong": { "$in": ["SGODAdmin", "SGODUser"] }
+    }
+  },
+  {
+    "_id": "payment:ManageSubscription",
+    "name": "Manage Any Subscription",
+    "service": "payment",
+    "can": true,
+    "action": "manage",
+    "subject": "Subscription",
+    "domain": "SGOD",
+    "fields": ["*"],
+    "conditions": {
+      "belong": { "$in": ["SGODAdmin"] }
+    }
+  },
+  {
+    "_id": "payment:ManagePackage",
+    "name": "Manage Package",
+    "service": "payment",
+    "can": true,
+    "action": "manage",
+    "subject": "Package",
+    "domain": "SGOD",
+    "fields": ["*"],
+    "conditions": {
+      "belong": { "$in": ["SGODAdmin"] }
+    }
+  },
+  {
+    "_id": "payment:CreatePackage",
+    "name": "Create Package",
+    "service": "payment",
+    "can": true,
+    "action": "create",
+    "subject": "Package",
+    "domain": "SGOD",
+    "fields": ["*"],
+    "conditions": {
+      "belong": { "$in": ["SGODAdmin"] }
+    }
+  },
+  {
+    "_id": "payment:ReadPackage",
+    "name": "Read Package",
+    "service": "payment",
+    "can": true,
+    "action": "read",
+    "subject": "Package",
+    "domain": "SGOD",
+    "fields": ["*"],
+    "conditions": {
+      "belong": { "$in": ["SGODAdmin", "SGODUser"] }
+    }
+  },
+  {
+    "_id": "payment:UpdatePackage",
+    "name": "Update Package",
+    "service": "payment",
+    "can": true,
+    "action": "update",
+    "subject": "Package",
+    "domain": "SGOD",
+    "fields": ["*"],
+    "conditions": {
+      "belong": { "$in": ["SGODAdmin"] }
+    }
+  },
+  {
+    "_id": "payment:DeletePackage",
+    "name": "Delete Package",
+    "service": "payment",
+    "can": true,
+    "action": "delete",
+    "subject": "Package",
+    "domain": "SGOD",
+    "fields": ["*"],
+    "conditions": {
+      "belong": { "$in": ["SGODAdmin"] }
+    }
+  },
+  {
+    "_id": "payment:ReadAuditLog",
+    "name": "Read Payment Audit Events",
+    "service": "payment",
+    "can": true,
+    "action": "read",
+    "subject": "AuditLog",
+    "domain": "SGOD",
+    "fields": ["*"],
+    "conditions": {
+      "belong": { "$in": ["SGODAdmin"] }
+    }
+  }
+]

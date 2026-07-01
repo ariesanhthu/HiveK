@@ -1,0 +1,87 @@
+[
+  {
+    "_id": "payment:ReadOwnWallet",
+    "name": "Read Own Wallet",
+    "service": "payment",
+    "can": true,
+    "action": "read",
+    "subject": "Wallet",
+    "domain": "ENTERPRISE",
+    "fields": ["*"],
+    "conditions": {
+      "userId": "${user.id}",
+      "tenantId": "${user.tenantId}",
+      "belong": { "$in": ["Enterprise", "Subenterprise", "EnterpriseUser"] }
+    }
+  },
+  {
+    "_id": "payment:ReadOwnPayments",
+    "name": "Read Own Payments",
+    "service": "payment",
+    "can": true,
+    "action": "read",
+    "subject": "Transaction",
+    "domain": "ENTERPRISE",
+    "fields": ["*"],
+    "conditions": {
+      "tenantId": "${user.tenantId}",
+      "belong": { "$in": ["Enterprise", "Subenterprise", "EnterpriseUser"] }
+    }
+  },
+  {
+    "_id": "payment:ReadOwnBills",
+    "name": "Read Own Bills",
+    "service": "payment",
+    "can": true,
+    "action": "read",
+    "subject": "Bill",
+    "domain": "ENTERPRISE",
+    "fields": ["*"],
+    "conditions": {
+      "tenantId": "${user.tenantId}",
+      "belong": { "$in": ["Enterprise", "Subenterprise", "EnterpriseUser"] }
+    }
+  },
+  {
+    "_id": "payment:CancelOwnBill",
+    "name": "Cancel Own Bill",
+    "service": "payment",
+    "can": true,
+    "action": "cancel_bill",
+    "subject": "Bill",
+    "domain": "ENTERPRISE",
+    "fields": ["*"],
+    "conditions": {
+      "tenantId": "${user.tenantId}",
+      "belong": { "$in": ["Enterprise", "Subenterprise"] }
+    }
+  },
+  {
+    "_id": "payment:ReadOwnSubscriptions",
+    "name": "Read Own Subscriptions",
+    "service": "payment",
+    "can": true,
+    "action": "read",
+    "subject": "Subscription",
+    "domain": "ENTERPRISE",
+    "fields": ["*"],
+    "conditions": {
+      "tenantId": "${user.tenantId}",
+      "belong": { "$in": ["Enterprise", "Subenterprise", "EnterpriseUser"] }
+    }
+  },
+  {
+    "_id": "payment:UnsubscribeOwn",
+    "name": "Unsubscribe Own",
+    "service": "payment",
+    "can": true,
+    "action": "unsubscribe",
+    "subject": "Subscription",
+    "domain": "ENTERPRISE",
+    "fields": ["*"],
+    "conditions": {
+      "tenantId": "${user.tenantId}",
+      "belong": { "$in": ["Enterprise", "Subenterprise"] }
+    }
+  }
+]

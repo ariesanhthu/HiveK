@@ -1,0 +1,36 @@
+[
+  {
+    "_id": "payment:ReadPackage",
+    "name": "Read Package (Public)",
+    "service": "payment",
+    "can": true,
+    "action": "read",
+    "subject": "Package",
+    "domain": "GUEST",
+    "fields": ["*"],
+    "conditions": {}
+  },
+  {
+    "_id": "payment:ReadPaymentProvider",
+    "name": "Read Payment Provider (Public)",
+    "service": "payment",
+    "can": true,
+    "action": "read",
+    "subject": "PaymentProvider",
+    "domain": "GUEST",
+    "fields": [
+      "id",
+      "code",
+      "displayName",
+      "isActive",
+      "supportedMethods",
+      "supportedCurrencies",
+      "supportsWebhook",
+      "supportsRefund",
+      "supportsPartialRefund",
+      "createdAt",
+      "updatedAt"
+    ],
+    "conditions": {}
+  }
+]

@@ -12,4 +12,10 @@ export * from './otp.schema';
 export * from './outbox.schema';
 export * from './campaign-proposal.schema';
 export * from './public-review.schema';
+export * from './bill.schema';
+export * from './package.schema';
+export * from './payment-provider.schema';
+export * from './payment.schema';
+export * from './subscription.schema';
+export * from './subscription-history.schema';
 

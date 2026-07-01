@@ -23,6 +23,12 @@ import {
   PublicReviewModel,
   CampaignProposalSchema,
   CampaignProposalModel,
+  BillModel, BillSchema,
+  PackageModel, PackageSchema,
+  PaymentProviderModel, PaymentProviderSchema,
+  PaymentModel, PaymentSchema,
+  SubscriptionModel, SubscriptionSchema,
+  SubscriptionHistoryModel, SubscriptionHistorySchema,
 } from './schemas';
 
 // Repository imports
@@ -38,6 +44,12 @@ import {
   MongoUploadedFileRepository,
   MongoOtpRepository,
   MongoKpiLogRepository,
+  MongoBillRepository,
+  MongoPackageRepository,
+  MongoPaymentProviderRepository,
+  MongoPaymentRepository,
+  MongoSubscriptionRepository,
+  MongoSubscriptionHistoryRepository,
 } from './repositories';
 
 // Read Service imports
@@ -52,6 +64,9 @@ import {
   MongoNotificationReadService,
   MongoUploadedFileReadService,
   MongoKpiLogReadService,
+  MongoPackageReadService,
+  MongoBillReadService,
+  MongoPaymentProviderReadService,
 } from './read-services';
 
 // Repository symbols
@@ -69,6 +84,12 @@ import {
   KPI_LOG_REPOSITORY,
   PUBLIC_REVIEW_REPOSITORY,
   CAMPAIGN_PROPOSAL_REPOSITORY,
+  BILL_REPOSITORY,
+  PACKAGE_REPOSITORY,
+  PAYMENT_PROVIDER_REPOSITORY,
+  PAYMENT_REPOSITORY,
+  SUBSCRIPTION_REPOSITORY,
+  SUBSCRIPTION_HISTORY_REPOSITORY,
 } from '@/core/interfaces/repositories';
 
 // Read Service symbols
@@ -83,6 +104,9 @@ import {
   NOTIFICATION_READ_SERVICE,
   UPLOADED_FILE_READ_SERVICE,
   KPI_LOG_READ_SERVICE,
+  PACKAGE_READ_SERVICE,
+  BILL_READ_SERVICE,
+  PAYMENT_PROVIDER_READ_SERVICE,
 } from '@/application/interfaces';
 
 import { RoleSeedService } from './seeding/role-seed.service';
@@ -126,6 +150,12 @@ import { MongoCampaignProposalReadService } from './read-services/campaign-propo
       { name: OutboxModel.name, schema: OutboxSchema },
       { name: PublicReviewModel.name, schema: PublicReviewSchema },
       { name: CampaignProposalModel.name, schema: CampaignProposalSchema },
+      { name: BillModel.name, schema: BillSchema },
+      { name: PackageModel.name, schema: PackageSchema },
+      { name: PaymentProviderModel.name, schema: PaymentProviderSchema },
+      { name: PaymentModel.name, schema: PaymentSchema },
+      { name: SubscriptionModel.name, schema: SubscriptionSchema },
+      { name: SubscriptionHistoryModel.name, schema: SubscriptionHistorySchema },
     ]),
   ],
   providers: [
@@ -187,6 +217,30 @@ import { MongoCampaignProposalReadService } from './read-services/campaign-propo
       provide: CAMPAIGN_PROPOSAL_REPOSITORY,
       useClass: MongoCampaignProposalRepository,
     },
+    {
+      provide: BILL_REPOSITORY,
+      useClass: MongoBillRepository,
+    },
+    {
+      provide: PACKAGE_REPOSITORY,
+      useClass: MongoPackageRepository,
+    },
+    {
+      provide: PAYMENT_PROVIDER_REPOSITORY,
+      useClass: MongoPaymentProviderRepository,
+    },
+    {
+      provide: PAYMENT_REPOSITORY,
+      useClass: MongoPaymentRepository,
+    },
+    {
+      provide: SUBSCRIPTION_REPOSITORY,
+      useClass: MongoSubscriptionRepository,
+    },
+    {
+      provide: SUBSCRIPTION_HISTORY_REPOSITORY,
+      useClass: MongoSubscriptionHistoryRepository,
+    },
     // All Read Services
     {
       provide: USER_READ_SERVICE,
@@ -236,6 +290,18 @@ import { MongoCampaignProposalReadService } from './read-services/campaign-propo
       provide: CAMPAIGN_PROPOSAL_READ_SERVICE,
       useClass: MongoCampaignProposalReadService,
     },
+    {
+      provide: PACKAGE_READ_SERVICE,
+      useClass: MongoPackageReadService,
+    },
+    {
+      provide: BILL_READ_SERVICE,
+      useClass: MongoBillReadService,
+    },
+    {
+      provide: PAYMENT_PROVIDER_READ_SERVICE,
+      useClass: MongoPaymentProviderReadService,
+    },
     // Seed service
     RoleSeedService,
   ],
@@ -255,6 +321,12 @@ import { MongoCampaignProposalReadService } from './read-services/campaign-propo
     KPI_LOG_REPOSITORY,
     CAMPAIGN_PROPOSAL_REPOSITORY,
     PUBLIC_REVIEW_REPOSITORY,
+    BILL_REPOSITORY,
+    PACKAGE_REPOSITORY,
+    PAYMENT_PROVIDER_REPOSITORY,
+    PAYMENT_REPOSITORY,
+    SUBSCRIPTION_REPOSITORY,
+    SUBSCRIPTION_HISTORY_REPOSITORY,
     // Export all read service tokens
     USER_READ_SERVICE,
     ROLE_READ_SERVICE,
@@ -268,6 +340,9 @@ import { MongoCampaignProposalReadService } from './read-services/campaign-propo
     KPI_LOG_READ_SERVICE,
     CAMPAIGN_PROPOSAL_READ_SERVICE,
     PUBLIC_REVIEW_READ_SERVICE,
+    PACKAGE_READ_SERVICE,
+    BILL_READ_SERVICE,
+    PAYMENT_PROVIDER_READ_SERVICE,
     // Export MongooseModule so domain modules can use the models if needed
     MongooseModule,
     RoleSeedService,
