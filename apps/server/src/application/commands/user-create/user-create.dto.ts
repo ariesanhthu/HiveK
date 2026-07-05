@@ -9,6 +9,6 @@ export const UserCreateInputSchema = z.object({
   fullName: z.string().min(1).max(100),
   type: z.enum(ERoleType),
   roleId: z.string().min(1),
-});
+}).strict();
 
 export class UserCreateInputDto extends createZodDto(UserCreateInputSchema) {}

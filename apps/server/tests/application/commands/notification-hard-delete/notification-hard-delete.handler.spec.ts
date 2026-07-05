@@ -12,10 +12,13 @@ describe('NotificationHardDeleteCommandHandler', () => {
     handler = new NotificationHardDeleteCommandHandler(mockUserNotificationRepository);
   });
 
-  it('should trigger hardDeleteMany repository method', async () => {
-    const command = new NotificationHardDeleteCommand(['receipt-123'], 'user-123');
+  it('should successfully hard delete notifications', async () => {
+    const ids = ['notif-1', 'notif-2'];
+    const userId = 'user-123';
+    const command = new NotificationHardDeleteCommand(ids, userId);
+
     await handler.execute(command);
 
-    expect(mockUserNotificationRepository.hardDeleteMany).toHaveBeenCalledWith(['receipt-123'], 'user-123');
+    expect(mockUserNotificationRepository.hardDeleteMany).toHaveBeenCalledWith(ids, userId);
   });
 });

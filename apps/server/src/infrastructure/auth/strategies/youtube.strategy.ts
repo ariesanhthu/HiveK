@@ -22,7 +22,7 @@ export class YoutubeStrategy extends PassportStrategy(Strategy, 'youtube') {
 
   async validate(req: any, accessToken: string, refreshToken: string, profile: any): Promise<any> {
     const userId = req.query.state;
-    if (!userId) {
+    if (!userId) {  
       throw new UnauthorizedException('No user state provided for verification');
     }
 

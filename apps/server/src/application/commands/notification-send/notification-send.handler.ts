@@ -8,6 +8,7 @@ import { ENTERPRISE_REPOSITORY, type IEnterpriseRepository } from '@/core/interf
 import { NotificationSendCommand } from './notification-send.command';
 import { NotificationDispatchedEvent } from '@/application/events';
 import { EnterpriseNotFoundException, InvalidOperationException } from '@/core/exceptions';
+import { isEmpty } from '@/shared/utils';
 
 @CommandHandler(NotificationSendCommand)
 export class NotificationSendCommandHandler implements ICommandHandler<NotificationSendCommand, void> {
@@ -25,7 +26,7 @@ export class NotificationSendCommandHandler implements ICommandHandler<Notificat
 
     switch (props.audience.broadcastType) {
       case 'direct': {
-        if (!props.audience.userIds || props.audience.userIds.length === 0) {
+        if (isEmpty(props.audience.userIds)) {
           throw new InvalidOperationException('Recipient user IDs are required for direct broadcast');
         }
         recipientIds.push(...props.audience.userIds);

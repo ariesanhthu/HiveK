@@ -1,24 +1,21 @@
 import { EnterpriseSoftDeleteCommandHandler } from '@/application/commands/enterprise-soft-delete/enterprise-soft-delete.handler';
 import { EnterpriseSoftDeleteCommand } from '@/application/commands/enterprise-soft-delete/enterprise-soft-delete.command';
 import { EnterpriseNotFoundException, EnterpriseForbiddenException, InvalidOperationException } from '@/core/exceptions';
+import { EnterpriseRoot } from '@/core/aggregate-roots';
+import { createMockEnterpriseRepository, createMockCampaignRepository } from '../../../__mocks__/mock-repositories';
+import { createMockUnitOfWork } from '../../../__mocks__/mock-services';
 
 describe('EnterpriseSoftDeleteCommandHandler', () => {
   let handler: EnterpriseSoftDeleteCommandHandler;
-  let mockEnterpriseRepository: any;
-  let mockCampaignRepository: any;
-  let mockUow: any;
+  let mockEnterpriseRepository: ReturnType<typeof createMockEnterpriseRepository>;
+  let mockCampaignRepository: ReturnType<typeof createMockCampaignRepository>;
+  let mockUow: ReturnType<typeof createMockUnitOfWork>;
 
   beforeEach(() => {
-    mockEnterpriseRepository = {
-      findById: jest.fn(),
-      save: jest.fn(),
-    };
-    mockCampaignRepository = {
-      hasActiveCampaigns: jest.fn(),
-    };
-    mockUow = {
-      execute: jest.fn((fn: any) => fn()),
-    };
+    mockEnterpriseRepository = createMockEnterpriseRepository();
+    mockCampaignRepository = createMockCampaignRepository();
+    mockUow = createMockUnitOfWork();
+    
     handler = new EnterpriseSoftDeleteCommandHandler(
         mockEnterpriseRepository, 
         mockCampaignRepository, 
@@ -26,46 +23,58 @@ describe('EnterpriseSoftDeleteCommandHandler', () => {
     );
   });
 
-  it('should soft delete enterprise successfully if owned and no active campaigns', async () => {
-    const mockEnterprise = {
-      userId: 'owner-123',
-      softDelete: jest.fn(),
-    };
-    mockEnterpriseRepository.findById.mockResolvedValue(mockEnterprise);
-    mockCampaignRepository.hasActiveCampaigns.mockResolvedValue(false);
+  const enterpriseId = 'ent-123';
+  const userId = 'user-123';
 
-    const command = new EnterpriseSoftDeleteCommand('ent-123', 'owner-123', 'owner-123');
-    await handler.execute(command);
-
-    expect(mockEnterprise.softDelete).toHaveBeenCalledWith('owner-123');
-    expect(mockEnterpriseRepository.save).toHaveBeenCalledWith(mockEnterprise);
+  const createMockEnterprise = () => EnterpriseRoot.instantiate(enterpriseId, {
+    userId: userId,
+    companyName: 'Test Ent',
+    contactEmail: 'test@ent.com',
+    isVerified: true,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    deleteAt: null,
+    deleteBy: null,
   });
 
-  it('should throw ForbiddenException if user is not owner', async () => {
-    const mockEnterprise = {
-      userId: 'owner-123',
-    };
-    mockEnterpriseRepository.findById.mockResolvedValue(mockEnterprise);
+  describe('Happy Path', () => {
+    it('should soft delete enterprise successfully', async () => {
+      const enterprise = createMockEnterprise();
+      mockEnterpriseRepository.findById.mockResolvedValue(enterprise);
+      mockCampaignRepository.hasActiveCampaigns.mockResolvedValue(false);
 
-    const command = new EnterpriseSoftDeleteCommand('ent-123', 'wrong-user', 'any');
-    await expect(handler.execute(command)).rejects.toThrow(EnterpriseForbiddenException);
+      const command = new EnterpriseSoftDeleteCommand(enterpriseId, userId, 'admin-123');
+      await handler.execute(command);
+
+      expect(enterprise.deleteAt).toBeDefined();
+      expect(enterprise.deleteBy).toBe('admin-123');
+      expect(mockEnterpriseRepository.save).toHaveBeenCalledWith(enterprise);
+    });
   });
 
-  it('should throw InvalidOperationException if enterprise has active campaigns', async () => {
-    const mockEnterprise = {
-      userId: 'owner-123',
-    };
-    mockEnterpriseRepository.findById.mockResolvedValue(mockEnterprise);
-    mockCampaignRepository.hasActiveCampaigns.mockResolvedValue(true);
+  describe('Sad Paths', () => {
+    it('should throw EnterpriseNotFoundException if enterprise does not exist', async () => {
+      mockEnterpriseRepository.findById.mockResolvedValue(null);
+      const command = new EnterpriseSoftDeleteCommand(enterpriseId, userId, 'admin-123');
+      await expect(handler.execute(command)).rejects.toThrow(EnterpriseNotFoundException);
+    });
 
-    const command = new EnterpriseSoftDeleteCommand('ent-123', 'owner-123', 'owner-123');
-    await expect(handler.execute(command)).rejects.toThrow(InvalidOperationException);
-  });
+    it('should throw EnterpriseForbiddenException if requester is not owner', async () => {
+      const enterprise = createMockEnterprise();
+      mockEnterpriseRepository.findById.mockResolvedValue(enterprise);
+      
+      const command = new EnterpriseSoftDeleteCommand(enterpriseId, 'wrong-user', 'admin-123');
+      await expect(handler.execute(command)).rejects.toThrow(EnterpriseForbiddenException);
+    });
 
-  it('should throw NotFoundException if enterprise not found', async () => {
-    mockEnterpriseRepository.findById.mockResolvedValue(null);
+    it('should throw InvalidOperationException if enterprise has active campaigns', async () => {
+      const enterprise = createMockEnterprise();
+      mockEnterpriseRepository.findById.mockResolvedValue(enterprise);
+      mockCampaignRepository.hasActiveCampaigns.mockResolvedValue(true);
 
-    const command = new EnterpriseSoftDeleteCommand('ent-123', 'any', 'any');
-    await expect(handler.execute(command)).rejects.toThrow(EnterpriseNotFoundException);
+      const command = new EnterpriseSoftDeleteCommand(enterpriseId, userId, 'admin-123');
+      await expect(handler.execute(command)).rejects.toThrow(InvalidOperationException);
+      expect(mockEnterpriseRepository.save).not.toHaveBeenCalled();
+    });
   });
 });

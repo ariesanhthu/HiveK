@@ -47,4 +47,21 @@ describe('PlatformRoot Aggregate Root', () => {
     root.updateIcon('newicon-id');
     expect(root.icon).toBe('newicon-id');
   });
+
+  it('should soft delete correctly', () => {
+    const root = PlatformRoot.create(createProps);
+    root.softDelete('admin-1');
+
+    expect(root.deleteAt).toBeInstanceOf(Date);
+    expect(root.deleteBy).toBe('admin-1');
+  });
+
+  it('should restore correctly', () => {
+    const root = PlatformRoot.create(createProps);
+    root.softDelete('admin-1');
+    root.restore();
+
+    expect(root.deleteAt).toBeNull();
+    expect(root.deleteBy).toBeNull();
+  });
 });

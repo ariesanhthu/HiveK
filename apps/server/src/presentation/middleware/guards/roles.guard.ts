@@ -4,6 +4,7 @@ import { GqlExecutionContext } from '@nestjs/graphql';
 import { ERoleType } from '@/core/enums';
 import { ROLES_KEY } from '../../decorators/roles.decorator';
 import { IS_PUBLIC_KEY } from '@/presentation/decorators/public.decorator';
+import { isFunction, isEmpty } from '@/shared/utils';
 
 @Injectable()
 export class RolesGuard implements CanActivate {
@@ -14,12 +15,12 @@ export class RolesGuard implements CanActivate {
       context.getHandler(),
       context.getClass(),
     ]);
-    if (!requiredRoles || requiredRoles.length === 0) {
+    if (isEmpty(requiredRoles)) {
       return true;
     }
     
     let request;
-    if (typeof context.getType === 'function' && context.getType() as string === 'graphql') {
+    if (isFunction(context.getType) && context.getType() as string === 'graphql') {
       const ctx = GqlExecutionContext.create(context);
       request = ctx.getContext().req;
     } else {

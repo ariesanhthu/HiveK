@@ -34,4 +34,21 @@ describe('RoleRoot Aggregate Root', () => {
     root.updatePermissions(newPermissions);
     expect(root.permissions).toEqual(newPermissions);
   });
+
+  it('should soft delete correctly', () => {
+    const root = RoleRoot.create(createProps);
+    root.softDelete('admin-1');
+
+    expect(root.deleteAt).toBeInstanceOf(Date);
+    expect(root.deleteBy).toBe('admin-1');
+  });
+
+  it('should restore correctly', () => {
+    const root = RoleRoot.create(createProps);
+    root.softDelete('admin-1');
+    root.restore();
+
+    expect(root.deleteAt).toBeNull();
+    expect(root.deleteBy).toBeNull();
+  });
 });

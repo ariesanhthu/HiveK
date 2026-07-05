@@ -1,3 +1,5 @@
+import { isString } from '@/shared/utils';
+
 /**
  * Utility for sanitizing inputs to prevent NoSQL injection and other malicious queries.
  */
@@ -8,7 +10,7 @@ export class MongoSanitizeUtil {
    * catastrophic backtracking (ReDoS) or unintended query results.
    */
   static escapeRegex(input: string): string {
-    if (typeof input !== 'string') return '';
+    if (!isString(input)) return '';
     return input.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   }
 
@@ -18,7 +20,7 @@ export class MongoSanitizeUtil {
    * Note: NestJS + Zod already prevent object-based injection by validating types.
    */
   static sanitizeString(input: string): string {
-    if (typeof input !== 'string') return '';
+    if (!isString(input)) return '';
     // Basic trimming and cleaning
     return input.trim();
   }

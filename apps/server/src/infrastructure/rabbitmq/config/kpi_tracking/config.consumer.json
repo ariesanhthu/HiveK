@@ -40,7 +40,31 @@
         {
           "exchange": "kpi_exchange",
           "routing_key": "tracking.terminated"
-        }        
+        }
+      ]
+    },
+    {
+      "name": "notification_queue",
+      "type": "classic",
+      "options": {
+        "durable": true,
+        "exclusive": false,
+        "autoDelete": false,
+        "arguments": {}
+      },
+      "bindings": [
+        {
+          "exchange": "kpi_exchange",
+          "routing_key": "notification.verification_otp"
+        },
+        {
+          "exchange": "kpi_exchange",
+          "routing_key": "notification.enterprise_invitation"
+        },
+        {
+          "exchange": "kpi_exchange",
+          "routing_key": "notification.enterprise_revocation"
+        }
       ]
     }
   ],

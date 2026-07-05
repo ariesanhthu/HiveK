@@ -1,25 +1,25 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { Inject } from '@nestjs/common';
-import { CAMPAIGN_PARTICIPANT_REPOSITORY, type ICampaignParticipantRepository } from '@/core/interfaces/repositories/campaign-participant.repository';
+import { CAMPAIGN_REPOSITORY, type ICampaignRepository } from '@/core/interfaces/repositories/campaign.repository';
 import { CampaignParticipantNotFoundException } from '@/core/exceptions';
 import { CampaignParticipantSoftDeleteCommand } from './campaign-participant-soft-delete.command';
 
 @CommandHandler(CampaignParticipantSoftDeleteCommand)
 export class CampaignParticipantSoftDeleteCommandHandler implements ICommandHandler<CampaignParticipantSoftDeleteCommand, void> {
   constructor(
-    @Inject(CAMPAIGN_PARTICIPANT_REPOSITORY)
-    private readonly participantRepository: ICampaignParticipantRepository,
+    @Inject(CAMPAIGN_REPOSITORY)
+    private readonly campaignRepository: ICampaignRepository,
   ) {}
 
   async execute(command: CampaignParticipantSoftDeleteCommand): Promise<void> {
     const { id, deletedBy } = command;
 
-    const participant = await this.participantRepository.findById(id);
-    if (!participant) {
+    const campaign = await this.campaignRepository.findByParticipantId(id);
+    if (!campaign) {
       throw new CampaignParticipantNotFoundException(id);
     }
 
-    participant.softDelete(deletedBy);
-    await this.participantRepository.save(participant);
+    campaign.softDeleteParticipant(id, deletedBy);
+    await this.campaignRepository.save(campaign);
   }
 }

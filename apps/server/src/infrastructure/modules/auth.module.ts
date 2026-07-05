@@ -34,10 +34,9 @@ import {
   TwitterStrategy 
 } from '@infrastructure/auth';
 
-// Modules
-
 // AdminControllers
 import { AuthAdminController, AuthClientController, OAuthController } from '@/presentation/controllers'
+import { AuthUserRmqController } from '@/presentation/controllers';
 
 const COMMAND_HANDLERS = [
   AuthSignInCommandHandler,
@@ -79,12 +78,14 @@ const STRATEGIES = [
   providers: [
     ...COMMAND_HANDLERS,
     ...QUERY_HANDLERS,
-    ...STRATEGIES,JwtStrategy,
+    ...STRATEGIES,
+    JwtStrategy,
     AuthService,
     {
       provide: AUTH_JWT_SERVICE,  
       useClass: JwtAuthService,
     },
+    AuthUserRmqController
   ],
   exports: [JwtStrategy,  AUTH_JWT_SERVICE, AuthService],
 })

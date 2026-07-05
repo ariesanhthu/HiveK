@@ -44,6 +44,10 @@ export class MongoUploadedFileRepository implements IUploadedFileRepository {
     }
   }
 
+  async saveMany(roots: UploadedFileRoot[]): Promise<void> {
+    await Promise.all(roots.map(r => this.save(r)));
+  }
+
   async delete(id: string): Promise<void> {
     await this.model.findByIdAndDelete(id).session(this.session).exec();
   }

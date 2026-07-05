@@ -13,6 +13,7 @@ import { AUTH_JWT_SERVICE } from '@/application/interfaces/auth-jwt.interface';
 import type { IAuthJwtService } from '@/application/interfaces/auth-jwt.interface';
 import { LOGGER_SERVICE } from '@/application/interfaces/logger.interface';
 import type { ILoggerService } from '@/application/interfaces/logger.interface';
+import { errorMessage } from '@/shared/utils';
 
 @NestWebSocketGateway({
   cors: { origin: '*' },
@@ -43,8 +44,7 @@ export class WebSocketGateway implements OnGatewayConnection, OnGatewayDisconnec
       await client.join(room);
       this.logger.log(`Client ${client.id} authenticated and joined user room: ${room}`);
     } catch (error) {
-      const errorMsg = error instanceof Error ? error.message : String(error);
-      this.logger.warn(`Connection rejected: Invalid token (Client: ${client.id}). Error: ${errorMsg}`);
+      this.logger.warn(`Connection rejected: Invalid token (Client: ${client.id}). Error: ${errorMessage(error)}`);
       client.disconnect(true);
     }
   }

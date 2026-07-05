@@ -5,8 +5,10 @@ import { IRoleRepository } from '@/core/interfaces/repositories';
 import { RoleRoot } from '@/core/aggregate-roots';
 import { RoleModel, RoleDocument } from '../schemas';
 import { Nullable } from '@/core/types';
-import { type IUnitOfWork, UNIT_OF_WORK } from '@/application/interfaces';
+import { type IUnitOfWork, UNIT_OF_WORK, CACHE_SERVICE } from '@/application/interfaces';
+import type { ICacheService } from '@/application/interfaces';
 import { MongoUnitOfWork } from '../mongo-uow';
+import { CacheKeyUtil } from '@/shared/utils/cache-key.util';
 
 @Injectable()
 export class MongoRoleRepository implements IRoleRepository {
@@ -15,6 +17,8 @@ export class MongoRoleRepository implements IRoleRepository {
     private readonly roleModel: Model<RoleDocument>,
     @Inject(UNIT_OF_WORK)
     private readonly uow: IUnitOfWork,
+    @Inject(CACHE_SERVICE)
+    private readonly cacheService: ICacheService,
   ) { }
 
   private get session(): ClientSession | undefined {
@@ -41,10 +45,29 @@ export class MongoRoleRepository implements IRoleRepository {
     } else {
       await this.roleModel.findByIdAndUpdate(role.id, data, { upsert: true }).session(this.session).exec();
     }
+
+    await this.invalidateCache(role.id!, role.title);
+  }
+
+  async saveMany(roles: RoleRoot[]): Promise<void> {
+    await Promise.all(roles.map(r => this.save(r)));
   }
 
   async delete(id: string): Promise<void> {
-    await this.roleModel.findByIdAndDelete(id).session(this.session).exec();
+    const doc = await this.roleModel.findById(id).session(this.session).exec();
+    if (doc) {
+      await this.roleModel.findByIdAndDelete(id).session(this.session).exec();
+      await this.invalidateCache(id, doc.title);
+    }
+  }
+
+  private async invalidateCache(id: string, title: string): Promise<void> {
+    const domain = 'role';
+    await Promise.all([
+      this.cacheService.del(CacheKeyUtil.id(domain, id)),
+      this.cacheService.del(CacheKeyUtil.custom(domain, `title:${title.toLowerCase()}`)),
+      this.cacheService.delByPattern(CacheKeyUtil.listPattern(domain)),
+    ]);
   }
 
   private mapToDomain(doc: RoleDocument): RoleRoot {

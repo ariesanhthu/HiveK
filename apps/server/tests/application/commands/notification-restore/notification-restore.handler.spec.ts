@@ -12,10 +12,13 @@ describe('NotificationRestoreCommandHandler', () => {
     handler = new NotificationRestoreCommandHandler(mockUserNotificationRepository);
   });
 
-  it('should trigger restoreMany repository method', async () => {
-    const command = new NotificationRestoreCommand(['receipt-123'], 'user-123');
+  it('should successfully restore notifications', async () => {
+    const ids = ['notif-1', 'notif-2'];
+    const userId = 'user-123';
+    const command = new NotificationRestoreCommand(ids, userId);
+
     await handler.execute(command);
 
-    expect(mockUserNotificationRepository.restoreMany).toHaveBeenCalledWith(['receipt-123'], 'user-123');
+    expect(mockUserNotificationRepository.restoreMany).toHaveBeenCalledWith(ids, userId);
   });
 });

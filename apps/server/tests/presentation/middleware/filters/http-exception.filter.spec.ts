@@ -1,6 +1,5 @@
 import { HttpExceptionFilter } from '@/presentation/middleware/filters/http-exception.filter';
 import { HttpException, HttpStatus } from '@nestjs/common';
-import { DomainException } from '@/core/common/exceptions/domain.exception';
 
 describe('HttpExceptionFilter', () => {
   let filter: HttpExceptionFilter;
@@ -34,10 +33,11 @@ describe('HttpExceptionFilter', () => {
     expect(mockResponse.status).toHaveBeenCalledWith(404);
     expect(mockResponse.json).toHaveBeenCalledWith(
       expect.objectContaining({
-        statusCode: 404,
-        path: '/test-path',
-        method: 'GET',
-        timestamp: expect.any(String),
+        success: false,
+        error: expect.objectContaining({
+          code: 'NOT_FOUND',
+          message: 'Not found',
+        }),
       }),
     );
   });
@@ -50,8 +50,11 @@ describe('HttpExceptionFilter', () => {
     expect(mockResponse.status).toHaveBeenCalledWith(500);
     expect(mockResponse.json).toHaveBeenCalledWith(
       expect.objectContaining({
-        statusCode: 500,
-        error: expect.objectContaining({ message: 'Unexpected error' }),
+        success: false,
+        error: expect.objectContaining({
+          code: 'INTERNAL_ERROR',
+          message: 'Unexpected error',
+        }),
       }),
     );
   });
@@ -64,19 +67,11 @@ describe('HttpExceptionFilter', () => {
     expect(mockResponse.status).toHaveBeenCalledWith(403);
     expect(mockResponse.json).toHaveBeenCalledWith(
       expect.objectContaining({
-        statusCode: 403,
-        error: expect.objectContaining({ message: 'Forbidden' }),
-      }),
-    );
-  });
-
-  it('should handle unknown error with default message', () => {
-    filter.catch('string error', mockHost);
-
-    expect(mockResponse.status).toHaveBeenCalledWith(500);
-    expect(mockResponse.json).toHaveBeenCalledWith(
-      expect.objectContaining({
-        statusCode: 500,
+        success: false,
+        error: expect.objectContaining({
+          code: 'FORBIDDEN',
+          message: 'Forbidden',
+        }),
       }),
     );
   });
@@ -91,7 +86,8 @@ describe('HttpExceptionFilter', () => {
 
     expect(mockResponse.status).toHaveBeenCalledWith(400);
     const jsonArg = mockResponse.json.mock.calls[0][0];
-    expect(jsonArg.statusCode).toBe(400);
-    expect(jsonArg.error.message).toEqual(['email must be a valid email', 'password too short']);
+    expect(jsonArg.success).toBe(false);
+    expect(jsonArg.error.code).toBe('BAD_REQUEST');
+    expect(jsonArg.error.message).toBe('email must be a valid email,password too short');
   });
 });

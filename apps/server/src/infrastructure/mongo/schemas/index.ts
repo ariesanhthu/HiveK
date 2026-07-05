@@ -9,5 +9,7 @@ export * from './uploaded-file.schema';
 export * from './notification.schema';
 export * from './user-notification.schema';
 export * from './otp.schema';
-export * from './campaign-participant.schema';
+export * from './outbox.schema';
+export * from './campaign-proposal.schema';
+export * from './public-review.schema';
 

@@ -4,7 +4,7 @@
 This document outlines the event-driven architecture for tracking KPI metrics (views, likes, comments, shares) of KOL outputs via a distributed Crawler service. 
 
 The core philosophy follows a strict separation of concerns:
-- **Server (NestJS)**: Owns the database, manages business state (`CampaignParticipant`, `KpiLog`), and pushes real-time updates to clients via WebSockets.
+- **Server (NestJS)**: Owns the database, manages business state (`Campaign` aggregate, `KpiLog`), and pushes real-time updates to clients via WebSockets.
 - **Crawler (Python/Worker)**: Handles the heavy lifting of scraping external platforms, manages its own scheduling via delayed queues, and reports back.
 
 ---
@@ -29,8 +29,8 @@ The current server-side implementation does not create or terminate KPI tracking
 1. The RMQ controller listens on `server_kpi_queue` for `tracking.terminated`.
 2. `KpiLogRmqController.handleTrackingTerminated()` forwards the payload to `KpiLogTerminateCommand`.
 3. `KpiLogTerminateCommandHandler` validates `participantId` and `outputId`.
-4. It loads the `CampaignParticipant` aggregate and calls `updateTrackingStatus(outputId, false)`.
-5. The participant is saved back to the repository.
+4. It loads the `CampaignRoot` aggregate using the campaign repository and calls `campaign.updateTrackingStatus(outputId, false)`.
+5. The campaign aggregate is saved back to the campaign repository.
 6. The handler publishes `KpiTrackingTerminatedEvent(participantId, outputId)`.
 7. `KpiTrackingEventsHandler` emits the websocket message `kpi_tracking_terminated` to the KOL user.
 

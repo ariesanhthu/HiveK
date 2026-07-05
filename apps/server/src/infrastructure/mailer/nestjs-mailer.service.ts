@@ -2,6 +2,7 @@ import { Injectable, Inject } from '@nestjs/common';
 import { MailerService as NestMailService } from '@nestjs-modules/mailer';
 import type { IMailerService, ISendMailOptions, ILoggerService } from '@/application/interfaces';
 import { LOGGER_SERVICE } from '@/application/interfaces';
+import { errorMessage, toError } from '@/shared/utils';
 
 @Injectable()
 export class NestjsMailerService implements IMailerService {
@@ -37,8 +38,8 @@ export class NestjsMailerService implements IMailerService {
       await this.mailerService.sendMail(mailOptions);
       this.logger.log(`✓ Email sent successfully to ${options.to}`);
     } catch (error) {
-      const errorMsg = error instanceof Error ? error.message : String(error);
-      this.logger.error(`Failed to send email to ${options.to}: ${errorMsg}`, error instanceof Error ? error.stack : undefined);
+      const { message, stack } = toError(error);
+      this.logger.error(`Failed to send email to ${options.to}: ${message}`, stack);
       throw error;
     }
   }

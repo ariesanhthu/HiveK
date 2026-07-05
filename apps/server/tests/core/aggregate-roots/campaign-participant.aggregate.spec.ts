@@ -142,5 +142,117 @@ describe('CampaignParticipantRoot', () => {
       expect(participant.outputs[0].url).toBe('https://instagram.com/myreels');
       expect(participant.outputs[0].postedAt).toBeInstanceOf(Date);
     });
+
+    it('should throw error when publishing non-existent output', () => {
+      const participant = CampaignParticipantRoot.create(validProps);
+      expect(() => participant.publishOutput('invalid-id', 'url')).toThrow("Output with ID 'invalid-id' not found");
+    });
+
+    it('should update tracking status', () => {
+      const participant = CampaignParticipantRoot.create(validProps);
+      participant.addOutput({
+        id: 'out-1',
+        platformId: 'plat-1',
+        outputType: EOutputType.VIDEO,
+        title: 'Video',
+        isScheduleForPost: false,
+        fileId: null,
+        scheduledAt: null,
+        url: 'http://url',
+      });
+
+      participant.updateTrackingStatus('out-1', false);
+      expect(participant.outputs[0].isTrackingActive).toBe(false);
+
+      participant.updateTrackingStatus('out-1', true);
+      expect(participant.outputs[0].isTrackingActive).toBe(true);
+    });
+
+    it('should set output file id', () => {
+      const participant = CampaignParticipantRoot.create(validProps);
+      participant.addOutput({
+        id: 'out-1',
+        platformId: 'plat-1',
+        outputType: EOutputType.VIDEO,
+        title: 'Video',
+        isScheduleForPost: false,
+        fileId: null,
+        scheduledAt: null,
+        url: 'http://url',
+      });
+
+      participant.setOutputFileId('out-1', 'new-file-id');
+      expect(participant.outputs[0].fileId).toBe('new-file-id');
+    });
+  });
+
+  describe('Deletion and Update', () => {
+    it('should soft delete and restore', () => {
+      const participant = CampaignParticipantRoot.create(validProps);
+      participant.softDelete('admin-1');
+      expect(participant.deleteAt).toBeInstanceOf(Date);
+      expect(participant.deleteBy).toBe('admin-1');
+
+      participant.restore();
+      expect(participant.deleteAt).toBeNull();
+      expect(participant.deleteBy).toBeNull();
+    });
+
+    it('should throw error if soft deleting participant with published outputs', () => {
+      const participant = CampaignParticipantRoot.create(validProps);
+      participant.addOutput({
+        id: 'out-1',
+        platformId: 'plat-1',
+        outputType: EOutputType.VIDEO,
+        title: 'Video',
+        isScheduleForPost: false,
+        fileId: null,
+        scheduledAt: null,
+        url: 'http://url',
+      });
+
+      expect(() => participant.softDelete('admin-1')).toThrow('Cannot delete participant with published outputs');
+    });
+
+    it('should update properties', () => {
+      const participant = CampaignParticipantRoot.create(validProps);
+      participant.update({ status: EParticipantStatus.JOINED });
+      expect(participant.status).toBe(EParticipantStatus.JOINED);
+    });
+
+    it('should update outputs correctly', () => {
+      const participant = CampaignParticipantRoot.create(validProps);
+      const newOutputs = [{
+        id: 'out-2',
+        platformId: 'plat-2',
+        outputType: EOutputType.VIDEO,
+        title: 'Video 2',
+        isScheduleForPost: true,
+        fileId: null,
+        scheduledAt: new Date(),
+        status: EOutputStatus.SCHEDULED,
+        url: null,
+        postedAt: null,
+        isTrackingActive: false,
+      }];
+      participant.updateOutputs(newOutputs);
+      expect(participant.outputs).toEqual(newOutputs);
+    });
+
+    it('should throw error when updating outputs that delete published ones', () => {
+      const participant = CampaignParticipantRoot.create(validProps);
+      participant.addOutput({
+        id: 'out-1',
+        platformId: 'plat-1',
+        outputType: EOutputType.VIDEO,
+        title: 'Published Video',
+        isScheduleForPost: false,
+        fileId: null,
+        scheduledAt: null,
+        url: 'http://url',
+      });
+
+      expect(() => participant.updateOutputs([])).toThrow('Cannot delete published output: Published Video');
+    });
   });
 });

@@ -1,7 +1,7 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, QueryFilter } from 'mongoose';
-import { IKolProfileReadService } from '@/application/interfaces';
+import { IKolProfileReadService, type ILoggerService, LOGGER_SERVICE } from '@/application/interfaces';
 import { KolProfileDetailDto } from '@/application/dtos';
 import { KolProfileFilterDto } from '@/application/queries';
 import { KolProfileModel, KolProfileDocument } from '../schemas';
@@ -14,9 +14,12 @@ export class MongoKolProfileReadService implements IKolProfileReadService {
   constructor(
     @InjectModel(KolProfileModel.name)
     private readonly kolProfileModel: Model<KolProfileDocument>,
+    @Inject(LOGGER_SERVICE)
+    private readonly logger: ILoggerService,
   ) { }
 
   async findAll(filters: KolProfileFilterDto = {} as any): Promise<PaginatedResponseDto<KolProfileDetailDto>> {
+    const start = performance.now();
     const { cursor, limit = 10, sort = SortOrder.DESC, name, location, gender, isVerified, categories, tags } = filters;
     const query: QueryFilter<KolProfileDocument> = {};
 
@@ -54,6 +57,10 @@ export class MongoKolProfileReadService implements IKolProfileReadService {
     const hasNextPage = docs.length > limit;
     const results = hasNextPage ? docs.slice(0, limit) : docs;
     const nextCursor = hasNextPage ? results[results.length - 1]._id.toString() : null;
+
+    const duration = performance.now() - start;
+    // Log ra để quan sát trong lúc K6 đang bắn tải
+    this.logger.log(`MongoDB Query executed in ${duration.toFixed(2)}ms`);
 
     return new PaginatedResponseDto(
       results.map((doc) => this.mapToDto(doc)),

@@ -8,3 +8,5 @@ export * from './uploaded-file.exception';
 export * from './notification.exception';
 export * from './general.exception';
 export * from './auth.exception';
+export * from './proposal.exception';
+export * from './review.exception';

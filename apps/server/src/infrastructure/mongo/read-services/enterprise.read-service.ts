@@ -1,32 +1,58 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Inject } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, QueryFilter, Types } from 'mongoose';
-import { IEnterpriseReadService } from '@/application/interfaces';
+import { IEnterpriseReadService, CACHE_SERVICE } from '@/application/interfaces';
+import type { ICacheService } from '@/application/interfaces';
 import { EnterpriseModel, type EnterpriseDocument } from '../schemas/enterprise.schema';
 import { Nullable } from '@/core/types';
 import { EnterpriseDetailDto } from '@/application/dtos';
 import { EnterpriseFilterDto } from '@/application/queries/enterprise-get-list/enterprise-get-list.dto';
 import { PaginatedResponseDto, SortOrder } from '@/application/dtos/pagination.dto';
 import { MongoSanitizeUtil } from '../utils';
+import { CacheKeyUtil } from '@/shared/utils/cache-key.util';
 
 @Injectable()
 export class MongoEnterpriseReadService implements IEnterpriseReadService {
+  private readonly domain = 'enterprise';
+
   constructor(
     @InjectModel(EnterpriseModel.name)
     private readonly enterpriseModel: Model<EnterpriseDocument>,
+    @Inject(CACHE_SERVICE)
+    private readonly cacheService: ICacheService,
   ) { }
 
   async findById(id: string): Promise<Nullable<EnterpriseDetailDto>> {
+    const cacheKey = CacheKeyUtil.id(this.domain, id);
+    const cached = await this.cacheService.get<EnterpriseDetailDto>(cacheKey);
+    if (cached) return cached;
+
     const doc = await this.enterpriseModel.findById(id).populate('user_id').populate('logo_url_id').lean().exec();
-    return doc ? this.mapToDto(doc) : null;
+    if (!doc) return null;
+
+    const dto = this.mapToDto(doc);
+    await this.cacheService.set(cacheKey, dto, 3600);
+    return dto;
   }
 
   async findByUserId(userId: string): Promise<Nullable<EnterpriseDetailDto>> {
+    const cacheKey = CacheKeyUtil.custom(this.domain, `userId:${userId}`);
+    const cached = await this.cacheService.get<EnterpriseDetailDto>(cacheKey);
+    if (cached) return cached;
+
     const doc = await this.enterpriseModel.findOne({ user_id: new Types.ObjectId(userId) as any }).populate('user_id').populate('logo_url_id').lean().exec();
-    return doc ? this.mapToDto(doc) : null;
+    if (!doc) return null;
+
+    const dto = this.mapToDto(doc);
+    await this.cacheService.set(cacheKey, dto, 3600);
+    return dto;
   }
 
   async findAll(filters: EnterpriseFilterDto = {} as any): Promise<PaginatedResponseDto<EnterpriseDetailDto>> {
+    const cacheKey = CacheKeyUtil.list(this.domain, filters);
+    const cached = await this.cacheService.get<PaginatedResponseDto<EnterpriseDetailDto>>(cacheKey);
+    if (cached) return cached;
+
     const { cursor, limit = 10, sort = SortOrder.DESC, companyName, contactEmail, taxId, isVerified } = filters;
     const query: QueryFilter<EnterpriseDocument> = {};
 
@@ -60,12 +86,15 @@ export class MongoEnterpriseReadService implements IEnterpriseReadService {
     const results = hasNextPage ? docs.slice(0, limit) : docs;
     const nextCursor = hasNextPage ? results[results.length - 1]._id.toString() : null;
 
-    return new PaginatedResponseDto(
+    const response = new PaginatedResponseDto(
       results.map((doc) => this.mapToDto(doc)),
       nextCursor,
       hasNextPage,
       limit,
     );
+
+    await this.cacheService.set(cacheKey, response, 300);
+    return response;
   }
 
   private mapToDto(doc: any): EnterpriseDetailDto {

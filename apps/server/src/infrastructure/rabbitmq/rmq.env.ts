@@ -1,18 +1,15 @@
+import { env, envInt } from '@/shared/utils';
+
 export const getRmqUri = (): string => {
-  const {
-    RMQ_USER,
-    RMQ_PASSWORD,
-    RMQ_HOST,
-    RMQ_PORT,
-    RMQ_VHOST,
-  } = process.env;
+  const protocol = env('RMQ_PROTOCOL', 'amqp');
+  const RMQ_USER = env('RMQ_USER');
+  const RMQ_PASSWORD = env('RMQ_PASSWORD');
+  const RMQ_HOST = env('RMQ_HOST');
+  const defaultPort = protocol === 'amqps' ? 5671 : 5672;
+  const port = envInt('RMQ_PORT', defaultPort);
 
-  if (!RMQ_USER || !RMQ_PASSWORD || !RMQ_HOST) {
-    throw new Error('Missing required RabbitMQ env vars (RMQ_USER, RMQ_PASSWORD, RMQ_HOST)');
-  }
+  const vhost = env('RMQ_VHOST', '/').replace(/^\//, '');
+  const vhostPart = vhost ? `/${encodeURIComponent(vhost)}` : '';
 
-  const portPart = RMQ_PORT ? `:${RMQ_PORT}` : '';
-  const vhostPart = RMQ_VHOST ? `/${encodeURIComponent(RMQ_VHOST)}` : '';
-
-  return `amqps://${encodeURIComponent(RMQ_USER)}:${encodeURIComponent(RMQ_PASSWORD)}@${RMQ_HOST}${portPart}${vhostPart}`;
+  return `${protocol}://${encodeURIComponent(RMQ_USER)}:${encodeURIComponent(RMQ_PASSWORD)}@${RMQ_HOST}:${port}${vhostPart}`;
 };

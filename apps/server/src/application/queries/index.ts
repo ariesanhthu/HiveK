@@ -63,3 +63,19 @@ export * from './campaign-participant-get-list/campaign-participant-get-list.que
 export * from './campaign-participant-get-list/campaign-participant-get-list.handler';
 export * from './campaign-participant-get-list/campaign-participant-get-list.dto';
 
+// Campaign Proposal Queries
+export * from './proposal-get-by-slug/proposal-get-by-slug.query';
+export * from './proposal-get-by-slug/proposal-get-by-slug.handler';
+export * from './proposal-get-by-id/proposal-get-by-id.query';
+export * from './proposal-get-by-id/proposal-get-by-id.handler';
+export * from './proposal-get-list/proposal-get-list.query';
+export * from './proposal-get-list/proposal-get-list.handler';
+export * from './proposal-get-list/proposal-get-list.dto';
+
+// Public Review Queries
+export * from './review-get-by-id/review-get-by-id.query';
+export * from './review-get-by-id/review-get-by-id.handler';
+export * from './review-get-list/review-get-list.query';
+export * from './review-get-list/review-get-list.handler';
+export * from './review-get-list/review-get-list.dto';
+

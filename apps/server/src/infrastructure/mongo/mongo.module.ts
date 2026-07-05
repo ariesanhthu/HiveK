@@ -2,7 +2,7 @@ import { Global, Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigService } from '@nestjs/config';
 import { MongoUnitOfWork } from './mongo-uow';
-import { UNIT_OF_WORK } from '@/application/interfaces';
+import { CAMPAIGN_PROPOSAL_READ_SERVICE, PUBLIC_REVIEW_READ_SERVICE, UNIT_OF_WORK } from '@/application/interfaces';
 import {
   UserModel, UserSchema,
   AdminModel, AdminSchema,
@@ -13,12 +13,16 @@ import {
   PlatformModel, PlatformSchema,
   KolProfileModel, KolProfileSchema,
   CampaignModel, CampaignSchema,
-  CampaignParticipantModel, CampaignParticipantSchema,
   NotificationModel, NotificationSchema,
   UserNotificationModel, UserNotificationSchema,
   UploadedFileModel, UploadedFileSchema,
   OtpModel, OtpSchema,
   KpiLogModel, KpiLogSchema,
+  OutboxModel, OutboxSchema,
+  PublicReviewSchema,
+  PublicReviewModel,
+  CampaignProposalSchema,
+  CampaignProposalModel,
 } from './schemas';
 
 // Repository imports
@@ -29,7 +33,6 @@ import {
   MongoPlatformRepository,
   MongoKolProfileRepository,
   MongoCampaignRepository,
-  MongoCampaignParticipantRepository,
   MongoNotificationRepository,
   MongoUserNotificationRepository,
   MongoUploadedFileRepository,
@@ -59,12 +62,13 @@ import {
   PLATFORM_REPOSITORY,
   KOL_PROFILE_REPOSITORY,
   CAMPAIGN_REPOSITORY,
-  CAMPAIGN_PARTICIPANT_REPOSITORY,
   NOTIFICATION_REPOSITORY,
   USER_NOTIFICATION_REPOSITORY,
   UPLOADED_FILE_REPOSITORY,
   OTP_REPOSITORY,
   KPI_LOG_REPOSITORY,
+  PUBLIC_REVIEW_REPOSITORY,
+  CAMPAIGN_PROPOSAL_REPOSITORY,
 } from '@/core/interfaces/repositories';
 
 // Read Service symbols
@@ -83,6 +87,10 @@ import {
 
 import { RoleSeedService } from './seeding/role-seed.service';
 import { ERoleType } from '@/core/enums';
+import { MongoPublicReviewReadService } from './read-services/public-review.read-service';
+import { MongoPublicReviewRepository } from './repositories/public-review.repository';
+import { MongoCampaignProposalRepository } from './repositories/campaign-proposal.repository';
+import { MongoCampaignProposalReadService } from './read-services/campaign-proposal.read-service';
 
 @Global()
 @Module({
@@ -110,12 +118,14 @@ import { ERoleType } from '@/core/enums';
       { name: PlatformModel.name, schema: PlatformSchema },
       { name: KolProfileModel.name, schema: KolProfileSchema },
       { name: CampaignModel.name, schema: CampaignSchema },
-      { name: CampaignParticipantModel.name, schema: CampaignParticipantSchema },
       { name: NotificationModel.name, schema: NotificationSchema },
       { name: UserNotificationModel.name, schema: UserNotificationSchema },
       { name: UploadedFileModel.name, schema: UploadedFileSchema },
       { name: OtpModel.name, schema: OtpSchema },
       { name: KpiLogModel.name, schema: KpiLogSchema },
+      { name: OutboxModel.name, schema: OutboxSchema },
+      { name: PublicReviewModel.name, schema: PublicReviewSchema },
+      { name: CampaignProposalModel.name, schema: CampaignProposalSchema },
     ]),
   ],
   providers: [
@@ -150,10 +160,6 @@ import { ERoleType } from '@/core/enums';
       useClass: MongoCampaignRepository,
     },
     {
-      provide: CAMPAIGN_PARTICIPANT_REPOSITORY,
-      useClass: MongoCampaignParticipantRepository,
-    },
-    {
       provide: NOTIFICATION_REPOSITORY,
       useClass: MongoNotificationRepository,
     },
@@ -172,6 +178,14 @@ import { ERoleType } from '@/core/enums';
     {
       provide: KPI_LOG_REPOSITORY,
       useClass: MongoKpiLogRepository
+    },
+    {
+      provide: PUBLIC_REVIEW_REPOSITORY,
+      useClass: MongoPublicReviewRepository,
+    },
+    {
+      provide: CAMPAIGN_PROPOSAL_REPOSITORY,
+      useClass: MongoCampaignProposalRepository,
     },
     // All Read Services
     {
@@ -214,6 +228,14 @@ import { ERoleType } from '@/core/enums';
       provide: KPI_LOG_READ_SERVICE,
       useClass: MongoKpiLogReadService,
     },
+    {
+      provide: PUBLIC_REVIEW_READ_SERVICE,
+      useClass: MongoPublicReviewReadService,
+    },
+    {
+      provide: CAMPAIGN_PROPOSAL_READ_SERVICE,
+      useClass: MongoCampaignProposalReadService,
+    },
     // Seed service
     RoleSeedService,
   ],
@@ -226,12 +248,13 @@ import { ERoleType } from '@/core/enums';
     PLATFORM_REPOSITORY,
     KOL_PROFILE_REPOSITORY,
     CAMPAIGN_REPOSITORY,
-    CAMPAIGN_PARTICIPANT_REPOSITORY,
     NOTIFICATION_REPOSITORY,
     USER_NOTIFICATION_REPOSITORY,
     UPLOADED_FILE_REPOSITORY,
     OTP_REPOSITORY,
     KPI_LOG_REPOSITORY,
+    CAMPAIGN_PROPOSAL_REPOSITORY,
+    PUBLIC_REVIEW_REPOSITORY,
     // Export all read service tokens
     USER_READ_SERVICE,
     ROLE_READ_SERVICE,
@@ -243,6 +266,8 @@ import { ERoleType } from '@/core/enums';
     NOTIFICATION_READ_SERVICE,
     UPLOADED_FILE_READ_SERVICE,
     KPI_LOG_READ_SERVICE,
+    CAMPAIGN_PROPOSAL_READ_SERVICE,
+    PUBLIC_REVIEW_READ_SERVICE,
     // Export MongooseModule so domain modules can use the models if needed
     MongooseModule,
     RoleSeedService,

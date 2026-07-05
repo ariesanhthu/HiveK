@@ -2,6 +2,7 @@ import { Injectable, Inject, Logger } from '@nestjs/common';
 import { IMessageQueueService } from '@application/interfaces';
 import { RawRabbitMQProducerClient } from './raw-rabbitmq-producer';
 import type { RabbitMQProducerConfig } from '@/infrastructure/rabbitmq/types/rabbitmq.types';
+import { errorMessage } from '@/shared/utils';
 
 export const RABBITMQ_PRODUCER_CLIENT = 'RABBITMQ_PRODUCER_CLIENT';
 export const RABBITMQ_CONFIG = 'RABBITMQ_CONFIG';
@@ -28,8 +29,7 @@ export class RabbitMQService implements IMessageQueueService {
       );
       await this.producer.publish(routingKey, data);
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : String(error);
-      this.logger.error(`Failed to emit event "${pattern}": ${errorMessage}`);
+      this.logger.error(`Failed to emit event "${pattern}": ${errorMessage(error)}`);
       throw error;
     }
   }

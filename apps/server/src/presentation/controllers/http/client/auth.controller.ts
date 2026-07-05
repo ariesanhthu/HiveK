@@ -30,6 +30,7 @@ import { Public } from '@/presentation/decorators/public.decorator';
 import { AuthGuard } from '@nestjs/passport';
 import { Throttle } from '@nestjs/throttler';
 import { UserUpdateInputDto } from '@/application/commands/user-update/user-update.dto';
+import { env } from '@/shared/utils';
 
 @ApiTags('CLIENT-auth')
 @ApiBearerAuth()
@@ -73,7 +74,7 @@ export class AuthClientController {
     if (result && result.accessToken) {
       response.cookie('access_token', result.accessToken, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
+        secure: env('NODE_ENV', 'development') === 'production',
         sameSite: 'lax',
         maxAge: 24 * 60 * 60 * 1000, // 1 day
       });
@@ -81,7 +82,7 @@ export class AuthClientController {
     if (result && result.refreshToken) {
       response.cookie('refresh_token', result.refreshToken, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
+        secure: env('NODE_ENV', 'development') === 'production',
         sameSite: 'lax',
         maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
       });
@@ -115,7 +116,7 @@ export class AuthClientController {
     if (result && result.accessToken) {
       response.cookie('access_token', result.accessToken, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
+        secure: env('NODE_ENV', 'development') === 'production',
         sameSite: 'lax',
         maxAge: 24 * 60 * 60 * 1000, // 1 day
       });
@@ -123,7 +124,7 @@ export class AuthClientController {
     if (result && result.refreshToken) {
       response.cookie('refresh_token', result.refreshToken, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
+        secure: env('NODE_ENV', 'development') === 'production',
         sameSite: 'lax',
         maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
       });

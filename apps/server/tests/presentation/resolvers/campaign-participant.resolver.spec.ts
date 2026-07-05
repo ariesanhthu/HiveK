@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { QueryBus } from '@nestjs/cqrs';
-import { CampaignParticipantResolver } from '@/presentation/resolvers/campaign-participant.resolver';
+import { CampaignParticipantResolver } from '@/presentation/controllers/resolvers/campaign-participant.resolver';
 import { CampaignParticipantGetByIdQuery, CampaignParticipantGetListQuery } from '@/application/queries';
 import { ProjectionDto } from '@/application/dtos/projection.dto';
 

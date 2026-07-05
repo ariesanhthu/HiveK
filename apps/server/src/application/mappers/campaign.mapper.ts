@@ -23,6 +23,52 @@ export class CampaignMapper {
         fileId: r.fileId,
         rawContent: r.rawContent,
       })),
+      schedule: root.schedule ? {
+        timeline: root.schedule.timeline.map((day) => ({
+          date: day.date,
+          label: day.label,
+          posts: day.posts.map((post) => ({
+            scheduledTime: post.scheduledTime,
+            platformId: post.platformId,
+            status: post.status,
+            campaignKOLOutputs: post.campaignKOLOutputs.map((o) => ({
+              id: o.id!,
+              campaignParticipantId: o.campaignParticipantId,
+              platformId: o.platformId,
+              uniqueId: o.uniqueId || null,
+              outputType: o.outputType,
+              title: o.title,
+              isScheduleForPost: o.isScheduleForPost,
+              scheduledAt: o.scheduledAt,
+              fileId: o.fileId,
+              status: o.status,
+              url: o.url,
+              postedAt: o.postedAt,
+              isTrackingActive: o.isTrackingActive,
+            })),
+            campaignEnterpriseOutputs: post.campaignEnterpriseOutputs.map((o) => ({
+              id: o.id!,
+              platformId: o.platformId,
+              uniqueId: o.uniqueId || null,
+              outputType: o.outputType,
+              title: o.title,
+              isScheduleForPost: o.isScheduleForPost,
+              scheduledAt: o.scheduledAt,
+              fileId: o.fileId,
+              status: o.status,
+              url: o.url,
+              postedAt: o.postedAt,
+              isTrackingActive: o.isTrackingActive,
+            })),
+          })),
+        })),
+      } : undefined,
+      participants: root.participants.map((p) => ({
+        id: p.id!,
+        kolProfileId: p.kolProfileId,
+        status: p.status,
+        joinedAt: p.joinedAt,
+      })),
     };
   }
 

@@ -4,6 +4,7 @@ import helmet from 'helmet';
 import { LoggingInterceptor, TransformInterceptor } from '@/presentation/middleware/interceptors';
 import { HttpExceptionFilter } from '@/presentation/middleware/filters';
 import { RabbitMQFactoryService } from '@infrastructure/rabbitmq';
+import { errorMessage } from '@/shared/utils';
 
 export function setupApplication(app: INestApplication): void {
   // Apply Security Headers
@@ -90,9 +91,9 @@ export async function setupRabbitMQMicroservice(
       return; // Success, exit retry loop
     } catch (error) {
       retries++;
-      const errorMessage = error instanceof Error ? error.message : String(error);
+      const errMsg = errorMessage(error);
       logger.warn(
-        `⚠️ Failed to connect RabbitMQ microservice (attempt ${retries}): ${errorMessage}\n` +
+        `⚠️ Failed to connect RabbitMQ microservice (attempt ${retries}): ${errMsg}\n` +
         `   Retrying in ${delayMs}ms...`
       );
 

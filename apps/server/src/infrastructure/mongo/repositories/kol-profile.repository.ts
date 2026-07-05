@@ -63,6 +63,10 @@ export class MongoKolProfileRepository implements IKolProfileRepository {
     }
   }
 
+  async saveMany(entities: KolProfileEntity[]): Promise<void> {
+    await Promise.all(entities.map(e => this.save(e)));
+  }
+
   async delete(id: string): Promise<void> {
     await this.kolProfileModel.findByIdAndDelete(id).session(this.session).exec();
   }

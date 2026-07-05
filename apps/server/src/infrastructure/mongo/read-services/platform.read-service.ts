@@ -1,22 +1,32 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Inject } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, QueryFilter } from 'mongoose';
 import { PlatformDocument, PlatformModel } from '../schemas';
-import { IPlatformReadService } from '@/application/interfaces';
+import { IPlatformReadService, CACHE_SERVICE } from '@/application/interfaces';
+import type { ICacheService } from '@/application/interfaces';
 import { Nullable } from '@/core/types';
 import { PlatformDetailDto } from '@/application/dtos';
 import { PlatformFilterDto } from '@/application/queries';
 import { PaginatedResponseDto, SortOrder } from '@/application/dtos/pagination.dto';
 import { MongoSanitizeUtil } from '../utils';
+import { CacheKeyUtil } from '@/shared/utils/cache-key.util';
 
 @Injectable()
 export class MongoPlatformReadService implements IPlatformReadService {
+  private readonly domain = 'platform';
+
   constructor(
     @InjectModel(PlatformModel.name)
     private readonly platformModel: Model<PlatformDocument>,
+    @Inject(CACHE_SERVICE)
+    private readonly cacheService: ICacheService,
   ) { }
 
   async findAll(filters: PlatformFilterDto = {} as any): Promise<PaginatedResponseDto<PlatformDetailDto>> {
+    const cacheKey = CacheKeyUtil.list(this.domain, filters);
+    const cached = await this.cacheService.get<PaginatedResponseDto<PlatformDetailDto>>(cacheKey);
+    if (cached) return cached;
+
     const { cursor, limit = 10, sort = SortOrder.DESC, name, apiStatus } = filters;
     const query: QueryFilter<PlatformDocument> = {};
 
@@ -44,22 +54,44 @@ export class MongoPlatformReadService implements IPlatformReadService {
     const results = hasNextPage ? docs.slice(0, limit) : docs;
     const nextCursor = hasNextPage ? results[results.length - 1]._id.toString() : null;
 
-    return new PaginatedResponseDto(
+    const response = new PaginatedResponseDto(
       results.map((doc) => this.mapToDto(doc)),
       nextCursor,
       hasNextPage,
       limit,
     );
+
+    // Cache list queries for 5 minutes
+    await this.cacheService.set(cacheKey, response, 300);
+    return response;
   }
 
   async findById(id: string): Promise<Nullable<PlatformDetailDto>> {
+    const cacheKey = CacheKeyUtil.id(this.domain, id);
+    const cached = await this.cacheService.get<PlatformDetailDto>(cacheKey);
+    if (cached) return cached;
+
     const doc = await this.platformModel.findById(id).populate('icon').lean().exec();
-    return doc ? this.mapToDto(doc) : null;
+    if (!doc) return null;
+
+    const dto = this.mapToDto(doc);
+    // Cache details for 1 hour
+    await this.cacheService.set(cacheKey, dto, 3600);
+    return dto;
   }
 
   async findByName(name: string): Promise<Nullable<PlatformDetailDto>> {
+    const cacheKey = CacheKeyUtil.custom(this.domain, `name:${name.toLowerCase()}`);
+    const cached = await this.cacheService.get<PlatformDetailDto>(cacheKey);
+    if (cached) return cached;
+
     const doc = await this.platformModel.findOne({ name: name.toLowerCase() }).populate('icon').lean().exec();
-    return doc ? this.mapToDto(doc) : null;
+    if (!doc) return null;
+
+    const dto = this.mapToDto(doc);
+    // Cache details for 1 hour
+    await this.cacheService.set(cacheKey, dto, 3600);
+    return dto;
   }
 
   private mapToDto(doc: any): PlatformDetailDto {

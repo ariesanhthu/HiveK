@@ -5,6 +5,7 @@ import { Inject } from '@nestjs/common';
 import { USER_REPOSITORY, type IUserRepository } from '@/core/interfaces/repositories';
 import { AuthService } from '@/application/services/auth.service';
 import { InvalidCredentialsException } from '@/core/exceptions';
+import { ERoleType } from '@/core/enums';
 
 @CommandHandler(AuthSignInCommand)
 export class AuthSignInCommandHandler implements ICommandHandler<AuthSignInCommand, AuthSignInOutputDto> {
@@ -15,11 +16,15 @@ export class AuthSignInCommandHandler implements ICommandHandler<AuthSignInComma
   ) { }
 
   async execute(command: AuthSignInCommand): Promise<AuthSignInOutputDto> {
-    const { input } = command;
+    const { input, isAdmin } = command;
 
     const normalizedEmail = this.authService.normalizeEmail(input.email);
     const user = await this.userRepository.findByEmail(normalizedEmail);
     if (!user) {
+      throw new InvalidCredentialsException();
+    }
+
+    if (isAdmin && user.type !== ERoleType.ADMIN) {
       throw new InvalidCredentialsException();
     }
 

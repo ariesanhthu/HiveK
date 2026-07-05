@@ -18,15 +18,23 @@ import { CampaignModule } from './campaign.module';
 import { UploadedFileModule } from './uploaded-file.module';
 import { NotificationModule } from './notification.module';
 import { CampaignParticipantModule } from './campaign-participant.module';
+import { CampaignProposalModule } from './campaign-proposal.module';
+import { PublicReviewModule } from './public-review.module';
 import { TestRmqHandler } from '../../presentation/controllers/rmq/test-rmq.controller';
 import { GraphqlModule } from '../graphql';
 import { HttpExceptionFilter } from '@/presentation/middleware/filters';
 import { LoggingInterceptor, TransformInterceptor } from '@/presentation/middleware/interceptors';
+import { ScheduleModule } from '@nestjs/schedule';
+import { RedisCacheModule } from '../cache/redis/redis-cache.module';
+import { EventsModule } from '../events/events.module';
+import { EventEmitterModule } from '@nestjs/event-emitter';
 
 @Module({
   imports: [
     // ConfigModule.forRoot({ isGlobal: true }),
     InfrastructureModule,
+    ScheduleModule.forRoot(),
+    EventEmitterModule.forRoot(),
     MongoModule,
     UserModule,
     EnterpriseModule,
@@ -39,15 +47,19 @@ import { LoggingInterceptor, TransformInterceptor } from '@/presentation/middlew
     CampaignParticipantModule,
     UploadedFileModule,
     NotificationModule,
+    CampaignProposalModule,
+    PublicReviewModule,
     RabbitMQModule,
     WebSocketModule,
     GraphqlModule,
-    ThrottlerModule.forRoot([
-      {
-        ttl: 60000, // 1 minute
-        limit: 60, // 60 requests per TTL
-      },
-    ]),
+    RedisCacheModule,
+    EventsModule,
+    // ThrottlerModule.forRoot([
+    //   {
+    //     ttl: 60000, // 1 minute
+    //     limit: 60, // 60 requests per TTL
+    //   },
+    // ]),
   ],
   controllers: [],
   providers: [
@@ -71,10 +83,10 @@ import { LoggingInterceptor, TransformInterceptor } from '@/presentation/middlew
       provide: APP_GUARD,
       useClass: ApiKeyGuard,
     },
-    {
-      provide: APP_GUARD,
-      useClass: GqlThrottlerGuard,
-    },
+    // {
+    //   provide: APP_GUARD,
+    //   useClass: GqlThrottlerGuard,
+    // },
     TestRmqHandler
   ],
 })

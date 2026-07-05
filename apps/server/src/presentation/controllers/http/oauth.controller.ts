@@ -2,8 +2,9 @@ import { Controller, Get, UseGuards, Res, Req } from '@nestjs/common';
 import type { Response } from 'express';
 import { ApiTags, ApiOperation, ApiBearerAuth, ApiSecurity } from '@nestjs/swagger';
 import { Public } from '@/presentation/decorators/public.decorator';
-import { AuthGuard } from '@nestjs/passport';
+import { GoogleAuthGuard } from '@/presentation/middleware/guards';
 import { buildVersionedRoute } from '@/presentation/utils/versioned-route.util';
+import { env } from '@/shared/utils';
 
 @ApiTags('OAuth')
 @ApiBearerAuth()
@@ -12,7 +13,7 @@ import { buildVersionedRoute } from '@/presentation/utils/versioned-route.util';
 export class OAuthController {
   @Public()
   @Get('google')
-  @UseGuards(AuthGuard('google'))
+  @UseGuards(GoogleAuthGuard)
   @ApiOperation({ summary: 'Google OAuth sign-in' })
   async googleAuth() {
     return;
@@ -20,7 +21,7 @@ export class OAuthController {
 
   @Public()
   @Get('google/callback')
-  @UseGuards(AuthGuard('google'))
+  @UseGuards(GoogleAuthGuard)
   @ApiOperation({ summary: 'Google OAuth callback' })
   async googleAuthCallback(
     @Req() req: any,
@@ -30,7 +31,7 @@ export class OAuthController {
     if (result && result.accessToken) {
       response.cookie('access_token', result.accessToken, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
+        secure: env('NODE_ENV', 'development') === 'production',
         sameSite: 'lax',
         maxAge: 24 * 60 * 60 * 1000, // 1 day
       });
@@ -38,7 +39,7 @@ export class OAuthController {
     if (result && result.refreshToken) {
       response.cookie('refresh_token', result.refreshToken, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
+        secure: env('NODE_ENV', 'development') === 'production',
         sameSite: 'lax',
         maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
       });

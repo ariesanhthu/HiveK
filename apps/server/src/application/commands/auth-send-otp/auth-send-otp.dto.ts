@@ -5,12 +5,12 @@ import { EOtpType } from '@/core/enums/otp-type.enum';
 export const AuthSendOtpInputSchema = z.object({
   email: z.email(),
   type: z.enum(EOtpType),
-});
+}).strict();
 
 export class AuthSendOtpInputDto extends createZodDto(AuthSendOtpInputSchema) {}
 
 export const AuthSendOtpOutputSchema = z.object({
   success: z.boolean(),
-});
+}).strict();
 
 export class AuthSendOtpOutputDto extends createZodDto(AuthSendOtpOutputSchema) {}

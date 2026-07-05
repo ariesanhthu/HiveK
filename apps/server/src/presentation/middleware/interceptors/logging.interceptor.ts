@@ -1,9 +1,11 @@
+import { type ILoggerService, LOGGER_SERVICE } from '@/application/interfaces';
 import {
   Injectable,
   NestInterceptor,
   ExecutionContext,
   CallHandler,
   Logger,
+  Inject,
 } from '@nestjs/common';
 import { GqlExecutionContext } from '@nestjs/graphql';
 import { Observable } from 'rxjs';
@@ -11,7 +13,12 @@ import { tap } from 'rxjs/operators';
 
 @Injectable()
 export class LoggingInterceptor implements NestInterceptor {
-  private readonly logger = new Logger('HTTP');
+  constructor (
+    @Inject(LOGGER_SERVICE)
+    private readonly logger: ILoggerService,
+  ) {
+    this.logger.setContext(LoggingInterceptor.name)
+  }
 
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
     const type = context.getType() as string;

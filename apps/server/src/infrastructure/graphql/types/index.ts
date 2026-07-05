@@ -7,3 +7,5 @@ export * from './platform.type';
 export * from './campaign.type';
 export * from './campaign-participant.type';
 export * from './pagination.type';
+export * from './proposal.type';
+export * from './review.type';

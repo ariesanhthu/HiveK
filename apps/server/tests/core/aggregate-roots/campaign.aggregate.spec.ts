@@ -102,4 +102,16 @@ describe('CampaignRoot Aggregate Root', () => {
     expect(() => root.revokeCollaborator('owner-1', 'owner-1')).toThrow(InvalidOperationException);
     expect(() => root.revokeCollaborator('non-existent', 'owner-1')).toThrow(InvalidOperationException);
   });
+
+  it('should soft delete and restore correctly', () => {
+    const root = CampaignRoot.instantiate('campaign-123', props);
+    root.softDelete('admin-1');
+
+    expect(root.deleteAt).toBeInstanceOf(Date);
+    expect(root.deleteBy).toBe('admin-1');
+
+    root.restore();
+    expect(root.deleteAt).toBeNull();
+    expect(root.deleteBy).toBeNull();
+  });
 });

@@ -6,7 +6,8 @@ import {
   CampaignParticipantSoftDeleteCommandHandler,
   CampaignParticipantHardDeleteCommandHandler,
   CampaignParticipantRestoreCommandHandler,
-  CampaignParticipantUpdateCommandHandler 
+  CampaignParticipantUpdateCommandHandler,
+  CampaignParticipantUpdateStatusCommandHandler
 } 
 from '@/application/commands';
 
@@ -18,8 +19,6 @@ import {
 import { LinkCampaignParticipantOutputFileHandler } from '@/application/events';
 
 import { 
-  CampaignParticipantAdminController,
-  CampaignParticipantClientController,
   CampaignParticipantResolver
 } from '@/presentation/controllers'
 
@@ -30,7 +29,8 @@ const COMMAND_HANDLERS = [
   CampaignParticipantSoftDeleteCommandHandler,
   CampaignParticipantHardDeleteCommandHandler,
   CampaignParticipantRestoreCommandHandler,
-  CampaignParticipantUpdateCommandHandler
+  CampaignParticipantUpdateCommandHandler,
+  CampaignParticipantUpdateStatusCommandHandler
 ];
 
 const QUERY_HANDLERS = [
@@ -44,7 +44,7 @@ const EVENT_HANDLERS = [
 
 @Module({
   imports: [CqrsModule, CampaignModule],
-  controllers: [CampaignParticipantAdminController, CampaignParticipantClientController],
+  controllers: [],
   providers: [
     ...COMMAND_HANDLERS, 
     ...QUERY_HANDLERS, 

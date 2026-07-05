@@ -7,9 +7,9 @@ export const PlatformDtoSchema = z.object({
   id: z.string(),
   name: z.string(),
   baseUrl: z.string(),
-  apiStatus: z.nativeEnum(PlatformApiStatus),
+  apiStatus: z.enum(PlatformApiStatus),
   icon: z.string().nullable(),
-});
+}).strict();
 
 export class PlatformDto extends createZodDto(PlatformDtoSchema) {}
 

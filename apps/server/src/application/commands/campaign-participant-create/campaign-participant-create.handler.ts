@@ -1,48 +1,62 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { Inject } from '@nestjs/common';
-import { CAMPAIGN_PARTICIPANT_REPOSITORY, type ICampaignParticipantRepository } from '@/core/interfaces/repositories/campaign-participant.repository';
 import { CAMPAIGN_REPOSITORY, type ICampaignRepository } from '@/core/interfaces/repositories/campaign.repository';
-import { CampaignParticipantRoot } from '@/core/aggregate-roots';
-import { InvalidOperationException, CampaignNotFoundException } from '@/core/exceptions';
+import { KOL_PROFILE_REPOSITORY, type IKolProfileRepository } from '@/core/interfaces/repositories/kol-profile.repository';
+import { InvalidOperationException, CampaignNotFoundException, UserNotFoundException } from '@/core/exceptions';
 import { CampaignParticipantCreateCommand } from './campaign-participant-create.command';
 import { ECampaignStatus } from '@/core/enums/campaign-status.enum';
+import { type IUnitOfWork, UNIT_OF_WORK, EVENT_SERVICE } from '@/application/interfaces';
+import type { IEventService } from '@/application/interfaces';
 
 @CommandHandler(CampaignParticipantCreateCommand)
 export class CampaignParticipantCreateCommandHandler implements ICommandHandler<CampaignParticipantCreateCommand, string> {
   constructor(
-    @Inject(CAMPAIGN_PARTICIPANT_REPOSITORY)
-    private readonly participantRepository: ICampaignParticipantRepository,
     @Inject(CAMPAIGN_REPOSITORY)
     private readonly campaignRepository: ICampaignRepository,
+    @Inject(KOL_PROFILE_REPOSITORY)
+    private readonly kolProfileRepository: IKolProfileRepository,
+    @Inject(EVENT_SERVICE)
+    private readonly eventService: IEventService,
+    @Inject(UNIT_OF_WORK)
+    private readonly uow: IUnitOfWork,
   ) {}
 
   async execute(command: CampaignParticipantCreateCommand): Promise<string> {
-    const { input } = command;
+    let participantId = '';
 
-    const campaign = await this.campaignRepository.findById(input.campaignId);
-    if (!campaign) {
-      throw new CampaignNotFoundException(input.campaignId);
-    }
+    await this.uow.execute(async () => {
+      const { input } = command;
 
-    if (campaign.status !== ECampaignStatus.FINDING_KOL && campaign.status !== ECampaignStatus.IN_PROGRESS) {
-      throw new InvalidOperationException('KOLs can only join campaigns that are in FINDING_KOL or IN_PROGRESS status');
-    }
+      const campaign = await this.campaignRepository.findById(input.campaignId);
+      if (!campaign) {
+        throw new CampaignNotFoundException(input.campaignId);
+      }
 
-    const existing = await this.participantRepository.findByCampaignAndKol(
-      input.campaignId,
-      input.kolProfileId,
-    );
-    if (existing) {
-      throw new InvalidOperationException('KOL is already a participant of this campaign');
-    }
+      if (campaign.status !== ECampaignStatus.FINDING_KOL && campaign.status !== ECampaignStatus.IN_PROGRESS) {
+        throw new InvalidOperationException('KOLs can only join campaigns that are in FINDING_KOL or IN_PROGRESS status');
+      }
 
-    const participant = CampaignParticipantRoot.create({
-      campaignId: input.campaignId,
-      kolProfileId: input.kolProfileId,
+      const kolProfile = await this.kolProfileRepository.findById(input.kolProfileId);
+      if (!kolProfile) {
+        throw new UserNotFoundException(input.kolProfileId);
+      }
+
+      if (!kolProfile.userId) {
+        throw new InvalidOperationException('KOL profile is not linked to a user');
+      }
+
+      const existing = campaign.participants.some(p => p.kolProfileId === input.kolProfileId);
+      if (existing) {
+        throw new InvalidOperationException('KOL is already a participant of this campaign');
+      }
+
+      participantId = campaign.addParticipant(input.kolProfileId, kolProfile.email);
+
+      await this.campaignRepository.save(campaign);
+
+      await this.eventService.publishEvents(campaign);
     });
 
-    await this.participantRepository.save(participant);
-
-    return participant.id!;
+    return participantId;
   }
 }

@@ -1,17 +1,17 @@
-import { CommandHandler, ICommandHandler, CommandBus } from '@nestjs/cqrs';
+import { CommandBus, CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { AuthSignUpCommand } from './auth-sign-up.command';
 import { AuthSignUpOutputDto } from './auth-sign-up.dto';
 import { Inject } from '@nestjs/common';
 import { ROLE_READ_SERVICE, type IRoleReadService } from '@/application/interfaces';
 import { USER_REPOSITORY, type IUserRepository } from '@/core/interfaces/repositories';
 import { KOLUserRoot, EnterpriseUserRoot, AdminRoot } from '@/core/aggregate-roots';
-import { ERoleType } from '@/core/enums';
+import { EOtpType, ERoleType } from '@/core/enums';
 import { AuthService } from '@/application/services/auth.service';
-import { AuthSendOtpCommand } from '../auth-send-otp/auth-send-otp.command';
-import { EOtpType } from '@/core/enums/otp-type.enum';
 import { UserConflictException, RoleNotFoundException, InvalidUserTypeException } from '@/core/exceptions';
-import { type IUnitOfWork, UNIT_OF_WORK } from '@/application/interfaces';
+import { type IUnitOfWork, UNIT_OF_WORK, EVENT_SERVICE } from '@/application/interfaces';
+import type { IEventService } from '@/application/interfaces';
 import { PhoneNumberVO } from '@/core/value-objects/phone-number.value-object';
+import { AuthSendOtpCommand } from '@/application/commands';
 
 @CommandHandler(AuthSignUpCommand)
 export class AuthSignUpCommandHandler implements ICommandHandler<AuthSignUpCommand, AuthSignUpOutputDto> {
@@ -21,9 +21,11 @@ export class AuthSignUpCommandHandler implements ICommandHandler<AuthSignUpComma
     @Inject(ROLE_READ_SERVICE)
     private readonly roleReadService: IRoleReadService,
     private readonly authService: AuthService,
-    private readonly commandBus: CommandBus,
+    @Inject(EVENT_SERVICE)
+    private readonly eventService: IEventService,
     @Inject(UNIT_OF_WORK)
     private readonly uow: IUnitOfWork,
+    private readonly commandBus: CommandBus,
   ) { }
 
   async execute(command: AuthSignUpCommand): Promise<AuthSignUpOutputDto> {
@@ -48,28 +50,22 @@ export class AuthSignUpCommandHandler implements ICommandHandler<AuthSignUpComma
         ? PhoneNumberVO.create({ value: input.phone })
         : PhoneNumberVO.create({ value: '+84000000000' });
 
-      const fullNameValue = input.fullName || 'DEFAULT NAME';
-
-      let user;
       const commonProps = {
         email: normalizedEmail,
         phone: phoneValue,
         passwordHash,
-        fullName: fullNameValue,
-        avatar: null,
+        fullName: input.fullName || 'DEFAULT NAME',
         type,
-        roleId: defaultRole.id,
-        isEmailVerified: false,
+        roleId: defaultRole.id!,
       };
 
+      let user;
       switch (type) {
         case ERoleType.KOL:
           user = KOLUserRoot.create(commonProps);
           break;
         case ERoleType.ENTERPRISE:
-          user = EnterpriseUserRoot.create({
-            ...commonProps,
-          });
+          user = EnterpriseUserRoot.create(commonProps);
           break;
         case ERoleType.ADMIN:
           user = AdminRoot.create(commonProps);
@@ -79,17 +75,10 @@ export class AuthSignUpCommandHandler implements ICommandHandler<AuthSignUpComma
       }
 
       await this.userRepository.save(user);
+      console.log("Created user")
+      await this.commandBus.execute(new AuthSendOtpCommand({ email: normalizedEmail, type: EOtpType.CREATE_ACCOUNT }));
 
-      try {
-        await this.commandBus.execute(
-          new AuthSendOtpCommand({
-            email: normalizedEmail,
-            type: EOtpType.CREATE_ACCOUNT,
-          }),
-        );
-      } catch (error) {
-        // Do not block signup if OTP dispatch fails
-      }
+      await this.eventService.publishEvents(user);
 
       return { userId: user.id! };
     });

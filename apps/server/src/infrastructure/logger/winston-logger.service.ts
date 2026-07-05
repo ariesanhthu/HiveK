@@ -3,6 +3,7 @@ import { createLogger, Logger as WinstonLogger } from 'winston';
 import { winstonConfig } from './winston.config';
 import { ILoggerService } from '@/application';
 import { JsonObject } from '@/core/types/common.type';
+import { env } from '@/shared/utils';
 
 @Injectable({ scope: Scope.TRANSIENT })
 export class WinstonLoggerService implements ILoggerService {
@@ -31,12 +32,12 @@ export class WinstonLoggerService implements ILoggerService {
 	}
 
 	debug(message: any, context?: string, metadata?: JsonObject): void {
-		if (process.env.NODE_ENV !== 'development') return;
+		if (env('NODE_ENV', 'development') !== 'development') return;
 		this.winstonLogger.debug(message, { context: context || this.context, ...(metadata || {}) });
 	}
 
 	verbose(message: any, context?: string, metadata?: JsonObject): void {
-		if (process.env.NODE_ENV !== 'development') return;
+		if (env('NODE_ENV', 'development') !== 'development') return;
 		this.winstonLogger.verbose(message, { context: context || this.context, ...(metadata || {}) });
 	}
 }

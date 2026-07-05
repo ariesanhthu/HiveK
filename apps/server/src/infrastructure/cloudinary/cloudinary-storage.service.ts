@@ -6,6 +6,7 @@ import {
   UploadResult,
   StorageResourceType,
 } from '@/core/interfaces/storage';
+import { errorMessage, toError, isEmpty } from '@/shared/utils';
 @Injectable()
 export class CloudinaryStorageService implements IStorageService {
   private readonly logger = new Logger(CloudinaryStorageService.name);
@@ -98,7 +99,7 @@ export class CloudinaryStorageService implements IStorageService {
       return false;
     } catch (error) {
       this.logger.error(
-        `Error deleting from Cloudinary: ${publicId}, ${error.message}`,
+        `Error deleting from Cloudinary: ${publicId}, ${errorMessage(error)}`,
       );
       return false;
     }
@@ -120,7 +121,7 @@ export class CloudinaryStorageService implements IStorageService {
       failed: [] as Array<{ publicId: string; error: string }>,
     };
 
-    if (!publicIds || publicIds.length === 0) {
+    if (isEmpty(publicIds)) {
       return results;
     }
 
@@ -151,7 +152,7 @@ export class CloudinaryStorageService implements IStorageService {
 
       return results;
     } catch (error) {
-      this.logger.warn(`Cloudinary bulk delete API failed (${error.message}). Falling back to individual deletes.`);
+      this.logger.warn(`Cloudinary bulk delete API failed (${errorMessage(error)}). Falling back to individual deletes.`);
       
       const deletePromises = publicIds.map((publicId) =>
         this.delete(publicId, options)
@@ -216,7 +217,7 @@ export class CloudinaryStorageService implements IStorageService {
       return publicIdWithFolder;
     } catch (error) {
       this.logger.error(
-        `Failed to extract public_id from URL: ${error.message}`,
+        `Failed to extract public_id from URL: ${errorMessage(error)}`,
       );
       return null;
     }
