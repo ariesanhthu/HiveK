@@ -6,10 +6,10 @@ import {
 
 export const dynamic = "force-dynamic";
 
-export function GET(request: Request) {
+export async function GET(request: Request) {
   const requestUrl = new URL(request.url);
   const filters = parseKolRankingFilters(requestUrl.searchParams);
-  const payload = getKolRankings(filters);
+  const payload = await getKolRankings(filters);
 
   return NextResponse.json(payload, {
     headers: {

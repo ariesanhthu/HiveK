@@ -7,33 +7,89 @@ type DashboardSidebarProps = {
 
 export function DashboardSidebar({ items }: DashboardSidebarProps) {
   return (
-    <aside className="hidden w-60 shrink-0 border-r border-primary-soft bg-card p-5 md:flex md:flex-col">
-      <div className="mb-8 flex items-center gap-2">
-        <div className="flex h-7 w-7 items-center justify-center rounded-full bg-primary text-background-dark">
-          <span className="material-symbols-outlined text-sm">hub</span>
-        </div>
-        <p className="text-base font-bold text-foreground">Phân tích KOL</p>
+    <aside className="sticky top-0 hidden h-screen w-60 shrink-0 overflow-hidden border-r border-primary-soft bg-card p-4 md:flex md:flex-col">
+      <Link
+        href="/dashboard"
+        className="mb-5 flex shrink-0 items-center gap-3 rounded-2xl outline-none ring-offset-2 ring-offset-card transition-opacity hover:opacity-85 focus-visible:ring-2 focus-visible:ring-primary"
+        aria-label="HiveK Dashboard"
+      >
+        <span className="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-primary-soft">
+          <img
+            src="/logo.png"
+            alt=""
+            className="h-8 w-8 object-contain"
+          />
+        </span>
+        <span className="min-w-0">
+          <span className="block text-base font-extrabold leading-tight text-foreground">
+            HiveK
+          </span>
+          <span className="block text-[11px] font-semibold uppercase tracking-wide text-foreground-muted">
+            Business
+          </span>
+        </span>
+      </Link>
+
+      <div className="min-h-0 flex-1 overflow-y-auto pr-1">
+        <p className="mb-3 text-[11px] font-semibold uppercase tracking-wide text-foreground-muted">
+          Menu chính
+        </p>
+        <nav className="space-y-1">
+          {items.map((item) => (
+            <Link
+              key={item.id}
+              href={item.href}
+              className={`flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium transition-colors ${
+                item.isActive
+                  ? "bg-primary text-background-dark"
+                  : "text-foreground-muted hover:bg-primary-soft hover:text-foreground"
+              }`}
+            >
+              <span className="material-symbols-outlined text-base">
+                {item.icon}
+              </span>
+              <span>{item.label}</span>
+            </Link>
+          ))}
+        </nav>
       </div>
 
-      <p className="mb-3 text-[11px] font-semibold uppercase tracking-wide text-foreground-muted">
-        Menu chính
-      </p>
-      <nav className="space-y-1.5">
-        {items.map((item) => (
-          <Link
-            key={item.id}
-            href={item.href}
-            className={`flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium transition-colors ${
-              item.isActive
-                ? "bg-primary text-background-dark"
-                : "text-foreground-muted hover:bg-primary-soft hover:text-foreground"
-            }`}
+      <div className="mt-3 shrink-0 border-t border-primary-soft pt-3">
+        <div className="mb-2 flex items-center gap-3 rounded-xl bg-primary-soft/60 p-2.5">
+          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary text-sm font-bold text-background-dark">
+            B
+          </div>
+          <div className="min-w-0">
+            <p className="truncate text-sm font-bold text-foreground">
+              Brand Workspace
+            </p>
+            <p className="truncate text-xs text-foreground-muted">
+              Quản trị doanh nghiệp
+            </p>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-2 gap-2">
+          <button
+            type="button"
+            className="flex h-9 items-center justify-center rounded-xl border border-primary-soft bg-card text-foreground-muted transition-colors hover:bg-primary-soft hover:text-foreground"
+            aria-label="Thông báo"
           >
-            <span className="material-symbols-outlined text-base">{item.icon}</span>
-            <span>{item.label}</span>
-          </Link>
-        ))}
-      </nav>
+            <span className="material-symbols-outlined text-[18px]">
+              notifications
+            </span>
+          </button>
+          <button
+            type="button"
+            className="flex h-9 items-center justify-center rounded-xl border border-primary-soft bg-card text-foreground-muted transition-colors hover:bg-primary-soft hover:text-foreground"
+            aria-label="Cài đặt"
+          >
+            <span className="material-symbols-outlined text-[18px]">
+              settings
+            </span>
+          </button>
+        </div>
+      </div>
     </aside>
   );
 }

@@ -10,22 +10,26 @@ export const dynamic = "force-dynamic";
 export function GET(request: Request) {
   const requestUrl = new URL(request.url);
   const filters = parseKolRankingFilters(requestUrl.searchParams);
+  let isClosed = false;
 
   const stream = new ReadableStream({
     start(controller) {
       const encoder = new TextEncoder();
 
-      const sendPayload = () => {
-        const payload = getKolRankings(filters);
-        controller.enqueue(
-          encoder.encode(`data: ${JSON.stringify(payload)}\n\n`)
-        );
+      const sendPayload = async () => {
+        const payload = await getKolRankings(filters);
+        if (!isClosed) {
+          controller.enqueue(
+            encoder.encode(`data: ${JSON.stringify(payload)}\n\n`)
+          );
+        }
       };
 
-      sendPayload();
-      const intervalId = setInterval(sendPayload, STREAM_INTERVAL_MS);
+      void sendPayload();
+      const intervalId = setInterval(() => void sendPayload(), STREAM_INTERVAL_MS);
 
       request.signal.addEventListener("abort", () => {
+        isClosed = true;
         clearInterval(intervalId);
         controller.close();
       });

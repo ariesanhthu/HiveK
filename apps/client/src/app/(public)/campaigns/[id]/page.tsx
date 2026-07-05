@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { CampaignDetailView } from "@/features/campaign-detail/components/campaign-detail-view";
-import { getCampaignDetailById } from "@/features/campaign-detail/server/get-campaign-detail-by-id";
+import { getCampaignDetailById } from "@/features/campaign-detail/server/get-connected-campaign-detail-by-id";
 
 type PageProps = {
   params: Promise<{ id: string }>;
@@ -9,7 +9,7 @@ type PageProps = {
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { id } = await params;
-  const detail = getCampaignDetailById(id);
+  const detail = await getCampaignDetailById(id);
   if (!detail) {
     return { title: "Chiến dịch | Hive-K" };
   }
@@ -21,7 +21,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 export default async function CampaignDetailPage({ params }: PageProps) {
   const { id } = await params;
-  const detail = getCampaignDetailById(id);
+  const detail = await getCampaignDetailById(id);
   if (!detail) {
     notFound();
   }

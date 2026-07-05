@@ -11,8 +11,8 @@ export const metadata: Metadata = {
     "Bảng xếp hạng KOL trực tuyến với bộ lọc, phân trang và cập nhật điểm số theo thời gian thực.",
 };
 
-export default function Page() {
-  const initialData = getKolRankings(DEFAULT_RANKING_FILTERS);
+export default async function Page() {
+  const initialData = await getKolRankings(DEFAULT_RANKING_FILTERS);
 
   return (
     <KolRankingPage

@@ -1,10 +1,21 @@
 "use server";
 
+import { redirect } from "next/navigation";
+import { AUTH_ROUTES } from "@/features/auth/constants";
 import {
   validateSignInFields,
   validateSignUpFields,
   type SignUpRole,
 } from "@/features/auth/lib/auth-validation";
+import {
+  backendRequest,
+  getBackendErrorMessage,
+  setBackendAuthCookies,
+} from "@/server/backend/backend-client";
+import type {
+  BackendAuthTokens,
+  BackendUserProfile,
+} from "@/server/backend/backend-types";
 
 export type SignInFormState = {
   ok: boolean;
@@ -38,10 +49,13 @@ function readString(formData: FormData, key: string): string {
   return v;
 }
 
-/**
- * Server Action đăng nhập: validate lại phía server (double validation),
- * không log mật khẩu. Khi có API auth, gọi backend tại đây và set cookie httpOnly.
- */
+function parseRole(raw: string): SignUpRole | null {
+  if (raw === "brand" || raw === "creator") {
+    return raw;
+  }
+  return null;
+}
+
 export async function submitSignIn(
   _prev: SignInFormState,
   formData: FormData
@@ -54,25 +68,46 @@ export async function submitSignIn(
     return { ok: false, fieldErrors, message: "" };
   }
 
-  // TODO: POST /auth/login — chỉ gửi qua TLS; lưu session httpOnly + Secure + SameSite
-  return {
-    ...INITIAL_SIGN_IN,
-    ok: false,
-    message:
-      "Xác thực qua máy chủ chưa được kết nối. Dùng «Truy cập nhanh demo» để vào workspace.",
-  };
-}
+  let redirectTo: string = AUTH_ROUTES.BUSINESS_DASHBOARD;
 
-function parseRole(raw: string): SignUpRole | null {
-  if (raw === "brand" || raw === "creator") {
-    return raw;
+  try {
+    const tokens = await backendRequest<BackendAuthTokens>(
+      "/hivek/client/v1/auth/sign-in",
+      {
+        method: "POST",
+        body: {
+          email: email.trim().toLowerCase(),
+          password,
+        },
+        cache: "no-store",
+      }
+    );
+
+    await setBackendAuthCookies(tokens);
+
+    const profile = await backendRequest<BackendUserProfile>(
+      "/hivek/client/v1/auth/profile",
+      {
+        method: "GET",
+        authToken: tokens.accessToken,
+        cache: "no-store",
+      }
+    ).catch(() => null);
+
+    if (profile?.type === "kol") {
+      redirectTo = AUTH_ROUTES.AMBASSADOR_DASHBOARD;
+    }
+  } catch (error) {
+    return {
+      ...INITIAL_SIGN_IN,
+      ok: false,
+      message: `Đăng nhập thất bại: ${getBackendErrorMessage(error)}`,
+    };
   }
-  return null;
+
+  redirect(redirectTo);
 }
 
-/**
- * Server Action đăng ký: validate + role; không persist cho đến khi có API.
- */
 export async function submitSignUp(
   _prev: SignUpFormState,
   formData: FormData
@@ -103,12 +138,33 @@ export async function submitSignUp(
     return { ok: false, fieldErrors, message: "" };
   }
 
-  void role;
+  try {
+    await backendRequest<{ userId: string }>(
+      role === "creator"
+        ? "/hivek/client/v1/auth/sign-up/kol"
+        : "/hivek/client/v1/auth/sign-up/enterprise",
+      {
+        method: "POST",
+        body: {
+          fullName: fullName.trim(),
+          email: email.trim().toLowerCase(),
+          password,
+        },
+        cache: "no-store",
+      }
+    );
+  } catch (error) {
+    return {
+      ...INITIAL_SIGN_UP,
+      ok: false,
+      message: `Đăng ký thất bại: ${getBackendErrorMessage(error)}`,
+    };
+  }
 
   return {
     ...INITIAL_SIGN_UP,
-    ok: false,
+    ok: true,
     message:
-      "Đăng ký qua API chưa bật. Bạn có thể dùng bản demo hoặc liên hệ admin.",
+      "Đăng ký thành công. Vui lòng kiểm tra email/OTP nếu backend yêu cầu xác minh, rồi đăng nhập.",
   };
 }
