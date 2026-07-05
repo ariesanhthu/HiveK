@@ -126,6 +126,146 @@ body {
   .bg-overlay-light {
     background-color: var(--color-overlay-light);
   }
+
+  .nav-shell {
+    margin-inline: auto;
+    display: flex;
+    max-width: 80rem;
+    align-items: center;
+    justify-content: space-between;
+    border-radius: 2rem;
+    border: 1px solid color-mix(in srgb, var(--color-on-dark) 10%, transparent);
+    background-color: color-mix(
+      in srgb,
+      var(--color-background-dark) 70%,
+      transparent
+    );
+    padding: 0.75rem 1.5rem;
+    box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.25);
+    backdrop-filter: blur(40px);
+  }
+
+  .nav-link {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--color-on-dark-muted);
+    transition-property: color;
+    transition-duration: 150ms;
+  }
+
+  .nav-link:hover {
+    color: var(--color-on-dark);
+  }
+
+  .nav-search {
+    display: none;
+    align-items: center;
+    border-radius: 9999px;
+    border: 1px solid color-mix(in srgb, var(--color-on-dark) 5%, transparent);
+    background-color: color-mix(in srgb, var(--color-on-dark) 5%, transparent);
+    padding: 0.5rem 1rem;
+    transition-property: background-color;
+    transition-duration: 150ms;
+  }
+
+  .nav-search:hover {
+    background-color: color-mix(in srgb, var(--color-on-dark) 10%, transparent);
+  }
+
+  .nav-search-icon {
+    margin-right: 0.5rem;
+    font-size: 1.125rem;
+    color: var(--color-on-dark-muted);
+  }
+
+  .nav-search-input {
+    width: 8rem;
+    border: none;
+    background-color: transparent;
+    font-size: 0.875rem;
+    color: var(--color-on-dark);
+  }
+
+  .nav-search-input::placeholder {
+    color: color-mix(in srgb, var(--color-on-dark) 50%, transparent);
+  }
+
+  .nav-search-input:focus {
+    outline: none;
+    box-shadow: none;
+  }
+
+  .btn-primary {
+    border-radius: 9999px;
+    background-color: var(--color-primary);
+    padding: 0.625rem 1.5rem;
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: var(--color-background-dark);
+    box-shadow: 0 4px 14px 0 var(--color-primary-shadow);
+    transition-property: background-color, box-shadow;
+    transition-duration: 150ms;
+  }
+
+  .btn-primary:hover {
+    background-color: color-mix(in srgb, var(--color-primary) 90%, transparent);
+    box-shadow: 0 6px 20px color-mix(in srgb, var(--color-primary) 23%, transparent);
+  }
+
+  .nav-shell-light {
+    border-color: color-mix(in srgb, var(--color-primary) 16%, transparent);
+    background-color: color-mix(
+      in srgb,
+      var(--color-card) 88%,
+      var(--color-primary) 5%
+    );
+    box-shadow: 0 18px 45px rgb(15 23 42 / 0.1);
+  }
+
+  .nav-shell-light .nav-link {
+    color: var(--color-foreground-muted);
+  }
+
+  .nav-shell-light .nav-link:hover {
+    color: var(--color-primary);
+  }
+
+  .nav-shell-light .nav-search {
+    border-color: color-mix(
+      in srgb,
+      var(--color-foreground-muted) 14%,
+      transparent
+    );
+    background-color: color-mix(in srgb, var(--color-card) 72%, transparent);
+  }
+
+  .nav-shell-light .nav-search:hover {
+    background-color: var(--color-card);
+  }
+
+  .nav-shell-light .nav-search-icon {
+    color: var(--color-muted-foreground);
+  }
+
+  .nav-shell-light .nav-search-input {
+    color: var(--color-foreground);
+  }
+
+  .nav-shell-light .nav-search-input::placeholder {
+    color: var(--color-muted-foreground);
+  }
+
+  @media (min-width: 640px) {
+    .nav-search {
+      display: flex;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .nav-search-input {
+      width: 12rem;
+    }
+  }
 }
 
 /* Chỉ khi in chứng nhận: ẩn header/footer public (set từ CertificateActionBar). */

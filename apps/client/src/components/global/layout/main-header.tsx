@@ -1,61 +1,56 @@
 import React from "react";
 import Link from "next/link";
+import Image from "next/image";
 
 export const MainHeader: React.FC = () => {
   return (
     <header className="fixed left-0 top-0 z-50 w-full p-4 transition-all duration-300 sm:p-6">
-      <div className="mx-auto flex max-w-7xl items-center justify-between rounded-[2rem] border border-white/10 bg-[#1f1f1f]/70 px-6 py-3 shadow-2xl backdrop-blur-2xl">
+      <div className="nav-shell nav-shell-light">
         <div className="flex items-center gap-8">
-          <div className="flex items-center gap-2 text-primary">
-            <span className="material-symbols-outlined text-3xl font-bold drop-shadow-sm">
-              hub
-            </span>
-            <a href='/' className="text-xl font-extrabold tracking-tight text-white drop-shadow-sm">
-              Hive-K
-            </a>
-          </div>
+          <Link href="/" className="flex items-center gap-2">
+            <Image
+              src="/logo.png"
+              alt="Hive-K Logo"
+              width={120}
+              height={40}
+              className="h-6 w-auto"
+              priority
+            />
+          </Link>
+
           <nav className="hidden items-center gap-8 md:flex">
-            <Link
-              href="/#platform"
-              className="text-sm font-semibold text-zinc-300 transition-colors hover:text-white"
-            >
-              Nền tảng
+            <Link href="/#platform" className="nav-link">
+              Dịch vụ
             </Link>
-            <Link
-              href="/#influencers"
-              className="text-sm font-semibold text-zinc-300 transition-colors hover:text-white"
-            >
+
+            <Link href="/#influencers" className="nav-link">
               KOLs
             </Link>
-            <Link
-              href="/#campaigns"
-              className="text-sm font-semibold text-zinc-300 transition-colors hover:text-white"
-            >
+
+            <Link href="/#campaigns" className="nav-link">
               Chiến dịch
             </Link>
-            <Link
-              href="/kol-ranking"
-              className="text-sm font-semibold text-zinc-300 transition-colors hover:text-white"
-            >
+
+            <Link href="/kol-ranking" className="nav-link">
               Xếp hạng
             </Link>
           </nav>
         </div>
+
         <div className="flex items-center gap-4">
-          <div className="hidden items-center rounded-full border border-white/5 bg-white/5 px-4 py-2 transition-colors hover:bg-white/10 sm:flex">
-            <span className="material-symbols-outlined mr-2 text-lg text-zinc-400">
+          <div className="nav-search">
+            <span className="material-symbols-outlined nav-search-icon">
               search
             </span>
+
             <input
               type="text"
               placeholder="Tìm kiếm creator..."
-              className="w-32 border-none bg-transparent text-sm text-zinc-200 placeholder:text-white/50 focus:outline-none focus:ring-0 lg:w-48"
+              className="nav-search-input"
             />
           </div>
-          <Link
-            href="/auth/sign-in"
-            className="rounded-full bg-primary px-6 py-2.5 text-sm font-bold text-background-dark shadow-[0_4px_14px_0_rgba(245,158,11,0.39)] transition-all hover:bg-primary/90 hover:shadow-[0_6px_20px_rgba(245,158,11,0.23)]"
-          >
+
+          <Link href="/auth/sign-in" className="btn-primary">
             Bắt đầu
           </Link>
         </div>
@@ -63,4 +58,3 @@ export const MainHeader: React.FC = () => {
     </header>
   );
 };
-
