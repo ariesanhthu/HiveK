@@ -127,7 +127,7 @@ export class MongoPaymentRepository implements IPaymentRepository {
     const doc = await this.paymentModel.findOne({
       'payment_attempts._id': new Types.ObjectId(attemptId),
       $or: [{ deleted_at: null }, { deleted_at: { $exists: false } }],
-    } as any).session(this.session).exec();
+    } as Record<string, unknown>).session(this.session).exec();
     return doc ? this.mapToDomain(doc) : null;
   }
 
@@ -138,8 +138,8 @@ export class MongoPaymentRepository implements IPaymentRepository {
         enterpriseId: doc.enterprise_id,
         userId: doc.user_id ?? null,
         billId: doc.bill_id,
-        amount: new MoneyVO(doc.amount, doc.currency as any),
-        status: new PaymentStatusVO(doc.status as any),
+        amount: new MoneyVO(doc.amount, doc.currency),
+        status: new PaymentStatusVO(doc.status),
         description: doc.description,
         idempotencyKey: doc.idempotency_key,
         version: doc.version,
@@ -149,7 +149,7 @@ export class MongoPaymentRepository implements IPaymentRepository {
         cancelReason: doc.cancel_reason,
         metadata: doc.metadata,
         paymentAttempts: doc.payment_attempts.map(
-          (attempt: any) =>
+          (attempt: PaymentDocument['payment_attempts'][0]) =>
             PaymentAttemptEntity.instantiate(
               attempt._id ? attempt._id.toString() : new Types.ObjectId().toString(),
               {
@@ -157,24 +157,24 @@ export class MongoPaymentRepository implements IPaymentRepository {
                 idempotencyKey: attempt.idempotency_key,
                 paymentUrl: attempt.payment_url,
                 attemptNumber: attempt.attempt_number,
-                status: new PaymentAttemptStatusVO(attempt.status as any),
+                status: new PaymentAttemptStatusVO(attempt.status),
                 providerTransactionId: attempt.provider_transaction_id,
                 failureReason: attempt.failure_reason,
                 failureType: attempt.failure_type
-                  ? FailureTypeVO.fromType(attempt.failure_type as any)
+                  ? FailureTypeVO.fromType(attempt.failure_type)
                   : undefined,
                 totalRefundedAmount: attempt.total_refunded_amount
-                  ? new MoneyVO(attempt.total_refunded_amount, doc.currency as any)
+                  ? new MoneyVO(attempt.total_refunded_amount, doc.currency)
                   : undefined,
                 transactions: (attempt.transactions || []).map(
-                  (tx: any) =>
+                  (tx: PaymentDocument['payment_attempts'][0]['transactions'][0]) =>
                     PaymentTransactionEntity.instantiate(
                       tx._id ? tx._id.toString() : new Types.ObjectId().toString(),
                       {
-                        transactionType: tx.transaction_type as any,
-                        transactionSource: tx.transaction_source as any,
-                        amount: new MoneyVO(tx.amount, tx.currency as any),
-                        status: tx.status as any,
+                        transactionType: tx.transaction_type,
+                        transactionSource: tx.transaction_source,
+                        amount: new MoneyVO(tx.amount, tx.currency),
+                        status: tx.status,
                         description: tx.description,
                         providerTransactionId: tx.provider_transaction_id,
                         providerRequest: tx.provider_request,
@@ -201,7 +201,7 @@ export class MongoPaymentRepository implements IPaymentRepository {
     );
   }
 
-  private mapToPersistence(data: PaymentEntity): Omit<PaymentModel, 'created_at' | 'updated_at'> {
+  private mapToPersistence(data: PaymentEntity): Record<string, unknown> {
     const includeNestedIds = Boolean(data.id);
     return {
       enterprise_id: data.enterpriseId,
@@ -219,7 +219,7 @@ export class MongoPaymentRepository implements IPaymentRepository {
       cancel_reason: data.cancelReason,
       metadata: data.metadata,
       payment_attempts: data.paymentAttempts.map((attempt) => ({
-        ...(includeNestedIds && attempt.id ? { _id: new Types.ObjectId(attempt.id) as any } : {}),
+        ...(includeNestedIds && attempt.id ? { _id: new Types.ObjectId(attempt.id) } : {}),
         payment_provider_id: attempt.paymentProviderId,
         idempotency_key: attempt.idempotencyKey,
         payment_url: attempt.paymentUrl,
@@ -230,7 +230,7 @@ export class MongoPaymentRepository implements IPaymentRepository {
         failure_type: attempt.failureType?.type,
         total_refunded_amount: attempt.totalRefundedAmount?.amount,
         transactions: attempt.transactions.map((tx) => ({
-          ...(includeNestedIds && tx.id ? { _id: new Types.ObjectId(tx.id) as any } : {}),
+          ...(includeNestedIds && tx.id ? { _id: new Types.ObjectId(tx.id) } : {}),
           transaction_type: tx.transactionType,
           transaction_source: tx.transactionSource,
           amount: tx.amount.amount,

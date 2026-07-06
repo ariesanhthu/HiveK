@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, QueryFilter } from 'mongoose';
+import { FlattenMaps, Model, QueryFilter } from 'mongoose';
 import { PackageDocument, PackageModel } from '../schemas';
 import { IPackageReadService } from '@/application/interfaces';
 import { PackageFilterDto } from '@/application/queries';
@@ -15,9 +15,9 @@ export class MongoPackageReadService implements IPackageReadService {
     private readonly model: Model<PackageDocument>,
   ) {}
 
-  async findAll(filters: PackageFilterDto = {} as any): Promise<PaginatedResponseDto<PackageResponseDto>> {
+  async findAll(filters: PackageFilterDto = {}): Promise<PaginatedResponseDto<PackageResponseDto>> {
     const { cursor, limit = 10, sort = SortOrder.DESC, code, status, type, scope, enterpriseId } = filters;
-    const query: any = {};
+    const query: QueryFilter<PackageDocument> = {};
 
     if (code) query.code = code;
     if (status) query.status = status;
@@ -59,21 +59,21 @@ export class MongoPackageReadService implements IPackageReadService {
   }
 
   async findByType(type: string): Promise<PackageResponseDto[]> {
-    const docs = await this.model.find({ type, status: 'active' } as any).lean().exec();
+    const docs = await this.model.find({ type, status: 'active' } as QueryFilter<PackageDocument>).lean().exec();
     return docs.map((doc) => this.mapToDto(doc));
   }
 
   async findPublicPackages(): Promise<PackageResponseDto[]> {
-    const docs = await this.model.find({ scope: 'public', status: 'active' } as any).lean().exec();
+    const docs = await this.model.find({ scope: 'public', status: 'active' } as QueryFilter<PackageDocument>).lean().exec();
     return docs.map((doc) => this.mapToDto(doc));
   }
 
   async findByEnterpriseId(enterpriseId: string): Promise<PackageResponseDto[]> {
-    const docs = await this.model.find({ enterprise_id: enterpriseId, status: 'active' } as any).lean().exec();
+    const docs = await this.model.find({ enterprise_id: enterpriseId, status: 'active' } as QueryFilter<PackageDocument>).lean().exec();
     return docs.map((doc) => this.mapToDto(doc));
   }
 
-  private mapToDto(doc: any): PackageResponseDto {
+  private mapToDto(doc: FlattenMaps<PackageDocument>): PackageResponseDto {
     const baseQuotas: Record<string, number> = {};
     if (doc.base_quotas) {
       for (const q of doc.base_quotas) {

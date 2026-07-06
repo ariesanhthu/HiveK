@@ -32,7 +32,7 @@ export class MongoEnterpriseRepository implements IEnterpriseRepository {
   }
 
   async findByUserId(userId: string): Promise<Nullable<EnterpriseRoot>> {
-    const doc = await this.enterpriseModel.findOne({ user_id: new Types.ObjectId(userId) as any }).session(this.session).exec();
+    const doc = await this.enterpriseModel.findOne({ user_id: new Types.ObjectId(userId) } as Record<string, unknown>).session(this.session).exec();
     return doc ? this.mapToDomain(doc) : null;
   }
 
@@ -95,16 +95,16 @@ export class MongoEnterpriseRepository implements IEnterpriseRepository {
     });
   }
 
-  private mapToPersistence(enterprise: EnterpriseRoot): Omit<EnterpriseModel, 'created_at' | 'updated_at'> {
+  private mapToPersistence(enterprise: EnterpriseRoot): Record<string, unknown> {
     return {
-      user_id: new Types.ObjectId(enterprise.userId) as any,
+      user_id: new Types.ObjectId(enterprise.userId),
       company_name: enterprise.companyName,
       description: enterprise.description ?? null,
       contact_email: enterprise.contactEmail,
       contact_phone: enterprise.contactPhone?.value ?? null,
       website: enterprise.website ?? null,
       tax_id: enterprise.taxId ?? null,
-      logo_url_id: enterprise.logoUrlId ? new Types.ObjectId(enterprise.logoUrlId) as any : null,
+      logo_url_id: enterprise.logoUrlId ? new Types.ObjectId(enterprise.logoUrlId) : null,
       is_verified: enterprise.isVerified,
       delete_at: enterprise.deleteAt,
       delete_by: enterprise.deleteBy,

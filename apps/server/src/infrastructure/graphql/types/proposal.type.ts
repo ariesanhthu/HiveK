@@ -12,7 +12,7 @@ export class MediaSlideType {
   fileId: string;
 
   @Field(() => UploadedFileType, { nullable: true })
-  file?: any;
+  file?: UploadedFileType | null;
 
   @Field(() => Int)
   displayOrder: number;
@@ -66,7 +66,7 @@ export class CampaignProposalType {
   campaignId: string;
 
   @Field(() => CampaignType, { nullable: true })
-  campain?: any;
+  campaign?: CampaignType | null;
 
   @Field()
   slug: string;

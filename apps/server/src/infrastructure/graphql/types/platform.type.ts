@@ -1,4 +1,6 @@
 import { Field, ObjectType, ID } from '@nestjs/graphql';
+import { GraphQLJSONObject } from 'graphql-type-json';
+import type { JsonObject } from '@/core/types/common.type';
 import { UploadedFileType } from './uploaded-file.type';
 
 @ObjectType()
@@ -15,8 +17,8 @@ export class PlatformType {
   @Field()
   apiStatus: string;
 
-  @Field(() => UploadedFileType, { nullable: true })
-  icon?: any;
+  @Field(() => GraphQLJSONObject, { nullable: true })
+  icon?: JsonObject;
 
   @Field()
   createdAt: string;

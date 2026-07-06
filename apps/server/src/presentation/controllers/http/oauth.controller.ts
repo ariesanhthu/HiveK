@@ -5,6 +5,7 @@ import { Public } from '@/presentation/decorators/public.decorator';
 import { GoogleAuthGuard } from '@/presentation/middleware/guards';
 import { buildVersionedRoute } from '@/presentation/utils/versioned-route.util';
 import { env } from '@/shared/utils';
+import type { AuthenticatedRequest } from '@/core/types/common.type';
 
 @ApiTags('OAuth')
 @ApiBearerAuth()
@@ -24,10 +25,10 @@ export class OAuthController {
   @UseGuards(GoogleAuthGuard)
   @ApiOperation({ summary: 'Google OAuth callback' })
   async googleAuthCallback(
-    @Req() req: any,
+    @Req() req: AuthenticatedRequest,
     @Res({ passthrough: true }) response: Response,
   ) {
-    const result = req.user;
+    const result = req.user as Record<string, unknown>;
     if (result && result.accessToken) {
       response.cookie('access_token', result.accessToken, {
         httpOnly: true,

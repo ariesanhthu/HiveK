@@ -1,13 +1,12 @@
 import { Injectable, Inject } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, ClientSession } from 'mongoose';
+import { Model, ClientSession, Types } from 'mongoose';
 import { IOtpRepository } from '@/core/interfaces/repositories/otp.repository';
 import { OtpModel, OtpDocument } from '../schemas/otp.schema';
 import { EOtpType } from '@/core/enums/otp-type.enum';
 import { type IUnitOfWork, UNIT_OF_WORK } from '@/application/interfaces';
 import { MongoUnitOfWork } from '../mongo-uow';
 import { OtpRoot } from '@/core/aggregate-roots/otp.aggregate';
-import { Schema } from 'mongoose';
 
 @Injectable()
 export class MongoOtpRepository implements IOtpRepository {
@@ -22,7 +21,7 @@ export class MongoOtpRepository implements IOtpRepository {
     return (this.uow as MongoUnitOfWork).getSession() || undefined;
   }
 
-  private mapToDomain(doc: any): OtpRoot | null {
+  private mapToDomain(doc: OtpDocument | null): OtpRoot | null {
     if (!doc) return null;
     return OtpRoot.instantiate(doc._id.toString(), {
       email: doc.email,
@@ -68,7 +67,7 @@ export class MongoOtpRepository implements IOtpRepository {
             code: otp.code,
             type: otp.type,
             expired_at: otp.expiresAt,
-          }
+          } as Record<string, unknown>,
         },
         upsert: true,
       }
@@ -105,9 +104,9 @@ export class MongoOtpRepository implements IOtpRepository {
     return this.mapToDomain(doc);
   }
 
-  private mapToPersistence(otp: OtpRoot): any {
+  private mapToPersistence(otp: OtpRoot): Partial<OtpModel> & { _id?: Types.ObjectId } {
     return {
-      _id: otp.id ? new Schema.Types.ObjectId(otp.id) : undefined,
+      _id: otp.id ? new Types.ObjectId(otp.id) : undefined,
       email: otp.email,
       code: otp.code,
       type: otp.type,

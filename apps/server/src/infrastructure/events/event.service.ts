@@ -49,7 +49,7 @@ export class EventService implements IEventService {
       created_at: new Date(),
     }));
 
-    const activeSession = (this.uow as any).getSession?.() || undefined;
+    const activeSession = this.uow.getSession?.();
     await this.outboxModel.insertMany(outboxRows, { session: activeSession as ClientSession });
     
     // Notify the outbox processor to run immediately

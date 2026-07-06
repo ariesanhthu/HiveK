@@ -45,7 +45,7 @@ export class OutboxProcessorService {
     this.isProcessing = true;
 
     try {
-      const activeSession = (this.uow as any).getSession?.() || undefined;
+      const activeSession = this.uow.getSession?.() || undefined;
       const pendingMessages = await this.outboxModel
         .find({ status: EOutboxStatus.PENDING })
         .sort({ created_at: 1 })
@@ -71,7 +71,7 @@ export class OutboxProcessorService {
   }
 
   private async dispatch(message: OutboxDocument) {
-    const activeSession = (this.uow as any).getSession?.() || undefined;
+    const activeSession = this.uow.getSession?.() || undefined;
     try {
       this.logger.debug(`Processing outbox message: ${message._id}`, undefined, { eventType: message.event_type });
 

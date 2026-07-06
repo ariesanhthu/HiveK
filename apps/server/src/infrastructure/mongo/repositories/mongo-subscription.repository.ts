@@ -99,8 +99,7 @@ export class MongoSubscriptionRepository implements ISubscriptionRepository {
     expectedVersion: number,
     entity: SubscriptionEntity
   ): Promise<void> {
-    const plain = this.mapToPersistence(entity);
-    delete (plain as any).version;
+    const { version: _version, ...plain } = this.mapToPersistence(entity);
 
     const result = await this.subscriptionModel.updateOne(
       { _id: id, version: expectedVersion },
@@ -119,9 +118,9 @@ export class MongoSubscriptionRepository implements ISubscriptionRepository {
       doc._id.toString(),
       {
         enterpriseId: doc.enterprise_id,
-        status: doc.status as any,
+        status: doc.status,
         items: (doc.items || []).map(
-          (item: any) =>
+          (item) =>
             new SubscriptionItemVO({
               packageId: item.package_id,
               packageVariantId: item.package_variant_id,

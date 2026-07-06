@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument, Schema as MongooseSchema } from 'mongoose';
+import { HydratedDocument, Types } from 'mongoose';
 import { EReviewStatus } from '@/core/enums';
 import { softDeletePlugin } from '../utils';
 
@@ -21,8 +21,8 @@ export const ReviewSecurityMetadataSubSchema = SchemaFactory.createForClass(Revi
   timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' },
 })
 export class PublicReviewModel {
-  @Prop({ required: true, type: MongooseSchema.Types.ObjectId, ref: 'CampaignProposalModel' })
-  proposal_id: MongooseSchema.Types.ObjectId;
+  @Prop({ required: true, type: Types.ObjectId, ref: 'CampaignProposalModel' })
+  proposal_id: Types.ObjectId;
 
   @Prop({ required: true, trim: true, maxlength: 100 })
   author_name: string;

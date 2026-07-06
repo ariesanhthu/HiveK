@@ -23,7 +23,7 @@ export const VoucherItemDtoSchema = z.object({
   platform: z.enum(EProductPlatform),
   discountValue: z.string(),
   description: z.string(),
-  expirationDate: z.any(),
+  expirationDate: z.coerce.date(),
 }).strict();
 
 export const ProposalDtoSchema = z.object({
@@ -37,15 +37,15 @@ export const ProposalDtoSchema = z.object({
   vouchers: z.array(VoucherItemDtoSchema).default([]),
   status: z.enum(EProposalStatus),
   metrics: z.record(z.string(), z.number()).default({}),
-  createdAt: z.any(),
-  updatedAt: z.any(),
+  createdAt: z.coerce.date(),
+  updatedAt: z.coerce.date(),
 }).strict();
 
 export class ProposalDto extends createZodDto(ProposalDtoSchema) {}
 
 export const ProposalFilterSchema = CursorPaginationRequestSchema.extend({
   campaignId: z.string().optional(),
-  status: z.string().optional(),
+  status: z.enum(EProposalStatus).optional(),
 }).strict();
 
 export class ProposalFilterDto extends createZodDto(ProposalFilterSchema) {}

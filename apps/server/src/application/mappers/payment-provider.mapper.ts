@@ -1,5 +1,6 @@
 import { PaymentProviderEntity } from '@/core/entities';
 import { PaymentProviderReducedResponseDto, PaymentProviderResponseDto } from '../dtos';
+import type { EPaymentMethod, ECurrency } from '@/core/enums';
 
 export class PaymentProviderMapper {
   static toDto(entity: PaymentProviderEntity): PaymentProviderResponseDto {
@@ -7,8 +8,8 @@ export class PaymentProviderMapper {
       id: entity.id!,
       code: entity.code,
       displayName: entity.displayName,
-      supportedMethods: entity.supportedMethods as any,
-      supportedCurrencies: entity.supportedCurrencies as any,
+      supportedMethods: entity.supportedMethods as EPaymentMethod[],
+      supportedCurrencies: entity.supportedCurrencies as ECurrency[],
       isActive: entity.isActive,
       supportsWebhook: entity.supportsWebhook,
       supportsRefund: entity.supportsRefund,
@@ -29,8 +30,8 @@ export class PaymentProviderMapper {
       id: entity.id!,
       code: entity.code,
       displayName: entity.displayName,
-      supportedMethods: entity.supportedMethods as any,
-      supportedCurrencies: entity.supportedCurrencies as any,
+      supportedMethods: entity.supportedMethods as EPaymentMethod[],
+      supportedCurrencies: entity.supportedCurrencies as ECurrency[],
       isActive: entity.isActive,
       supportsRefund: entity.supportsRefund,
       supportsPartialRefund: entity.supportsPartialRefund,

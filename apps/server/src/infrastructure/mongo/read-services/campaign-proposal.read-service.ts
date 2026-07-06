@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, QueryFilter, Types } from 'mongoose';
+import { FlattenMaps, Model, QueryFilter, Types } from 'mongoose';
 import { ICampaignProposalReadService } from '@/application/interfaces/read-service/proposal.read-service.interface';
 import { ProposalDto, ProposalFilterDto } from '@/application/dtos';
 import { CampaignProposalModel, CampaignProposalDocument } from '../schemas/campaign-proposal.schema';
@@ -24,16 +24,16 @@ export class MongoCampaignProposalReadService implements ICampaignProposalReadSe
     return doc ? this.mapToDto(doc) : null;
   }
 
-  async findAll(filters: ProposalFilterDto = {} as any): Promise<PaginatedResponseDto<ProposalDto>> {
+  async findAll(filters: ProposalFilterDto = {}): Promise<PaginatedResponseDto<ProposalDto>> {
     const { cursor, limit = 10, sort = SortOrder.DESC, campaignId, status } = filters;
     const query: QueryFilter<CampaignProposalDocument> = {};
 
     if (campaignId) {
-      query.campaign_id = new Types.ObjectId(campaignId) as any;
+      query.campaign_id = new Types.ObjectId(campaignId);
     }
 
     if (status) {
-      query.status = status as any;
+      query.status = status;
     }
 
     if (cursor) {
@@ -59,7 +59,7 @@ export class MongoCampaignProposalReadService implements ICampaignProposalReadSe
     );
   }
 
-  private mapToDto(doc: any): ProposalDto {
+  private mapToDto(doc: FlattenMaps<CampaignProposalDocument>): ProposalDto {
     return {
       id: doc._id.toString(),
       campaignId: doc.campaign_id?.toString() || '',
@@ -92,8 +92,8 @@ export class MongoCampaignProposalReadService implements ICampaignProposalReadSe
       metrics: doc.metrics instanceof Map
         ? Object.fromEntries(doc.metrics)
         : (doc.metrics || {}),
-      createdAt: doc.created_at || doc.createdAt,
-      updatedAt: doc.updated_at || doc.updatedAt,
+      createdAt: doc.created_at,
+      updatedAt: doc.updated_at,
     };
   }
 }

@@ -1,5 +1,6 @@
 import { Field, ObjectType, ID, Float } from '@nestjs/graphql';
 import { GraphQLJSONObject } from 'graphql-type-json';
+import type { JsonObject } from '@/core/types/common.type';
 import { UserType } from './user.type';
 import { EnterpriseType } from './enterprise.type';
 import { PlatformType } from './platform.type';
@@ -12,7 +13,7 @@ export class PlatformTargetItemType {
   platformId: string;
 
   @Field(() => PlatformType, { nullable: true })
-  platform?: any;
+  platform?: PlatformType | null;
 
   @Field(() => Float, { nullable: true })
   minFollowers?: number;
@@ -24,7 +25,7 @@ export class PlatformTargetItemType {
   note?: string;
 
   @Field(() => GraphQLJSONObject, { nullable: true })
-  others?: Record<string, any>;
+  others?: JsonObject | null;
 }
 
 @ObjectType()
@@ -33,7 +34,7 @@ export class RawContentItemType {
   fileId: string;
 
   @Field(() => UploadedFileType, { nullable: true })
-  file?: any;
+  file?: UploadedFileType | null;
 
   @Field({ nullable: true })
   rawContent?: string;
@@ -51,7 +52,7 @@ export class CampaignKOLOutputType {
   platformId: string;
 
   @Field(() => PlatformType, { nullable: true })
-  platform?: any;
+  platform?: PlatformType | null;
 
   @Field({ nullable: true })
   uniqueId?: string;
@@ -69,7 +70,7 @@ export class CampaignKOLOutputType {
   fileId?: string;
 
   @Field(() => UploadedFileType, { nullable: true })
-  file?: any;
+  file?: UploadedFileType | null;
 
   @Field({ nullable: true })
   scheduledAt?: string;
@@ -96,7 +97,7 @@ export class CampaignEnterpriseOutputType {
   platformId: string;
 
   @Field(() => PlatformType, { nullable: true })
-  platform?: any;
+  platform?: PlatformType | null;
 
   @Field({ nullable: true })
   uniqueId?: string;
@@ -114,7 +115,7 @@ export class CampaignEnterpriseOutputType {
   fileId?: string;
 
   @Field(() => UploadedFileType, { nullable: true })
-  file?: any;
+  file?: UploadedFileType | null;
 
   @Field({ nullable: true })
   scheduledAt?: string;
@@ -141,7 +142,7 @@ export class SchedulePostType {
   platformId: string;
 
   @Field(() => PlatformType, { nullable: true })
-  platform?: any;
+  platform?: PlatformType | null;
 
   @Field()
   status: string;
@@ -180,19 +181,19 @@ export class CampaignType {
   ownerId: string;
 
   @Field(() => UserType, { nullable: true })
-  owner?: any;
+  owner?: UserType | null;
 
   @Field({ nullable: true })
   enterpriseId?: string;
 
   @Field(() => EnterpriseType, { nullable: true })
-  enterprise?: any;
+  enterprise?: EnterpriseType | null;
 
   @Field(() => Float)
   budget: number;
 
   @Field(() => GraphQLJSONObject)
-  financialTarget: Record<string, any>;
+  financialTarget: JsonObject;
 
   @Field()
   description: string;
@@ -207,7 +208,7 @@ export class CampaignType {
   collaboratorIds: string[];
 
   @Field(() => [UserType], { nullable: true })
-  collaborators?: any[];
+  collaborators?: UserType[] | null;
 
   @Field(() => [RawContentItemType])
   rawContents: RawContentItemType[];
@@ -216,5 +217,5 @@ export class CampaignType {
   schedule?: CampaignScheduleType;
 
   @Field(() => [CampaignParticipantType], { nullable: true })
-  participants?: any[];
+  participants?: CampaignParticipantType[] | null;
 }

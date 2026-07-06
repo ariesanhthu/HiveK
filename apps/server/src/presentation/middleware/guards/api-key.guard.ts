@@ -7,6 +7,7 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { GqlExecutionContext } from '@nestjs/graphql';
 import { Observable } from 'rxjs';
+import type { AuthenticatedRequest } from '@/core/types/common.type';
 
 @Injectable()
 export class ApiKeyGuard implements CanActivate {
@@ -16,7 +17,7 @@ export class ApiKeyGuard implements CanActivate {
     context: ExecutionContext,
   ): boolean | Promise<boolean> | Observable<boolean> {
     const type = context.getType() as string;
-    let request: any;
+    let request: AuthenticatedRequest;
 
     if (type === 'graphql') {
       const gqlCtx = GqlExecutionContext.create(context);

@@ -99,6 +99,12 @@ export class PackageModel {
   @Prop({ type: Date, required: false, default: null })
   activated_at: Date | null;
 
+  @Prop({ type: Date, required: false })
+  created_at?: Date;
+
+  @Prop({ type: Date, required: false })
+  updated_at?: Date;
+
   _id?: string;
 
   @Virtual({

@@ -1,5 +1,6 @@
 import { BillEntity } from '@/core/aggregate-roots';
 import { BillResponseDto, BillCalculateResponseDto } from '../dtos';
+import type { EBillType, EBillStatus } from '@/core/enums';
 
 export class BillMapper {
   static toDto(entity: BillEntity): BillResponseDto {
@@ -7,8 +8,8 @@ export class BillMapper {
       id: entity.id!,
       billCode: entity.billCode,
       enterpriseId: entity.enterpriseId,
-      type: entity.type as any,
-      status: entity.status as any,
+      type: entity.type as EBillType,
+      status: entity.status as EBillStatus,
       items: entity.items.map((item) => ({
         packageId: item.packageId,
         packageVariantId: item.packageVariantId,

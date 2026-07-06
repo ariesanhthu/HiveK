@@ -53,6 +53,9 @@ export class BillModel {
   @Prop({ type: Date, required: false, default: null })
   expires_at: Date | null;
 
+  @Prop({ type: Date, required: false })
+  created_at?: Date;
+
   _id?: string;
 
   @Virtual({

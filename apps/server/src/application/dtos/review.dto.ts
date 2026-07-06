@@ -10,14 +10,14 @@ export const ReviewDtoSchema = z.object({
   rating: z.number().int().min(1).max(5),
   comment: z.string(),
   status: z.enum(EReviewStatus),
-  createdAt: z.any(),
+  createdAt: z.coerce.date(),
 }).strict();
 
 export class ReviewDto extends createZodDto(ReviewDtoSchema) {}
 
 export const ReviewFilterSchema = CursorPaginationRequestSchema.extend({
   proposalId: z.string().optional(),
-  status: z.string().optional(),
+  status: z.enum(EReviewStatus).optional(),
 }).strict();
 
 export class ReviewFilterDto extends createZodDto(ReviewFilterSchema) {}

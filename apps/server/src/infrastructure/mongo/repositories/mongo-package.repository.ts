@@ -122,16 +122,16 @@ export class MongoPackageRepository implements IPackageRepository {
         code: doc.code,
         name: doc.name,
         description: doc.description,
-        type: doc.type as any,
-        scope: doc.scope as any,
+        type: doc.type,
+        scope: doc.scope,
         enterpriseId: doc.enterprise_id,
-        status: doc.status as any,
+        status: doc.status,
         features: (doc.features || []).map(
           (f) => new PackageFeatureVO({ code: f.code, permissions: f.permissions })
         ),
         baseQuotas: new QuotaVO(baseQuotasRecord),
-        variants: (doc.variants || []).map((v: any) => {
-          const extraQuotasRecord = ((v.extra_quotas || []) as any[]).reduce<Record<string, number>>(
+        variants: (doc.variants || []).map((v) => {
+          const extraQuotasRecord = ((v.extra_quotas || [])).reduce<Record<string, number>>(
             (acc, curr: QuotaItemSchema) => {
               acc[curr.code] = curr.limit;
               return acc;
@@ -147,7 +147,7 @@ export class MongoPackageRepository implements IPackageRepository {
               price: v.price,
               priceAfterDiscount: v.price_after_discount,
               tax: v.tax,
-              currency: v.currency as any,
+              currency: v.currency,
               extraQuotas: new QuotaVO(extraQuotasRecord),
             }
           );
@@ -178,7 +178,7 @@ export class MongoPackageRepository implements IPackageRepository {
         limit: Number(limit),
       })),
       variants: data.variants.map((v) => ({
-        ...(includeVariantIds && v.id ? { _id: new Types.ObjectId(v.id) as any } : {}),
+        ...(includeVariantIds && v.id ? { _id: new Types.ObjectId(v.id).toString() } : {}),
         title: v.title,
         duration_months: v.durationMonths,
         price: v.price,

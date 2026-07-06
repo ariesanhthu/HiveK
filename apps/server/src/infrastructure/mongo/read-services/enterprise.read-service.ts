@@ -40,7 +40,7 @@ export class MongoEnterpriseReadService implements IEnterpriseReadService {
     const cached = await this.cacheService.get<EnterpriseDetailDto>(cacheKey);
     if (cached) return cached;
 
-    const doc = await this.enterpriseModel.findOne({ user_id: new Types.ObjectId(userId) as any }).populate('user_id').populate('logo_url_id').lean().exec();
+    const doc = await this.enterpriseModel.findOne({ user_id: new Types.ObjectId(userId) }).populate('user_id').populate('logo_url_id').lean().exec();
     if (!doc) return null;
 
     const dto = this.mapToDto(doc);
@@ -48,7 +48,7 @@ export class MongoEnterpriseReadService implements IEnterpriseReadService {
     return dto;
   }
 
-  async findAll(filters: EnterpriseFilterDto = {} as any): Promise<PaginatedResponseDto<EnterpriseDetailDto>> {
+  async findAll(filters: EnterpriseFilterDto = {}): Promise<PaginatedResponseDto<EnterpriseDetailDto>> {
     const cacheKey = CacheKeyUtil.list(this.domain, filters);
     const cached = await this.cacheService.get<PaginatedResponseDto<EnterpriseDetailDto>>(cacheKey);
     if (cached) return cached;
@@ -133,7 +133,7 @@ export class MongoEnterpriseReadService implements IEnterpriseReadService {
         type: doc.user_id.type,
         createdAt: doc.user_id.created_at,
         updatedAt: doc.user_id.updated_at,
-      } as any : undefined,
+      } : undefined,
     };
   }
 }

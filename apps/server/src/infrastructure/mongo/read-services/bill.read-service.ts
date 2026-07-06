@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, QueryFilter } from 'mongoose';
+import { FlattenMaps, Model, QueryFilter } from 'mongoose';
 import { BillDocument, BillModel } from '../schemas';
 import { IBillReadService } from '@/application/interfaces';
 import { BillFilterDto } from '@/application/queries';
@@ -15,9 +15,9 @@ export class MongoBillReadService implements IBillReadService {
     private readonly model: Model<BillDocument>,
   ) {}
 
-  async findAll(filters: BillFilterDto = {} as any): Promise<PaginatedResponseDto<BillResponseDto>> {
+  async findAll(filters: BillFilterDto = {}): Promise<PaginatedResponseDto<BillResponseDto>> {
     const { cursor, limit = 10, sort = SortOrder.DESC, enterpriseId, status } = filters;
-    const query: any = {};
+    const query: QueryFilter<BillDocument> = {};
 
     if (enterpriseId) query.enterprise_id = enterpriseId;
     if (status) query.status = status;
@@ -51,21 +51,21 @@ export class MongoBillReadService implements IBillReadService {
   }
 
   async findByBillCode(billCode: string): Promise<Nullable<BillResponseDto>> {
-    const doc = await this.model.findOne({ bill_code: billCode } as any).lean().exec();
+    const doc = await this.model.findOne({ bill_code: billCode } as QueryFilter<BillDocument>).lean().exec();
     return doc ? this.mapToDto(doc) : null;
   }
 
   async findByEnterpriseId(enterpriseId: string): Promise<BillResponseDto[]> {
-    const docs = await this.model.find({ enterprise_id: enterpriseId } as any).lean().exec();
+    const docs = await this.model.find({ enterprise_id: enterpriseId } as QueryFilter<BillDocument>).lean().exec();
     return docs.map((doc) => this.mapToDto(doc));
   }
 
   async findUnpaidBills(enterpriseId: string): Promise<BillResponseDto[]> {
-    const docs = await this.model.find({ enterprise_id: enterpriseId, status: 'pending' } as any).lean().exec();
+    const docs = await this.model.find({ enterprise_id: enterpriseId, status: 'pending' } as QueryFilter<BillDocument>).lean().exec();
     return docs.map((doc) => this.mapToDto(doc));
   }
 
-  private mapToDto(doc: any): BillResponseDto {
+  private mapToDto(doc: FlattenMaps<BillDocument>): BillResponseDto {
     const items: BillItemResponseDto[] = (doc.items || []).map((item: any) => ({
       packageId: item.package_id,
       packageVariantId: item.package_variant_id,

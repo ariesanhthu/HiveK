@@ -91,8 +91,8 @@ export class MongoPaymentProviderRepository implements IPaymentProviderRepositor
       {
         code: doc.code,
         displayName: doc.display_name,
-        supportedMethods: doc.supported_methods as any,
-        supportedCurrencies: doc.supported_currencies as any,
+        supportedMethods: doc.supported_methods,
+        supportedCurrencies: doc.supported_currencies,
         credentials: doc.credentials,
         isActive: doc.is_active,
         supportsWebhook: doc.supports_webhook,

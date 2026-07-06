@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, QueryFilter } from 'mongoose';
+import { FlattenMaps, Model, QueryFilter } from 'mongoose';
 import { UploadedFileDocument, UploadedFileModel } from '../schemas';
 import { IUploadedFileReadService } from '@/application/interfaces';
 import { Nullable } from '@/core/types';
@@ -15,7 +15,7 @@ export class MongoUploadedFileReadService implements IUploadedFileReadService {
     private readonly model: Model<UploadedFileDocument>,
   ) {}
 
-  async findAll(filters: UploadedFileFilterDto = {} as any): Promise<PaginatedResponseDto<UploadedFileDto>> {
+  async findAll(filters: UploadedFileFilterDto = {}): Promise<PaginatedResponseDto<UploadedFileDto>> {
     const { cursor, limit = 10, sort = SortOrder.DESC, targetId, format, size, minSize, maxSize } = filters;
     const query: QueryFilter<UploadedFileDocument> = { delete_at: null };
 
@@ -67,7 +67,7 @@ export class MongoUploadedFileReadService implements IUploadedFileReadService {
     return doc ? this.mapToDto(doc) : null;
   }
 
-  private mapToDto(doc: any): UploadedFileDto {
+  private mapToDto(doc: FlattenMaps<UploadedFileDocument>): UploadedFileDto {
     return {
       id: doc._id.toString(),
       url: doc.url,

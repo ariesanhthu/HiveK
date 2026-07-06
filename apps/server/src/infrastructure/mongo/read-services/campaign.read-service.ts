@@ -1,13 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, QueryFilter } from 'mongoose';
+import { Model, QueryFilter, Types } from 'mongoose';
 import { CampaignDocument, CampaignModel } from '../schemas';
 import { ICampaignReadService } from '@/application/interfaces';
 import { Nullable } from '@/core/types';
 import { CampaignDetailDto } from '@/application/dtos';
 import { CampaignFilterDto } from '@/application/queries';
 import { PaginatedResponseDto, SortOrder } from '@/application/dtos/pagination.dto';
-import { Schema } from 'mongoose';
 import { parseMongoProjection, MongoSanitizeUtil } from '../utils';
 
 @Injectable()
@@ -17,7 +16,7 @@ export class MongoCampaignReadService implements ICampaignReadService {
     private readonly campaignModel: Model<CampaignDocument>,
   ) { }
 
-  async findAll(filters: CampaignFilterDto = {} as any, projection?: any): Promise<PaginatedResponseDto<CampaignDetailDto>> {
+  async findAll(filters: CampaignFilterDto = {}, projection?: any): Promise<PaginatedResponseDto<CampaignDetailDto>> {
     const { cursor, limit = 10, sort = SortOrder.DESC, name, ownerId, enterpriseId } = filters;
     const query: QueryFilter<CampaignDocument> = {};
 
@@ -26,18 +25,18 @@ export class MongoCampaignReadService implements ICampaignReadService {
     }
 
     if (ownerId) {
-      query.owner_id = new Schema.Types.ObjectId(ownerId);
+      query.owner_id = new Types.ObjectId(ownerId);
     }
 
     if (enterpriseId) {
-      query.enterprise_id = new Schema.Types.ObjectId(enterpriseId);
+      query.enterprise_id = new Types.ObjectId(enterpriseId);
     }
 
     if (cursor) {
       query._id = sort === SortOrder.DESC ? { $lt: cursor } : { $gt: cursor };
     }
 
-    let queryBuilder: any = this.campaignModel
+    let queryBuilder = this.campaignModel
       .find(query)
       .sort({ _id: sort === SortOrder.DESC ? -1 : 1 })
       .limit(limit + 1);
@@ -94,7 +93,7 @@ export class MongoCampaignReadService implements ICampaignReadService {
       });
 
       if (select) {
-        queryBuilder = queryBuilder.select(select);
+        queryBuilder = queryBuilder.select(select) as any;
       }
       if (populate && populate.length > 0) {
         populate.forEach((opt) => {
@@ -112,7 +111,7 @@ export class MongoCampaignReadService implements ICampaignReadService {
     const nextCursor = hasNextPage ? results[results.length - 1]._id.toString() : null;
 
     return new PaginatedResponseDto(
-      results.map((doc: any) => this.mapToDto(doc)),
+      results.map((doc) => this.mapToDto(doc)),
       nextCursor,
       hasNextPage,
       limit,    
@@ -120,7 +119,7 @@ export class MongoCampaignReadService implements ICampaignReadService {
   }
 
   async findById(id: string, projection?: any): Promise<Nullable<CampaignDetailDto>> {
-    let queryBuilder: any = this.campaignModel.findById(id);
+    let queryBuilder = this.campaignModel.findById(id);
 
     if (projection) {
       const { select, populate } = parseMongoProjection(projection, {
@@ -174,10 +173,10 @@ export class MongoCampaignReadService implements ICampaignReadService {
       });
 
       if (select) {
-        queryBuilder = queryBuilder.select(select);
+        queryBuilder = queryBuilder.select(select) as any;
       }
       if (populate && populate.length > 0) {
-        populate.forEach((opt) => {
+        populate.forEach((opt: any) => {
           queryBuilder = queryBuilder.populate(opt);
         });
       }
@@ -266,7 +265,7 @@ export class MongoCampaignReadService implements ICampaignReadService {
         type: doc.owner_id.type,
         createdAt: doc.owner_id.created_at,
         updatedAt: doc.owner_id.updated_at,
-      } as any : undefined,
+      } : undefined,
       enterprise: doc.enterprise_id && typeof doc.enterprise_id === 'object' && doc.enterprise_id._id ? {
         id: doc.enterprise_id._id.toString(),
         userId: doc.enterprise_id.user_id ? doc.enterprise_id.user_id.toString() : '',

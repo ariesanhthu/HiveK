@@ -23,7 +23,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
     this.logger.setContext(HttpExceptionFilter.name)
   }
 
-  catch(exception: any, host: ArgumentsHost) {
+  catch(exception: unknown, host: ArgumentsHost) {
     if (isFunction(host.getType) && (host.getType() as string) === 'graphql') {
       throw exception;
     }
@@ -59,8 +59,9 @@ export class HttpExceptionFilter implements ExceptionFilter {
     }
 
     // ---------- UNHANDLED ERRORS ----------
-    const message = exception?.message || 'Internal server error';
-    this.logger.error(`${request.method} ${request.url} 500 - ${message}`, exception?.stack);
+    const message = exception instanceof Error ? exception.message : 'Internal server error';
+    const stack = exception instanceof Error ? exception.stack : undefined;
+    this.logger.error(`${request.method} ${request.url} 500 - ${message}`, stack);
     return response.status(HttpStatus.INTERNAL_SERVER_ERROR).json(
       ApiResponseHelper.error('INTERNAL_ERROR', message),
     );

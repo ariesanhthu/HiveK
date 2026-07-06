@@ -22,7 +22,7 @@ export class MongoPlatformReadService implements IPlatformReadService {
     private readonly cacheService: ICacheService,
   ) { }
 
-  async findAll(filters: PlatformFilterDto = {} as any): Promise<PaginatedResponseDto<PlatformDetailDto>> {
+  async findAll(filters: PlatformFilterDto = {}): Promise<PaginatedResponseDto<PlatformDetailDto>> {
     const cacheKey = CacheKeyUtil.list(this.domain, filters);
     const cached = await this.cacheService.get<PaginatedResponseDto<PlatformDetailDto>>(cacheKey);
     if (cached) return cached;

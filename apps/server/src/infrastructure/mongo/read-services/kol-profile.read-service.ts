@@ -18,7 +18,7 @@ export class MongoKolProfileReadService implements IKolProfileReadService {
     private readonly logger: ILoggerService,
   ) { }
 
-  async findAll(filters: KolProfileFilterDto = {} as any): Promise<PaginatedResponseDto<KolProfileDetailDto>> {
+  async findAll(filters: KolProfileFilterDto = {}): Promise<PaginatedResponseDto<KolProfileDetailDto>> {
     const start = performance.now();
     const { cursor, limit = 10, sort = SortOrder.DESC, name, location, gender, isVerified, categories, tags } = filters;
     const query: QueryFilter<KolProfileDocument> = {};
@@ -71,7 +71,7 @@ export class MongoKolProfileReadService implements IKolProfileReadService {
   }
 
   async findById(id: string, projection?: any): Promise<Nullable<KolProfileDetailDto>> {
-    let queryBuilder: any = this.kolProfileModel.findById(id);
+    let queryBuilder = this.kolProfileModel.findById(id);
 
     if (projection) {
       const { select, populate } = parseMongoProjection(projection, {
@@ -101,7 +101,7 @@ export class MongoKolProfileReadService implements IKolProfileReadService {
       });
 
       if (select) {
-        queryBuilder = queryBuilder.select(select);
+        queryBuilder = queryBuilder.select(select) as any;
       }
       if (populate && populate.length > 0) {
         populate.forEach((opt) => {
@@ -169,7 +169,7 @@ export class MongoKolProfileReadService implements IKolProfileReadService {
         type: doc.user_id.type,
         createdAt: doc.user_id.created_at,
         updatedAt: doc.user_id.updated_at,
-      } as any : undefined,
+      } : undefined,
     };
   }
 }

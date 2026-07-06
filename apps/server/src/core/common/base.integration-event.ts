@@ -13,7 +13,7 @@ export interface EventMetadata {
   [key: string]: unknown;
 }
 
-export abstract class IntegrationEvent<T = any> {
+export abstract class IntegrationEvent<T = unknown> {
   abstract eventType: string;
   version = 1;
   eventId = crypto.randomUUID();

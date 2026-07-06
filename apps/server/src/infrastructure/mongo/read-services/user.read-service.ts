@@ -1,13 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, QueryFilter } from 'mongoose';
+import { Model, QueryFilter, Types } from 'mongoose';
 import { IUserReadService } from '@/application/interfaces';
 import { UserDetailDto, UserFilterDto } from '@/application/dtos';
 import { UserDocument, UserModel } from '../schemas';
 import { Nullable } from '@/core/types';
 import { ERoleType } from '@/core/enums';
 import { PaginatedResponseDto, SortOrder } from '@/application/dtos/pagination.dto';
-import { Schema } from 'mongoose';
 import { MongoSanitizeUtil } from '../utils';
 
 @Injectable()
@@ -27,7 +26,7 @@ export class MongoUserReadService implements IUserReadService {
     return doc ? this.mapToDto(doc) : null;
   }
 
-  async findAll(filters: UserFilterDto = {} as any): Promise<PaginatedResponseDto<UserDetailDto>> {
+  async findAll(filters: UserFilterDto = {}): Promise<PaginatedResponseDto<UserDetailDto>> {
     const { cursor, limit = 10, sort = SortOrder.DESC, email, phone, fullName, type, roleId, isEmailVerified } = filters;
     const query: QueryFilter<UserDocument> = {};
 
@@ -44,7 +43,7 @@ export class MongoUserReadService implements IUserReadService {
       query.type = type;
     }
     if (roleId) {
-      query.role_id = new Schema.Types.ObjectId(roleId);
+      query.role_id = new Types.ObjectId(roleId);
     }
     if (isEmailVerified !== undefined) {
       query.is_email_verified = isEmailVerified;
@@ -114,17 +113,17 @@ export class MongoUserReadService implements IUserReadService {
           ...baseFields,
           type: ERoleType.ENTERPRISE,
           enterpriseIds: doc.enterprise_ids ? doc.enterprise_ids.map((id: any) => id.toString()) : [],
-        } as any;
+        } as UserDetailDto;
       case ERoleType.ADMIN:
         return {
           ...baseFields,
           type: ERoleType.ADMIN,
-        } as any;
+        } as UserDetailDto;
       case ERoleType.KOL:
         return {
           ...baseFields,
           type: ERoleType.KOL,
-        } as any;
+        } as UserDetailDto;
       default:
         throw new Error(`Unknown user type: ${doc.type}`);
     }

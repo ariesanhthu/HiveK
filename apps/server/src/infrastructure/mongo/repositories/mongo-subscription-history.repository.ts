@@ -32,15 +32,15 @@ function quotaPropsFromUnknown(raw: unknown): Record<string, number> {
 
 function subscriptionChangeDetailsPropsFromMongo(
   details: SubscriptionChangeDetailsModel | Record<string, unknown> | null | undefined
-): any {
+) {
   const d = details ?? {};
   return {
-    oldPackages: stringArrayFromUnknown((d as any).oldPackages),
-    newPackages: stringArrayFromUnknown((d as any).newPackages),
-    oldQuotas: new QuotaVO(quotaPropsFromUnknown((d as any).oldQuotas)),
-    newQuotas: new QuotaVO(quotaPropsFromUnknown((d as any).newQuotas)),
-    oldPermissions: stringArrayFromUnknown((d as any).oldPermissions),
-    newPermissions: stringArrayFromUnknown((d as any).newPermissions),
+    oldPackages: stringArrayFromUnknown((d as SubscriptionChangeDetailsModel).oldPackages),
+    newPackages: stringArrayFromUnknown((d as SubscriptionChangeDetailsModel).newPackages),
+    oldQuotas: new QuotaVO(quotaPropsFromUnknown((d as SubscriptionChangeDetailsModel).oldQuotas)),
+    newQuotas: new QuotaVO(quotaPropsFromUnknown((d as SubscriptionChangeDetailsModel).newQuotas)),
+    oldPermissions: stringArrayFromUnknown((d as SubscriptionChangeDetailsModel).oldPermissions),
+    newPermissions: stringArrayFromUnknown((d as SubscriptionChangeDetailsModel).newPermissions),
   };
 }
 

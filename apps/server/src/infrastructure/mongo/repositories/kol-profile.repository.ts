@@ -36,7 +36,7 @@ export class MongoKolProfileRepository implements IKolProfileRepository {
   }
 
   async findByUserId(userId: string): Promise<Nullable<KolProfileEntity>> {
-    const doc = await this.kolProfileModel.findOne({ user_id: new Types.ObjectId(userId) as any }).session(this.session).exec();
+    const doc = await this.kolProfileModel.findOne({ user_id: new Types.ObjectId(userId) } as Record<string, unknown>).session(this.session).exec();
     return doc ? this.mapToDomain(doc) : null;
   }
 
@@ -72,10 +72,10 @@ export class MongoKolProfileRepository implements IKolProfileRepository {
   }
 
   private mapToDomain(doc: KolProfileDocument): KolProfileEntity {
-    const platforms = (doc.platforms || []).map((p: any) =>
+    const platforms = (doc.platforms || []).map((p: KolProfileModel['platforms'][0]) =>
       KolPlatformInfoVO.create({
-        platformId: p.platform_id,
-        uniqueId: p.uniqueId ?? p.handle ?? '',
+        platformId: p.platform_id.toString(),
+        uniqueId: p.uniqueId,
         externalId: p.external_id,
         followerCount: p.follower_count,
         avgEngagement: p.avg_engagement,
@@ -106,7 +106,7 @@ export class MongoKolProfileRepository implements IKolProfileRepository {
 
   private mapToPersistence(entity: KolProfileEntity): Omit<KolProfileModel, 'created_at' | 'updated_at'> {
     const platforms = (entity.platforms || []).map((p) => ({
-      platform_id: p.platformId,
+      platform_id: new Types.ObjectId(p.platformId),
       uniqueId: p.uniqueId,
       external_id: p.externalId,
       follower_count: p.followerCount,
@@ -116,7 +116,7 @@ export class MongoKolProfileRepository implements IKolProfileRepository {
     }));
 
     return {
-      user_id: entity.userId ? new Types.ObjectId(entity.userId) as any : null,
+      user_id: entity.userId ? new Types.ObjectId(entity.userId) : null,
       verification_type: entity.verificationType,
       name: entity.name,
       location: entity.location ?? null,

@@ -19,7 +19,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
     return context.switchToHttp().getRequest();
   }
 
-  override handleRequest(err: any, user: any, info: any, context: ExecutionContext, status?: any) {
+  override handleRequest(err: any, user: any, info: any, context: ExecutionContext, status?: number) {
     if (user) {
       return user;
     }

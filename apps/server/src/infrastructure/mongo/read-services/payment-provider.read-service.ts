@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, QueryFilter } from 'mongoose';
+import { FlattenMaps, Model, QueryFilter } from 'mongoose';
 import { PaymentProviderDocument, PaymentProviderModel } from '../schemas';
 import { IPaymentProviderReadService } from '@/application/interfaces';
 import { PaymentProviderFilterDto } from '@/application/queries';
@@ -15,15 +15,15 @@ export class MongoPaymentProviderReadService implements IPaymentProviderReadServ
     private readonly model: Model<PaymentProviderDocument>,
   ) {}
 
-  async findAll(filters: PaymentProviderFilterDto = {} as any): Promise<PaginatedResponseDto<PaymentProviderResponseDto>> {
+  async findAll(filters: PaymentProviderFilterDto = {}): Promise<PaginatedResponseDto<PaymentProviderResponseDto>> {
     const { cursor, limit = 10, sort = SortOrder.DESC, methods, isActive } = filters;
-    const query: any = { deleted_at: null };
+    const query: QueryFilter<PaymentProviderDocument> = { deleted_at: null };
 
     if (isActive !== undefined) {
       query.is_active = isActive;
     }
     if (methods && methods.length > 0) {
-      query.supported_methods = { $in: methods };
+      query.supported_methods = { $in: methods as any };
     }
 
     if (cursor) {
@@ -50,21 +50,21 @@ export class MongoPaymentProviderReadService implements IPaymentProviderReadServ
   }
 
   async findById(id: string): Promise<Nullable<PaymentProviderResponseDto>> {
-    const doc = await this.model.findOne({ _id: id, deleted_at: null } as any).lean().exec();
+    const doc = await this.model.findOne({ _id: id, deleted_at: null } as QueryFilter<PaymentProviderDocument>).lean().exec();
     return doc ? this.mapToDto(doc) : null;
   }
 
   async findByCode(code: string): Promise<Nullable<PaymentProviderResponseDto>> {
-    const doc = await this.model.findOne({ code, deleted_at: null } as any).lean().exec();
+    const doc = await this.model.findOne({ code, deleted_at: null } as QueryFilter<PaymentProviderDocument>).lean().exec();
     return doc ? this.mapToDto(doc) : null;
   }
 
   async findAllActive(): Promise<PaymentProviderResponseDto[]> {
-    const docs = await this.model.find({ is_active: true, deleted_at: null } as any).lean().exec();
+    const docs = await this.model.find({ is_active: true, deleted_at: null } as QueryFilter<PaymentProviderDocument>).lean().exec();
     return docs.map((doc) => this.mapToDto(doc));
   }
 
-  private mapToDto(doc: any): PaymentProviderResponseDto {
+  private mapToDto(doc: FlattenMaps<PaymentProviderDocument>): PaymentProviderResponseDto {
     return {
       id: doc._id.toString(),
       code: doc.code,

@@ -6,6 +6,7 @@ import {
   PaymentResponseDto,
   PaymentTransactionResponseDto,
 } from '../dtos';
+import type { EPaymentStatus, EPaymentAttemptStatus, ETransactionStatus } from '@/core/enums';
 
 export class PaymentMapper {
   static toDto(entity: PaymentEntity): PaymentResponseDto {
@@ -16,7 +17,7 @@ export class PaymentMapper {
       billId: entity.billId,
       amount: entity.amount.amount,
       currency: entity.amount.currency,
-      status: entity.status.value as any,
+      status: entity.status.value as EPaymentStatus,
       description: entity.description || undefined,
       idempotencyKey: entity.idempotencyKey || undefined,
       version: entity.version,
@@ -40,7 +41,7 @@ export class PaymentMapper {
       billId: entity.billId,
       amount: entity.amount.amount,
       currency: entity.amount.currency,
-      status: entity.status.value as any,
+      status: entity.status.value as EPaymentStatus,
       description: entity.description || undefined,
       attempts: entity.paymentAttempts.map((attempt) => this.toDtoAttempt(attempt)),
       idempotencyKey: entity.idempotencyKey || undefined,
@@ -61,7 +62,7 @@ export class PaymentMapper {
     return {
       paymentProviderId: entity.paymentProviderId,
       attemptNumber: entity.attemptNumber,
-      status: entity.status.value as any,
+      status: entity.status.value as EPaymentAttemptStatus,
       transactions: entity.transactions.map((transaction) =>
         this.toDtoTransaction(transaction)
       ),
@@ -78,7 +79,7 @@ export class PaymentMapper {
       transactionType: entity.transactionType,
       amount: entity.amount.amount,
       currency: entity.amount.currency,
-      status: entity.status as any,
+      status: entity.status as ETransactionStatus,
       createdAt: entity.createdAt,
       description: entity.description || undefined,
       providerTransactionId: entity.providerTransactionId || undefined,

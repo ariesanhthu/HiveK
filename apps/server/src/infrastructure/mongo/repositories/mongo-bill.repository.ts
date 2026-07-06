@@ -97,13 +97,13 @@ export class MongoBillRepository implements IBillRepository {
         type: doc.type,
         status: doc.status,
         items: (doc.items || []).map(
-          (item: any) =>
+          (item) =>
             new BillItemVO({
               packageId: item.package_id,
               packageVariantId: item.package_variant_id,
               price: item.price,
               taxPercent: item.tax_percent,
-              purchaseType: item.purchase_type as any,
+              purchaseType: item.purchase_type,
             })
         ),
         totalAmount: doc.total_amount,

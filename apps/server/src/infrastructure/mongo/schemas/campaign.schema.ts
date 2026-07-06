@@ -35,7 +35,7 @@ export class RawContentItemModel {
 export class CampaignParticipantSubModel {
   _id: Types.ObjectId;
 
-  @Prop({ required: true, type: MongooseSchema.Types.ObjectId, ref: 'KolProfileModel' })
+  @Prop({ required: true, type: Types.ObjectId, ref: 'KolProfileModel' })
   kol_profile_id: Types.ObjectId;
 
   @Prop({ required: true, type: String, enum: Object.values(EParticipantStatus) })
@@ -49,6 +49,9 @@ export class CampaignParticipantSubModel {
 
   @Prop({ type: String, default: null })
   delete_by: string | null;
+
+  created_at: Date;
+  updated_at: Date;
 }
 export const CampaignParticipantSubSchema = SchemaFactory.createForClass(CampaignParticipantSubModel);
 
@@ -56,10 +59,10 @@ export const CampaignParticipantSubSchema = SchemaFactory.createForClass(Campaig
 export class CampaignKOLOutputSubModel {
   _id: Types.ObjectId;
 
-  @Prop({ required: true, type: MongooseSchema.Types.ObjectId })
+  @Prop({ required: true, type: Types.ObjectId })
   campaign_participant_id: Types.ObjectId;
 
-  @Prop({ required: true, type: MongooseSchema.Types.ObjectId, ref: 'PlatformModel' })
+  @Prop({ required: true, type: Types.ObjectId, ref: 'PlatformModel' })
   platform_id: Types.ObjectId;
 
   @Prop({ type: String, default: null })
@@ -77,7 +80,7 @@ export class CampaignKOLOutputSubModel {
   @Prop({ type: Date, default: null })
   scheduled_at: Date | null;
 
-  @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'UploadedFileModel', default: null })
+  @Prop({ type: Types.ObjectId, ref: 'UploadedFileModel', default: null })
   file_id: Types.ObjectId | null;
 
   @Prop({ required: true, type: String, enum: Object.values(EOutputStatus) })
@@ -98,7 +101,7 @@ export const CampaignKOLOutputSubSchema = SchemaFactory.createForClass(CampaignK
 export class CampaignEnterpriseOutputSubModel {
   _id: Types.ObjectId;
 
-  @Prop({ required: true, type: MongooseSchema.Types.ObjectId, ref: 'PlatformModel' })
+  @Prop({ required: true, type: Types.ObjectId, ref: 'PlatformModel' })
   platform_id: Types.ObjectId;
 
   @Prop({ type: String, default: null })
@@ -116,7 +119,7 @@ export class CampaignEnterpriseOutputSubModel {
   @Prop({ type: Date, default: null })
   scheduled_at: Date | null;
 
-  @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'UploadedFileModel', default: null })
+  @Prop({ type: Types.ObjectId, ref: 'UploadedFileModel', default: null })
   file_id: Types.ObjectId | null;
 
   @Prop({ required: true, type: String, enum: Object.values(EOutputStatus) })
@@ -138,7 +141,7 @@ export class SchedulePostModel {
   @Prop({ required: true, type: Date })
   scheduled_time: Date;
 
-  @Prop({ required: true, type: MongooseSchema.Types.ObjectId, ref: 'PlatformModel' })
+  @Prop({ required: true, type: Types.ObjectId, ref: 'PlatformModel' })
   platform_id: Types.ObjectId;
 
   @Prop({ required: true, type: String, enum: Object.values(ESchedulePostStatus) })
@@ -169,6 +172,9 @@ export const ScheduleDaySchema = SchemaFactory.createForClass(ScheduleDayModel);
 export class CampaignScheduleModel {
   @Prop({ type: [ScheduleDaySchema], default: [] })
   timeline: ScheduleDayModel[];
+
+  created_at: Date;
+  updated_at: Date;
 }
 export const CampaignScheduleSchema = SchemaFactory.createForClass(CampaignScheduleModel);
 
@@ -177,11 +183,11 @@ export const CampaignScheduleSchema = SchemaFactory.createForClass(CampaignSched
   timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' },
 })
 export class CampaignModel {
-  @Prop({ required: true, type: MongooseSchema.Types.ObjectId, ref: 'UserModel' })
-  owner_id: MongooseSchema.Types.ObjectId;
+  @Prop({ required: true, type: Types.ObjectId, ref: 'UserModel' })
+  owner_id: Types.ObjectId;
 
-  @Prop({ required: true, type: MongooseSchema.Types.ObjectId, ref: 'EnterpriseModel' })
-  enterprise_id: MongooseSchema.Types.ObjectId;
+  @Prop({ required: true, type: Types.ObjectId, ref: 'EnterpriseModel' })
+  enterprise_id: Types.ObjectId;
 
   @Prop({ type: Number, required: true, min: 0 })
   budget: number;
