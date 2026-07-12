@@ -17,3 +17,6 @@ export * from './package.aggregate';
 export * from './payment.aggregate';
 export * from './subscription.aggregate';
 export * from './subscription-history.aggregate';
+export * from './social-page.aggregate';
+export * from './scheduled-post.aggregate';
+export * from './auto-reply-rule.aggregate';

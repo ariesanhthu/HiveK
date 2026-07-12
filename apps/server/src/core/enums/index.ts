@@ -27,3 +27,5 @@ export * from './transaction-status.enum';
 export * from './transaction-source.enum';
 export * from './purchase-type.enum';
 export * from './failure-type.enum';
+export * from './post-status.enum';
+export * from './social-platform-code.enum';

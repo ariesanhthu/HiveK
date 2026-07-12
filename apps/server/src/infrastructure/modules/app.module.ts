@@ -29,6 +29,7 @@ import { RedisCacheModule } from '../cache/redis/redis-cache.module';
 import { EventsModule } from '../events/events.module';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { BillingModule } from '@/infrastructure/modules/billing.module';
+import { PostingModule } from '@/infrastructure/modules/posting.module';
 
 @Module({
   imports: [
@@ -56,6 +57,7 @@ import { BillingModule } from '@/infrastructure/modules/billing.module';
     RedisCacheModule,
     EventsModule,
     BillingModule,
+    PostingModule,
     // ThrottlerModule.forRoot([
     //   {
     //     ttl: 60000, // 1 minute

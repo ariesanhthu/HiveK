@@ -10,3 +10,7 @@ export * from './bill-cancelled.domain-event';
 export * from './payment-authorized.domain-event';
 export * from './payment-completed.domain-event';
 export * from './payment-events';
+export * from './social-page-connected.domain-event';
+export * from './post-scheduled.domain-event';
+export * from './post-published.domain-event';
+export * from './post-failed.domain-event';

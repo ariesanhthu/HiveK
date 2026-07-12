@@ -18,7 +18,7 @@ services:
     #         limits:
     #           cpus: '4.0'    # Chỉ cho phép NestJS dùng tối đa 1 Core CPU
     #           memory: 1G  # Chỉ cho phép dùng tối đa 512MB RAM
-    restart: none
+    # restart: none
 
 networks:
   default:

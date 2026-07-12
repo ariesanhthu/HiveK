@@ -29,6 +29,9 @@ import {
   PaymentModel, PaymentSchema,
   SubscriptionModel, SubscriptionSchema,
   SubscriptionHistoryModel, SubscriptionHistorySchema,
+  SocialPageModel, SocialPageSchema,
+  ScheduledPostModel, ScheduledPostSchema,
+  AutoReplyRuleModel, AutoReplyRuleSchema,
 } from './schemas';
 
 // Repository imports
@@ -50,6 +53,9 @@ import {
   MongoPaymentRepository,
   MongoSubscriptionRepository,
   MongoSubscriptionHistoryRepository,
+  MongoSocialPageRepository,
+  MongoScheduledPostRepository,
+  MongoAutoReplyRuleRepository,
 } from './repositories';
 
 // Read Service imports
@@ -90,6 +96,9 @@ import {
   PAYMENT_REPOSITORY,
   SUBSCRIPTION_REPOSITORY,
   SUBSCRIPTION_HISTORY_REPOSITORY,
+  SOCIAL_PAGE_REPOSITORY,
+  SCHEDULED_POST_REPOSITORY,
+  AUTO_REPLY_RULE_REPOSITORY,
 } from '@/core/interfaces/repositories';
 
 // Read Service symbols
@@ -156,6 +165,9 @@ import { MongoCampaignProposalReadService } from './read-services/campaign-propo
       { name: PaymentModel.name, schema: PaymentSchema },
       { name: SubscriptionModel.name, schema: SubscriptionSchema },
       { name: SubscriptionHistoryModel.name, schema: SubscriptionHistorySchema },
+      { name: SocialPageModel.name, schema: SocialPageSchema },
+      { name: ScheduledPostModel.name, schema: ScheduledPostSchema },
+      { name: AutoReplyRuleModel.name, schema: AutoReplyRuleSchema },
     ]),
   ],
   providers: [
@@ -240,6 +252,18 @@ import { MongoCampaignProposalReadService } from './read-services/campaign-propo
     {
       provide: SUBSCRIPTION_HISTORY_REPOSITORY,
       useClass: MongoSubscriptionHistoryRepository,
+    },
+    {
+      provide: SOCIAL_PAGE_REPOSITORY,
+      useClass: MongoSocialPageRepository,
+    },
+    {
+      provide: SCHEDULED_POST_REPOSITORY,
+      useClass: MongoScheduledPostRepository,
+    },
+    {
+      provide: AUTO_REPLY_RULE_REPOSITORY,
+      useClass: MongoAutoReplyRuleRepository,
     },
     // All Read Services
     {
@@ -327,6 +351,9 @@ import { MongoCampaignProposalReadService } from './read-services/campaign-propo
     PAYMENT_REPOSITORY,
     SUBSCRIPTION_REPOSITORY,
     SUBSCRIPTION_HISTORY_REPOSITORY,
+    SOCIAL_PAGE_REPOSITORY,
+    SCHEDULED_POST_REPOSITORY,
+    AUTO_REPLY_RULE_REPOSITORY,
     // Export all read service tokens
     USER_READ_SERVICE,
     ROLE_READ_SERVICE,

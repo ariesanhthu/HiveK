@@ -17,7 +17,7 @@ import { JwtAuthGuard, RolesGuard, RecaptchaGuard } from '@/presentation/middlew
 import { CurrentUser } from '@/presentation/decorators/current-user.decorator';
 import { Public } from '@/presentation/decorators/public.decorator';
 import { Roles } from '@/presentation/decorators/roles.decorator';
-import { ERoleType } from '@/core/enums';
+import { EReviewStatus, ERoleType } from '@/core/enums';
 import { Throttle } from '@nestjs/throttler';
 
 @ApiTags('CLIENT-reviews')
@@ -44,7 +44,7 @@ export class PublicReviewClientController {
   @Get()
   @ApiOperation({ summary: 'Get approved reviews' })
   async findAll(@Query() filters: ReviewFilterInputDto): Promise<PaginatedResponseDto<ReviewDto>> {
-    const safeFilters = { ...filters, status: 'approved' };
+    const safeFilters = { ...filters, status: EReviewStatus.APPROVED };
     return this.queryBus.execute(new ReviewGetListQuery(safeFilters));
   }
 

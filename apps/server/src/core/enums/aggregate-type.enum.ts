@@ -16,4 +16,7 @@ export enum EAggregateType {
   PACKAGE = 'package',
   PAYMENT = 'payment',
   SUBSCRIPTION = 'subscription',
+  SOCIAL_PAGE = 'social_page',
+  SCHEDULED_POST = 'scheduled_post',
+  AUTO_REPLY_RULE = 'auto_reply_rule',
 }

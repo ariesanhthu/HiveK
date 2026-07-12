@@ -66,6 +66,22 @@
           "routing_key": "notification.enterprise_revocation"
         }
       ]
+    },
+    {
+      "name": "comment_webhook_queue",
+      "type": "classic",
+      "options": {
+        "durable": true,
+        "exclusive": false,
+        "autoDelete": false,
+        "arguments": {}
+      },
+      "bindings": [
+        {
+          "exchange": "kpi_exchange",
+          "routing_key": "webhook.facebook.comment"
+        }
+      ]
     }
   ],
   "validation": {

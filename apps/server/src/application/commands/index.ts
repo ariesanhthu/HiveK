@@ -268,3 +268,39 @@ export * from './payment-void-authorization';
 
 // Subscription Commands
 export * from './subscription-update';
+
+// Social Page Commands
+export * from './social-page-connect/social-page-connect.command';
+export * from './social-page-connect/social-page-connect.handler';
+export * from './social-page-connect/social-page-connect.dto';
+export * from './social-page-disconnect/social-page-disconnect.command';
+export * from './social-page-disconnect/social-page-disconnect.handler';
+export * from './social-page-refresh-token/social-page-refresh-token.command';
+export * from './social-page-refresh-token/social-page-refresh-token.handler';
+
+// Scheduled Post Commands
+export * from './scheduled-post-create/scheduled-post-create.command';
+export * from './scheduled-post-create/scheduled-post-create.handler';
+export * from './scheduled-post-create/scheduled-post-create.dto';
+export * from './scheduled-post-schedule/scheduled-post-schedule.command';
+export * from './scheduled-post-schedule/scheduled-post-schedule.handler';
+export * from './scheduled-post-cancel/scheduled-post-cancel.command';
+export * from './scheduled-post-cancel/scheduled-post-cancel.handler';
+export * from './scheduled-post-reschedule/scheduled-post-reschedule.command';
+export * from './scheduled-post-reschedule/scheduled-post-reschedule.handler';
+export * from './scheduled-post-publish/scheduled-post-publish.command';
+export * from './scheduled-post-publish/scheduled-post-publish.handler';
+
+// Auto Reply Rule Commands
+export * from './auto-reply-rule-create/auto-reply-rule-create.command';
+export * from './auto-reply-rule-create/auto-reply-rule-create.handler';
+export * from './auto-reply-rule-create/auto-reply-rule-create.dto';
+export * from './auto-reply-rule-update/auto-reply-rule-update.command';
+export * from './auto-reply-rule-update/auto-reply-rule-update.handler';
+export * from './auto-reply-rule-update/auto-reply-rule-update.dto';
+export * from './auto-reply-rule-delete/auto-reply-rule-delete.command';
+export * from './auto-reply-rule-delete/auto-reply-rule-delete.handler';
+
+// Comment Webhook Handler
+export * from './comment-webhook-handle/comment-webhook-handle.command';
+export * from './comment-webhook-handle/comment-webhook-handle.handler';

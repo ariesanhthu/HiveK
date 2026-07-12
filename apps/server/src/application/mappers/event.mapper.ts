@@ -9,6 +9,10 @@ import {
   SubscriptionUpdatedEvent,
   PaymentAuthorizedEvent,
   PaymentCompletedEvent,
+  SocialPageConnectedEvent,
+  PostScheduledEvent,
+  PostPublishedEvent,
+  PostFailedEvent,
 } from '@/core/events';
 import {
   SendVerificationEmailRequestedEvent,
@@ -61,6 +65,11 @@ export class EventMapper {
           ),
         ];
       }
+      case event instanceof SocialPageConnectedEvent:
+      case event instanceof PostScheduledEvent:
+      case event instanceof PostPublishedEvent:
+      case event instanceof PostFailedEvent:
+        return [];
       default:
         return [];
     }

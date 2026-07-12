@@ -29,7 +29,8 @@
     "tracking.stop": "tracking.stop",
     "notification.verification_otp": "notification.verification_otp",
     "notification.enterprise_invitation": "notification.enterprise_invitation",
-    "notification.enterprise_revocation": "notification.enterprise_revocation"
+    "notification.enterprise_revocation": "notification.enterprise_revocation",
+    "webhook.facebook.comment": "webhook.facebook.comment"
   },
   "publish": {
     "persistent": true,

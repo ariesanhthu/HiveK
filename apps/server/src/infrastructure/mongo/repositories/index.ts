@@ -17,5 +17,8 @@ export * from './mongo-payment-provider.repository';
 export * from './mongo-payment.repository';
 export * from './mongo-subscription.repository';
 export * from './mongo-subscription-history.repository';
+export * from './social-page.repository';
+export * from './scheduled-post.repository';
+export * from './auto-reply-rule.repository';
 
 

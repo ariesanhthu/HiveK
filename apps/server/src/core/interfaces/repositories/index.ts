@@ -17,5 +17,8 @@ export * from './payment-provider.repository';
 export * from './payment.repository';
 export * from './subscription-history.repository';
 export * from './subscription.repository';
+export * from './social-page.repository';
+export * from './scheduled-post.repository';
+export * from './auto-reply-rule.repository';
 
 

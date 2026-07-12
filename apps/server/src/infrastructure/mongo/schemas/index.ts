@@ -18,4 +18,7 @@ export * from './payment-provider.schema';
 export * from './payment.schema';
 export * from './subscription.schema';
 export * from './subscription-history.schema';
+export * from './social-page.schema';
+export * from './scheduled-post.schema';
+export * from './auto-reply-rule.schema';
 
