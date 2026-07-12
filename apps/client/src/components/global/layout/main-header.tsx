@@ -1,10 +1,59 @@
-import React from "react";
+"use client";
+
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 
+/** Ignore tiny scroll jitter (trackpad inertia) below this delta. */
+const SCROLL_DELTA = 8;
+/** Never hide while still near the top of the page. */
+const TOP_OFFSET = 80;
+
+/**
+ * Auto-hide on scroll: hidden while scrolling down (content gets the full
+ * viewport), revealed on any scroll up or near the top.
+ */
+function useAutoHideHeader() {
+  const [hidden, setHidden] = useState(false);
+
+  useEffect(() => {
+    let lastY = window.scrollY;
+    let ticking = false;
+
+    const onScroll = () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => {
+        const y = window.scrollY;
+        const delta = y - lastY;
+        if (y < TOP_OFFSET) {
+          setHidden(false);
+        } else if (delta > SCROLL_DELTA) {
+          setHidden(true);
+        } else if (delta < -SCROLL_DELTA) {
+          setHidden(false);
+        }
+        lastY = y;
+        ticking = false;
+      });
+    };
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  return hidden;
+}
+
 export const MainHeader: React.FC = () => {
+  const hidden = useAutoHideHeader();
+
   return (
-    <header className="fixed left-0 top-0 z-50 w-full p-4 transition-all duration-300 sm:p-6">
+    <header
+      className={`fixed left-0 top-0 z-50 w-full p-4 transition-transform duration-300 ease-out sm:p-6 ${
+        hidden ? "-translate-y-full" : "translate-y-0"
+      }`}
+    >
       <div className="nav-shell nav-shell-light">
         <div className="flex items-center gap-8">
           <Link href="/" className="flex items-center gap-2">
@@ -33,6 +82,10 @@ export const MainHeader: React.FC = () => {
 
             <Link href="/kol-ranking" className="nav-link">
               Xếp hạng
+            </Link>
+
+            <Link href="/pricing" className="nav-link">
+              Bảng giá
             </Link>
           </nav>
         </div>
