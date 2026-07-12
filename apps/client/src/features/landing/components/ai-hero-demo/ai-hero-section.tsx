@@ -31,7 +31,10 @@ export function AiHeroSection() {
 
   return (
     <section
-      className="relative overflow-hidden pb-14 pt-24 md:pt-28"
+      // Cancels the shared (public) layout's `pt-[72px]` (added so light pages
+      // clear the fixed header) — this hero handles its own header clearance
+      // below so the two paddings don't stack into a large empty gap.
+      className="relative -mt-[72px] overflow-hidden pb-14 pt-24 md:pt-28"
       style={{
         backgroundColor: "var(--color-background-dark)",
         backgroundImage:

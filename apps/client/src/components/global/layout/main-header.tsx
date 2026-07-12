@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { usePathname } from "next/navigation";
 
 /** Ignore tiny scroll jitter (trackpad inertia) below this delta. */
 const SCROLL_DELTA = 8;
@@ -47,6 +48,11 @@ function useAutoHideHeader() {
 
 export const MainHeader: React.FC = () => {
   const hidden = useAutoHideHeader();
+  const pathname = usePathname();
+  // The landing page opens on a dark hero (starfield background), so the
+  // glass nav needs the dark variant there to avoid a white card floating
+  // on a dark section. Every other public page is light.
+  const isDarkHero = pathname === "/";
 
   return (
     <header
@@ -54,17 +60,21 @@ export const MainHeader: React.FC = () => {
         hidden ? "-translate-y-full" : "translate-y-0"
       }`}
     >
-      <div className="nav-shell nav-shell-light">
+      <div className={`nav-shell ${isDarkHero ? "" : "nav-shell-light"}`}>
         <div className="flex items-center gap-8">
           <Link href="/" className="flex items-center gap-2">
-            <Image
-              src="/logo.png"
-              alt="Hive-K Logo"
-              width={120}
-              height={40}
-              className="h-6 w-auto"
-              priority
-            />
+            <span
+              className={`flex items-center rounded-lg ${isDarkHero ? "bg-white px-2 py-1" : ""}`}
+            >
+              <Image
+                src="/logo.png"
+                alt="Hive-K Logo"
+                width={120}
+                height={40}
+                className="h-6 w-auto"
+                priority
+              />
+            </span>
           </Link>
 
           <nav className="hidden items-center gap-8 md:flex">
