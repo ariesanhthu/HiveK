@@ -1,6 +1,10 @@
 @import "tailwindcss";
 
-:root {
+/* Palette registered via @theme so Tailwind v4 generates the color utilities
+   (incl. opacity variants like bg-primary/10). The .dark block below overrides
+   the same CSS variables at runtime — utilities reference var(), so both
+   themes keep working. */
+@theme {
   --color-primary: #f59e0b;
   --color-secondary: #fb923c;
   --color-tech-blue: #3b82f6;
@@ -142,7 +146,9 @@ body {
     );
     padding: 0.75rem 1.5rem;
     box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.25);
-    backdrop-filter: blur(40px);
+    /* Keep the radius small: the fixed nav re-blurs its backdrop every frame
+       while the page scrolls/animates beneath it. */
+    backdrop-filter: blur(14px);
   }
 
   .nav-link {
@@ -266,6 +272,58 @@ body {
       width: 12rem;
     }
   }
+}
+
+/* Floating label cho input trang auth (auth-field.tsx). Chỉ animate
+   transform + màu (compositor) — không đổi font-size/weight/top để
+   label trượt lên viền input mượt, không giật. Label đặt SAU input
+   trong DOM để dùng selector `input ~ label`. */
+.hk-float {
+  position: relative;
+}
+
+.hk-float > label {
+  position: absolute;
+  left: 3rem; /* thẳng hàng với text của input (pl-12) */
+  top: 50%;
+  transform: translateY(-50%);
+  transform-origin: left center;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.38);
+  padding: 0 0.4rem;
+  margin-left: -0.4rem;
+  border-radius: 9999px;
+  pointer-events: none;
+  white-space: nowrap;
+  will-change: transform;
+  transition:
+    transform 0.22s cubic-bezier(0.4, 0, 0.2, 1),
+    color 0.22s ease,
+    background-color 0.22s ease;
+}
+
+.hk-float > input:focus ~ label,
+.hk-float > input:not(:placeholder-shown) ~ label {
+  /* h-12 input → tâm cách viền trên 1.5rem */
+  transform: translateY(calc(-50% - 1.5rem)) scale(0.74);
+  color: rgba(255, 255, 255, 0.6);
+  background-color: #0c1124;
+}
+
+.hk-float > input:focus ~ label {
+  color: var(--auth-accent, var(--color-primary));
+}
+
+/* Placeholder ví dụ chỉ hiện khi label đã bay lên (lúc focus). */
+.hk-float > input::placeholder {
+  color: rgba(255, 255, 255, 0.25);
+  opacity: 0;
+  transition: opacity 0.18s ease 0.08s;
+}
+
+.hk-float > input:focus::placeholder {
+  opacity: 1;
 }
 
 /* Chỉ khi in chứng nhận: ẩn header/footer public (set từ CertificateActionBar). */

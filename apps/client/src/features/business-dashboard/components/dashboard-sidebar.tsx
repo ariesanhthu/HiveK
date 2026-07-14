@@ -39,13 +39,14 @@ export function DashboardSidebar({ items }: DashboardSidebarProps) {
             <Link
               key={item.id}
               href={item.href}
+              aria-current={item.isActive ? "page" : undefined}
               className={`flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium transition-colors ${
                 item.isActive
                   ? "bg-primary text-background-dark"
                   : "text-foreground-muted hover:bg-primary-soft hover:text-foreground"
               }`}
             >
-              <span className="material-symbols-outlined text-base">
+              <span className="material-symbols-outlined text-base" aria-hidden>
                 {item.icon}
               </span>
               <span>{item.label}</span>

@@ -1,15 +1,12 @@
 "use client";
 
-import type { ReactNode } from "react";
 import { useActionState, useState } from "react";
 import Link from "next/link";
-import { Building2, Lock, Mail, ShieldCheck, Sparkles, User, CheckCircle } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { cn } from "@/lib/utils";
+import { motion } from "framer-motion";
 import { AUTH_ROUTES } from "@/features/auth/constants";
+import { AccentWord, AuthShell } from "@/features/auth/components/auth-shell";
+import { AuthField, AuthPasswordField } from "@/features/auth/components/auth-field";
+import { AuthOAuth } from "@/features/auth/components/auth-oauth";
 import type { SignUpRole } from "@/features/auth/lib/auth-validation";
 import {
   submitSignUp,
@@ -22,34 +19,84 @@ const INITIAL: SignUpFormState = {
   message: "",
 };
 
-type RoleCardProps = {
+const ACCENT = "var(--color-primary)";
+
+const ROLES: {
   role: SignUpRole;
-  selected: SignUpRole;
-  onSelect: (r: SignUpRole) => void;
+  icon: string;
   title: string;
   description: string;
-  icon: ReactNode;
-};
+  color: string;
+}[] = [
+  {
+    role: "brand",
+    icon: "storefront",
+    title: "Thương hiệu",
+    description: "Tìm KOL phù hợp & vận hành chiến dịch",
+    color: "var(--color-primary)",
+  },
+  {
+    role: "creator",
+    icon: "auto_awesome",
+    title: "Creator",
+    description: "Nhận hợp đồng & chi trả an toàn",
+    color: "var(--color-primary)",
+  },
+];
 
-function RoleCard({ role, selected, onSelect, title, description, icon }: RoleCardProps) {
-  const isOn = selected === role;
+/** Big selectable role card — the signature element of the sign-up page. */
+function RoleCard({
+  option,
+  selected,
+  onSelect,
+}: {
+  option: (typeof ROLES)[number];
+  selected: boolean;
+  onSelect: (role: SignUpRole) => void;
+}) {
   return (
-    <button
+    <motion.button
       type="button"
-      onClick={() => onSelect(role)}
-      className={cn(
-        "flex w-full flex-col items-center gap-3 rounded-2xl border-2 p-6 text-center transition-all bg-[#1e293b]",
-        isOn
-          ? "border-[#f39c12] shadow-sm"
-          : "border-slate-700/60 hover:border-[#f39c12]/50 hover:shadow-sm"
-      )}
+      onClick={() => onSelect(option.role)}
+      aria-pressed={selected}
+      whileHover={{ y: -2 }}
+      whileTap={{ scale: 0.98 }}
+      className="relative flex flex-1 flex-col items-start gap-1.5 rounded-2xl border p-4 text-left transition-colors"
+      style={{
+        borderColor: selected
+          ? `color-mix(in srgb, ${option.color} 65%, transparent)`
+          : "rgba(255,255,255,0.10)",
+        backgroundColor: selected
+          ? `color-mix(in srgb, ${option.color} 12%, transparent)`
+          : "rgba(255,255,255,0.04)",
+        boxShadow: selected
+          ? `0 0 24px color-mix(in srgb, ${option.color} 18%, transparent)`
+          : "none",
+      }}
     >
-      <span className={cn("inline-flex items-center justify-center rounded-full w-12 h-12 mb-1", isOn ? "bg-[#f39c12]/20 text-[#f39c12]" : "bg-slate-800 text-[#f39c12]")}>
-        {icon}
+      <span
+        className="material-symbols-outlined absolute right-3 top-3 text-lg transition-opacity"
+        style={{ color: option.color, opacity: selected ? 1 : 0 }}
+        aria-hidden
+      >
+        check_circle
       </span>
-      <span className="text-[15px] font-bold text-white">{title}</span>
-      <span className="text-[13px] font-medium text-slate-400 leading-relaxed max-w-[200px]">{description}</span>
-    </button>
+
+      <span
+        className="flex h-10 w-10 items-center justify-center rounded-xl"
+        style={{
+          backgroundColor: `color-mix(in srgb, ${option.color} 16%, transparent)`,
+          border: `1px solid color-mix(in srgb, ${option.color} 40%, transparent)`,
+        }}
+      >
+        <span className="material-symbols-outlined text-xl" style={{ color: option.color }} aria-hidden>
+          {option.icon}
+        </span>
+      </span>
+
+      <span className="mt-1 text-sm font-black text-white">{option.title}</span>
+      <span className="text-xs leading-relaxed text-white/50">{option.description}</span>
+    </motion.button>
   );
 }
 
@@ -58,159 +105,121 @@ export function SignUpForm() {
   const [state, formAction, isPending] = useActionState(submitSignUp, INITIAL);
 
   return (
-    <div className="flex w-full max-w-2xl flex-col items-center gap-8">
-      <div className="space-y-3 text-center">
-        <h1 className="text-3xl font-extrabold tracking-tight text-white md:text-4xl">
-          Gia nhập Hive-K
-        </h1>
-        <p className="text-sm font-medium text-slate-400 max-w-[400px] mx-auto leading-relaxed">
-          Chọn vai trò và hoàn tất đăng ký trên nền tảng creator economy tuyệt vời nhất.
-        </p>
-      </div>
+    <AuthShell
+      className="max-w-xl"
+      accent={{ color: ACCENT, chipIcon: "auto_awesome", chipLabel: "Miễn phí khởi tạo" }}
+      heading={
+        <>
+          Gia nhập nền kinh tế <AccentWord color={ACCENT}>Sáng tạo</AccentWord>
+        </>
+      }
+      subtitle="Tạo tài khoản trong một phút — chọn quỹ đạo của bạn trong vũ trụ Hive-K."
+      footer={
+        <>
+          Đã có tài khoản?{" "}
+          <Link href={AUTH_ROUTES.SIGN_IN} className="font-bold text-primary hover:underline">
+            Đăng nhập
+          </Link>
+        </>
+      }
+    >
+      <form action={formAction} className="space-y-5" noValidate>
+        <input type="hidden" name="role" value={role} />
 
-      <div className="grid w-full gap-4 sm:grid-cols-2">
-        <RoleCard
-          role="brand"
-          selected={role}
-          onSelect={setRole}
-          title="Thương hiệu / Doanh nghiệp"
-          description="Tìm kiếm creator tiềm năng và chạy các chiến dịch bùng nổ."
-          icon={<Building2 className="flex-shrink-0" size={20} aria-hidden />}
-        />
-        <RoleCard
-          role="creator"
-          selected={role}
-          onSelect={setRole}
-          title="KOL / Creator"
-          description="Kiếm tiền từ tầm ảnh hưởng và phát triển thương hiệu cá nhân."
-          icon={<Sparkles className="flex-shrink-0" size={20} aria-hidden />}
-        />
-      </div>
+        <div className="flex flex-col gap-3 sm:flex-row">
+          {ROLES.map((option) => (
+            <RoleCard
+              key={option.role}
+              option={option}
+              selected={role === option.role}
+              onSelect={setRole}
+            />
+          ))}
+        </div>
 
-      <Card className="w-full max-w-2xl rounded-2xl border border-slate-700/60 bg-[#1e293b] p-6 shadow-sm sm:p-10">
-        <CardContent className="p-0">
-          <form action={formAction} className="space-y-6" noValidate>
-            <input type="hidden" name="role" value={role} />
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+          <AuthField
+            id="su-name"
+            name="fullName"
+            label="Họ và tên"
+            icon="badge"
+            autoComplete="name"
+            placeholder="Nguyễn Văn A"
+            error={state.fieldErrors.fullName}
+          />
+          <AuthField
+            id="su-email"
+            name="email"
+            type="email"
+            label="Email"
+            icon="alternate_email"
+            autoComplete="email"
+            inputMode="email"
+            placeholder="ban@email.com"
+            error={state.fieldErrors.email}
+          />
+          <AuthPasswordField
+            id="su-password"
+            name="password"
+            label="Mật khẩu"
+            autoComplete="new-password"
+            placeholder="Tối thiểu 8 ký tự"
+            error={state.fieldErrors.password}
+          />
+          <AuthPasswordField
+            id="su-confirm"
+            name="confirmPassword"
+            label="Xác nhận mật khẩu"
+            autoComplete="new-password"
+            placeholder="Nhập lại mật khẩu"
+            error={state.fieldErrors.confirmPassword}
+          />
+        </div>
 
-            <div className="grid gap-6 sm:grid-cols-2">
-              <div className="space-y-2">
-                <Label htmlFor="fullName" className="flex items-center gap-2 text-[13px] font-bold text-white">
-                  <User size={14} className="text-[#3b82f6]" aria-hidden />
-                  Họ và tên
-                </Label>
-                <Input
-                  id="fullName"
-                  name="fullName"
-                  autoComplete="name"
-                  placeholder="Nguyễn Văn A"
-                  className="h-11 rounded-xl border-none bg-[#f4f7fb] px-4 text-sm font-medium text-slate-800 placeholder:text-slate-400 transition-colors focus-visible:bg-white focus-visible:ring-2 focus-visible:ring-[#3b82f6]/30"
-                  aria-invalid={Boolean(state.fieldErrors.fullName)}
-                />
-                {state.fieldErrors.fullName ? (
-                  <p className="text-xs text-red-500" role="alert">
-                    {state.fieldErrors.fullName}
-                  </p>
-                ) : null}
-              </div>
+        {state.message ? (
+          <p
+            role="status"
+            className={
+              state.ok
+                ? "flex items-start gap-2 rounded-xl border border-emerald-400/30 bg-emerald-400/10 px-3.5 py-2.5 text-sm text-emerald-300"
+                : "flex items-start gap-2 rounded-xl border border-red-400/30 bg-red-400/10 px-3.5 py-2.5 text-sm text-red-300"
+            }
+          >
+            <span className="material-symbols-outlined mt-0.5 text-base" aria-hidden>
+              {state.ok ? "check_circle" : "warning"}
+            </span>
+            {state.message}
+          </p>
+        ) : null}
 
-              <div className="space-y-2">
-                <Label htmlFor="su-email" className="flex items-center gap-2 text-[13px] font-bold text-white">
-                  <Mail size={14} className="text-[#3b82f6]" aria-hidden />
-                  Email
-                </Label>
-                <Input
-                  id="su-email"
-                  name="email"
-                  type="email"
-                  inputMode="email"
-                  placeholder="ban@email.com"
-                  className="h-11 rounded-xl border-none bg-[#f4f7fb] px-4 text-sm font-medium text-slate-800 placeholder:text-slate-400 transition-colors focus-visible:bg-white focus-visible:ring-2 focus-visible:ring-[#3b82f6]/30"
-                  aria-invalid={Boolean(state.fieldErrors.email)}
-                />
-                {state.fieldErrors.email ? (
-                  <p className="text-xs text-red-500" role="alert">
-                    {state.fieldErrors.email}
-                  </p>
-                ) : null}
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="su-password" className="flex items-center gap-2 text-[13px] font-bold text-white">
-                  <Lock size={14} className="text-[#3b82f6]" aria-hidden />
-                  Mật khẩu
-                </Label>
-                <Input
-                  id="su-password"
-                  name="password"
-                  type="password"
-                  autoComplete="new-password"
-                  placeholder="••••••••"
-                  className="h-11 rounded-xl border-none bg-[#f4f7fb] px-4 text-sm font-medium text-slate-800 placeholder:text-slate-400 transition-colors focus-visible:bg-white focus-visible:ring-2 focus-visible:ring-[#3b82f6]/30"
-                  aria-invalid={Boolean(state.fieldErrors.password)}
-                />
-                {state.fieldErrors.password ? (
-                  <p className="text-xs text-red-500" role="alert">
-                    {state.fieldErrors.password}
-                  </p>
-                ) : null}
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="su-confirm" className="flex items-center gap-2 text-[13px] font-bold text-white">
-                  <CheckCircle size={14} className="text-[#3b82f6]" aria-hidden />
-                  Xác nhận mật khẩu
-                </Label>
-                <Input
-                  id="su-confirm"
-                  name="confirmPassword"
-                  type="password"
-                  autoComplete="new-password"
-                  placeholder="••••••••"
-                  className="h-11 rounded-xl border-none bg-[#f4f7fb] px-4 text-sm font-medium text-slate-800 placeholder:text-slate-400 transition-colors focus-visible:bg-white focus-visible:ring-2 focus-visible:ring-[#3b82f6]/30"
-                  aria-invalid={Boolean(state.fieldErrors.confirmPassword)}
-                />
-                {state.fieldErrors.confirmPassword ? (
-                  <p className="text-xs text-red-500" role="alert">
-                    {state.fieldErrors.confirmPassword}
-                  </p>
-                ) : null}
-              </div>
-            </div>
-
-            {state.message ? (
-              <p
-                className="rounded-xl border border-primary-soft bg-primary-soft/50 px-3 py-2 text-sm text-foreground"
-                role="status"
-              >
-                {state.message}
-              </p>
-            ) : null}
-
-            <div className="pt-2">
-              <Button type="submit" className="mt-2 h-12 w-full rounded-lg bg-[#f39c12] text-base font-bold text-white hover:bg-[#e67e22] shadow-[0_0_20px_-5px_#f39c12] transition-colors disabled:opacity-70 disabled:hover:bg-[#f39c12]" disabled={isPending}>
-                {isPending ? "Đang xử lý..." : "Tạo tài khoản"}
-              </Button>
-            </div>
-
-            <p className="text-center text-[11px] text-slate-500">
-              Bằng việc Tạo tài khoản, bạn đồng ý với{" "}
-              <Link href="/terms" className="text-[#3b82f6] hover:underline">Điều khoản</Link>{" "}
-              và{" "}
-              <Link href="/privacy" className="text-[#3b82f6] hover:underline">Quyền riêng tư</Link>
-            </p>
-          </form>
-        </CardContent>
-      </Card>
-
-      <p className="mt-2 text-center text-sm font-medium text-slate-400">
-        Đã có tài khoản?{" "}
-        <Link
-          href={AUTH_ROUTES.SIGN_IN}
-          className="font-bold text-[#f39c12] hover:text-[#fcd34d] hover:underline"
+        <motion.button
+          type="submit"
+          disabled={isPending}
+          whileHover={{ scale: isPending ? 1 : 1.02 }}
+          whileTap={{ scale: isPending ? 1 : 0.97 }}
+          className="flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-primary text-sm font-bold text-background-dark shadow-primary transition-colors hover:bg-primary/90 disabled:cursor-wait disabled:opacity-70"
         >
-          Đăng nhập
-        </Link>
-      </p>
-    </div>
+          {isPending ? (
+            <>
+              <span className="material-symbols-outlined animate-spin text-lg" aria-hidden>
+                progress_activity
+              </span>
+              Đang khởi tạo...
+            </>
+          ) : (
+            <>
+              Tạo tài khoản
+              <span className="material-symbols-outlined text-lg" aria-hidden>
+                rocket_launch
+              </span>
+            </>
+          )}
+        </motion.button>
+      </form>
+
+      <div className="mt-7">
+        <AuthOAuth />
+      </div>
+    </AuthShell>
   );
 }

@@ -1,6 +1,22 @@
-import { Controller, Get, Post, Patch, Param, Query, Body, HttpCode, HttpStatus, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Patch,
+  Param,
+  Query,
+  Body,
+  HttpCode,
+  HttpStatus,
+  UseGuards,
+} from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
-import { ApiTags, ApiOperation, ApiBearerAuth, ApiSecurity } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiBearerAuth,
+  ApiSecurity,
+} from '@nestjs/swagger';
 import { buildVersionedRoute } from '@presentation/utils';
 import {
   ProposalCreateCommand,
@@ -14,8 +30,16 @@ import {
   ProposalSoftDeleteCommand,
   ProposalRestoreCommand,
 } from '@/application/commands';
-import { ProposalGetBySlugQuery, ProposalGetByIdQuery, ProposalGetListQuery, ProposalFilterDto } from '@/application/queries';
-import { ProposalDto, ProposalFilterDto as ProposalFilterInputDto } from '@/application/dtos';
+import {
+  ProposalGetBySlugQuery,
+  ProposalGetByIdQuery,
+  ProposalGetListQuery,
+  ProposalFilterDto,
+} from '@/application/queries';
+import {
+  ProposalDto,
+  ProposalFilterDto as ProposalFilterInputDto,
+} from '@/application/dtos';
 import { PaginatedResponseDto } from '@/application/dtos/pagination.dto';
 import { SoftDeleteInputDto } from '@/application/dtos';
 import { JwtAuthGuard, RolesGuard } from '@/presentation/middleware/guards';
@@ -48,7 +72,9 @@ export class CampaignProposalClientController {
   @Get()
   @UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: 'Get all campaign proposals' })
-  async findAll(@Query() filters: ProposalFilterInputDto): Promise<PaginatedResponseDto<ProposalDto>> {
+  async findAll(
+    @Query() filters: ProposalFilterInputDto,
+  ): Promise<PaginatedResponseDto<ProposalDto>> {
     return this.queryBus.execute(new ProposalGetListQuery(filters));
   }
 
@@ -79,7 +105,9 @@ export class CampaignProposalClientController {
     @Param('id') id: string,
     @Body() input: ProposalUpdateInputDto,
   ): Promise<ProposalDto> {
-    return this.commandBus.execute(new ProposalUpdateCommand(id, input, userId));
+    return this.commandBus.execute(
+      new ProposalUpdateCommand(id, input, userId),
+    );
   }
 
   @Patch(':id/status')
@@ -92,7 +120,9 @@ export class CampaignProposalClientController {
     @Param('id') id: string,
     @Body() input: ProposalUpdateStatusInputDto,
   ): Promise<void> {
-    return this.commandBus.execute(new ProposalUpdateStatusCommand(id, input.status, userId));
+    return this.commandBus.execute(
+      new ProposalUpdateStatusCommand(id, input.status, userId),
+    );
   }
 
   // @Patch(':id/metrics')
