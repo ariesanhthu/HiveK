@@ -190,10 +190,10 @@ export function SchedulePostDemo({ active }: { active: boolean }) {
           </span>
           MỘT LẦN LÊN LỊCH · TỰ ĐỘNG ĐĂNG
         </div>
-        <h1 className="my-3.5 text-4xl font-black leading-[1.1] tracking-tight text-white md:text-5xl">
+        <h1 className="my-3.5 text-4xl font-black leading-[1.1] tracking-tight text-foreground md:text-5xl">
           Lên lịch đăng bài, <span className="text-primary">AI lo phần còn lại</span>
         </h1>
-        <p className="mb-6 max-w-[420px] text-base leading-relaxed text-[color:var(--color-on-dark-muted)]">
+        <p className="mb-6 max-w-[420px] text-base leading-relaxed text-foreground-muted">
           Chọn nội dung, thời gian và nền tảng — Hive-K tự động đăng đúng lịch hẹn.
         </p>
 

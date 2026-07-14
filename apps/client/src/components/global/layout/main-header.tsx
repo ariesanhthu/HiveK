@@ -3,7 +3,6 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { usePathname } from "next/navigation";
 
 /** Ignore tiny scroll jitter (trackpad inertia) below this delta. */
 const SCROLL_DELTA = 8;
@@ -48,11 +47,9 @@ function useAutoHideHeader() {
 
 export const MainHeader: React.FC = () => {
   const hidden = useAutoHideHeader();
-  const pathname = usePathname();
-  // The landing page opens on a dark hero (starfield background), so the
-  // glass nav needs the dark variant there to avoid a white card floating
-  // on a dark section. Every other public page is light.
-  const isDarkHero = pathname === "/";
+  // Every public page (incl. the landing hero) now uses the light theme, so
+  // the glass nav always renders its light variant.
+  const isDarkHero = false;
 
   return (
     <header

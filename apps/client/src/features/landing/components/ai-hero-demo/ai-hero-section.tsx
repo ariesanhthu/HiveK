@@ -6,21 +6,6 @@ import { ChatConnectDemo } from "./chat-connect-demo";
 import { SchedulePostDemo } from "./schedule-post-demo";
 import type { HeroVariant } from "./hero-demo-data";
 
-// Deterministic star field (seeded LCG) so SSR and client render identically
-// — same trick as the feature-showcase section's space background.
-function seededStars(count: number, seed: number) {
-  let s = seed;
-  const rand = () => ((s = (s * 1664525 + 1013904223) % 4294967296) / 4294967296);
-  return Array.from({ length: count }, (_, id) => ({
-    id,
-    top: rand() * 100,
-    left: rand() * 100,
-    size: rand() * 1.6 + 1,
-  }));
-}
-
-const STARS = seededStars(28, 11);
-
 const VARIANTS: { id: HeroVariant; label: string; icon: string }[] = [
   { id: "chat", label: "Chat & kết nối", icon: "forum" },
   { id: "schedule", label: "Lên lịch đăng bài", icon: "event_available" },
@@ -31,34 +16,26 @@ export function AiHeroSection() {
 
   return (
     <section
-      // Cancels the shared (public) layout's `pt-[72px]` (added so light pages
-      // clear the fixed header) — this hero handles its own header clearance
-      // below so the two paddings don't stack into a large empty gap.
+      // Cancels the shared (public) layout's `pt-[72px]` so the light hero
+      // background fills the full width behind the fixed glass header instead
+      // of leaving a gap; the `pt-24` below restores clearance for the nav.
       className="relative -mt-[72px] overflow-hidden pb-14 pt-24 md:pt-28"
-      style={{
-        backgroundColor: "var(--color-background-dark)",
-        backgroundImage:
-          "radial-gradient(1.5px 1.5px at 20% 20%, rgba(255,255,255,0.45) 50%, transparent 51%), radial-gradient(1px 1px at 75% 40%, rgba(255,255,255,0.35) 50%, transparent 51%), radial-gradient(1.5px 1.5px at 55% 75%, rgba(255,255,255,0.28) 50%, transparent 51%), radial-gradient(1px 1px at 88% 65%, rgba(255,255,255,0.35) 50%, transparent 51%)",
-        backgroundSize: "320px 320px, 260px 260px, 380px 380px, 300px 300px",
-      }}
+      style={{ backgroundColor: "var(--color-background-light)" }}
     >
-      <div className="pointer-events-none absolute inset-0" aria-hidden>
-        {STARS.map((star) => (
-          <span
-            key={star.id}
-            className="absolute rounded-full bg-white/40"
-            style={{ top: `${star.top}%`, left: `${star.left}%`, width: star.size, height: star.size }}
-          />
-        ))}
-        <div
-          className="absolute left-1/2 top-0 h-[340px] w-[760px] -translate-x-1/2"
-          style={{ background: "radial-gradient(ellipse, rgba(245,158,11,0.18), transparent 66%)" }}
-        />
-      </div>
+      {/* Soft amber glow at the top + faint neutral wash — light SaaS feel,
+          no per-node starfield to composite (cheaper than the old dark hero). */}
+      <div
+        className="pointer-events-none absolute inset-0"
+        aria-hidden
+        style={{
+          background:
+            "radial-gradient(60% 40% at 50% 0%, rgba(245,158,11,0.12), transparent 70%), radial-gradient(50% 40% at 85% 30%, rgba(139,92,246,0.06), transparent 70%)",
+        }}
+      />
 
       <div className="relative mx-auto max-w-[1220px] px-6">
         {/* Fast switch between the two demo flows — no scrolling required. */}
-        <div className="mx-auto mb-8 flex w-fit items-center rounded-full border border-white/15 bg-white/5 p-1 backdrop-blur-md">
+        <div className="mx-auto mb-8 flex w-fit items-center rounded-full border border-primary-soft bg-card p-1 shadow-sm">
           {VARIANTS.map((v) => {
             const isActive = variant === v.id;
             return (
@@ -77,12 +54,12 @@ export function AiHeroSection() {
                   />
                 )}
                 <span
-                  className={`material-symbols-outlined relative text-base ${isActive ? "text-background-dark" : "text-white/70"}`}
+                  className={`material-symbols-outlined relative text-base ${isActive ? "text-background-dark" : "text-foreground-muted"}`}
                   aria-hidden
                 >
                   {v.icon}
                 </span>
-                <span className={`relative ${isActive ? "text-background-dark" : "text-white/70"}`}>{v.label}</span>
+                <span className={`relative ${isActive ? "text-background-dark" : "text-foreground-muted"}`}>{v.label}</span>
               </button>
             );
           })}
@@ -105,25 +82,25 @@ export function AiHeroSection() {
         </AnimatePresence>
 
         <div className="relative mt-12 text-center">
-          <div className="inline-flex items-center gap-2 rounded-full bg-white/[0.08] px-3.5 py-1.5 text-[0.76rem] font-bold tracking-wide text-white">
+          <div className="inline-flex items-center gap-2 rounded-full border border-primary-soft bg-primary/10 px-3.5 py-1.5 text-[0.76rem] font-bold tracking-wide text-primary">
             CHÚNG TÔI LÀ AI
           </div>
-          <p className="mx-auto mt-5 max-w-[760px] text-[1.4rem] font-semibold leading-relaxed text-slate-100">
+          <p className="mx-auto mt-5 max-w-[760px] text-[1.4rem] font-semibold leading-relaxed text-foreground">
             Nơi <span className="text-primary">creator</span> và{" "}
             <span className="text-primary">nhãn hàng</span> gặp nhau — vận hành bằng AI.
           </p>
           <div className="mt-7 flex items-center justify-center gap-8">
             <div className="text-center">
-              <div className="text-2xl font-black text-white">2.000+</div>
-              <div className="text-[0.76rem] font-semibold text-slate-400">KOL &amp; Creator</div>
+              <div className="text-2xl font-black text-foreground">2.000+</div>
+              <div className="text-[0.76rem] font-semibold text-foreground-muted">KOL &amp; Creator</div>
             </div>
             <div className="text-center">
-              <div className="text-2xl font-black text-white">500+</div>
-              <div className="text-[0.76rem] font-semibold text-slate-400">Nhãn hàng</div>
+              <div className="text-2xl font-black text-foreground">500+</div>
+              <div className="text-[0.76rem] font-semibold text-foreground-muted">Nhãn hàng</div>
             </div>
             <div className="text-center">
-              <div className="text-2xl font-black text-white">12+</div>
-              <div className="text-[0.76rem] font-semibold text-slate-400">Ngành hàng</div>
+              <div className="text-2xl font-black text-foreground">12+</div>
+              <div className="text-[0.76rem] font-semibold text-foreground-muted">Ngành hàng</div>
             </div>
           </div>
         </div>

@@ -6,7 +6,7 @@ import { type ProcessStepDef, stepStatus } from "./hero-demo-data";
  */
 function lineGradient(currentStep: number, stepCount: number) {
   const progressPct = ((currentStep - 1) / (stepCount - 1)) * 100;
-  return `linear-gradient(to bottom, #4ade80 0%, #4ade80 ${progressPct}%, rgba(255,255,255,0.14) ${progressPct}%, rgba(255,255,255,0.14) 100%)`;
+  return `linear-gradient(to bottom, #22c55e 0%, #22c55e ${progressPct}%, rgba(15,23,42,0.10) ${progressPct}%, rgba(15,23,42,0.10) 100%)`;
 }
 
 export function ProcessSteps({
@@ -26,7 +26,7 @@ export function ProcessSteps({
         </span>
         QUY TRÌNH TỰ ĐỘNG
       </div>
-      <div className="my-2.5 text-lg font-extrabold text-white">{title}</div>
+      <div className="my-2.5 text-lg font-extrabold text-foreground">{title}</div>
       <div className="relative">
         <div
           className="absolute bottom-[18px] left-[17px] top-[18px] z-0 w-0.5 transition-[background] duration-400"
@@ -36,14 +36,18 @@ export function ProcessSteps({
           {steps.map((step, i) => {
             const status = stepStatus(i, currentStep);
             const circleBg =
-              status === "done" ? "#123524" : status === "active" ? step.brand : "#1c2739";
+              status === "done"
+                ? "rgba(34,197,94,0.14)"
+                : status === "active"
+                  ? step.brand
+                  : "var(--color-muted)";
             const circleColor =
-              status === "done" ? "#4ade80" : status === "active" ? step.activeColor : "#64748b";
+              status === "done" ? "#16a34a" : status === "active" ? step.activeColor : "#94a3b8";
             const circleBorder =
               status === "pending"
-                ? "1.5px solid rgba(255,255,255,0.14)"
+                ? "1.5px solid rgba(15,23,42,0.10)"
                 : status === "done"
-                  ? "1.5px solid rgba(74,222,128,0.4)"
+                  ? "1.5px solid rgba(34,197,94,0.35)"
                   : "1.5px solid transparent";
             const ringShadow = status === "active" ? `0 0 0 5px ${step.ring}` : "none";
             return (
@@ -71,13 +75,13 @@ export function ProcessSteps({
                 <span>
                   <span
                     className="block text-sm font-bold transition-colors duration-300"
-                    style={{ color: status === "pending" ? "#64748b" : "#fff" }}
+                    style={{ color: status === "pending" ? "#94a3b8" : "var(--color-foreground)" }}
                   >
                     {step.title}
                   </span>
                   <span
                     className="mt-0.5 block text-xs transition-colors duration-300"
-                    style={{ color: status === "pending" ? "#475569" : "#94a3b8" }}
+                    style={{ color: status === "pending" ? "#cbd5e1" : "var(--color-foreground-muted)" }}
                   >
                     {step.desc}
                   </span>

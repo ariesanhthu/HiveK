@@ -234,10 +234,10 @@ export function ChatConnectDemo({ active }: { active: boolean }) {
           </span>
           THIẾT LẬP TỰ ĐỘNG · MỌI NỀN TẢNG
         </div>
-        <h1 className="my-3.5 text-4xl font-black leading-[1.1] tracking-tight text-white md:text-5xl">
+        <h1 className="my-3.5 text-4xl font-black leading-[1.1] tracking-tight text-foreground md:text-5xl">
           Trợ lý AI đăng bài khắp <span className="text-primary">5+ nền tảng</span>
         </h1>
-        <p className="mb-6 max-w-[420px] text-base leading-relaxed text-[color:var(--color-on-dark-muted)]">
+        <p className="mb-6 max-w-[420px] text-base leading-relaxed text-foreground-muted">
           Một câu chat — nội dung, lịch đăng, tất cả tự động.
         </p>
 
