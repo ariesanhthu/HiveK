@@ -8,7 +8,7 @@ This document tracks the refactoring progress and outlines the remaining phases 
 
 ### Phase 1: Domain & Infrastructure (Mongoose Repositories) - COMPLETED
 * **Lowercase Enums**: Configured all enums (e.g., `EPackageType`, `EBillStatus`, `EPaymentStatus`) to use lowercase/snake_case string values under `src/core/enums/`.
-* **Pure Domain Models**: Implemented `PackageEntity`, `BillEntity`, `PaymentEntity`, and `SubscriptionEntity` without wallet/credit fields.
+* **Pure Domain Models**: Implemented `PackageRoot`, `BillEntity`, `PaymentEntity`, and `SubscriptionRoot` without wallet/credit fields.
 * **Mongoose Schemas**: Created schemas with credit fields excluded (`credit_amount_applied`, `credit_amount_refund`, etc.).
 * **Mongoose Repositories**: Implemented core repositories (`MongoPackageRepository`, `MongoBillRepository`, `MongoPaymentRepository`, `MongoSubscriptionRepository`) using NestJS `MongoUnitOfWork` (AsyncLocalStorage context).
 

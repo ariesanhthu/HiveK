@@ -1,7 +1,7 @@
 import { BaseAggregateRoot } from '../common';
 import { type Optional, type Nullable } from '../types';
 import { EVersionStatus, type EPackageType, type EPackageScope } from '../enums';
-import { type PackageFeatureVO, type QuotaVO } from '../value-objects';
+import { type GrantVO } from '../value-objects';
 import { type PackageVariantEntity } from '../entities/package-variant.entity';
 
 export interface PackageProps {
@@ -12,8 +12,8 @@ export interface PackageProps {
   scope: EPackageScope;
   enterpriseId: Nullable<string>;
   status: EVersionStatus;
-  features: PackageFeatureVO[];
-  baseQuotas: QuotaVO;
+  features: string[];
+  baseGrants: GrantVO[];
   variants: PackageVariantEntity[];
   createdAt: Date;
   updatedAt: Date;
@@ -31,10 +31,10 @@ export type PackageCreateProps = Omit<
   activatedAt?: Date;
 };
 
-export class PackageEntity extends BaseAggregateRoot<PackageProps> {
-  public static create(input: PackageCreateProps, id?: string): PackageEntity {
+export class PackageRoot extends BaseAggregateRoot<PackageProps> {
+  public static create(input: PackageCreateProps, id?: string): PackageRoot {
     const now = new Date();
-    return new PackageEntity(
+    return new PackageRoot(
       {
         code: input.code,
         name: input.name,
@@ -44,7 +44,7 @@ export class PackageEntity extends BaseAggregateRoot<PackageProps> {
         enterpriseId: input.enterpriseId,
         status: input.status ?? EVersionStatus.DRAFT,
         features: input.features,
-        baseQuotas: input.baseQuotas,
+        baseGrants: input.baseGrants,
         variants: input.variants ?? [],
         createdAt: input.createdAt ?? now,
         updatedAt: input.updatedAt ?? now,
@@ -54,8 +54,8 @@ export class PackageEntity extends BaseAggregateRoot<PackageProps> {
     );
   }
 
-  public static instantiate(id: string, props: PackageProps): PackageEntity {
-    return new PackageEntity(props, id);
+  public static instantiate(id: string, props: PackageProps): PackageRoot {
+    return new PackageRoot(props, id);
   }
 
   private constructor(props: PackageProps, id?: string) {
@@ -90,12 +90,12 @@ export class PackageEntity extends BaseAggregateRoot<PackageProps> {
     return this.props.status;
   }
 
-  get features(): PackageFeatureVO[] {
+  get features(): string[] {
     return this.props.features;
   }
 
-  get baseQuotas(): QuotaVO {
-    return this.props.baseQuotas;
+  get baseGrants(): GrantVO[] {
+    return this.props.baseGrants;
   }
 
   get variants(): PackageVariantEntity[] {
@@ -131,8 +131,8 @@ export class PackageEntity extends BaseAggregateRoot<PackageProps> {
       description: string;
       type: EPackageType;
       scope: EPackageScope;
-      features: PackageFeatureVO[];
-      baseQuotas: QuotaVO;
+      features: string[];
+      baseGrants: GrantVO[];
     }>
   ): void {
     if (props.name !== undefined) this.props.name = props.name;
@@ -140,7 +140,7 @@ export class PackageEntity extends BaseAggregateRoot<PackageProps> {
     if (props.type !== undefined) this.props.type = props.type;
     if (props.scope !== undefined) this.props.scope = props.scope;
     if (props.features !== undefined) this.props.features = props.features;
-    if (props.baseQuotas !== undefined) this.props.baseQuotas = props.baseQuotas;
+    if (props.baseGrants !== undefined) this.props.baseGrants = props.baseGrants;
     this.props.updatedAt = new Date();
   }
 

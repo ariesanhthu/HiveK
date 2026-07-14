@@ -17,3 +17,4 @@ export * from './notify-kol-campaign-invitation.event';
 export * from './capture-payment-request.event';
 export * from './request-auth-update-subscription.event';
 export * from './update-subscription.event';
+export * from './subscription-updated/subscription-updated.event-handler';

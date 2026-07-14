@@ -32,6 +32,8 @@ import {
   SocialPageModel, SocialPageSchema,
   ScheduledPostModel, ScheduledPostSchema,
   AutoReplyRuleModel, AutoReplyRuleSchema,
+  CreditWalletModel, CreditWalletSchema,
+  QuotaUsageModel, QuotaUsageSchema,
 } from './schemas';
 
 // Repository imports
@@ -56,6 +58,8 @@ import {
   MongoSocialPageRepository,
   MongoScheduledPostRepository,
   MongoAutoReplyRuleRepository,
+  MongoCreditWalletRepository,
+  MongoQuotaUsageRepository,
 } from './repositories';
 
 // Read Service imports
@@ -99,6 +103,8 @@ import {
   SOCIAL_PAGE_REPOSITORY,
   SCHEDULED_POST_REPOSITORY,
   AUTO_REPLY_RULE_REPOSITORY,
+  CREDIT_WALLET_REPOSITORY,
+  QUOTA_USAGE_REPOSITORY,
 } from '@/core/interfaces/repositories';
 
 // Read Service symbols
@@ -119,6 +125,7 @@ import {
 } from '@/application/interfaces';
 
 import { RoleSeedService } from './seeding/role-seed.service';
+import { PackageMigrationService } from './seeding/package-migration.service';
 import { ERoleType } from '@/core/enums';
 import { MongoPublicReviewReadService } from './read-services/public-review.read-service';
 import { MongoPublicReviewRepository } from './repositories/public-review.repository';
@@ -168,6 +175,8 @@ import { MongoCampaignProposalReadService } from './read-services/campaign-propo
       { name: SocialPageModel.name, schema: SocialPageSchema },
       { name: ScheduledPostModel.name, schema: ScheduledPostSchema },
       { name: AutoReplyRuleModel.name, schema: AutoReplyRuleSchema },
+      { name: CreditWalletModel.name, schema: CreditWalletSchema },
+      { name: QuotaUsageModel.name, schema: QuotaUsageSchema },
     ]),
   ],
   providers: [
@@ -265,6 +274,14 @@ import { MongoCampaignProposalReadService } from './read-services/campaign-propo
       provide: AUTO_REPLY_RULE_REPOSITORY,
       useClass: MongoAutoReplyRuleRepository,
     },
+    {
+      provide: CREDIT_WALLET_REPOSITORY,
+      useClass: MongoCreditWalletRepository,
+    },
+    {
+      provide: QUOTA_USAGE_REPOSITORY,
+      useClass: MongoQuotaUsageRepository,
+    },
     // All Read Services
     {
       provide: USER_READ_SERVICE,
@@ -328,6 +345,7 @@ import { MongoCampaignProposalReadService } from './read-services/campaign-propo
     },
     // Seed service
     RoleSeedService,
+    PackageMigrationService,
   ],
   exports: [
     UNIT_OF_WORK,
@@ -354,6 +372,8 @@ import { MongoCampaignProposalReadService } from './read-services/campaign-propo
     SOCIAL_PAGE_REPOSITORY,
     SCHEDULED_POST_REPOSITORY,
     AUTO_REPLY_RULE_REPOSITORY,
+    CREDIT_WALLET_REPOSITORY,
+    QUOTA_USAGE_REPOSITORY,
     // Export all read service tokens
     USER_READ_SERVICE,
     ROLE_READ_SERVICE,
@@ -373,6 +393,7 @@ import { MongoCampaignProposalReadService } from './read-services/campaign-propo
     // Export MongooseModule so domain modules can use the models if needed
     MongooseModule,
     RoleSeedService,
+    PackageMigrationService,
   ],
 })
 export class MongoModule {}

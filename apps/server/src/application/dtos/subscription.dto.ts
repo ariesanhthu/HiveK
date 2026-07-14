@@ -1,34 +1,33 @@
 import { z } from 'zod';
-import { PackageQuotaDto } from './package.dto';
+import { GrantDtoSchema, GrantDto } from './package.dto';
 
-const SubscriptionItemSchema = z.object({
+const PlanItemSchema = z.object({
   packageId: z.string(),
   packageVariantId: z.string(),
   startDate: z.date(),
   expiresAt: z.date(),
+  billId: z.string(),
+  autoRenew: z.boolean(),
 });
 
-export type SubscriptionItemDTO = z.infer<typeof SubscriptionItemSchema>;
-
-const subscriptionResponseSchema = z.object({
-  id: z.string(),
-  enterpriseId: z.string(),
-  status: z.string(),
-  items: z.array(SubscriptionItemSchema),
-  computedQuotas: PackageQuotaDto,
-  computedPermissions: z.array(z.string()),
-  nextExpiryCheckAt: z.date(),
-  createdAt: z.date(),
-  updatedAt: z.date(),
+const AddonItemSchema = z.object({
+  packageId: z.string(),
+  packageVariantId: z.string(),
+  purchasedAt: z.date(),
+  expiresAt: z.date().nullable(),
+  billId: z.string(),
 });
 
-export type SubscriptionResponseDTO = z.infer<typeof subscriptionResponseSchema>;
+export type PlanItemDTO = z.infer<typeof PlanItemSchema>;
+export type AddonItemDTO = z.infer<typeof AddonItemSchema>;
+
 export class SubscriptionResponseDto {
   id: string;
   enterpriseId: string;
   status: string;
-  items: SubscriptionItemDTO[];
-  computedQuotas: Record<string, number>;
+  planItem: PlanItemDTO | null;
+  addonItems: AddonItemDTO[];
+  computedGrants: GrantDto[];
   computedPermissions: string[];
   nextExpiryCheckAt: Date;
   createdAt: Date;

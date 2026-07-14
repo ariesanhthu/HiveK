@@ -1,15 +1,25 @@
 import { Prop, Schema, SchemaFactory, Virtual } from '@nestjs/mongoose';
 import { HydratedDocument, Types } from 'mongoose';
-import { EBillType, EBillStatus, EPurchaseType } from '@/core/enums';
+import { EBillType, EBillStatus, EPurchaseType, EBillLineType } from '@/core/enums';
 
 export type BillDocument = HydratedDocument<BillModel>;
 
+@Schema({ _id: false })
 class BillItemSchema {
-  @Prop({ type: String, required: true })
-  package_id: string;
+  @Prop({ type: String, required: true, enum: EBillLineType })
+  line_type: EBillLineType;
 
-  @Prop({ type: String, required: true })
-  package_variant_id: string;
+  @Prop({ type: String, required: false, default: null })
+  package_id: string | null;
+
+  @Prop({ type: String, required: false, default: null })
+  package_variant_id: string | null;
+
+  @Prop({ type: String, required: false, default: null })
+  credit_type: string | null;
+
+  @Prop({ type: Number, required: false, default: null })
+  credit_amount: number | null;
 
   @Prop({ type: Number, required: true })
   price: number;
@@ -35,7 +45,7 @@ export class BillModel {
   @Prop({ type: String, required: true, enum: EBillStatus, default: EBillStatus.PENDING })
   status: EBillStatus;
 
-  @Prop({ type: [Object], required: true })
+  @Prop({ type: [BillItemSchema], required: true })
   items: BillItemSchema[];
 
   @Prop({ type: Number, required: true })

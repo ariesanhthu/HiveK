@@ -2,27 +2,14 @@ import { Injectable, Inject } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types, ClientSession } from 'mongoose';
 import { ISubscriptionRepository } from '@/core/interfaces/repositories';
-import { SubscriptionEntity } from '@/core/aggregate-roots';
-import { SubscriptionItemVO, QuotaVO } from '@/core/value-objects';
+import { SubscriptionRoot } from '@/core/aggregate-roots';
+import { PlanItemVO, AddonItemVO, GrantVO } from '@/core/value-objects';
 import { SubscriptionModel, SubscriptionDocument } from '../schemas';
 import { Nullable } from '@/core/types';
 import { type IUnitOfWork, UNIT_OF_WORK, CACHE_SERVICE } from '@/application/interfaces';
 import type { ICacheService } from '@/application/interfaces';
 import { MongoUnitOfWork } from '../mongo-uow';
 import { CacheKeyUtil } from '@/shared/utils/cache-key.util';
-
-function quotaPropsFromUnknown(raw: unknown): Record<string, number> {
-  if (!raw || typeof raw !== 'object') {
-    return {};
-  }
-  const out: Record<string, number> = {};
-  for (const [k, v] of Object.entries(raw as Record<string, unknown>)) {
-    if (typeof v === 'number' && Number.isFinite(v)) {
-      out[k] = v;
-    }
-  }
-  return out;
-}
 
 @Injectable()
 export class MongoSubscriptionRepository implements ISubscriptionRepository {
@@ -39,12 +26,12 @@ export class MongoSubscriptionRepository implements ISubscriptionRepository {
     return (this.uow as MongoUnitOfWork).getSession() || undefined;
   }
 
-  async findById(id: string): Promise<Nullable<SubscriptionEntity>> {
+  async findById(id: string): Promise<Nullable<SubscriptionRoot>> {
     const doc = await this.subscriptionModel.findById(id).session(this.session).exec();
     return doc ? this.mapToDomain(doc) : null;
   }
 
-  async save(subscription: SubscriptionEntity): Promise<void> {
+  async save(subscription: SubscriptionRoot): Promise<void> {
     const data = this.mapToPersistence(subscription);
 
     if (!subscription.id) {
@@ -58,7 +45,7 @@ export class MongoSubscriptionRepository implements ISubscriptionRepository {
     await this.invalidateCache(subscription.id!, subscription.enterpriseId);
   }
 
-  async saveMany(subscriptions: SubscriptionEntity[]): Promise<void> {
+  async saveMany(subscriptions: SubscriptionRoot[]): Promise<void> {
     await Promise.all(subscriptions.map(s => this.save(s)));
   }
 
@@ -82,22 +69,32 @@ export class MongoSubscriptionRepository implements ISubscriptionRepository {
     await Promise.all(invalidations);
   }
 
-  async findByEnterpriseId(enterpriseId: string): Promise<Nullable<SubscriptionEntity>> {
+  async findByEnterpriseId(enterpriseId: string): Promise<Nullable<SubscriptionRoot>> {
     const doc = await this.subscriptionModel.findOne({ enterprise_id: enterpriseId }).session(this.session).exec();
     return doc ? this.mapToDomain(doc) : null;
   }
 
   async existsByPackageId(packageId: string): Promise<boolean> {
     const count = await this.subscriptionModel.countDocuments({
-      'items.package_id': packageId,
+      $or: [
+        { 'plan_item.package_id': packageId },
+        { 'addon_items.package_id': packageId },
+      ],
     }).session(this.session).exec();
     return count > 0;
+  }
+
+  async findExpiredSubscriptions(now: Date): Promise<SubscriptionRoot[]> {
+    const docs = await this.subscriptionModel.find({
+      'plan_item.expires_at': { $lte: now },
+    }).session(this.session).exec();
+    return docs.map(doc => this.mapToDomain(doc));
   }
 
   async updateWithVersion(
     id: string,
     expectedVersion: number,
-    entity: SubscriptionEntity
+    entity: SubscriptionRoot
   ): Promise<void> {
     const { version: _version, ...plain } = this.mapToPersistence(entity);
 
@@ -113,23 +110,49 @@ export class MongoSubscriptionRepository implements ISubscriptionRepository {
     await this.invalidateCache(id, entity.enterpriseId);
   }
 
-  private mapToDomain(doc: SubscriptionDocument): SubscriptionEntity {
-    return SubscriptionEntity.instantiate(
+  private mapToDomain(doc: SubscriptionDocument): SubscriptionRoot {
+    return SubscriptionRoot.instantiate(
       doc._id.toString(),
       {
         enterpriseId: doc.enterprise_id,
         status: doc.status,
-        items: (doc.items || []).map(
+        planItem: doc.plan_item
+          ? new PlanItemVO({
+              packageId: doc.plan_item.package_id,
+              packageVariantId: doc.plan_item.package_variant_id,
+              startDate: doc.plan_item.start_date,
+              expiresAt: doc.plan_item.expires_at,
+              billId: doc.plan_item.bill_id,
+              autoRenew: doc.plan_item.auto_renew,
+            })
+          : null,
+        addonItems: (doc.addon_items || []).map(
           (item) =>
-            new SubscriptionItemVO({
+            new AddonItemVO({
               packageId: item.package_id,
               packageVariantId: item.package_variant_id,
-              startDate: item.start_date,
+              purchasedAt: item.purchased_at,
               expiresAt: item.expires_at,
               billId: item.bill_id,
             })
         ),
-        computedQuotas: new QuotaVO(quotaPropsFromUnknown(doc.computed_quotas)),
+        computedGrants: (doc.computed_grants || []).map(
+          (g) =>
+            new GrantVO({
+              type: g.type,
+              key: g.key,
+              value: g.value,
+              resetCycle: g.reset_cycle || undefined,
+              creditFallback: g.credit_fallback
+                ? {
+                    creditType: g.credit_fallback.credit_type,
+                    creditsPerUnit: g.credit_fallback.credits_per_unit,
+                  }
+                : g.credit_fallback === null
+                ? null
+                : undefined,
+            })
+        ),
         computedPermissions: doc.computed_permissions || [],
         version: doc.version || 1,
         nextExpiryCheckAt: doc.next_expiry_check_at,
@@ -139,18 +162,41 @@ export class MongoSubscriptionRepository implements ISubscriptionRepository {
     );
   }
 
-  private mapToPersistence(data: SubscriptionEntity): Omit<SubscriptionModel, 'created_at' | 'updated_at'> {
+  private mapToPersistence(data: SubscriptionRoot): Omit<SubscriptionModel, 'created_at' | 'updated_at'> {
     return {
       enterprise_id: data.enterpriseId,
       status: data.status,
-      items: data.items.map((item) => ({
+      plan_item: data.planItem
+        ? {
+            package_id: data.planItem.packageId,
+            package_variant_id: data.planItem.packageVariantId,
+            start_date: data.planItem.startDate,
+            expires_at: data.planItem.expiresAt,
+            bill_id: data.planItem.billId,
+            auto_renew: data.planItem.autoRenew,
+          }
+        : null,
+      addon_items: data.addonItems.map((item) => ({
         package_id: item.packageId,
         package_variant_id: item.packageVariantId,
-        start_date: item.startDate,
+        purchased_at: item.purchasedAt,
         expires_at: item.expiresAt,
         bill_id: item.billId,
       })),
-      computed_quotas: data.computedQuotas.unmarshal,
+      computed_grants: data.computedGrants.map((g) => ({
+        type: g.type,
+        key: g.key,
+        value: g.value,
+        reset_cycle: g.resetCycle ?? null,
+        credit_fallback: g.creditFallback
+          ? {
+              credit_type: g.creditFallback.creditType,
+              credits_per_unit: g.creditFallback.creditsPerUnit,
+            }
+          : g.creditFallback === null
+          ? null
+          : null,
+      })),
       computed_permissions: data.computedPermissions,
       version: data.version,
       next_expiry_check_at: data.nextExpiryCheckAt,

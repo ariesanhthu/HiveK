@@ -1,19 +1,36 @@
-import { SubscriptionEntity, SubscriptionHistoryEntity } from '@/core/aggregate-roots';
+import { SubscriptionRoot, SubscriptionHistoryEntity } from '@/core/aggregate-roots';
 import { SubscriptionResponseDto, SubscriptionHistoryResponseDto } from '../dtos';
 
 export class SubscriptionMapper {
-  static toDto(entity: SubscriptionEntity): SubscriptionResponseDto {
+  static toDto(entity: SubscriptionRoot): SubscriptionResponseDto {
     return {
       id: entity.id!,
       enterpriseId: entity.enterpriseId,
       status: entity.status,
-      items: entity.items.map((item) => ({
+      planItem: entity.planItem
+        ? {
+            packageId: entity.planItem.packageId,
+            packageVariantId: entity.planItem.packageVariantId,
+            startDate: entity.planItem.startDate,
+            expiresAt: entity.planItem.expiresAt,
+            billId: entity.planItem.billId,
+            autoRenew: entity.planItem.autoRenew,
+          }
+        : null,
+      addonItems: entity.addonItems.map((item) => ({
         packageId: item.packageId,
         packageVariantId: item.packageVariantId,
-        startDate: item.startDate,
+        purchasedAt: item.purchasedAt,
         expiresAt: item.expiresAt,
+        billId: item.billId,
       })),
-      computedQuotas: entity.computedQuotas.unmarshal,
+      computedGrants: entity.computedGrants.map((g) => ({
+        type: g.type,
+        key: g.key,
+        value: g.value,
+        resetCycle: g.resetCycle,
+        creditFallback: g.creditFallback,
+      })),
       computedPermissions: entity.computedPermissions,
       nextExpiryCheckAt: entity.nextExpiryCheckAt,
       createdAt: entity.createdAt,
@@ -29,10 +46,24 @@ export class SubscriptionMapper {
       billId: entity.billId ?? null,
       actorId: entity.actorId ?? null,
       details: {
-        oldPackages: entity.details.oldPackages,
-        newPackages: entity.details.newPackages,
-        oldQuotas: entity.details.oldQuotas.unmarshal,
-        newQuotas: entity.details.newQuotas.unmarshal,
+        oldPlanId: entity.details.oldPlanId,
+        newPlanId: entity.details.newPlanId,
+        addedAddonIds: entity.details.addedAddonIds,
+        removedAddonIds: entity.details.removedAddonIds,
+        oldGrants: entity.details.oldGrants.map((g) => ({
+          type: g.type,
+          key: g.key,
+          value: g.value,
+          resetCycle: g.resetCycle,
+          creditFallback: g.creditFallback,
+        })),
+        newGrants: entity.details.newGrants.map((g) => ({
+          type: g.type,
+          key: g.key,
+          value: g.value,
+          resetCycle: g.resetCycle,
+          creditFallback: g.creditFallback,
+        })),
         oldPermissions: entity.details.oldPermissions,
         newPermissions: entity.details.newPermissions,
       },
@@ -40,7 +71,7 @@ export class SubscriptionMapper {
     };
   }
 
-  static toDtoList(entities: SubscriptionEntity[]): SubscriptionResponseDto[] {
+  static toDtoList(entities: SubscriptionRoot[]): SubscriptionResponseDto[] {
     return entities.map((entity) => this.toDto(entity));
   }
 

@@ -1,12 +1,12 @@
 import { IBaseRepository } from '../../common';
-import { PackageEntity } from '../../aggregate-roots/package.aggregate';
+import { PackageRoot } from '../../aggregate-roots/package.aggregate';
 import { EPackageType } from '../../enums';
 
-export interface IPackageRepository extends IBaseRepository<PackageEntity> {
-  findByCode(code: string): Promise<PackageEntity[]>;
-  findByType(type: EPackageType): Promise<PackageEntity[]>;
-  findPublicPackages(): Promise<PackageEntity[]>;
-  findByEnterpriseId(enterpriseId: string): Promise<PackageEntity[]>;
+export interface IPackageRepository extends IBaseRepository<PackageRoot> {
+  findByCode(code: string): Promise<PackageRoot[]>;
+  findByType(type: EPackageType): Promise<PackageRoot[]>;
+  findPublicPackages(): Promise<PackageRoot[]>;
+  findByEnterpriseId(enterpriseId: string): Promise<PackageRoot[]>;
   deleteByCode(code: string): Promise<void>;
 }
 

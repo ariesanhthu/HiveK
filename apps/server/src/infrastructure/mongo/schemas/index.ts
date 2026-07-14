@@ -21,4 +21,6 @@ export * from './subscription-history.schema';
 export * from './social-page.schema';
 export * from './scheduled-post.schema';
 export * from './auto-reply-rule.schema';
+export * from './credit-wallet.schema';
+export * from './quota-usage.schema';
 

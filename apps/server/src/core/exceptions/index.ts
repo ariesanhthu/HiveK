@@ -14,3 +14,5 @@ export * from './bill.exception';
 export * from './package.exception';
 export * from './payment-provider.exception';
 export * from './payment.exception';
+export * from './credit.exception';
+export * from './quota.exception';

@@ -1,13 +1,9 @@
-import { PackageEntity } from '@/core/aggregate-roots';
+import { PackageRoot } from '@/core/aggregate-roots';
 import { PackageVariantEntity } from '@/core/entities';
 import { PackageResponseDto, PackageVariantDto } from '../dtos';
 
 export class PackageMapper {
-  static toDto(entity: PackageEntity): PackageResponseDto {
-    const baseQuotas = Object.fromEntries(
-      Object.entries(entity.baseQuotas.unmarshal).filter(([_, v]) => v !== undefined)
-    ) as Record<string, number>;
-
+  static toDto(entity: PackageRoot): PackageResponseDto {
     return {
       id: entity.id!,
       code: entity.code,
@@ -17,11 +13,14 @@ export class PackageMapper {
       scope: entity.scope,
       enterpriseId: entity.enterpriseId,
       status: entity.status,
-      features: entity.features.map((f) => ({
-        code: f.code,
-        permissions: f.permissions,
+      features: entity.features,
+      baseGrants: entity.baseGrants.map((g) => ({
+        type: g.type,
+        key: g.key,
+        value: g.value,
+        resetCycle: g.resetCycle,
+        creditFallback: g.creditFallback,
       })),
-      baseQuotas,
       variants: entity.variants.map((v) => this.toVariantDto(v)),
       createdAt: entity.createdAt,
       updatedAt: entity.updatedAt,
@@ -30,10 +29,6 @@ export class PackageMapper {
   }
 
   static toVariantDto(entity: PackageVariantEntity): PackageVariantDto {
-    const extraQuotas = Object.fromEntries(
-      Object.entries(entity.extraQuotas.unmarshal).filter(([_, v]) => v !== undefined)
-    ) as Record<string, number>;
-
     return {
       id: entity.id!,
       title: entity.title,
@@ -42,11 +37,17 @@ export class PackageMapper {
       priceAfterDiscount: entity.priceAfterDiscount,
       tax: entity.tax,
       currency: entity.currency,
-      extraQuotas,
+      extraGrants: entity.extraGrants.map((g) => ({
+        type: g.type,
+        key: g.key,
+        value: g.value,
+        resetCycle: g.resetCycle,
+        creditFallback: g.creditFallback,
+      })),
     };
   }
 
-  static toDtoList(entities: PackageEntity[]): PackageResponseDto[] {
+  static toDtoList(entities: PackageRoot[]): PackageResponseDto[] {
     return entities.map((entity) => this.toDto(entity));
   }
 }

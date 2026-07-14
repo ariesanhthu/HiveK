@@ -20,5 +20,7 @@ export * from './subscription.repository';
 export * from './social-page.repository';
 export * from './scheduled-post.repository';
 export * from './auto-reply-rule.repository';
+export * from './credit-wallet.repository';
+export * from './quota-usage.repository';
 
 

@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { FlattenMaps, Model, QueryFilter } from 'mongoose';
-import { PackageDocument, PackageModel } from '../schemas';
+import { PackageDocument, PackageModel, GrantSchema } from '../schemas';
 import { IPackageReadService } from '@/application/interfaces';
 import { PackageFilterDto } from '@/application/queries';
 import { Nullable } from '@/core/types';
-import { PackageResponseDto, PackageFeatureDto, PackageVariantDto, PackageQuotaDto } from '@/application/dtos';
+import { PackageResponseDto, PackageVariantDto, GrantDto } from '@/application/dtos';
 import { PaginatedResponseDto, SortOrder } from '@/application/dtos/pagination.dto';
 
 @Injectable()
@@ -23,29 +23,20 @@ export class MongoPackageReadService implements IPackageReadService {
     if (status) query.status = status;
     if (type) query.type = type;
     if (scope) query.scope = scope;
-    if (enterpriseId) query.enterprise_id = enterpriseId;
-
-    if (cursor) {
-      query._id = sort === SortOrder.DESC ? { $lt: cursor } : { $gt: cursor };
+    if (enterpriseId !== undefined) {
+      query.enterprise_id = enterpriseId === null ? null : enterpriseId;
     }
 
     const docs = await this.model
       .find(query)
-      .sort({ _id: sort === SortOrder.DESC ? -1 : 1 })
-      .limit(limit + 1)
+      .sort({ created_at: sort === SortOrder.ASC ? 1 : -1 })
+      .limit(limit)
       .lean()
       .exec();
 
-    const hasNextPage = docs.length > limit;
-    const results = hasNextPage ? docs.slice(0, limit) : docs;
-    const nextCursor = hasNextPage ? results[results.length - 1]._id.toString() : null;
+    const data = docs.map((doc) => this.mapToDto(doc));
 
-    return new PaginatedResponseDto(
-      results.map((doc) => this.mapToDto(doc)),
-      nextCursor,
-      hasNextPage,
-      limit,
-    );
+    return new PaginatedResponseDto(data, null, false, limit);
   }
 
   async findById(id: string): Promise<Nullable<PackageResponseDto>> {
@@ -54,7 +45,7 @@ export class MongoPackageReadService implements IPackageReadService {
   }
 
   async findByCode(code: string): Promise<PackageResponseDto[]> {
-    const docs = await this.model.find({ code }).lean().exec();
+    const docs = await this.model.find({ code, status: 'active' } as QueryFilter<PackageDocument>).lean().exec();
     return docs.map((doc) => this.mapToDto(doc));
   }
 
@@ -74,20 +65,24 @@ export class MongoPackageReadService implements IPackageReadService {
   }
 
   private mapToDto(doc: FlattenMaps<PackageDocument>): PackageResponseDto {
-    const baseQuotas: Record<string, number> = {};
-    if (doc.base_quotas) {
-      for (const q of doc.base_quotas) {
-        baseQuotas[q.code] = q.limit;
-      }
-    }
+    const mapGrantsList = (grantsList: GrantSchema[] | null | undefined): GrantDto[] => {
+      return (grantsList || []).map((g) => ({
+        type: g.type,
+        key: g.key,
+        value: g.value,
+        resetCycle: g.reset_cycle || undefined,
+        creditFallback: g.credit_fallback
+          ? {
+              creditType: g.credit_fallback.credit_type,
+              creditsPerUnit: g.credit_fallback.credits_per_unit,
+            }
+          : g.credit_fallback === null
+          ? null
+          : undefined,
+      }));
+    };
 
-    const variants: PackageVariantDto[] = (doc.variants || []).map((v: any) => {
-      const extraQuotas: Record<string, number> = {};
-      if (v.extra_quotas) {
-        for (const q of v.extra_quotas) {
-          extraQuotas[q.code] = q.limit;
-        }
-      }
+    const variants: PackageVariantDto[] = (doc.variants || []).map((v: FlattenMaps<PackageDocument>['variants'][number]) => {
       return {
         id: v._id ? v._id.toString() : '',
         title: v.title,
@@ -96,7 +91,7 @@ export class MongoPackageReadService implements IPackageReadService {
         priceAfterDiscount: v.price_after_discount,
         tax: v.tax,
         currency: v.currency,
-        extraQuotas,
+        extraGrants: mapGrantsList(v.extra_grants),
       };
     });
 
@@ -109,11 +104,8 @@ export class MongoPackageReadService implements IPackageReadService {
       scope: doc.scope,
       enterpriseId: doc.enterprise_id || null,
       status: doc.status,
-      features: (doc.features || []).map((f: any) => ({
-        code: f.code,
-        permissions: f.permissions || [],
-      })),
-      baseQuotas,
+      features: doc.features || [],
+      baseGrants: mapGrantsList(doc.base_grants),
       variants,
       createdAt: doc.created_at || new Date(),
       updatedAt: doc.updated_at || new Date(),

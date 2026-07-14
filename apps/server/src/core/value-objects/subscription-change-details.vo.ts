@@ -1,11 +1,13 @@
 import { BaseValueObject } from '../common';
-import { type QuotaVO } from './quota.vo';
+import { GrantVO } from './grant.vo';
 
 export interface SubscriptionChangeDetailsProps {
-  oldPackages: string[];
-  newPackages: string[];
-  oldQuotas: QuotaVO;
-  newQuotas: QuotaVO;
+  oldPlanId: string | null;
+  newPlanId: string | null;
+  addedAddonIds: string[];
+  removedAddonIds: string[];
+  oldGrants: GrantVO[];
+  newGrants: GrantVO[];
   oldPermissions: string[];
   newPermissions: string[];
 }
@@ -15,20 +17,28 @@ export class SubscriptionChangeDetailsVO extends BaseValueObject<SubscriptionCha
     super(props);
   }
 
-  get oldPackages(): string[] {
-    return this.props.oldPackages;
+  get oldPlanId(): string | null {
+    return this.props.oldPlanId;
   }
 
-  get newPackages(): string[] {
-    return this.props.newPackages;
+  get newPlanId(): string | null {
+    return this.props.newPlanId;
   }
 
-  get oldQuotas(): QuotaVO {
-    return this.props.oldQuotas;
+  get addedAddonIds(): string[] {
+    return this.props.addedAddonIds;
   }
 
-  get newQuotas(): QuotaVO {
-    return this.props.newQuotas;
+  get removedAddonIds(): string[] {
+    return this.props.removedAddonIds;
+  }
+
+  get oldGrants(): GrantVO[] {
+    return this.props.oldGrants;
+  }
+
+  get newGrants(): GrantVO[] {
+    return this.props.newGrants;
   }
 
   get oldPermissions(): string[] {
@@ -37,15 +47,6 @@ export class SubscriptionChangeDetailsVO extends BaseValueObject<SubscriptionCha
 
   get newPermissions(): string[] {
     return this.props.newPermissions;
-  }
-
-  // Computed diffs
-  getAddedPackages(): string[] {
-    return this.props.newPackages.filter((p) => !this.props.oldPackages.includes(p));
-  }
-
-  getRemovedPackages(): string[] {
-    return this.props.oldPackages.filter((p) => !this.props.newPackages.includes(p));
   }
 
   getAddedPermissions(): string[] {

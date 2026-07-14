@@ -1,4 +1,0 @@
-export enum ECurrency {
-	VND = 'VND',
-	USD = 'USD',
-}

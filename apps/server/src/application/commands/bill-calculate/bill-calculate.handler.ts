@@ -4,7 +4,7 @@ import { BillCalculateCommand } from './bill-calculate.command';
 import { BillCalculateResponseDto } from '@/application/dtos';
 import { BillMapper } from '@/application/mappers';
 import { BillService } from '@/application/services';
-import { PackageEntity } from '@/core/aggregate-roots';
+import { PackageRoot } from '@/core/aggregate-roots';
 import { BillEntity } from '@/core/aggregate-roots';
 import { EBillType, EBillStatus, EPackageType, ECurrency } from '@/core/enums';
 import { BillMultiplePlanException } from '@/core/exceptions';
@@ -25,7 +25,7 @@ export class BillCalculateHandler implements ICommandHandler<BillCalculateComman
     const packageIds = input.items.map((i) => i.packageId);
     const packages = (await Promise.all(
       packageIds.map((id) => this.packageRepository.findById(id))
-    )).filter((p): p is PackageEntity => p !== null);
+    )).filter((p): p is PackageRoot => p !== null);
 
     const packageMap = new Map(packages.map((p) => [p.id, p]));
 

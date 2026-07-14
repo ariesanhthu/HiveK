@@ -99,8 +99,11 @@ export class MongoBillRepository implements IBillRepository {
         items: (doc.items || []).map(
           (item) =>
             new BillItemVO({
+              lineType: item.line_type,
               packageId: item.package_id,
               packageVariantId: item.package_variant_id,
+              creditType: item.credit_type,
+              creditAmount: item.credit_amount,
               price: item.price,
               taxPercent: item.tax_percent,
               purchaseType: item.purchase_type,
@@ -123,8 +126,11 @@ export class MongoBillRepository implements IBillRepository {
       type: data.type,
       status: data.status,
       items: data.items.map((item) => ({
+        line_type: item.lineType,
         package_id: item.packageId,
         package_variant_id: item.packageVariantId,
+        credit_type: item.creditType,
+        credit_amount: item.creditAmount,
         price: item.price,
         tax_percent: item.taxPercent,
         purchase_type: item.purchaseType,

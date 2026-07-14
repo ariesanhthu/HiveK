@@ -1,34 +1,44 @@
 import { Prop, Schema, SchemaFactory, Virtual } from '@nestjs/mongoose';
 import { HydratedDocument, Types } from 'mongoose';
-import { EVersionStatus, EPackageType, EPackageScope, ECurrency } from '@/core/enums';
+import { EVersionStatus, EPackageType, EPackageScope, ECurrency, EGrantType } from '@/core/enums';
 
 export type PackageDocument = HydratedDocument<PackageModel>;
 
 @Schema({ _id: false })
-class PackageFeatureSchema {
-  @Prop({ type: String, required: true })
-  code: string;
+export class GrantSchema {
+  @Prop({ type: String, required: true, enum: EGrantType })
+  type: EGrantType;
 
-  @Prop({ type: [String], required: true })
-  permissions: string[];
+  @Prop({ type: String, required: true })
+  key: string;
+
+  @Prop({ type: Number, required: true })
+  value: number;
+
+  @Prop({ type: String, required: false, default: null })
+  reset_cycle?: 'monthly' | 'weekly' | 'daily' | null;
+
+  @Prop({
+    type: {
+      credit_type: { type: String, required: true },
+      credits_per_unit: { type: Number, required: true },
+    },
+    required: false,
+    default: null,
+  })
+  credit_fallback?: {
+    credit_type: string;
+    credits_per_unit: number;
+  } | null;
 }
 
 @Schema({ _id: false })
-export class QuotaItemSchema {
-  @Prop({ type: String, required: true })
-  code: string;
-
-  @Prop({ type: Number, required: true })
-  limit: number;
-}
-
-@Schema({ timestamps: false })
 class PackageVariantSchema {
   @Prop({ type: String, required: true })
   title: string;
 
-  @Prop({ type: Number, required: true })
-  duration_months: number;
+  @Prop({ type: Number, required: false, default: null })
+  duration_months: number | null;
 
   @Prop({ type: Number, required: true })
   price: number;
@@ -42,8 +52,8 @@ class PackageVariantSchema {
   @Prop({ type: String, required: true })
   currency: ECurrency;
 
-  @Prop({ type: [QuotaItemSchema], required: false, default: [] })
-  extra_quotas: QuotaItemSchema[];
+  @Prop({ type: [GrantSchema], required: false, default: [] })
+  extra_grants: GrantSchema[];
 
   _id?: string;
 
@@ -57,7 +67,7 @@ class PackageVariantSchema {
 
 @Schema({
   collection: 'packages',
-	timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' },
+  timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' },
 })
 export class PackageModel {
   @Prop({ type: String, required: true })
@@ -87,11 +97,11 @@ export class PackageModel {
   })
   status: EVersionStatus;
 
-  @Prop({ type: [PackageFeatureSchema], required: false, default: [] })
-  features: PackageFeatureSchema[];
+  @Prop({ type: [String], required: false, default: [] })
+  features: string[];
 
-  @Prop({ type: [QuotaItemSchema], required: false, default: [] })
-  base_quotas: QuotaItemSchema[];
+  @Prop({ type: [GrantSchema], required: false, default: [] })
+  base_grants: GrantSchema[];
 
   @Prop({ type: [PackageVariantSchema], required: false, default: [] })
   variants: PackageVariantSchema[];

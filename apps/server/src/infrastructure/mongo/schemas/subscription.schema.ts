@@ -1,11 +1,13 @@
 import { Prop, Schema, SchemaFactory, Virtual } from '@nestjs/mongoose';
 import { HydratedDocument, Types } from 'mongoose';
 import { ESubscriptionStatus } from '@/core/enums';
+import { GrantSchema } from './package.schema';
 
 export type SubscriptionDocument = HydratedDocument<SubscriptionModel>;
 
-class SubscriptionItemSchema {
-  @Prop({ type: String, required: true, name: 'package_version_id' })
+@Schema({ _id: false })
+class PlanItemSchema {
+  @Prop({ type: String, required: true })
   package_id: string;
 
   @Prop({ type: String, required: true })
@@ -16,6 +18,27 @@ class SubscriptionItemSchema {
 
   @Prop({ type: Date, required: true })
   expires_at: Date;
+
+  @Prop({ type: String, required: true })
+  bill_id: string;
+
+  @Prop({ type: Boolean, required: true })
+  auto_renew: boolean;
+}
+
+@Schema({ _id: false })
+class AddonItemSchema {
+  @Prop({ type: String, required: true })
+  package_id: string;
+
+  @Prop({ type: String, required: true })
+  package_variant_id: string;
+
+  @Prop({ type: Date, required: true })
+  purchased_at: Date;
+
+  @Prop({ type: Date, required: false, default: null })
+  expires_at: Date | null;
 
   @Prop({ type: String, required: true })
   bill_id: string;
@@ -37,11 +60,14 @@ export class SubscriptionModel {
   })
   status: ESubscriptionStatus;
 
-  @Prop({ type: [Object], required: false, default: [] })
-  items: SubscriptionItemSchema[];
+  @Prop({ type: PlanItemSchema, required: false, default: null })
+  plan_item: PlanItemSchema | null;
 
-  @Prop({ type: Object, required: false, default: {} })
-  computed_quotas: Record<string, unknown>;
+  @Prop({ type: [AddonItemSchema], required: false, default: [] })
+  addon_items: AddonItemSchema[];
+
+  @Prop({ type: [GrantSchema], required: false, default: [] })
+  computed_grants: GrantSchema[];
 
   @Prop({ type: [String], required: false, default: [] })
   computed_permissions: string[];

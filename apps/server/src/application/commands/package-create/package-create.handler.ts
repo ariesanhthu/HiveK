@@ -1,8 +1,7 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { Inject } from '@nestjs/common';
 import { PACKAGE_REPOSITORY, type IPackageRepository } from '@/core/interfaces/repositories';
-import { PackageEntity } from '@/core/aggregate-roots';
-import { QuotaVO } from '@/core/value-objects';
+import { PackageRoot } from '@/core/aggregate-roots';
 import { EVersionStatus } from '@/core/enums';
 import { PackageCodeAlreadyExistsException } from '@/core/exceptions';
 import { PackageMapper } from '@/application/mappers';
@@ -29,8 +28,8 @@ export class PackageCreateCommandHandler implements ICommandHandler<PackageCreat
         throw new PackageCodeAlreadyExistsException(input.code);
       }
 
-      // Create a single PackageEntity with metadata
-      const packageEntity = PackageEntity.create({
+      // Create a single PackageRoot with metadata
+      const packageEntity = PackageRoot.create({
         code: input.code,
         name: input.name,
         description: input.description,
@@ -39,7 +38,7 @@ export class PackageCreateCommandHandler implements ICommandHandler<PackageCreat
         enterpriseId: input.enterpriseId || null,
         status: EVersionStatus.DRAFT,
         features: [],
-        baseQuotas: new QuotaVO({}),
+        baseGrants: [],
         variants: [],
         createdAt: new Date(),
         updatedAt: new Date(),

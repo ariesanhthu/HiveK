@@ -24,6 +24,8 @@ import {
   PaymentVoidAuthorizationHandler,
   SubscriptionUpdateHandler,
 } from '@/application/commands';
+import { SubscriptionUpdatedEventHandler } from '@/application/events';
+import { SubscriptionCronService } from './subscription-cron.service';
 
 @Module({
   imports: [
@@ -57,6 +59,8 @@ import {
     PaymentVoidAuthorizationHandler,
     // Subscription Handlers
     SubscriptionUpdateHandler,
+    SubscriptionUpdatedEventHandler,
+    SubscriptionCronService,
   ],
   exports: [
     PaymentService,

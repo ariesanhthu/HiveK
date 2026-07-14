@@ -14,3 +14,7 @@ export * from './social-page-connected.domain-event';
 export * from './post-scheduled.domain-event';
 export * from './post-published.domain-event';
 export * from './post-failed.domain-event';
+export * from './credit-topped-up.domain-event';
+export * from './credit-deducted.domain-event';
+export * from './quota-consumed.domain-event';
+export * from './quota-usage-reset.domain-event';

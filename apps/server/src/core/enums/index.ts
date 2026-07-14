@@ -29,3 +29,6 @@ export * from './purchase-type.enum';
 export * from './failure-type.enum';
 export * from './post-status.enum';
 export * from './social-platform-code.enum';
+export * from './grant-type.enum';
+export * from './bill-line-type.enum';
+export * from './credit-transaction-type.enum';

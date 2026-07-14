@@ -3,46 +3,13 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types, ClientSession } from 'mongoose';
 import { ISubscriptionHistoryRepository } from '@/core/interfaces/repositories';
 import { SubscriptionHistoryEntity } from '@/core/aggregate-roots';
-import { SubscriptionHistoryModel, SubscriptionHistoryDocument, SubscriptionChangeDetailsModel } from '../schemas';
-import { SubscriptionChangeDetailsVO, QuotaVO } from '@/core/value-objects';
+import { SubscriptionHistoryModel, SubscriptionHistoryDocument, GrantSchema } from '../schemas';
+import { SubscriptionChangeDetailsVO, GrantVO } from '@/core/value-objects';
 import { Nullable } from '@/core/types';
 import { type IUnitOfWork, UNIT_OF_WORK, CACHE_SERVICE } from '@/application/interfaces';
 import type { ICacheService } from '@/application/interfaces';
 import { MongoUnitOfWork } from '../mongo-uow';
 import { CacheKeyUtil } from '@/shared/utils/cache-key.util';
-
-function stringArrayFromUnknown(value: unknown): string[] {
-  return Array.isArray(value) && value.every((x): x is string => typeof x === 'string')
-    ? value
-    : [];
-}
-
-function quotaPropsFromUnknown(raw: unknown): Record<string, number> {
-  if (!raw || typeof raw !== 'object') {
-    return {};
-  }
-  const out: Record<string, number> = {};
-  for (const [k, v] of Object.entries(raw as Record<string, unknown>)) {
-    if (typeof v === 'number' && Number.isFinite(v)) {
-      out[k] = v;
-    }
-  }
-  return out;
-}
-
-function subscriptionChangeDetailsPropsFromMongo(
-  details: SubscriptionChangeDetailsModel | Record<string, unknown> | null | undefined
-) {
-  const d = details ?? {};
-  return {
-    oldPackages: stringArrayFromUnknown((d as SubscriptionChangeDetailsModel).oldPackages),
-    newPackages: stringArrayFromUnknown((d as SubscriptionChangeDetailsModel).newPackages),
-    oldQuotas: new QuotaVO(quotaPropsFromUnknown((d as SubscriptionChangeDetailsModel).oldQuotas)),
-    newQuotas: new QuotaVO(quotaPropsFromUnknown((d as SubscriptionChangeDetailsModel).newQuotas)),
-    oldPermissions: stringArrayFromUnknown((d as SubscriptionChangeDetailsModel).oldPermissions),
-    newPermissions: stringArrayFromUnknown((d as SubscriptionChangeDetailsModel).newPermissions),
-  };
-}
 
 @Injectable()
 export class MongoSubscriptionHistoryRepository implements ISubscriptionHistoryRepository {
@@ -113,6 +80,27 @@ export class MongoSubscriptionHistoryRepository implements ISubscriptionHistoryR
   }
 
   private mapToDomain(doc: SubscriptionHistoryDocument): SubscriptionHistoryEntity {
+    const details = doc.details;
+    const mapGrantsList = (grantsList: GrantSchema[] | null | undefined): GrantVO[] => {
+      return (grantsList || []).map(
+        (g) =>
+          new GrantVO({
+            type: g.type,
+            key: g.key,
+            value: g.value,
+            resetCycle: g.reset_cycle || undefined,
+            creditFallback: g.credit_fallback
+              ? {
+                  creditType: g.credit_fallback.credit_type,
+                  creditsPerUnit: g.credit_fallback.credits_per_unit,
+                }
+              : g.credit_fallback === null
+              ? null
+              : undefined,
+          })
+      );
+    };
+
     return SubscriptionHistoryEntity.instantiate(
       doc._id.toString(),
       {
@@ -120,27 +108,53 @@ export class MongoSubscriptionHistoryRepository implements ISubscriptionHistoryR
         subscriptionId: doc.subscription_id,
         billId: doc.bill_id,
         actorId: doc.actor_id,
-        details: new SubscriptionChangeDetailsVO(
-          subscriptionChangeDetailsPropsFromMongo(doc.details)
-        ),
+        details: new SubscriptionChangeDetailsVO({
+          oldPlanId: details.old_plan_id || null,
+          newPlanId: details.new_plan_id || null,
+          addedAddonIds: details.added_addon_ids || [],
+          removedAddonIds: details.removed_addon_ids || [],
+          oldGrants: mapGrantsList(details.old_grants),
+          newGrants: mapGrantsList(details.new_grants),
+          oldPermissions: details.old_permissions || [],
+          newPermissions: details.new_permissions || [],
+        }),
         createdAt: doc.get('created_at'),
       }
     );
   }
 
   private mapToPersistence(data: SubscriptionHistoryEntity): Omit<SubscriptionHistoryModel, 'created_at'> {
+    const mapGrantsToSchema = (grantsList: GrantVO[]) => {
+      return grantsList.map((g) => ({
+        type: g.type,
+        key: g.key,
+        value: g.value,
+        reset_cycle: g.resetCycle ?? null,
+        credit_fallback: g.creditFallback
+          ? {
+              credit_type: g.creditFallback.creditType,
+              credits_per_unit: g.creditFallback.creditsPerUnit,
+            }
+          : g.creditFallback === null
+          ? null
+          : null,
+      }));
+    };
+
     return {
       enterprise_id: data.enterpriseId,
       subscription_id: data.subscriptionId,
       bill_id: data.billId,
       actor_id: data.actorId,
       details: {
-        oldPackages: data.details.oldPackages,
-        newPackages: data.details.newPackages,
-        oldQuotas: data.details.oldQuotas.unmarshal,
-        newQuotas: data.details.newQuotas.unmarshal,
-        oldPermissions: data.details.oldPermissions,
-        newPermissions: data.details.newPermissions,
+        old_plan_id: data.details.oldPlanId,
+        new_plan_id: data.details.newPlanId,
+        added_addon_ids: data.details.addedAddonIds,
+        removed_addon_ids: data.details.removedAddonIds,
+        old_grants: mapGrantsToSchema(data.details.oldGrants),
+        new_grants: mapGrantsToSchema(data.details.newGrants),
+        old_permissions: data.details.oldPermissions,
+        new_permissions: data.details.newPermissions,
       },
     };
   }

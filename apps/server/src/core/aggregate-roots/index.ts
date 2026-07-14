@@ -20,3 +20,6 @@ export * from './subscription-history.aggregate';
 export * from './social-page.aggregate';
 export * from './scheduled-post.aggregate';
 export * from './auto-reply-rule.aggregate';
+export * from './credit-wallet.aggregate';
+export * from './quota-usage.aggregate';
+

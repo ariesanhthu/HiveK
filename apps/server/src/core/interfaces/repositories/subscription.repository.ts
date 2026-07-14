@@ -1,13 +1,14 @@
 import { IBaseRepository } from '../../common';
-import { SubscriptionEntity } from '../../aggregate-roots/subscription.aggregate';
+import { SubscriptionRoot } from '../../aggregate-roots/subscription.aggregate';
 
-export interface ISubscriptionRepository extends IBaseRepository<SubscriptionEntity> {
-  findByEnterpriseId(enterpriseId: string): Promise<SubscriptionEntity | null>;
+export interface ISubscriptionRepository extends IBaseRepository<SubscriptionRoot> {
+  findByEnterpriseId(enterpriseId: string): Promise<SubscriptionRoot | null>;
   existsByPackageId(packageId: string): Promise<boolean>;
+  findExpiredSubscriptions(now: Date): Promise<SubscriptionRoot[]>;
   updateWithVersion(
     id: string,
     expectedVersion: number,
-    entity: SubscriptionEntity
+    entity: SubscriptionRoot
   ): Promise<void>;
 }
 

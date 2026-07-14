@@ -1,13 +1,14 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { Inject } from '@nestjs/common';
 import { PackageUpdateCommand } from './package-update.command';
+import { PackageUpdateInputDto, type UpdateVariantDto } from './package-update.dto';
 import { PACKAGE_REPOSITORY, type IPackageRepository } from '@/core/interfaces/repositories';
-import { PackageEntity } from '@/core/aggregate-roots';
+import { PackageRoot } from '@/core/aggregate-roots';
 import { PackageVariantEntity } from '@/core/entities';
-import { PackageResponseDto, PackageVariantDto, VariantDto, QuotaItemDto } from '@/application/dtos';
+import { PackageResponseDto, VariantDto, type GrantDto } from '@/application/dtos';
 import { PackageMapper } from '@/application/mappers';
-import { EVersionStatus } from '@/core/enums';
-import { PackageFeatureVO, QuotaVO } from '@/core/value-objects';
+import { EVersionStatus, ECurrency } from '@/core/enums';
+import { GrantVO } from '@/core/value-objects';
 import { PackageNotFoundException, DuplicateVariantException } from '@/core/exceptions';
 import { type IUnitOfWork, UNIT_OF_WORK } from '@/application/interfaces';
 
@@ -24,28 +25,26 @@ export class PackageUpdateHandler implements ICommandHandler<PackageUpdateComman
     const { input } = command;
 
     return this.uow.execute(async () => {
-      // 1. Retrieve Target Package
+      // 1. Fetch package
       const pkg = await this.packageRepository.findById(input.id);
       if (!pkg) {
         throw new PackageNotFoundException(input.id);
       }
 
-      // 2. Validate Status
+      // 2. Reject changes to non-draft packages
       if (pkg.status !== EVersionStatus.DRAFT) {
-        throw new Error(
-          `Cannot update package with status '${pkg.status}'. Only DRAFT packages can be updated.`
-        );
+        throw new Error('Can only update packages in DRAFT status.');
       }
 
-      // 3. Update General Info & Metadata
+      // 3. Update top-level info
       this.handleGeneralUpdates(pkg, input);
 
-      // 4. Process Variants
-      this.handleDeleteVariants(pkg, input.deletedVariants);
-      this.handleUpdateVariants(pkg, input.currentVariants);
+      // 4. Update variants list
+      this.handleDeleteVariants(pkg, input.deletedVariantIds);
+      this.handleUpdateVariants(pkg, input.variants);
       this.handleAddVariants(pkg, input.newVariants);
 
-      // 5. Validate Business Rules (Unique Titles)
+      // 5. Validation constraints
       this.validateUniqueTitles(pkg);
 
       // 6. Persist
@@ -55,17 +54,15 @@ export class PackageUpdateHandler implements ICommandHandler<PackageUpdateComman
     });
   }
 
-  private handleGeneralUpdates(pkg: PackageEntity, dto: any) {
-    let features: PackageFeatureVO[] | undefined;
-    let baseQuotas: QuotaVO | undefined;
+  private handleGeneralUpdates(pkg: PackageRoot, dto: PackageUpdateInputDto) {
+    let features: string[] | undefined;
+    let baseGrants: GrantVO[] | undefined;
 
     if (dto.features) {
-      features = dto.features.map(
-        (f: any) => new PackageFeatureVO({ code: f.code, permissions: f.permissions })
-      );
+      features = dto.features;
     }
-    if (dto.baseQuotas) {
-      baseQuotas = this.mapQuotaItemsToVO(dto.baseQuotas);
+    if (dto.baseGrants) {
+      baseGrants = this.mapGrantDtosToVOs(dto.baseGrants);
     }
 
     pkg.updateGeneralInfo({
@@ -74,11 +71,11 @@ export class PackageUpdateHandler implements ICommandHandler<PackageUpdateComman
       type: dto.type,
       scope: dto.scope,
       features,
-      baseQuotas,
+      baseGrants,
     });
   }
 
-  private handleDeleteVariants(pkg: PackageEntity, deletedIds?: string[]) {
+  private handleDeleteVariants(pkg: PackageRoot, deletedIds?: string[]) {
     if (!deletedIds || deletedIds.length === 0) return;
 
     for (const id of deletedIds) {
@@ -86,7 +83,7 @@ export class PackageUpdateHandler implements ICommandHandler<PackageUpdateComman
     }
   }
 
-  private handleUpdateVariants(pkg: PackageEntity, updates?: any[]) {
+  private handleUpdateVariants(pkg: PackageRoot, updates?: UpdateVariantDto[]) {
     if (!updates || updates.length === 0) return;
 
     for (const updateDto of updates) {
@@ -99,15 +96,15 @@ export class PackageUpdateHandler implements ICommandHandler<PackageUpdateComman
           priceAfterDiscount: updateDto.priceAfterDiscount,
           tax: updateDto.tax,
           currency: updateDto.currency,
-          extraQuotas: updateDto.extraQuotas
-            ? this.mapQuotaItemsToVO(updateDto.extraQuotas)
+          extraGrants: updateDto.extraGrants
+            ? this.mapGrantDtosToVOs(updateDto.extraGrants)
             : undefined,
         });
       }
     }
   }
 
-  private handleAddVariants(pkg: PackageEntity, newVariants?: VariantDto[]) {
+  private handleAddVariants(pkg: PackageRoot, newVariants?: VariantDto[]) {
     if (!newVariants || newVariants.length === 0) return;
 
     for (const v of newVariants) {
@@ -117,14 +114,14 @@ export class PackageUpdateHandler implements ICommandHandler<PackageUpdateComman
         price: v.price,
         priceAfterDiscount: v.priceAfterDiscount,
         tax: v.tax,
-        currency: v.currency as any,
-        extraQuotas: this.mapQuotaItemsToVO(v.extraQuotas),
+        currency: v.currency as ECurrency,
+        extraGrants: this.mapGrantDtosToVOs(v.extraGrants),
       });
       pkg.variants.push(newVariant);
     }
   }
 
-  private validateUniqueTitles(pkg: PackageEntity) {
+  private validateUniqueTitles(pkg: PackageRoot) {
     const titles = new Set<string>();
     for (const v of pkg.variants) {
       if (titles.has(v.title)) {
@@ -134,11 +131,17 @@ export class PackageUpdateHandler implements ICommandHandler<PackageUpdateComman
     }
   }
 
-  private mapQuotaItemsToVO(items: QuotaItemDto[]): QuotaVO {
-    const props: { [key: string]: number } = {};
-    for (const item of items) {
-      props[item.code] = item.limit;
-    }
-    return new QuotaVO(props);
+  private mapGrantDtosToVOs(grants: GrantDto[]): GrantVO[] {
+    if (!grants) return [];
+    return grants.map(
+      (g) =>
+        new GrantVO({
+          type: g.type,
+          key: g.key,
+          value: g.value,
+          resetCycle: g.resetCycle,
+          creditFallback: g.creditFallback,
+        })
+    );
   }
 }

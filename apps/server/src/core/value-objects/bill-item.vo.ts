@@ -1,9 +1,12 @@
 import { BaseValueObject } from '../common';
-import { type EPurchaseType } from '../enums';
+import { EBillLineType, EPurchaseType } from '../enums';
 
 export interface BillItemProps {
-  packageId: string;
-  packageVariantId: string;
+  lineType: EBillLineType;
+  packageId: string | null;
+  packageVariantId: string | null;
+  creditType: string | null;
+  creditAmount: number | null;
   price: number;
   taxPercent: number;
   purchaseType: EPurchaseType;
@@ -14,12 +17,24 @@ export class BillItemVO extends BaseValueObject<BillItemProps> {
     super(props);
   }
 
-  get packageId(): string {
+  get lineType(): EBillLineType {
+    return this.props.lineType;
+  }
+
+  get packageId(): string | null {
     return this.props.packageId;
   }
 
-  get packageVariantId(): string {
+  get packageVariantId(): string | null {
     return this.props.packageVariantId;
+  }
+
+  get creditType(): string | null {
+    return this.props.creditType;
+  }
+
+  get creditAmount(): number | null {
+    return this.props.creditAmount;
   }
 
   get price(): number {

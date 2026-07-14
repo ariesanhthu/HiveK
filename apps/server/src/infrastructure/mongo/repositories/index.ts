@@ -20,5 +20,7 @@ export * from './mongo-subscription-history.repository';
 export * from './social-page.repository';
 export * from './scheduled-post.repository';
 export * from './auto-reply-rule.repository';
+export * from './mongo-credit-wallet.repository';
+export * from './mongo-quota-usage.repository';
 
 

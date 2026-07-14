@@ -1,48 +1,39 @@
 import { z } from 'zod';
-import { ECurrency, EPackageType, EPackageScope } from '@/core/enums';
+import { ECurrency, EPackageType, EPackageScope, EGrantType } from '@/core/enums';
 
-export const QuotaItemDtoSchema = z.object({
-  code: z.string().min(1),
-  limit: z.number(),
-});
-
-export const FeatureSchema = z.object({
-  code: z.string().min(1),
-  permissions: z.array(z.string().min(1)),
+export const GrantDtoSchema = z.object({
+  type: z.nativeEnum(EGrantType),
+  key: z.string().min(1),
+  value: z.number(),
+  resetCycle: z.enum(['monthly', 'weekly', 'daily']).optional(),
+  creditFallback: z.object({
+    creditType: z.string().min(1),
+    creditsPerUnit: z.number().positive(),
+  }).nullable().optional(),
 });
 
 export const VariantSchema = z.object({
   title: z.string().min(1),
-  durationMonths: z.number().int().min(1),
+  durationMonths: z.number().int().min(1).nullable(),
   price: z.number().min(0),
   priceAfterDiscount: z.number().min(0),
   tax: z.number().min(0),
   currency: z.enum([ECurrency.VND, ECurrency.USD]),
-  extraQuotas: z.array(QuotaItemDtoSchema),
+  extraGrants: z.array(GrantDtoSchema),
 });
 
-export type QuotaItemDto = z.infer<typeof QuotaItemDtoSchema>;
-export type FeatureDto = z.infer<typeof FeatureSchema>;
+export type GrantDto = z.infer<typeof GrantDtoSchema>;
 export type VariantDto = z.infer<typeof VariantSchema>;
-
-export class PackageFeatureDto {
-  code: string;
-  permissions: string[];
-}
-
-export class PackageQuotaDto {
-  [key: string]: number;
-}
 
 export class PackageVariantDto {
   id: string;
   title: string;
-  durationMonths: number;
+  durationMonths: number | null;
   price: number;
   priceAfterDiscount: number;
   tax: number;
   currency: string;
-  extraQuotas: PackageQuotaDto;
+  extraGrants: GrantDto[];
 }
 
 export class PackageResponseDto {
@@ -54,8 +45,8 @@ export class PackageResponseDto {
   scope: string;
   enterpriseId: string | null;
   status: string;
-  features: PackageFeatureDto[];
-  baseQuotas: PackageQuotaDto;
+  features: string[];
+  baseGrants: GrantDto[];
   variants: PackageVariantDto[];
   createdAt: Date;
   updatedAt: Date;

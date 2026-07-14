@@ -1,4 +1,5 @@
 import { DomainEvent, IntegrationEvent } from '@/core/common';
+import { EGrantType } from '@/core/enums';
 import {
   EntityHardDeletedEvent,
   UserSignedUpEvent,
@@ -48,13 +49,19 @@ export class EventMapper {
         return [new UpdateSubscriptionEvent((event as PaymentCompletedEvent).payload)];
       case event instanceof SubscriptionUpdatedEvent: {
         const e = event as SubscriptionUpdatedEvent;
+        const quotaRecord: Record<string, number> = {};
+        for (const grant of e.payload.details.newGrants) {
+          if (grant.type === EGrantType.QUOTA_HARD || grant.type === EGrantType.QUOTA_RENEWABLE) {
+            quotaRecord[grant.key] = grant.value;
+          }
+        }
         return [
           new RequestAuthUpdateSubscriptionEvent(
             {
               id: e.payload.subscriptionHistoryId,
               enterprise_id: e.payload.enterpriseId,
               permission: e.payload.details.newPermissions,
-              quota: e.payload.details.newQuotas.unmarshal,
+              quota: quotaRecord,
               timestamp: new Date().toISOString(),
             },
             undefined,

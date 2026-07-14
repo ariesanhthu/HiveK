@@ -1,15 +1,15 @@
 import { BaseEntity } from '../common';
-import { type QuotaVO } from '../value-objects';
+import { type GrantVO } from '../value-objects';
 import { type ECurrency } from '../enums';
 
 export interface PackageVariantProps {
   title: string;
-  durationMonths: number;
+  durationMonths: number | null;
   price: number;
   priceAfterDiscount: number;
   tax: number;
   currency: ECurrency;
-  extraQuotas: QuotaVO;
+  extraGrants: GrantVO[];
 }
 
 export type PackageVariantCreateProps = PackageVariantProps;
@@ -31,7 +31,7 @@ export class PackageVariantEntity extends BaseEntity<PackageVariantProps> {
     return this.props.title;
   }
 
-  get durationMonths(): number {
+  get durationMonths(): number | null {
     return this.props.durationMonths;
   }
 
@@ -51,19 +51,19 @@ export class PackageVariantEntity extends BaseEntity<PackageVariantProps> {
     return this.props.currency;
   }
 
-  get extraQuotas(): QuotaVO {
-    return this.props.extraQuotas;
+  get extraGrants(): GrantVO[] {
+    return this.props.extraGrants;
   }
 
   public update(
     props: Partial<{
       title: string;
-      durationMonths: number;
+      durationMonths: number | null;
       price: number;
       priceAfterDiscount: number;
       tax: number;
       currency: ECurrency;
-      extraQuotas: QuotaVO;
+      extraGrants: GrantVO[];
     }>
   ): void {
     if (props.title !== undefined) this.props.title = props.title;
@@ -73,6 +73,6 @@ export class PackageVariantEntity extends BaseEntity<PackageVariantProps> {
       this.props.priceAfterDiscount = props.priceAfterDiscount;
     if (props.tax !== undefined) this.props.tax = props.tax;
     if (props.currency !== undefined) this.props.currency = props.currency;
-    if (props.extraQuotas !== undefined) this.props.extraQuotas = props.extraQuotas;
+    if (props.extraGrants !== undefined) this.props.extraGrants = props.extraGrants;
   }
 }

@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { createZodDto } from 'nestjs-zod';
-import { FeatureSchema, QuotaItemDtoSchema, VariantSchema } from '../../dtos/package.dto';
+import { GrantDtoSchema, VariantSchema } from '../../dtos/package.dto';
 import { EPackageType, EPackageScope } from '@/core/enums';
 
 // UpdateVariantDto extends VariantSchema but makes fields optional + requires ID
@@ -19,13 +19,13 @@ export const PackageUpdateSchema = z.object({
   scope: z.enum([EPackageScope.PUBLIC, EPackageScope.PRIVATE]).optional(),
 
   // General Info (Optional - overwrite if present)
-  features: z.array(FeatureSchema).optional(),
-  baseQuotas: z.array(QuotaItemDtoSchema).optional(),
+  features: z.array(z.string()).optional(),
+  baseGrants: z.array(GrantDtoSchema).optional(),
 
   // Variant Management
-  currentVariants: z.array(UpdateVariantSchema).optional(),
+  variants: z.array(UpdateVariantSchema).optional(),
   newVariants: z.array(VariantSchema).optional(),
-  deletedVariants: z.array(z.string().min(1)).optional(),
+  deletedVariantIds: z.array(z.string().min(1)).optional(),
 }).strict();
 
 export type UpdateVariantDto = z.infer<typeof UpdateVariantSchema>;
