@@ -40,6 +40,9 @@ export class AuthGoogleSignInCommandHandler implements ICommandHandler<AuthGoogl
         if (!user.googleId) {
           user.updateGoogleId(input.googleId);
         }
+        if (!user.isEmailVerified) {
+          user.verifyEmail();
+        }
       } else {
         const type = input.type || ERoleType.KOL;
         const defaultRole = await this.roleRepository.findByTitle(type);

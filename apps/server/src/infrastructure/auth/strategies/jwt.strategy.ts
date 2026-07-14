@@ -37,7 +37,8 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       sub: user.id,
       email: user.email,
       role: user.roleId,
-      type: user.type
+      type: user.type,
+      isEmailVerified: user.isEmailVerified,
     };
     this.logger.debug(`Validating user`, undefined, jwtPayload);
 

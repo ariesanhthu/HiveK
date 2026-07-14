@@ -22,7 +22,7 @@ import {
 import { CampaignGetListQuery, CampaignGetByIdQuery, CampaignFilterDto } from '@/application/queries';
 import { CampaignDto, SoftDeleteInputDto } from '@/application/dtos';
 import { PaginatedResponseDto } from '@/application/dtos/pagination.dto';
-import { JwtAuthGuard, RolesGuard } from '@/presentation/middleware/guards';
+import { JwtAuthGuard, RolesGuard, UserVerifiedGuard } from '@/presentation/middleware/guards';
 import { CurrentUser } from '@/presentation/decorators/current-user.decorator';
 import { CampaignInviteCollaboratorCommand, CampaignRevokeCollaboratorCommand, CampaignUpdateStatusCommand, CampaignUpdateStatusInputDto, CampaignInviteCollaboratorInputDto, CampaignRevokeCollaboratorInputDto } from '@/application/commands';
 import { Roles } from '@/presentation/decorators/roles.decorator';
@@ -31,7 +31,7 @@ import { ERoleType } from '@/core/enums';
 @ApiTags('CLIENT-campaigns')
 @ApiBearerAuth()
 @ApiSecurity('x-api-key')
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, UserVerifiedGuard)
 @Controller(buildVersionedRoute('client', 'campaigns', 1))
 export class CampaignClientController {
   constructor(

@@ -14,7 +14,7 @@ import {
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { ApiTags, ApiOperation, ApiBearerAuth, ApiSecurity } from '@nestjs/swagger';
 import { buildVersionedRoute } from '@presentation/utils';
-import { JwtAuthGuard, RolesGuard } from '@/presentation/middleware/guards';
+import { JwtAuthGuard, RolesGuard, UserVerifiedGuard } from '@/presentation/middleware/guards';
 import { CurrentUser } from '@/presentation/decorators/current-user.decorator';
 import { Roles } from '@/presentation/decorators/roles.decorator';
 import { ERoleType } from '@/core/enums';
@@ -35,7 +35,7 @@ import { WebHook } from '@/presentation/decorators/webhook.decorator';
 @ApiTags('CLIENT-social-pages')
 @ApiBearerAuth()
 @ApiSecurity('x-api-key')
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, RolesGuard, UserVerifiedGuard)
 @Roles(ERoleType.ENTERPRISE)
 @Controller(buildVersionedRoute('client', 'social-pages', 1))
 export class SocialPageController {

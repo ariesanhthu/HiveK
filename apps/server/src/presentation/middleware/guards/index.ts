@@ -7,3 +7,4 @@ export * from './api-key.guard';
 export * from './recaptcha.guard';
 export * from './google-auth.guard';
 export * from './facebook-ip.guard';
+export * from './user-verified.guard';

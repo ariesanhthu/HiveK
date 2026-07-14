@@ -29,14 +29,20 @@ export class AuthSendOtpCommandHandler implements ICommandHandler<AuthSendOtpCom
       const { input } = command;
       const normalizedEmail = this.authService.normalizeEmail(input.email);
 
-      // Validate userId and user status for CREATE_ACCOUNT or CHANGE_PASSWORD types
-      if (input.type === EOtpType.CREATE_ACCOUNT || input.type === EOtpType.CHANGE_PASSWORD) {
+      // Validate user status
+      if (input.type === EOtpType.CHANGE_PASSWORD) {
         if (!command.userId) {
           throw new ForbiddenDomainException('User must sign in');
         }
         const user = await this.userRepository.findById(command.userId);
         if (!user || user.deleteAt !== null) {
           throw new UserNotFoundException(command.userId);
+        }
+      } else {
+        // For CREATE_ACCOUNT and RESET_PASSWORD, check user existence by email
+        const user = await this.userRepository.findByEmail(normalizedEmail);
+        if (!user || user.deleteAt !== null) {
+          throw new UserNotFoundException(normalizedEmail);
         }
       }
 
