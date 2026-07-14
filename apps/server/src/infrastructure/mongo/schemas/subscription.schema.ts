@@ -24,6 +24,12 @@ class PlanItemSchema {
 
   @Prop({ type: Boolean, required: true })
   auto_renew: boolean;
+
+  @Prop({ type: Number, required: true })
+  price: number;
+
+  @Prop({ type: Number, required: true })
+  price_after_discount: number;
 }
 
 @Schema({ _id: false })
@@ -42,6 +48,12 @@ class AddonItemSchema {
 
   @Prop({ type: String, required: true })
   bill_id: string;
+
+  @Prop({ type: Number, required: true })
+  price: number;
+
+  @Prop({ type: Number, required: true })
+  price_after_discount: number;
 }
 
 @Schema({

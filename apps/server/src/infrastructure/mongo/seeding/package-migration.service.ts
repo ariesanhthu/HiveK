@@ -165,6 +165,8 @@ export class PackageMigrationService implements OnModuleInit {
             expires_at: plan.expires_at ?? new Date(),
             bill_id: plan.bill_id,
             auto_renew: plan.auto_renew ?? true,
+            price: 0,
+            price_after_discount: 0,
           };
         }
 
@@ -174,6 +176,8 @@ export class PackageMigrationService implements OnModuleInit {
           purchased_at: addon.start_date,
           expires_at: addon.expires_at ?? null,
           bill_id: addon.bill_id,
+          price: 0,
+          price_after_discount: 0,
         }));
 
         (rawSub as unknown as Record<string, unknown>).items = undefined;

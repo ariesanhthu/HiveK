@@ -124,6 +124,8 @@ export class MongoSubscriptionRepository implements ISubscriptionRepository {
               expiresAt: doc.plan_item.expires_at,
               billId: doc.plan_item.bill_id,
               autoRenew: doc.plan_item.auto_renew,
+              price: doc.plan_item.price,
+              priceAfterDiscount: doc.plan_item.price_after_discount,
             })
           : null,
         addonItems: (doc.addon_items || []).map(
@@ -134,6 +136,8 @@ export class MongoSubscriptionRepository implements ISubscriptionRepository {
               purchasedAt: item.purchased_at,
               expiresAt: item.expires_at,
               billId: item.bill_id,
+              price: item.price,
+              priceAfterDiscount: item.price_after_discount,
             })
         ),
         computedGrants: (doc.computed_grants || []).map(
@@ -174,6 +178,8 @@ export class MongoSubscriptionRepository implements ISubscriptionRepository {
             expires_at: data.planItem.expiresAt,
             bill_id: data.planItem.billId,
             auto_renew: data.planItem.autoRenew,
+            price: data.planItem.price,
+            price_after_discount: data.planItem.priceAfterDiscount,
           }
         : null,
       addon_items: data.addonItems.map((item) => ({
@@ -182,6 +188,8 @@ export class MongoSubscriptionRepository implements ISubscriptionRepository {
         purchased_at: item.purchasedAt,
         expires_at: item.expiresAt,
         bill_id: item.billId,
+        price: item.price,
+        price_after_discount: item.priceAfterDiscount,
       })),
       computed_grants: data.computedGrants.map((g) => ({
         type: g.type,

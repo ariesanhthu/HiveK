@@ -67,8 +67,11 @@ export class MongoBillReadService implements IBillReadService {
 
   private mapToDto(doc: FlattenMaps<BillDocument>): BillResponseDto {
     const items: BillItemResponseDto[] = (doc.items || []).map((item: any) => ({
+      lineType: item.line_type,
       packageId: item.package_id,
       packageVariantId: item.package_variant_id,
+      creditType: item.credit_type ?? null,
+      creditAmount: item.credit_amount ?? null,
       price: item.price,
       taxPercent: item.tax_percent,
       purchaseType: item.purchase_type,

@@ -4,7 +4,7 @@ export interface RequestAuthUpdateSubscriptionPayload {
   id: string;
   enterprise_id: string;
   permission: string[];
-  quota: Record<string, any>;
+  quota: Record<string, number>;
   timestamp: string;
 }
 

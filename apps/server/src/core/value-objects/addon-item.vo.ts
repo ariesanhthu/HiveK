@@ -6,6 +6,8 @@ export interface AddonItemProps {
   purchasedAt: Date;
   expiresAt: Date | null;
   billId: string;
+  price: number;
+  priceAfterDiscount: number;
 }
 
 export class AddonItemVO extends BaseValueObject<AddonItemProps> {
@@ -31,6 +33,14 @@ export class AddonItemVO extends BaseValueObject<AddonItemProps> {
 
   get billId(): string {
     return this.props.billId;
+  }
+
+  get price(): number {
+    return this.props.price;
+  }
+
+  get priceAfterDiscount(): number {
+    return this.props.priceAfterDiscount;
   }
 
   isExpired(): boolean {

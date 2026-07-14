@@ -248,6 +248,7 @@ export class PaymentService {
         new PaymentCompletedEvent(payment.id!, {
           paymentId: payment.id!,
           billId: payment.billId,
+          enterpriseId: payment.enterpriseId,
           attemptId: attempt.id!,
           amount: payment.amount.amount,
           currency: payment.amount.currency,

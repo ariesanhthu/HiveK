@@ -1,5 +1,5 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { Inject } from '@nestjs/common';
+import { Inject, Logger } from '@nestjs/common';
 import { SubscriptionUpdateCommand } from './subscription-update.command';
 import {
   SUBSCRIPTION_REPOSITORY,
@@ -18,15 +18,18 @@ import {
   SubscriptionRoot,
   SubscriptionHistoryEntity,
   PackageRoot,
-  CreditWalletRoot
+  CreditWalletRoot,
+  BillEntity,
 } from '@/core/aggregate-roots';
 import {
   PlanItemVO,
   AddonItemVO,
   GrantVO,
-  SubscriptionChangeDetailsVO
+  SubscriptionChangeDetailsVO,
+  BillItemVO,
 } from '@/core/value-objects';
-import { ESubscriptionStatus, EPackageType, EBillLineType, EGrantType } from '@/core/enums';
+import { ESubscriptionStatus, EPackageType, EBillLineType, EGrantType, EPurchaseType, EBillType, EBillStatus } from '@/core/enums';
+import { ProrationService } from '@/application/services/proration.service';
 
 @CommandHandler(SubscriptionUpdateCommand)
 export class SubscriptionUpdateHandler implements ICommandHandler<SubscriptionUpdateCommand, void> {
@@ -43,7 +46,10 @@ export class SubscriptionUpdateHandler implements ICommandHandler<SubscriptionUp
     private readonly creditWalletRepository: ICreditWalletRepository,
     @Inject(UNIT_OF_WORK)
     private readonly uow: IUnitOfWork,
+    private readonly prorationService: ProrationService,
   ) {}
+
+  private readonly logger = new Logger(SubscriptionUpdateHandler.name);
 
   async execute(command: SubscriptionUpdateCommand): Promise<void> {
     const { input } = command;
@@ -70,6 +76,8 @@ export class SubscriptionUpdateHandler implements ICommandHandler<SubscriptionUp
         });
       }
 
+      // Snapshot old plan state before any changes (for proration calculation)
+      const oldPlanItem = subscription!.planItem;
       const originalVersion = subscription!.version;
       const oldPlanId = subscription!.planItem ? subscription!.planItem.packageId : null;
       const oldGrants = subscription!.computedGrants;
@@ -98,9 +106,14 @@ export class SubscriptionUpdateHandler implements ICommandHandler<SubscriptionUp
 
       const packageMap = new Map(packages.map((p) => [p.id, p]));
       const addedAddonIds: string[] = [];
-      const removedAddonIds: string[] = [];
+      const removedAddonIds: string[] = input.removedAddonIds || [];
 
-      // 5. Process bill items
+      // 5. Process removals (downgrade / addon removal)
+      for (const variantId of removedAddonIds) {
+        subscription!.removeAddon(variantId);
+      }
+
+      // 6. Process bill items
       for (const billItem of bill.items) {
         if (billItem.lineType === EBillLineType.CREDIT_TOP_UP) {
           // Non-catalogue direct top-up
@@ -139,6 +152,8 @@ export class SubscriptionUpdateHandler implements ICommandHandler<SubscriptionUp
             expiresAt: itemExpiresAt,
             billId: input.billId,
             autoRenew: true,
+            price: variant.price,
+            priceAfterDiscount: variant.priceAfterDiscount,
           });
 
           subscription!.attachPlan(planItem);
@@ -151,16 +166,22 @@ export class SubscriptionUpdateHandler implements ICommandHandler<SubscriptionUp
           }
         } else if (billItem.lineType === EBillLineType.ADDON_PURCHASE) {
           // Process Addon Purchase
-          const itemExpiresAt = variant.durationMonths
-            ? new Date(startDate.getTime() + variant.durationMonths * 30 * 24 * 60 * 60 * 1000)
-            : null;
+          const itemExpiresAt = new Date(startDate);
+          if (variant.durationMonths) {
+            itemExpiresAt.setMonth(itemExpiresAt.getMonth() + variant.durationMonths);
+          } else {
+            itemExpiresAt.setDate(itemExpiresAt.getDate() + 30);
+          }
+          const addonExpiresAt = variant.durationMonths ? itemExpiresAt : null;
 
           const addonItem = new AddonItemVO({
             packageId: billItem.packageId!,
             packageVariantId: billItem.packageVariantId!,
             purchasedAt: startDate,
-            expiresAt: itemExpiresAt,
+            expiresAt: addonExpiresAt,
             billId: input.billId,
+            price: variant.price,
+            priceAfterDiscount: variant.priceAfterDiscount,
           });
 
           const success = subscription!.attachAddon(addonItem);
@@ -178,6 +199,8 @@ export class SubscriptionUpdateHandler implements ICommandHandler<SubscriptionUp
       }
 
       // 6. Gather all grants details for recomputing grants
+      // Reuse packageMap from step 4 (packages from the current bill).
+      // Also fetch any pre-existing packages that weren't in this bill.
       const activePackageIds: string[] = [];
       if (subscription!.planItem) {
         activePackageIds.push(subscription!.planItem.packageId);
@@ -186,16 +209,21 @@ export class SubscriptionUpdateHandler implements ICommandHandler<SubscriptionUp
         activePackageIds.push(addon.packageId);
       }
 
-      const activePackages = (await Promise.all(
-        activePackageIds.map((id) => this.packageRepository.findById(id))
-      )).filter((p): p is PackageRoot => p !== null);
-
-      const activePackageMap = new Map(activePackages.map((p) => [p.id, p]));
+      const uniqueIds = [...new Set(activePackageIds)];
+      const missingIds = uniqueIds.filter((id) => !packageMap.has(id));
+      if (missingIds.length > 0) {
+        const missingPackages = (await Promise.all(
+          missingIds.map((id) => this.packageRepository.findById(id))
+        )).filter((p): p is PackageRoot => p !== null);
+        for (const p of missingPackages) {
+          if (p.id) packageMap.set(p.id, p);
+        }
+      }
 
       // Build plan effective grants
       let planGrants: GrantVO[] = [];
       if (subscription!.planItem) {
-        const planPkg = activePackageMap.get(subscription!.planItem.packageId);
+        const planPkg = packageMap.get(subscription!.planItem.packageId);
         if (planPkg) {
           const planVariant = planPkg.variants.find((v) => v.id === subscription!.planItem!.packageVariantId);
           if (planVariant) {
@@ -207,7 +235,7 @@ export class SubscriptionUpdateHandler implements ICommandHandler<SubscriptionUp
       // Build addon effective grants map
       const addonsGrantsMap = new Map<string, GrantVO[]>();
       for (const addon of subscription!.addonItems) {
-        const addonPkg = activePackageMap.get(addon.packageId);
+        const addonPkg = packageMap.get(addon.packageId);
         if (addonPkg) {
           const addonVariant = addonPkg.variants.find((v) => v.id === addon.packageVariantId);
           if (addonVariant) {
@@ -220,7 +248,57 @@ export class SubscriptionUpdateHandler implements ICommandHandler<SubscriptionUp
       // Recompute computed fields
       subscription!.recomputeGrants(planGrants, addonsGrantsMap);
 
-      // 7. Calculate next expiry check date
+      // 7. Proration: Calculate refund if plan changed mid-cycle
+      const newPlanItem = subscription!.planItem;
+      const oldVariantId = oldPlanItem?.packageVariantId;
+      const newVariantId = newPlanItem?.packageVariantId;
+      const planChanged = oldPlanId !== newPlanItem?.packageId || oldVariantId !== newVariantId;
+      if (oldPlanItem && newPlanItem && planChanged) {
+        const proration = this.prorationService.calculatePlanChangeRefund({
+          oldPrice: oldPlanItem.priceAfterDiscount,
+          newPrice: newPlanItem.priceAfterDiscount,
+          cycleStartAt: oldPlanItem.startDate,
+          cycleEndsAt: oldPlanItem.expiresAt,
+          changeDate: new Date(),
+        });
+
+        if (proration.refundAmount > 0) {
+          const refundBill = BillEntity.create({
+            billCode: `REF-${Date.now()}-${Math.random().toString(36).slice(2, 8).toUpperCase()}`,
+            enterpriseId: subscription!.enterpriseId,
+            type: EBillType.REFUND,
+            status: EBillStatus.PENDING,
+            items: [
+              new BillItemVO({
+                lineType: EBillLineType.CREDIT_TOP_UP,
+                packageId: null,
+                packageVariantId: null,
+                creditType: 'proration_credit',
+                creditAmount: proration.refundAmount,
+                price: -proration.refundAmount,
+                taxPercent: 0,
+                purchaseType: EPurchaseType.DOWNGRADE,
+              }),
+            ],
+            currency: 'vnd',
+            expiresAt: null,
+          });
+
+          await this.billRepository.save(refundBill);
+
+          wallet.topUp(
+            'proration_credit',
+            proration.refundAmount,
+            `Proration refund: ${oldPlanItem.packageId} → ${newPlanItem.packageId} (${proration.remainingDays}/${proration.totalCycleDays} days remaining)`
+          );
+
+          this.logger.log(
+            `Proration refund of ${proration.refundAmount} issued for enterprise ${subscription!.enterpriseId} (plan change: ${oldPlanItem.packageId} → ${newPlanItem.packageId})`
+          );
+        }
+      }
+
+      // 7 (renumbered). Calculate next expiry check date
       let minExpiry = expiresAt;
       if (subscription!.planItem) {
         minExpiry = subscription!.planItem.expiresAt;

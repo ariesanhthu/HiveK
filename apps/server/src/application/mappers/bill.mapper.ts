@@ -11,8 +11,11 @@ export class BillMapper {
       type: entity.type as EBillType,
       status: entity.status as EBillStatus,
       items: entity.items.map((item) => ({
+        lineType: item.lineType,
         packageId: item.packageId,
         packageVariantId: item.packageVariantId,
+        creditType: item.creditType,
+        creditAmount: item.creditAmount,
         price: item.price,
         taxPercent: item.taxPercent,
         purchaseType: item.purchaseType,
@@ -29,8 +32,11 @@ export class BillMapper {
   static toCalculateDto(entity: BillEntity): BillCalculateResponseDto {
     return {
       items: entity.items.map((item) => ({
+        lineType: item.lineType,
         packageId: item.packageId,
         packageVariantId: item.packageVariantId,
+        creditType: item.creditType,
+        creditAmount: item.creditAmount,
         price: item.price,
         taxPercent: item.taxPercent,
         purchaseType: item.purchaseType,

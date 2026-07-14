@@ -1,12 +1,15 @@
 import { z } from 'zod';
-import { EBillType, EBillStatus, EPurchaseType } from '@/core/enums';
+import { EBillType, EBillStatus, EPurchaseType, EBillLineType } from '@/core/enums';
 
 export const BillItemResponseSchema = z.object({
-  packageId: z.string(),
-  packageVariantId: z.string(),
+  lineType: z.enum(EBillLineType),
+  packageId: z.string().nullable(),
+  packageVariantId: z.string().nullable(),
+  creditType: z.string().nullable(),
+  creditAmount: z.number().nullable(),
   price: z.number(),
   taxPercent: z.number(),
-  purchaseType: z.enum([EPurchaseType.NEW, EPurchaseType.RENEWAL, EPurchaseType.CANCELLED]),
+  purchaseType: z.enum(EPurchaseType),
 });
 
 export type BillItemResponseDto = z.infer<typeof BillItemResponseSchema>;

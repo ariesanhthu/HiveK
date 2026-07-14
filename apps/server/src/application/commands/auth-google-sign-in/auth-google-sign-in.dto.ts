@@ -7,7 +7,7 @@ export const AuthGoogleSignInInputSchema = z.object({
   email: z.email(),
   displayName: z.string().optional(),
   avatarUrl: z.string().nullable().optional(),
-  type: z.nativeEnum(ERoleType).optional(),
+  type: z.enum(ERoleType).optional(),
 }).strict();
 
 export class AuthGoogleSignInInputDto extends createZodDto(AuthGoogleSignInInputSchema) {}

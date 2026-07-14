@@ -9,7 +9,6 @@ import {
   CampaignParticipantCreatedEvent,
   SubscriptionUpdatedEvent,
   PaymentAuthorizedEvent,
-  PaymentCompletedEvent,
   SocialPageConnectedEvent,
   PostScheduledEvent,
   PostPublishedEvent,
@@ -22,7 +21,6 @@ import {
   NotifyKolCampaignInvitationEvent,
   CapturePaymentRequestEvent,
   RequestAuthUpdateSubscriptionEvent,
-  UpdateSubscriptionEvent,
 } from '../events';
 
 export class EventMapper {
@@ -45,8 +43,6 @@ export class EventMapper {
         return EventMapper.mapCampaignParticipantCreatedEvent(event as CampaignParticipantCreatedEvent);
       case event instanceof PaymentAuthorizedEvent:
         return [new CapturePaymentRequestEvent((event as PaymentAuthorizedEvent).payload)];
-      case event instanceof PaymentCompletedEvent:
-        return [new UpdateSubscriptionEvent((event as PaymentCompletedEvent).payload)];
       case event instanceof SubscriptionUpdatedEvent: {
         const e = event as SubscriptionUpdatedEvent;
         const quotaRecord: Record<string, number> = {};

@@ -2,7 +2,7 @@ import { z } from 'zod';
 import { ECurrency, EPackageType, EPackageScope, EGrantType } from '@/core/enums';
 
 export const GrantDtoSchema = z.object({
-  type: z.nativeEnum(EGrantType),
+  type: z.enum(EGrantType),
   key: z.string().min(1),
   value: z.number(),
   resetCycle: z.enum(['monthly', 'weekly', 'daily']).optional(),

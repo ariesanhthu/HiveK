@@ -7,6 +7,8 @@ export interface PlanItemProps {
   expiresAt: Date;
   billId: string;
   autoRenew: boolean;
+  price: number;
+  priceAfterDiscount: number;
 }
 
 export class PlanItemVO extends BaseValueObject<PlanItemProps> {
@@ -36,6 +38,14 @@ export class PlanItemVO extends BaseValueObject<PlanItemProps> {
 
   get autoRenew(): boolean {
     return this.props.autoRenew;
+  }
+
+  get price(): number {
+    return this.props.price;
+  }
+
+  get priceAfterDiscount(): number {
+    return this.props.priceAfterDiscount;
   }
 
   isExpired(): boolean {

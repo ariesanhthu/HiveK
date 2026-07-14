@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
 import { MongoModule } from '../mongo/mongo.module';
 import { PaymentProvidersModule } from '../payment-providers/payment-providers.module';
-import { BillService, PaymentService } from '@/application/services';
+import { BillService, PaymentService, ProrationService } from '@/application/services';
 
 import {
   PackageUpdateHandler,
@@ -24,7 +24,7 @@ import {
   PaymentVoidAuthorizationHandler,
   SubscriptionUpdateHandler,
 } from '@/application/commands';
-import { SubscriptionUpdatedEventHandler } from '@/application/events';
+import { SubscriptionUpdatedEventHandler, PaymentCompletedEventHandler } from '@/application/events';
 import { SubscriptionCronService } from './subscription-cron.service';
 
 @Module({
@@ -58,8 +58,10 @@ import { SubscriptionCronService } from './subscription-cron.service';
     PaymentCancelHandler,
     PaymentVoidAuthorizationHandler,
     // Subscription Handlers
+    ProrationService,
     SubscriptionUpdateHandler,
     SubscriptionUpdatedEventHandler,
+    PaymentCompletedEventHandler,
     SubscriptionCronService,
   ],
   exports: [
