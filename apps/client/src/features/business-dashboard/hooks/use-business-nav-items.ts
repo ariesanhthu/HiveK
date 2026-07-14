@@ -6,7 +6,13 @@ import { type DashboardNavItem } from "@/features/business-dashboard/types";
 
 const BUSINESS_NAV_BASE: Omit<DashboardNavItem, "isActive">[] = [
   { id: "dashboard", label: "Bảng điều khiển", icon: "dashboard", href: "/dashboard" },
-  { id: "campaigns", label: "Chiến dịch", icon: "campaign", href: "/campaign-planning" },
+  { id: "campaigns", label: "Chiến dịch", icon: "campaign", href: "/campaign-management" },
+  {
+    id: "auto-posting",
+    label: "Lên bài tự động",
+    icon: "auto_awesome",
+    href: "/campaign-planning",
+  },
   { id: "discovery", label: "Khám phá KOL", icon: "travel_explore", href: "/kol-matching" },
   { id: "analytics", label: "Phân tích", icon: "bar_chart", href: "/kol-analysis" },
   { id: "settings", label: "Cài đặt", icon: "settings", href: "#" },

@@ -93,7 +93,7 @@ function mapRankingToCertificate(kol: KolRankingItem): KolVerificationCertificat
 async function resolveKol(params: PageProps["params"]) {
   const { id } = await params;
   const decodedId = decodeURIComponent(id);
-  const kol = getKolById(decodedId);
+  const kol = await getKolById(decodedId);
   return { decodedId, kol };
 }
 

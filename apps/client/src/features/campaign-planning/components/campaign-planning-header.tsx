@@ -32,7 +32,7 @@ export function CampaignPlanningHeader({
         <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-3">
             <h1 className="text-2xl font-extrabold tracking-tight text-foreground">
-              Tạo Chiến Dịch
+              Lên bài tự động
             </h1>
             {selectedCampaign ? (
               <span
@@ -48,7 +48,7 @@ export function CampaignPlanningHeader({
             ) : null}
           </div>
           <p className="mt-1 text-xs leading-5 text-foreground-muted">
-            Tạo, xem xét và lên lịch chiến dịch đăng bài tự động từ đầu vào có sẵn.
+            Tạo bài viết, xem xét nội dung và lên lịch đăng tự động từ cấu hình chiến dịch.
           </p>
         </div>
 
@@ -76,7 +76,7 @@ export function CampaignPlanningHeader({
             onClick={onAddCampaign}
             className="h-10 rounded-lg border border-primary-soft px-3 text-sm font-semibold text-foreground transition-colors hover:bg-primary-soft"
           >
-            + Thêm chiến dịch mới
+            + Chọn chiến dịch khác
           </button>
 
           <button
@@ -85,7 +85,7 @@ export function CampaignPlanningHeader({
             className="inline-flex h-10 items-center justify-center gap-2 rounded-lg bg-primary px-4 text-sm font-bold text-background-dark shadow-primary transition-colors hover:bg-amber-500"
           >
             <Sparkles className="size-4" aria-hidden />
-            Tạo Kế Hoạch
+            Tạo bài viết
           </button>
         </div>
       </div>

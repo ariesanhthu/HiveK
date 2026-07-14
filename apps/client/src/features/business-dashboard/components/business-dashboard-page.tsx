@@ -25,7 +25,7 @@ export function BusinessDashboardPage() {
       <DashboardSidebar items={navItems} />
 
       <div className="flex min-w-0 flex-1 flex-col">
-        <DashboardTopbar periodLabel={periodLabel} />
+        <DashboardTopbar />
 
         <section className="mx-auto flex w-full max-w-6xl flex-col gap-4 px-4 py-6 md:px-6">
           <header>
