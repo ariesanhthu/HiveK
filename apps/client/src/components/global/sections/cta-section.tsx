@@ -2,7 +2,7 @@ import React from "react";
 
 export const CallToActionSection: React.FC = () => {
   return (
-    <section className="mx-auto max-w-7xl px-6 py-24">
+    <section className="mx-auto max-w-7xl px-6 py-10">
       <div className="relative overflow-hidden rounded-[2.5rem] bg-background-dark p-8 text-center text-on-dark md:p-16">
         <div className="absolute -top-24 -left-24 h-96 w-96 rounded-full bg-primary/20 blur-[80px]" />
         <div className="absolute -bottom-24 -right-24 h-96 w-96 rounded-full bg-primary/10 blur-[80px]" />

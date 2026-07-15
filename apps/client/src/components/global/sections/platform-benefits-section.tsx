@@ -2,7 +2,7 @@ import React from "react";
 
 export const PlatformBenefitsSection: React.FC = () => {
   return (
-    <section id="platform" className="bg-[#fdf9f3] py-24 dark:bg-background-dark/30">
+    <section id="platform" className="py-10">
       <div className="mx-auto max-w-7xl px-6">
         <div className="mb-16 flex flex-col items-center text-center">
           <h2 className="text-sm font-bold uppercase tracking-widest text-primary">
@@ -17,8 +17,8 @@ export const PlatformBenefitsSection: React.FC = () => {
         </div>
 
         <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
-          <div className="group rounded-[2rem] bg-white p-10 shadow-[0_8px_30px_rgb(0,0,0,0.06)] transition-all hover:-translate-y-1 hover:shadow-xl dark:bg-card">
-            <div className="mb-6 inline-flex h-14 w-14 items-center justify-center rounded-full bg-[#FFF4E5] text-primary dark:bg-primary/20">
+          <div className="landing-card group rounded-[2rem] p-10 shadow-[0_8px_30px_rgb(0,0,0,0.4)] transition-all hover:-translate-y-1 hover:border-primary/30 hover:shadow-xl">
+            <div className="hex-chip mb-6">
               <span className="material-symbols-outlined text-[28px]">
                 psychology
               </span>
@@ -31,8 +31,8 @@ export const PlatformBenefitsSection: React.FC = () => {
             </p>
           </div>
 
-          <div className="group rounded-[2rem] bg-white p-10 shadow-[0_8px_30px_rgb(0,0,0,0.06)] transition-all hover:-translate-y-1 hover:shadow-xl dark:bg-card">
-            <div className="mb-6 inline-flex h-14 w-14 items-center justify-center rounded-full bg-[#FFF4E5] text-primary dark:bg-primary/20">
+          <div className="landing-card group rounded-[2rem] p-10 shadow-[0_8px_30px_rgb(0,0,0,0.4)] transition-all hover:-translate-y-1 hover:border-primary/30 hover:shadow-xl">
+            <div className="hex-chip mb-6">
               <span className="material-symbols-outlined text-[28px]">
                 monitoring
               </span>
@@ -45,8 +45,8 @@ export const PlatformBenefitsSection: React.FC = () => {
             </p>
           </div>
 
-          <div className="group rounded-[2rem] bg-white p-10 shadow-[0_8px_30px_rgb(0,0,0,0.06)] transition-all hover:-translate-y-1 hover:shadow-xl dark:bg-card">
-            <div className="mb-6 inline-flex h-14 w-14 items-center justify-center rounded-full bg-[#FFF4E5] text-primary dark:bg-primary/20">
+          <div className="landing-card group rounded-[2rem] p-10 shadow-[0_8px_30px_rgb(0,0,0,0.4)] transition-all hover:-translate-y-1 hover:border-primary/30 hover:shadow-xl">
+            <div className="hex-chip mb-6">
               <span className="material-symbols-outlined text-[28px]">
                 payments
               </span>

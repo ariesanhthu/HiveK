@@ -35,7 +35,7 @@ export const ActiveCampaignsSection: React.FC = () => {
   return (
     <section
       id="campaigns"
-      className="bg-background-light py-24 dark:bg-background-dark/30"
+      className="py-10"
     >
       <div className="mx-auto max-w-7xl px-6">
         <div className="mb-12 flex flex-col items-center gap-6 text-center sm:flex-row sm:items-end sm:justify-between sm:text-left">
@@ -62,16 +62,16 @@ export const ActiveCampaignsSection: React.FC = () => {
           {/* Mờ hai bên */}
           <div 
             className="pointer-events-none absolute bottom-0 left-0 top-0 z-10 w-16 opacity-0 transition-opacity duration-300 sm:w-32" 
-            style={{ 
-              background: "linear-gradient(to right, var(--color-background-light) 0%, transparent 100%)",
-              opacity: canScrollLeft ? 1 : 0 
+            style={{
+              background: "linear-gradient(to right, var(--landing-fade, var(--color-background-light)) 0%, transparent 100%)",
+              opacity: canScrollLeft ? 1 : 0
             }}
           />
           <div 
             className="pointer-events-none absolute bottom-0 right-0 top-0 z-10 w-16 opacity-0 transition-opacity duration-300 sm:w-32" 
-            style={{ 
-              background: "linear-gradient(to left, var(--color-background-light) 0%, transparent 100%)",
-              opacity: canScrollRight ? 1 : 0 
+            style={{
+              background: "linear-gradient(to left, var(--landing-fade, var(--color-background-light)) 0%, transparent 100%)",
+              opacity: canScrollRight ? 1 : 0
             }}
           />
 

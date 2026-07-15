@@ -1,0 +1,17 @@
+# Local-only override (git-ignored).
+# - Remaps Redis to 6380 (host 6379 is taken by another project).
+# - Adds MongoDB (root compose has it commented out; server + AI need it).
+services:
+  redis:
+    ports: !override
+      - "6380:6379"
+
+  mongodb:
+    image: mongo:7
+    ports:
+      - "27017:27017"
+    volumes:
+      - hivek_mongo_data:/data/db
+
+volumes:
+  hivek_mongo_data:

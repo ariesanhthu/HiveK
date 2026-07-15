@@ -1,0 +1,805 @@
+{
+  "global": "HiveKUI",
+  "pkg": "client",
+  "pkgDir": "/home/tvconss/Workspace/HiveK/node_modules/client",
+  "extraEntries": [],
+  "exported": [
+    "ActiveCampaignsSection",
+    "AgentProcessingPanel",
+    "AgentProgressCard",
+    "AnalyticsPanel",
+    "AuthLegalInline",
+    "Badge",
+    "Button",
+    "CallToActionSection",
+    "CampaignActiveCreatorsTable",
+    "CampaignBriefCard",
+    "CampaignCategoryChips",
+    "CampaignConfigPanel",
+    "CampaignContextBar",
+    "CampaignCreateDrawer",
+    "CampaignDetailHeader",
+    "CampaignDetailView",
+    "CampaignKpiDonut",
+    "CampaignKpiSection",
+    "CampaignListPanel",
+    "CampaignPlanningHeader",
+    "CampaignRecentContentList",
+    "CampaignSidebar",
+    "CampaignStatsGrid",
+    "CampaignSummaryBar",
+    "CampaignTrackingDashboard",
+    "CampaignsGrid",
+    "CampaignsPageHeader",
+    "Card",
+    "CardContent",
+    "CardDescription",
+    "CardHeader",
+    "CardTitle",
+    "CertificateActionBar",
+    "ChartContainer",
+    "ChartTooltip",
+    "ChartTooltipContent",
+    "CommentItem",
+    "CommentSection",
+    "CreatorContactModal",
+    "CreatorSuggestionsTab",
+    "DashboardKpiCards",
+    "DashboardPerformance",
+    "DashboardRecentActivities",
+    "DashboardSidebar",
+    "DashboardTopbar",
+    "FindEntryForm",
+    "FindEntryHelperPanel",
+    "FlowPageHeader",
+    "FlowStepper",
+    "HeroCardSlideshow",
+    "HeroSection",
+    "HeroSlideshowSlot",
+    "Input",
+    "InviteLinkBlock",
+    "KolAnalysisHeader",
+    "KolAnalysisTabs",
+    "KolComparisonTable",
+    "KolInfoCard",
+    "KolReviewQuote",
+    "KolVerificationCertificateView",
+    "KpiOverview",
+    "Label",
+    "MainFooter",
+    "MainHeader",
+    "MetricsCard",
+    "OverviewPanel",
+    "ParticipantsTab",
+    "PipelineGuidePanel",
+    "PlatformBenefitsSection",
+    "PlatformNicheAnalytics",
+    "PostContentPanel",
+    "PostDetailShell",
+    "PostReviewPanel",
+    "PostSchedulePanel",
+    "PostingRoadmap",
+    "ProductCard",
+    "ProfileRadarChart",
+    "PublishingTimeline",
+    "RankingFilters",
+    "RankingPagination",
+    "ScoreDistributionCharts",
+    "SearchResultsFiltersPanel",
+    "SearchResultsList",
+    "SelectedProfileCard",
+    "SignInForm",
+    "SignUpForm",
+    "TopPerformersSection",
+    "VideoPlayer"
+  ],
+  "storybookStatic": null,
+  "keyRecipe": 7,
+  "cfgSliceGlobal": "2a1e90e16d26d2462176b57b629f4c8c939ec2d790e3196b72ecd959a268c694",
+  "components": [
+    {
+      "name": "ActiveCampaignsSection",
+      "group": "sections",
+      "srcSha": null,
+      "sourceKey": "864433b04349d455",
+      "cfgSlice": "5ff899b099eb6923833804cda955efdd69101524bec86f67dac5537cd81802e8",
+      "stories": []
+    },
+    {
+      "name": "AgentProcessingPanel",
+      "group": "kol-matching",
+      "srcSha": null,
+      "sourceKey": "4b1ac0dee9a9d046",
+      "cfgSlice": "5ff899b099eb6923833804cda955efdd69101524bec86f67dac5537cd81802e8",
+      "stories": []
+    },
+    {
+      "name": "AgentProgressCard",
+      "group": "campaign-planning",
+      "srcSha": null,
+      "sourceKey": "ad24764644a8abd2",
+      "cfgSlice": "5ff899b099eb6923833804cda955efdd69101524bec86f67dac5537cd81802e8",
+      "stories": []
+    },
+    {
+      "name": "AnalyticsPanel",
+      "group": "kol-analysis",
+      "srcSha": null,
+      "sourceKey": "ad25ad85fb83dc9c",
+      "cfgSlice": "5ff899b099eb6923833804cda955efdd69101524bec86f67dac5537cd81802e8",
+      "stories": []
+    },
+    {
+      "name": "AuthLegalInline",
+      "group": "auth",
+      "srcSha": null,
+      "sourceKey": "864433b04349d455",
+      "cfgSlice": "5ff899b099eb6923833804cda955efdd69101524bec86f67dac5537cd81802e8",
+      "stories": []
+    },
+    {
+      "name": "Badge",
+      "group": "general",
+      "srcSha": null,
+      "sourceKey": "864433b04349d455",
+      "cfgSlice": "5ff899b099eb6923833804cda955efdd69101524bec86f67dac5537cd81802e8",
+      "stories": []
+    },
+    {
+      "name": "Button",
+      "group": "general",
+      "srcSha": null,
+      "sourceKey": "864433b04349d455",
+      "cfgSlice": "5ff899b099eb6923833804cda955efdd69101524bec86f67dac5537cd81802e8",
+      "stories": []
+    },
+    {
+      "name": "CallToActionSection",
+      "group": "general",
+      "srcSha": null,
+      "sourceKey": "864433b04349d455",
+      "cfgSlice": "5ff899b099eb6923833804cda955efdd69101524bec86f67dac5537cd81802e8",
+      "stories": []
+    },
+    {
+      "name": "CampaignActiveCreatorsTable",
+      "group": "campaign-detail",
+      "srcSha": null,
+      "sourceKey": "350bcf9128b5b509",
+      "cfgSlice": "5ff899b099eb6923833804cda955efdd69101524bec86f67dac5537cd81802e8",
+      "stories": []
+    },
+    {
+      "name": "CampaignBriefCard",
+      "group": "campaign-detail",
+      "srcSha": null,
+      "sourceKey": "d99df6ffc53b883a",
+      "cfgSlice": "5ff899b099eb6923833804cda955efdd69101524bec86f67dac5537cd81802e8",
+      "stories": []
+    },
+    {
+      "name": "CampaignCategoryChips",
+      "group": "campaigns",
+      "srcSha": null,
+      "sourceKey": "7e5143e5cb9554d4",
+      "cfgSlice": "5ff899b099eb6923833804cda955efdd69101524bec86f67dac5537cd81802e8",
+      "stories": []
+    },
+    {
+      "name": "CampaignConfigPanel",
+      "group": "campaign-management",
+      "srcSha": null,
+      "sourceKey": "2b9a4817ad8c737d",
+      "cfgSlice": "5ff899b099eb6923833804cda955efdd69101524bec86f67dac5537cd81802e8",
+      "stories": []
+    },
+    {
+      "name": "CampaignContextBar",
+      "group": "campaign-management",
+      "srcSha": null,
+      "sourceKey": "66f3e498fdceec6b",
+      "cfgSlice": "5ff899b099eb6923833804cda955efdd69101524bec86f67dac5537cd81802e8",
+      "stories": []
+    },
+    {
+      "name": "CampaignCreateDrawer",
+      "group": "campaign-management",
+      "srcSha": null,
+      "sourceKey": "f935d467507fef59",
+      "cfgSlice": "5ff899b099eb6923833804cda955efdd69101524bec86f67dac5537cd81802e8",
+      "stories": []
+    },
+    {
+      "name": "CampaignDetailHeader",
+      "group": "campaign-detail",
+      "srcSha": null,
+      "sourceKey": "efcae9dbd97cf646",
+      "cfgSlice": "5ff899b099eb6923833804cda955efdd69101524bec86f67dac5537cd81802e8",
+      "stories": []
+    },
+    {
+      "name": "CampaignDetailView",
+      "group": "campaign-detail",
+      "srcSha": null,
+      "sourceKey": "1e967d6924b769f5",
+      "cfgSlice": "5ff899b099eb6923833804cda955efdd69101524bec86f67dac5537cd81802e8",
+      "stories": []
+    },
+    {
+      "name": "CampaignKpiDonut",
+      "group": "campaign-detail",
+      "srcSha": null,
+      "sourceKey": "864433b04349d455",
+      "cfgSlice": "5ff899b099eb6923833804cda955efdd69101524bec86f67dac5537cd81802e8",
+      "stories": []
+    },
+    {
+      "name": "CampaignKpiSection",
+      "group": "campaign-detail",
+      "srcSha": null,
+      "sourceKey": "2ea996ea55760470",
+      "cfgSlice": "5ff899b099eb6923833804cda955efdd69101524bec86f67dac5537cd81802e8",
+      "stories": []
+    },
+    {
+      "name": "CampaignListPanel",
+      "group": "campaign-management",
+      "srcSha": null,
+      "sourceKey": "938c26530be1f04f",
+      "cfgSlice": "5ff899b099eb6923833804cda955efdd69101524bec86f67dac5537cd81802e8",
+      "stories": []
+    },
+    {
+      "name": "CampaignPlanningHeader",
+      "group": "campaign-planning",
+      "srcSha": null,
+      "sourceKey": "fd2090ab8bede25a",
+      "cfgSlice": "5ff899b099eb6923833804cda955efdd69101524bec86f67dac5537cd81802e8",
+      "stories": []
+    },
+    {
+      "name": "CampaignRecentContentList",
+      "group": "campaign-detail",
+      "srcSha": null,
+      "sourceKey": "d30f9fdd392e5491",
+      "cfgSlice": "5ff899b099eb6923833804cda955efdd69101524bec86f67dac5537cd81802e8",
+      "stories": []
+    },
+    {
+      "name": "CampaignsGrid",
+      "group": "campaigns",
+      "srcSha": null,
+      "sourceKey": "0e046e10a919ac42",
+      "cfgSlice": "5ff899b099eb6923833804cda955efdd69101524bec86f67dac5537cd81802e8",
+      "stories": []
+    },
+    {
+      "name": "CampaignSidebar",
+      "group": "campaign-management",
+      "srcSha": null,
+      "sourceKey": "7e4f6319450c0dad",
+      "cfgSlice": "5ff899b099eb6923833804cda955efdd69101524bec86f67dac5537cd81802e8",
+      "stories": []
+    },
+    {
+      "name": "CampaignsPageHeader",
+      "group": "campaigns",
+      "srcSha": null,
+      "sourceKey": "864433b04349d455",
+      "cfgSlice": "5ff899b099eb6923833804cda955efdd69101524bec86f67dac5537cd81802e8",
+      "stories": []
+    },
+    {
+      "name": "CampaignStatsGrid",
+      "group": "campaign-detail",
+      "srcSha": null,
+      "sourceKey": "040f825783324df5",
+      "cfgSlice": "5ff899b099eb6923833804cda955efdd69101524bec86f67dac5537cd81802e8",
+      "stories": []
+    },
+    {
+      "name": "CampaignSummaryBar",
+      "group": "campaign-planning",
+      "srcSha": null,
+      "sourceKey": "864433b04349d455",
+      "cfgSlice": "5ff899b099eb6923833804cda955efdd69101524bec86f67dac5537cd81802e8",
+      "stories": []
+    },
+    {
+      "name": "CampaignTrackingDashboard",
+      "group": "campaign-management",
+      "srcSha": null,
+      "sourceKey": "3cb5746e09458cce",
+      "cfgSlice": "5ff899b099eb6923833804cda955efdd69101524bec86f67dac5537cd81802e8",
+      "stories": []
+    },
+    {
+      "name": "Card",
+      "group": "general",
+      "srcSha": null,
+      "sourceKey": "864433b04349d455",
+      "cfgSlice": "5ff899b099eb6923833804cda955efdd69101524bec86f67dac5537cd81802e8",
+      "stories": []
+    },
+    {
+      "name": "CardContent",
+      "group": "general",
+      "srcSha": null,
+      "sourceKey": "864433b04349d455",
+      "cfgSlice": "5ff899b099eb6923833804cda955efdd69101524bec86f67dac5537cd81802e8",
+      "stories": []
+    },
+    {
+      "name": "CardDescription",
+      "group": "general",
+      "srcSha": null,
+      "sourceKey": "70152df2b2cfe604",
+      "cfgSlice": "5ff899b099eb6923833804cda955efdd69101524bec86f67dac5537cd81802e8",
+      "stories": []
+    },
+    {
+      "name": "CardHeader",
+      "group": "general",
+      "srcSha": null,
+      "sourceKey": "864433b04349d455",
+      "cfgSlice": "5ff899b099eb6923833804cda955efdd69101524bec86f67dac5537cd81802e8",
+      "stories": []
+    },
+    {
+      "name": "CardTitle",
+      "group": "general",
+      "srcSha": null,
+      "sourceKey": "3fa27bb379135a8e",
+      "cfgSlice": "5ff899b099eb6923833804cda955efdd69101524bec86f67dac5537cd81802e8",
+      "stories": []
+    },
+    {
+      "name": "CertificateActionBar",
+      "group": "kol-verification-certificate",
+      "srcSha": null,
+      "sourceKey": "864433b04349d455",
+      "cfgSlice": "5ff899b099eb6923833804cda955efdd69101524bec86f67dac5537cd81802e8",
+      "stories": []
+    },
+    {
+      "name": "ChartContainer",
+      "group": "general",
+      "srcSha": null,
+      "sourceKey": "7b5fc37bda56c499",
+      "cfgSlice": "5ff899b099eb6923833804cda955efdd69101524bec86f67dac5537cd81802e8",
+      "stories": []
+    },
+    {
+      "name": "ChartTooltip",
+      "group": "general",
+      "srcSha": null,
+      "sourceKey": "ab36f45a59295198",
+      "cfgSlice": "5ff899b099eb6923833804cda955efdd69101524bec86f67dac5537cd81802e8",
+      "stories": []
+    },
+    {
+      "name": "ChartTooltipContent",
+      "group": "general",
+      "srcSha": null,
+      "sourceKey": "835536e19f82911b",
+      "cfgSlice": "5ff899b099eb6923833804cda955efdd69101524bec86f67dac5537cd81802e8",
+      "stories": []
+    },
+    {
+      "name": "CommentItem",
+      "group": "certificate-product",
+      "srcSha": null,
+      "sourceKey": "743f5c768786b3e5",
+      "cfgSlice": "5ff899b099eb6923833804cda955efdd69101524bec86f67dac5537cd81802e8",
+      "stories": []
+    },
+    {
+      "name": "CommentSection",
+      "group": "certificate-product",
+      "srcSha": null,
+      "sourceKey": "1a699923180896b0",
+      "cfgSlice": "5ff899b099eb6923833804cda955efdd69101524bec86f67dac5537cd81802e8",
+      "stories": []
+    },
+    {
+      "name": "CreatorContactModal",
+      "group": "campaign-management",
+      "srcSha": null,
+      "sourceKey": "45af125eff03fe01",
+      "cfgSlice": "5ff899b099eb6923833804cda955efdd69101524bec86f67dac5537cd81802e8",
+      "stories": []
+    },
+    {
+      "name": "CreatorSuggestionsTab",
+      "group": "campaign-management",
+      "srcSha": null,
+      "sourceKey": "5b0c0b65cce33ef4",
+      "cfgSlice": "5ff899b099eb6923833804cda955efdd69101524bec86f67dac5537cd81802e8",
+      "stories": []
+    },
+    {
+      "name": "DashboardKpiCards",
+      "group": "business-dashboard",
+      "srcSha": null,
+      "sourceKey": "1b8640ef200e606f",
+      "cfgSlice": "5ff899b099eb6923833804cda955efdd69101524bec86f67dac5537cd81802e8",
+      "stories": []
+    },
+    {
+      "name": "DashboardPerformance",
+      "group": "business-dashboard",
+      "srcSha": null,
+      "sourceKey": "fcd62a9a9b759b93",
+      "cfgSlice": "5ff899b099eb6923833804cda955efdd69101524bec86f67dac5537cd81802e8",
+      "stories": []
+    },
+    {
+      "name": "DashboardRecentActivities",
+      "group": "business-dashboard",
+      "srcSha": null,
+      "sourceKey": "a0d23a7adb54eb76",
+      "cfgSlice": "5ff899b099eb6923833804cda955efdd69101524bec86f67dac5537cd81802e8",
+      "stories": []
+    },
+    {
+      "name": "DashboardSidebar",
+      "group": "business-dashboard",
+      "srcSha": null,
+      "sourceKey": "a282a9dabf0bd7e4",
+      "cfgSlice": "5ff899b099eb6923833804cda955efdd69101524bec86f67dac5537cd81802e8",
+      "stories": []
+    },
+    {
+      "name": "DashboardTopbar",
+      "group": "business-dashboard",
+      "srcSha": null,
+      "sourceKey": "864433b04349d455",
+      "cfgSlice": "5ff899b099eb6923833804cda955efdd69101524bec86f67dac5537cd81802e8",
+      "stories": []
+    },
+    {
+      "name": "FindEntryForm",
+      "group": "kol-matching",
+      "srcSha": null,
+      "sourceKey": "3f42cb21ee5579f1",
+      "cfgSlice": "5ff899b099eb6923833804cda955efdd69101524bec86f67dac5537cd81802e8",
+      "stories": []
+    },
+    {
+      "name": "FindEntryHelperPanel",
+      "group": "kol-matching",
+      "srcSha": null,
+      "sourceKey": "864433b04349d455",
+      "cfgSlice": "5ff899b099eb6923833804cda955efdd69101524bec86f67dac5537cd81802e8",
+      "stories": []
+    },
+    {
+      "name": "FlowPageHeader",
+      "group": "kol-matching",
+      "srcSha": null,
+      "sourceKey": "ea264760e8224cd2",
+      "cfgSlice": "5ff899b099eb6923833804cda955efdd69101524bec86f67dac5537cd81802e8",
+      "stories": []
+    },
+    {
+      "name": "FlowStepper",
+      "group": "kol-matching",
+      "srcSha": null,
+      "sourceKey": "864433b04349d455",
+      "cfgSlice": "5ff899b099eb6923833804cda955efdd69101524bec86f67dac5537cd81802e8",
+      "stories": []
+    },
+    {
+      "name": "HeroCardSlideshow",
+      "group": "landing",
+      "srcSha": null,
+      "sourceKey": "864433b04349d455",
+      "cfgSlice": "5ff899b099eb6923833804cda955efdd69101524bec86f67dac5537cd81802e8",
+      "stories": []
+    },
+    {
+      "name": "HeroSection",
+      "group": "sections",
+      "srcSha": null,
+      "sourceKey": "864433b04349d455",
+      "cfgSlice": "5ff899b099eb6923833804cda955efdd69101524bec86f67dac5537cd81802e8",
+      "stories": []
+    },
+    {
+      "name": "HeroSlideshowSlot",
+      "group": "sections",
+      "srcSha": null,
+      "sourceKey": "864433b04349d455",
+      "cfgSlice": "5ff899b099eb6923833804cda955efdd69101524bec86f67dac5537cd81802e8",
+      "stories": []
+    },
+    {
+      "name": "Input",
+      "group": "general",
+      "srcSha": null,
+      "sourceKey": "864433b04349d455",
+      "cfgSlice": "5ff899b099eb6923833804cda955efdd69101524bec86f67dac5537cd81802e8",
+      "stories": []
+    },
+    {
+      "name": "InviteLinkBlock",
+      "group": "campaign-management",
+      "srcSha": null,
+      "sourceKey": "864433b04349d455",
+      "cfgSlice": "5ff899b099eb6923833804cda955efdd69101524bec86f67dac5537cd81802e8",
+      "stories": []
+    },
+    {
+      "name": "KolAnalysisHeader",
+      "group": "kol-analysis",
+      "srcSha": null,
+      "sourceKey": "864433b04349d455",
+      "cfgSlice": "5ff899b099eb6923833804cda955efdd69101524bec86f67dac5537cd81802e8",
+      "stories": []
+    },
+    {
+      "name": "KolAnalysisTabs",
+      "group": "kol-analysis",
+      "srcSha": null,
+      "sourceKey": "864433b04349d455",
+      "cfgSlice": "5ff899b099eb6923833804cda955efdd69101524bec86f67dac5537cd81802e8",
+      "stories": []
+    },
+    {
+      "name": "KolComparisonTable",
+      "group": "kol-matching",
+      "srcSha": null,
+      "sourceKey": "2885fd1077979bf5",
+      "cfgSlice": "5ff899b099eb6923833804cda955efdd69101524bec86f67dac5537cd81802e8",
+      "stories": []
+    },
+    {
+      "name": "KolInfoCard",
+      "group": "certificate-product",
+      "srcSha": null,
+      "sourceKey": "2baf769f9b895c1f",
+      "cfgSlice": "5ff899b099eb6923833804cda955efdd69101524bec86f67dac5537cd81802e8",
+      "stories": []
+    },
+    {
+      "name": "KolReviewQuote",
+      "group": "certificate-product",
+      "srcSha": null,
+      "sourceKey": "864433b04349d455",
+      "cfgSlice": "5ff899b099eb6923833804cda955efdd69101524bec86f67dac5537cd81802e8",
+      "stories": []
+    },
+    {
+      "name": "KolVerificationCertificateView",
+      "group": "kol-verification-certificate",
+      "srcSha": null,
+      "sourceKey": "6dda59f9d19e9d65",
+      "cfgSlice": "5ff899b099eb6923833804cda955efdd69101524bec86f67dac5537cd81802e8",
+      "stories": []
+    },
+    {
+      "name": "KpiOverview",
+      "group": "kol-analysis",
+      "srcSha": null,
+      "sourceKey": "cd41fb8beae54112",
+      "cfgSlice": "5ff899b099eb6923833804cda955efdd69101524bec86f67dac5537cd81802e8",
+      "stories": []
+    },
+    {
+      "name": "Label",
+      "group": "general",
+      "srcSha": null,
+      "sourceKey": "ffe78d2da53cddbe",
+      "cfgSlice": "5ff899b099eb6923833804cda955efdd69101524bec86f67dac5537cd81802e8",
+      "stories": []
+    },
+    {
+      "name": "MainFooter",
+      "group": "layout",
+      "srcSha": null,
+      "sourceKey": "864433b04349d455",
+      "cfgSlice": "5ff899b099eb6923833804cda955efdd69101524bec86f67dac5537cd81802e8",
+      "stories": []
+    },
+    {
+      "name": "MainHeader",
+      "group": "layout",
+      "srcSha": null,
+      "sourceKey": "bba70dcff941b1ca",
+      "cfgSlice": "5ff899b099eb6923833804cda955efdd69101524bec86f67dac5537cd81802e8",
+      "stories": []
+    },
+    {
+      "name": "MetricsCard",
+      "group": "ambassador-campaigns",
+      "srcSha": null,
+      "sourceKey": "864433b04349d455",
+      "cfgSlice": "5ff899b099eb6923833804cda955efdd69101524bec86f67dac5537cd81802e8",
+      "stories": []
+    },
+    {
+      "name": "OverviewPanel",
+      "group": "kol-analysis",
+      "srcSha": null,
+      "sourceKey": "d042210ae671f8e1",
+      "cfgSlice": "5ff899b099eb6923833804cda955efdd69101524bec86f67dac5537cd81802e8",
+      "stories": []
+    },
+    {
+      "name": "ParticipantsTab",
+      "group": "campaign-management",
+      "srcSha": null,
+      "sourceKey": "c1e82531a9544260",
+      "cfgSlice": "5ff899b099eb6923833804cda955efdd69101524bec86f67dac5537cd81802e8",
+      "stories": []
+    },
+    {
+      "name": "PipelineGuidePanel",
+      "group": "kol-analysis",
+      "srcSha": null,
+      "sourceKey": "864433b04349d455",
+      "cfgSlice": "5ff899b099eb6923833804cda955efdd69101524bec86f67dac5537cd81802e8",
+      "stories": []
+    },
+    {
+      "name": "PlatformBenefitsSection",
+      "group": "sections",
+      "srcSha": null,
+      "sourceKey": "864433b04349d455",
+      "cfgSlice": "5ff899b099eb6923833804cda955efdd69101524bec86f67dac5537cd81802e8",
+      "stories": []
+    },
+    {
+      "name": "PlatformNicheAnalytics",
+      "group": "kol-analysis",
+      "srcSha": null,
+      "sourceKey": "d0687f7635e510f4",
+      "cfgSlice": "5ff899b099eb6923833804cda955efdd69101524bec86f67dac5537cd81802e8",
+      "stories": []
+    },
+    {
+      "name": "PostContentPanel",
+      "group": "postdetailtabs",
+      "srcSha": null,
+      "sourceKey": "ba379ab9c97b59ec",
+      "cfgSlice": "5ff899b099eb6923833804cda955efdd69101524bec86f67dac5537cd81802e8",
+      "stories": []
+    },
+    {
+      "name": "PostDetailShell",
+      "group": "campaign-planning",
+      "srcSha": null,
+      "sourceKey": "864433b04349d455",
+      "cfgSlice": "5ff899b099eb6923833804cda955efdd69101524bec86f67dac5537cd81802e8",
+      "stories": []
+    },
+    {
+      "name": "PostingRoadmap",
+      "group": "campaign-management",
+      "srcSha": null,
+      "sourceKey": "17b5dfcaec907b4a",
+      "cfgSlice": "5ff899b099eb6923833804cda955efdd69101524bec86f67dac5537cd81802e8",
+      "stories": []
+    },
+    {
+      "name": "PostReviewPanel",
+      "group": "postdetailtabs",
+      "srcSha": null,
+      "sourceKey": "081de05755fca961",
+      "cfgSlice": "5ff899b099eb6923833804cda955efdd69101524bec86f67dac5537cd81802e8",
+      "stories": []
+    },
+    {
+      "name": "PostSchedulePanel",
+      "group": "postdetailtabs",
+      "srcSha": null,
+      "sourceKey": "b972a6e9949b17ba",
+      "cfgSlice": "5ff899b099eb6923833804cda955efdd69101524bec86f67dac5537cd81802e8",
+      "stories": []
+    },
+    {
+      "name": "ProductCard",
+      "group": "certificate-product",
+      "srcSha": null,
+      "sourceKey": "52f5788f8ac6bace",
+      "cfgSlice": "5ff899b099eb6923833804cda955efdd69101524bec86f67dac5537cd81802e8",
+      "stories": []
+    },
+    {
+      "name": "ProfileRadarChart",
+      "group": "kol-analysis",
+      "srcSha": null,
+      "sourceKey": "864433b04349d455",
+      "cfgSlice": "5ff899b099eb6923833804cda955efdd69101524bec86f67dac5537cd81802e8",
+      "stories": []
+    },
+    {
+      "name": "PublishingTimeline",
+      "group": "campaign-planning",
+      "srcSha": null,
+      "sourceKey": "d346cdfec33cc481",
+      "cfgSlice": "5ff899b099eb6923833804cda955efdd69101524bec86f67dac5537cd81802e8",
+      "stories": []
+    },
+    {
+      "name": "RankingFilters",
+      "group": "kol-ranking",
+      "srcSha": null,
+      "sourceKey": "e0494fb5a5e7c868",
+      "cfgSlice": "5ff899b099eb6923833804cda955efdd69101524bec86f67dac5537cd81802e8",
+      "stories": []
+    },
+    {
+      "name": "RankingPagination",
+      "group": "kol-ranking",
+      "srcSha": null,
+      "sourceKey": "864433b04349d455",
+      "cfgSlice": "5ff899b099eb6923833804cda955efdd69101524bec86f67dac5537cd81802e8",
+      "stories": []
+    },
+    {
+      "name": "ScoreDistributionCharts",
+      "group": "kol-analysis",
+      "srcSha": null,
+      "sourceKey": "864433b04349d455",
+      "cfgSlice": "5ff899b099eb6923833804cda955efdd69101524bec86f67dac5537cd81802e8",
+      "stories": []
+    },
+    {
+      "name": "SearchResultsFiltersPanel",
+      "group": "kol-matching",
+      "srcSha": null,
+      "sourceKey": "6b5c558de0881208",
+      "cfgSlice": "5ff899b099eb6923833804cda955efdd69101524bec86f67dac5537cd81802e8",
+      "stories": []
+    },
+    {
+      "name": "SearchResultsList",
+      "group": "kol-matching",
+      "srcSha": null,
+      "sourceKey": "d832e60333f74e44",
+      "cfgSlice": "5ff899b099eb6923833804cda955efdd69101524bec86f67dac5537cd81802e8",
+      "stories": []
+    },
+    {
+      "name": "SelectedProfileCard",
+      "group": "kol-analysis",
+      "srcSha": null,
+      "sourceKey": "6e06178965bf233b",
+      "cfgSlice": "5ff899b099eb6923833804cda955efdd69101524bec86f67dac5537cd81802e8",
+      "stories": []
+    },
+    {
+      "name": "SignInForm",
+      "group": "auth",
+      "srcSha": null,
+      "sourceKey": "864433b04349d455",
+      "cfgSlice": "5ff899b099eb6923833804cda955efdd69101524bec86f67dac5537cd81802e8",
+      "stories": []
+    },
+    {
+      "name": "SignUpForm",
+      "group": "auth",
+      "srcSha": null,
+      "sourceKey": "864433b04349d455",
+      "cfgSlice": "5ff899b099eb6923833804cda955efdd69101524bec86f67dac5537cd81802e8",
+      "stories": []
+    },
+    {
+      "name": "TopPerformersSection",
+      "group": "sections",
+      "srcSha": null,
+      "sourceKey": "864433b04349d455",
+      "cfgSlice": "5ff899b099eb6923833804cda955efdd69101524bec86f67dac5537cd81802e8",
+      "stories": []
+    },
+    {
+      "name": "VideoPlayer",
+      "group": "certificate-product",
+      "srcSha": null,
+      "sourceKey": "8741ec467241f5ca",
+      "cfgSlice": "5ff899b099eb6923833804cda955efdd69101524bec86f67dac5537cd81802e8",
+      "stories": []
+    }
+  ]
+}

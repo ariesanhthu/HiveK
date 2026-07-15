@@ -1,0 +1,2521 @@
+[
+  {
+    "name": "MetricsCard",
+    "group": "ambassador-campaigns",
+    "rel": "components/ambassador-campaigns/MetricsCard/MetricsCard.html",
+    "errs": 0,
+    "caught": 0,
+    "firstErr": null,
+    "pngBytes": 7026,
+    "blank": false,
+    "rootEmpty": false,
+    "thin": false,
+    "nameOnly": false,
+    "allHollow": false,
+    "collapsed": false,
+    "hasPlaceholder": false,
+    "nPlaceholder": 0,
+    "fallbackCard": false,
+    "maxHeight": 110,
+    "variantsIdentical": false,
+    "bad": false,
+    "gridOverflow": null,
+    "texts": [
+      ""
+    ]
+  },
+  {
+    "name": "AuthLegalInline",
+    "group": "auth",
+    "rel": "components/auth/AuthLegalInline/AuthLegalInline.html",
+    "errs": 0,
+    "caught": 0,
+    "firstErr": null,
+    "pngBytes": 15171,
+    "blank": false,
+    "rootEmpty": false,
+    "thin": false,
+    "nameOnly": false,
+    "allHollow": false,
+    "collapsed": false,
+    "hasPlaceholder": false,
+    "nPlaceholder": 0,
+    "fallbackCard": false,
+    "maxHeight": 24,
+    "variantsIdentical": false,
+    "bad": false,
+    "gridOverflow": null,
+    "texts": [
+      "Bằng việc đăng nhập, bạn đồng ý với Điều khoản dịch vụ và Chính sách quyền riêng tư của Hive-K."
+    ]
+  },
+  {
+    "name": "SignInForm",
+    "group": "auth",
+    "rel": "components/auth/SignInForm/SignInForm.html",
+    "errs": 0,
+    "caught": 0,
+    "firstErr": null,
+    "pngBytes": 48329,
+    "blank": false,
+    "rootEmpty": false,
+    "thin": false,
+    "nameOnly": false,
+    "allHollow": false,
+    "collapsed": false,
+    "hasPlaceholder": false,
+    "nPlaceholder": 0,
+    "fallbackCard": false,
+    "maxHeight": 842,
+    "variantsIdentical": false,
+    "bad": false,
+    "gridOverflow": null,
+    "texts": [
+      "Đăng nhậpChào mừng trở lại! Vui lòng nhập thông tin để tiếp tục.Truy cập nhanh DemoDoanh nghiệp / AgencyKOL / KOCEmailMật khẩuQuên mật khẩu?Sign InHoặc tiếp tục vớiGoogleAppleOAuth sẽ được bật khi hoàn tất cấu hình.Chưa có tài khoản? Tạo tài khoảnBằng việc đăng nhập, bạn đồng ý với Điều khoản dịch vụ và Chính sách quyền riêng tư của Hive-K."
+    ]
+  },
+  {
+    "name": "SignUpForm",
+    "group": "auth",
+    "rel": "components/auth/SignUpForm/SignUpForm.html",
+    "errs": 0,
+    "caught": 0,
+    "firstErr": null,
+    "pngBytes": 53772,
+    "blank": false,
+    "rootEmpty": false,
+    "thin": false,
+    "nameOnly": false,
+    "allHollow": false,
+    "collapsed": false,
+    "hasPlaceholder": false,
+    "nPlaceholder": 0,
+    "fallbackCard": false,
+    "maxHeight": 801,
+    "variantsIdentical": false,
+    "bad": false,
+    "gridOverflow": null,
+    "texts": [
+      "Gia nhập Hive-KChọn vai trò và hoàn tất đăng ký trên nền tảng creator economy tuyệt vời nhất.Thương hiệu / Doanh nghiệpTìm kiếm creator tiềm năng và chạy các chiến dịch bùng nổ.KOL / CreatorKiếm tiền từ tầm ảnh hưởng và phát triển thương hiệu cá nhân.Họ và tênEmailMật khẩuXác nhận mật khẩuTạo tài khoảnBằng việc Tạo tài khoản, bạn đồng ý với Điều khoản và Quyền riêng tưĐã có tài khoản? Đăng nhập"
+    ]
+  },
+  {
+    "name": "DashboardKpiCards",
+    "group": "business-dashboard",
+    "rel": "components/business-dashboard/DashboardKpiCards/DashboardKpiCards.html",
+    "errs": 0,
+    "caught": 0,
+    "firstErr": null,
+    "pngBytes": 30298,
+    "blank": false,
+    "rootEmpty": false,
+    "thin": false,
+    "nameOnly": false,
+    "allHollow": false,
+    "collapsed": false,
+    "hasPlaceholder": false,
+    "nPlaceholder": 0,
+    "fallbackCard": false,
+    "maxHeight": 256,
+    "variantsIdentical": false,
+    "bad": false,
+    "gridOverflow": "wide",
+    "gridOverflowCells": [
+      "Default"
+    ],
+    "suggestedOverride": {
+      "cardMode": "column"
+    },
+    "texts": [
+      "Chiến dịch đang chạycampaign12+3 so với tháng trướcTổng lượt tiếp cậngroups4,8 triệu+18,2%Tỷ lệ chuyển đổitrending_up3,7%-0,4% tuần nàyNgân sách đã dùngaccount_balance_wallet284tr ₫+12,5%"
+    ]
+  },
+  {
+    "name": "DashboardPerformance",
+    "group": "business-dashboard",
+    "rel": "components/business-dashboard/DashboardPerformance/DashboardPerformance.html",
+    "errs": 0,
+    "caught": 0,
+    "firstErr": null,
+    "pngBytes": 28408,
+    "blank": false,
+    "rootEmpty": false,
+    "thin": false,
+    "nameOnly": false,
+    "allHollow": false,
+    "collapsed": false,
+    "hasPlaceholder": false,
+    "nPlaceholder": 0,
+    "fallbackCard": false,
+    "maxHeight": 298,
+    "variantsIdentical": false,
+    "bad": false,
+    "gridOverflow": "wide",
+    "gridOverflowCells": [
+      "Default"
+    ],
+    "suggestedOverride": {
+      "cardMode": "column"
+    },
+    "texts": [
+      "Hiệu suất Chiến dịchĐánh giá hiệu quả và Tương tác+12%\n [data-chart=chart-_r_0_] {\n  --color-campaign: var(--color-primary);\n  --color-conversion: var(--color-secondary);\n}\n\n\n.dark [data-chart=chart-_r_0_] {\n  --color-campaign: var(--color-primary);\n  --color-conversion: var(--color-secondary);\n}\nT3T4T5T6T7CNXu hướng Chuyển đổiChỉ số chuyển đổiTuầnTháng\n [data-chart=chart-_r_1_] {\n  --color-campaign: var(--color-primary);\n  --color-conversion: var(--color-secondary);\n}\n\n\n.dark [data-chart=chart-_r_1_] {\n  --color-campaign: var(--color-primary);\n  --color-conversion: var(--color-secondary);\n}\nTuần 1Tuần 2Tuần 3Tuần 4",
+      "",
+      "",
+      "",
+      "",
+      "Tuần 1"
+    ]
+  },
+  {
+    "name": "DashboardRecentActivities",
+    "group": "business-dashboard",
+    "rel": "components/business-dashboard/DashboardRecentActivities/DashboardRecentActivities.html",
+    "errs": 0,
+    "caught": 0,
+    "firstErr": null,
+    "pngBytes": 54142,
+    "blank": false,
+    "rootEmpty": false,
+    "thin": false,
+    "nameOnly": false,
+    "allHollow": false,
+    "collapsed": false,
+    "hasPlaceholder": false,
+    "nPlaceholder": 0,
+    "fallbackCard": false,
+    "maxHeight": 338,
+    "variantsIdentical": false,
+    "bad": false,
+    "gridOverflow": null,
+    "texts": [
+      "Hoạt động Gần đâyXem tất cảrate_reviewChiến dịch \"Ra mắt Mùa hè 2024\" cần duyệtKOL Mai Anh Beauty đã gửi nội dung để phê duyệt.5 phút trướcĐánh giáplay_circleVideo review của Trần Quốc Huy đã lên sóngĐạt 128K lượt xem trong 2 giờ đầu tiên.1 giờ trướcHoạt độngpaymentsThanh toán hoa hồng đã hoàn tấtĐã chuyển 15.000.000 ₫ cho 3 nhà sáng tạo.Hôm quaĐã thanh toánwarningNgân sách chiến dịch sắp cạnChiến dịch \"Khuyến mãi Đồ công nghệ\" còn 8% ngân sách.2 ngày trướcCảnh báo"
+    ]
+  },
+  {
+    "name": "DashboardSidebar",
+    "group": "business-dashboard",
+    "rel": "components/business-dashboard/DashboardSidebar/DashboardSidebar.html",
+    "errs": 0,
+    "caught": 0,
+    "firstErr": null,
+    "pngBytes": 25712,
+    "blank": false,
+    "rootEmpty": false,
+    "thin": false,
+    "nameOnly": false,
+    "allHollow": false,
+    "collapsed": false,
+    "hasPlaceholder": false,
+    "nPlaceholder": 0,
+    "fallbackCard": false,
+    "maxHeight": 720,
+    "variantsIdentical": false,
+    "bad": false,
+    "gridOverflow": null,
+    "texts": [
+      "HiveKBusinessMenu chínhdashboardTổng quancampaignChiến dịchdiversity_3Nhà sáng tạoanalyticsPhân tíchpaymentsThanh toánsettingsCài đặtBBrand WorkspaceQuản trị doanh nghiệpnotificationssettings"
+    ]
+  },
+  {
+    "name": "DashboardTopbar",
+    "group": "business-dashboard",
+    "rel": "components/business-dashboard/DashboardTopbar/DashboardTopbar.html",
+    "errs": 0,
+    "caught": 0,
+    "firstErr": null,
+    "pngBytes": 8970,
+    "blank": false,
+    "rootEmpty": false,
+    "thin": false,
+    "nameOnly": false,
+    "allHollow": false,
+    "collapsed": false,
+    "hasPlaceholder": false,
+    "nPlaceholder": 0,
+    "fallbackCard": false,
+    "maxHeight": 67,
+    "variantsIdentical": false,
+    "bad": false,
+    "gridOverflow": null,
+    "texts": [
+      "search"
+    ]
+  },
+  {
+    "name": "CampaignActiveCreatorsTable",
+    "group": "campaign-detail",
+    "rel": "components/campaign-detail/CampaignActiveCreatorsTable/CampaignActiveCreatorsTable.html",
+    "errs": 0,
+    "caught": 0,
+    "firstErr": null,
+    "pngBytes": 41167,
+    "blank": false,
+    "rootEmpty": false,
+    "thin": false,
+    "nameOnly": false,
+    "allHollow": false,
+    "collapsed": false,
+    "hasPlaceholder": false,
+    "nPlaceholder": 0,
+    "fallbackCard": false,
+    "maxHeight": 402,
+    "variantsIdentical": false,
+    "bad": false,
+    "gridOverflow": "wide",
+    "gridOverflowCells": [
+      "Populated"
+    ],
+    "suggestedOverride": {
+      "cardMode": "column"
+    },
+    "texts": [
+      "Active Creators (4)Filter creators by nameCreatorReachEngagementStatusHoà Minzy1,8 triệu6,4%LIVEmore_vertCall Me Duy920K8,1%LIVEmore_vertTrinh Phạm1,2 triệu5,7%PENDING POSTmore_vertChan La Cà640K9,3%PENDING POSTmore_vert"
+    ]
+  },
+  {
+    "name": "CampaignBriefCard",
+    "group": "campaign-detail",
+    "rel": "components/campaign-detail/CampaignBriefCard/CampaignBriefCard.html",
+    "errs": 0,
+    "caught": 0,
+    "firstErr": null,
+    "pngBytes": 54252,
+    "blank": false,
+    "rootEmpty": false,
+    "thin": false,
+    "nameOnly": false,
+    "allHollow": false,
+    "collapsed": false,
+    "hasPlaceholder": false,
+    "nPlaceholder": 0,
+    "fallbackCard": false,
+    "maxHeight": 396,
+    "variantsIdentical": false,
+    "bad": false,
+    "gridOverflow": "wide",
+    "gridOverflowCells": [
+      "Beauty",
+      "Tech"
+    ],
+    "suggestedOverride": {
+      "cardMode": "column"
+    },
+    "texts": [
+      "Campaign BriefLàm đẹpSkincareReview mỹ phẩmLifestylePlatformsphoto_cameramusic_notesmart_displayAudience TargetNữ giới 18–30 tuổi tại các thành phố lớn (Hà Nội, TP.HCM, Đà Nẵng), quan tâm chăm sóc da và mỹ phẩm thuần chay.Xem brief đầy đủ (PDF)arrow_forward",
+      "Campaign BriefCông nghệĐánh giá sản phẩmGamingPlatformssmart_displaymusic_noteAudience TargetNam giới 20–35 tuổi yêu công nghệ, thường xuyên theo dõi các kênh review điện thoại và thiết bị thông minh.Tải brief kỹ thuậtarrow_forward"
+    ]
+  },
+  {
+    "name": "CampaignDetailHeader",
+    "group": "campaign-detail",
+    "rel": "components/campaign-detail/CampaignDetailHeader/CampaignDetailHeader.html",
+    "errs": 0,
+    "caught": 0,
+    "firstErr": null,
+    "pngBytes": 39830,
+    "blank": false,
+    "rootEmpty": false,
+    "thin": false,
+    "nameOnly": false,
+    "allHollow": false,
+    "collapsed": false,
+    "hasPlaceholder": false,
+    "nPlaceholder": 0,
+    "fallbackCard": false,
+    "maxHeight": 127,
+    "variantsIdentical": false,
+    "bad": false,
+    "gridOverflow": "wide",
+    "gridOverflowCells": [
+      "Active",
+      "Closed",
+      "Draft"
+    ],
+    "suggestedOverride": {
+      "cardMode": "column"
+    },
+    "texts": [
+      "Sữa Rửa Mặt Cocoon x Beauty KOLsACTIVEMã chiến dịch: CDN-2024-0187•Tạo bởi Nguyễn Thu Trangperson_addInvite More KOLs",
+      "Review Điện Thoại Xiaomi 14T cùng Tech ReviewerCLOSEDMã chiến dịch: CDN-2023-0921•Tạo bởi Lê Hoàng Anhperson_addInvite More KOLs",
+      "Ra Mắt Nước Hoa TheFaceHolic Mùa HèDRAFTMã chiến dịch: CDN-2024-0205•Tạo bởi Trần Minh Quânperson_addInvite More KOLs"
+    ]
+  },
+  {
+    "name": "CampaignDetailView",
+    "group": "campaign-detail",
+    "rel": "components/campaign-detail/CampaignDetailView/CampaignDetailView.html",
+    "errs": 0,
+    "caught": 0,
+    "firstErr": null,
+    "pngBytes": 147635,
+    "blank": false,
+    "rootEmpty": false,
+    "thin": false,
+    "nameOnly": false,
+    "allHollow": false,
+    "collapsed": false,
+    "hasPlaceholder": false,
+    "nPlaceholder": 0,
+    "fallbackCard": false,
+    "maxHeight": 1390,
+    "variantsIdentical": false,
+    "bad": false,
+    "gridOverflow": "wide",
+    "gridOverflowCells": [
+      "FullDetail"
+    ],
+    "suggestedOverride": {
+      "cardMode": "column"
+    },
+    "texts": [
+      "Sữa Rửa Mặt Cocoon x Beauty KOLsACTIVEMã chiến dịch: CDN-2024-0187•Tạo bởi Nguyễn Thu Trangperson_addInvite More KOLsNgân sáchpayments40 triệuĐã dùng 58%Thời giancalendar_month18 ngàyCòn 6 ngàyKOL tham giagroups324 chờ duyệtChuyển đổishopping_cart1.240+18% tuần nàyKPI PerformanceView Analytics82%Tỷ lệ hoàn thành6,4%Tương tác mục tiêu58%Ngân sách đã dùngActive Creators (3)Filter creators by nameCreatorReachEngagementStatusHoà Minzy1,8 triệu6,4%LIVEmore_vertCall Me Duy920K8,1%LIVEmore_vertTrinh Phạm1,2 triệu5,7%PENDING POSTmore_vertCampaign BriefLàm đẹpSkincareReview mỹ phẩmPlatformsphoto_cameramusic_notesmart_displayAudience TargetNữ giới 18–30 tuổi tại các thành phố lớn, quan tâm chăm sóc da và mỹ phẩm thuần chay.Xem brief đầy đủ (PDF)arrow_forwardRecent ContentUnbox sữa rửa mặt Cocoon cà phêHoà Minzy · 2 giờ trướcPENDING REVIEWApproveDeclineTrải nghiệm 7 ngày dùng bí đaoChan La Cà · 3 ngày trướcAPPROVEDView all content (27)"
+    ]
+  },
+  {
+    "name": "CampaignKpiDonut",
+    "group": "campaign-detail",
+    "rel": "components/campaign-detail/CampaignKpiDonut/CampaignKpiDonut.html",
+    "errs": 0,
+    "caught": 0,
+    "firstErr": null,
+    "pngBytes": 4512,
+    "blank": true,
+    "rootEmpty": false,
+    "thin": true,
+    "nameOnly": false,
+    "allHollow": true,
+    "collapsed": false,
+    "hasPlaceholder": false,
+    "nPlaceholder": 0,
+    "fallbackCard": false,
+    "maxHeight": 136,
+    "variantsIdentical": false,
+    "bad": true,
+    "gridOverflow": null,
+    "texts": [
+      ""
+    ]
+  },
+  {
+    "name": "CampaignKpiSection",
+    "group": "campaign-detail",
+    "rel": "components/campaign-detail/CampaignKpiSection/CampaignKpiSection.html",
+    "errs": 0,
+    "caught": 0,
+    "firstErr": null,
+    "pngBytes": 28257,
+    "blank": false,
+    "rootEmpty": false,
+    "thin": false,
+    "nameOnly": false,
+    "allHollow": false,
+    "collapsed": false,
+    "hasPlaceholder": false,
+    "nPlaceholder": 0,
+    "fallbackCard": false,
+    "maxHeight": 243,
+    "variantsIdentical": false,
+    "bad": false,
+    "gridOverflow": "wide",
+    "gridOverflowCells": [
+      "FourDonuts"
+    ],
+    "suggestedOverride": {
+      "cardMode": "column"
+    },
+    "texts": [
+      "KPI PerformanceView Analytics82%Tỷ lệ hoàn thành6,4%Tương tác mục tiêu58%Ngân sách đã dùng19/27Nội dung đã duyệt"
+    ]
+  },
+  {
+    "name": "CampaignRecentContentList",
+    "group": "campaign-detail",
+    "rel": "components/campaign-detail/CampaignRecentContentList/CampaignRecentContentList.html",
+    "errs": 0,
+    "caught": 0,
+    "firstErr": null,
+    "pngBytes": 47112,
+    "blank": false,
+    "rootEmpty": false,
+    "thin": false,
+    "nameOnly": false,
+    "allHollow": false,
+    "collapsed": false,
+    "hasPlaceholder": false,
+    "nPlaceholder": 0,
+    "fallbackCard": false,
+    "maxHeight": 611,
+    "variantsIdentical": false,
+    "bad": false,
+    "gridOverflow": null,
+    "texts": [
+      "Recent ContentUnbox sữa rửa mặt Cocoon cà phê Đắk LắkHoà Minzy · 2 giờ trướcPENDING REVIEWApproveDeclineSkincare routine buổi tối với 3 bướcTrinh Phạm · Hôm quaPENDING REVIEWApproveDeclineTrải nghiệm 7 ngày dùng bí đao CocoonChan La Cà · 3 ngày trướcAPPROVEDView all content (27)"
+    ]
+  },
+  {
+    "name": "CampaignStatsGrid",
+    "group": "campaign-detail",
+    "rel": "components/campaign-detail/CampaignStatsGrid/CampaignStatsGrid.html",
+    "errs": 0,
+    "caught": 0,
+    "firstErr": null,
+    "pngBytes": 29567,
+    "blank": false,
+    "rootEmpty": false,
+    "thin": false,
+    "nameOnly": false,
+    "allHollow": false,
+    "collapsed": false,
+    "hasPlaceholder": false,
+    "nPlaceholder": 0,
+    "fallbackCard": false,
+    "maxHeight": 339,
+    "variantsIdentical": false,
+    "bad": false,
+    "gridOverflow": "wide",
+    "gridOverflowCells": [
+      "Default"
+    ],
+    "suggestedOverride": {
+      "cardMode": "column"
+    },
+    "texts": [
+      "Lượt tiếp cậnvisibility2,4 triệu+18% tuần nàyTương tácfavorite186K+9%KOL tham giagroup324 chờ duyệtChi phí / lượtpayments1.240₫Ổn định"
+    ]
+  },
+  {
+    "name": "CampaignConfigPanel",
+    "group": "campaign-management",
+    "rel": "components/campaign-management/CampaignConfigPanel/CampaignConfigPanel.html",
+    "errs": 0,
+    "caught": 0,
+    "firstErr": null,
+    "pngBytes": 167795,
+    "blank": false,
+    "rootEmpty": false,
+    "thin": false,
+    "nameOnly": false,
+    "allHollow": false,
+    "collapsed": false,
+    "hasPlaceholder": false,
+    "nPlaceholder": 0,
+    "fallbackCard": false,
+    "maxHeight": 1938,
+    "variantsIdentical": false,
+    "bad": false,
+    "gridOverflow": "wide",
+    "gridOverflowCells": [
+      "Default"
+    ],
+    "suggestedOverride": {
+      "cardMode": "column"
+    },
+    "texts": [
+      "Config chiến dịchChiến dịch ra mắt áo khoác gió ON TOP cho người trẻ cần một item gọn, dễ phối, đi học đi làm đi chơi đều dùng được.Tạo bài viếtSản phẩmÁo khoác gió ON TOPThông điệpNhẹ nhưng chỉn chu: cản gió, chống thấm nhẹ, phối được nhiều outfit hằng ngày.CTAComment size để được tư vấn phối đồContent riêng theo từng nền tảngFacebook, Threads và Instagram có format, caption, media direction riêng.AI tối ưu captionFacebookAlbum 4 ảnhCách đăng: Bài bán hàng storytelling ngắn, CTA comment size.Có những ngày chỉ cần một chiếc áo khoác gọn là outfit nhìn chỉn chu hơn hẳn. ON TOP Jacket nhẹ, dễ phối. Comment chiều cao/cân nặng để tụi mình gợi ý size.Hình ảnh: Ảnh 1 hero outfit, ảnh 2 chất liệu, ảnh 3 phối đồ, ảnh 4 CTA.ThreadsText + 1 ảnhCách đăng: Conversation-first, ngắn, kéo comment.Một chiếc áo khoác gió dễ phối cứu khá nhiều ngày không biết mặc gì. Team thích màu basic hay màu nổi?Hình ảnh: Một ảnh outfit tối giản, nền sạch.InstagramCarousel 5 ảnhCách đăng: Visual-first, hook 1 dòng, CTA DM.3 outfit với một chiếc jacket nhẹ. Lưu lại và DM ONTOP để tư vấn size.Hình ảnh: Full outfit, detail khóa, phối jeans, phối short, CTA DM.Hình ảnhFill sẵn ảnh mẫu, có thể upload thêm ảnh sản phẩm/lookbook.Upload ảnhLookbook streetwearFlatlay áo khoácAI image promptProduct shot, minimal streetwear, neutral background.Data Q&A mẫu cho agent rep commentCâu hỏiCâu trả lời mẫuMình cao 1m68 nặng 58kg mặc size nào?Bạn tham khảo size M nếu thích form vừa, hoặc L cho oversize nhẹ. Gửi thêm số đo vai/ngực để ON TOP check kỹ nha.Áo này có chống nước không shop?Áo chống thấm nhẹ, hợp mưa nhỏ hoặc đi đường gió. Mưa lớn lâu thì vẫn nên dùng áo mưa chuyên dụng nhé.Giá bao nhiêu, có mã giảm không?Bạn comment mã OTOP10 hoặc nhắn tin, tụi mình gửi giá hiện tại kèm voucher đơn đầu."
+    ]
+  },
+  {
+    "name": "CampaignContextBar",
+    "group": "campaign-management",
+    "rel": "components/campaign-management/CampaignContextBar/CampaignContextBar.html",
+    "errs": 0,
+    "caught": 0,
+    "firstErr": null,
+    "pngBytes": 21205,
+    "blank": false,
+    "rootEmpty": false,
+    "thin": false,
+    "nameOnly": false,
+    "allHollow": false,
+    "collapsed": false,
+    "hasPlaceholder": false,
+    "nPlaceholder": 0,
+    "fallbackCard": false,
+    "maxHeight": 62,
+    "variantsIdentical": false,
+    "bad": false,
+    "gridOverflow": "wide",
+    "gridOverflowCells": [
+      "Default"
+    ],
+    "suggestedOverride": {
+      "cardMode": "column"
+    },
+    "texts": [
+      "Đang tạo từ chiến dịch: ON TOP Jacket DropMục tiêu: Bán hàng · Tone: Trẻ trung, ít emoji · Mã mời: ONTOP10Sửa briefCopy link mời"
+    ]
+  },
+  {
+    "name": "CampaignCreateDrawer",
+    "group": "campaign-management",
+    "rel": "components/campaign-management/CampaignCreateDrawer/CampaignCreateDrawer.html",
+    "errs": 0,
+    "caught": 0,
+    "firstErr": null,
+    "pngBytes": 56329,
+    "blank": false,
+    "rootEmpty": false,
+    "thin": false,
+    "nameOnly": false,
+    "allHollow": false,
+    "collapsed": false,
+    "hasPlaceholder": false,
+    "nPlaceholder": 0,
+    "fallbackCard": false,
+    "maxHeight": 760,
+    "variantsIdentical": false,
+    "bad": false,
+    "gridOverflow": "escape",
+    "gridOverflowCells": [
+      "Open"
+    ],
+    "suggestedOverride": {
+      "cardMode": "single"
+    },
+    "texts": [
+      "Tạo chiến dịch mớiNhập thông tin để AI hiểu mục tiêu, khách hàng, tone giọng và tài nguyên của chiến dịch.1. Thông tin chính2. Nội dung & Tone3. Media & Brand4. AI Generate5. KOL/KOC & Người tham giaTên chiến dịch *Mục tiêu chiến dịch *Nhận diện thương hiệuTăng tương tácKéo trafficThu leadBán hàngTuyển KOL/KOCNền tảng *FacebookThreadsInstagramSản phẩm / Dịch vụ liên quanCTA chính *Landing URL / Link sản phẩmHuỷLưu bản nhápTạo chiến dịch"
+    ]
+  },
+  {
+    "name": "CampaignListPanel",
+    "group": "campaign-management",
+    "rel": "components/campaign-management/CampaignListPanel/CampaignListPanel.html",
+    "errs": 0,
+    "caught": 0,
+    "firstErr": null,
+    "pngBytes": 62518,
+    "blank": false,
+    "rootEmpty": false,
+    "thin": false,
+    "nameOnly": false,
+    "allHollow": false,
+    "collapsed": false,
+    "hasPlaceholder": false,
+    "nPlaceholder": 0,
+    "fallbackCard": false,
+    "maxHeight": 620,
+    "variantsIdentical": false,
+    "bad": false,
+    "gridOverflow": "wide",
+    "gridOverflowCells": [
+      "TwoCampaigns"
+    ],
+    "suggestedOverride": {
+      "cardMode": "column"
+    },
+    "texts": [
+      "Danh sách chiến dịchTracking, content và người tham gia.+ MớiONON TOP Jacket DropscheduledBán hàng · Áo khoác gió ON TOPChiến dịch ra mắt áo khoác gió ON TOP cho người trẻ cần một item gọn, dễ phối, đi học đi làm đi chơi đều dùng được.FacebookThreadsInstagram4Bài2Đã lên6NgườiTrackingEditParticipantĐăng bài tự độngLALALA Serum B5reviewingNhận diện thương hiệu · Serum phục hồi B5Ra mắt serum B5 phục hồi da cho nhóm da nhạy cảm, đẩy nội dung review chân thực từ KOC beauty.InstagramThreads3Bài0Đã lên3NgườiTrackingEditParticipantĐăng bài tự động"
+    ]
+  },
+  {
+    "name": "CampaignSidebar",
+    "group": "campaign-management",
+    "rel": "components/campaign-management/CampaignSidebar/CampaignSidebar.html",
+    "errs": 0,
+    "caught": 0,
+    "firstErr": null,
+    "pngBytes": 113928,
+    "blank": false,
+    "rootEmpty": false,
+    "thin": false,
+    "nameOnly": false,
+    "allHollow": false,
+    "collapsed": false,
+    "hasPlaceholder": false,
+    "nPlaceholder": 0,
+    "fallbackCard": false,
+    "maxHeight": 1072,
+    "variantsIdentical": false,
+    "bad": false,
+    "gridOverflow": "wide",
+    "gridOverflowCells": [
+      "NeedsInput",
+      "ReadyToPlan"
+    ],
+    "suggestedOverride": {
+      "cardMode": "column"
+    },
+    "texts": [
+      "ON TOP Jacket DropMục tiêu: Bán hàngreviewingNền tảng: Facebook, Threads, InstagramTone: Trẻ trungMã mời: ONTOP102 người tham giaCopy link mờiLink mời chiến dịch/campaigns/ontop-fashion-windbreaker/invite?code=ONTOP10Copy linkAgent AI đang tối ưu hoá kế hoạch đăng bài...45%Cần bổ sung trước khi tạo kế hoạch:- Chưa nhập thông điệp chính (key message)- Chưa mô tả đối tượng mục tiêuĐọc dữ liệu đầu vàoHiểu mục tiêu và đối tượng mục tiêuPhân tích tone thương hiệuGợi ý KOL/KOC phù hợpTạo kế hoạch nội dungTạo nội dung bài viếtKiểm tra giọng văn thương hiệuChuẩn bị lịch trình đăng tự độngLộ trình đăng bài9 bàiNgày 1TeaserNgày 2UGC reviewNgày 3Offer reminder",
+      "ON TOP Jacket DropMục tiêu: Bán hàngreviewingNền tảng: Facebook, Threads, InstagramTone: Trẻ trungMã mời: ONTOP106 người tham giaCopy link mờiLink mời chiến dịch/campaigns/ontop-fashion-windbreaker/invite?code=ONTOP10Copy linkAgent AI đang tối ưu hoá kế hoạch đăng bài...78%Đọc dữ liệu đầu vàoHiểu mục tiêu và đối tượng mục tiêuPhân tích tone thương hiệuGợi ý KOL/KOC phù hợpTạo kế hoạch nội dungTạo nội dung bài viếtKiểm tra giọng văn thương hiệuChuẩn bị lịch trình đăng tự độngLộ trình đăng bài9 bàiNgày 1TeaserNgày 2UGC reviewNgày 3Offer reminder"
+    ]
+  },
+  {
+    "name": "CampaignTrackingDashboard",
+    "group": "campaign-management",
+    "rel": "components/campaign-management/CampaignTrackingDashboard/CampaignTrackingDashboard.html",
+    "errs": 0,
+    "caught": 0,
+    "firstErr": null,
+    "pngBytes": 54634,
+    "blank": false,
+    "rootEmpty": false,
+    "thin": false,
+    "nameOnly": false,
+    "allHollow": false,
+    "collapsed": false,
+    "hasPlaceholder": false,
+    "nPlaceholder": 0,
+    "fallbackCard": false,
+    "maxHeight": 541,
+    "variantsIdentical": false,
+    "bad": false,
+    "gridOverflow": "wide",
+    "gridOverflowCells": [
+      "Default"
+    ],
+    "suggestedOverride": {
+      "cardMode": "column"
+    },
+    "texts": [
+      "Tracking KPI chiến dịchDashboard tổng quan hiệu quả, chi phí, chuyển đổi và trạng thái vận hành.reviewing6 người tham gia6 bài viếtImpressions128.400Lượt hiển thị toàn chiến dịchReach64.200Người dùng tiếp cậnEngagement5.8%486 commentClicks3.420214 leadConversion3.4%Từ click sang lead/đơnROI237.3%62.400.000 ₫ revenueTình trạng bài đăng6Tổng bài1Đã duyệt2Đã lên lịchChi phí & doanh thuSpend18.500.000 ₫Revenue62.400.000 ₫ROI237.3%"
+    ]
+  },
+  {
+    "name": "CreatorContactModal",
+    "group": "campaign-management",
+    "rel": "components/campaign-management/CreatorContactModal/CreatorContactModal.html",
+    "errs": 0,
+    "caught": 0,
+    "firstErr": null,
+    "pngBytes": 70214,
+    "blank": false,
+    "rootEmpty": false,
+    "thin": false,
+    "nameOnly": false,
+    "allHollow": false,
+    "collapsed": false,
+    "hasPlaceholder": false,
+    "nPlaceholder": 0,
+    "fallbackCard": false,
+    "maxHeight": 720,
+    "variantsIdentical": false,
+    "bad": false,
+    "gridOverflow": "escape",
+    "gridOverflowCells": [
+      "Default"
+    ],
+    "suggestedOverride": {
+      "cardMode": "single"
+    },
+    "texts": [
+      "Liên hệ KOL/KOCNgười nhận: Mina Outfit · Chiến dịch: ON TOP Jacket DropKOCInstagramThreadsMatch 89%Mã cộng tác viênMINAOUTFLink mời/campaigns/ontop-fashion-windbreaker/invite?code=ONTOP10Mẫu tin nhắnChào Mina Outfit,\n\nBên mình đang triển khai chiến dịch ON TOP Jacket Drop và thấy nội dung của bạn khá phù hợp với nhóm khách hàng mà chiến dịch hướng tới.\n\nBên mình muốn mời bạn tham gia chiến dịch với vai trò KOC. Bạn có thể xem thông tin chiến dịch tại link dưới đây:\n\n/campaigns/ontop-fashion-windbreaker/invite?code=ONTOP10\n\nNếu bạn quan tâm, mình rất mong được trao đổi thêm về format nội dung, thời gian đăng và chi phí hợp tác.\n\nCảm ơn bạn.Copy nội dungGửi lời mờiĐánh dấu đã liên hệ"
+    ]
+  },
+  {
+    "name": "CreatorSuggestionsTab",
+    "group": "campaign-management",
+    "rel": "components/campaign-management/CreatorSuggestionsTab/CreatorSuggestionsTab.html",
+    "errs": 0,
+    "caught": 0,
+    "firstErr": null,
+    "pngBytes": 78005,
+    "blank": false,
+    "rootEmpty": false,
+    "thin": false,
+    "nameOnly": false,
+    "allHollow": false,
+    "collapsed": false,
+    "hasPlaceholder": false,
+    "nPlaceholder": 0,
+    "fallbackCard": false,
+    "maxHeight": 658,
+    "variantsIdentical": false,
+    "bad": false,
+    "gridOverflow": "wide",
+    "gridOverflowCells": [
+      "Default"
+    ],
+    "suggestedOverride": {
+      "cardMode": "column"
+    },
+    "texts": [
+      "KOL/KOC phù hợp với chiến dịchFilter: Nền tảng · Niche · Sort: Match cao nhấtGợi ý lại bằng AIMiMina OutfitKOCMatch 89%Chưa liên hệfashion · ootd · minimal styleInstagramThreadsFollower: 30K - 50KEngagement: 4.8%Cost: 1.500.000đ - 2.500.000đVì sao phù hợp:- Tệp người xem quan tâm outfit hằng ngày và streetwear tối giản.- Nội dung thường có carousel phối đồ, dễ gắn sản phẩm.Xem chi tiếtContactTúTú Mix ĐồCreatorMatch 84%Đã gửi lời mờimen fashion · streetwear reviewInstagramFacebookFollower: 80K - 120KEngagement: 5.2%Cost: 3.000.000đ - 5.000.000đVì sao phù hợp:- Thế mạnh video ngắn dạng phối 3 outfit.- Review chất liệu thực tế, dễ nói rõ ưu điểm cản gió.Xem chi tiếtContact"
+    ]
+  },
+  {
+    "name": "InviteLinkBlock",
+    "group": "campaign-management",
+    "rel": "components/campaign-management/InviteLinkBlock/InviteLinkBlock.html",
+    "errs": 0,
+    "caught": 0,
+    "firstErr": null,
+    "pngBytes": 11283,
+    "blank": false,
+    "rootEmpty": false,
+    "thin": false,
+    "nameOnly": false,
+    "allHollow": false,
+    "collapsed": false,
+    "hasPlaceholder": false,
+    "nPlaceholder": 0,
+    "fallbackCard": false,
+    "maxHeight": 116,
+    "variantsIdentical": false,
+    "bad": false,
+    "gridOverflow": null,
+    "texts": [
+      "Link mời chiến dịchCopy link"
+    ]
+  },
+  {
+    "name": "ParticipantsTab",
+    "group": "campaign-management",
+    "rel": "components/campaign-management/ParticipantsTab/ParticipantsTab.html",
+    "errs": 0,
+    "caught": 0,
+    "firstErr": null,
+    "pngBytes": 51017,
+    "blank": false,
+    "rootEmpty": false,
+    "thin": false,
+    "nameOnly": false,
+    "allHollow": false,
+    "collapsed": false,
+    "hasPlaceholder": false,
+    "nPlaceholder": 0,
+    "fallbackCard": false,
+    "maxHeight": 360,
+    "variantsIdentical": false,
+    "bad": false,
+    "gridOverflow": "wide",
+    "gridOverflowCells": [
+      "Default"
+    ],
+    "suggestedOverride": {
+      "cardMode": "column"
+    },
+    "texts": [
+      "Người tham giaQuản lý team member, KOL/KOC, reviewer và cộng tác viên.Mời người tham giaTênVai tròKênhMã mời / CodeTrạng tháiQuyềnHành độngAnh ThưOwneremailOWNERĐã tham gia3 quyềnMina OutfitKOCinstagramMINA10Đang trao đổi3 quyềnTú Mix ĐồCreatorfacebookTUMIXĐã mời2 quyềnHoàng NamRevieweremailREVIEWĐã tham gia2 quyền"
+    ]
+  },
+  {
+    "name": "PostingRoadmap",
+    "group": "campaign-management",
+    "rel": "components/campaign-management/PostingRoadmap/PostingRoadmap.html",
+    "errs": 0,
+    "caught": 0,
+    "firstErr": null,
+    "pngBytes": 92517,
+    "blank": false,
+    "rootEmpty": false,
+    "thin": false,
+    "nameOnly": false,
+    "allHollow": false,
+    "collapsed": false,
+    "hasPlaceholder": false,
+    "nPlaceholder": 0,
+    "fallbackCard": false,
+    "maxHeight": 706,
+    "variantsIdentical": false,
+    "bad": false,
+    "gridOverflow": "wide",
+    "gridOverflowCells": [
+      "Compact",
+      "Full"
+    ],
+    "suggestedOverride": {
+      "cardMode": "column"
+    },
+    "texts": [
+      "Ngày 1Thứ 2 · Tuần ra mắt2 bài09:00 · Teaser jacket mớiFacebook · album · Content teamĐã duyệt12:30 · Gợi chuyện chọn màuThreads · thread · Agent AIĐã lên lịchNgày 2Thứ 4 · Đẩy cân nhắc2 bài19:30 · 3 cách phối jacketInstagram · carousel · DesignerCần duyệt20:15 · Detail chất liệuFacebook · caption · Agent AINhápNgày 3Thứ 6 · Chốt chuyển đổi1 bài20:00 · Mã OTOP10Facebook · caption · Sales teamNháp",
+      "Ngày 1Thứ 2 · Tuần ra mắt2 bài09:00 · Teaser jacket mớiFacebook · album · Content teamĐã duyệtMột item gọn cho ngày không biết mặc gì.12:30 · Gợi chuyện chọn màuThreads · thread · Agent AIĐã lên lịchTeam basic hay màu nổi?Ngày 2Thứ 4 · Đẩy cân nhắc2 bài19:30 · 3 cách phối jacketInstagram · carousel · DesignerCần duyệtCarousel phối đồ đi học, đi làm, cafe.20:15 · Detail chất liệuFacebook · caption · Agent AINhápCản gió, chống thấm nhẹ, form unisex.Ngày 3Thứ 6 · Chốt chuyển đổi1 bài20:00 · Mã OTOP10Facebook · caption · Sales teamNhápComment mã nhận voucher đơn đầu tiên."
+    ]
+  },
+  {
+    "name": "AgentProgressCard",
+    "group": "campaign-planning",
+    "rel": "components/campaign-planning/AgentProgressCard/AgentProgressCard.html",
+    "errs": 0,
+    "caught": 0,
+    "firstErr": null,
+    "pngBytes": 26832,
+    "blank": false,
+    "rootEmpty": false,
+    "thin": false,
+    "nameOnly": false,
+    "allHollow": false,
+    "collapsed": false,
+    "hasPlaceholder": false,
+    "nPlaceholder": 0,
+    "fallbackCard": false,
+    "maxHeight": 230,
+    "variantsIdentical": false,
+    "bad": false,
+    "gridOverflow": null,
+    "texts": [
+      "Agent AI đang tối ưu hoá kế hoạch đăng bài...45%Đọc dữ liệu đầu vào chiến dịchHiểu mục tiêu và đối tượng mục tiêuPhân tích tone thương hiệuGợi ý KOL/KOC phù hợpTạo kế hoạch nội dungChuẩn bị lịch trình đăng tự động"
+    ]
+  },
+  {
+    "name": "CampaignPlanningHeader",
+    "group": "campaign-planning",
+    "rel": "components/campaign-planning/CampaignPlanningHeader/CampaignPlanningHeader.html",
+    "errs": 0,
+    "caught": 0,
+    "firstErr": null,
+    "pngBytes": 26316,
+    "blank": false,
+    "rootEmpty": false,
+    "thin": false,
+    "nameOnly": false,
+    "allHollow": false,
+    "collapsed": false,
+    "hasPlaceholder": false,
+    "nPlaceholder": 0,
+    "fallbackCard": false,
+    "maxHeight": 145,
+    "variantsIdentical": false,
+    "bad": false,
+    "gridOverflow": "wide",
+    "gridOverflowCells": [
+      "Default"
+    ],
+    "suggestedOverride": {
+      "cardMode": "column"
+    },
+    "texts": [
+      "Lên bài tự độngĐã lên lịchTạo bài viết, xem xét nội dung và lên lịch đăng tự động từ cấu hình chiến dịch.ON TOP Jacket DropLALA Serum B5Nâu Coffee Ra Mắt Cold Brew+ Chọn chiến dịch khácTạo bài viết"
+    ]
+  },
+  {
+    "name": "CampaignSummaryBar",
+    "group": "campaign-planning",
+    "rel": "components/campaign-planning/CampaignSummaryBar/CampaignSummaryBar.html",
+    "errs": 0,
+    "caught": 0,
+    "firstErr": null,
+    "pngBytes": 15677,
+    "blank": false,
+    "rootEmpty": false,
+    "thin": false,
+    "nameOnly": false,
+    "allHollow": false,
+    "collapsed": false,
+    "hasPlaceholder": false,
+    "nPlaceholder": 0,
+    "fallbackCard": false,
+    "maxHeight": 65,
+    "variantsIdentical": false,
+    "bad": false,
+    "gridOverflow": null,
+    "texts": [
+      "Tổng quan chiến dịch bài viết ·  đã duyệt ·  đã lên lịch ·  cần xem lạiDuyệt Tất CảLên Lịch Chiến Dịch"
+    ]
+  },
+  {
+    "name": "PostDetailShell",
+    "group": "campaign-planning",
+    "rel": "components/campaign-planning/PostDetailShell/PostDetailShell.html",
+    "errs": 0,
+    "caught": 0,
+    "firstErr": null,
+    "pngBytes": 9937,
+    "blank": false,
+    "rootEmpty": false,
+    "thin": false,
+    "nameOnly": false,
+    "allHollow": false,
+    "collapsed": false,
+    "hasPlaceholder": false,
+    "nPlaceholder": 0,
+    "fallbackCard": false,
+    "maxHeight": 90,
+    "variantsIdentical": false,
+    "bad": false,
+    "gridOverflow": null,
+    "texts": [
+      "Chi Tiết Bài ViếtNội dungReviewLịch đăng"
+    ]
+  },
+  {
+    "name": "PublishingTimeline",
+    "group": "campaign-planning",
+    "rel": "components/campaign-planning/PublishingTimeline/PublishingTimeline.html",
+    "errs": 0,
+    "caught": 0,
+    "firstErr": null,
+    "pngBytes": 47356,
+    "blank": false,
+    "rootEmpty": false,
+    "thin": false,
+    "nameOnly": false,
+    "allHollow": false,
+    "collapsed": false,
+    "hasPlaceholder": false,
+    "nPlaceholder": 0,
+    "fallbackCard": false,
+    "maxHeight": 560,
+    "variantsIdentical": false,
+    "bad": false,
+    "gridOverflow": "wide",
+    "gridOverflowCells": [
+      "Compact",
+      "Expanded"
+    ],
+    "suggestedOverride": {
+      "cardMode": "column"
+    },
+    "texts": [
+      "Lộ trình đăng bàiMở rộngNgày 1Thứ 2 · 15/062 bài viếtNgày 2Thứ 4 · 17/062 bài viếtNgày 3Thứ 6 · 19/061 bài viết",
+      "Lộ trình đăng bàiRút gọnNgày 1Thứ 2 · 15/0609:00Đã duyệtTeaser áo khoác mới12:30Đã lên lịchGợi chuyện chọn màuNgày 2Thứ 4 · 17/0619:30Cần xem lại3 cách phối jacket20:15Bản nhápDetail chất liệu cản gióNgày 3Thứ 6 · 19/0620:00Bản nhápChốt ưu đãi mã OTOP10"
+    ]
+  },
+  {
+    "name": "CampaignCategoryChips",
+    "group": "campaigns",
+    "rel": "components/campaigns/CampaignCategoryChips/CampaignCategoryChips.html",
+    "errs": 0,
+    "caught": 0,
+    "firstErr": null,
+    "pngBytes": 23013,
+    "blank": false,
+    "rootEmpty": false,
+    "thin": false,
+    "nameOnly": false,
+    "allHollow": false,
+    "collapsed": false,
+    "hasPlaceholder": false,
+    "nPlaceholder": 0,
+    "fallbackCard": false,
+    "maxHeight": 88,
+    "variantsIdentical": false,
+    "bad": false,
+    "gridOverflow": "wide",
+    "gridOverflowCells": [
+      "AllSelected",
+      "CategorySelected"
+    ],
+    "suggestedOverride": {
+      "cardMode": "column"
+    },
+    "texts": [
+      "Tất cảLàm đẹpThời trangCông nghệẨm thựcDu lịchMẹ & BéGaming",
+      "Tất cảLàm đẹpThời trangCông nghệẨm thựcDu lịchMẹ & BéGaming"
+    ]
+  },
+  {
+    "name": "CampaignsGrid",
+    "group": "campaigns",
+    "rel": "components/campaigns/CampaignsGrid/CampaignsGrid.html",
+    "errs": 0,
+    "caught": 0,
+    "firstErr": null,
+    "pngBytes": 60575,
+    "blank": false,
+    "rootEmpty": false,
+    "thin": false,
+    "nameOnly": false,
+    "allHollow": false,
+    "collapsed": false,
+    "hasPlaceholder": false,
+    "nPlaceholder": 0,
+    "fallbackCard": false,
+    "maxHeight": 882,
+    "variantsIdentical": false,
+    "bad": false,
+    "gridOverflow": "wide",
+    "gridOverflowCells": [
+      "Empty",
+      "Grid"
+    ],
+    "suggestedOverride": {
+      "cardMode": "column"
+    },
+    "texts": [
+      "search_offKhông tìm thấy chiến dịchKhông có chiến dịch nào khớp với bộ lọc hiện tại. Thử chọn \"Tất cả\" hoặc một danh mục khác để xem thêm.",
+      "Làm đẹpHoạt độngSữa Rửa Mặt Cocoon x Beauty KOLsNgân sách15 – 40 triệuarrow_forwardCông nghệHoạt độngReview Điện Thoại Xiaomi 14T SeriesNgân sách30 – 80 triệuarrow_forwardThời trangSắp mởRa Mắt BST Nước Hoa TheFaceHolicNgân sách20 – 50 triệuarrow_forwardẨm thựcĐã đóngChiến Dịch Cà Phê Phin Highlands TếtNgân sách10 – 25 triệuarrow_forward"
+    ]
+  },
+  {
+    "name": "CampaignsPageHeader",
+    "group": "campaigns",
+    "rel": "components/campaigns/CampaignsPageHeader/CampaignsPageHeader.html",
+    "errs": 0,
+    "caught": 0,
+    "firstErr": null,
+    "pngBytes": 32188,
+    "blank": false,
+    "rootEmpty": false,
+    "thin": false,
+    "nameOnly": false,
+    "allHollow": false,
+    "collapsed": false,
+    "hasPlaceholder": false,
+    "nPlaceholder": 0,
+    "fallbackCard": false,
+    "maxHeight": 165,
+    "variantsIdentical": false,
+    "bad": false,
+    "gridOverflow": null,
+    "texts": [
+      "Đang mở bookingChiến dịch hợp tác trải nghiệmKhám phá thương vụ hợp tác KOL/KOC theo ngành hàng và mức ngân sách phù hợp. Tham gia ngay để kết nối với các nhãn hàng hàng đầu."
+    ]
+  },
+  {
+    "name": "CommentItem",
+    "group": "certificate-product",
+    "rel": "components/certificate-product/CommentItem/CommentItem.html",
+    "errs": 0,
+    "caught": 0,
+    "firstErr": null,
+    "pngBytes": 20726,
+    "blank": false,
+    "rootEmpty": false,
+    "thin": false,
+    "nameOnly": false,
+    "allHollow": false,
+    "collapsed": false,
+    "hasPlaceholder": false,
+    "nPlaceholder": 0,
+    "fallbackCard": false,
+    "maxHeight": 104,
+    "variantsIdentical": false,
+    "bad": false,
+    "gridOverflow": null,
+    "texts": [
+      "Nguyễn Thị Lan Hương42 phút trướcMình đã dùng serum này theo review của chị và da sáng lên rõ rệt sau 3 tuần. Rất đáng tiền, sẽ mua lại!"
+    ]
+  },
+  {
+    "name": "CommentSection",
+    "group": "certificate-product",
+    "rel": "components/certificate-product/CommentSection/CommentSection.html",
+    "errs": 0,
+    "caught": 0,
+    "firstErr": null,
+    "pngBytes": 45145,
+    "blank": false,
+    "rootEmpty": false,
+    "thin": false,
+    "nameOnly": false,
+    "allHollow": false,
+    "collapsed": false,
+    "hasPlaceholder": false,
+    "nPlaceholder": 0,
+    "fallbackCard": false,
+    "maxHeight": 403,
+    "variantsIdentical": false,
+    "bad": false,
+    "gridOverflow": null,
+    "texts": [
+      "Cộng đồng đánh giárate_reviewThêm bình luậnNguyễn Thị Lan Hương28 phút trướcSerum này thật sự hiệu quả, da mình đều màu hơn hẳn sau 3 tuần. Cảm ơn chị đã review chi tiết!Trần Quốc Bảo3 giờ trướcMua cho vợ dùng thử, thấy khen nên đặt thêm 2 lọ nữa. Giao hàng nhanh.Phạm Mai Anh1 ngày trướcKết cấu thấm nhanh, không bết dính. Hợp với da dầu như mình.Xem thêm bình luận"
+    ]
+  },
+  {
+    "name": "KolInfoCard",
+    "group": "certificate-product",
+    "rel": "components/certificate-product/KolInfoCard/KolInfoCard.html",
+    "errs": 0,
+    "caught": 0,
+    "firstErr": null,
+    "pngBytes": 21984,
+    "blank": false,
+    "rootEmpty": false,
+    "thin": false,
+    "nameOnly": false,
+    "allHollow": false,
+    "collapsed": false,
+    "hasPlaceholder": false,
+    "nPlaceholder": 0,
+    "fallbackCard": false,
+    "maxHeight": 138,
+    "variantsIdentical": false,
+    "bad": false,
+    "gridOverflow": null,
+    "texts": [
+      "Mai Anh BeautyverifiedLàm đẹp & Chăm sóc dastar4.8/5(1.284 đánh giá)groups860KLượt tiếp cận"
+    ]
+  },
+  {
+    "name": "KolReviewQuote",
+    "group": "certificate-product",
+    "rel": "components/certificate-product/KolReviewQuote/KolReviewQuote.html",
+    "errs": 0,
+    "caught": 0,
+    "firstErr": null,
+    "pngBytes": 6251,
+    "blank": false,
+    "rootEmpty": false,
+    "thin": false,
+    "nameOnly": false,
+    "allHollow": false,
+    "collapsed": false,
+    "hasPlaceholder": false,
+    "nPlaceholder": 0,
+    "fallbackCard": false,
+    "maxHeight": 65,
+    "variantsIdentical": false,
+    "bad": false,
+    "gridOverflow": null,
+    "texts": [
+      "“”"
+    ]
+  },
+  {
+    "name": "ProductCard",
+    "group": "certificate-product",
+    "rel": "components/certificate-product/ProductCard/ProductCard.html",
+    "errs": 0,
+    "caught": 0,
+    "firstErr": null,
+    "pngBytes": 38639,
+    "blank": false,
+    "rootEmpty": false,
+    "thin": false,
+    "nameOnly": false,
+    "allHollow": false,
+    "collapsed": false,
+    "hasPlaceholder": false,
+    "nPlaceholder": 0,
+    "fallbackCard": false,
+    "maxHeight": 632,
+    "variantsIdentical": false,
+    "bad": false,
+    "gridOverflow": null,
+    "texts": [
+      "Sản phẩm nổi bậtSerum Dưỡng Sáng Vitamin C 20%Tinh chất dưỡng sáng da chuyên sâu, làm mờ thâm nám và đều màu da sau 4 tuần sử dụng.₫480.000Xem trang sản phẩmarrow_forwardHoa hồng 15%Quà tặng độc quyềnFreeship toàn quốc"
+    ]
+  },
+  {
+    "name": "VideoPlayer",
+    "group": "certificate-product",
+    "rel": "components/certificate-product/VideoPlayer/VideoPlayer.html",
+    "errs": 0,
+    "caught": 0,
+    "firstErr": null,
+    "pngBytes": 139734,
+    "blank": false,
+    "rootEmpty": false,
+    "thin": false,
+    "nameOnly": false,
+    "allHollow": false,
+    "collapsed": false,
+    "hasPlaceholder": false,
+    "nPlaceholder": 0,
+    "fallbackCard": false,
+    "maxHeight": 349,
+    "variantsIdentical": false,
+    "bad": false,
+    "gridOverflow": null,
+    "texts": [
+      "play_arrow5:42"
+    ]
+  },
+  {
+    "name": "Badge",
+    "group": "general",
+    "rel": "components/general/Badge/Badge.html",
+    "errs": 0,
+    "caught": 0,
+    "firstErr": null,
+    "pngBytes": 4844,
+    "blank": true,
+    "rootEmpty": false,
+    "thin": false,
+    "nameOnly": false,
+    "allHollow": false,
+    "collapsed": false,
+    "hasPlaceholder": false,
+    "nPlaceholder": 0,
+    "fallbackCard": false,
+    "maxHeight": 10,
+    "variantsIdentical": false,
+    "bad": true,
+    "gridOverflow": null,
+    "texts": [
+      ""
+    ]
+  },
+  {
+    "name": "Button",
+    "group": "general",
+    "rel": "components/general/Button/Button.html",
+    "errs": 0,
+    "caught": 0,
+    "firstErr": null,
+    "pngBytes": 7434,
+    "blank": false,
+    "rootEmpty": false,
+    "thin": false,
+    "nameOnly": false,
+    "allHollow": false,
+    "collapsed": false,
+    "hasPlaceholder": false,
+    "nPlaceholder": 0,
+    "fallbackCard": false,
+    "maxHeight": 44,
+    "variantsIdentical": false,
+    "bad": false,
+    "gridOverflow": null,
+    "texts": [
+      ""
+    ]
+  },
+  {
+    "name": "CallToActionSection",
+    "group": "general",
+    "rel": "components/general/CallToActionSection/CallToActionSection.html",
+    "errs": 0,
+    "caught": 0,
+    "firstErr": null,
+    "pngBytes": 46215,
+    "blank": false,
+    "rootEmpty": false,
+    "thin": false,
+    "nameOnly": false,
+    "allHollow": false,
+    "collapsed": false,
+    "hasPlaceholder": false,
+    "nPlaceholder": 0,
+    "fallbackCard": false,
+    "maxHeight": 598,
+    "variantsIdentical": false,
+    "bad": false,
+    "gridOverflow": null,
+    "texts": [
+      "Sẵn sàng đưa tầm ảnh hưởng của bạn lên tầm cao mới?Gia nhập cộng đồng creator ưu tú và bắt đầu xây dựng quan hệ đối tác thương hiệu ý nghĩa ngay hôm nay.Bắt đầu miễn phíLiên hệ kinh doanh"
+    ]
+  },
+  {
+    "name": "Card",
+    "group": "general",
+    "rel": "components/general/Card/Card.html",
+    "errs": 0,
+    "caught": 0,
+    "firstErr": null,
+    "pngBytes": 4742,
+    "blank": true,
+    "rootEmpty": false,
+    "thin": false,
+    "nameOnly": false,
+    "allHollow": false,
+    "collapsed": false,
+    "hasPlaceholder": false,
+    "nPlaceholder": 0,
+    "fallbackCard": false,
+    "maxHeight": 2,
+    "variantsIdentical": false,
+    "bad": true,
+    "gridOverflow": null,
+    "texts": [
+      ""
+    ]
+  },
+  {
+    "name": "CardContent",
+    "group": "general",
+    "rel": "components/general/CardContent/CardContent.html",
+    "errs": 0,
+    "caught": 0,
+    "firstErr": null,
+    "pngBytes": 4512,
+    "blank": true,
+    "rootEmpty": false,
+    "thin": true,
+    "nameOnly": false,
+    "allHollow": true,
+    "collapsed": false,
+    "hasPlaceholder": false,
+    "nPlaceholder": 0,
+    "fallbackCard": false,
+    "maxHeight": 20,
+    "variantsIdentical": false,
+    "bad": true,
+    "gridOverflow": null,
+    "texts": [
+      ""
+    ]
+  },
+  {
+    "name": "CardDescription",
+    "group": "general",
+    "rel": "components/general/CardDescription/CardDescription.html",
+    "errs": 0,
+    "caught": 0,
+    "firstErr": null,
+    "pngBytes": 31253,
+    "blank": false,
+    "rootEmpty": false,
+    "thin": false,
+    "nameOnly": false,
+    "allHollow": false,
+    "collapsed": false,
+    "hasPlaceholder": false,
+    "nPlaceholder": 0,
+    "fallbackCard": false,
+    "maxHeight": 167,
+    "variantsIdentical": false,
+    "bad": false,
+    "gridOverflow": "wide",
+    "gridOverflowCells": [
+      "Default",
+      "StatCaption"
+    ],
+    "suggestedOverride": {
+      "cardMode": "column"
+    },
+    "texts": [
+      "Ra mắt sữa rửa mặt SimpleĐề xuất 12 KOL beauty phù hợp tệp khách hàng Gen Z, ngân sách 320 triệu ₫.Ưu tiên creator có tỷ lệ tương tác trên 6% và tệp nữ 18–24 tuổi.",
+      "Tỷ lệ chuyển đổiTính trên tổng lượt click affiliate trong 30 ngày4,8%"
+    ]
+  },
+  {
+    "name": "CardHeader",
+    "group": "general",
+    "rel": "components/general/CardHeader/CardHeader.html",
+    "errs": 0,
+    "caught": 0,
+    "firstErr": null,
+    "pngBytes": 4512,
+    "blank": true,
+    "rootEmpty": false,
+    "thin": true,
+    "nameOnly": false,
+    "allHollow": true,
+    "collapsed": false,
+    "hasPlaceholder": false,
+    "nPlaceholder": 0,
+    "fallbackCard": false,
+    "maxHeight": 40,
+    "variantsIdentical": false,
+    "bad": true,
+    "gridOverflow": null,
+    "texts": [
+      ""
+    ]
+  },
+  {
+    "name": "CardTitle",
+    "group": "general",
+    "rel": "components/general/CardTitle/CardTitle.html",
+    "errs": 0,
+    "caught": 0,
+    "firstErr": null,
+    "pngBytes": 27951,
+    "blank": false,
+    "rootEmpty": false,
+    "thin": false,
+    "nameOnly": false,
+    "allHollow": false,
+    "collapsed": false,
+    "hasPlaceholder": false,
+    "nPlaceholder": 0,
+    "fallbackCard": false,
+    "maxHeight": 157,
+    "variantsIdentical": false,
+    "bad": false,
+    "gridOverflow": "wide",
+    "gridOverflowCells": [
+      "Default",
+      "WithinReport"
+    ],
+    "suggestedOverride": {
+      "cardMode": "column"
+    },
+    "texts": [
+      "Chiến dịch Tết 2025 — Mỹ phẩm CocoonTổng ngân sách 850 triệu ₫ · 24 KOL tham gia · chạy từ 05/01 đến 10/02.",
+      "Báo cáo hiệu suất KOLTrang Hí đạt 1,2 triệu lượt xem trên chiến dịch skincare."
+    ]
+  },
+  {
+    "name": "ChartContainer",
+    "group": "general",
+    "rel": "components/general/ChartContainer/ChartContainer.html",
+    "errs": 0,
+    "caught": 0,
+    "firstErr": null,
+    "pngBytes": 14654,
+    "blank": false,
+    "rootEmpty": false,
+    "thin": false,
+    "nameOnly": false,
+    "allHollow": false,
+    "collapsed": false,
+    "hasPlaceholder": false,
+    "nPlaceholder": 0,
+    "fallbackCard": false,
+    "maxHeight": 260,
+    "variantsIdentical": false,
+    "bad": false,
+    "gridOverflow": null,
+    "texts": [
+      "[data-chart=chart-_r_0_] {\n  --color-reach: #f59e0b;\n}\n\n\n.dark [data-chart=chart-_r_0_] {\n  --color-reach: #f59e0b;\n}\nTikTokInstagramFacebookYouTube035070010501400",
+      "",
+      "",
+      "0"
+    ]
+  },
+  {
+    "name": "ChartTooltip",
+    "group": "general",
+    "rel": "components/general/ChartTooltip/ChartTooltip.html",
+    "errs": 0,
+    "caught": 0,
+    "firstErr": null,
+    "pngBytes": 14387,
+    "blank": false,
+    "rootEmpty": false,
+    "thin": false,
+    "nameOnly": false,
+    "allHollow": false,
+    "collapsed": false,
+    "hasPlaceholder": false,
+    "nPlaceholder": 0,
+    "fallbackCard": false,
+    "maxHeight": 280,
+    "variantsIdentical": false,
+    "bad": false,
+    "gridOverflow": null,
+    "texts": [
+      "[data-chart=chart-_r_0_] {\n  --color-reach: #f59e0b;\n}\n\n\n.dark [data-chart=chart-_r_0_] {\n  --color-reach: #f59e0b;\n}\nTikTokInstagramFacebookYouTube035070010501400",
+      "",
+      "",
+      "0"
+    ]
+  },
+  {
+    "name": "ChartTooltipContent",
+    "group": "general",
+    "rel": "components/general/ChartTooltipContent/ChartTooltipContent.html",
+    "errs": 0,
+    "caught": 0,
+    "firstErr": null,
+    "pngBytes": 16693,
+    "blank": false,
+    "rootEmpty": false,
+    "thin": false,
+    "nameOnly": false,
+    "allHollow": false,
+    "collapsed": false,
+    "hasPlaceholder": false,
+    "nPlaceholder": 0,
+    "fallbackCard": false,
+    "maxHeight": 144,
+    "variantsIdentical": false,
+    "bad": false,
+    "gridOverflow": null,
+    "texts": [
+      "[data-chart=chart-_r_0_] {\n  --color-reach: #f59e0b;\n  --color-engagement: #3b82f6;\n}\n\n\n.dark [data-chart=chart-_r_0_] {\n  --color-reach: #f59e0b;\n  --color-engagement: #3b82f6;\n}\nTikTokLượt tiếp cận1,2 TrTương tác186,4 N",
+      "",
+      "[data-chart=chart-_r_1_] {\n  --color-reach: #f59e0b;\n  --color-engagement: #3b82f6;\n}\n\n\n.dark [data-chart=chart-_r_1_] {\n  --color-reach: #f59e0b;\n  --color-engagement: #3b82f6;\n}\nChiến dịch Tết 2025Lượt tiếp cận1,2 TrTương tác186,4 N",
+      ""
+    ]
+  },
+  {
+    "name": "Input",
+    "group": "general",
+    "rel": "components/general/Input/Input.html",
+    "errs": 0,
+    "caught": 0,
+    "firstErr": null,
+    "pngBytes": 5153,
+    "blank": false,
+    "rootEmpty": false,
+    "thin": false,
+    "nameOnly": false,
+    "allHollow": false,
+    "collapsed": false,
+    "hasPlaceholder": false,
+    "nPlaceholder": 0,
+    "fallbackCard": false,
+    "maxHeight": 44,
+    "variantsIdentical": false,
+    "bad": false,
+    "gridOverflow": null,
+    "texts": [
+      ""
+    ]
+  },
+  {
+    "name": "Label",
+    "group": "general",
+    "rel": "components/general/Label/Label.html",
+    "errs": 0,
+    "caught": 0,
+    "firstErr": null,
+    "pngBytes": 15599,
+    "blank": false,
+    "rootEmpty": false,
+    "thin": false,
+    "nameOnly": false,
+    "allHollow": false,
+    "collapsed": false,
+    "hasPlaceholder": false,
+    "nPlaceholder": 0,
+    "fallbackCard": false,
+    "maxHeight": 64,
+    "variantsIdentical": false,
+    "bad": false,
+    "gridOverflow": null,
+    "texts": [
+      "Tên chiến dịch",
+      "Ngân sách chiến dịch *",
+      "Email liên hệ"
+    ]
+  },
+  {
+    "name": "AnalyticsPanel",
+    "group": "kol-analysis",
+    "rel": "components/kol-analysis/AnalyticsPanel/AnalyticsPanel.html",
+    "errs": 0,
+    "caught": 0,
+    "firstErr": null,
+    "pngBytes": 176619,
+    "blank": false,
+    "rootEmpty": false,
+    "thin": false,
+    "nameOnly": false,
+    "allHollow": false,
+    "collapsed": false,
+    "hasPlaceholder": false,
+    "nPlaceholder": 0,
+    "fallbackCard": false,
+    "maxHeight": 3454,
+    "variantsIdentical": false,
+    "bad": false,
+    "gridOverflow": "wide",
+    "gridOverflowCells": [
+      "Default"
+    ],
+    "suggestedOverride": {
+      "cardMode": "column"
+    },
+    "texts": [
+      "Radar ProfileNormalized component performance on a 0-100 scale.Select profileNguyễn Linh ChiTrần Minh QuangPhạm Thu Hà\n [data-chart=chart-_r_0_] {\n  --color-value: #3b82f6;\n}\n\n\n.dark [data-chart=chart-_r_0_] {\n  --color-value: #3b82f6;\n}\nCảm xúcTương tácChuyên mônĐộ tin cậyTăng trưởng0255075100Radar excludes KOL Score; it only visualizes atomic scoring components.Nguyễn Linh ChiTikTok / Làm đẹpFollowers1,280,000Engagement6.42%KOL Score87.64Risk1.80Score DistributionsDistribution and platform risk signals from the mock analysis batch.KOL Score DistributionCount of profiles by score range.\n [data-chart=chart-_r_1_] {\n  --color-count: #3b82f6;\n}\n\n\n.dark [data-chart=chart-_r_1_] {\n  --color-count: #3b82f6;\n}\n40-5050-6060-7070-8080-9090-1000255075100Controversy DistributionRisk score spread across evaluated creators.\n [data-chart=chart-_r_2_] {\n  --color-count: #f59e0b;\n}\n\n\n.dark [data-chart=chart-_r_2_] {\n  --color-count: #f59e0b;\n}\n0-22-44-66-88-100255075100Risk by PlatformMin, average, and max controversy risk.\n [data-chart=chart-_r_3_] {\n  --color-min: #22c55e;\n  --color-avg: #f59e0b;\n  --color-max: #ef4444;\n}\n\n\n.dark [data-chart=chart-_r_3_] {\n  --color-min: #22c55e;\n  --color-avg: #f59e0b;\n  --color-max: #ef4444;\n}\nTikTokInstagramYouTube036912Platform & Niche AnalysisPlatform averages, niche engagement, engagement quality, and follower distribution.Average KOL Score by PlatformPlatform-level scoring benchmark.\n [data-chart=chart-_r_4_] {\n  --color-kolScore: #f59e0b;\n}\n\n\n.dark [data-chart=chart-_r_4_] {\n  --color-kolScore: #f59e0b;\n}\nTikTokInstagramYouTube0255075100Average Engagement by NicheRelative engagement strength by category.\n [data-chart=chart-_r_5_] {\n  --color-engagementRate: #3b82f6;\n}\n\n\n.dark [data-chart=chart-_r_5_] {\n  --color-engagementRate: #3b82f6;\n}\nEngagement Quality vs ScoreBubble size maps to follower volume.\n [data-chart=chart-_r_6_] {\n  --color-kolScore: #8b5cf6;\n}\n\n\n.dark [data-chart=chart-_r_6_] {\n  --color-kolScore: #8b5cf6;\n}\n0204060800255075100Follower DistributionAggregated audience by primary platform.\n [data-chart=chart-_r_7_] {\n  --color-followers: #14b8a6;\n}\n\n\n.dark [data-chart=chart-_r_7_] {\n  --color-followers: #14b8a6;\n}\n01.5M3M4.5M6MTikTokInstagramYouTube",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "1.5M"
+    ]
+  },
+  {
+    "name": "KolAnalysisHeader",
+    "group": "kol-analysis",
+    "rel": "components/kol-analysis/KolAnalysisHeader/KolAnalysisHeader.html",
+    "errs": 0,
+    "caught": 0,
+    "firstErr": null,
+    "pngBytes": 37827,
+    "blank": false,
+    "rootEmpty": false,
+    "thin": false,
+    "nameOnly": false,
+    "allHollow": false,
+    "collapsed": false,
+    "hasPlaceholder": false,
+    "nPlaceholder": 0,
+    "fallbackCard": false,
+    "maxHeight": 198,
+    "variantsIdentical": false,
+    "bad": false,
+    "gridOverflow": null,
+    "texts": [
+      "Dashboard/KOL AnalysisSocial Listening PipelineKOL/KOC Analytics DashboardStatic overview for metadata collection priorities, scoring logic, and creator performance across platforms and niches.Score modelSentiment + Engagement + Topic + SafetyWeights0.35 / 0.3 / 0.2 / 0.15"
+    ]
+  },
+  {
+    "name": "KolAnalysisTabs",
+    "group": "kol-analysis",
+    "rel": "components/kol-analysis/KolAnalysisTabs/KolAnalysisTabs.html",
+    "errs": 0,
+    "caught": 0,
+    "firstErr": null,
+    "pngBytes": 10337,
+    "blank": false,
+    "rootEmpty": false,
+    "thin": false,
+    "nameOnly": false,
+    "allHollow": false,
+    "collapsed": false,
+    "hasPlaceholder": false,
+    "nPlaceholder": 0,
+    "fallbackCard": false,
+    "maxHeight": 49,
+    "variantsIdentical": false,
+    "bad": false,
+    "gridOverflow": null,
+    "texts": [
+      "dashboardOverviewmonitoringPerformance Analyticsaccount_treePipeline Guide"
+    ]
+  },
+  {
+    "name": "KpiOverview",
+    "group": "kol-analysis",
+    "rel": "components/kol-analysis/KpiOverview/KpiOverview.html",
+    "errs": 0,
+    "caught": 0,
+    "firstErr": null,
+    "pngBytes": 45501,
+    "blank": false,
+    "rootEmpty": false,
+    "thin": false,
+    "nameOnly": false,
+    "allHollow": false,
+    "collapsed": false,
+    "hasPlaceholder": false,
+    "nPlaceholder": 0,
+    "fallbackCard": false,
+    "maxHeight": 450,
+    "variantsIdentical": false,
+    "bad": false,
+    "gridOverflow": "wide",
+    "gridOverflowCells": [
+      "Default"
+    ],
+    "suggestedOverride": {
+      "cardMode": "column"
+    },
+    "texts": [
+      "KPI OverviewPortfolio-level snapshot converted from the Streamlit dashboard.Tổng KOLgroups248Hồ sơ đã phân tích trong đợt nàyĐiểm KOL TBtrending_up74.8Trung bình toàn danh mụcTương tác TBfavorite4.26%Engagement rate trung bìnhFollower TBgroup612KQuy mô audience trung vịRủi ro caowarning17KOL có controversy risk > 60Lĩnh vực nổi bậtstarLàm đẹpNiche có điểm cao nhất"
+    ]
+  },
+  {
+    "name": "OverviewPanel",
+    "group": "kol-analysis",
+    "rel": "components/kol-analysis/OverviewPanel/OverviewPanel.html",
+    "errs": 0,
+    "caught": 0,
+    "firstErr": null,
+    "pngBytes": 100947,
+    "blank": false,
+    "rootEmpty": false,
+    "thin": false,
+    "nameOnly": false,
+    "allHollow": false,
+    "collapsed": false,
+    "hasPlaceholder": false,
+    "nPlaceholder": 0,
+    "fallbackCard": false,
+    "maxHeight": 819,
+    "variantsIdentical": false,
+    "bad": false,
+    "gridOverflow": "wide",
+    "gridOverflowCells": [
+      "Default"
+    ],
+    "suggestedOverride": {
+      "cardMode": "column"
+    },
+    "texts": [
+      "KPI OverviewPortfolio-level snapshot converted from the Streamlit dashboard.Tổng KOLgroups248Hồ sơ đã phân tíchĐiểm KOL TBtrending_up74.8Trung bình danh mụcTương tác TBfavorite4.26%Engagement rateFollower TBgroup612KQuy mô audienceRủi ro caowarning17Risk > 60Niche nổi bậtstarLàm đẹpĐiểm cao nhấtKOL Ranking TableSorted by weighted KOL Score. Lower controversy risk is better.CreatorPlatformNicheFollowersEngagementSentimentRiskKOL ScoreNguyễn Linh Chi@linhchibeautyTikTokLàm đẹp1,280,0006.42%82.501.8087.64Phạm Thu Hà@thuha.dailyInstagramĐời sống890,0005.11%76.404.2080.31Trần Minh Quang@quangtechYouTubeCông nghệ542,0003.18%71.206.9072.09Lê Bảo Ngọc@baongoc.fitTikTokThể hình610,0004.05%68.903.1076.82"
+    ]
+  },
+  {
+    "name": "PipelineGuidePanel",
+    "group": "kol-analysis",
+    "rel": "components/kol-analysis/PipelineGuidePanel/PipelineGuidePanel.html",
+    "errs": 0,
+    "caught": 0,
+    "firstErr": null,
+    "pngBytes": 129353,
+    "blank": false,
+    "rootEmpty": false,
+    "thin": false,
+    "nameOnly": false,
+    "allHollow": false,
+    "collapsed": false,
+    "hasPlaceholder": false,
+    "nPlaceholder": 0,
+    "fallbackCard": false,
+    "maxHeight": 1076,
+    "variantsIdentical": false,
+    "bad": false,
+    "gridOverflow": null,
+    "texts": [
+      "Pipeline Overviewcrawl dataarrow_forwarddata_collecting.pyarrow_forwarddata_processing.pyarrow_forwardsemantic_understanding.pyarrow_forwardevaluation.pyarrow_forwardrun_pipeline.pyPipeline ExplanationConverted from the Streamlit expanders into native disclosure panels.0. crawl dataexpand_moreCurrent crawler focuses on Threads and receives manual link input.Previous pipeline version primarily targeted comment-based public opinion analysis.1. data_collecting.pyexpand_moreNormalizes schema from JSONL inputs into a stable, model-ready format.Designed to support future expansion into multi-platform collection.2. data_processing.pyexpand_moreCleans spam/noise records and removes structurally low-signal content.Normalizes teencode and slang using a dictionary mapping layer.3. semantic_understanding.pyexpand_moreGenerates PhoBERT embeddings for semantic representation.Embedding similarity supports sentiment inference, topic mapping, and entity signals.4. evaluation.pyexpand_moreCombines sentiment, engagement quality, topic authority, and controversy risk.Outputs the weighted KOL Score used for ranking and comparison.5. run_pipeline.pyexpand_moreExecutes the end-to-end pipeline from ingestion to final scoring artifacts.This stage packages the analysis output for dashboard consumption.Metric MeaningAtomic signals used by the evaluation stage and final score formula.Sentiment Score> 0 indicates positive sentiment dominates negative sentiment in analyzed conversations.Engagement QualityCombines interaction volume and interaction quality from comments, replies, and saves.Topic AuthorityMeasured as dominant topic frequency divided by total topic frequency.Controversy RiskLower risk is better and interpreted as safer brand collaboration potential.KOL ScoreWeighted combination of sentiment, engagement quality, topic authority, and controversy safety.KOL Score FormulaKOL Score = w1 * Sentiment + w2 * Engagement + w3 * Topic Authority + w4 * Controversy SafetyCurrent weights: w1=0.35, w2=0.3, w3=0.2, w4=0.15"
+    ]
+  },
+  {
+    "name": "PlatformNicheAnalytics",
+    "group": "kol-analysis",
+    "rel": "components/kol-analysis/PlatformNicheAnalytics/PlatformNicheAnalytics.html",
+    "errs": 0,
+    "caught": 0,
+    "firstErr": null,
+    "pngBytes": 60967,
+    "blank": false,
+    "rootEmpty": false,
+    "thin": false,
+    "nameOnly": false,
+    "allHollow": false,
+    "collapsed": false,
+    "hasPlaceholder": false,
+    "nPlaceholder": 0,
+    "fallbackCard": false,
+    "maxHeight": 1648,
+    "variantsIdentical": false,
+    "bad": false,
+    "gridOverflow": "wide",
+    "gridOverflowCells": [
+      "Default"
+    ],
+    "suggestedOverride": {
+      "cardMode": "column"
+    },
+    "texts": [
+      "Average KOL Score by PlatformPlatform-level scoring benchmark.\n [data-chart=chart-_r_0_] {\n  --color-kolScore: #f59e0b;\n}\n\n\n.dark [data-chart=chart-_r_0_] {\n  --color-kolScore: #f59e0b;\n}\nTikTokInstagramYouTube0255075100Average Engagement by NicheRelative engagement strength by category.\n [data-chart=chart-_r_1_] {\n  --color-engagementRate: #3b82f6;\n}\n\n\n.dark [data-chart=chart-_r_1_] {\n  --color-engagementRate: #3b82f6;\n}\nEngagement Quality vs ScoreBubble size maps to follower volume.\n [data-chart=chart-_r_2_] {\n  --color-kolScore: #8b5cf6;\n}\n\n\n.dark [data-chart=chart-_r_2_] {\n  --color-kolScore: #8b5cf6;\n}\n0204060800255075100Follower DistributionAggregated audience by primary platform.\n [data-chart=chart-_r_3_] {\n  --color-followers: #14b8a6;\n}\n\n\n.dark [data-chart=chart-_r_3_] {\n  --color-followers: #14b8a6;\n}\n01.5M3M4.5M6MTikTokInstagramYouTube",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "1.5M"
+    ]
+  },
+  {
+    "name": "ProfileRadarChart",
+    "group": "kol-analysis",
+    "rel": "components/kol-analysis/ProfileRadarChart/ProfileRadarChart.html",
+    "errs": 0,
+    "caught": 0,
+    "firstErr": null,
+    "pngBytes": 4512,
+    "blank": true,
+    "rootEmpty": false,
+    "thin": false,
+    "nameOnly": false,
+    "allHollow": false,
+    "collapsed": false,
+    "hasPlaceholder": false,
+    "nPlaceholder": 0,
+    "fallbackCard": false,
+    "maxHeight": 360,
+    "variantsIdentical": false,
+    "bad": true,
+    "gridOverflow": null,
+    "texts": [
+      "[data-chart=chart-_r_0_] {\n  --color-value: #3b82f6;\n}\n\n\n.dark [data-chart=chart-_r_0_] {\n  --color-value: #3b82f6;\n}",
+      ""
+    ]
+  },
+  {
+    "name": "ScoreDistributionCharts",
+    "group": "kol-analysis",
+    "rel": "components/kol-analysis/ScoreDistributionCharts/ScoreDistributionCharts.html",
+    "errs": 0,
+    "caught": 0,
+    "firstErr": null,
+    "pngBytes": 27275,
+    "blank": false,
+    "rootEmpty": false,
+    "thin": false,
+    "nameOnly": false,
+    "allHollow": false,
+    "collapsed": false,
+    "hasPlaceholder": false,
+    "nPlaceholder": 0,
+    "fallbackCard": false,
+    "maxHeight": 1136,
+    "variantsIdentical": false,
+    "bad": false,
+    "gridOverflow": null,
+    "texts": [
+      "KOL Score DistributionCount of profiles by score range.\n [data-chart=chart-_r_0_] {\n  --color-count: #3b82f6;\n}\n\n\n.dark [data-chart=chart-_r_0_] {\n  --color-count: #3b82f6;\n}\nControversy DistributionRisk score spread across evaluated creators.\n [data-chart=chart-_r_1_] {\n  --color-count: #f59e0b;\n}\n\n\n.dark [data-chart=chart-_r_1_] {\n  --color-count: #f59e0b;\n}\nRisk by PlatformMin, average, and max controversy risk.\n [data-chart=chart-_r_2_] {\n  --color-min: #22c55e;\n  --color-avg: #f59e0b;\n  --color-max: #ef4444;\n}\n\n\n.dark [data-chart=chart-_r_2_] {\n  --color-min: #22c55e;\n  --color-avg: #f59e0b;\n  --color-max: #ef4444;\n}",
+      "",
+      "",
+      ""
+    ]
+  },
+  {
+    "name": "SelectedProfileCard",
+    "group": "kol-analysis",
+    "rel": "components/kol-analysis/SelectedProfileCard/SelectedProfileCard.html",
+    "errs": 0,
+    "caught": 0,
+    "firstErr": null,
+    "pngBytes": 31887,
+    "blank": false,
+    "rootEmpty": false,
+    "thin": false,
+    "nameOnly": false,
+    "allHollow": false,
+    "collapsed": false,
+    "hasPlaceholder": false,
+    "nPlaceholder": 0,
+    "fallbackCard": false,
+    "maxHeight": 238,
+    "variantsIdentical": false,
+    "bad": false,
+    "gridOverflow": "wide",
+    "gridOverflowCells": [
+      "BeautyKol",
+      "TechKol"
+    ],
+    "suggestedOverride": {
+      "cardMode": "column"
+    },
+    "texts": [
+      "Nguyễn Linh ChiTikTok / Làm đẹpFollowers1,280,000Engagement6.42%KOL Score87.64Risk12.30",
+      "Trần Minh QuangYouTube / Công nghệFollowers542,000Engagement3.18%KOL Score72.09Risk34.60"
+    ]
+  },
+  {
+    "name": "AgentProcessingPanel",
+    "group": "kol-matching",
+    "rel": "components/kol-matching/AgentProcessingPanel/AgentProcessingPanel.html",
+    "errs": 0,
+    "caught": 0,
+    "firstErr": null,
+    "pngBytes": 82294,
+    "blank": false,
+    "rootEmpty": false,
+    "thin": false,
+    "nameOnly": false,
+    "allHollow": false,
+    "collapsed": false,
+    "hasPlaceholder": false,
+    "nPlaceholder": 0,
+    "fallbackCard": false,
+    "maxHeight": 512,
+    "variantsIdentical": false,
+    "bad": false,
+    "gridOverflow": "wide",
+    "gridOverflowCells": [
+      "Default"
+    ],
+    "suggestedOverride": {
+      "cardMode": "column"
+    },
+    "texts": [
+      "tips_and_updatesĐang phân tích yêu cầuAI của chúng tôi đang xử lý yêu cầu để tìm ra những ứng viên phù hợp nhất.Thuật toán Xử lý60%checkPhân tích yêu cầu chiến dịchHoàn thànhcheckQuét cơ sở dữ liệu nhà sáng tạoHoàn thànhsyncChấm điểm độ phù hợpĐang xử lý - tìm kiếm influencer...scheduleƯớc tính ngân sách & ROIĐang chờscheduleTạo danh sách rút gọnĐang chờlightbulbChúng tôi ưu tiên sự phù hợp về lĩnh vực, lịch sử hiệu suất, đánh giá và ngân sách để đảm bảo ROI tốt nhất.Nhật ký Xử lýNhật ký thực thi theo thời gian thực từ AI ghép đôi.Giai đoạn hiện tạiChấm điểm độ phù hợpĐối chiếu tệp khán giả và hiệu suất.09:12successPhân tích yêu cầu chiến dịch completed successfully.10:15successQuét cơ sở dữ liệu nhà sáng tạo completed successfully.11:18processingChấm điểm độ phù hợp...Nhật ký sẽ tiếp tục cập nhật cho đến khi danh sách rút gọn được tạo xong."
+    ]
+  },
+  {
+    "name": "FindEntryForm",
+    "group": "kol-matching",
+    "rel": "components/kol-matching/FindEntryForm/FindEntryForm.html",
+    "errs": 0,
+    "caught": 0,
+    "firstErr": null,
+    "pngBytes": 113910,
+    "blank": false,
+    "rootEmpty": false,
+    "thin": false,
+    "nameOnly": false,
+    "allHollow": false,
+    "collapsed": false,
+    "hasPlaceholder": false,
+    "nPlaceholder": 0,
+    "fallbackCard": false,
+    "maxHeight": 722,
+    "variantsIdentical": false,
+    "bad": false,
+    "gridOverflow": "wide",
+    "gridOverflowCells": [
+      "Default"
+    ],
+    "suggestedOverride": {
+      "cardMode": "column"
+    },
+    "texts": [
+      "lightbulbHướng dẫn NhanhĐể có kết quả chính xác, hãy xác định rõ đối tượng mục tiêu và tiếng nói thương hiệu. AI ưu tiên creator có tương tác thật thay vì người theo dõi ảo.history_eduMẫu Gợi ý (Prompt)D2C LifestyleFinding eco-conscious nano-influencers in the EU for sustainable fashion...Mobile GamingStreamers with high retention rates for RPG launch targeting Gen-Z...historyTìm kiếm Gần đâysearchLifestyle Tech (Global)2 days ago • 45 matchessearchSkincare Routine KOLs5 days ago • 120 matchesXem Toàn bộ Lịch sửdescriptionBảng Thông tin Tìm kiếmChọn Chiến dịchRa mắt Mùa hè 2024Khuyến mãi Đồ công nghệChiến dịch Influencer Q3Lĩnh vựcĐời sống & Thời trangCông nghệ & GameSức khỏe & Thể chấtẨm thựcTóm tắt Sản phẩm/Chiến dịchRa mắt dòng son kem lì mới cho mùa hè, hướng tới nữ giới 18-28 tuổi yêu thích trang điểm tự nhiên.Nền tảng mục tiêucheck_circleTikTokcheck_circleInstagramcheck_circleYouTubeTiếp cận (Min)CTR Tối thiểu (%)Mục tiêu chuyển đổiKhoảng Ngân sách$1k - $25kKhoảng Người theo dõi100k - 800kfilter_listBộ lọc Nâng caoauto_awesomeTạo Gợi ý"
+    ]
+  },
+  {
+    "name": "FindEntryHelperPanel",
+    "group": "kol-matching",
+    "rel": "components/kol-matching/FindEntryHelperPanel/FindEntryHelperPanel.html",
+    "errs": 0,
+    "caught": 0,
+    "firstErr": null,
+    "pngBytes": 57566,
+    "blank": false,
+    "rootEmpty": false,
+    "thin": false,
+    "nameOnly": false,
+    "allHollow": false,
+    "collapsed": false,
+    "hasPlaceholder": false,
+    "nPlaceholder": 0,
+    "fallbackCard": false,
+    "maxHeight": 622,
+    "variantsIdentical": false,
+    "bad": false,
+    "gridOverflow": null,
+    "texts": [
+      "lightbulbHướng dẫn NhanhĐể có kết quả chính xác, hãy xác định rõ đối tượng mục tiêu và tiếng nói thương hiệu. AI ưu tiên creator có tương tác thật thay vì người theo dõi ảo.history_eduMẫu Gợi ý (Prompt)D2C LifestyleFinding eco-conscious nano-influencers in the EU for sustainable fashion...Mobile GamingStreamers with high retention rates for RPG launch targeting Gen-Z...historyTìm kiếm Gần đâysearchLifestyle Tech (Global)2 days ago • 45 matchessearchSkincare Routine KOLs5 days ago • 120 matchesXem Toàn bộ Lịch sử"
+    ]
+  },
+  {
+    "name": "FlowPageHeader",
+    "group": "kol-matching",
+    "rel": "components/kol-matching/FlowPageHeader/FlowPageHeader.html",
+    "errs": 0,
+    "caught": 0,
+    "firstErr": null,
+    "pngBytes": 25747,
+    "blank": false,
+    "rootEmpty": false,
+    "thin": false,
+    "nameOnly": false,
+    "allHollow": false,
+    "collapsed": false,
+    "hasPlaceholder": false,
+    "nPlaceholder": 0,
+    "fallbackCard": false,
+    "maxHeight": 88,
+    "variantsIdentical": false,
+    "bad": false,
+    "gridOverflow": "wide",
+    "gridOverflowCells": [
+      "Default"
+    ],
+    "suggestedOverride": {
+      "cardMode": "column"
+    },
+    "texts": [
+      "Chiến dịchchevron_rightTìm KOLchevron_rightKết quả tìm kiếmGhép đôi Nhà sáng tạo bằng AIChiến dịch “Ra mắt Son Mùa hè” · 48 ứng viên phù hợpbookmarkLưu nhápauto_awesomeTạo lại gợi ý"
+    ]
+  },
+  {
+    "name": "FlowStepper",
+    "group": "kol-matching",
+    "rel": "components/kol-matching/FlowStepper/FlowStepper.html",
+    "errs": 0,
+    "caught": 0,
+    "firstErr": null,
+    "pngBytes": 24044,
+    "blank": false,
+    "rootEmpty": false,
+    "thin": false,
+    "nameOnly": false,
+    "allHollow": false,
+    "collapsed": false,
+    "hasPlaceholder": false,
+    "nPlaceholder": 0,
+    "fallbackCard": false,
+    "maxHeight": 286,
+    "variantsIdentical": false,
+    "bad": false,
+    "gridOverflow": null,
+    "texts": [
+      "Tiến trìnhNhập thông tin KOL/KOCBước 1AI Đang xử lýBước 2Kết quả Tìm kiếmBước 3So sánh KOLBước 4"
+    ]
+  },
+  {
+    "name": "KolComparisonTable",
+    "group": "kol-matching",
+    "rel": "components/kol-matching/KolComparisonTable/KolComparisonTable.html",
+    "errs": 0,
+    "caught": 0,
+    "firstErr": null,
+    "pngBytes": 91189,
+    "blank": false,
+    "rootEmpty": false,
+    "thin": false,
+    "nameOnly": false,
+    "allHollow": false,
+    "collapsed": false,
+    "hasPlaceholder": false,
+    "nPlaceholder": 0,
+    "fallbackCard": false,
+    "maxHeight": 700,
+    "variantsIdentical": false,
+    "bad": false,
+    "gridOverflow": "wide",
+    "gridOverflowCells": [
+      "Default"
+    ],
+    "suggestedOverride": {
+      "cardMode": "column"
+    },
+    "texts": [
+      "Chỉ số Chiến dịchMAMai Anh Beauty@mai_anh_beautycloseTQTrần Quốc Huy@trần_quốc_huyclosePNPhạm Ngọc Lan@phạm_ngọc_lancloseĐiểm phù hợp92%Độ Phù hợp Cao nhất84%Độ Phù hợp Cao nhất88%Độ Phù hợp Cao nhấtNgười theo dõi860K245K1.3MMức tương tác6.4%5.1%4.3%Đánh giástarstarstarstarstar4.7starstarstarstarstar_outline4.2starstarstarstarstar4.5Tỷ lệ Hoàn thành97%89%93%Chi phí Ước tính$1,200$780$1,650Phù hợp Khán giảHigh MatchMedium FitHigh MatchMức độ Rủi roLowMediumMediumMATQPN3 KOL đã chọn để xem xétĐưa các creator này vào danh sách rút gọn sẽ thêm họ vào không gian làm việc chiến dịch của bạn.Quay lạiLưu Danh sách rút gọnMời người đã chọn"
+    ]
+  },
+  {
+    "name": "SearchResultsFiltersPanel",
+    "group": "kol-matching",
+    "rel": "components/kol-matching/SearchResultsFiltersPanel/SearchResultsFiltersPanel.html",
+    "errs": 0,
+    "caught": 0,
+    "firstErr": null,
+    "pngBytes": 30691,
+    "blank": false,
+    "rootEmpty": false,
+    "thin": false,
+    "nameOnly": false,
+    "allHollow": false,
+    "collapsed": false,
+    "hasPlaceholder": false,
+    "nPlaceholder": 0,
+    "fallbackCard": false,
+    "maxHeight": 480,
+    "variantsIdentical": false,
+    "bad": false,
+    "gridOverflow": null,
+    "texts": [
+      "Bộ lọcXóa tất cảNền tảngInstagramTikTokYouTubeTrống = tất cả nền tảngLĩnh vựcLàm đẹp & Đời sốngCông nghệ & GameThể hình & Sức khỏeẨm thực & Nấu ănNgười theo dõi (tối thiểu)150k+Tỷ lệ tương tácBất kỳTrên 3%Trên 5%Trên 7%"
+    ]
+  },
+  {
+    "name": "SearchResultsList",
+    "group": "kol-matching",
+    "rel": "components/kol-matching/SearchResultsList/SearchResultsList.html",
+    "errs": 0,
+    "caught": 0,
+    "firstErr": null,
+    "pngBytes": 93697,
+    "blank": false,
+    "rootEmpty": false,
+    "thin": false,
+    "nameOnly": false,
+    "allHollow": false,
+    "collapsed": false,
+    "hasPlaceholder": false,
+    "nPlaceholder": 0,
+    "fallbackCard": false,
+    "maxHeight": 555,
+    "variantsIdentical": false,
+    "bad": false,
+    "gridOverflow": "wide",
+    "gridOverflowCells": [
+      "Default"
+    ],
+    "suggestedOverride": {
+      "cardMode": "column"
+    },
+    "texts": [
+      "Bộ lọcXóa tất cảNền tảngInstagramTikTokYouTubeTrống = tất cả nền tảngLĩnh vựcLàm đẹp & Đời sốngCông nghệ & GameThể hình & Sức khỏeẨm thực & Nấu ănNgười theo dõi (tối thiểu)Bất kỳTỷ lệ tương tácBất kỳTrên 3%Trên 5%Trên 7%Kết quả Tìm kiếm KOLNhấp vào thẻ để chọn (tối đa 3). Chọn ít nhất 2 creator để so sánh.Mời người đã chọnMAMai Anh BeautyKOLĐã chọnTikTok • Làm đẹp92% Phù hợpNgười theo dõi 860.0KTương tác 6.4%Đánh giá 4.7Phù hợp tệp khán giảPhù hợp ngân sáchXem Hồ sơTQTrần Quốc HuyKOCYouTube • Công nghệ & Game84% Phù hợpNgười theo dõi 245.0KTương tác 5.1%Đánh giá 4.2Phù hợp tệp khán giảPhù hợp ngân sáchXem Hồ sơPNPhạm Ngọc LanKOLInstagram • Thời trang88% Phù hợpNgười theo dõi 1.3MTương tác 4.3%Đánh giá 4.5Phù hợp tệp khán giảPhù hợp ngân sáchXem Hồ sơĐã chọn: 1 / 3 • Đang hiển thị 3 trên 3"
+    ]
+  },
+  {
+    "name": "RankingFilters",
+    "group": "kol-ranking",
+    "rel": "components/kol-ranking/RankingFilters/RankingFilters.html",
+    "errs": 0,
+    "caught": 0,
+    "firstErr": null,
+    "pngBytes": 18897,
+    "blank": false,
+    "rootEmpty": false,
+    "thin": false,
+    "nameOnly": false,
+    "allHollow": false,
+    "collapsed": false,
+    "hasPlaceholder": false,
+    "nPlaceholder": 0,
+    "fallbackCard": false,
+    "maxHeight": 104,
+    "variantsIdentical": false,
+    "bad": false,
+    "gridOverflow": "wide",
+    "gridOverflowCells": [
+      "Empty",
+      "WithSelection"
+    ],
+    "suggestedOverride": {
+      "cardMode": "column"
+    },
+    "texts": [
+      "Tìm kiếmLĩnh vựcTất cả lĩnh vựcLàm đẹpGameĐời sốngCông nghệThể hìnhNền tảngTất cả nền tảngTikTokInstagramYouTubeNgười theo dõiTất cả khoảng0-100k100k-500k500k-1m1m+",
+      "Tìm kiếmLĩnh vựcTất cả lĩnh vựcLàm đẹpGameĐời sốngCông nghệThể hìnhNền tảngTất cả nền tảngTikTokInstagramYouTubeNgười theo dõiTất cả khoảng0-100k100k-500k500k-1m1m+"
+    ]
+  },
+  {
+    "name": "RankingPagination",
+    "group": "kol-ranking",
+    "rel": "components/kol-ranking/RankingPagination/RankingPagination.html",
+    "errs": 0,
+    "caught": 0,
+    "firstErr": null,
+    "pngBytes": 8997,
+    "blank": false,
+    "rootEmpty": false,
+    "thin": false,
+    "nameOnly": false,
+    "allHollow": false,
+    "collapsed": false,
+    "hasPlaceholder": false,
+    "nPlaceholder": 0,
+    "fallbackCard": false,
+    "maxHeight": 60,
+    "variantsIdentical": false,
+    "bad": false,
+    "gridOverflow": null,
+    "texts": [
+      "Trang  / TrướcSau"
+    ]
+  },
+  {
+    "name": "CertificateActionBar",
+    "group": "kol-verification-certificate",
+    "rel": "components/kol-verification-certificate/CertificateActionBar/CertificateActionBar.html",
+    "errs": 0,
+    "caught": 0,
+    "firstErr": null,
+    "pngBytes": 10155,
+    "blank": false,
+    "rootEmpty": false,
+    "thin": false,
+    "nameOnly": false,
+    "allHollow": false,
+    "collapsed": false,
+    "hasPlaceholder": false,
+    "nPlaceholder": 0,
+    "fallbackCard": false,
+    "maxHeight": 46,
+    "variantsIdentical": false,
+    "bad": false,
+    "gridOverflow": null,
+    "texts": [
+      "Download PDFShareVerify Link"
+    ]
+  },
+  {
+    "name": "KolVerificationCertificateView",
+    "group": "kol-verification-certificate",
+    "rel": "components/kol-verification-certificate/KolVerificationCertificateView/KolVerificationCertificateView.html",
+    "errs": 0,
+    "caught": 0,
+    "firstErr": null,
+    "pngBytes": 137876,
+    "blank": false,
+    "rootEmpty": false,
+    "thin": false,
+    "nameOnly": false,
+    "allHollow": false,
+    "collapsed": false,
+    "hasPlaceholder": false,
+    "nPlaceholder": 0,
+    "fallbackCard": false,
+    "maxHeight": 1178,
+    "variantsIdentical": false,
+    "bad": false,
+    "gridOverflow": null,
+    "texts": [
+      "✓ Verified CredentialCreator Verification CertificateThis document validates authenticity, performance metrics, and verified track record for the creator profile below.Nguyễn Linh ChiBeauty Creator · TikTok & InstagramVerification IDHK-2026-0417-LCIssue date08 tháng 7, 20264.7/5Aggregate performance ratingVerified competenciesXác thựcAudience thật > 94%, không botHiệu quảCVR chiến dịch trung bình 3.8%Lịch sử32 chiến dịch hoàn thànhVerification checksĐã xác minh danh tính qua CCCD và số điện thoạiChỉ số tương tác được kiểm chứng độc lậpKhông có vi phạm brand-safety trong 12 thángSở hữu kênh được xác nhận qua OAuth nền tảngVerified partner feedback“Linh Chi giao nội dung đúng hạn, chất lượng cao và tỷ lệ chuyển đổi vượt kỳ vọng cho dòng serum mới của chúng tôi.”La Roche-Posay VN5.0 / 5“Tương tác chân thực, cộng đồng phản hồi tích cực. Sẽ tiếp tục hợp tác trong các đợt ra mắt tới.”Hasaki Beauty4.6 / 5Issuing authorityHiveK Creator Trust AuthorityChữ ký số bởi HiveK Verification Enginesha256:9f3c8a1e7b204d6f8e2a5c9d1b0f4e7a6c3d8b2f1a5e9c0d7b4f2a8e1c6d3b9fDownload PDFShareVerify Link"
+    ]
+  },
+  {
+    "name": "HeroCardSlideshow",
+    "group": "landing",
+    "rel": "components/landing/HeroCardSlideshow/HeroCardSlideshow.html",
+    "errs": 0,
+    "caught": 0,
+    "firstErr": null,
+    "pngBytes": 62782,
+    "blank": false,
+    "rootEmpty": false,
+    "thin": false,
+    "nameOnly": false,
+    "allHollow": false,
+    "collapsed": false,
+    "hasPlaceholder": false,
+    "nPlaceholder": 0,
+    "fallbackCard": false,
+    "maxHeight": 552,
+    "variantsIdentical": false,
+    "bad": false,
+    "gridOverflow": null,
+    "texts": [
+      "Gợi ý hàng đầuThương hiệuPhân tích AI✓ThangĐiểm tương thíchTheo nhân khẩu & ngách nội dung98%Khớp cao\n [data-chart=chart-_r_1_] {\n  --color-y: var(--color-tech-blue);\n}\n\n\n.dark [data-chart=chart-_r_1_] {\n  --color-y: var(--color-tech-blue);\n}\nTương tác8.4%Cảm xúcTích cựcTăng trưởng+12%ROI dự kiếnDoanh thu ×4.2Thời gian thựcBảng theo dõi chiến dịchCập nhật mỗi vài giây — lượt hiển thị, tương tác và tỉ lệ click.\n [data-chart=chart-_r_2_] {\n  --color-v: var(--color-primary);\n}\n\n\n.dark [data-chart=chart-_r_2_] {\n  --color-v: var(--color-primary);\n}\n2h4h6h8h10h12h14hLượt hiển thị1.2MTương tác5.8%Tỉ lệ click3.1%Thanh toánChi trả an toàn cho creatorEscrow, đối soát KPI và lịch sử giao dịch minh bạch.check_circleXác minh KPI tự độngcheck_circleĐa tầng phê duyệtcheck_circleRút tiền 24–48hĐã chi trả tuần này12,840,000đ",
+      "",
+      "",
+      "",
+      "",
+      "2h"
+    ]
+  },
+  {
+    "name": "MainFooter",
+    "group": "layout",
+    "rel": "components/layout/MainFooter/MainFooter.html",
+    "errs": 0,
+    "caught": 0,
+    "firstErr": null,
+    "pngBytes": 33594,
+    "blank": false,
+    "rootEmpty": false,
+    "thin": false,
+    "nameOnly": false,
+    "allHollow": false,
+    "collapsed": false,
+    "hasPlaceholder": false,
+    "nPlaceholder": 0,
+    "fallbackCard": false,
+    "maxHeight": 345,
+    "variantsIdentical": false,
+    "bad": false,
+    "gridOverflow": null,
+    "texts": [
+      "hubHive-KNền tảng hàng đầu về marketing kết hợp KOL dựa trên dữ liệu, giúp các nhãn hàng và người sáng tạo kết nối hiệu quả.Nền tảngKOLs & CreatorNhãn hàng & Doanh nghiệpBảng xếp hạng KOLHỗ trợTrung tâm trợ giúpĐiều khoản dịch vụLiên hệ© 2024 Hive-K. Đã đăng ký bản quyền.publicalternate_emaillink"
+    ]
+  },
+  {
+    "name": "MainHeader",
+    "group": "layout",
+    "rel": "components/layout/MainHeader/MainHeader.html",
+    "errs": 0,
+    "caught": 0,
+    "firstErr": null,
+    "pngBytes": 24828,
+    "blank": false,
+    "rootEmpty": false,
+    "thin": false,
+    "nameOnly": false,
+    "allHollow": false,
+    "collapsed": false,
+    "hasPlaceholder": false,
+    "nPlaceholder": 0,
+    "fallbackCard": false,
+    "maxHeight": 140,
+    "variantsIdentical": false,
+    "bad": false,
+    "gridOverflow": "escape",
+    "gridOverflowCells": [
+      "Default"
+    ],
+    "suggestedOverride": {
+      "cardMode": "single"
+    },
+    "texts": [
+      "Dịch vụKOLsChiến dịchXếp hạngsearchBắt đầu"
+    ]
+  },
+  {
+    "name": "PostContentPanel",
+    "group": "postdetailtabs",
+    "rel": "components/postdetailtabs/PostContentPanel/PostContentPanel.html",
+    "errs": 0,
+    "caught": 0,
+    "firstErr": null,
+    "pngBytes": 73455,
+    "blank": false,
+    "rootEmpty": false,
+    "thin": false,
+    "nameOnly": false,
+    "allHollow": false,
+    "collapsed": false,
+    "hasPlaceholder": false,
+    "nPlaceholder": 0,
+    "fallbackCard": false,
+    "maxHeight": 834,
+    "variantsIdentical": false,
+    "bad": false,
+    "gridOverflow": "wide",
+    "gridOverflowCells": [
+      "Default"
+    ],
+    "suggestedOverride": {
+      "cardMode": "column"
+    },
+    "texts": [
+      "Nền tảng & Tài khoảnFacebookThreadsTikTokON TOP OfficialON TOP Shop HCMMục tiêu:Nội dung chínhTối ưu AICó những ngày chỉ cần một chiếc áo khoác gọn là outfit nhìn chỉn chu hơn hẳn. ON TOP Jacket nhẹ, dễ phối, hợp đi học, đi làm lẫn cafe cuối tuần. Comment chiều cao/cân nặng, tụi mình gợi ý size và cách phối phù hợp nha.218 ký tựMedia (Hình ảnh/Video)Kéo thả hoặc tải lên fileTạo ảnh bằng AIẢnh hero outfit streetwear tối giản, nền phố sạch, màu áo nổi rõ.Bình luận đầu tiênAi cần tư vấn size cứ comment chiều cao/cân nặng bên dưới nhé!Phản hồi gợi ýBạn cao bao nhiêu để shop tư vấn size?Inbox shop để nhận mã OTOP10 nhaÁo còn đủ màu bạn nhé"
+    ]
+  },
+  {
+    "name": "PostReviewPanel",
+    "group": "postdetailtabs",
+    "rel": "components/postdetailtabs/PostReviewPanel/PostReviewPanel.html",
+    "errs": 0,
+    "caught": 0,
+    "firstErr": null,
+    "pngBytes": 54838,
+    "blank": false,
+    "rootEmpty": false,
+    "thin": false,
+    "nameOnly": false,
+    "allHollow": false,
+    "collapsed": false,
+    "hasPlaceholder": false,
+    "nPlaceholder": 0,
+    "fallbackCard": false,
+    "maxHeight": 477,
+    "variantsIdentical": false,
+    "bad": false,
+    "gridOverflow": "wide",
+    "gridOverflowCells": [
+      "NeedsReview"
+    ],
+    "suggestedOverride": {
+      "cardMode": "column"
+    },
+    "texts": [
+      "Checklist reviewKiểm tra nhanh nội dung trước khi duyệt và chuyển sang lịch đăng.Giọng văn thương hiệuĐúng tinh thần trẻ, rõ lợi ích và không quá quảng cáo.92%CTACó lời kêu gọi hành động, nên đặt ở câu cuối để dễ scan hơn.78%Rủi ro nội dungKhông phát hiện claims nhạy cảm hoặc thông tin cần chứng minh.96%Ghi chú reviewNội dung ổn, chỉ cần đẩy CTA lên câu cuối cho dễ scan hơn.Người reviewTrạng thái hiện tạiCần xem lạiDuyệt bài viết"
+    ]
+  },
+  {
+    "name": "PostSchedulePanel",
+    "group": "postdetailtabs",
+    "rel": "components/postdetailtabs/PostSchedulePanel/PostSchedulePanel.html",
+    "errs": 0,
+    "caught": 0,
+    "firstErr": null,
+    "pngBytes": 51412,
+    "blank": false,
+    "rootEmpty": false,
+    "thin": false,
+    "nameOnly": false,
+    "allHollow": false,
+    "collapsed": false,
+    "hasPlaceholder": false,
+    "nPlaceholder": 0,
+    "fallbackCard": false,
+    "maxHeight": 356,
+    "variantsIdentical": false,
+    "bad": false,
+    "gridOverflow": "wide",
+    "gridOverflowCells": [
+      "Approved"
+    ],
+    "suggestedOverride": {
+      "cardMode": "column"
+    },
+    "texts": [
+      "Thiết lập lịch đăngĐiều chỉnh thời điểm đăng và kiểm tra thông tin phân phối của từng bài.Ngày giờ đăngKhung giờ tối ưu09:00 - Awareness10:30 - Discussion18:00 - Short video20:00 - ConversionPreview hàng đợiTeaser áo khoác gió ON TOPfacebook · Thứ 2 · 15/06 · 20:00Có những ngày chỉ cần một chiếc áo khoác gọn là outfit nhìn chỉn chu hơn hẳn. ON TOP Jacket nhẹ, dễ phối, hợp đi học, đi làm lẫn cafe cuối tuần.Trạng thái lịch đăngBài viết đã duyệt và sẵn sàng lên lịch.Hashtag#ONTOP#Aokhoacgio#StreetwearVietnam"
+    ]
+  },
+  {
+    "name": "ActiveCampaignsSection",
+    "group": "sections",
+    "rel": "components/sections/ActiveCampaignsSection/ActiveCampaignsSection.html",
+    "errs": 0,
+    "caught": 0,
+    "firstErr": null,
+    "pngBytes": 307076,
+    "blank": false,
+    "rootEmpty": false,
+    "thin": false,
+    "nameOnly": false,
+    "allHollow": false,
+    "collapsed": false,
+    "hasPlaceholder": false,
+    "nPlaceholder": 0,
+    "fallbackCard": false,
+    "maxHeight": 801,
+    "variantsIdentical": false,
+    "bad": false,
+    "gridOverflow": null,
+    "texts": [
+      "Chiến dịch Nổi bậtCác thương vụ giá trị cao đang mở hợp tácXem tất cảarrow_forwardChăm sóc daHoạt độngChiến dịch Dưỡng da Mùa hè Toả sángNgân sách$8,000 - $15,000arrow_forwardGiày dépHoạt độngNike: Tốc độ Tương laiNgân sách$2,500 - $5,000arrow_forwardĐiện tửHoạt độngReview Hệ thống Âm thanh ProNgân sách$1,200 - $3,000arrow_forwardThời trang cao cấpHoạt độngBộ sưu tập Elite ChronoNgân sách$4,000 - $8,000arrow_forwardĐồ gia dụngHoạt độngTrạm pha cà phê Barista HomeNgân sách$800 - $1,500arrow_forward"
+    ]
+  },
+  {
+    "name": "HeroSection",
+    "group": "sections",
+    "rel": "components/sections/HeroSection/HeroSection.html",
+    "errs": 0,
+    "caught": 0,
+    "firstErr": null,
+    "pngBytes": 116978,
+    "blank": false,
+    "rootEmpty": false,
+    "thin": false,
+    "nameOnly": false,
+    "allHollow": false,
+    "collapsed": false,
+    "hasPlaceholder": false,
+    "nPlaceholder": 0,
+    "fallbackCard": false,
+    "maxHeight": 744,
+    "variantsIdentical": false,
+    "bad": false,
+    "gridOverflow": null,
+    "texts": [
+      "KOL Marketing Thế Hệ MớiNâng tầm nền kinh tế Sáng tạoNền tảng toàn diện dành cho KOL và Nhãn hàng. Mở rộng tầm ảnh hưởng với cơ chế ghép đôi AI thông minh, phân tích thời gian thực và thanh toán an toàn liền mạch.Tham gia ngaytrending_upXem Demo+2kĐược tin dùng bởi hơn 2,000 creators toàn cầuGợi ý hàng đầuThương hiệuPhân tích AI✓ThangĐiểm tương thíchTheo nhân khẩu & ngách nội dung98%Khớp cao\n [data-chart=chart-_r_1_] {\n  --color-y: var(--color-tech-blue);\n}\n\n\n.dark [data-chart=chart-_r_1_] {\n  --color-y: var(--color-tech-blue);\n}\nTương tác8.4%Cảm xúcTích cựcTăng trưởng+12%ROI dự kiếnDoanh thu ×4.2Thời gian thựcBảng theo dõi chiến dịchCập nhật mỗi vài giây — lượt hiển thị, tương tác và tỉ lệ click.\n [data-chart=chart-_r_2_] {\n  --color-v: var(--color-primary);\n}\n\n\n.dark [data-chart=chart-_r_2_] {\n  --color-v: var(--color-primary);\n}\n2h4h6h8h10h12h14hLượt hiển thị1.2MTương tác5.8%Tỉ lệ click3.1%Thanh toánChi trả an toàn cho creatorEscrow, đối soát KPI và lịch sử giao dịch minh bạch.check_circleXác minh KPI tự độngcheck_circleĐa tầng phê duyệtcheck_circleRút tiền 24–48hĐã chi trả tuần này12,840,000đ",
+      "",
+      "",
+      "",
+      "",
+      "2h"
+    ]
+  },
+  {
+    "name": "HeroSlideshowSlot",
+    "group": "sections",
+    "rel": "components/sections/HeroSlideshowSlot/HeroSlideshowSlot.html",
+    "errs": 0,
+    "caught": 0,
+    "firstErr": null,
+    "pngBytes": 60714,
+    "blank": false,
+    "rootEmpty": false,
+    "thin": false,
+    "nameOnly": false,
+    "allHollow": false,
+    "collapsed": false,
+    "hasPlaceholder": false,
+    "nPlaceholder": 0,
+    "fallbackCard": false,
+    "maxHeight": 552,
+    "variantsIdentical": false,
+    "bad": false,
+    "gridOverflow": null,
+    "texts": [
+      "Gợi ý hàng đầuThương hiệuPhân tích AI✓ThangĐiểm tương thíchTheo nhân khẩu & ngách nội dung98%Khớp cao\n [data-chart=chart-_r_1_] {\n  --color-y: var(--color-tech-blue);\n}\n\n\n.dark [data-chart=chart-_r_1_] {\n  --color-y: var(--color-tech-blue);\n}\nTương tác8.4%Cảm xúcTích cựcTăng trưởng+12%ROI dự kiếnDoanh thu ×4.2Thời gian thựcBảng theo dõi chiến dịchCập nhật mỗi vài giây — lượt hiển thị, tương tác và tỉ lệ click.\n [data-chart=chart-_r_2_] {\n  --color-v: var(--color-primary);\n}\n\n\n.dark [data-chart=chart-_r_2_] {\n  --color-v: var(--color-primary);\n}\n2h4h6h8h10h12h14hLượt hiển thị1.2MTương tác5.8%Tỉ lệ click3.1%Thanh toánChi trả an toàn cho creatorEscrow, đối soát KPI và lịch sử giao dịch minh bạch.check_circleXác minh KPI tự độngcheck_circleĐa tầng phê duyệtcheck_circleRút tiền 24–48hĐã chi trả tuần này12,840,000đ",
+      "",
+      "",
+      "",
+      "",
+      "2h"
+    ]
+  },
+  {
+    "name": "PlatformBenefitsSection",
+    "group": "sections",
+    "rel": "components/sections/PlatformBenefitsSection/PlatformBenefitsSection.html",
+    "errs": 0,
+    "caught": 0,
+    "firstErr": null,
+    "pngBytes": 73668,
+    "blank": false,
+    "rootEmpty": false,
+    "thin": false,
+    "nameOnly": false,
+    "allHollow": false,
+    "collapsed": false,
+    "hasPlaceholder": false,
+    "nPlaceholder": 0,
+    "fallbackCard": false,
+    "maxHeight": 717,
+    "variantsIdentical": false,
+    "bad": false,
+    "gridOverflow": null,
+    "texts": [
+      "Cách thức hoạt độngKhai phá tiềm năng của bạnChúng tôi đơn giản hóa việc kết nối giữa KOL và các thương hiệu hàng đầu, tập trung vào tăng trưởng và tương tác thực chất.psychologyGhép đôi thông minhAI gợi ý thương hiệu phù hợp với tệp khán giả riêng của bạn để tạo nên các chiến dịch hoàn hảo.monitoringPhân tích thời gian thựcBảng điều khiển toàn diện giúp theo dõi lượng tương tác, sự phát triển khán giả và ROI chiến dịch ngay lập tức.paymentsThanh toán an toànHệ thống thanh toán đảm bảo (escrow) giúp bạn nhận tiền đúng hạn ngay khi đạt đủ mốc yêu cầu của chiến dịch."
+    ]
+  },
+  {
+    "name": "TopPerformersSection",
+    "group": "sections",
+    "rel": "components/sections/TopPerformersSection/TopPerformersSection.html",
+    "errs": 0,
+    "caught": 0,
+    "firstErr": null,
+    "pngBytes": 60750,
+    "blank": false,
+    "rootEmpty": false,
+    "thin": false,
+    "nameOnly": false,
+    "allHollow": false,
+    "collapsed": false,
+    "hasPlaceholder": false,
+    "nPlaceholder": 0,
+    "fallbackCard": false,
+    "maxHeight": 653,
+    "variantsIdentical": false,
+    "bad": false,
+    "gridOverflow": null,
+    "texts": [
+      "KOL Nổi bậtNhững nhà sáng tạo có ảnh hưởng nhất tuần nàyXem toàn bộ bảng xếp hạngarrow_forwardCreatorDanh mụcTỷ lệ tương tácNgười theo dõiXu hướngKhoai Lang Thang@KhoailangthangDu lịch & Ẩm thực10.1%2.7Mtrending_upSun HT@SunHTFitness & Lifestyle9.8%1.2Mtrending_upGiang Ơi@GiangOiĐời sống9.2%2.2Mtrending_upMixiGaming@mixigaming3conGaming8.4%8.2Mtrending_up"
+    ]
+  }
+]

@@ -1,0 +1,120 @@
+[
+  {
+    "sheet": 1,
+    "components": [
+      "ActiveCampaignsSection",
+      "AgentProcessingPanel",
+      "AgentProgressCard",
+      "AnalyticsPanel",
+      "AuthLegalInline",
+      "Badge",
+      "Button",
+      "CallToActionSection",
+      "CampaignActiveCreatorsTable",
+      "CampaignBriefCard",
+      "CampaignCategoryChips",
+      "CampaignConfigPanel",
+      "CampaignContextBar",
+      "CampaignCreateDrawer",
+      "CampaignDetailHeader",
+      "CampaignDetailView"
+    ]
+  },
+  {
+    "sheet": 2,
+    "components": [
+      "CampaignKpiDonut",
+      "CampaignKpiSection",
+      "CampaignListPanel",
+      "CampaignPlanningHeader",
+      "CampaignRecentContentList",
+      "CampaignsGrid",
+      "CampaignSidebar",
+      "CampaignsPageHeader",
+      "CampaignStatsGrid",
+      "CampaignSummaryBar",
+      "CampaignTrackingDashboard",
+      "Card",
+      "CardContent",
+      "CardDescription",
+      "CardHeader",
+      "CardTitle"
+    ]
+  },
+  {
+    "sheet": 3,
+    "components": [
+      "CertificateActionBar",
+      "ChartContainer",
+      "ChartTooltip",
+      "ChartTooltipContent",
+      "CommentItem",
+      "CommentSection",
+      "CreatorContactModal",
+      "CreatorSuggestionsTab",
+      "DashboardKpiCards",
+      "DashboardPerformance",
+      "DashboardRecentActivities",
+      "DashboardSidebar",
+      "DashboardTopbar",
+      "FindEntryForm",
+      "FindEntryHelperPanel",
+      "FlowPageHeader"
+    ]
+  },
+  {
+    "sheet": 4,
+    "components": [
+      "FlowStepper",
+      "HeroCardSlideshow",
+      "HeroSection",
+      "HeroSlideshowSlot",
+      "Input",
+      "InviteLinkBlock",
+      "KolAnalysisHeader",
+      "KolAnalysisTabs",
+      "KolComparisonTable",
+      "KolInfoCard",
+      "KolReviewQuote",
+      "KolVerificationCertificateView",
+      "KpiOverview",
+      "Label",
+      "MainFooter",
+      "MainHeader"
+    ]
+  },
+  {
+    "sheet": 5,
+    "components": [
+      "MetricsCard",
+      "OverviewPanel",
+      "ParticipantsTab",
+      "PipelineGuidePanel",
+      "PlatformBenefitsSection",
+      "PlatformNicheAnalytics",
+      "PostContentPanel",
+      "PostDetailShell",
+      "PostingRoadmap",
+      "PostReviewPanel",
+      "PostSchedulePanel",
+      "ProductCard",
+      "ProfileRadarChart",
+      "PublishingTimeline",
+      "RankingFilters",
+      "RankingPagination"
+    ]
+  },
+  {
+    "sheet": 6,
+    "components": [
+      "ScoreDistributionCharts",
+      "SearchResultsFiltersPanel",
+      "SearchResultsList",
+      "SelectedProfileCard",
+      "SignInForm",
+      "SignUpForm",
+      "TopPerformersSection",
+      "VideoPlayer"
+    ]
+  }
+]
