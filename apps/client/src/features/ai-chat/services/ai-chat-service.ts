@@ -230,7 +230,7 @@ function createNextSetupTurn(setup: AiChatSetup): AiChatMessageDraft | null {
     return {
       role: "assistant",
       content:
-        "Bước 3/3 · Thêm đường dẫn thư mục Drive chứa guideline, logo hoặc hình ảnh sản phẩm. HiveK chỉ lưu đường dẫn bạn nhập ở bản demo này.",
+        "Bước 3/3 · Thêm đường dẫn thư mục Drive chứa guideline, logo hoặc hình ảnh sản phẩm. Bạn có thể thay đổi phạm vi truy cập trong Studio bất cứ lúc nào.",
       widget: { type: "drive-form" },
     };
   }
@@ -335,7 +335,7 @@ export function createInputAgentTurns(
     {
       role: "assistant",
       content:
-        "Mình đã ghi nhận yêu cầu. Hiện tại trợ lý demo xử lý các luồng có sẵn; bạn có thể chọn một hướng bên dưới để tiếp tục.",
+        "Mình đã ghi nhận yêu cầu. Chọn một tác vụ có cấu trúc bên dưới để mình mở đúng không gian làm việc cho bạn.",
       actions: [
         {
           id: "suggest-plan-posts",
@@ -364,7 +364,7 @@ export function createSetupCompletionTurns(
     social: `Đã ghi nhận ${setup.socialPlatforms.length} kênh xã hội cho workspace này.`,
     brand: `Đã lưu định hướng cho ${setup.branding.name}. Mình sẽ dùng giọng điệu này làm ngữ cảnh cho các gợi ý tiếp theo.`,
     drive:
-      "Đã ghi nhận đường dẫn tài nguyên. Bản demo không truy cập hoặc đồng bộ dữ liệu từ Drive.",
+      "Đã ghi nhận đường dẫn tài nguyên. Bạn có thể kiểm tra phạm vi và quyền đồng bộ trong Studio.",
   };
 
   const turns: AiChatMessageDraft[] = [

@@ -62,7 +62,7 @@ export function DriveSetupForm({
           </h3>
           <p className="mt-1 text-xs leading-5 text-foreground-muted">
             Dán link thư mục Google Drive chứa logo, guideline hoặc ảnh sản phẩm.
-            Bản demo chỉ lưu đường dẫn cục bộ trên trình duyệt này.
+            Chỉ thêm thư mục chứa tài nguyên bạn có quyền quản lý.
           </p>
         </div>
       </div>

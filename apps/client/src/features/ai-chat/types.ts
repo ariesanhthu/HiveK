@@ -24,6 +24,14 @@ export type BrandToneId =
 
 export type AiChatActionVariant = "primary" | "secondary";
 
+/** Review verdicts the agent accepts for a generated draft. */
+export type AiChatDecision =
+  | "approve"
+  | "reject"
+  | "edit"
+  | "regenerate"
+  | "pin_as_good";
+
 type AiChatActionBase = {
   id: string;
   label: string;
@@ -41,7 +49,16 @@ export type AiChatHrefAction = AiChatActionBase & {
   external?: boolean;
 };
 
-export type AiChatAction = AiChatIntentAction | AiChatHrefAction;
+export type AiChatDecisionAction = AiChatActionBase & {
+  kind: "decision";
+  decision: AiChatDecision;
+  assetId: string;
+};
+
+export type AiChatAction =
+  | AiChatIntentAction
+  | AiChatHrefAction
+  | AiChatDecisionAction;
 
 export type AiChatWidget =
   | { type: "setup-overview" }
@@ -93,6 +110,13 @@ export type AiChatSetup = {
     tone: BrandToneId | null;
   };
   driveUrl: string;
+};
+
+/** Identifiers the agentic service uses to scope facts, memory and history. */
+export type AiChatIdentity = {
+  workspaceId: string;
+  userId: string;
+  threadId: string;
 };
 
 export type AiChatSetupProgress = {

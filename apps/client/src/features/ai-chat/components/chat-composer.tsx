@@ -1,18 +1,28 @@
 "use client";
 
 import { useRef, useState, type FormEvent, type KeyboardEvent } from "react";
-import { ArrowUp, CornerDownLeft } from "lucide-react";
+import { ArrowUp, CornerDownLeft, Link2 } from "lucide-react";
+
+import { cn } from "@/lib/utils";
 
 type ChatComposerProps = {
   onSubmit: (message: string) => void;
+  isPending?: boolean;
+  placeholder?: string;
+  submitLabel?: string;
 };
 
 const MAX_TEXTAREA_HEIGHT = 144;
 
-export function ChatComposer({ onSubmit }: ChatComposerProps) {
+export function ChatComposer({
+  onSubmit,
+  isPending = false,
+  placeholder = "Nhắn HiveK AI điều bạn muốn thực hiện…",
+  submitLabel,
+}: ChatComposerProps) {
   const [value, setValue] = useState("");
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const canSubmit = value.trim().length > 0;
+  const canSubmit = value.trim().length > 0 && !isPending;
 
   function resetComposer(): void {
     setValue("");
@@ -23,7 +33,7 @@ export function ChatComposer({ onSubmit }: ChatComposerProps) {
 
   function submitMessage(): void {
     const nextMessage = value.trim();
-    if (!nextMessage) return;
+    if (!nextMessage || isPending) return;
     onSubmit(nextMessage);
     resetComposer();
   }
@@ -71,17 +81,30 @@ export function ChatComposer({ onSubmit }: ChatComposerProps) {
             resizeTextarea(event.currentTarget);
           }}
           onKeyDown={handleKeyDown}
-          placeholder="Nhắn HiveK AI điều bạn muốn thực hiện…"
+          placeholder={placeholder}
+          disabled={isPending}
           autoComplete="off"
-          className="max-h-36 min-h-11 min-w-0 flex-1 resize-none bg-transparent px-3 py-3 text-sm leading-5 text-foreground outline-none placeholder:text-slate-400"
+          className="max-h-36 min-h-11 min-w-0 flex-1 resize-none bg-transparent px-3 py-3 text-sm leading-5 text-foreground outline-none placeholder:text-slate-400 disabled:cursor-not-allowed"
         />
         <button
           type="submit"
           disabled={!canSubmit}
-          className="flex size-11 shrink-0 touch-manipulation items-center justify-center rounded-2xl bg-primary text-background-dark shadow-[0_6px_16px_rgba(245,158,11,0.24)] transition-[transform,background-color,opacity] hover:-translate-y-0.5 hover:bg-amber-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 disabled:translate-y-0 disabled:cursor-not-allowed disabled:bg-slate-200 disabled:text-slate-400 disabled:shadow-none motion-reduce:transform-none motion-reduce:transition-none"
-          aria-label="Gửi tin nhắn"
+          className={cn(
+            "flex h-11 shrink-0 touch-manipulation items-center justify-center rounded-2xl bg-primary text-background-dark shadow-[0_6px_16px_rgba(245,158,11,0.24)] transition-[transform,background-color,opacity] hover:-translate-y-0.5 hover:bg-amber-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 disabled:translate-y-0 disabled:cursor-not-allowed disabled:bg-slate-200 disabled:text-slate-400 disabled:shadow-none motion-reduce:transform-none motion-reduce:transition-none",
+            submitLabel
+              ? "min-w-28 gap-2 px-4 text-sm font-extrabold"
+              : "w-11"
+          )}
+          aria-label={submitLabel ?? "Gửi tin nhắn"}
         >
-          <ArrowUp className="size-5" strokeWidth={2.4} aria-hidden />
+          {submitLabel ? (
+            <>
+              <Link2 className="size-4" strokeWidth={2.4} aria-hidden />
+              <span>{submitLabel}</span>
+            </>
+          ) : (
+            <ArrowUp className="size-5" strokeWidth={2.4} aria-hidden />
+          )}
         </button>
       </form>
       <p className="mx-auto mt-2 hidden max-w-3xl items-center justify-center gap-1.5 text-center text-[10px] text-slate-400 sm:flex">

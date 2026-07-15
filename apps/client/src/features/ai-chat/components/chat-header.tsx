@@ -11,6 +11,9 @@ type ChatHeaderProps = {
   hasConversation: boolean;
   navItems: DashboardNavItem[];
   onReset: () => void;
+  statusText?: string;
+  isBusy?: boolean;
+  resetDisabled?: boolean;
 };
 
 export function ChatHeader({
@@ -20,6 +23,9 @@ export function ChatHeader({
   hasConversation,
   navItems,
   onReset,
+  statusText = "Sẵn sàng đồng hành cùng bạn",
+  isBusy = false,
+  resetDisabled = false,
 }: ChatHeaderProps) {
   return (
     <header className="z-10 flex h-[4.5rem] shrink-0 items-center justify-between gap-3 border-b border-slate-200/80 bg-card/95 px-4 backdrop-blur md:px-6">
@@ -39,8 +45,15 @@ export function ChatHeader({
             </span>
           </div>
           <p className="mt-0.5 flex items-center gap-1.5 truncate text-[11px] font-medium text-foreground-muted sm:text-xs">
-            <span className="size-1.5 rounded-full bg-emerald-500" aria-hidden />
-            Sẵn sàng đồng hành cùng bạn
+            <span
+              className={`size-1.5 rounded-full ${
+                isBusy
+                  ? "animate-pulse bg-amber-500 motion-reduce:animate-none"
+                  : "bg-emerald-500"
+              }`}
+              aria-hidden
+            />
+            {statusText}
           </p>
         </div>
       </div>
@@ -60,6 +73,7 @@ export function ChatHeader({
             variant="ghost"
             size="sm"
             onClick={onReset}
+            disabled={resetDisabled}
             className="h-11 touch-manipulation px-3 text-foreground-muted hover:text-foreground sm:h-9"
             aria-label="Bắt đầu cuộc trò chuyện mới"
           >

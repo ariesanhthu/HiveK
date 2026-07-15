@@ -75,21 +75,21 @@ export const MainHeader: React.FC = () => {
           </Link>
 
           <nav className="hidden items-center gap-8 md:flex">
-            <Link href="/#platform" className="nav-link">
+            <Link href="/#feature-showcase" className="nav-link">
               Dịch vụ
             </Link>
 
-            <Link href="/#influencers" className="nav-link">
+            {/* <Link href="/#influencers" className="nav-link">
               KOLs
-            </Link>
+            </Link> */}
 
             <Link href="/#campaigns" className="nav-link">
               Chiến dịch
             </Link>
 
-            <Link href="/kol-ranking" className="nav-link">
+            {/* <Link href="/kol-ranking" className="nav-link">
               Xếp hạng
-            </Link>
+            </Link> */}
 
             <Link href="/pricing" className="nav-link">
               Bảng giá
