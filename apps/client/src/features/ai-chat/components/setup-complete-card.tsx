@@ -10,14 +10,14 @@ export function SetupCompleteCard() {
         <div className="min-w-0">
           <div className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-[0.12em] text-emerald-700">
             <Sparkles className="size-3.5" aria-hidden />
-            Workspace sẵn sàng
+            Workspace The TutorX sẵn sàng
           </div>
           <h3 className="mt-1.5 text-base font-extrabold text-foreground">
-            Bạn đã hoàn tất thiết lập nhanh
+            Hồ sơ và chiến lược nền đã hoàn tất
           </h3>
           <p className="mt-1 text-xs leading-5 text-foreground-muted">
-            Từ đây, HiveK có thể dùng ngữ cảnh vừa nhập để hướng dẫn các bước
-            tiếp theo nhất quán hơn.
+            HiveK đã có đủ ngữ cảnh để tạo lịch nội dung theo đúng trụ cột,
+            kênh và giọng thương hiệu. Bạn vẫn duyệt trước khi lên lịch.
           </p>
         </div>
       </div>

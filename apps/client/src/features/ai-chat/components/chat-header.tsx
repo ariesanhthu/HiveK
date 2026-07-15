@@ -30,7 +30,11 @@ export function ChatHeader({
   return (
     <header className="z-10 flex h-[4.5rem] shrink-0 items-center justify-between gap-3 border-b border-slate-200/80 bg-card/95 px-4 backdrop-blur md:px-6">
       <div className="flex min-w-0 items-center gap-3">
-        <AgentAvatar size="sm" className="md:hidden" />
+        <AgentAvatar
+          size="sm"
+          variant={isBusy ? "action" : "friendly"}
+          className="md:hidden"
+        />
         <div className="min-w-0">
           <div className="flex items-center gap-2">
             <h1

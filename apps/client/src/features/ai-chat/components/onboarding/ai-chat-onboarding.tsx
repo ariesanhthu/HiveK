@@ -84,7 +84,7 @@ function AgentMessage({
 }) {
   return (
     <div className="flex items-start gap-3">
-      <AgentAvatar size="sm" className="mt-0.5" />
+      <AgentAvatar size="sm" variant="action" className="mt-0.5" />
       <div className="max-w-[calc(100%_-_2.75rem)] rounded-[1.35rem] rounded-tl-md border border-slate-200 bg-card px-4 py-3 shadow-sm sm:max-w-[82%]">
         {eyebrow ? (
           <p className="mb-1 text-[10px] font-bold uppercase tracking-[0.12em] text-amber-700">

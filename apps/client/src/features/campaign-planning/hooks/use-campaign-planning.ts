@@ -141,9 +141,10 @@ export function useCampaignPlanning() {
     const nextNumber = campaigns.length + 1;
     const newCampaign: Campaign = {
       id: `campaign-${Date.now()}`,
-      name: `Chien dich moi ${nextNumber}`,
+      name: `Kế hoạch nội dung mới ${nextNumber}`,
       status: "draft",
-      description: "Mock draft campaign ready for agentic planning.",
+      description:
+        "Bản nháp mới sử dụng hồ sơ thương hiệu và quy tắc nội dung của The TutorX.",
     };
     const nextSnapshot: CampaignPlanningSnapshot = {
       ...data,
@@ -191,7 +192,7 @@ export function useCampaignPlanning() {
       reviewNote:
         validation.issues.length > 0
           ? validation.issues.join(" ")
-          : "Content validated and approved.",
+          : "Nội dung đã vượt qua kiểm tra và được duyệt.",
     });
 
     await saveFeedbackMutation.mutateAsync({
@@ -238,7 +239,7 @@ export function useCampaignPlanning() {
     await saveFeedbackMutation.mutateAsync({
       campaignId: selectedCampaign.id,
       eventType: "publish",
-      reason: "Campaign scheduled from planner.",
+      reason: "Người dùng đã xác nhận lịch đăng từ trình lập kế hoạch.",
     });
   }, [saveFeedbackMutation, selectedCampaign, updateCurrentSnapshot]);
 
@@ -259,7 +260,8 @@ export function useCampaignPlanning() {
       stepId: selectedPost.id,
       platform: selectedPost.platform,
       angle: selectedPost.title,
-      userInstruction: "Make the copy more natural and less salesy.",
+      userInstruction:
+        "Viết tự nhiên, hữu ích, đúng giọng The TutorX và tránh tạo cảm giác quảng cáo quá mức.",
     });
 
     updateSelectedPost({
@@ -276,7 +278,7 @@ export function useCampaignPlanning() {
       eventType: "regenerate",
       beforeText: selectedPost.content,
       afterText: generatedPost.content,
-      reason: "AI optimization requested from content tab.",
+      reason: "Người dùng yêu cầu Agent tối ưu nội dung từ tab biên tập.",
     });
   }, [
     generatePostMutation,

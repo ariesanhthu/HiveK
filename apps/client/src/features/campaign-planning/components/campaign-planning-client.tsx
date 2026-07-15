@@ -141,8 +141,8 @@ export function CampaignPlanningClient() {
             ) : (
               <div className="flex h-full items-center justify-center rounded-lg border border-dashed border-primary-soft text-sm font-semibold text-foreground-muted">
                 {isLoading
-                  ? "Dang tai agentic planner..."
-                  : "Chon mot bai viet trong lo trinh de xem chi tiet."}
+                  ? "Agent đang tải kế hoạch The TutorX…"
+                  : "Chọn một bài viết trong lộ trình để xem và chỉnh sửa."}
               </div>
             )}
           </PostDetailShell>

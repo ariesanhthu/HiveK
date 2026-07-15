@@ -22,7 +22,7 @@ export function CampaignSummaryBar({
       <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
         <div>
           <p className="text-[11px] font-bold uppercase tracking-wide text-foreground-muted">
-            Tổng quan chiến dịch
+            Tổng quan kế hoạch
           </p>
           <p className="mt-0.5 text-sm font-bold text-foreground">
             {total} bài viết ·{" "}
@@ -39,7 +39,7 @@ export function CampaignSummaryBar({
             className="inline-flex h-10 items-center justify-center gap-2 rounded-lg border border-primary-soft px-4 text-sm font-bold text-foreground transition-colors hover:bg-muted"
           >
             <CheckCircle2 className="size-4" aria-hidden />
-            Duyệt Tất Cả
+            Duyệt tất cả
           </button>
           <button
             type="button"
@@ -47,7 +47,7 @@ export function CampaignSummaryBar({
             className="inline-flex h-10 items-center justify-center gap-2 rounded-lg bg-secondary px-4 text-sm font-bold text-white shadow-sm transition-colors hover:bg-orange-500"
           >
             <CalendarDays className="size-4" aria-hidden />
-            Lên Lịch Chiến Dịch
+            Xác nhận lịch đăng
           </button>
         </div>
       </div>

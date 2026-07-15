@@ -20,7 +20,7 @@ const INTENT_ACTIONS = {
   },
   planPosts: {
     id: "open-campaign-planning",
-    label: "Mở trình lập kế hoạch",
+    label: "Bắt đầu lên kế hoạch đăng bài",
     kind: "href",
     href: "/campaign-planning",
     variant: "primary",
@@ -51,9 +51,9 @@ const INTENT_ACTIONS = {
 const READY_ACTIONS = [
   {
     id: "complete-plan-posts",
-    label: "Lên kế hoạch đăng bài",
-    kind: "intent",
-    intent: "plan-posts",
+    label: "Bắt đầu lên kế hoạch đăng bài",
+    kind: "href",
+    href: "/campaign-planning",
     variant: "primary",
   },
   {
@@ -382,7 +382,7 @@ export function createSetupCompletionTurns(
     {
       role: "assistant",
       content:
-        "Thiết lập nhanh đã hoàn tất. HiveK đã có đủ ngữ cảnh cơ bản để đồng hành cùng kế hoạch nội dung của bạn.",
+        "Workspace The TutorX đã hoàn tất. HiveK đã có hồ sơ thương hiệu, hệ thống kênh và chiến lược 90 ngày để bắt đầu xây dựng kế hoạch nội dung.",
       widget: { type: "setup-complete" },
       actions: [...READY_ACTIONS],
     },

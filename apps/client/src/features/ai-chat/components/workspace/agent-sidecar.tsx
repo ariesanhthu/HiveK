@@ -1,6 +1,13 @@
 "use client";
 
-import { Bot, ChevronRight, PanelRightClose, RotateCcw, Sparkles } from "lucide-react";
+import Link from "next/link";
+import {
+  CalendarRange,
+  ChevronRight,
+  PanelRightClose,
+  RotateCcw,
+  Sparkles,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { AgentAvatar } from "@/features/ai-chat/components/agent-avatar";
 import { ChatComposer } from "@/features/ai-chat/components/chat-composer";
@@ -193,7 +200,7 @@ export function AgentSidecar({
     >
       <header className="flex h-[4.5rem] shrink-0 items-center justify-between gap-3 border-b border-slate-200 px-4">
         <div className="flex min-w-0 items-center gap-3">
-          <AgentAvatar size="sm" />
+          <AgentAvatar size="sm" variant={isLoading ? "action" : "friendly"} />
           <div className="min-w-0">
             <div className="flex items-center gap-1.5">
               <h2 className="truncate text-sm font-extrabold text-foreground">
@@ -310,15 +317,20 @@ export function AgentSidecar({
       ) : (
         <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 py-5">
           <div className="rounded-2xl border border-amber-200 bg-[linear-gradient(135deg,#fffaf0,#ffffff)] p-4">
-            <span className="flex size-9 items-center justify-center rounded-xl bg-primary text-background-dark">
-              <Bot className="size-[1.1rem]" aria-hidden />
-            </span>
+            <AgentAvatar size="lg" variant="action" showStatus={false} />
             <h3 className="mt-4 text-base font-extrabold text-foreground">
               Mình đã chuẩn bị hồ sơ {workspaceName}
             </h3>
             <p className="mt-2 text-xs leading-5 text-foreground-muted">
               Chọn một hành động để mình đưa bạn đến đúng màn hình. Dữ liệu đã được điền sẵn, bạn chỉ cần kiểm tra, chỉnh sửa và xác nhận.
             </p>
+            <Link
+              href="/campaign-planning"
+              className="mt-4 inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-xl bg-primary px-4 text-sm font-extrabold text-slate-950 shadow-[0_8px_20px_rgba(245,158,11,0.2)] transition-colors hover:bg-amber-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+            >
+              <CalendarRange className="size-4" aria-hidden />
+              Bắt đầu lên kế hoạch đăng bài
+            </Link>
           </div>
 
           <section className="mt-5" aria-labelledby="agent-next-actions">

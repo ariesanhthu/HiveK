@@ -3,7 +3,6 @@
 import Link from "next/link";
 import {
   BarChart3,
-  Bot,
   Boxes,
   ExternalLink,
   Menu,
@@ -12,11 +11,11 @@ import {
   RotateCcw,
   Settings2,
   ShieldCheck,
-  Sparkles,
   Target,
   type LucideIcon,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { AgentAvatar } from "@/features/ai-chat/components/agent-avatar";
 import type { DashboardNavItem } from "@/features/business-dashboard/types";
 import type { WorkspaceViewId } from "@/features/ai-chat/types/workspace-types";
 import { cn } from "@/lib/utils";
@@ -98,9 +97,12 @@ export function WorkspaceHeader({
             </nav>
           </details>
 
-          <span className="hidden size-10 shrink-0 items-center justify-center rounded-2xl bg-[linear-gradient(135deg,#fef3c7,#ffedd5)] text-amber-700 sm:flex">
-            <Sparkles className="size-5" aria-hidden />
-          </span>
+          <AgentAvatar
+            size="md"
+            variant="friendly"
+            showStatus={false}
+            className="hidden sm:inline-flex"
+          />
           <div className="min-w-0">
             <div className="flex items-center gap-2">
               <h1 className="truncate text-sm font-extrabold tracking-tight text-foreground sm:text-base">
@@ -154,7 +156,12 @@ export function WorkspaceHeader({
             aria-controls="hivek-agent-sidecar"
             aria-label={agentOpen ? "Ẩn HiveK Agent" : "Mở HiveK Agent"}
           >
-            <Bot className="size-4" aria-hidden />
+            <AgentAvatar
+              size="xs"
+              variant="action"
+              showStatus={false}
+              className="border-0 bg-transparent shadow-none"
+            />
             <span className="hidden sm:inline">{agentOpen ? "Ẩn Agent" : "Mở Agent"}</span>
           </Button>
         </div>

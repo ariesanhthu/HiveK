@@ -7,6 +7,14 @@ import { type DashboardNavItem } from "@/features/business-dashboard/types";
 const BUSINESS_NAV_BASE: Omit<DashboardNavItem, "isActive">[] = [
   { id: "ai-chat", label: "HiveK AI", icon: "auto_awesome", href: "/ai-chat" },
   { id: "dashboard", label: "Bảng điều khiển", icon: "dashboard", href: "/dashboard" },
+  {
+    id: "inbox",
+    label: "Hộp thư",
+    icon: "support_agent",
+    href: "/inbox",
+    badgeCount: 4,
+    badgeLabel: "4 cuộc hội thoại cần xử lý",
+  },
   { id: "campaigns", label: "Chiến dịch", icon: "campaign", href: "/campaign-management" },
   {
     id: "auto-posting",

@@ -20,7 +20,7 @@ export function AgentProgressCard({ progress, steps }: AgentProgressCardProps) {
         <div className="flex min-w-0 items-center gap-2">
           <span className="size-2.5 shrink-0 rounded-full bg-primary" />
           <p className="truncate text-xs font-bold text-foreground">
-            Agent AI đang tối ưu hoá kế hoạch đăng bài...
+            Agent đang dựng kế hoạch từ hồ sơ The TutorX…
           </p>
         </div>
         <span className="text-xs font-bold text-amber-700">{progress}%</span>

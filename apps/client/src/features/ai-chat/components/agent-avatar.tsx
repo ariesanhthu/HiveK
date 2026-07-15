@@ -3,22 +3,40 @@ import { cn } from "@/lib/utils";
 
 type AgentAvatarProps = {
   className?: string;
-  size?: "sm" | "md" | "lg";
+  size?: "xs" | "sm" | "md" | "lg" | "hero";
+  variant?: "friendly" | "action";
+  showStatus?: boolean;
+  preload?: boolean;
 };
 
 const SIZE_CLASSES = {
+  xs: "size-7 rounded-lg",
   sm: "size-8 rounded-xl",
   md: "size-10 rounded-2xl",
-  lg: "size-14 rounded-[1.25rem]",
+  lg: "size-16 rounded-[1.4rem]",
+  hero: "size-28 rounded-[2rem] sm:size-32",
 };
 
 const IMAGE_SIZES = {
-  sm: 19,
-  md: 24,
-  lg: 32,
+  xs: 24,
+  sm: 29,
+  md: 37,
+  lg: 58,
+  hero: 116,
 };
 
-export function AgentAvatar({ className, size = "md" }: AgentAvatarProps) {
+const MASCOT_SOURCES = {
+  friendly: "/icon/mascot1.webp",
+  action: "/icon/mascot2.webp",
+} as const;
+
+export function AgentAvatar({
+  className,
+  size = "md",
+  variant = "friendly",
+  showStatus = true,
+  preload = false,
+}: AgentAvatarProps) {
   return (
     <span
       className={cn(
@@ -29,13 +47,16 @@ export function AgentAvatar({ className, size = "md" }: AgentAvatarProps) {
       aria-hidden
     >
       <Image
-        src="/hivek-icon.png"
+        src={MASCOT_SOURCES[variant]}
         alt=""
         width={IMAGE_SIZES[size]}
         height={IMAGE_SIZES[size]}
-        className="object-contain"
+        preload={preload}
+        className="object-contain drop-shadow-[0_5px_8px_rgba(124,58,237,0.12)]"
       />
-      <span className="absolute -right-0.5 -top-0.5 size-2.5 rounded-full border-2 border-white bg-emerald-500" />
+      {showStatus ? (
+        <span className="absolute -right-0.5 -top-0.5 size-2.5 rounded-full border-2 border-white bg-emerald-500" />
+      ) : null}
     </span>
   );
 }

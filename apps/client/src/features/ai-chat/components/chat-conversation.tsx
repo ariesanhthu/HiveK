@@ -26,7 +26,11 @@ type ChatConversationProps = {
 function TypingIndicator() {
   return (
     <article className="flex items-start gap-3 py-3 sm:gap-3.5">
-      <AgentAvatar size="sm" className="mt-0.5" />
+      <AgentAvatar
+        size="sm"
+        variant="action"
+        className="mt-0.5 animate-pulse motion-reduce:animate-none"
+      />
       <span className="flex items-center gap-1.5 pt-3.5">
         <span className="sr-only">HiveK AI đang soạn câu trả lời</span>
         <span

@@ -55,7 +55,12 @@ export function ChatWelcome({ prompts, onSelectPrompt }: ChatWelcomeProps) {
 
       <div className="relative w-full max-w-3xl">
         <div className="mb-6 text-center sm:mb-8">
-          <AgentAvatar size="lg" className="mx-auto" />
+          <AgentAvatar
+            size="hero"
+            variant="friendly"
+            preload
+            className="mx-auto"
+          />
           <p className="mt-5 text-xs font-bold uppercase tracking-[0.16em] text-amber-700">
             Agent thiết lập workspace
           </p>

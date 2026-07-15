@@ -74,7 +74,7 @@ export async function generateCampaignPlanWorkflow(
     campaignId: selectedCampaign?.id ?? campaignId,
     strategySummary:
       selectedCampaign?.description ??
-      "Mock strategy generated from local campaign planning data.",
+      "Kế hoạch nội dung được xây dựng từ hồ sơ thương hiệu và chiến lược 90 ngày của The TutorX.",
     steps,
     agentRun: createAgentRunSummary({
       workflowName: "generate-campaign-plan",

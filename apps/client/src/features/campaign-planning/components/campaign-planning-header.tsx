@@ -11,8 +11,8 @@ type CampaignPlanningHeaderProps = {
 };
 
 const STATUS_LABELS: Record<Campaign["status"], string> = {
-  draft: "Bản nháp",
-  ready: "Sẵn sàng duyệt",
+  draft: "Đang xây dựng",
+  ready: "Chờ duyệt",
   scheduled: "Đã lên lịch",
 };
 
@@ -32,7 +32,7 @@ export function CampaignPlanningHeader({
         <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-3">
             <h1 className="text-2xl font-extrabold tracking-tight text-foreground">
-              Lên bài tự động
+              Kế hoạch đăng bài The TutorX
             </h1>
             {selectedCampaign ? (
               <span
@@ -48,7 +48,7 @@ export function CampaignPlanningHeader({
             ) : null}
           </div>
           <p className="mt-1 text-xs leading-5 text-foreground-muted">
-            Tạo bài viết, xem xét nội dung và lên lịch đăng tự động từ cấu hình chiến dịch.
+            Agent đã dùng hồ sơ thương hiệu, trụ cột nội dung và chiến lược 90 ngày để chuẩn bị bản nháp. Bạn kiểm tra, chỉnh sửa và duyệt trước khi lên lịch.
           </p>
         </div>
 
@@ -76,7 +76,7 @@ export function CampaignPlanningHeader({
             onClick={onAddCampaign}
             className="h-10 rounded-lg border border-primary-soft px-3 text-sm font-semibold text-foreground transition-colors hover:bg-primary-soft"
           >
-            + Chọn chiến dịch khác
+            + Tạo kế hoạch khác
           </button>
 
           <button
@@ -85,7 +85,7 @@ export function CampaignPlanningHeader({
             className="inline-flex h-10 items-center justify-center gap-2 rounded-lg bg-primary px-4 text-sm font-bold text-background-dark shadow-primary transition-colors hover:bg-amber-500"
           >
             <Sparkles className="size-4" aria-hidden />
-            Tạo bài viết
+            Tạo kế hoạch bằng Agent
           </button>
         </div>
       </div>
