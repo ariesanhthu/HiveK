@@ -22,5 +22,6 @@ export * from './scheduled-post.repository';
 export * from './auto-reply-rule.repository';
 export * from './credit-wallet.repository';
 export * from './quota-usage.repository';
+export * from './enterprise-invitation.repository';
 
 

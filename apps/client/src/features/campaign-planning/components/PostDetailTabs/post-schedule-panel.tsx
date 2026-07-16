@@ -58,10 +58,12 @@ export function PostSchedulePanel({ post, onPostChange }: PostSchedulePanelProps
               onChange={(event) => onPostChange({ time: event.target.value })}
               className="h-11 w-full rounded-lg border border-primary-soft bg-background-light px-3 text-sm font-semibold text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
             >
-              <option value="09:00">09:00 - Awareness</option>
-              <option value="10:30">10:30 - Discussion</option>
-              <option value="18:00">18:00 - Short video</option>
-              <option value="20:00">20:00 - Conversion</option>
+              <option value="09:00">09:00 · Nhận diện</option>
+              <option value="09:30">09:30 · Phụ huynh</option>
+              <option value="11:30">11:30 · Thảo luận</option>
+              <option value="19:30">19:30 · Video ngắn</option>
+              <option value="20:00">20:00 · Nội dung chuyên sâu</option>
+              <option value="20:30">20:30 · Hỏi đáp</option>
             </select>
           </label>
         </div>

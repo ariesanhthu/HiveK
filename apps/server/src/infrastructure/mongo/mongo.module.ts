@@ -34,6 +34,8 @@ import {
   AutoReplyRuleModel, AutoReplyRuleSchema,
   CreditWalletModel, CreditWalletSchema,
   QuotaUsageModel, QuotaUsageSchema,
+  EnterpriseInvitationModel,
+  EnterpriseInvitationSchema,
 } from './schemas';
 
 // Repository imports
@@ -60,6 +62,7 @@ import {
   MongoAutoReplyRuleRepository,
   MongoCreditWalletRepository,
   MongoQuotaUsageRepository,
+  MongoEnterpriseInvitationRepository,
 } from './repositories';
 
 // Read Service imports
@@ -105,6 +108,7 @@ import {
   AUTO_REPLY_RULE_REPOSITORY,
   CREDIT_WALLET_REPOSITORY,
   QUOTA_USAGE_REPOSITORY,
+  ENTERPRISE_INVITATION_REPOSITORY,
 } from '@/core/interfaces/repositories';
 
 // Read Service symbols
@@ -177,6 +181,7 @@ import { MongoCampaignProposalReadService } from './read-services/campaign-propo
       { name: AutoReplyRuleModel.name, schema: AutoReplyRuleSchema },
       { name: CreditWalletModel.name, schema: CreditWalletSchema },
       { name: QuotaUsageModel.name, schema: QuotaUsageSchema },
+      { name: EnterpriseInvitationModel.name, schema: EnterpriseInvitationSchema },
     ]),
   ],
   providers: [
@@ -282,6 +287,10 @@ import { MongoCampaignProposalReadService } from './read-services/campaign-propo
       provide: QUOTA_USAGE_REPOSITORY,
       useClass: MongoQuotaUsageRepository,
     },
+    {
+      provide: ENTERPRISE_INVITATION_REPOSITORY,
+      useClass: MongoEnterpriseInvitationRepository,
+    },
     // All Read Services
     {
       provide: USER_READ_SERVICE,
@@ -374,6 +383,7 @@ import { MongoCampaignProposalReadService } from './read-services/campaign-propo
     AUTO_REPLY_RULE_REPOSITORY,
     CREDIT_WALLET_REPOSITORY,
     QUOTA_USAGE_REPOSITORY,
+    ENTERPRISE_INVITATION_REPOSITORY,
     // Export all read service tokens
     USER_READ_SERVICE,
     ROLE_READ_SERVICE,

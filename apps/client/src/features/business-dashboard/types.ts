@@ -4,6 +4,8 @@ export type DashboardNavItem = {
   icon: string;
   href: string;
   isActive: boolean;
+  badgeCount?: number;
+  badgeLabel?: string;
 };
 
 export type DashboardMetricTrend = "up" | "down";

@@ -21,4 +21,5 @@ export * from './subscription-history.dto';
 export * from './social-page.dto';
 export * from './scheduled-post.dto';
 export * from './auto-reply-rule.dto';
+export * from './enterprise-invitation.dto';
 

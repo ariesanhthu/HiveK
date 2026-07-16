@@ -275,8 +275,17 @@ export class MongoCampaignReadService implements ICampaignReadService {
         contactPhone: doc.enterprise_id.contact_phone,
         website: doc.enterprise_id.website,
         taxId: doc.enterprise_id.tax_id,
-        logoUrlId: doc.enterprise_id.logo_url_id,
+        logoUrlId: doc.enterprise_id.logo_url_id ? doc.enterprise_id.logo_url_id.toString() : null,
         isVerified: doc.enterprise_id.is_verified,
+        members: (doc.enterprise_id.members || []).map((m: any) => ({
+          userId: m.user_id ? m.user_id.toString() : '',
+          mode: m.mode,
+        })),
+        knowledgeBase: doc.enterprise_id.knowledge_base ? {
+          rawText: doc.enterprise_id.knowledge_base.raw_text,
+          externalLinks: doc.enterprise_id.knowledge_base.external_links || [],
+          updatedAt: doc.enterprise_id.knowledge_base.updated_at ? new Date(doc.enterprise_id.knowledge_base.updated_at).toISOString() : new Date().toISOString(),
+        } : undefined,
         createdAt: doc.enterprise_id.created_at,
         updatedAt: doc.enterprise_id.updated_at,
       } : undefined,

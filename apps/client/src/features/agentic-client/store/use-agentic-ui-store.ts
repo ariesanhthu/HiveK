@@ -16,7 +16,7 @@ type AgenticUiState = {
 };
 
 export const useAgenticUiStore = create<AgenticUiState>((set) => ({
-  selectedCampaignId: "summer-travel",
+  selectedCampaignId: "tutorx-better-every-hour",
   selectedPostId: "post-01",
   activeCampaignDetailTab: "content",
   isTimelineCompact: false,

@@ -1,17 +1,23 @@
 import { Controller, Get, Post, Patch, Param, Body, HttpCode, HttpStatus, UseGuards, Delete } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
-import { EnterpriseGetByIdQuery } from '@/application/queries';
+import { EnterpriseGetByIdQuery, EnterpriseGetInvitationsQuery } from '@/application/queries';
 import {
   EnterpriseCreateCommand,
   EnterpriseUpdateCommand,
   EnterpriseCreateInputDto,
   EnterpriseUpdateInputDto,
   EnterpriseAddUserCommand,
-  EnterpriseRevokeUserCommand,
   EnterpriseAddUserInputDto,
-  EnterpriseRevokeUserInputDto,
+  EnterpriseInviteMemberCommand,
+  EnterpriseAcceptInvitationCommand,
+  EnterpriseInviteMemberInputDto,
+  EnterpriseRevokeMemberCommand,
+  EnterpriseRevokeMemberInputDto,
+  EnterpriseRevokeInvitationCommand,
+  EnterpriseChangeMemberModeCommand,
+  EnterpriseChangeMemberModeInputDto,
 } from '@/application/commands';
-import { EnterpriseDto, EnterpriseDetailDto } from '@/application/dtos';
+import { EnterpriseDto, EnterpriseDetailDto, EnterpriseInvitationDto } from '@/application/dtos';
 import { ApiTags, ApiOperation, ApiBearerAuth, ApiSecurity } from '@nestjs/swagger';
 import { buildVersionedRoute } from '@presentation/utils';
 import { JwtAuthGuard, RolesGuard, UserVerifiedGuard } from '@/presentation/middleware/guards';
@@ -59,6 +65,27 @@ export class EnterpriseClientController {
     return enterprise;
   }
 
+  @Post(':id/invitations')
+  @ApiOperation({ summary: 'Invite a user to the enterprise' })
+  async inviteMember(
+    @Param('id') enterpriseId: string,
+    @CurrentUser('sub') requestedBy: string,
+    @Body() input: EnterpriseInviteMemberInputDto,
+  ): Promise<EnterpriseInvitationDto> {
+    return this.commandBus.execute(new EnterpriseInviteMemberCommand(enterpriseId, requestedBy, input));
+  }
+
+  @Post(':id/invitations/:invitationId/accept')
+  @ApiOperation({ summary: 'Accept an enterprise invitation' })
+  async acceptInvitation(
+    @Param('id') enterpriseId: string,
+    @Param('invitationId') invitationId: string,
+    @CurrentUser('sub') userId: string,
+  ): Promise<{ success: boolean }> {
+    await this.commandBus.execute(new EnterpriseAcceptInvitationCommand(enterpriseId, invitationId, userId));
+    return { success: true };
+  }
+
   @Post(':id/members')
   @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
@@ -74,12 +101,36 @@ export class EnterpriseClientController {
   @Delete(':id/members')
   @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
-  @ApiOperation({ summary: 'Remove user from enterprise' })
+  @ApiOperation({ summary: 'Remove user from enterprise (revoke membership)' })
   async removeUser(
     @CurrentUser('sub') requestedBy: string,
     @Param('id') enterpriseId: string,
-    @Body() dto: EnterpriseRevokeUserInputDto,
+    @Body() dto: EnterpriseRevokeMemberInputDto,
   ): Promise<void> {
-    return this.commandBus.execute(new EnterpriseRevokeUserCommand(enterpriseId, dto, requestedBy));
+    return this.commandBus.execute(new EnterpriseRevokeMemberCommand(enterpriseId, requestedBy, dto));
+  }
+
+  @Delete(':id/invitations/:invitationId')
+  @UseGuards(JwtAuthGuard)
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiOperation({ summary: 'Cancel/revoke a pending invitation' })
+  async cancelInvitation(
+    @Param('id') enterpriseId: string,
+    @Param('invitationId') invitationId: string,
+    @CurrentUser('sub') requestedBy: string,
+  ): Promise<void> {
+    return this.commandBus.execute(new EnterpriseRevokeInvitationCommand(enterpriseId, invitationId, requestedBy));
+  }
+
+  @Patch(':id/members/mode')
+  @UseGuards(JwtAuthGuard)
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiOperation({ summary: 'Change enterprise member role mode (promote/demote)' })
+  async changeMemberMode(
+    @Param('id') enterpriseId: string,
+    @CurrentUser('sub') requestedBy: string,
+    @Body() dto: EnterpriseChangeMemberModeInputDto,
+  ): Promise<void> {
+    return this.commandBus.execute(new EnterpriseChangeMemberModeCommand(enterpriseId, requestedBy, dto));
   }
 }

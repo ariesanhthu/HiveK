@@ -4,7 +4,7 @@ import { OutboxService } from '@/application/services/outbox.service';
 import { type IUnitOfWork } from '@/application/interfaces/uow.interface';
 import { CommandBus, QueryBus, EventBus } from '@nestjs/cqrs';
 import { ConfigService } from '@nestjs/config';
-import { type IRoleReadService, type IAuthJwtService, type IMailerService, type IWebSocketService } from '@/application/interfaces';
+import { type IRoleReadService, type IAuthJwtService, type IMailerService, type IWebSocketService, type IEventService } from '@/application/interfaces';
 
 /**
  * Centralized mock factories for all application service interfaces.
@@ -25,6 +25,10 @@ export const createMockAuthService = (): jest.Mocked<AuthService> => ({
 export const createMockOutboxService = (): jest.Mocked<OutboxService> => ({
   enqueue: jest.fn().mockResolvedValue(undefined),
   enqueueMany: jest.fn().mockResolvedValue(undefined),
+});
+
+export const createMockEventService = (): jest.Mocked<IEventService> => ({
+  publishEvents: jest.fn().mockResolvedValue(undefined),
 });
 
 export const createMockJwtService = (): jest.Mocked<IAuthJwtService> => ({

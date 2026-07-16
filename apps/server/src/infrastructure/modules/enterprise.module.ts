@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
 import { EnterpriseAdminController, EnterpriseClientController } from '@/presentation/controllers';
-import { EnterpriseGetByIdHandler, EnterpriseGetListHandler } from '@/application/queries';
+import { EnterpriseGetByIdHandler, EnterpriseGetListHandler, EnterpriseGetInvitationsQueryHandler } from '@/application/queries';
 
 import {
   EnterpriseCreateCommandHandler,
@@ -11,6 +11,11 @@ import {
   EnterpriseRestoreCommandHandler,
   EnterpriseAddUserCommandHandler,
   EnterpriseRevokeUserCommandHandler,
+  EnterpriseInviteMemberCommandHandler,
+  EnterpriseAcceptInvitationCommandHandler,
+  EnterpriseRevokeMemberCommandHandler,
+  EnterpriseRevokeInvitationCommandHandler,
+  EnterpriseChangeMemberModeCommandHandler,
 } from '@/application/commands';
 
 import { UploadedFileModule } from './uploaded-file.module';
@@ -26,12 +31,18 @@ const COMMAND_HANDLERS = [
   EnterpriseRestoreCommandHandler,
   EnterpriseAddUserCommandHandler,
   EnterpriseRevokeUserCommandHandler,
+  EnterpriseInviteMemberCommandHandler,
+  EnterpriseAcceptInvitationCommandHandler,
+  EnterpriseRevokeMemberCommandHandler,
+  EnterpriseRevokeInvitationCommandHandler,
+  EnterpriseChangeMemberModeCommandHandler,
 ];
 
 const QUERY_HANDLERS = [
   EnterpriseGetByIdHandler,
-  EnterpriseGetListHandler
-]
+  EnterpriseGetListHandler,
+  EnterpriseGetInvitationsQueryHandler,
+];
 
 const EVENT_HANDLERS = [
   LinkEnterpriseLogoHandler,

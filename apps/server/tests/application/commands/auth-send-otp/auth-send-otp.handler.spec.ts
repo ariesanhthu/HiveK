@@ -4,7 +4,7 @@ import { AuthSendOtpCommand } from '@/application/commands/auth-send-otp/auth-se
 import { EOtpType, ERoleType } from '@/core/enums';
 import { OtpRateLimitException, ForbiddenDomainException, UserNotFoundException } from '@/core/exceptions';
 import { createMockOtpRepository, createMockUserRepository } from '../../../__mocks__/mock-repositories';
-import { createMockAuthService, createMockOutboxService, createMockUnitOfWork } from '../../../__mocks__/mock-services';
+import { createMockAuthService, createMockEventService, createMockUnitOfWork } from '../../../__mocks__/mock-services';
 import { OtpRoot } from '@/core/aggregate-roots/otp.aggregate';
 import { KOLUserRoot } from '@/core/aggregate-roots/kol-user.aggregate';
 import { PhoneNumberVO } from '@/core/value-objects/phone-number.value-object';
@@ -13,21 +13,21 @@ describe('AuthSendOtpCommandHandler', () => {
   let handler: AuthSendOtpCommandHandler;
   let mockOtpRepository: ReturnType<typeof createMockOtpRepository>;
   let mockUserRepository: ReturnType<typeof createMockUserRepository>;
-  let mockOutboxService: ReturnType<typeof createMockOutboxService>;
+  let mockEventService: ReturnType<typeof createMockEventService>;
   let mockAuthService: ReturnType<typeof createMockAuthService>;
   let mockUow: ReturnType<typeof createMockUnitOfWork>;
 
   beforeEach(() => {
     mockOtpRepository = createMockOtpRepository();
     mockUserRepository = createMockUserRepository();
-    mockOutboxService = createMockOutboxService();
+    mockEventService = createMockEventService();
     mockAuthService = createMockAuthService();
     mockUow = createMockUnitOfWork();
 
     handler = new AuthSendOtpCommandHandler(
       mockOtpRepository,
       mockUserRepository,
-      mockOutboxService,
+      mockEventService,
       mockAuthService,
       mockUow,
     );
@@ -48,7 +48,7 @@ describe('AuthSendOtpCommandHandler', () => {
       expect(mockOtpRepository.deleteByEmailAndType).toHaveBeenCalledWith('user@example.com', EOtpType.RESET_PASSWORD);
       expect(mockOtpRepository.save).toHaveBeenCalledWith(expect.any(OtpRoot));
       
-      expect(mockOutboxService.enqueueMany).toHaveBeenCalled();
+      expect(mockEventService.publishEvents).toHaveBeenCalled();
       expect(mockUow.execute).toHaveBeenCalled();
     });
 
@@ -81,7 +81,7 @@ describe('AuthSendOtpCommandHandler', () => {
       expect(result).toEqual({ success: true });
       expect(mockUserRepository.findById).toHaveBeenCalledWith(userId);
       expect(mockOtpRepository.save).toHaveBeenCalledWith(expect.any(OtpRoot));
-      expect(mockOutboxService.enqueueMany).toHaveBeenCalled();
+      expect(mockEventService.publishEvents).toHaveBeenCalled();
     });
   });
 

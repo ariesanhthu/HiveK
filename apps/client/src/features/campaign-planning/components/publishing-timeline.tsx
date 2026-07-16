@@ -37,7 +37,7 @@ export function PublishingTimeline({
   return (
     <section className="min-h-0 flex-1">
       <div className="mb-3 flex items-center justify-between">
-        <h2 className="text-sm font-extrabold text-foreground">Lộ trình đăng bài</h2>
+        <h2 className="text-sm font-extrabold text-foreground">Lịch nội dung đề xuất</h2>
         <button
           type="button"
           onClick={() => onCompactChange(!isCompact)}

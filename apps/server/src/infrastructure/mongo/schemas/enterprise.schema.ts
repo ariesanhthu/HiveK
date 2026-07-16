@@ -1,6 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Types } from 'mongoose';
 import { softDeletePlugin } from '../utils';
+import { EEnterpriseMemberMode } from '@/core/enums';
 
 @Schema({
   collection: 'enterprises',
@@ -43,6 +44,34 @@ export class EnterpriseModel {
 
   @Prop({ type: Boolean, default: false })
   is_verified: boolean;
+
+  @Prop({
+    type: [
+      {
+        user_id: { type: Types.ObjectId, ref: 'UserModel', required: true },
+        mode: { type: String, enum: EEnterpriseMemberMode, required: true },
+      },
+    ],
+    default: [],
+  })
+  members: {
+    user_id: Types.ObjectId;
+    mode: EEnterpriseMemberMode;
+  }[];
+
+  @Prop({
+    type: {
+      raw_text: { type: String, default: null },
+      external_links: { type: [String], default: [] },
+      updated_at: { type: Date, default: Date.now },
+    },
+    default: null,
+  })
+  knowledge_base: {
+    raw_text: string | null;
+    external_links: string[];
+    updated_at: Date;
+  } | null;
 
   @Prop({ type: Date, default: null })
   delete_at: Date | null;

@@ -56,7 +56,7 @@ pids
 report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 
 local*
-
-.agents/
-.cursor/
-.specify/
+.agents
+.cursor
+.specify
+specs

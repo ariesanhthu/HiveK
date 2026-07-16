@@ -9,17 +9,17 @@ import type {
 
 function appendInstruction(content: string, instruction?: string): string {
   if (!instruction?.trim()) {
-    return `${content}\n\nDat lich tu van de nhan goi y hanh trinh phu hop voi ngan sach cua ban.`;
+    return `${content}\n\nBạn muốn cải thiện môn học nào? Chia sẻ với The TutorX để nhận gợi ý điểm bắt đầu phù hợp.`;
   }
 
-  return `${content}\n\nGhi chu toi uu: ${instruction.trim()}`;
+  return `${content}\n\nBạn muốn cải thiện môn học nào? The TutorX sẽ cùng bạn xác định bước tiếp theo phù hợp.`;
 }
 
 export async function generateSinglePostWorkflow(
   campaignId: string,
   request: GenerateSinglePostRequest
 ): Promise<GenerateSinglePostResponse> {
-  const cacheKey = `agentic:single-post:${campaignId}:${request.stepId}:${request.platform}:${request.angle}:${request.userInstruction ?? ""}`;
+  const cacheKey = `agentic:single-post:v2:${campaignId}:${request.stepId}:${request.platform}:${request.angle}:${request.userInstruction ?? ""}`;
   const cachedPost = await getCacheJson<GenerateSinglePostResponse>(cacheKey);
   if (cachedPost) return cachedPost;
 
@@ -34,8 +34,11 @@ export async function generateSinglePostWorkflow(
     content,
     firstComment:
       sourcePost?.firstComment ??
-      "Comment keyword HIVE-K de nhan goi y tiep theo.",
-    replySuggestions: sourcePost?.suggestedReplies ?? ["Da gui ban nhe", "Team se inbox them"],
+      "Bình luận môn học và lớp để The TutorX hỗ trợ gợi ý lộ trình.",
+    replySuggestions: sourcePost?.suggestedReplies ?? [
+      "TutorX đã ghi nhận và sẽ hỗ trợ bạn nhé.",
+      "Bạn có thể inbox kết quả học tập gần nhất để được tư vấn kỹ hơn.",
+    ],
     validation,
     agentRun: createAgentRunSummary({
       workflowName: "generate-single-post",

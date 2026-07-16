@@ -22,4 +22,4 @@ export * from './scheduled-post.aggregate';
 export * from './auto-reply-rule.aggregate';
 export * from './credit-wallet.aggregate';
 export * from './quota-usage.aggregate';
-
+export * from './enterprise-invitation.aggregate';

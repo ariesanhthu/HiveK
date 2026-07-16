@@ -1,10 +1,43 @@
-import { Controller, Get, Post, Patch, Delete, Param, Query, Body, HttpCode, HttpStatus, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Patch,
+  Delete,
+  Param,
+  Query,
+  Body,
+  HttpCode,
+  HttpStatus,
+  UseGuards,
+} from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
-import { ApiTags, ApiOperation, ApiBearerAuth, ApiSecurity } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiBearerAuth,
+  ApiSecurity,
+} from '@nestjs/swagger';
 import { buildVersionedRoute } from '@presentation/utils';
-import { PlatformCreateCommand, PlatformUpdateCommand, PlatformSoftDeleteCommand, PlatformHardDeleteCommand, PlatformRestoreCommand, PlatformCreateInputDto, PlatformUpdateInputDto } from '@/application/commands';
-import { PlatformGetListQuery, PlatformGetByIdQuery, PlatformFilterDto } from '@/application/queries';
-import { PlatformDto, PlatformDetailDto, SoftDeleteInputDto } from '@/application/dtos';
+import {
+  PlatformCreateCommand,
+  PlatformUpdateCommand,
+  PlatformSoftDeleteCommand,
+  PlatformHardDeleteCommand,
+  PlatformRestoreCommand,
+  PlatformCreateInputDto,
+  PlatformUpdateInputDto,
+} from '@/application/commands';
+import {
+  PlatformGetListQuery,
+  PlatformGetByIdQuery,
+  PlatformFilterDto,
+} from '@/application/queries';
+import {
+  PlatformDto,
+  PlatformDetailDto,
+  SoftDeleteInputDto,
+} from '@/application/dtos';
 import { PaginatedResponseDto } from '@/application/dtos/pagination.dto';
 import { JwtAuthGuard, RolesGuard } from '@/presentation/middleware/guards';
 import { Public } from '@/presentation/decorators/public.decorator';
@@ -21,12 +54,14 @@ export class PlatformAdminController {
   constructor(
     private readonly commandBus: CommandBus,
     private readonly queryBus: QueryBus,
-  ) { }
+  ) {}
 
   @Public()
   @Get()
   @ApiOperation({ summary: 'Get all platforms' })
-  async findAll(@Query() filters: PlatformFilterDto): Promise<PaginatedResponseDto<PlatformDetailDto>> {
+  async findAll(
+    @Query() filters: PlatformFilterDto,
+  ): Promise<PaginatedResponseDto<PlatformDetailDto>> {
     return this.queryBus.execute(new PlatformGetListQuery(filters));
   }
 
@@ -62,7 +97,9 @@ export class PlatformAdminController {
     @Param('id') id: string,
     @Query() dto: SoftDeleteInputDto,
   ): Promise<void> {
-    return this.commandBus.execute(new PlatformSoftDeleteCommand(id, dto.deletedBy));
+    return this.commandBus.execute(
+      new PlatformSoftDeleteCommand(id, dto.deletedBy),
+    );
   }
 
   @Delete(':id')

@@ -6,7 +6,7 @@ import type { CampaignInsightResponse } from "@/server/ai/types/agent.types";
 export async function generateInsightWorkflow(
   campaignId: string
 ): Promise<CampaignInsightResponse> {
-  const cacheKey = `agentic:insight:${campaignId}`;
+  const cacheKey = `agentic:insight:v2:${campaignId}`;
   const cachedInsight = await getCacheJson<CampaignInsightResponse>(cacheKey);
   if (cachedInsight) return cachedInsight;
 
@@ -18,26 +18,26 @@ export async function generateInsightWorkflow(
   const needsReviewCount = data.posts.filter((post) => post.status === "needs-review").length;
 
   const response: CampaignInsightResponse = {
-    summary: `${selectedCampaign?.name ?? campaignId} has ${approvedCount} approved posts and ${needsReviewCount} posts that still need review in mock data.`,
+    summary: `${selectedCampaign?.name ?? campaignId} hiện có ${approvedCount} bài đã duyệt và ${needsReviewCount} bài đang chờ người dùng kiểm tra.`,
     whatWorked: [
-      "Social proof posts have clearer CTA and lower validation risk.",
-      "Timeline mixes awareness, consideration, and conversion angles.",
+      "Nội dung dành cho phụ huynh có CTA rõ và mức rủi ro tuyên bố thấp.",
+      "Lịch nội dung đã kết hợp nhận diện, xây dựng niềm tin và chuyển đổi tư vấn.",
     ],
     whatDidNotWork: [
-      "Some awareness copy still uses generic travel phrases.",
-      "Video hook needs stronger first-frame direction.",
+      "Một số bài nhận diện vẫn cần ví dụ học tập cụ thể hơn.",
+      "Video thói quen học tập cần hook trực quan hơn ở hai giây đầu.",
     ],
-    bestAngle: "Customer proof with concrete itinerary request.",
-    weakestAngle: "Generic summer discovery hook.",
+    bestAngle: "Tiến bộ có lộ trình với ví dụ cụ thể cho học sinh và phụ huynh.",
+    weakestAngle: "Thông điệp học tập chung chung, chưa chỉ rõ vấn đề cần giải quyết.",
     kolPerformanceNotes: [
-      "No live KOL performance connected yet; use matching recommendations as planning input.",
+      "Chưa kết nối dữ liệu KOL trực tiếp; hiện chỉ dùng đề xuất matching làm đầu vào tham khảo.",
     ],
     nextCampaignRecommendations: [
-      "Collect edit feedback after each approval to improve brand memory.",
-      "Tag every post by funnel stage before publishing.",
+      "Ghi nhận phản hồi sau mỗi lần duyệt để Agent học cách diễn đạt của The TutorX.",
+      "Gắn trụ cột và giai đoạn hành trình cho từng bài trước khi lên lịch.",
     ],
     dataLimitations: [
-      "This response uses local mock campaign data until MongoDB/performance events are connected.",
+      "Các chỉ số hiện dùng dữ liệu demo cho đến khi tài khoản social được kết nối đầy đủ.",
     ],
     agentRun: createAgentRunSummary({
       workflowName: "generate-insight",

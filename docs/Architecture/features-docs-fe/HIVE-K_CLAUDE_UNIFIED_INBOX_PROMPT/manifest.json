@@ -1,0 +1,19 @@
+{
+  "title": "HIVE-K Claude Unified Inbox Prompt Pack",
+  "language": "vi",
+  "file_count": 11,
+  "reading_order": [
+    "00_README.md",
+    "01_MASTER_PROMPT_FOR_CLAUDE.md",
+    "02_INFORMATION_ARCHITECTURE_AND_ENTRY_FLOW.md",
+    "03_UNIFIED_INBOX_COMPONENTS.md",
+    "04_CONVERSATION_REPLY_AND_TEAM_WORKFLOW.md",
+    "05_AI_AGENT_AUTOMATION_AND_HUMAN_HANDOFF.md",
+    "06_CHANNEL_CAPABILITY_AND_POLICY_STATES.md",
+    "07_DATA_EVENTS_LOADING_AND_ERROR_STATES.md",
+    "08_RESPONSIVE_ACCESSIBILITY_AND_ACCEPTANCE.md",
+    "09_TEST_SCENARIOS_AND_DELIVERY_CHECKLIST.md",
+    "10_RESEARCH_NOTES.md"
+  ],
+  "scope": "UI/UX flow and frontend implementation prompt for a unified social messaging inbox"
+}
