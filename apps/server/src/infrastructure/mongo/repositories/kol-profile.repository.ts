@@ -24,7 +24,8 @@ export class MongoKolProfileRepository implements IKolProfileRepository {
 
   async findById(id: string): Promise<Nullable<KolProfileEntity>> {
     const doc = await this.kolProfileModel.findById(id).session(this.session).exec();
-    return doc ? this.mapToDomain(doc) : null;
+    // return doc ? this.mapToDomain(doc as unknown as KolProfileDocument) : null;
+    return doc ? this.mapToDomain(doc as unknown as KolProfileDocument) : null;
   }
 
   async findByPlatformInfo(platformId: string, externalId: string): Promise<Nullable<KolProfileEntity>> {
@@ -32,12 +33,12 @@ export class MongoKolProfileRepository implements IKolProfileRepository {
       'platforms.platform_id': platformId,
       'platforms.external_id': externalId,
     }).session(this.session).exec();
-    return doc ? this.mapToDomain(doc) : null;
+    return doc ? this.mapToDomain(doc as unknown as KolProfileDocument) : null;
   }
 
   async findByUserId(userId: string): Promise<Nullable<KolProfileEntity>> {
     const doc = await this.kolProfileModel.findOne({ user_id: new Types.ObjectId(userId) } as Record<string, unknown>).session(this.session).exec();
-    return doc ? this.mapToDomain(doc) : null;
+    return doc ? this.mapToDomain(doc as unknown as KolProfileDocument) : null;
   }
 
   async existsByPlatformId(platformId: string): Promise<boolean> {
