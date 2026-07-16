@@ -8,10 +8,6 @@ import {
   EnterpriseRestoreCommand,
   EnterpriseCreateInputDto,
   EnterpriseUpdateInputDto,
-  EnterpriseAddUserCommand,
-  EnterpriseRevokeUserCommand,
-  EnterpriseAddUserInputDto,
-  EnterpriseRevokeUserInputDto,
 } from '@/application/commands';
 import { EnterpriseDto, EnterpriseDetailDto, SoftDeleteInputDto } from '@/application/dtos';
 import { ApiTags, ApiOperation, ApiBearerAuth, ApiSecurity } from '@nestjs/swagger';
@@ -96,27 +92,5 @@ export class EnterpriseAdminController {
     return this.commandBus.execute(new EnterpriseRestoreCommand(id));
   }
 
-  @Post(':id/members')
-  @UseGuards(JwtAuthGuard)
-  @HttpCode(HttpStatus.NO_CONTENT)
-  @ApiOperation({ summary: 'Add user to enterprise' })
-  async addUser(
-    @CurrentUser('sub') requestedBy: string,
-    @Param('id') enterpriseId: string,
-    @Body() dto: EnterpriseAddUserInputDto,
-  ): Promise<void> {
-    return this.commandBus.execute(new EnterpriseAddUserCommand(enterpriseId, dto, requestedBy));
-  }
 
-  @Delete(':id/members')
-  @UseGuards(JwtAuthGuard)
-  @HttpCode(HttpStatus.NO_CONTENT)
-  @ApiOperation({ summary: 'Remove user from enterprise' })
-  async removeUser(
-    @CurrentUser('sub') requestedBy: string,
-    @Param('id') enterpriseId: string,
-    @Body() dto: EnterpriseRevokeUserInputDto,
-  ): Promise<void> {
-    return this.commandBus.execute(new EnterpriseRevokeUserCommand(enterpriseId, dto, requestedBy));
-  }
 }

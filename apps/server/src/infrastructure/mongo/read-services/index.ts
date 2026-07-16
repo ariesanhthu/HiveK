@@ -13,4 +13,4 @@ export * from './public-review.read-service';
 export * from './package.read-service';
 export * from './bill.read-service';
 export * from './payment-provider.read-service';
-
+export * from './enterprise-invitation.read-service';

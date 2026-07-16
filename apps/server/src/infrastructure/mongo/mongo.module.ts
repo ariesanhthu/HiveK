@@ -80,6 +80,7 @@ import {
   MongoPackageReadService,
   MongoBillReadService,
   MongoPaymentProviderReadService,
+  MongoEnterpriseInvitationReadService,
 } from './read-services';
 
 // Repository symbols
@@ -126,6 +127,7 @@ import {
   PACKAGE_READ_SERVICE,
   BILL_READ_SERVICE,
   PAYMENT_PROVIDER_READ_SERVICE,
+  ENTERPRISE_INVITATION_READ_SERVICE,
 } from '@/application/interfaces';
 
 import { RoleSeedService } from './seeding/role-seed.service';
@@ -352,6 +354,10 @@ import { MongoCampaignProposalReadService } from './read-services/campaign-propo
       provide: PAYMENT_PROVIDER_READ_SERVICE,
       useClass: MongoPaymentProviderReadService,
     },
+    {
+      provide: ENTERPRISE_INVITATION_READ_SERVICE,
+      useClass: MongoEnterpriseInvitationReadService,
+    },
     // Seed service
     RoleSeedService,
     PackageMigrationService,
@@ -400,6 +406,7 @@ import { MongoCampaignProposalReadService } from './read-services/campaign-propo
     PACKAGE_READ_SERVICE,
     BILL_READ_SERVICE,
     PAYMENT_PROVIDER_READ_SERVICE,
+    ENTERPRISE_INVITATION_READ_SERVICE,
     // Export MongooseModule so domain modules can use the models if needed
     MongooseModule,
     RoleSeedService,

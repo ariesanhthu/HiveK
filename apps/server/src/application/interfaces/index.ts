@@ -13,6 +13,7 @@ export * from './read-service/campaign-participant.read-service.interface';
 export * from './read-service/package.read-service.interface';
 export * from './read-service/bill.read-service.interface';
 export * from './read-service/payment-provider.read-service.interface';
+export * from './read-service/enterprise-invitation.read-service.interface';
 
 export * from './uow.interface';
 

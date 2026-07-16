@@ -48,6 +48,61 @@ export class MongoEnterpriseReadService implements IEnterpriseReadService {
     return dto;
   }
 
+  async findByUserIdOrMember(userId: string, filters: EnterpriseFilterDto = {}): Promise<PaginatedResponseDto<EnterpriseDetailDto>> {
+    // const filterKey = JSON.stringify(filters);
+    // const cacheKey = CacheKeyUtil.custom(this.domain, `user:${userId}:list:${filterKey}`);
+    // const cached = await this.cacheService.get<PaginatedResponseDto<EnterpriseDetailDto>>(cacheKey);
+    // if (cached) return cached;
+
+    const { cursor, limit = 10, sort = SortOrder.DESC, companyName, contactEmail, taxId, isVerified } = filters;
+    const query: QueryFilter<EnterpriseDocument> = {
+      $or: [
+        { user_id: new Types.ObjectId(userId) },
+        { 'members.user_id': new Types.ObjectId(userId) },
+      ],
+    };
+
+    if (companyName) {
+      query.company_name = { $regex: MongoSanitizeUtil.escapeRegex(companyName), $options: 'i' };
+    }
+    if (contactEmail) {
+      query.contact_email = { $regex: MongoSanitizeUtil.escapeRegex(contactEmail), $options: 'i' };
+    }
+    if (taxId) {
+      query.tax_id = taxId;
+    }
+    if (isVerified !== undefined) {
+      query.is_verified = isVerified;
+    }
+
+    if (cursor) {
+      query._id = sort === SortOrder.DESC ? { $lt: cursor } : { $gt: cursor };
+    }
+
+    const docs = await this.enterpriseModel
+      .find(query)
+      .sort({ _id: sort === SortOrder.DESC ? -1 : 1 })
+      .limit(limit + 1)
+      .populate('user_id')
+      .populate('logo_url_id')
+      .lean()
+      .exec();
+
+    const hasNextPage = docs.length > limit;
+    const results = hasNextPage ? docs.slice(0, limit) : docs;
+    const nextCursor = hasNextPage ? results[results.length - 1]._id.toString() : null;
+
+    const response = new PaginatedResponseDto(
+      results.map((doc) => this.mapToDto(doc)),
+      nextCursor,
+      hasNextPage,
+      limit,
+    );
+
+    // await this.cacheService.set(cacheKey, response, 300);
+    return response;
+  }
+
   async findAll(filters: EnterpriseFilterDto = {}): Promise<PaginatedResponseDto<EnterpriseDetailDto>> {
     const cacheKey = CacheKeyUtil.list(this.domain, filters);
     const cached = await this.cacheService.get<PaginatedResponseDto<EnterpriseDetailDto>>(cacheKey);

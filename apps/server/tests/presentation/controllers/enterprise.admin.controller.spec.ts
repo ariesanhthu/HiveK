@@ -6,8 +6,6 @@ import {
   EnterpriseUpdateCommand,
   EnterpriseSoftDeleteCommand,
   EnterpriseRestoreCommand,
-  EnterpriseAddUserCommand,
-  EnterpriseRevokeUserCommand,
 } from '@/application/commands';
 import { EnterpriseGetByIdQuery, EnterpriseGetListQuery } from '@/application/queries';
 
