@@ -23,6 +23,8 @@ import {
   PublicReviewModel,
   CampaignProposalSchema,
   CampaignProposalModel,
+  EnterpriseInvitationModel,
+  EnterpriseInvitationSchema,
 } from './schemas';
 
 // Repository imports
@@ -38,6 +40,7 @@ import {
   MongoUploadedFileRepository,
   MongoOtpRepository,
   MongoKpiLogRepository,
+  MongoEnterpriseInvitationRepository,
 } from './repositories';
 
 // Read Service imports
@@ -69,6 +72,7 @@ import {
   KPI_LOG_REPOSITORY,
   PUBLIC_REVIEW_REPOSITORY,
   CAMPAIGN_PROPOSAL_REPOSITORY,
+  ENTERPRISE_INVITATION_REPOSITORY,
 } from '@/core/interfaces/repositories';
 
 // Read Service symbols
@@ -126,6 +130,7 @@ import { MongoCampaignProposalReadService } from './read-services/campaign-propo
       { name: OutboxModel.name, schema: OutboxSchema },
       { name: PublicReviewModel.name, schema: PublicReviewSchema },
       { name: CampaignProposalModel.name, schema: CampaignProposalSchema },
+      { name: EnterpriseInvitationModel.name, schema: EnterpriseInvitationSchema },
     ]),
   ],
   providers: [
@@ -186,6 +191,10 @@ import { MongoCampaignProposalReadService } from './read-services/campaign-propo
     {
       provide: CAMPAIGN_PROPOSAL_REPOSITORY,
       useClass: MongoCampaignProposalRepository,
+    },
+    {
+      provide: ENTERPRISE_INVITATION_REPOSITORY,
+      useClass: MongoEnterpriseInvitationRepository,
     },
     // All Read Services
     {
@@ -255,6 +264,7 @@ import { MongoCampaignProposalReadService } from './read-services/campaign-propo
     KPI_LOG_REPOSITORY,
     CAMPAIGN_PROPOSAL_REPOSITORY,
     PUBLIC_REVIEW_REPOSITORY,
+    ENTERPRISE_INVITATION_REPOSITORY,
     // Export all read service tokens
     USER_READ_SERVICE,
     ROLE_READ_SERVICE,

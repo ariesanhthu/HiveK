@@ -8,3 +8,4 @@ export * from './uploaded-file.mapper';
 export * from './event.mapper';
 export * from './proposal.mapper';
 export * from './review.mapper';
+export * from './enterprise-invitation.mapper';

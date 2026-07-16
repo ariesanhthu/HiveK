@@ -14,6 +14,12 @@ export const EnterpriseDtoSchema = z.object({
   taxId: z.string().nullable(),
   logoUrlId: z.string().nullable(),
   isVerified: z.boolean(),
+  members: z.array(z.object({ userId: z.string(), mode: z.string() })).default([]),
+  knowledgeBase: z.object({
+    rawText: z.string().optional(),
+    externalLinks: z.array(z.string()),
+    updatedAt: z.string(),
+  }).optional(),
   createdAt: z.string(),
   updatedAt: z.string(),
 }).strict();

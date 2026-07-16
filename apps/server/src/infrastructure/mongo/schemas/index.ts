@@ -12,4 +12,5 @@ export * from './otp.schema';
 export * from './outbox.schema';
 export * from './campaign-proposal.schema';
 export * from './public-review.schema';
+export * from './enterprise-invitation.schema';
 

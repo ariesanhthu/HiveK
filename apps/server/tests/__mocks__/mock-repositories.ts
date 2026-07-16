@@ -11,6 +11,7 @@ import { type IUserNotificationRepository } from '@/core/interfaces/repositories
 import { type IUploadedFileRepository } from '@/core/interfaces/repositories/uploaded-file.repository';
 import { type IOtpRepository } from '@/core/interfaces/repositories/otp.repository';
 import { type IKpiLogRepository } from '@/core/interfaces/repositories/kpi-log.repository';
+import { type IEnterpriseInvitationRepository } from '@/core/interfaces/repositories/enterprise-invitation.repository';
 
 /**
  * Centralized mock factories for all repository interfaces.
@@ -161,3 +162,26 @@ export const createMockKpiLogRepository = (): jest.Mocked<IKpiLogRepository> => 
   saveMany: jest.fn(),
   delete: jest.fn(),
 });
+
+export const createMockEnterpriseInvitationRepository = (): jest.Mocked<IEnterpriseInvitationRepository> => {
+  const mock: jest.Mocked<IEnterpriseInvitationRepository> = {
+    findById: jest.fn(),
+    findByEmailAndEnterpriseId: jest.fn(),
+    findPendingByEmailAndEnterpriseId: jest.fn(),
+    findByEnterpriseId: jest.fn(),
+    save: jest.fn().mockImplementation(async (invitation: any) => {
+      const generatedId = 'generated-invite-' + Math.random().toString(36).substring(7);
+      if (typeof invitation.setId === 'function') {
+        try {
+          if (!invitation.id) invitation.setId(generatedId);
+        } catch (e) {}
+      } else if (!invitation.id) {
+        invitation.id = generatedId;
+      }
+      return Promise.resolve();
+    }),
+    saveMany: jest.fn(),
+    delete: jest.fn(),
+  };
+  return mock;
+};

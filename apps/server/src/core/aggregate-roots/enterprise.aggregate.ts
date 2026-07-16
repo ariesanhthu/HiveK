@@ -2,7 +2,18 @@ import { BaseAggregateRoot } from '@/core/common/base.aggregate-root';
 import { Nullable } from '@/core/types';
 import { PhoneNumberVO } from '@/core/value-objects/phone-number.value-object';
 import { EntityHardDeletedEvent } from '../events/entity-hard-deleted.domain-event';
-import { TargetType } from '../enums';
+import { TargetType, EEnterpriseMemberMode } from '../enums';
+
+export interface EnterpriseMember {
+  userId: string;
+  mode: EEnterpriseMemberMode;
+}
+
+export interface EnterpriseKnowledgeBase {
+  rawText?: string;
+  externalLinks: string[];
+  updatedAt: Date;
+}
 
 export interface EnterpriseProps {
   userId: string;
@@ -14,13 +25,18 @@ export interface EnterpriseProps {
   taxId?: string;
   logoUrlId?: string;
   isVerified: boolean;
+  members: EnterpriseMember[];
+  knowledgeBase?: EnterpriseKnowledgeBase;
   createdAt: Date;
   updatedAt: Date;
   deleteAt: Nullable<Date>;
   deleteBy: Nullable<string>;
 }
 
-export type EnterpriseCreateProps = Omit<EnterpriseProps, 'createdAt' | 'updatedAt' | 'deleteAt' | 'deleteBy'>;
+export type EnterpriseCreateProps = Omit<EnterpriseProps, 'createdAt' | 'updatedAt' | 'deleteAt' | 'deleteBy' | 'members' | 'knowledgeBase'> & {
+  members?: EnterpriseMember[];
+  knowledgeBase?: EnterpriseKnowledgeBase;
+};
 
 export class EnterpriseRoot extends BaseAggregateRoot<EnterpriseProps> {
   private constructor(props: EnterpriseProps, id?: string) {
@@ -31,6 +47,7 @@ export class EnterpriseRoot extends BaseAggregateRoot<EnterpriseProps> {
     const now = new Date();
     return new EnterpriseRoot({
       ...props,
+      members: props.members ?? [],
       createdAt: now,
       updatedAt: now,
       deleteAt: null,
@@ -104,6 +121,54 @@ export class EnterpriseRoot extends BaseAggregateRoot<EnterpriseProps> {
     this.props.deleteBy = null;
   }
 
+  get members(): EnterpriseMember[] {
+    return [...(this.props.members ?? [])];
+  }
+
+  get knowledgeBase(): EnterpriseKnowledgeBase | undefined {
+    return this.props.knowledgeBase;
+  }
+
+  public isOwner(userId: string): boolean {
+    return this.props.userId === userId;
+  }
+
+  public isSubOwner(userId: string): boolean {
+    return this.props.members?.some(m => m.userId === userId && m.mode === EEnterpriseMemberMode.SUB_OWNER) ?? false;
+  }
+
+  public isMember(userId: string): boolean {
+    return this.isOwner(userId) || (this.props.members?.some(m => m.userId === userId) ?? false);
+  }
+
+  public addMember(userId: string, mode: EEnterpriseMemberMode): void {
+    if (this.props.userId === userId) {
+      throw new Error('Owner is already a member');
+    }
+    if (this.props.members.some(m => m.userId === userId)) {
+      return; // Already a member
+    }
+    this.props.members.push({ userId, mode });
+    this.props.updatedAt = new Date();
+  }
+
+  public removeMember(userId: string): void {
+    if (!this.props.members.some(m => m.userId === userId)) {
+      return;
+    }
+    this.props.members = this.props.members.filter(m => m.userId !== userId);
+    this.props.updatedAt = new Date();
+  }
+
+  public changeMemberMode(userId: string, mode: EEnterpriseMemberMode): void {
+    const member = this.props.members.find(m => m.userId === userId);
+    if (!member) {
+      throw new Error('Member not found');
+    }
+    member.mode = mode;
+    this.props.updatedAt = new Date();
+  }
+
   public update(props: Partial<EnterpriseProps>): void {
     if (props.companyName !== undefined) this.props.companyName = props.companyName;
     if (props.description !== undefined) this.props.description = props.description;
@@ -113,6 +178,12 @@ export class EnterpriseRoot extends BaseAggregateRoot<EnterpriseProps> {
     if (props.taxId !== undefined) this.props.taxId = props.taxId;
     if (props.logoUrlId !== undefined) this.props.logoUrlId = props.logoUrlId;
     if (props.isVerified !== undefined) this.props.isVerified = props.isVerified;
+    if (props.knowledgeBase !== undefined) {
+      this.props.knowledgeBase = {
+        ...props.knowledgeBase,
+        updatedAt: new Date(),
+      };
+    }
     this.props.updatedAt = new Date();
   }
 

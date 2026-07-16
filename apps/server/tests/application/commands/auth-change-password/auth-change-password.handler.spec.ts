@@ -4,28 +4,28 @@ import { EOtpType, ERoleType } from '@/core/enums';
 import { KOLUserRoot } from '@/core/aggregate-roots';
 import { UserNotFoundException, InvalidOperationException, InvalidPasswordException } from '@/core/exceptions';
 import { createMockUserRepository, createMockOtpRepository } from '../../../__mocks__/mock-repositories';
-import { createMockAuthService, createMockOutboxService, createMockUnitOfWork } from '../../../__mocks__/mock-services';
+import { createMockAuthService, createMockEventService, createMockUnitOfWork } from '../../../__mocks__/mock-services';
 
 describe('AuthChangePasswordCommandHandler', () => {
   let handler: AuthChangePasswordCommandHandler;
   let mockUserRepository: ReturnType<typeof createMockUserRepository>;
   let mockOtpRepository: ReturnType<typeof createMockOtpRepository>;
   let mockAuthService: ReturnType<typeof createMockAuthService>;
-  let mockOutboxService: ReturnType<typeof createMockOutboxService>;
+  let mockEventService: ReturnType<typeof createMockEventService>;
   let mockUow: ReturnType<typeof createMockUnitOfWork>;
 
   beforeEach(() => {
     mockUserRepository = createMockUserRepository();
     mockOtpRepository = createMockOtpRepository();
     mockAuthService = createMockAuthService();
-    mockOutboxService = createMockOutboxService();
+    mockEventService = createMockEventService();
     mockUow = createMockUnitOfWork();
 
     handler = new AuthChangePasswordCommandHandler(
       mockUserRepository,
       mockOtpRepository,
       mockAuthService as any,
-      mockOutboxService as any,
+      mockEventService as any,
       mockUow,
     );
   });

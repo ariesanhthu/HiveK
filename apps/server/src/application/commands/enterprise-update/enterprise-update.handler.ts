@@ -22,7 +22,7 @@ export class EnterpriseUpdateCommandHandler implements ICommandHandler<Enterpris
       throw new EnterpriseNotFoundException(id);
     }
 
-    if (enterprise.userId !== userId) {
+    if (!enterprise.isOwner(userId) && !enterprise.isSubOwner(userId)) {
       throw new EnterpriseForbiddenException();
     }
 
@@ -33,6 +33,13 @@ export class EnterpriseUpdateCommandHandler implements ICommandHandler<Enterpris
       contactPhone: input.contactPhone ? PhoneNumberVO.create({ value: input.contactPhone }) : undefined,
       website: input.website,
       taxId: input.taxId,
+      knowledgeBase: input.knowledgeBase
+        ? {
+            rawText: input.knowledgeBase.rawText,
+            externalLinks: input.knowledgeBase.externalLinks || [],
+            updatedAt: new Date(),
+          }
+        : undefined,
     });
 
     await this.enterpriseRepository.save(enterprise);

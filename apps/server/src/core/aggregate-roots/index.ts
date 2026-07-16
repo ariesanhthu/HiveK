@@ -12,3 +12,4 @@ export * from './user-notification.aggregate';
 export * from './otp.aggregate';
 export * from './campaign-proposal.aggregate';
 export * from './public-review.aggregate';
+export * from './enterprise-invitation.aggregate';

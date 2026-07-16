@@ -12,4 +12,5 @@ export * from './campaign-participant.dto';
 export * from './projection.dto';
 export * from './proposal.dto';
 export * from './review.dto';
+export * from './enterprise-invitation.dto';
 

@@ -11,5 +11,6 @@ export * from './otp.repository';
 export * from './kpi-log.repository';
 export * from './campaign-proposal.repository';
 export * from './public-review.repository';
+export * from './enterprise-invitation.repository';
 
 

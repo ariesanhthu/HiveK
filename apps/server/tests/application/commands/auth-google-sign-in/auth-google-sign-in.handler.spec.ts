@@ -5,28 +5,28 @@ import { KOLUserRoot, EnterpriseUserRoot } from '@/core/aggregate-roots';
 import { PhoneNumberVO } from '@/core/value-objects/phone-number.value-object';
 import { UserDeletedException, RoleNotFoundException } from '@/core/exceptions';
 import { createMockUserRepository, createMockRoleRepository } from '../../../__mocks__/mock-repositories';
-import { createMockAuthService, createMockOutboxService, createMockUnitOfWork } from '../../../__mocks__/mock-services';
+import { createMockAuthService, createMockEventService, createMockUnitOfWork } from '../../../__mocks__/mock-services';
 
 describe('AuthGoogleSignInCommandHandler', () => {
   let handler: AuthGoogleSignInCommandHandler;
   let mockUserRepository: ReturnType<typeof createMockUserRepository>;
   let mockRoleRepository: ReturnType<typeof createMockRoleRepository>;
   let mockAuthService: ReturnType<typeof createMockAuthService>;
-  let mockOutboxService: ReturnType<typeof createMockOutboxService>;
+  let mockEventService: ReturnType<typeof createMockEventService>;
   let mockUow: ReturnType<typeof createMockUnitOfWork>;
 
   beforeEach(() => {
     mockUserRepository = createMockUserRepository();
     mockRoleRepository = createMockRoleRepository();
     mockAuthService = createMockAuthService();
-    mockOutboxService = createMockOutboxService();
+    mockEventService = createMockEventService();
     mockUow = createMockUnitOfWork();
 
     handler = new AuthGoogleSignInCommandHandler(
       mockUserRepository,
       mockRoleRepository,
       mockAuthService as any,
-      mockOutboxService as any,
+      mockEventService as any,
       mockUow,
     );
   });
@@ -59,7 +59,7 @@ describe('AuthGoogleSignInCommandHandler', () => {
       expect(mockUserRepository.save).toHaveBeenCalled();
       
       // Verification email is not enqueued for Google sign-in in current implementation
-      expect(mockOutboxService.enqueueMany).not.toHaveBeenCalled();
+      expect(mockEventService.publishEvents).toHaveBeenCalled();
     });
 
     it('should create a new Enterprise user when type is Enterprise', async () => {
@@ -114,7 +114,7 @@ describe('AuthGoogleSignInCommandHandler', () => {
 
       expect(existingUser.googleId).toBe('google-123');
       expect(mockUserRepository.save).toHaveBeenCalledWith(existingUser);
-      expect(mockOutboxService.enqueueMany).not.toHaveBeenCalled();
+      expect(mockEventService.publishEvents).toHaveBeenCalled();
     });
   });
 

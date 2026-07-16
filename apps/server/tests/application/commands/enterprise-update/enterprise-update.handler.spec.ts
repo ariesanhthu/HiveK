@@ -21,6 +21,7 @@ describe('EnterpriseUpdateCommandHandler', () => {
     companyName: 'Old Company',
     contactEmail: 'old@test.com',
     isVerified: true,
+    members: [],
     createdAt: new Date(),
     updatedAt: new Date(),
     deleteAt: null,
@@ -46,6 +47,42 @@ describe('EnterpriseUpdateCommandHandler', () => {
       expect(enterprise.companyName).toBe('New Company');
       expect(enterprise.description).toBe('New Description');
       expect(mockEnterpriseRepository.save).toHaveBeenCalledWith(enterprise);
+    });
+
+    it('should update enterprise successfully if requested by a sub-owner', async () => {
+      const enterprise = createMockEnterprise();
+      enterprise.addMember('sub-owner-123', 'sub_owner' as any);
+      mockEnterpriseRepository.findById.mockResolvedValue(enterprise);
+
+      const input = {
+        companyName: 'New Sub Company',
+      };
+
+      const command = new EnterpriseUpdateCommand(enterpriseId, 'sub-owner-123', input);
+      const result = await handler.execute(command);
+
+      expect(result).toBeDefined();
+      expect(result.companyName).toBe('New Sub Company');
+    });
+
+    it('should update knowledgeBase successfully', async () => {
+      const enterprise = createMockEnterprise();
+      mockEnterpriseRepository.findById.mockResolvedValue(enterprise);
+
+      const input = {
+        knowledgeBase: {
+          rawText: 'This is enterprise knowledge raw text content.',
+          externalLinks: ['https://enterprise.com/docs'],
+        },
+      };
+
+      const command = new EnterpriseUpdateCommand(enterpriseId, userId, input);
+      const result = await handler.execute(command);
+
+      expect(result).toBeDefined();
+      expect(result.knowledgeBase).toBeDefined();
+      expect(result.knowledgeBase?.rawText).toBe(input.knowledgeBase.rawText);
+      expect(result.knowledgeBase?.externalLinks).toContain('https://enterprise.com/docs');
     });
   });
 

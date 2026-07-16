@@ -88,6 +88,17 @@ export class MongoEnterpriseRepository implements IEnterpriseRepository {
       taxId: doc.tax_id || undefined,
       logoUrlId: doc.logo_url_id ? doc.logo_url_id.toString() : undefined,
       isVerified: doc.is_verified,
+      members: (doc.members || []).map((m: any) => ({
+        userId: m.user_id ? m.user_id.toString() : '',
+        mode: m.mode,
+      })),
+      knowledgeBase: doc.knowledge_base
+        ? {
+            rawText: doc.knowledge_base.raw_text || undefined,
+            externalLinks: doc.knowledge_base.external_links || [],
+            updatedAt: doc.knowledge_base.updated_at,
+          }
+        : undefined,
       createdAt: doc.created_at,
       updatedAt: doc.updated_at,
       deleteAt: doc.delete_at,
@@ -106,6 +117,17 @@ export class MongoEnterpriseRepository implements IEnterpriseRepository {
       tax_id: enterprise.taxId ?? null,
       logo_url_id: enterprise.logoUrlId ? new Types.ObjectId(enterprise.logoUrlId) as any : null,
       is_verified: enterprise.isVerified,
+      members: (enterprise.members || []).map(m => ({
+        user_id: new Types.ObjectId(m.userId) as any,
+        mode: m.mode,
+      })),
+      knowledge_base: enterprise.knowledgeBase
+        ? {
+            raw_text: enterprise.knowledgeBase.rawText ?? null,
+            external_links: enterprise.knowledgeBase.externalLinks || [],
+            updated_at: enterprise.knowledgeBase.updatedAt || new Date(),
+          }
+        : null,
       delete_at: enterprise.deleteAt,
       delete_by: enterprise.deleteBy,
     };

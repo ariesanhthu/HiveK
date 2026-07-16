@@ -44,6 +44,34 @@ export class EnterpriseModel {
   @Prop({ type: MongooseSchema.Types.Boolean, default: false })
   is_verified: boolean;
 
+  @Prop({
+    type: [
+      {
+        user_id: { type: MongooseSchema.Types.ObjectId, ref: 'UserModel', required: true },
+        mode: { type: String, enum: ['sub_owner', 'user'], required: true },
+      },
+    ],
+    default: [],
+  })
+  members: {
+    user_id: MongooseSchema.Types.ObjectId;
+    mode: string;
+  }[];
+
+  @Prop({
+    type: {
+      raw_text: { type: MongooseSchema.Types.String, default: null },
+      external_links: { type: [MongooseSchema.Types.String], default: [] },
+      updated_at: { type: MongooseSchema.Types.Date, default: Date.now },
+    },
+    default: null,
+  })
+  knowledge_base: {
+    raw_text: string | null;
+    external_links: string[];
+    updated_at: Date;
+  } | null;
+
   @Prop({ type: MongooseSchema.Types.Date, default: null })
   delete_at: Date | null;
 

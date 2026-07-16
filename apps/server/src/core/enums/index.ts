@@ -12,3 +12,5 @@ export * from './proposal-status.enum';
 export * from './review-status.enum';
 export * from './product-platform.enum';
 export * from './media-slide-type.enum';
+export * from './enterprise-member-mode.enum';
+export * from './enterprise-invitation-status.enum';

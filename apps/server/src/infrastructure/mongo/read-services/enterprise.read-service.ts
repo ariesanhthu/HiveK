@@ -121,6 +121,15 @@ export class MongoEnterpriseReadService implements IEnterpriseReadService {
         updatedAt: doc.logo_url_id.updated_at,
       } : null,
       isVerified: doc.is_verified,
+      members: (doc.members || []).map((m: any) => ({
+        userId: m.user_id ? m.user_id.toString() : '',
+        mode: m.mode,
+      })),
+      knowledgeBase: doc.knowledge_base ? {
+        rawText: doc.knowledge_base.raw_text,
+        externalLinks: doc.knowledge_base.external_links || [],
+        updatedAt: doc.knowledge_base.updated_at ? new Date(doc.knowledge_base.updated_at).toISOString() : new Date().toISOString(),
+      } : undefined,
       createdAt: doc.created_at,
       updatedAt: doc.updated_at,
       user: doc.user_id && typeof doc.user_id === 'object' && doc.user_id._id ? {
