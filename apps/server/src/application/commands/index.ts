@@ -284,6 +284,9 @@ export * from './social-page-disconnect/social-page-disconnect.command';
 export * from './social-page-disconnect/social-page-disconnect.handler';
 export * from './social-page-refresh-token/social-page-refresh-token.command';
 export * from './social-page-refresh-token/social-page-refresh-token.handler';
+export * from './social-page-bulk-connect/social-page-bulk-connect.command';
+export * from './social-page-bulk-connect/social-page-bulk-connect.handler';
+export * from './social-page-bulk-connect/social-page-bulk-connect.dto';
 
 // Scheduled Post Commands
 export * from './scheduled-post-create/scheduled-post-create.command';

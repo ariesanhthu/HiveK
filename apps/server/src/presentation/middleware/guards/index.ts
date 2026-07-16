@@ -8,3 +8,4 @@ export * from './recaptcha.guard';
 export * from './google-auth.guard';
 export * from './facebook-ip.guard';
 export * from './user-verified.guard';
+export * from './state-auth.guard';

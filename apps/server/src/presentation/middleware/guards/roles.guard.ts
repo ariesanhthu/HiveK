@@ -5,6 +5,7 @@ import { ERoleType } from '@/core/enums';
 import { ROLES_KEY } from '../../decorators/roles.decorator';
 import { IS_PUBLIC_KEY } from '@/presentation/decorators/public.decorator';
 import { isFunction, isEmpty } from '@/shared/utils';
+import { IS_WEBHOOK_KEY } from '@/presentation/decorators/webhook.decorator';
 
 @Injectable()
 export class RolesGuard implements CanActivate {
@@ -31,7 +32,13 @@ export class RolesGuard implements CanActivate {
       context.getHandler(),
       context.getClass(),
     ]);
-    if (isPublic) {
+
+    const isWebhook = this.reflector.getAllAndOverride<boolean>(IS_WEBHOOK_KEY, [
+      context.getHandler(),
+      context.getClass(),
+    ]);
+
+    if (isPublic || isWebhook) {
       return true;
     }
     

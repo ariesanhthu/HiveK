@@ -6,31 +6,35 @@ import {
   Param,
   Body,
   Query,
+  Res,
   UseGuards,
   ForbiddenException,
   Inject,
-  Redirect,
 } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { ApiTags, ApiOperation, ApiBearerAuth, ApiSecurity } from '@nestjs/swagger';
 import { buildVersionedRoute } from '@presentation/utils';
-import { JwtAuthGuard, RolesGuard, UserVerifiedGuard } from '@/presentation/middleware/guards';
+import { JwtAuthGuard, RolesGuard, UserVerifiedGuard, StateAuthGuard } from '@/presentation/middleware/guards';
 import { CurrentUser } from '@/presentation/decorators/current-user.decorator';
 import { Roles } from '@/presentation/decorators/roles.decorator';
-import { ERoleType } from '@/core/enums';
+import { ERoleType, ESocialPlatformCode } from '@/core/enums';
 import { ENTERPRISE_REPOSITORY, type IEnterpriseRepository } from '@/core/interfaces/repositories';
 import {
   SocialPageConnectCommand,
   SocialPageDisconnectCommand,
   SocialPageConnectInputDto,
   SocialPageRefreshTokenCommand,
+  SocialPageBulkConnectCommand,
 } from '@/application/commands';
 import { SocialPageGetListQuery } from '@/application/queries';
 import { SocialPageDto } from '@/application/dtos';
 import { FacebookTokenService } from '@/infrastructure/facebook/facebook-token.service';
+import { AUTH_JWT_SERVICE, type IAuthJwtService, type IJwtPayload } from '@/application/interfaces/auth-jwt.interface';
+import { errorMessage } from '@/shared/utils';
 import { ConfigService } from '@nestjs/config';
 import { Public } from '@/presentation/decorators/public.decorator';
 import { WebHook } from '@/presentation/decorators/webhook.decorator';
+import type { Response } from 'express';
 
 @ApiTags('CLIENT-social-pages')
 @ApiBearerAuth()
@@ -46,6 +50,8 @@ export class SocialPageController {
     private readonly enterpriseRepository: IEnterpriseRepository,
     private readonly facebookTokenService: FacebookTokenService,
     private readonly configService: ConfigService,
+    @Inject(AUTH_JWT_SERVICE)
+    private readonly jwtService: IAuthJwtService,
   ) {}
 
   private async getEnterpriseId(userId: string): Promise<string> {
@@ -73,47 +79,63 @@ export class SocialPageController {
     return this.commandBus.execute(new SocialPageDisconnectCommand(id, enterpriseId, userId));
   }
 
-  @Public()
   @Get('facebook/oauth')
   @ApiOperation({ summary: 'Get Facebook OAuth Redirect URL' })
-  async getFacebookOauthUrl(@CurrentUser('sub') userId: string) {
+  async getFacebookOauthUrl(@CurrentUser() user: IJwtPayload) {
     const appId = this.configService.get<string>('FACEBOOK_APP_ID') || '';
     const redirectUri = this.configService.get<string>('FACEBOOK_CALLBACK_URL') || '';
     const scope = 'public_profile,pages_show_list';
     // const scope = 'pages_manage_posts,pages_read_engagement,pages_show_list,pages_messaging';
     
+    // Sign a short-lived JWT with the user's identity as the OAuth state
+    // so the callback can verify and extract userId, email, role via StateAuthGuard
+    const state = this.jwtService.sign(
+      { sub: user.sub, email: user.email, role: user.role },
+      { expiresInMinutes: 10 },
+    );
+
     const url = `https://www.facebook.com/v25.0/dialog/oauth?client_id=${appId}&redirect_uri=${encodeURIComponent(
       redirectUri
-    )}&scope=${scope}&state=${userId}`;
+    )}&scope=${scope}&state=${encodeURIComponent(state)}`;
 
     return { url };
   }
 
   @WebHook()
+  @UseGuards(StateAuthGuard)
   @Get('facebook/callback')
-  @ApiOperation({ summary: 'Exchange Facebook OAuth code for long-lived access token and list manageable pages' })
+  @ApiOperation({ summary: 'Exchange Facebook OAuth code, bulk connect pages, then redirect to the frontend' })
   async facebookCallback(
     @CurrentUser('sub') userId: string,
     @Query('code') code: string,
-  ) {
+    @Res() res: Response,
+  ): Promise<void> {
+    const redirectEndpoint = this.configService.get<string>('REDIRECT_ENDPOINT') || '/';
     const redirectUri = this.configService.get<string>('FACEBOOK_CALLBACK_URL') || '';
-    
-    // 1. Exchange code for short lived user token
-    const userToken = await this.facebookTokenService.exchangeCodeForUserToken(code, redirectUri);
 
-    // 2. Exchange for 60-day long lived user token
-    const longLivedUserToken = await this.facebookTokenService.exchangeUserTokenForLongLivedToken(userToken);
+    try {
+      // 1. Exchange code for short lived user token
+      const userToken = await this.facebookTokenService.exchangeCodeForUserToken(code, redirectUri);
 
-    // 3. Fetch manageable page list
-    const pages = await this.facebookTokenService.getUserAccounts(longLivedUserToken);
+      // 2. Exchange for 60-day long lived user token
+      const longLivedUserToken = await this.facebookTokenService.exchangeUserTokenForLongLivedToken(userToken);
 
-    return pages.map((page) => ({
-      pageId: page.id,
-      pageName: page.name,
-      // Temporarily returning page-specific token to frontend so frontend can complete the connect request.
-      // In production, this can also be stored or selected directly.
-      accessToken: page.access_token, 
-    }));
+      // 3. Resolve enterprise from userId (set by StateAuthGuard from the JWT state param)
+      const enterpriseId = await this.getEnterpriseId(userId);
+
+      // 4. Bulk connect all pages via command handler
+      await this.commandBus.execute(
+        new SocialPageBulkConnectCommand(enterpriseId, {
+          platformCode: ESocialPlatformCode.FACEBOOK,
+          longLivedUserToken,
+        }),
+      );
+
+      // 5. Redirect to frontend on success
+      res.redirect(`${redirectEndpoint}?success=true`);
+    } catch (error: unknown) {
+      res.redirect(`${redirectEndpoint}?success=false&error=${encodeURIComponent(errorMessage(error))}`);
+    }
   }
 
   @Post('facebook/connect')

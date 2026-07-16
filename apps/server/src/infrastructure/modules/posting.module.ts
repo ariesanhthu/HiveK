@@ -18,6 +18,7 @@ import {
 import {
   SocialPageConnectHandler,
   SocialPageDisconnectHandler,
+  SocialPageBulkConnectHandler,
   ScheduledPostCreateHandler,
   ScheduledPostScheduleHandler,
   ScheduledPostCancelHandler,
@@ -44,9 +45,12 @@ import {
   FacebookWebhookController,
 } from '@/presentation/controllers';
 
+import { StateAuthGuard } from '@/presentation/middleware/guards';
+
 const Handlers = [
   SocialPageConnectHandler,
   SocialPageDisconnectHandler,
+  SocialPageBulkConnectHandler,
   ScheduledPostCreateHandler,
   ScheduledPostScheduleHandler,
   ScheduledPostCancelHandler,
@@ -99,6 +103,7 @@ const Handlers = [
     },
     PostPublishJob,
     CommentWebhookConsumer,
+    StateAuthGuard,
     ...Handlers,
   ],
   exports: [
@@ -107,6 +112,7 @@ const Handlers = [
     FacebookModule,
     PostPublishJob,
     CommentWebhookConsumer,
+    StateAuthGuard,
     ...Handlers,
   ],
 })
