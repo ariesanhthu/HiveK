@@ -38,7 +38,7 @@ export * from './rmq/test-rmq.controller';
 export * from './rmq/enterprise-user.rmq.controller'
 export * from './rmq/notification.rmq.controller'
 export * from './rmq/auth-user.rmq.controller'
-
+export * from './rmq/scheduled-post.rmq.controller'
 
 // OAuth Controllers
 export * from './http/oauth.controller';

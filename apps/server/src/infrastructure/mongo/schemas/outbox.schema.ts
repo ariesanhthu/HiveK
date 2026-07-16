@@ -41,6 +41,9 @@ export class OutboxModel {
   created_at: Date;
 
   @Prop({ type: Date, required: false })
+  available_at?: Date;
+
+  @Prop({ type: Date, required: false })
   processed_at?: Date;
 
   updated_at: Date;

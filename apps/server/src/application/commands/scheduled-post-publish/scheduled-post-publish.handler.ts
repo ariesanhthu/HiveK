@@ -41,30 +41,24 @@ export class ScheduledPostPublishHandler implements ICommandHandler<ScheduledPos
 
   async execute(command: ScheduledPostPublishCommand): Promise<ScheduledPostDto> {
     // 1. Mark as publishing first to prevent double-processing
-    await this.uow.startTransaction();
-    let post = await this.scheduledPostRepository.findById(command.postId);
-    if (!post) {
-      await this.uow.rollbackTransaction();
-      throw new Error('Scheduled post not found.');
-    }
-
-    try {
-      post.markPublishing();
-      await this.scheduledPostRepository.save(post);
-      await this.uow.commitTransaction();
-    } catch (error) {
-      await this.uow.rollbackTransaction();
-      throw error;
-    }
+    let post = await this.uow.execute(async () => {
+      const p = await this.scheduledPostRepository.findById(command.postId);
+      if (!p) {
+        throw new Error('Scheduled post not found.');
+      }
+      p.markPublishing();
+      await this.scheduledPostRepository.save(p);
+      return p;
+    });
 
     // 2. Fetch the SocialPage
     const socialPage = await this.socialPageRepository.findById(post.socialPageId);
     if (!socialPage) {
-      await this.uow.startTransaction();
-      post.markFailed('Social page connection not found.');
-      await this.scheduledPostRepository.save(post);
-      await this.uow.commitTransaction();
-      return ScheduledPostMapper.toDto(post);
+      return this.uow.execute(async () => {
+        post.markFailed('Social page connection not found.');
+        await this.scheduledPostRepository.save(post);
+        return ScheduledPostMapper.toDto(post);
+      });
     }
 
     // 3. Resolve media file URLs
@@ -80,25 +74,25 @@ export class ScheduledPostPublishHandler implements ICommandHandler<ScheduledPos
     try {
       const publisher = this.socialPublisherDiscovery.findByCode(socialPage.platformCode);
       const result = await publisher.publishPost({
-        pageToken: socialPage.encryptedToken, // Plain access token in core
+        pageToken: socialPage.encryptedToken,
         pageId: socialPage.pageId,
         content: post.content,
         mediaUrls,
       });
 
-      await this.uow.startTransaction();
-      post.markPublished(result.platformPostId);
-      await this.scheduledPostRepository.save(post);
-      await this.eventService.publishEvents(post);
-      await this.uow.commitTransaction();
-    } catch (err: any) {
-      await this.uow.startTransaction();
-      post.markFailed(err.message || 'Publishing failed.');
-      await this.scheduledPostRepository.save(post);
-      await this.eventService.publishEvents(post);
-      await this.uow.commitTransaction();
+      return this.uow.execute(async () => {
+        post.markPublished(result.platformPostId);
+        await this.scheduledPostRepository.save(post);
+        await this.eventService.publishEvents(post);
+        return ScheduledPostMapper.toDto(post);
+      });
+    } catch (err: unknown) {
+      return this.uow.execute(async () => {
+        post.markFailed(err instanceof Error ? err.message : 'Publishing failed.');
+        await this.scheduledPostRepository.save(post);
+        await this.eventService.publishEvents(post);
+        return ScheduledPostMapper.toDto(post);
+      });
     }
-
-    return ScheduledPostMapper.toDto(post);
   }
 }

@@ -23,6 +23,8 @@ import {
   ScheduledPostCancelCommand,
   ScheduledPostRescheduleCommand,
   ScheduledPostCreateInputDto,
+  ScheduledPostCreateAndPublishCommand,
+  ScheduledPostCreateAndPublishInputDto,
 } from '@/application/commands';
 import { ScheduledPostGetListQuery, ScheduledPostGetByIdQuery } from '@/application/queries';
 import { ScheduledPostDto } from '@/application/dtos';
@@ -74,6 +76,17 @@ export class ScheduledPostController {
   ): Promise<ScheduledPostDto> {
     const enterpriseId = await this.getEnterpriseId(userId);
     return this.queryBus.execute(new ScheduledPostGetByIdQuery(id, enterpriseId));
+  }
+
+  @Post('test')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: '[TEST] Create a post and publish it immediately (bypasses outbox delay)' })
+  async createAndPublish(
+    @CurrentUser('sub') userId: string,
+    @Body() input: ScheduledPostCreateAndPublishInputDto,
+  ): Promise<ScheduledPostDto> {
+    const enterpriseId = await this.getEnterpriseId(userId);
+    return this.commandBus.execute(new ScheduledPostCreateAndPublishCommand(enterpriseId, userId, input));
   }
 
   @Post(':id/cancel')

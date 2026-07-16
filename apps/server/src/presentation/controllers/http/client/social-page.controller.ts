@@ -84,8 +84,7 @@ export class SocialPageController {
   async getFacebookOauthUrl(@CurrentUser() user: IJwtPayload) {
     const appId = this.configService.get<string>('FACEBOOK_APP_ID') || '';
     const redirectUri = this.configService.get<string>('FACEBOOK_CALLBACK_URL') || '';
-    const scope = 'public_profile,pages_show_list';
-    // const scope = 'pages_manage_posts,pages_read_engagement,pages_show_list,pages_messaging';
+    const scope = 'public_profile,pages_show_list,pages_manage_posts,pages_read_engagement';
     
     // Sign a short-lived JWT with the user's identity as the OAuth state
     // so the callback can verify and extract userId, email, role via StateAuthGuard

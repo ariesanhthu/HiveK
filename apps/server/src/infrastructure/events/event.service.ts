@@ -47,6 +47,7 @@ export class EventService implements IEventService {
       retry_count: 0,
       max_retry: 5,
       created_at: new Date(),
+      available_at: (event.metadata?.deliverAt as Date) ?? new Date(),
     }));
 
     const activeSession = this.uow.getSession?.();

@@ -20,6 +20,7 @@ import {
   SocialPageDisconnectHandler,
   SocialPageBulkConnectHandler,
   ScheduledPostCreateHandler,
+  ScheduledPostCreateAndPublishHandler,
   ScheduledPostScheduleHandler,
   ScheduledPostCancelHandler,
   ScheduledPostRescheduleHandler,
@@ -43,6 +44,7 @@ import {
   ScheduledPostController,
   AutoReplyRuleController,
   FacebookWebhookController,
+  ScheduledPostRmqController,
 } from '@/presentation/controllers';
 
 import { StateAuthGuard } from '@/presentation/middleware/guards';
@@ -52,6 +54,7 @@ const Handlers = [
   SocialPageDisconnectHandler,
   SocialPageBulkConnectHandler,
   ScheduledPostCreateHandler,
+  ScheduledPostCreateAndPublishHandler,
   ScheduledPostScheduleHandler,
   ScheduledPostCancelHandler,
   ScheduledPostRescheduleHandler,
@@ -77,6 +80,7 @@ const Handlers = [
     ScheduledPostController,
     AutoReplyRuleController,
     FacebookWebhookController,
+    ScheduledPostRmqController,
   ],
   providers: [
     {

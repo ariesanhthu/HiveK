@@ -21,6 +21,7 @@ import {
   NotifyKolCampaignInvitationEvent,
   CapturePaymentRequestEvent,
   RequestAuthUpdateSubscriptionEvent,
+  PostScheduledIntegrationEvent,
 } from '../events';
 
 export class EventMapper {
@@ -68,8 +69,9 @@ export class EventMapper {
           ),
         ];
       }
-      case event instanceof SocialPageConnectedEvent:
       case event instanceof PostScheduledEvent:
+        return EventMapper.mapPostScheduledEvent(event as PostScheduledEvent);
+      case event instanceof SocialPageConnectedEvent:
       case event instanceof PostPublishedEvent:
       case event instanceof PostFailedEvent:
         return [];
@@ -157,6 +159,25 @@ export class EventMapper {
       {
         exchange: 'kpi_exchange',
         routingKey: 'notification.kol_campaign_invitation',
+      }
+    );
+    return [e];
+  }
+
+  private static mapPostScheduledEvent(event: PostScheduledEvent): IntegrationEvent[] {
+    const e = new PostScheduledIntegrationEvent(
+      {
+        postId: event.payload.postId,
+        enterpriseId: event.payload.enterpriseId,
+        socialPageId: event.payload.socialPageId,
+        scheduledAt: event.payload.scheduledAt.toISOString(),
+      },
+      {
+        deliverAt: event.payload.scheduledAt,
+      },
+      {
+        exchange: 'kpi_exchange',
+        routingKey: 'post.scheduled',
       }
     );
     return [e];

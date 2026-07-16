@@ -46,8 +46,15 @@ export class OutboxProcessorService {
 
     try {
       const activeSession = this.uow.getSession?.() || undefined;
+      const now = new Date();
       const pendingMessages = await this.outboxModel
-        .find({ status: EOutboxStatus.PENDING })
+        .find({
+          status: EOutboxStatus.PENDING,
+          $or: [
+            { available_at: { $lte: now } },
+            { available_at: { $exists: false } },
+          ],
+        })
         .sort({ created_at: 1 })
         .limit(20)
         .session(activeSession)
