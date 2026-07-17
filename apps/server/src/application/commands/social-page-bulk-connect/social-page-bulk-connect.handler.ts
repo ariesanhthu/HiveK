@@ -42,6 +42,7 @@ export class SocialPageBulkConnectHandler implements ICommandHandler<SocialPageB
       this.logger.warn(`No pages found for platform ${input.platformCode}`);
       return [];
     }
+    this.logger.debug(accounts);
 
     // 3. Upsert all pages in a single transaction
     return this.uow.execute(async () => {

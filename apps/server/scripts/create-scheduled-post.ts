@@ -11,11 +11,11 @@ const BASE_URL = 'https://webhook.gnourt.me/hivek';       // e.g. 'http://localh
 const API_KEY = 'HiveK_ApiKey';        // x-api-key header value
 const EMAIL = 'txt812005@gmail.com';          // Enterprise user email
 const PASSWORD = 'Hivek@123';       // Enterprise user password
-const SOCIAL_PAGE_ID = '6a59105589cd6af5e9c52970'; // TODO: fill in with a valid socialPageId
+const SOCIAL_PAGE_ID = '6a5a5711a0472b6d73a6e5e2'; // TODO: fill in with a valid socialPageId
 // ─────────────────────────────────────────────────────────────────────────────
 
 const AUTH_ENDPOINT = `${BASE_URL}/client/v1/auth/sign-in`;
-const SCHEDULED_POST_ENDPOINT = `${BASE_URL}/client/v1/scheduled-posts`;
+const SCHEDULED_POST_ENDPOINT = `${BASE_URL}/client/v1/scheduled-posts/test`;
 
 async function signIn(): Promise<string> {
   console.log(`➡️  POST ${AUTH_ENDPOINT} (sign-in)`);

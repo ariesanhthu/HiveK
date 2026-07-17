@@ -30,6 +30,7 @@ export * from './http/client/user.controller';
 export * from './http/client/social-page.controller';
 export * from './http/client/scheduled-post.controller';
 export * from './http/client/auto-reply-rule.controller';
+export * from './http/client/threads-oauth.controller';
 export * from './http/facebook-webhook.controller';
 
 // RMQ Controllers

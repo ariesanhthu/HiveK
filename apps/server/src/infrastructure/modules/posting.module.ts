@@ -1,6 +1,9 @@
 import { Module } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
 import { FacebookModule } from '../facebook/facebook.module';
+import { ThreadsModule } from '../threads/threads.module';
+import { ThreadsPublisherService } from '../threads/threads-publisher.service';
+import { ThreadsSocialPageConnectorService } from '../threads/threads-social-page-connector.service';
 import { FacebookPublisherService } from '../facebook/facebook-publisher.service';
 import { FacebookCommentReplierService } from '../facebook/facebook-comment-replier.service';
 import { FacebookSocialPageConnectorService } from '../facebook/facebook-social-page-connector.service';
@@ -49,6 +52,7 @@ import {
   AutoReplyRuleController,
   FacebookWebhookController,
   ScheduledPostRmqController,
+  ThreadsOAuthController,
 } from '@/presentation/controllers';
 
 import { StateAuthGuard } from '@/presentation/middleware/guards';
@@ -78,19 +82,25 @@ const Handlers = [
   imports: [
     CqrsModule,
     FacebookModule,
+    ThreadsModule,
   ],
   controllers: [
     SocialPageController,
     ScheduledPostController,
     AutoReplyRuleController,
     FacebookWebhookController,
+    ThreadsOAuthController,
   ],
   providers: [
     {
       provide: SOCIAL_PUBLISHERS,
-      inject: [FacebookPublisherService],
-      useFactory: (facebook: FacebookPublisherService) => ({
+      inject: [FacebookPublisherService, ThreadsPublisherService],
+      useFactory: (
+        facebook: FacebookPublisherService,
+        threads: ThreadsPublisherService,
+      ) => ({
         facebook,
+        threads,
       }),
     },
     {
@@ -110,9 +120,13 @@ const Handlers = [
     },
     {
       provide: SOCIAL_PAGE_CONNECTORS,
-      inject: [FacebookSocialPageConnectorService],
-      useFactory: (facebook: FacebookSocialPageConnectorService) => ({
+      inject: [FacebookSocialPageConnectorService, ThreadsSocialPageConnectorService],
+      useFactory: (
+        facebook: FacebookSocialPageConnectorService,
+        threads: ThreadsSocialPageConnectorService,
+      ) => ({
         facebook,
+        threads,
       }),
     },
     {
