@@ -2,7 +2,7 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { Inject, NotFoundException, ForbiddenException } from '@nestjs/common';
 import { SOCIAL_PAGE_REPOSITORY, type ISocialPageRepository } from '@/core/interfaces/repositories';
 import { UNIT_OF_WORK, type IUnitOfWork } from '@/application/interfaces';
-import { FacebookTokenService } from '@/infrastructure/facebook/facebook-token.service';
+import { type ISocialPageConnectorFactory, SOCIAL_PAGE_CONNECTOR_FACTORY } from '@/core/interfaces';
 import { SocialPageRefreshTokenCommand } from './social-page-refresh-token.command';
 import { SocialPageDto } from '@/application/dtos';
 import { SocialPageMapper } from '@/application/mappers';
@@ -14,7 +14,8 @@ export class SocialPageRefreshTokenHandler implements ICommandHandler<SocialPage
     private readonly socialPageRepository: ISocialPageRepository,
     @Inject(UNIT_OF_WORK)
     private readonly uow: IUnitOfWork,
-    private readonly facebookTokenService: FacebookTokenService,
+    @Inject(SOCIAL_PAGE_CONNECTOR_FACTORY)
+    private readonly connectorFactory: ISocialPageConnectorFactory,
   ) {}
 
   async execute(command: SocialPageRefreshTokenCommand): Promise<SocialPageDto> {
@@ -29,24 +30,27 @@ export class SocialPageRefreshTokenHandler implements ICommandHandler<SocialPage
       throw new ForbiddenException('Unauthorized access to this social page connection.');
     }
 
-    // 1. Exchange user access token for a long-lived one
-    const longLivedUserToken = await this.facebookTokenService.exchangeUserTokenForLongLivedToken(userAccessToken);
+    // 1. Resolve platform connector
+    const connector = this.connectorFactory.findByCode(socialPage.platformCode);
 
-    // 2. Fetch page accounts to find the fresh page token
-    const accounts = await this.facebookTokenService.getUserAccounts(longLivedUserToken);
+    // 2. Exchange user access token for a long-lived one
+    const longLivedUserToken = await connector.exchangeForLongLivedToken(userAccessToken);
+
+    // 3. Fetch page accounts to find the fresh page token
+    const accounts = await connector.getUserAccounts(longLivedUserToken);
     const matchingAccount = accounts.find((acc) => acc.id === socialPage.pageId);
 
     if (!matchingAccount) {
       throw new NotFoundException('The page is no longer manageable with the provided Facebook account.');
     }
 
-    // 3. Get details to get picture and follower count
-    const details = await this.facebookTokenService.getPageDetails(matchingAccount.access_token, socialPage.pageId);
+    // 4. Get details to get picture and follower count
+    const details = await connector.getPageDetails(matchingAccount.accessToken, socialPage.pageId);
 
     await this.uow.startTransaction();
     try {
-      socialPage.updateToken(matchingAccount.access_token);
-      socialPage.updatePageInfo(details.name, details.picture?.data?.url, details.fan_count);
+      socialPage.updateToken(matchingAccount.accessToken);
+      socialPage.updatePageInfo(details.name, details.pictureUrl, details.followerCount);
       socialPage.activate();
 
       await this.socialPageRepository.save(socialPage);

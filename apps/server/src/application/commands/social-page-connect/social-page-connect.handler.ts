@@ -6,7 +6,7 @@ import { SocialPageRoot } from '@/core/aggregate-roots';
 import { SocialPageConnectCommand } from './social-page-connect.command';
 import { SocialPageDto } from '@/application/dtos';
 import { SocialPageMapper } from '@/application/mappers';
-import { FacebookTokenService } from '@/infrastructure/facebook/facebook-token.service';
+import { type ISocialPageConnectorFactory, SOCIAL_PAGE_CONNECTOR_FACTORY } from '@/core/interfaces';
 
 @CommandHandler(SocialPageConnectCommand)
 export class SocialPageConnectHandler implements ICommandHandler<SocialPageConnectCommand, SocialPageDto> {
@@ -17,7 +17,8 @@ export class SocialPageConnectHandler implements ICommandHandler<SocialPageConne
     private readonly eventService: IEventService,
     @Inject(UNIT_OF_WORK)
     private readonly uow: IUnitOfWork,
-    private readonly facebookTokenService: FacebookTokenService,
+    @Inject(SOCIAL_PAGE_CONNECTOR_FACTORY)
+    private readonly connectorFactory: ISocialPageConnectorFactory,
   ) {}
 
   async execute(command: SocialPageConnectCommand): Promise<SocialPageDto> {
@@ -32,15 +33,17 @@ export class SocialPageConnectHandler implements ICommandHandler<SocialPageConne
     // Secure server-side validation of page token and metadata
     if (input.platformCode === 'facebook') {
       try {
-        const details = await this.facebookTokenService.getPageDetails(input.accessToken, input.pageId);
-        if (details && details.access_token) {
-          finalAccessToken = details.access_token;
+        const connector = this.connectorFactory.findByCode(input.platformCode);
+        const details = await connector.getPageDetails(input.accessToken, input.pageId);
+        if (details && details.accessToken) {
+          finalAccessToken = details.accessToken;
           finalPageName = details.name;
-          finalPictureUrl = details.picture?.data?.url || null;
-          finalFollowerCount = details.fan_count || null;
+          finalPictureUrl = details.pictureUrl || null;
+          finalFollowerCount = details.followerCount || null;
         }
-      } catch (err: any) {
-        throw new Error(`Failed to verify page details via Facebook Graph API: ${err.message}`);
+      } catch (err: unknown) {
+        const message = err instanceof Error ? err.message : 'Unknown error';
+        throw new Error(`Failed to verify page details via Facebook Graph API: ${message}`);
       }
     }
 

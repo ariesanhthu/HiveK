@@ -7,7 +7,7 @@ import { SocialPageRoot } from '@/core/aggregate-roots';
 import { SocialPageBulkConnectCommand } from './social-page-bulk-connect.command';
 import { SocialPageDto } from '@/application/dtos';
 import { SocialPageMapper } from '@/application/mappers';
-import { FacebookTokenService } from '@/infrastructure/facebook/facebook-token.service';
+import { type ISocialPageConnectorFactory, SOCIAL_PAGE_CONNECTOR_FACTORY } from '@/core/interfaces';
 
 @CommandHandler(SocialPageBulkConnectCommand)
 export class SocialPageBulkConnectHandler implements ICommandHandler<SocialPageBulkConnectCommand, SocialPageDto[]> {
@@ -22,7 +22,8 @@ export class SocialPageBulkConnectHandler implements ICommandHandler<SocialPageB
     private readonly eventService: IEventService,
     @Inject(UNIT_OF_WORK)
     private readonly uow: IUnitOfWork,
-    private readonly facebookTokenService: FacebookTokenService,
+    @Inject(SOCIAL_PAGE_CONNECTOR_FACTORY)
+    private readonly connectorFactory: ISocialPageConnectorFactory,
   ) {}
 
   async execute(command: SocialPageBulkConnectCommand): Promise<SocialPageDto[]> {
@@ -34,8 +35,9 @@ export class SocialPageBulkConnectHandler implements ICommandHandler<SocialPageB
       throw new Error(`Platform not found for code: ${input.platformCode}`);
     }
 
-    // 2. Fetch pages from Facebook API using the long-lived user token
-    const accounts = await this.facebookTokenService.getUserAccounts(input.longLivedUserToken);
+    // 2. Resolve platform connector and fetch pages
+    const connector = this.connectorFactory.findByCode(input.platformCode);
+    const accounts = await connector.getUserAccounts(input.longLivedUserToken);
     if (accounts.length === 0) {
       this.logger.warn(`No pages found for platform ${input.platformCode}`);
       return [];
@@ -53,7 +55,7 @@ export class SocialPageBulkConnectHandler implements ICommandHandler<SocialPageB
 
         if (socialPage) {
           // Page already connected — update token and sync page name
-          socialPage.updateToken(account.access_token, null);
+          socialPage.updateToken(account.accessToken, null);
           socialPage.updatePageInfo(account.name, null, null);
           socialPage.activate();
         } else {
@@ -67,7 +69,7 @@ export class SocialPageBulkConnectHandler implements ICommandHandler<SocialPageB
             pageName: account.name,
             pictureUrl: null,
             followerCount: null,
-            encryptedToken: account.access_token,
+            encryptedToken: account.accessToken,
             tokenExpiresAt: null,
           });
         }

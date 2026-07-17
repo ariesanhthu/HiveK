@@ -28,7 +28,7 @@ import {
 } from '@/application/commands';
 import { SocialPageGetListQuery } from '@/application/queries';
 import { SocialPageDto } from '@/application/dtos';
-import { FacebookTokenService } from '@/infrastructure/facebook/facebook-token.service';
+import { type ISocialPageConnectorFactory, SOCIAL_PAGE_CONNECTOR_FACTORY } from '@/core/interfaces';
 import { AUTH_JWT_SERVICE, type IAuthJwtService, type IJwtPayload } from '@/application/interfaces/auth-jwt.interface';
 import { errorMessage } from '@/shared/utils';
 import { ConfigService } from '@nestjs/config';
@@ -48,10 +48,11 @@ export class SocialPageController {
     private readonly queryBus: QueryBus,
     @Inject(ENTERPRISE_REPOSITORY)
     private readonly enterpriseRepository: IEnterpriseRepository,
-    private readonly facebookTokenService: FacebookTokenService,
     private readonly configService: ConfigService,
     @Inject(AUTH_JWT_SERVICE)
     private readonly jwtService: IAuthJwtService,
+    @Inject(SOCIAL_PAGE_CONNECTOR_FACTORY)
+    private readonly connectorFactory: ISocialPageConnectorFactory,
   ) {}
 
   private async getEnterpriseId(userId: string): Promise<string> {
@@ -113,11 +114,14 @@ export class SocialPageController {
     const redirectUri = this.configService.get<string>('FACEBOOK_CALLBACK_URL') || '';
 
     try {
-      // 1. Exchange code for short lived user token
-      const userToken = await this.facebookTokenService.exchangeCodeForUserToken(code, redirectUri);
+      // 1. Resolve Facebook connector
+      const connector = this.connectorFactory.findByCode('facebook');
 
-      // 2. Exchange for 60-day long lived user token
-      const longLivedUserToken = await this.facebookTokenService.exchangeUserTokenForLongLivedToken(userToken);
+      // 2. Exchange code for short lived user token
+      const userToken = await connector.exchangeCodeForToken(code, redirectUri);
+
+      // 3. Exchange for 60-day long lived user token
+      const longLivedUserToken = await connector.exchangeForLongLivedToken(userToken);
 
       // 3. Resolve enterprise from userId (set by StateAuthGuard from the JWT state param)
       const enterpriseId = await this.getEnterpriseId(userId);

@@ -3,8 +3,10 @@ import { CqrsModule } from '@nestjs/cqrs';
 import { FacebookModule } from '../facebook/facebook.module';
 import { FacebookPublisherService } from '../facebook/facebook-publisher.service';
 import { FacebookCommentReplierService } from '../facebook/facebook-comment-replier.service';
+import { FacebookSocialPageConnectorService } from '../facebook/facebook-social-page-connector.service';
 import { SocialPublisherDiscoveryService } from '../posting/social-publisher-discovery.service';
 import { CommentReplierDiscoveryService } from '../posting/comment-replier-discovery.service';
+import { SocialPageConnectorFactoryService } from '../posting/social-page-connector-factory.service';
 import { PostPublishJob } from '../posting/jobs/post-publish.job';
 import { CommentWebhookConsumer } from '../../presentation/controllers/rmq/comment-webhook.consumer';
 import {
@@ -12,6 +14,8 @@ import {
   SOCIAL_PUBLISHER_DISCOVERY,
   COMMENT_REPLIERS,
   COMMENT_REPLIER_DISCOVERY,
+  SOCIAL_PAGE_CONNECTORS,
+  SOCIAL_PAGE_CONNECTOR_FACTORY,
 } from '@/core/interfaces';
 
 // Import all Command and Query Handlers
@@ -104,6 +108,17 @@ const Handlers = [
       provide: COMMENT_REPLIER_DISCOVERY,
       useClass: CommentReplierDiscoveryService,
     },
+    {
+      provide: SOCIAL_PAGE_CONNECTORS,
+      inject: [FacebookSocialPageConnectorService],
+      useFactory: (facebook: FacebookSocialPageConnectorService) => ({
+        facebook,
+      }),
+    },
+    {
+      provide: SOCIAL_PAGE_CONNECTOR_FACTORY,
+      useClass: SocialPageConnectorFactoryService,
+    },
     PostPublishJob,
     CommentWebhookConsumer,
     StateAuthGuard,
@@ -113,6 +128,7 @@ const Handlers = [
   exports: [
     SOCIAL_PUBLISHER_DISCOVERY,
     COMMENT_REPLIER_DISCOVERY,
+    SOCIAL_PAGE_CONNECTOR_FACTORY,
     FacebookModule,
     PostPublishJob,
     CommentWebhookConsumer,
