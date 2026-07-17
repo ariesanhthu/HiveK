@@ -4,12 +4,13 @@ import { MongoEnterpriseRepository } from '@/infrastructure/mongo/repositories/e
 import { EnterpriseModel } from '@/infrastructure/mongo/schemas/enterprise.schema';
 import { EnterpriseRoot } from '@/core/aggregate-roots';
 import { Types } from 'mongoose';
-import { UNIT_OF_WORK } from '@/application/interfaces';
+import { UNIT_OF_WORK, CACHE_SERVICE } from '@/application/interfaces';
 
 describe('MongoEnterpriseRepository', () => {
   let repository: MongoEnterpriseRepository;
   let mockEnterpriseModel: any;
   let mockUow: any;
+  let mockCacheService: any;
 
   const validId = new Types.ObjectId().toHexString();
   const validUserId = new Types.ObjectId().toHexString();
@@ -22,6 +23,7 @@ describe('MongoEnterpriseRepository', () => {
     contact_email: 'test@ent.com',
     contact_phone: '+841234567890',
     is_verified: false,
+    members: [],
     created_at: new Date(),
     updated_at: new Date(),
     delete_at: null,
@@ -34,7 +36,7 @@ describe('MongoEnterpriseRepository', () => {
         ...data,
         save: jest.fn().mockResolvedValue({ _id: new Types.ObjectId() }),
     }));
-    
+
     mockEnterpriseModel.findById = jest.fn().mockReturnThis();
     mockEnterpriseModel.findOne = jest.fn().mockReturnThis();
     mockEnterpriseModel.findByIdAndUpdate = jest.fn().mockReturnThis();
@@ -44,6 +46,13 @@ describe('MongoEnterpriseRepository', () => {
 
     mockUow = {
         getSession: jest.fn().mockReturnValue(null),
+    };
+
+    mockCacheService = {
+      get: jest.fn().mockResolvedValue(null),
+      set: jest.fn().mockResolvedValue(undefined),
+      del: jest.fn().mockResolvedValue(undefined),
+      delByPattern: jest.fn().mockResolvedValue(undefined),
     };
 
     const module: TestingModule = await Test.createTestingModule({
@@ -56,6 +65,10 @@ describe('MongoEnterpriseRepository', () => {
         {
           provide: UNIT_OF_WORK,
           useValue: mockUow,
+        },
+        {
+          provide: CACHE_SERVICE,
+          useValue: mockCacheService,
         },
       ],
     }).compile();

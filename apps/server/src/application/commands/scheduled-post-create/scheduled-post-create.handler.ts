@@ -43,6 +43,7 @@ export class ScheduledPostCreateHandler implements ICommandHandler<ScheduledPost
       const post = ScheduledPostRoot.create({
         enterpriseId,
         socialPageId: input.socialPageId,
+        campaignId: input.campaignId,
         platformCode: socialPage.platformCode,
         content: input.content,
         mediaFileIds: input.mediaFileIds,

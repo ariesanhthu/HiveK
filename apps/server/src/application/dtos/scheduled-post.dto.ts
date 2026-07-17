@@ -4,6 +4,7 @@ export class ScheduledPostDto {
   id: string;
   enterpriseId: string;
   socialPageId: string;
+  campaignId?: string;
   platformCode: string;
   content: string;
   mediaFileIds: string[];

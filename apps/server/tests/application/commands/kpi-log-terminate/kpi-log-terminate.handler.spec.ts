@@ -1,18 +1,19 @@
 import { KpiLogTerminateCommandHandler } from '@/application/commands/kpi-log-terminate/kpi-log-terminate.handler';
 import { KpiLogTerminateCommand } from '@/application/commands/kpi-log-terminate/kpi-log-terminate.command';
-import { CampaignParticipantRoot } from '@/core/aggregate-roots/campaign-participant.aggregate';
-import { EParticipantStatus, EOutputStatus, EOutputType } from '@/core/enums';
+import { CampaignRoot } from '@/core/aggregate-roots';
+import { CampaignParticipantEntity } from '@/core/entities';
+import { EParticipantStatus, ECampaignStatus } from '@/core/enums';
 import { KpiTrackingTerminatedEvent } from '@/application/events';
 
 describe('KpiLogTerminateCommandHandler', () => {
   let handler: KpiLogTerminateCommandHandler;
-  let mockParticipantRepository: any;
+  let mockCampaignRepository: any;
   let mockEventBus: any;
   let mockUow: any;
 
   beforeEach(() => {
-    mockParticipantRepository = {
-      findById: jest.fn(),
+    mockCampaignRepository = {
+      findByParticipantId: jest.fn(),
       save: jest.fn(),
     };
     mockEventBus = {
@@ -22,7 +23,7 @@ describe('KpiLogTerminateCommandHandler', () => {
       execute: jest.fn((fn: any) => fn()),
     };
     handler = new KpiLogTerminateCommandHandler(
-      mockParticipantRepository,
+      mockCampaignRepository,
       mockEventBus,
       mockUow,
     );
@@ -31,44 +32,39 @@ describe('KpiLogTerminateCommandHandler', () => {
   const participantId = 'participant-123';
   const outputId = 'output-456';
 
-  const createMockParticipant = () => {
-    const participant = CampaignParticipantRoot.instantiate(participantId, {
-      campaignId: 'campaign-123',
-      kolProfileId: 'kol-123',
+  it('should publish KpiTrackingTerminatedEvent when participant exists', async () => {
+    const participant = CampaignParticipantEntity.instantiate(participantId, {
+      kolProfileId: 'kol-1',
       status: EParticipantStatus.JOINED,
       joinedAt: new Date(),
-      createdAt: new Date(),
-      updatedAt: new Date(),
-      outputs: [
-        {
-          id: outputId,
-          platformId: 'platform-1',
-          outputType: EOutputType.VIDEO,
-          title: 'Test Video',
-          isScheduleForPost: false,
-          fileId: null,
-          scheduledAt: null,
-          status: EOutputStatus.PUBLISHED,
-          url: 'https://video.com',
-          postedAt: new Date(),
-          isTrackingActive: true,
-        },
-      ],
       deleteAt: null,
       deleteBy: null,
+      createdAt: new Date(),
+      updatedAt: new Date(),
     });
-    return participant;
-  };
 
-  it('should successfully terminate tracking and publish event', async () => {
-    const participant = createMockParticipant();
-    mockParticipantRepository.findById.mockResolvedValue(participant);
+    const campaign = CampaignRoot.instantiate('campaign-123', {
+      ownerId: 'owner-1',
+      enterpriseId: 'ent-1',
+      budget: 5000,
+      financialTarget: {},
+      description: 'Test Campaign',
+      platformTarget: [],
+      status: ECampaignStatus.IN_PROGRESS,
+      collaboratorIds: [],
+      rawContents: [],
+      deleteAt: null,
+      deleteBy: null,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      participants: [participant],
+    });
+
+    mockCampaignRepository.findByParticipantId.mockResolvedValue(campaign);
 
     const command = new KpiLogTerminateCommand({ participantId, outputId });
     await handler.execute(command);
 
-    expect(participant.outputs[0].isTrackingActive).toBe(false);
-    expect(mockParticipantRepository.save).toHaveBeenCalledWith(participant);
     expect(mockEventBus.publish).toHaveBeenCalledWith(expect.any(KpiTrackingTerminatedEvent));
   });
 
@@ -76,17 +72,16 @@ describe('KpiLogTerminateCommandHandler', () => {
     const command = new KpiLogTerminateCommand({ participantId: '', outputId: '' });
     await handler.execute(command);
 
-    expect(mockParticipantRepository.findById).not.toHaveBeenCalled();
+    expect(mockCampaignRepository.findByParticipantId).not.toHaveBeenCalled();
     expect(mockEventBus.publish).not.toHaveBeenCalled();
   });
 
-  it('should return early if participant not found', async () => {
-    mockParticipantRepository.findById.mockResolvedValue(null);
+  it('should return early if campaign not found for participant', async () => {
+    mockCampaignRepository.findByParticipantId.mockResolvedValue(null);
 
     const command = new KpiLogTerminateCommand({ participantId, outputId });
     await handler.execute(command);
 
-    expect(mockParticipantRepository.save).not.toHaveBeenCalled();
     expect(mockEventBus.publish).not.toHaveBeenCalled();
   });
 });

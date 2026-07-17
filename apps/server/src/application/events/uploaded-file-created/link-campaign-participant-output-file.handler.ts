@@ -26,7 +26,8 @@ export class LinkCampaignParticipantOutputFileHandler implements IEventHandler<U
       return;
     }
 
-    campaign.setOutputFileId(event.targetId, event.fileId);
-    await this.campaignRepository.save(campaign);
+    // @code-comment(SchedulePost): setOutputFileId disabled — schedule posts are now ScheduledPost IDs.
+    // campaign.setOutputFileId(event.targetId, event.fileId);
+    // await this.campaignRepository.save(campaign);
   }
 }

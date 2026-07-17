@@ -9,7 +9,7 @@ export const PlatformTargetItemDtoSchema = z.object({
   minFollowers: z.number().optional(),
   maxFollowers: z.number().optional(),
   note: z.string().optional(),
-    others: z.record(z.string(), z.unknown()).optional(),
+    extras: z.record(z.string(), z.unknown()).optional(),
 }).strict();
 
 export const RawContentItemDtoSchema = z.object({
@@ -55,18 +55,13 @@ export const CampaignEnterpriseOutputDtoSchema = z.object({
   isTrackingActive: z.boolean(),
 }).strict();
 
-export const SchedulePostDtoSchema = z.object({
-  scheduledTime: z.coerce.date(),
-  platformId: z.string(),
-  status: z.string(),
-  campaignKOLOutputs: z.array(CampaignKOLOutputDtoSchema).optional().default([]),
-  campaignEnterpriseOutputs: z.array(CampaignEnterpriseOutputDtoSchema).optional().default([]),
-}).strict();
+// @code-comment(SchedulePostDtoSchema): Kept for future reuse.
+// export const SchedulePostDtoSchema = z.object({ ... }).strict();
 
 export const ScheduleDayDtoSchema = z.object({
   date: z.coerce.date(),
   label: z.string().optional(),
-  posts: z.array(SchedulePostDtoSchema),
+  posts: z.array(z.string()),  // ScheduledPost IDs
 }).strict();
 
 export const CampaignScheduleDtoSchema = z.object({
@@ -84,6 +79,7 @@ export const CampaignDtoSchema = z.object({
   status: z.enum(ECampaignStatus),
   collaboratorIds: z.array(z.string()),
   rawContents: z.array(RawContentItemDtoSchema),
+  extras: z.record(z.string(), z.unknown()).optional(),
   schedule: CampaignScheduleDtoSchema.optional(),
   participants: z.array(CampaignParticipantSubDtoSchema).optional().default([]),
 }).strict();

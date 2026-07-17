@@ -72,6 +72,7 @@ export class MongoScheduledPostRepository implements IScheduledPostRepository {
     return ScheduledPostRoot.instantiate(doc._id.toString(), {
       enterpriseId: doc.enterprise_id.toString(),
       socialPageId: doc.social_page_id.toString(),
+      campaignId: doc.campaign_id?.toString(),
       platformCode: doc.platform_code,
       content: doc.content,
       mediaFileIds: doc.media_file_ids,
@@ -90,6 +91,7 @@ export class MongoScheduledPostRepository implements IScheduledPostRepository {
     return {
       enterprise_id: new Types.ObjectId(scheduledPost.enterpriseId),
       social_page_id: new Types.ObjectId(scheduledPost.socialPageId),
+      campaign_id: scheduledPost.campaignId ? new Types.ObjectId(scheduledPost.campaignId) : undefined,
       platform_code: scheduledPost.platformCode,
       content: scheduledPost.content,
       media_file_ids: scheduledPost.mediaFileIds,

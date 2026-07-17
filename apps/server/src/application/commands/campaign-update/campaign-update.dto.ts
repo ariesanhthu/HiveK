@@ -10,8 +10,9 @@ export const CampaignUpdateInputSchema = z.object({
     minFollowers: z.number().nonnegative().optional(),
     maxFollowers: z.number().nonnegative().optional(),
     note: z.string().max(500).optional(),
-    others: z.record(z.string(), z.any()).optional(),
+    extras: z.record(z.string(), z.any()).optional(),
   }).strict()).optional(),
+  extras: z.record(z.string(), z.any()).optional(),
 }).strict();
 
 

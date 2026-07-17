@@ -19,7 +19,7 @@ export class PlatformTargetItemModel {
   note?: string;
 
   @Prop({ type: MongooseSchema.Types.Map, of: MongooseSchema.Types.Mixed, required: false })
-  others?: Record<string, any>;
+  extras?: Record<string, any>;
 }
 
 @Schema({ _id: false })
@@ -55,105 +55,17 @@ export class CampaignParticipantSubModel {
 }
 export const CampaignParticipantSubSchema = SchemaFactory.createForClass(CampaignParticipantSubModel);
 
-@Schema({ timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } })
-export class CampaignKOLOutputSubModel {
-  _id: Types.ObjectId;
+// @code-comment(CampaignKOLOutputSubModel): Kept for future reuse when schedule posts are re-inlined.
+// export class CampaignKOLOutputSubModel { ... }
+// export const CampaignKOLOutputSubSchema = SchemaFactory.createForClass(CampaignKOLOutputSubModel);
 
-  @Prop({ required: true, type: Types.ObjectId })
-  campaign_participant_id: Types.ObjectId;
+// @code-comment(CampaignEnterpriseOutputSubModel): Kept for future reuse.
+// export class CampaignEnterpriseOutputSubModel { ... }
+// export const CampaignEnterpriseOutputSubSchema = SchemaFactory.createForClass(CampaignEnterpriseOutputSubModel);
 
-  @Prop({ required: true, type: Types.ObjectId, ref: 'PlatformModel' })
-  platform_id: Types.ObjectId;
-
-  @Prop({ type: String, default: null })
-  unique_id: string | null;
-
-  @Prop({ required: true, type: String, enum: Object.values(EOutputType) })
-  output_type: EOutputType;
-
-  @Prop({ required: true, type: String })
-  title: string;
-
-  @Prop({ required: true, type: Boolean })
-  is_schedule_for_post: boolean;
-
-  @Prop({ type: Date, default: null })
-  scheduled_at: Date | null;
-
-  @Prop({ type: Types.ObjectId, ref: 'UploadedFileModel', default: null })
-  file_id: Types.ObjectId | null;
-
-  @Prop({ required: true, type: String, enum: Object.values(EOutputStatus) })
-  status: EOutputStatus;
-
-  @Prop({ type: String, default: null })
-  url: string | null;
-
-  @Prop({ type: Date, default: null })
-  posted_at: Date | null;
-
-  @Prop({ type: Boolean, default: false })
-  is_tracking_active: boolean;
-}
-export const CampaignKOLOutputSubSchema = SchemaFactory.createForClass(CampaignKOLOutputSubModel);
-
-@Schema({ timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } })
-export class CampaignEnterpriseOutputSubModel {
-  _id: Types.ObjectId;
-
-  @Prop({ required: true, type: Types.ObjectId, ref: 'PlatformModel' })
-  platform_id: Types.ObjectId;
-
-  @Prop({ type: String, default: null })
-  unique_id: string | null;
-
-  @Prop({ required: true, type: String, enum: Object.values(EOutputType) })
-  output_type: EOutputType;
-
-  @Prop({ required: true, type: String })
-  title: string;
-
-  @Prop({ required: true, type: Boolean })
-  is_schedule_for_post: boolean;
-
-  @Prop({ type: Date, default: null })
-  scheduled_at: Date | null;
-
-  @Prop({ type: Types.ObjectId, ref: 'UploadedFileModel', default: null })
-  file_id: Types.ObjectId | null;
-
-  @Prop({ required: true, type: String, enum: Object.values(EOutputStatus) })
-  status: EOutputStatus;
-
-  @Prop({ type: String, default: null })
-  url: string | null;
-
-  @Prop({ type: Date, default: null })
-  posted_at: Date | null;
-
-  @Prop({ type: Boolean, default: false })
-  is_tracking_active: boolean;
-}
-export const CampaignEnterpriseOutputSubSchema = SchemaFactory.createForClass(CampaignEnterpriseOutputSubModel);
-
-@Schema({ timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } })
-export class SchedulePostModel {
-  @Prop({ required: true, type: Date })
-  scheduled_time: Date;
-
-  @Prop({ required: true, type: Types.ObjectId, ref: 'PlatformModel' })
-  platform_id: Types.ObjectId;
-
-  @Prop({ required: true, type: String, enum: Object.values(ESchedulePostStatus) })
-  status: ESchedulePostStatus;
-
-  @Prop({ type: [CampaignKOLOutputSubSchema], default: [] })
-  campaign_kol_outputs: CampaignKOLOutputSubModel[];
-
-  @Prop({ type: [CampaignEnterpriseOutputSubSchema], default: [] })
-  campaign_enterprise_outputs: CampaignEnterpriseOutputSubModel[];
-}
-export const SchedulePostSchema = SchemaFactory.createForClass(SchedulePostModel);
+// @code-comment(SchedulePostModel): Kept for future reuse.
+// export class SchedulePostModel { ... }
+// export const SchedulePostSchema = SchemaFactory.createForClass(SchedulePostModel);
 
 @Schema({ _id: false })
 export class ScheduleDayModel {
@@ -163,8 +75,8 @@ export class ScheduleDayModel {
   @Prop({ type: String, required: false })
   label?: string;
 
-  @Prop({ type: [SchedulePostSchema], default: [] })
-  posts: SchedulePostModel[];
+  @Prop({ type: [{ type: Types.ObjectId, ref: 'ScheduledPostModel' }], default: [] })
+  posts: Types.ObjectId[];  // ScheduledPost IDs
 }
 export const ScheduleDaySchema = SchemaFactory.createForClass(ScheduleDayModel);
 
@@ -218,6 +130,9 @@ export class CampaignModel {
 
   @Prop({ type: [CampaignParticipantSubSchema], default: [] })
   participants: CampaignParticipantSubModel[];
+
+  @Prop({ type: MongooseSchema.Types.Map, of: MongooseSchema.Types.Mixed, required: false })
+  extras?: Record<string, any>;
 
   @Prop({ type: CampaignScheduleSchema, required: false })
   schedule?: CampaignScheduleModel;

@@ -73,7 +73,7 @@ describe('Campaign Domain (e2e)', () => {
           minFollowers: 100,
           maxFollowers: 500,
           note: 'test note',
-          others: { age: '18-24' },
+          extras: { age: '18-24' },
         },
       ],
     };

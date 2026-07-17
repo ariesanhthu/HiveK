@@ -17,3 +17,4 @@ export * from './social-page.mapper';
 export * from './scheduled-post.mapper';
 export * from './auto-reply-rule.mapper';
 export * from './enterprise-invitation.mapper';
+export * from './campaign-participant.mapper';

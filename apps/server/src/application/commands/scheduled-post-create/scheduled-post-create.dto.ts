@@ -6,6 +6,7 @@ export const ScheduledPostCreateInputSchema = z.object({
   content: z.string().min(1),
   mediaFileIds: z.array(z.string()).default([]),
   scheduledAt: z.string().datetime().optional(),
+  campaignId: z.string().optional(),
 }).strict();
 
 export class ScheduledPostCreateInputDto extends createZodDto(ScheduledPostCreateInputSchema) {}

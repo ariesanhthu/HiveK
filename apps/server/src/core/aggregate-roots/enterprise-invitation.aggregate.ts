@@ -1,5 +1,6 @@
 import { BaseAggregateRoot } from '@/core/common/base.aggregate-root';
 import { EEnterpriseMemberMode, EEnterpriseInvitationStatus } from '../enums';
+import { InvalidOperationException } from '../exceptions';
 
 export interface EnterpriseInvitationProps {
   enterpriseId: string;
@@ -73,12 +74,12 @@ export class EnterpriseInvitationRoot extends BaseAggregateRoot<EnterpriseInvita
 
   public accept(): void {
     if (this.props.status !== EEnterpriseInvitationStatus.PENDING) {
-      throw new Error('Invitation is not pending');
+      throw new InvalidOperationException('Invitation is not pending');
     }
     if (this.isExpired()) {
       this.props.status = EEnterpriseInvitationStatus.EXPIRED;
       this.props.updatedAt = new Date();
-      throw new Error('Invitation has expired');
+      throw new InvalidOperationException('Invitation has expired');
     }
     this.props.status = EEnterpriseInvitationStatus.ACCEPTED;
     this.props.updatedAt = new Date();
@@ -86,7 +87,7 @@ export class EnterpriseInvitationRoot extends BaseAggregateRoot<EnterpriseInvita
 
   public revoke(): void {
     if (this.props.status !== EEnterpriseInvitationStatus.PENDING) {
-      throw new Error('Invitation is not pending');
+      throw new InvalidOperationException('Invitation is not pending');
     }
     this.props.status = EEnterpriseInvitationStatus.REVOKED;
     this.props.updatedAt = new Date();

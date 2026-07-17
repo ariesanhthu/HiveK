@@ -14,6 +14,9 @@ export class ScheduledPostModel {
   @Prop({ type: Types.ObjectId, ref: 'SocialPageModel', required: true })
   social_page_id: Types.ObjectId;
 
+  @Prop({ type: Types.ObjectId, ref: 'CampaignModel', required: false })
+  campaign_id: Types.ObjectId;
+
   @Prop({ type: String, required: true })
   platform_code: string;
 

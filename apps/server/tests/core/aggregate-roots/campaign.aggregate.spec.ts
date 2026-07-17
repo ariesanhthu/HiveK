@@ -15,7 +15,7 @@ describe('CampaignRoot Aggregate Root', () => {
         minFollowers: 1000,
         maxFollowers: 5000,
         note: 'High priority',
-        others: { age: '18-25' },
+        extras: { age: '18-25' },
       },
     ],
     status: ECampaignStatus.DRAFT,
@@ -30,6 +30,7 @@ describe('CampaignRoot Aggregate Root', () => {
     deleteBy: null,
     createdAt: new Date(),
     updatedAt: new Date(),
+    participants: [],
   };
 
   it('should create and get properties correctly', () => {

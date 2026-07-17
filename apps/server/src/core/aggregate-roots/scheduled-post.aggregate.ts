@@ -9,6 +9,7 @@ import { InvalidOperationException } from '../exceptions';
 export interface ScheduledPostProps {
   enterpriseId: string;
   socialPageId: string;
+  campaignId?: string;
   platformCode: string;
   content: string;
   mediaFileIds: string[];
@@ -51,6 +52,7 @@ export class ScheduledPostRoot extends BaseAggregateRoot<ScheduledPostProps> {
 
   get enterpriseId(): string { return this.props.enterpriseId; }
   get socialPageId(): string { return this.props.socialPageId; }
+  get campaignId(): string | undefined { return this.props.campaignId; }
   get platformCode(): string { return this.props.platformCode; }
   get content(): string { return this.props.content; }
   get mediaFileIds(): string[] { return [...this.props.mediaFileIds]; }

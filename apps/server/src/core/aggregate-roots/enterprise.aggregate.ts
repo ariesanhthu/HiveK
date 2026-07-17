@@ -3,6 +3,7 @@ import { Nullable } from '@/core/types';
 import { PhoneNumberVO } from '@/core/value-objects/phone-number.value-object';
 import { EntityHardDeletedEvent } from '../events/entity-hard-deleted.domain-event';
 import { TargetType, EEnterpriseMemberMode } from '../enums';
+import { InvalidOperationException } from '../exceptions';
 
 export interface EnterpriseMember {
   userId: string;
@@ -143,7 +144,7 @@ export class EnterpriseRoot extends BaseAggregateRoot<EnterpriseProps> {
 
   public addMember(userId: string, mode: EEnterpriseMemberMode): void {
     if (this.props.userId === userId) {
-      throw new Error('Owner is already a member');
+      throw new InvalidOperationException('Owner is already a member');
     }
     if (this.props.members.some(m => m.userId === userId)) {
       return; // Already a member
@@ -163,7 +164,7 @@ export class EnterpriseRoot extends BaseAggregateRoot<EnterpriseProps> {
   public changeMemberMode(userId: string, mode: EEnterpriseMemberMode): void {
     const member = this.props.members.find(m => m.userId === userId);
     if (!member) {
-      throw new Error('Member not found');
+      throw new InvalidOperationException('Member not found');
     }
     member.mode = mode;
     this.props.updatedAt = new Date();

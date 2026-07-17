@@ -7,6 +7,7 @@ export class ScheduledPostMapper {
       id: root.id!,
       enterpriseId: root.enterpriseId,
       socialPageId: root.socialPageId,
+      campaignId: root.campaignId,
       platformCode: root.platformCode,
       content: root.content,
       mediaFileIds: root.mediaFileIds,

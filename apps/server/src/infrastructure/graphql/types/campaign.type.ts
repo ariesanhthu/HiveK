@@ -133,26 +133,9 @@ export class CampaignEnterpriseOutputType {
   isTrackingActive: boolean;
 }
 
-@ObjectType()
-export class SchedulePostType {
-  @Field()
-  scheduledTime: string;
-
-  @Field()
-  platformId: string;
-
-  @Field(() => PlatformType, { nullable: true })
-  platform?: PlatformType | null;
-
-  @Field()
-  status: string;
-
-  @Field(() => [CampaignKOLOutputType])
-  campaignKOLOutputs: CampaignKOLOutputType[];
-
-  @Field(() => [CampaignEnterpriseOutputType])
-  campaignEnterpriseOutputs: CampaignEnterpriseOutputType[];
-}
+// @code-comment(SchedulePostType): Kept for future reuse when schedule posts are re-inlined.
+// @ObjectType()
+// export class SchedulePostType { ... }
 
 @ObjectType()
 export class ScheduleDayType {
@@ -162,8 +145,8 @@ export class ScheduleDayType {
   @Field({ nullable: true })
   label?: string;
 
-  @Field(() => [SchedulePostType])
-  posts: SchedulePostType[];
+  @Field(() => [String])
+  posts: string[];  // ScheduledPost IDs
 }
 
 @ObjectType()

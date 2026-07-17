@@ -1,91 +1,74 @@
 import { CampaignParticipantHardDeleteCommandHandler } from '@/application/commands/campaign-participant-hard-delete/campaign-participant-hard-delete.handler';
 import { CampaignParticipantHardDeleteCommand } from '@/application/commands/campaign-participant-hard-delete/campaign-participant-hard-delete.command';
-import { CampaignParticipantRoot } from '@/core/aggregate-roots';
+import { CampaignRoot } from '@/core/aggregate-roots';
+import { CampaignParticipantEntity } from '@/core/entities';
 import { CampaignParticipantNotFoundException, InvalidOperationException } from '@/core/exceptions';
-import { EOutputStatus, EParticipantStatus, EOutputType } from '@/core/enums';
+import { EParticipantStatus, ECampaignStatus } from '@/core/enums';
 
 describe('CampaignParticipantHardDeleteCommandHandler', () => {
   let handler: CampaignParticipantHardDeleteCommandHandler;
-  let mockParticipantRepository: any;
+  let mockCampaignRepository: any;
 
   beforeEach(() => {
-    mockParticipantRepository = {
-      findById: jest.fn(),
-      delete: jest.fn(),
+    mockCampaignRepository = {
+      findByParticipantId: jest.fn(),
+      save: jest.fn(),
     };
-    handler = new CampaignParticipantHardDeleteCommandHandler(mockParticipantRepository);
+    handler = new CampaignParticipantHardDeleteCommandHandler(mockCampaignRepository);
   });
 
-  it('should throw CampaignParticipantNotFoundException if participant not found', async () => {
-    mockParticipantRepository.findById.mockResolvedValue(null);
+  const createCampaignWithParticipant = (participantId: string, status: EParticipantStatus) => {
+    const participant = CampaignParticipantEntity.instantiate(participantId, {
+      kolProfileId: 'kol-1',
+      status,
+      joinedAt: status === EParticipantStatus.REJECTED ? null : new Date(),
+      deleteAt: null,
+      deleteBy: null,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
+
+    return CampaignRoot.instantiate('campaign-123', {
+      ownerId: 'owner-1',
+      enterpriseId: 'ent-1',
+      budget: 5000,
+      financialTarget: {},
+      description: 'Test Campaign',
+      platformTarget: [],
+      status: ECampaignStatus.IN_PROGRESS,
+      collaboratorIds: [],
+      rawContents: [],
+      deleteAt: null,
+      deleteBy: null,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      participants: [participant],
+    });
+  };
+
+  it('should throw CampaignParticipantNotFoundException if campaign not found', async () => {
+    mockCampaignRepository.findByParticipantId.mockResolvedValue(null);
 
     const command = new CampaignParticipantHardDeleteCommand('non-existent');
     await expect(handler.execute(command)).rejects.toThrow(CampaignParticipantNotFoundException);
   });
 
-  it('should hard delete participant successfully when there are no published outputs', async () => {
-    const participant = CampaignParticipantRoot.instantiate('participant-123', {
-      campaignId: 'camp-1',
-      kolProfileId: 'kol-1',
-      status: EParticipantStatus.JOINED,
-      joinedAt: new Date(),
-      createdAt: new Date(),
-      updatedAt: new Date(),
-      outputs: [
-        {
-          id: 'out-1',
-          platformId: 'plat-1',
-          outputType: EOutputType.VIDEO,
-          title: 'Draft output',
-          isScheduleForPost: true,
-          fileId: null,
-          scheduledAt: null,
-          status: EOutputStatus.DRAFT,
-          url: null,
-          postedAt: null,
-        },
-      ],
-      deleteAt: null,
-      deleteBy: null,
-    } as any);
+  it('should throw InvalidOperationException if participant status is not REJECTED', async () => {
+    const campaign = createCampaignWithParticipant('participant-123', EParticipantStatus.JOINED);
+    mockCampaignRepository.findByParticipantId.mockResolvedValue(campaign);
 
-    mockParticipantRepository.findById.mockResolvedValue(participant);
+    const command = new CampaignParticipantHardDeleteCommand('participant-123');
+    await expect(handler.execute(command)).rejects.toThrow(InvalidOperationException);
+  });
+
+  it('should hard delete participant successfully when status is REJECTED', async () => {
+    const campaign = createCampaignWithParticipant('participant-123', EParticipantStatus.REJECTED);
+    mockCampaignRepository.findByParticipantId.mockResolvedValue(campaign);
 
     const command = new CampaignParticipantHardDeleteCommand('participant-123');
     await handler.execute(command);
 
-    expect(mockParticipantRepository.delete).toHaveBeenCalledWith('participant-123');
-  });
-
-  it('should throw InvalidOperationException when hard deleting participant with published outputs', async () => {
-    const participant = CampaignParticipantRoot.instantiate('participant-123', {
-      campaignId: 'camp-1',
-      kolProfileId: 'kol-1',
-      status: EParticipantStatus.JOINED,
-      joinedAt: new Date(),
-      createdAt: new Date(),
-      updatedAt: new Date(),
-      outputs: [
-        {
-          id: 'out-1',
-          platformId: 'plat-1',
-          outputType: EOutputType.VIDEO,
-          title: 'Published output',
-          isScheduleForPost: false,
-          fileId: null,
-          scheduledAt: null,
-          status: EOutputStatus.PUBLISHED,
-          url: 'http://test.com',
-          postedAt: new Date(),
-        },
-      ],
-      deleteAt: null,
-      deleteBy: null,
-    } as any);
-
-    mockParticipantRepository.findById.mockResolvedValue(participant);
-
-    const command = new CampaignParticipantHardDeleteCommand('participant-123');
-    await expect(handler.execute(command)).rejects.toThrow(InvalidOperationException);
+    expect(campaign.participants.length).toBe(0);
+    expect(mockCampaignRepository.save).toHaveBeenCalledWith(campaign);
   });
 });

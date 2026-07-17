@@ -1,14 +1,17 @@
 import { HttpExceptionFilter } from '@/presentation/middleware/filters/http-exception.filter';
 import { HttpException, HttpStatus } from '@nestjs/common';
+import { createMockLoggerService } from '../../../__mocks__/mock-services';
 
 describe('HttpExceptionFilter', () => {
   let filter: HttpExceptionFilter;
   let mockResponse: any;
   let mockRequest: any;
   let mockHost: any;
+  let mockLogger: ReturnType<typeof createMockLoggerService>;
 
   beforeEach(() => {
-    filter = new HttpExceptionFilter();
+    mockLogger = createMockLoggerService();
+    filter = new HttpExceptionFilter(mockLogger as any);
     mockResponse = {
       status: jest.fn().mockReturnThis(),
       json: jest.fn(),
