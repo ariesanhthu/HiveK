@@ -49,6 +49,7 @@ export class ScheduledPostCreateHandler implements ICommandHandler<ScheduledPost
         scheduledAt,
         createdBy: userId,
       });
+      await this.scheduledPostRepository.save(post);
 
       // If scheduledAt is passed explicitly, schedule it, otherwise keep it draft
       if (input.scheduledAt) {

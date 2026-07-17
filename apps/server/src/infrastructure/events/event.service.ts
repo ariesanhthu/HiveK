@@ -54,6 +54,6 @@ export class EventService implements IEventService {
     await this.outboxModel.insertMany(outboxRows, { session: activeSession as ClientSession });
     
     // Notify the outbox processor to run immediately
-    this.outboxEmitter.emit();
+    // this.outboxEmitter.emit();
   }
 }

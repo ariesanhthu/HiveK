@@ -80,7 +80,6 @@ const Handlers = [
     ScheduledPostController,
     AutoReplyRuleController,
     FacebookWebhookController,
-    ScheduledPostRmqController,
   ],
   providers: [
     {
@@ -109,6 +108,7 @@ const Handlers = [
     CommentWebhookConsumer,
     StateAuthGuard,
     ...Handlers,
+    ScheduledPostRmqController,
   ],
   exports: [
     SOCIAL_PUBLISHER_DISCOVERY,
