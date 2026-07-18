@@ -1,8 +1,8 @@
 import { BaseAggregateRoot } from '@/core/common/base.aggregate-root';
-import { Nullable } from '@/core/types';
+import { Nullable, FileId } from '@/core/types';
 import { PhoneNumberVO } from '@/core/value-objects/phone-number.value-object';
 import { EntityHardDeletedEvent } from '../events/entity-hard-deleted.domain-event';
-import { TargetType, EEnterpriseMemberMode } from '../enums';
+import { ETargetType, EEnterpriseMemberMode } from '../enums';
 import { InvalidOperationException } from '../exceptions';
 
 export interface EnterpriseMember {
@@ -24,7 +24,7 @@ export interface EnterpriseProps {
   contactPhone?: PhoneNumberVO;
   website?: string;
   taxId?: string;
-  logoUrlId?: string;
+  logoUrlId?: FileId;
   isVerified: boolean;
   members: EnterpriseMember[];
   knowledgeBase?: EnterpriseKnowledgeBase;
@@ -88,7 +88,7 @@ export class EnterpriseRoot extends BaseAggregateRoot<EnterpriseProps> {
     return this.props.taxId;
   }
 
-  get logoUrlId(): string | undefined {
+  get logoUrlId(): FileId | undefined {
     return this.props.logoUrlId;
   }
 
@@ -193,7 +193,7 @@ export class EnterpriseRoot extends BaseAggregateRoot<EnterpriseProps> {
       this.id!,
       {
         entityId: this.id!,
-        targetType: TargetType.ENTERPRISE,
+        targetType: ETargetType.ENTERPRISE,
       }
     ));
   }

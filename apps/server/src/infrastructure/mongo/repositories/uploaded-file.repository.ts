@@ -5,7 +5,7 @@ import { IUploadedFileRepository } from '@/core/interfaces/repositories';
 import { UploadedFileRoot } from '@/core/aggregate-roots';
 import { UploadedFileModel, UploadedFileDocument } from '../schemas';
 import { Nullable } from '@/core/types';
-import { TargetType } from '@/core/enums/target-type.enum';
+import { ETargetType } from '@/core/enums/target-type.enum';
 import { type IUnitOfWork, UNIT_OF_WORK } from '@/application/interfaces';
 import { MongoUnitOfWork } from '../mongo-uow';
 
@@ -16,7 +16,7 @@ export class MongoUploadedFileRepository implements IUploadedFileRepository {
     private readonly model: Model<UploadedFileDocument>,
     @Inject(UNIT_OF_WORK)
     private readonly uow: IUnitOfWork,
-  ) {}
+  ) { }
 
   private get session(): ClientSession | undefined {
     return (this.uow as MongoUnitOfWork).getSession() || undefined;
@@ -27,7 +27,7 @@ export class MongoUploadedFileRepository implements IUploadedFileRepository {
     return doc ? this.mapToDomain(doc) : null;
   }
 
-  async findByTarget(targetId: string, targetType: TargetType): Promise<UploadedFileRoot[]> {
+  async findByTarget(targetId: string, targetType: ETargetType): Promise<UploadedFileRoot[]> {
     const docs = await this.model.find({ target_id: targetId, target_type: targetType }).session(this.session).exec();
     return docs.map((doc) => this.mapToDomain(doc));
   }

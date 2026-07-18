@@ -1,5 +1,5 @@
 import { BaseAggregateRoot } from '@/core/common/base.aggregate-root';
-import { JsonObject, Nullable } from '@/core/types';
+import { JsonObject, Nullable, FileId } from '@/core/types';
 import { ECampaignStatus } from '@/core/enums/campaign-status.enum';
 import { EParticipantStatus } from '@/core/enums';
 import { InvalidOperationException } from '@/core/exceptions';
@@ -21,7 +21,7 @@ export interface PlatformTargetItem {
 }
 
 export interface RawContentItem {
-  fileId: string;
+  fileId: FileId;
   rawContent?: string;
 }
 

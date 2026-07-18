@@ -113,8 +113,8 @@ export * from './enterprise-change-member-mode/enterprise-change-member-mode.dto
 // Uploaded File Commands
 export * from './uploaded-file-create/uploaded-file-create.command';
 export * from './uploaded-file-create/uploaded-file-create.handler';
-export * from './uploaded-file-create/uploaded-file-bulk-create.command';
-export * from './uploaded-file-create/uploaded-file-bulk-create.handler';
+export * from './uploaded-file-bulk-create/uploaded-file-bulk-create.command';
+export * from './uploaded-file-bulk-create/uploaded-file-bulk-create.handler';
 export * from './uploaded-file-create/uploaded-file-create.dto';
 
 export * from './uploaded-file-soft-delete/uploaded-file-soft-delete.command';

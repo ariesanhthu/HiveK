@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Types } from 'mongoose';
-import { PlatformApiStatus } from '@/core/enums/platform-api-status.enum';
+import { EPlatformApiStatus } from '@/core/enums/platform-api-status.enum';
 import { softDeletePlugin } from '../utils';
 
 @Schema({
@@ -14,8 +14,8 @@ export class PlatformModel {
   @Prop({ type: String, required: true, trim: true, match: [/^https?:\/\/.+/, 'Please fill a valid URL'] })
   base_url: string;
 
-  @Prop({ type: String, required: true, enum: Object.values(PlatformApiStatus), default: PlatformApiStatus.STABLE })
-  api_status: PlatformApiStatus;
+  @Prop({ type: String, required: true, enum: Object.values(EPlatformApiStatus), default: EPlatformApiStatus.STABLE })
+  api_status: EPlatformApiStatus;
 
   @Prop({ type: Types.ObjectId, ref: 'UploadedFileModel', default: null })
   icon: Types.ObjectId | null;

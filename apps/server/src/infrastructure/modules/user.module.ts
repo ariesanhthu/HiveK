@@ -12,7 +12,6 @@ import {
 } from '@/application/commands';
 
 import { UserGetByIdHandler, UserGetListHandler } from '@/application/queries';
-import { LinkUserAvatarHandler } from '@/application/events';
 import { UserAdminController, UserClientController } from '@/presentation/controllers';
 
 const COMMAND_HANDLERS = [
@@ -31,7 +30,6 @@ const QUERY_HANDLERS = [
 ];
 
 const EVENT_HANDLERS = [
-  LinkUserAvatarHandler,
 ];
 
 @Module({

@@ -18,7 +18,6 @@ import {
 
 import { UploadedFileModule } from './uploaded-file.module';
 import { UserModule } from './user.module';
-import { LinkEnterpriseLogoHandler } from '@/application/events';
 import { EnterpriseUserRmqController } from '@/presentation/controllers';
 
 const COMMAND_HANDLERS = [
@@ -43,7 +42,6 @@ const QUERY_HANDLERS = [
 ];
 
 const EVENT_HANDLERS = [
-  LinkEnterpriseLogoHandler,
 ]
 
 @Module({

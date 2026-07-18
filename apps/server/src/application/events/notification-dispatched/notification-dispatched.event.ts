@@ -1,4 +1,4 @@
-import { NotificationType, TargetType, NotificationChannel } from '@/core/enums';
+import { NotificationType, ETargetType, NotificationChannel } from '@/core/enums';
 
 export class NotificationDispatchedEvent {
   constructor(
@@ -6,10 +6,10 @@ export class NotificationDispatchedEvent {
       type: NotificationType;
       title: string;
       content: string;
-      targetType?: TargetType;
+      targetType?: ETargetType;
       targetId?: string;
     },
     public readonly recipientIds: string[],
     public readonly channels: NotificationChannel[],
-  ) {}
+  ) { }
 }

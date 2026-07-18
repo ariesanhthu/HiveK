@@ -34,3 +34,4 @@ export * from './bill-line-type.enum';
 export * from './credit-transaction-type.enum';
 export * from './enterprise-member-mode.enum';
 export * from './enterprise-invitation-status.enum';
+export * from './upload-target-field.enum';

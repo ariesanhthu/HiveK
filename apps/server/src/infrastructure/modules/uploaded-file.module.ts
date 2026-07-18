@@ -16,7 +16,9 @@ import {
   UploadedFileGetListHandler,
 } from '@/application/queries';
 
-import { UploadService } from '@/application/services';
+import { UploadService, FileLinkerService } from '@/application/services';
+import { IMAGE_PROCESSOR_SERVICE } from '@/application/interfaces';
+import { SharpImageProcessorService } from '@/infrastructure/image-processor/sharp-image-processor.service';
 
 const COMMAND_HANDLERS = [
   UploadedFileCreateCommandHandler,
@@ -34,10 +36,28 @@ const QUERY_HANDLERS = [
 const EVENT_HANDLERS = [
 ]
 
+/**
+ * UploadedFileModule manages system asset uploads.
+ * Repository wiring notes (Audit Note P10):
+ * - USER_REPOSITORY is provided by UserModule (imported via InfrastructureModule)
+ * - ENTERPRISE_REPOSITORY is provided by EnterpriseModule (imported via InfrastructureModule)
+ * - PLATFORM_REPOSITORY is provided by PlatformModule (imported via InfrastructureModule)
+ * - CAMPAIGN_REPOSITORY is provided by CampaignModule (imported via InfrastructureModule)
+ */
 @Module({
   imports: [CqrsModule, InfrastructureModule],
   controllers: [UploadedFileAdminController, UploadedFileClientController],
-  providers: [...COMMAND_HANDLERS, ...QUERY_HANDLERS, ...EVENT_HANDLERS, UploadService],
-  exports: [UploadService],
+  providers: [
+    ...COMMAND_HANDLERS,
+    ...QUERY_HANDLERS,
+    ...EVENT_HANDLERS,
+    UploadService,
+    FileLinkerService,
+    {
+      provide: IMAGE_PROCESSOR_SERVICE,
+      useClass: SharpImageProcessorService,
+    },
+  ],
+  exports: [UploadService, FileLinkerService],
 })
 export class UploadedFileModule {}

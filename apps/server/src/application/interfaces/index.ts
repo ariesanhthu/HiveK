@@ -27,3 +27,4 @@ export * from './post-scheduler.interface';
 export * from './cache.interface';
 export * from './event-service.interface';
 export * from './domain-event-mapper.interface';
+export * from './image-processor.interface';

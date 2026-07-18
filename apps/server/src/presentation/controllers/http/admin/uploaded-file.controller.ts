@@ -19,12 +19,14 @@ import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { ApiTags, ApiOperation, ApiConsumes, ApiBody, ApiBearerAuth, ApiSecurity } from '@nestjs/swagger';
 import { buildVersionedRoute } from '@presentation/utils';
 import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
-import { TargetType } from '@/core/enums/target-type.enum';
+import { ETargetType } from '@/core/enums/target-type.enum';
 import {
   UploadedFileCreateCommand,
   UploadedFileBulkCreateCommand,
   UploadedFileRestoreCommand,
   UploadedFileCreateInputDto,
+  UploadedFileSoftDeleteCommand,
+  UploadedFileDeleteCommand,
 } from '@/application/commands';
 import {
   UploadedFileGetListQuery,
@@ -49,7 +51,7 @@ export class UploadedFileAdminController {
   constructor(
     private readonly commandBus: CommandBus,
     private readonly queryBus: QueryBus,
-  ) {}
+  ) { }
 
   @Get()
   @ApiOperation({ summary: 'Get all uploaded files' })
@@ -81,7 +83,7 @@ export class UploadedFileAdminController {
         },
         targetType: {
           type: 'string',
-          enum: Object.values(TargetType),
+          enum: Object.values(ETargetType),
           description: 'Domain target type (USER, KOL_PROFILE, PLATFORM, CAMPAIGN, ENTERPRISE)',
         },
         targetId: {
@@ -137,7 +139,7 @@ export class UploadedFileAdminController {
         },
         targetType: {
           type: 'string',
-          enum: Object.values(TargetType),
+          enum: Object.values(ETargetType),
           description: 'Domain target type (USER, KOL_PROFILE, PLATFORM, CAMPAIGN, ENTERPRISE)',
         },
         targetId: {
@@ -160,9 +162,6 @@ export class UploadedFileAdminController {
     if (isEmpty(files)) {
       throw new BadRequestException('At least one file is required');
     }
-    if (files.length > 10) {
-      throw new BadRequestException('Cannot upload more than 10 files at a time');
-    }
     return this.commandBus.execute(
       new UploadedFileBulkCreateCommand(
         files.map((file) => ({
@@ -175,29 +174,27 @@ export class UploadedFileAdminController {
     );
   }
 
-  /*
   @Patch(':id/soft-delete')
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: 'Soft delete uploaded file' })
   async delete(
     @Param('id') id: string,
-    @Query() dto: SoftDeleteInputDto,
+    @Body() dto: { deletedBy: string },
   ): Promise<void> {
-    return this.commandBus.execute(new UploadedFileSoftDeleteCommand(id, dto.deletedBy));
+    await this.commandBus.execute(new UploadedFileSoftDeleteCommand(id, dto.deletedBy));
   }
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: 'Hard delete uploaded file' })
   async hardDelete(@Param('id') id: string): Promise<void> {
-    return this.commandBus.execute(new UploadedFileDeleteCommand(id));
+    await this.commandBus.execute(new UploadedFileDeleteCommand(id));
   }
-  */
 
   @Patch(':id/restore')
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: 'Restore soft deleted uploaded file' })
   async restore(@Param('id') id: string): Promise<void> {
-    return this.commandBus.execute(new UploadedFileRestoreCommand(id));
+    await this.commandBus.execute(new UploadedFileRestoreCommand(id));
   }
 }

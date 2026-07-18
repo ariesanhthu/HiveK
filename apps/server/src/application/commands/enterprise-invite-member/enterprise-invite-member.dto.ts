@@ -4,7 +4,7 @@ import { EEnterpriseMemberMode } from '@/core/enums';
 
 export const EnterpriseInviteMemberInputSchema = z.object({
   email: z.string().email().trim().toLowerCase(),
-  mode: z.nativeEnum(EEnterpriseMemberMode),
+  mode: z.enum(EEnterpriseMemberMode),
 }).strict();
 
-export class EnterpriseInviteMemberInputDto extends createZodDto(EnterpriseInviteMemberInputSchema) {}
+export class EnterpriseInviteMemberInputDto extends createZodDto(EnterpriseInviteMemberInputSchema) { }

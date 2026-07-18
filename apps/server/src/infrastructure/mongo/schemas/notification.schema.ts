@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
-import { NotificationType, TargetType } from '@/core/enums';
+import { NotificationType, ETargetType } from '@/core/enums';
 
 @Schema({
   collection: 'notifications',
@@ -16,8 +16,8 @@ export class NotificationModel {
   @Prop({ required: true, type: String })
   content: string;
 
-  @Prop({ type: String, enum: TargetType, default: null })
-  target_type: TargetType | null;
+  @Prop({ type: String, enum: ETargetType, default: null })
+  target_type: ETargetType | null;
 
   @Prop({ type: String, default: null })
   target_id: string | null;

@@ -4,7 +4,7 @@ export interface UploadResult {
   url: string;
   format: string;
   size: number;
-  publicId?: string;
+  publicId: string;
 }
 
 export interface IStorageService {

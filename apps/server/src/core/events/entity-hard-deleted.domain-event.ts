@@ -1,10 +1,10 @@
 import { DomainEvent } from '../common/base.domain-event';
 import { EAggregateType } from '../enums/aggregate-type.enum';
-import { TargetType } from '../enums/target-type.enum';
+import { ETargetType } from '../enums/target-type.enum';
 
 export interface EntityHardDeletedPayload {
   entityId: string;
-  targetType: TargetType;
+  targetType: ETargetType;
 }
 
 export class EntityHardDeletedEvent extends DomainEvent<EntityHardDeletedPayload> {

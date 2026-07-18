@@ -1,5 +1,5 @@
 import { BaseAggregateRoot } from '@/core/common/base.aggregate-root';
-import { Nullable } from '@/core/types';
+import { Nullable, FileId } from '@/core/types';
 import { EPostStatus } from '../enums/post-status.enum';
 import { PostScheduledEvent } from '../events/post-scheduled.domain-event';
 import { PostPublishedEvent } from '../events/post-published.domain-event';
@@ -12,7 +12,7 @@ export interface ScheduledPostProps {
   campaignId?: string;
   platformCode: string;
   content: string;
-  mediaFileIds: string[];
+  mediaFileIds: FileId[];
   scheduledAt: Date;
   status: EPostStatus;
   publishedAt: Nullable<Date>;
@@ -55,7 +55,7 @@ export class ScheduledPostRoot extends BaseAggregateRoot<ScheduledPostProps> {
   get campaignId(): string | undefined { return this.props.campaignId; }
   get platformCode(): string { return this.props.platformCode; }
   get content(): string { return this.props.content; }
-  get mediaFileIds(): string[] { return [...this.props.mediaFileIds]; }
+  get mediaFileIds(): FileId[] { return [...this.props.mediaFileIds]; }
   get scheduledAt(): Date { return this.props.scheduledAt; }
   get status(): EPostStatus { return this.props.status; }
   get publishedAt(): Nullable<Date> { return this.props.publishedAt; }
@@ -162,5 +162,12 @@ export class ScheduledPostRoot extends BaseAggregateRoot<ScheduledPostProps> {
         scheduledAt: newTime,
       })
     );
+  }
+
+  public addMediaFile(fileId: FileId): void {
+    if (!this.props.mediaFileIds.includes(fileId)) {
+      this.props.mediaFileIds.push(fileId);
+      this.props.updatedAt = new Date();
+    }
   }
 }

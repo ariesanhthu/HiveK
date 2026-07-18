@@ -1,11 +1,11 @@
 import { BaseAggregateRoot } from '@/core/common/base.aggregate-root';
-import { PlatformApiStatus } from '../enums/platform-api-status.enum';
-import { Nullable } from '@/core/types';
+import { EPlatformApiStatus } from '../enums/platform-api-status.enum';
+import { Nullable, FileId } from '@/core/types';
 
 export interface PlatformProps {
   name: string;
   baseUrl: string;
-  apiStatus: PlatformApiStatus;
+  apiStatus: EPlatformApiStatus;
   icon: Nullable<string>;
   deleteAt: Nullable<Date>;
   deleteBy: Nullable<string>;
@@ -16,7 +16,7 @@ export interface PlatformProps {
 export interface PlatformCreateProps {
   name: string;
   baseUrl: string;
-  apiStatus: PlatformApiStatus;
+  apiStatus: EPlatformApiStatus;
 }
 
 /**
@@ -52,7 +52,7 @@ export class PlatformRoot extends BaseAggregateRoot<PlatformProps> {
     return this.props.baseUrl;
   }
 
-  get apiStatus(): PlatformApiStatus {
+  get apiStatus(): EPlatformApiStatus {
     return this.props.apiStatus;
   }
 
@@ -78,11 +78,11 @@ export class PlatformRoot extends BaseAggregateRoot<PlatformProps> {
     this.props.deleteBy = null;
   }
 
-  public updateApiStatus(status: PlatformApiStatus): void {
+  public updateApiStatus(status: EPlatformApiStatus): void {
     this.props.apiStatus = status;
   }
 
-  public updateIcon(icon: string): void {
+  public updateIcon(icon: FileId): void {
     this.props.icon = icon;
   }
 }

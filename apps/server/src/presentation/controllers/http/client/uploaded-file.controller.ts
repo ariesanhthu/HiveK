@@ -14,7 +14,7 @@ import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { ApiTags, ApiOperation, ApiConsumes, ApiBody, ApiBearerAuth, ApiSecurity } from '@nestjs/swagger';
 import { buildVersionedRoute } from '@presentation/utils';
 import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
-import { TargetType } from '@/core/enums/target-type.enum';
+import { ETargetType } from '@/core/enums/target-type.enum';
 import {
   UploadedFileCreateCommand,
   UploadedFileBulkCreateCommand,
@@ -37,7 +37,7 @@ export class UploadedFileClientController {
   constructor(
     private readonly commandBus: CommandBus,
     private readonly queryBus: QueryBus,
-  ) {}
+  ) { }
   @Get(':id')
   @ApiOperation({ summary: 'Get uploaded file by ID' })
   async findById(@Param('id') id: string): Promise<UploadedFileDto> {
@@ -62,7 +62,7 @@ export class UploadedFileClientController {
         },
         targetType: {
           type: 'string',
-          enum: Object.values(TargetType),
+          enum: Object.values(ETargetType),
           description: 'Domain target type (USER, KOL_PROFILE, PLATFORM, CAMPAIGN, ENTERPRISE)',
         },
         targetId: {
@@ -118,7 +118,7 @@ export class UploadedFileClientController {
         },
         targetType: {
           type: 'string',
-          enum: Object.values(TargetType),
+          enum: Object.values(ETargetType),
           description: 'Domain target type (USER, KOL_PROFILE, PLATFORM, CAMPAIGN, ENTERPRISE)',
         },
         targetId: {
@@ -140,9 +140,6 @@ export class UploadedFileClientController {
   ): Promise<UploadedFileDto[]> {
     if (isEmpty(files)) {
       throw new BadRequestException('At least one file is required');
-    }
-    if (files.length > 10) {
-      throw new BadRequestException('Cannot upload more than 10 files at a time');
     }
     return this.commandBus.execute(
       new UploadedFileBulkCreateCommand(

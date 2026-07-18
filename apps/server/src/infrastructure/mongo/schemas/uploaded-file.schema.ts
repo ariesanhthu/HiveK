@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
-import { TargetType } from '@/core/enums/target-type.enum';
+import { ETargetType } from '@/core/enums/target-type.enum';
 import { softDeletePlugin } from '../utils';
 
 @Schema({
@@ -23,8 +23,8 @@ export class UploadedFileModel {
   @Prop({ type: String, default: null, trim: true, maxlength: 500 })
   title: string | null;
 
-  @Prop({ type: String, required: true, enum: TargetType })
-  target_type: TargetType;
+  @Prop({ type: String, required: true, enum: ETargetType })
+  target_type: ETargetType;
 
   @Prop({ type: String, required: true })
   target_id: string;

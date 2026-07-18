@@ -4,7 +4,7 @@ import { EEnterpriseMemberMode } from '@/core/enums';
 
 export const EnterpriseChangeMemberModeInputSchema = z.object({
   userId: z.string().min(1),
-  mode: z.nativeEnum(EEnterpriseMemberMode),
+  mode: z.enum(EEnterpriseMemberMode),
 }).strict();
 
-export class EnterpriseChangeMemberModeInputDto extends createZodDto(EnterpriseChangeMemberModeInputSchema) {}
+export class EnterpriseChangeMemberModeInputDto extends createZodDto(EnterpriseChangeMemberModeInputSchema) { }

@@ -10,7 +10,6 @@ import {
 } from '@/application/commands';
 
 import { PlatformGetListHandler, PlatformGetByIdHandler } from '@/application/queries';
-import { LinkPlatformIconHandler } from '@/application/events';
 import { PlatformAdminController, PlatformClientController } from '@/presentation/controllers'
 import { UploadedFileModule } from './uploaded-file.module';
 
@@ -28,7 +27,6 @@ const QUERY_HANDLERS = [
 ];
 
 const EVENT_HANDLERS = [
-  LinkPlatformIconHandler,
 ];
 
 @Module({

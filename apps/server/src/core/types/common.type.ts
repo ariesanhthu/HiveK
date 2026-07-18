@@ -89,3 +89,6 @@ export interface RmqMessage<T = unknown> {
   data: T;
   correlationId?: string;
 }
+
+// Brand/Entity ID Aliases
+export type FileId = string;

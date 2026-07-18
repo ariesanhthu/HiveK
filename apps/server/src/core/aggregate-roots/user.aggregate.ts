@@ -1,6 +1,6 @@
 import { BaseAggregateRoot } from '@/core/common/base.aggregate-root';
 import { ERoleType } from '../enums';
-import { Nullable } from '@/core/types';
+import { Nullable, FileId } from '@/core/types';
 import { PhoneNumberVO } from '@/core/value-objects/phone-number.value-object';
 
 export interface UserProps {
@@ -123,6 +123,11 @@ export abstract class UserRoot<T extends UserProps = UserProps> extends BaseAggr
 
   public verifyEmail(): void {
     this.props.isEmailVerified = true;
+    this.props.updatedAt = new Date();
+  }
+
+  public setAvatar(fileId: FileId): void {
+    this.props.avatar = fileId;
     this.props.updatedAt = new Date();
   }
 }
