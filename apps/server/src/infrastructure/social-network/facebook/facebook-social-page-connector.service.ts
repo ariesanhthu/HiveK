@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { FacebookTokenService } from './facebook-token.service';
+import { FacebookGraphApiClient } from './facebook-graph-api.client';
 import { ESocialPlatformCode } from '@/core/enums';
 import {
   ISocialPageConnector,
@@ -11,7 +11,7 @@ import {
 export class FacebookSocialPageConnectorService
   implements ISocialPageConnector
 {
-  constructor(private readonly tokenService: FacebookTokenService) {}
+  constructor(private readonly apiClient: FacebookGraphApiClient) {}
 
   getPlatformCode(): ESocialPlatformCode {
     return ESocialPlatformCode.FACEBOOK;
@@ -21,15 +21,15 @@ export class FacebookSocialPageConnectorService
     code: string,
     redirectUri: string,
   ): Promise<string> {
-    return this.tokenService.exchangeCodeForUserToken(code, redirectUri);
+    return this.apiClient.exchangeCodeForUserToken(code, redirectUri);
   }
 
   async exchangeForLongLivedToken(token: string): Promise<string> {
-    return this.tokenService.exchangeUserTokenForLongLivedToken(token);
+    return this.apiClient.exchangeUserTokenForLongLivedToken(token);
   }
 
   async getUserAccounts(token: string): Promise<ISocialPageAccount[]> {
-    const accounts = await this.tokenService.getUserAccounts(token);
+    const accounts = await this.apiClient.getUserAccounts(token);
     return accounts.map((a) => ({
       id: a.id,
       name: a.name,
@@ -43,7 +43,7 @@ export class FacebookSocialPageConnectorService
     pageToken: string,
     pageId: string,
   ): Promise<ISocialPageDetails> {
-    const details = await this.tokenService.getPageDetails(
+    const details = await this.apiClient.getPageDetails(
       pageToken,
       pageId,
     );

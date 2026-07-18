@@ -20,7 +20,7 @@ const API_KEY = 'HiveK_ApiKey';                             // x-api-key header 
 const EMAIL = 'txt812005@gmail.com';                        // Enterprise user email
 const PASSWORD = 'Hivek@123';                               // Enterprise user password
 const ENTERPRISE_ID = '';                                   // TODO: fill in with a valid enterpriseId
-const SOCIAL_PAGE_ID = '6a59105589cd6af5e9c52970';          // TODO: fill in with a valid socialPageId
+const SOCIAL_PAGE_ID = '6a5b334f4a83f0f8c9e881d5';          // TODO: fill in with a valid socialPageId
 // ─────────────────────────────────────────────────────────────────────────────
 
 const AUTH_ENDPOINT = `${BASE_URL}/client/v1/auth/sign-in`;

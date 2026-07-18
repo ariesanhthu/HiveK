@@ -11,7 +11,7 @@ const BASE_URL = 'https://webhook.gnourt.me/hivek';       // e.g. 'http://localh
 const API_KEY = 'HiveK_ApiKey';        // x-api-key header value
 const EMAIL = 'txt812005@gmail.com';          // Enterprise user email
 const PASSWORD = 'Hivek@123';       // Enterprise user password
-const SOCIAL_PAGE_ID = '6a5a5711a0472b6d73a6e5e2'; // TODO: fill in with a valid socialPageId
+const SOCIAL_PAGE_ID = '6a5b334f4a83f0f8c9e881d5'; // TODO: fill in with a valid socialPageId
 // ─────────────────────────────────────────────────────────────────────────────
 
 const AUTH_ENDPOINT = `${BASE_URL}/client/v1/auth/sign-in`;
@@ -54,7 +54,7 @@ async function createScheduledPost(accessToken: string) {
   const payload = {
     socialPageId: SOCIAL_PAGE_ID,   // TODO: fill in
     content: `Test post from create-scheduled-post script ${new Date().toISOString()}`,
-    mediaFileIds: [],
+    mediaFileIds: ["6a1a7e507eae4ab02b9c43d1"],
     scheduledAt,
   };
 

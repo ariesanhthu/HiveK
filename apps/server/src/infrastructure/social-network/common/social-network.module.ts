@@ -2,8 +2,11 @@ import { Module } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
 import { FacebookModule } from '../facebook/facebook.module';
 import { ThreadsModule } from '../threads/threads.module';
+import { InstagramModule } from '../instagram/instagram.module';
 import { ThreadsPublisherService } from '../threads/threads-publisher.service';
 import { ThreadsSocialPageConnectorService } from '../threads/threads-social-page-connector.service';
+import { InstagramPublisherService } from '../instagram/instagram-publisher.service';
+import { InstagramSocialPageConnectorService } from '../instagram/instagram-social-page-connector.service';
 import { FacebookPublisherService } from '../facebook/facebook-publisher.service';
 import { FacebookCommentReplierService } from '../facebook/facebook-comment-replier.service';
 import { FacebookSocialPageConnectorService } from '../facebook/facebook-social-page-connector.service';
@@ -53,6 +56,8 @@ import {
   FacebookWebhookController,
   ScheduledPostRmqController,
   ThreadsOAuthController,
+  InstagramOAuthController,
+  FacebookOAuthController,
 } from '@/presentation/controllers';
 
 import { StateAuthGuard } from '@/presentation/middleware/guards';
@@ -83,6 +88,7 @@ const Handlers = [
     CqrsModule,
     FacebookModule,
     ThreadsModule,
+    InstagramModule,
   ],
   controllers: [
     SocialPageController,
@@ -90,17 +96,21 @@ const Handlers = [
     AutoReplyRuleController,
     FacebookWebhookController,
     ThreadsOAuthController,
+    InstagramOAuthController,
+    FacebookOAuthController,
   ],
   providers: [
     {
       provide: SOCIAL_PUBLISHERS,
-      inject: [FacebookPublisherService, ThreadsPublisherService],
+      inject: [FacebookPublisherService, ThreadsPublisherService, InstagramPublisherService],
       useFactory: (
         facebook: FacebookPublisherService,
         threads: ThreadsPublisherService,
+        instagram: InstagramPublisherService,
       ) => ({
         facebook,
         threads,
+        instagram,
       }),
     },
     {
@@ -120,13 +130,15 @@ const Handlers = [
     },
     {
       provide: SOCIAL_PAGE_CONNECTORS,
-      inject: [FacebookSocialPageConnectorService, ThreadsSocialPageConnectorService],
+      inject: [FacebookSocialPageConnectorService, ThreadsSocialPageConnectorService, InstagramSocialPageConnectorService],
       useFactory: (
         facebook: FacebookSocialPageConnectorService,
         threads: ThreadsSocialPageConnectorService,
+        instagram: InstagramSocialPageConnectorService,
       ) => ({
         facebook,
         threads,
+        instagram,
       }),
     },
     {

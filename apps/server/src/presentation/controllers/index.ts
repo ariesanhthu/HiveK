@@ -27,10 +27,12 @@ export * from './http/client/platform.controller';
 export * from './http/client/role.controller';
 export * from './http/client/uploaded-file.controller';
 export * from './http/client/user.controller';
-export * from './http/client/social-page.controller';
+export * from './http/client/social-pages/social-page.controller';
 export * from './http/client/scheduled-post.controller';
 export * from './http/client/auto-reply-rule.controller';
-export * from './http/client/threads-oauth.controller';
+export * from './http/client/social-pages/threads-oauth.controller';
+export * from './http/client/social-pages/instagram-oauth.controller';
+export * from './http/client/social-pages/facebook-oauth.controller';
 export * from './http/facebook-webhook.controller';
 
 // RMQ Controllers

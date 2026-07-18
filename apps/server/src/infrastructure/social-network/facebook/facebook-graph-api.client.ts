@@ -8,7 +8,7 @@ import {
   IFacebookPageDetails,
   IFacebookPostResponse,
   IFacebookPageAccount,
-} from './interfaces/facebook-api.interface';
+} from './facebook-api.types';
 import { isAxiosError } from 'axios';
 import { errorMessage } from '@/shared/utils/error.util';
 
