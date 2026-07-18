@@ -53,19 +53,6 @@ export class PaymentProviderModel {
 
   @Prop({ type: String, required: false, default: null })
   deleted_by: string | null;
-
-  _id?: string;
-
-  @Virtual({
-    get: function (this: { _id?: Types.ObjectId }) {
-      return this._id?.toString();
-    },
-  })
-  id?: string;
 }
 
 export const PaymentProviderSchema = SchemaFactory.createForClass(PaymentProviderModel);
-
-PaymentProviderSchema.virtual('id').get(function (this: { _id?: Types.ObjectId }) {
-  return this._id;
-});

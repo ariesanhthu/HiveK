@@ -3,7 +3,7 @@ import { SubscriptionHistoryEntity } from '../../aggregate-roots/subscription-hi
 
 export interface ISubscriptionHistoryRepository extends IBaseRepository<SubscriptionHistoryEntity> {
   findBySubscriptionId(subscriptionId: string): Promise<SubscriptionHistoryEntity[]>;
-  findByEnterpriseId(enterpriseId: string): Promise<SubscriptionHistoryEntity[]>;
+  findByUserId(userId: string): Promise<SubscriptionHistoryEntity[]>;
 }
 
 export const SUBSCRIPTION_HISTORY_REPOSITORY = Symbol('ISubscriptionHistoryRepository');

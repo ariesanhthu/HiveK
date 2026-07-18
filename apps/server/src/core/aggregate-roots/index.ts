@@ -23,3 +23,4 @@ export * from './auto-reply-rule.aggregate';
 export * from './credit-wallet.aggregate';
 export * from './quota-usage.aggregate';
 export * from './enterprise-invitation.aggregate';
+export * from './enterprise-quota-allocation.aggregate';

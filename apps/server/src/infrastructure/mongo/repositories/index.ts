@@ -23,3 +23,4 @@ export * from './auto-reply-rule.repository';
 export * from './mongo-credit-wallet.repository';
 export * from './mongo-quota-usage.repository';
 export * from './enterprise-invitation.repository';
+export * from './mongo-enterprise-quota-allocation.repository';

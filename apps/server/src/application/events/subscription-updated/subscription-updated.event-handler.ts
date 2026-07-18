@@ -27,7 +27,7 @@ export class SubscriptionUpdatedEventHandler implements IEventHandler<Subscripti
     const { enterpriseId } = event.payload;
     this.logger.log(`Handling SubscriptionUpdatedEvent for enterprise: ${enterpriseId}`);
 
-    const subscription = await this.subscriptionRepository.findByEnterpriseId(enterpriseId);
+    const subscription = await this.subscriptionRepository.findByUserId(enterpriseId);
     if (!subscription) {
       this.logger.warn(`Subscription not found for enterprise: ${enterpriseId}`);
       return;

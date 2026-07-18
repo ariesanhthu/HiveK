@@ -136,9 +136,9 @@ export class MongoPackageRepository implements IPackageRepository {
                 : undefined,
             })
         ),
-        variants: (doc.variants || []).map((v) => {
+        variants: (doc.variants || []).map((v: PackageDocument['variants'][0]) => {
           return PackageVariantEntity.instantiate(
-            v._id ? v._id.toString() : new Types.ObjectId().toString(),
+            v._id.toString(),
             {
               title: v.title,
               durationMonths: v.duration_months,
@@ -199,7 +199,7 @@ export class MongoPackageRepository implements IPackageRepository {
           : null,
       })),
       variants: data.variants.map((v) => ({
-        ...(includeVariantIds && v.id ? { _id: new Types.ObjectId(v.id).toString() } : {}),
+        _id: new Types.ObjectId(v.id),
         title: v.title,
         duration_months: v.durationMonths,
         price: v.price,

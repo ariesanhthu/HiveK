@@ -17,7 +17,7 @@ export type SubscriptionChangeDetailsDTO = z.infer<typeof SubscriptionChangeDeta
 export class SubscriptionHistoryResponseDto {
   id: string;
   subscriptionId: string;
-  enterpriseId: string;
+  userId: string;
   billId: string | null;
   actorId: string | null;
   details: SubscriptionChangeDetailsDTO;

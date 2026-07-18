@@ -38,7 +38,7 @@ export type SubscriptionHistoryDocument = HydratedDocument<SubscriptionHistoryMo
 })
 export class SubscriptionHistoryModel {
   @Prop({ type: String, required: true, index: true })
-  enterprise_id: string;
+  user_id: string;
 
   @Prop({ type: String, required: true, index: true })
   subscription_id: string;
@@ -51,18 +51,6 @@ export class SubscriptionHistoryModel {
 
   @Prop({ type: SubscriptionChangeDetailsSchema, required: true })
   details: SubscriptionChangeDetailsModel;
-
-  _id?: string;
-
-  @Virtual({
-    get: function (this: { _id?: Types.ObjectId }) {
-      return this._id == null ? undefined : String(this._id);
-    },
-  })
-  id?: string;
 }
 
 export const SubscriptionHistorySchema = SchemaFactory.createForClass(SubscriptionHistoryModel);
-SubscriptionHistorySchema.virtual('id').get(function (this: { _id?: Types.ObjectId }) {
-  return this._id == null ? undefined : this._id;
-});

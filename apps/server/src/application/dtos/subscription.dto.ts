@@ -23,7 +23,7 @@ export type AddonItemDTO = z.infer<typeof AddonItemSchema>;
 
 export class SubscriptionResponseDto {
   id: string;
-  enterpriseId: string;
+  userId: string;
   status: string;
   planItem: PlanItemDTO | null;
   addonItems: AddonItemDTO[];

@@ -26,6 +26,8 @@ import {
 } from '@/application/commands';
 import { SubscriptionUpdatedEventHandler, PaymentCompletedEventHandler } from '@/application/events';
 import { SubscriptionCronService } from './subscription-cron.service';
+import { MongoEnterpriseQuotaAllocationRepository } from '@/infrastructure/mongo/repositories';
+import { ENTERPRISE_QUOTA_ALLOCATION_REPOSITORY } from '@/core/interfaces/repositories';
 
 @Module({
   imports: [
@@ -63,6 +65,10 @@ import { SubscriptionCronService } from './subscription-cron.service';
     SubscriptionUpdatedEventHandler,
     PaymentCompletedEventHandler,
     SubscriptionCronService,
+    {
+      provide: ENTERPRISE_QUOTA_ALLOCATION_REPOSITORY,
+      useClass: MongoEnterpriseQuotaAllocationRepository,
+    },
   ],
   exports: [
     PaymentService,

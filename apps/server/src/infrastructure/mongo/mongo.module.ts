@@ -34,6 +34,7 @@ import {
   AutoReplyRuleModel, AutoReplyRuleSchema,
   CreditWalletModel, CreditWalletSchema,
   QuotaUsageModel, QuotaUsageSchema,
+  EnterpriseQuotaAllocationModel, EnterpriseQuotaAllocationSchema,
   EnterpriseInvitationModel,
   EnterpriseInvitationSchema,
 } from './schemas';
@@ -131,7 +132,6 @@ import {
 } from '@/application/interfaces';
 
 import { RoleSeedService } from './seeding/role-seed.service';
-import { PackageMigrationService } from './seeding/package-migration.service';
 import { ERoleType } from '@/core/enums';
 import { MongoPublicReviewReadService } from './read-services/public-review.read-service';
 import { MongoPublicReviewRepository } from './repositories/public-review.repository';
@@ -184,6 +184,7 @@ import { MongoCampaignProposalReadService } from './read-services/campaign-propo
       { name: CreditWalletModel.name, schema: CreditWalletSchema },
       { name: QuotaUsageModel.name, schema: QuotaUsageSchema },
       { name: EnterpriseInvitationModel.name, schema: EnterpriseInvitationSchema },
+      { name: EnterpriseQuotaAllocationModel.name, schema: EnterpriseQuotaAllocationSchema },
     ]),
   ],
   providers: [
@@ -360,7 +361,6 @@ import { MongoCampaignProposalReadService } from './read-services/campaign-propo
     },
     // Seed service
     RoleSeedService,
-    PackageMigrationService,
   ],
   exports: [
     UNIT_OF_WORK,
@@ -410,7 +410,6 @@ import { MongoCampaignProposalReadService } from './read-services/campaign-propo
     // Export MongooseModule so domain modules can use the models if needed
     MongooseModule,
     RoleSeedService,
-    PackageMigrationService,
   ],
 })
 export class MongoModule {}

@@ -2,7 +2,7 @@ import { z } from 'zod';
 import { createZodDto } from 'nestjs-zod';
 
 export const SubscriptionUpdateSchema = z.object({
-  enterpriseId: z.string().min(1),
+  userId: z.string().min(1),
   billId: z.string().min(1),
   removedAddonIds: z.array(z.string().min(1)).optional(),
 }).strict();

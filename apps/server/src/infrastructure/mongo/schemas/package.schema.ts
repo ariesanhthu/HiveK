@@ -1,4 +1,4 @@
-import { Prop, Schema, SchemaFactory, Virtual } from '@nestjs/mongoose';
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Types } from 'mongoose';
 import { EVersionStatus, EPackageType, EPackageScope, ECurrency, EGrantType } from '@/core/enums';
 
@@ -32,8 +32,10 @@ export class GrantSchema {
   } | null;
 }
 
-@Schema({ _id: false })
+@Schema()
 class PackageVariantSchema {
+  _id?: Types.ObjectId;
+
   @Prop({ type: String, required: true })
   title: string;
 
@@ -54,15 +56,6 @@ class PackageVariantSchema {
 
   @Prop({ type: [GrantSchema], required: false, default: [] })
   extra_grants: GrantSchema[];
-
-  _id?: string;
-
-  @Virtual({
-    get: function (this: { _id?: Types.ObjectId }) {
-      return this._id == null ? undefined : String(this._id);
-    },
-  })
-  id?: string;
 }
 
 @Schema({
@@ -114,19 +107,7 @@ export class PackageModel {
 
   @Prop({ type: Date, required: false })
   updated_at?: Date;
-
-  _id?: string;
-
-  @Virtual({
-    get: function (this: { _id?: Types.ObjectId }) {
-      return this._id == null ? undefined : String(this._id);
-    },
-  })
-  id?: string;
 }
 
 export const PackageSchema = SchemaFactory.createForClass(PackageModel);
-PackageSchema.virtual('id').get(function (this: { _id?: Types.ObjectId }) {
-  return this._id == null ? undefined : this._id;
-});
 PackageSchema.index({ code: 1 }, { unique: true });

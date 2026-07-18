@@ -25,18 +25,6 @@ export class CreditWalletModel {
 
   @Prop({ type: [CreditBalanceSchema], required: false, default: [] })
   balances: CreditBalanceSchema[];
-
-  _id?: string;
-
-  @Virtual({
-    get: function (this: { _id?: Types.ObjectId }) {
-      return this._id == null ? undefined : String(this._id);
-    },
-  })
-  id?: string;
 }
 
 export const CreditWalletSchema = SchemaFactory.createForClass(CreditWalletModel);
-CreditWalletSchema.virtual('id').get(function (this: { _id?: Types.ObjectId }) {
-  return this._id == null ? undefined : this._id;
-});

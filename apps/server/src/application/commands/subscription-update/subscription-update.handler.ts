@@ -56,7 +56,7 @@ export class SubscriptionUpdateHandler implements ICommandHandler<SubscriptionUp
 
     return this.uow.execute(async () => {
       // 1. Fetch or initialize Subscription
-      let subscription = await this.subscriptionRepository.findByEnterpriseId(input.enterpriseId);
+      let subscription = await this.subscriptionRepository.findByUserId(input.userId);
       const isNew = !subscription;
 
       const startDate = new Date();
@@ -65,7 +65,7 @@ export class SubscriptionUpdateHandler implements ICommandHandler<SubscriptionUp
 
       if (isNew) {
         subscription = SubscriptionRoot.create({
-          enterpriseId: input.enterpriseId,
+          userId: input.userId,
           status: ESubscriptionStatus.ACTIVE,
           planItem: null,
           addonItems: [],
@@ -90,9 +90,9 @@ export class SubscriptionUpdateHandler implements ICommandHandler<SubscriptionUp
       }
 
       // 3. Load or create Credit Wallet
-      let wallet = await this.creditWalletRepository.findByEnterpriseId(input.enterpriseId);
+      let wallet = await this.creditWalletRepository.findByEnterpriseId(input.userId);
       if (!wallet) {
-        wallet = CreditWalletRoot.create(input.enterpriseId);
+        wallet = CreditWalletRoot.create(input.userId);
       }
 
       // 4. Load all package entities involved in the bill
@@ -265,7 +265,7 @@ export class SubscriptionUpdateHandler implements ICommandHandler<SubscriptionUp
         if (proration.refundAmount > 0) {
           const refundBill = BillEntity.create({
             billCode: `REF-${Date.now()}-${Math.random().toString(36).slice(2, 8).toUpperCase()}`,
-            enterpriseId: subscription!.enterpriseId,
+            enterpriseId: subscription!.userId,
             type: EBillType.REFUND,
             status: EBillStatus.PENDING,
             items: [
@@ -293,7 +293,7 @@ export class SubscriptionUpdateHandler implements ICommandHandler<SubscriptionUp
           );
 
           this.logger.log(
-            `Proration refund of ${proration.refundAmount} issued for enterprise ${subscription!.enterpriseId} (plan change: ${oldPlanItem.packageId} → ${newPlanItem.packageId})`
+            `Proration refund of ${proration.refundAmount} issued for user ${subscription!.userId} (plan change: ${oldPlanItem.packageId} → ${newPlanItem.packageId})`
           );
         }
       }
@@ -327,7 +327,7 @@ export class SubscriptionUpdateHandler implements ICommandHandler<SubscriptionUp
       const newPlanId = subscription!.planItem ? subscription!.planItem.packageId : null;
       const history = SubscriptionHistoryEntity.create({
         subscriptionId: subscription!.id!,
-        enterpriseId: subscription!.enterpriseId,
+        userId: subscription!.userId,
         billId: input.billId,
         actorId: undefined,
         details: new SubscriptionChangeDetailsVO({

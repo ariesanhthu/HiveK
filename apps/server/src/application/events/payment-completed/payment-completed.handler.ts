@@ -12,8 +12,8 @@ export class PaymentCompletedEventHandler implements IEventHandler<PaymentComple
   ) {}
 
   async handle(event: PaymentCompletedEvent) {
-    const { enterpriseId, billId } = event.payload;
-    this.logger.log(`Handling PaymentCompletedEvent for enterprise: ${enterpriseId}, bill: ${billId}`);
+    const { userId, billId } = event.payload;
+    this.logger.log(`Handling PaymentCompletedEvent for user: ${userId}, bill: ${billId}`);
 
     // Defer to next tick to avoid nested Unit of Work.
     // The PaymentCaptureHandler runs within a UoW transaction, and
@@ -24,7 +24,7 @@ export class PaymentCompletedEventHandler implements IEventHandler<PaymentComple
       try {
         await this.commandBus.execute(
           new SubscriptionUpdateCommand({
-            enterpriseId,
+            userId,
             billId,
           })
         );

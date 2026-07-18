@@ -9,7 +9,7 @@ import {
 import { SubscriptionUpdatedEvent } from '../events/subscription-updated.domain-event';
 
 export interface SubscriptionProps {
-  enterpriseId: string;
+  userId: string;
   status: ESubscriptionStatus;
   planItem: PlanItemVO | null;
   addonItems: AddonItemVO[];
@@ -32,8 +32,8 @@ export class SubscriptionRoot extends BaseAggregateRoot<SubscriptionProps> {
     const now = new Date();
     return new SubscriptionRoot(
       {
-        enterpriseId: input.enterpriseId,
-        status: input.status,
+      userId: input.userId,
+      status: input.status,
         planItem: input.planItem,
         addonItems: input.addonItems,
         computedGrants: input.computedGrants,
@@ -55,8 +55,8 @@ export class SubscriptionRoot extends BaseAggregateRoot<SubscriptionProps> {
     super(props, id);
   }
 
-  get enterpriseId(): string {
-    return this.props.enterpriseId;
+  get userId(): string {
+    return this.props.userId;
   }
 
   get status(): ESubscriptionStatus {
@@ -188,7 +188,7 @@ export class SubscriptionRoot extends BaseAggregateRoot<SubscriptionProps> {
   ): void {
     this.addDomainEvent(
       new SubscriptionUpdatedEvent(
-        this.enterpriseId,
+        this.userId,
         subscriptionHistoryId,
         details
       )

@@ -4,7 +4,7 @@ import { type Optional } from '../types';
 
 export interface SubscriptionHistoryProps {
   subscriptionId: string;
-  enterpriseId: string;
+  userId: string;
   billId: Optional<string>;
   actorId: Optional<string>;
   details: SubscriptionChangeDetailsVO;
@@ -24,7 +24,7 @@ export class SubscriptionHistoryEntity extends BaseAggregateRoot<SubscriptionHis
     return new SubscriptionHistoryEntity(
       {
         subscriptionId: input.subscriptionId,
-        enterpriseId: input.enterpriseId,
+        userId: input.userId,
         billId: input.billId,
         actorId: input.actorId,
         details: input.details,
@@ -49,8 +49,8 @@ export class SubscriptionHistoryEntity extends BaseAggregateRoot<SubscriptionHis
     return this.props.subscriptionId;
   }
 
-  get enterpriseId(): string {
-    return this.props.enterpriseId;
+  get userId(): string {
+    return this.props.userId;
   }
 
   get billId(): string | undefined {

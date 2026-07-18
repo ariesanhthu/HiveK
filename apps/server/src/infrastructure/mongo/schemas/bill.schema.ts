@@ -65,19 +65,7 @@ export class BillModel {
 
   @Prop({ type: Date, required: false })
   created_at?: Date;
-
-  _id?: string;
-
-  @Virtual({
-    get: function (this: { _id?: Types.ObjectId }) {
-      return this._id == null ? undefined : String(this._id);
-    },
-  })
-  id?: string;
 }
 
 export const BillSchema = SchemaFactory.createForClass(BillModel);
-BillSchema.virtual('id').get(function (this: { _id?: Types.ObjectId }) {
-  return this._id == null ? undefined : this._id;
-});
 BillSchema.index({ enterprise_id: 1, status: 1 });

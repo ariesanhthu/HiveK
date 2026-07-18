@@ -62,7 +62,7 @@ class AddonItemSchema {
 })
 export class SubscriptionModel {
   @Prop({ type: String, required: true, unique: true, index: true })
-  enterprise_id: string;
+  user_id: string;
 
   @Prop({
     type: String,
@@ -89,18 +89,6 @@ export class SubscriptionModel {
 
   @Prop({ type: Date, required: false, index: true })
   next_expiry_check_at: Date;
-
-  _id?: string;
-
-  @Virtual({
-    get: function (this: { _id?: Types.ObjectId }) {
-      return this._id == null ? undefined : String(this._id);
-    },
-  })
-  id?: string;
 }
 
 export const SubscriptionSchema = SchemaFactory.createForClass(SubscriptionModel);
-SubscriptionSchema.virtual('id').get(function (this: { _id?: Types.ObjectId }) {
-  return this._id == null ? undefined : this._id;
-});

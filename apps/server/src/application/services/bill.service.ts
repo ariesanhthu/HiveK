@@ -19,11 +19,11 @@ export class BillService {
    * Determine purchase types for bill items by comparing with current subscription.
    */
   async determinePurchaseTypes(
-    enterpriseId: string | undefined,
+    userId: string | undefined,
     requestedItems: { pkg: PackageRoot; variant: PackageVariantEntity }[],
   ): Promise<BillItemVO[]> {
-    const subscription = enterpriseId
-      ? await this.subscriptionRepository.findByEnterpriseId(enterpriseId)
+    const subscription = userId
+      ? await this.subscriptionRepository.findByUserId(userId)
       : null;
 
     const items: BillItemVO[] = [];

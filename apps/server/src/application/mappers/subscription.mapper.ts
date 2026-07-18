@@ -5,7 +5,7 @@ export class SubscriptionMapper {
   static toDto(entity: SubscriptionRoot): SubscriptionResponseDto {
     return {
       id: entity.id!,
-      enterpriseId: entity.enterpriseId,
+      userId: entity.userId,
       status: entity.status,
       planItem: entity.planItem
         ? {
@@ -42,7 +42,7 @@ export class SubscriptionMapper {
     return {
       id: entity.id!,
       subscriptionId: entity.subscriptionId,
-      enterpriseId: entity.enterpriseId,
+      userId: entity.userId,
       billId: entity.billId ?? null,
       actorId: entity.actorId ?? null,
       details: {

@@ -24,3 +24,4 @@ export * from './auto-reply-rule.schema';
 export * from './credit-wallet.schema';
 export * from './quota-usage.schema';
 export * from './enterprise-invitation.schema';
+export * from './enterprise-quota-allocation.schema';

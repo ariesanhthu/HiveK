@@ -89,7 +89,7 @@ export class SubscriptionCronService {
 
           const history = SubscriptionHistoryEntity.create({
             subscriptionId: sub.id!,
-            enterpriseId: sub.enterpriseId,
+            userId: sub.userId,
             billId: undefined,
             actorId: undefined,
             details: new SubscriptionChangeDetailsVO({
@@ -108,7 +108,7 @@ export class SubscriptionCronService {
           await this.historyRepository.save(history);
           sub.recordSubscriptionUpdated(history.id!, history.details);
 
-          this.logger.log(`Subscription plan expired for enterprise ${sub.enterpriseId}, plan ${oldPlanId}`);
+          this.logger.log(`Subscription plan expired for enterprise ${sub.userId}, plan ${oldPlanId}`);
         }
       }
     });

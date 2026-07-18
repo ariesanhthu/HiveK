@@ -4,7 +4,7 @@ import { EAggregateType } from '../enums';
 export interface PaymentCompletedPayload {
   paymentId: string;
   billId: string;
-  enterpriseId: string;
+  userId: string;
   attemptId: string;
   amount: number;
   currency: string;

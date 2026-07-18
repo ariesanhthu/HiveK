@@ -186,24 +186,9 @@ export class PaymentModel {
 
   @Prop({ type: String, required: false })
   deleted_by?: string;
-
-  _id?: string;
-
-  // Virtual for string ID
-  @Virtual({
-    get: function (this: { _id?: Types.ObjectId }) {
-      return this._id;
-    },
-  })
-  id?: string;
 }
 
 export const PaymentSchema = SchemaFactory.createForClass(PaymentModel);
-
-// Add virtual id
-PaymentSchema.virtual('id').get(function (this: { _id?: Types.ObjectId }) {
-  return this._id;
-});
 
 // Indexes
 PaymentSchema.index({ enterprise_id: 1 });

@@ -3,6 +3,7 @@ export * from './kol-platform-info.value-object';
 export * from './media-slide.value-object';
 export * from './product-item.value-object';
 export * from './voucher-item.value-object';
+export * from './enterprise-quota-allocation.vo';
 export * from './review-security-metadata.value-object';
 export * from './bill-item.vo';
 export * from './money.vo';

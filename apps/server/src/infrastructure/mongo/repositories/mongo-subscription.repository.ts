@@ -1,6 +1,6 @@
 import { Injectable, Inject } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, Types, ClientSession } from 'mongoose';
+import { Model, ClientSession } from 'mongoose';
 import { ISubscriptionRepository } from '@/core/interfaces/repositories';
 import { SubscriptionRoot } from '@/core/aggregate-roots';
 import { PlanItemVO, AddonItemVO, GrantVO } from '@/core/value-objects';
@@ -42,7 +42,7 @@ export class MongoSubscriptionRepository implements ISubscriptionRepository {
       await this.subscriptionModel.findByIdAndUpdate(subscription.id, data, { upsert: true }).session(this.session).exec();
     }
 
-    await this.invalidateCache(subscription.id!, subscription.enterpriseId);
+    await this.invalidateCache(subscription.id!, subscription.userId);
   }
 
   async saveMany(subscriptions: SubscriptionRoot[]): Promise<void> {
@@ -53,24 +53,24 @@ export class MongoSubscriptionRepository implements ISubscriptionRepository {
     const doc = await this.subscriptionModel.findById(id).session(this.session).exec();
     if (doc) {
       await this.subscriptionModel.findByIdAndDelete(id).session(this.session).exec();
-      await this.invalidateCache(id, doc.enterprise_id);
+      await this.invalidateCache(id, doc.user_id);
     }
   }
 
-  private async invalidateCache(id: string, enterpriseId: string): Promise<void> {
+  private async invalidateCache(id: string, userId: string): Promise<void> {
     const domain = 'subscription';
     const invalidations = [
       this.cacheService.del(CacheKeyUtil.id(domain, id)),
       this.cacheService.delByPattern(CacheKeyUtil.listPattern(domain)),
     ];
-    if (enterpriseId) {
-      invalidations.push(this.cacheService.del(CacheKeyUtil.custom(domain, `enterpriseId:${enterpriseId}`)));
+    if (userId) {
+      invalidations.push(this.cacheService.del(CacheKeyUtil.custom(domain, `userId:${userId}`)));
     }
     await Promise.all(invalidations);
   }
 
-  async findByEnterpriseId(enterpriseId: string): Promise<Nullable<SubscriptionRoot>> {
-    const doc = await this.subscriptionModel.findOne({ enterprise_id: enterpriseId }).session(this.session).exec();
+  async findByUserId(userId: string): Promise<Nullable<SubscriptionRoot>> {
+    const doc = await this.subscriptionModel.findOne({ user_id: userId }).session(this.session).exec();
     return doc ? this.mapToDomain(doc) : null;
   }
 
@@ -107,14 +107,14 @@ export class MongoSubscriptionRepository implements ISubscriptionRepository {
     if (result.modifiedCount === 0) {
       throw new Error('OptimisticLockException: Subscription version conflict');
     }
-    await this.invalidateCache(id, entity.enterpriseId);
+    await this.invalidateCache(id, entity.userId);
   }
 
   private mapToDomain(doc: SubscriptionDocument): SubscriptionRoot {
     return SubscriptionRoot.instantiate(
       doc._id.toString(),
       {
-        enterpriseId: doc.enterprise_id,
+        userId: doc.user_id,
         status: doc.status,
         planItem: doc.plan_item
           ? new PlanItemVO({
@@ -168,7 +168,7 @@ export class MongoSubscriptionRepository implements ISubscriptionRepository {
 
   private mapToPersistence(data: SubscriptionRoot): Omit<SubscriptionModel, 'created_at' | 'updated_at'> {
     return {
-      enterprise_id: data.enterpriseId,
+      user_id: data.userId,
       status: data.status,
       plan_item: data.planItem
         ? {
@@ -201,8 +201,6 @@ export class MongoSubscriptionRepository implements ISubscriptionRepository {
               credit_type: g.creditFallback.creditType,
               credits_per_unit: g.creditFallback.creditsPerUnit,
             }
-          : g.creditFallback === null
-          ? null
           : null,
       })),
       computed_permissions: data.computedPermissions,
