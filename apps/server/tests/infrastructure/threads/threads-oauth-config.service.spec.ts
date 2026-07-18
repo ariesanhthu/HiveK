@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ConfigService } from '@nestjs/config';
-import { ThreadsOAuthConfigService } from '@/infrastructure/threads/threads-oauth-config.service';
+import { ThreadsOAuthConfigService } from '@/infrastructure/social-network/threads/threads-oauth-config.service';
 
 describe('ThreadsOAuthConfigService', () => {
   let service: ThreadsOAuthConfigService;

@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { ThreadsPublisherService } from '@/infrastructure/threads/threads-publisher.service';
-import { ThreadsGraphApiClient } from '@/infrastructure/threads/threads-graph-api.client';
+import { ThreadsPublisherService } from '@/infrastructure/social-network/threads/threads-publisher.service';
+import { ThreadsGraphApiClient } from '@/infrastructure/social-network/threads/threads-graph-api.client';
 import { Logger } from '@nestjs/common';
 
 describe('ThreadsPublisherService', () => {

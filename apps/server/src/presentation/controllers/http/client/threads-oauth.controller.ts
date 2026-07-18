@@ -21,7 +21,7 @@ import { errorMessage } from '@/shared/utils';
 import { ConfigService } from '@nestjs/config';
 import { WebHook } from '@/presentation/decorators/webhook.decorator';
 import type { Response } from 'express';
-import { ThreadsOAuthConfigService } from '@/infrastructure/threads/threads-oauth-config.service';
+import { ThreadsOAuthConfigService } from '@/infrastructure/social-network/threads/threads-oauth-config.service';
 
 @ApiTags('CLIENT-social-pages')
 @ApiBearerAuth()

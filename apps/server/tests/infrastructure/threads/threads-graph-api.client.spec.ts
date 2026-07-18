@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { HttpService } from '@nestjs/axios';
 import { ConfigService } from '@nestjs/config';
-import { ThreadsGraphApiClient } from '@/infrastructure/threads/threads-graph-api.client';
+import { ThreadsGraphApiClient } from '@/infrastructure/social-network/threads/threads-graph-api.client';
 import { of } from 'rxjs';
 import { AxiosResponse } from 'axios';
 

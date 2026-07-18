@@ -7,11 +7,11 @@ import { ThreadsSocialPageConnectorService } from '../threads/threads-social-pag
 import { FacebookPublisherService } from '../facebook/facebook-publisher.service';
 import { FacebookCommentReplierService } from '../facebook/facebook-comment-replier.service';
 import { FacebookSocialPageConnectorService } from '../facebook/facebook-social-page-connector.service';
-import { SocialPublisherDiscoveryService } from '../posting/social-publisher-discovery.service';
-import { CommentReplierDiscoveryService } from '../posting/comment-replier-discovery.service';
-import { SocialPageConnectorFactoryService } from '../posting/social-page-connector-factory.service';
-import { PostPublishJob } from '../posting/jobs/post-publish.job';
-import { CommentWebhookConsumer } from '../../presentation/controllers/rmq/comment-webhook.consumer';
+import { SocialPublisherDiscoveryService } from './factories/social-publisher-discovery.service';
+import { CommentReplierDiscoveryService } from './factories/comment-replier-discovery.service';
+import { SocialPageConnectorFactoryService } from './factories/social-page-connector-factory.service';
+import { PostPublishJob } from './jobs/post-publish.job';
+import { CommentWebhookConsumer } from '../../../presentation/controllers/rmq/comment-webhook.consumer';
 import {
   SOCIAL_PUBLISHERS,
   SOCIAL_PUBLISHER_DISCOVERY,
@@ -150,4 +150,4 @@ const Handlers = [
     ...Handlers,
   ],
 })
-export class PostingModule {}
+export class SocialNetworkModule {}

@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { ThreadsSocialPageConnectorService } from '@/infrastructure/threads/threads-social-page-connector.service';
-import { ThreadsGraphApiClient } from '@/infrastructure/threads/threads-graph-api.client';
+import { ThreadsSocialPageConnectorService } from '@/infrastructure/social-network/threads/threads-social-page-connector.service';
+import { ThreadsGraphApiClient } from '@/infrastructure/social-network/threads/threads-graph-api.client';
 
 describe('ThreadsSocialPageConnectorService', () => {
   let service: ThreadsSocialPageConnectorService;
