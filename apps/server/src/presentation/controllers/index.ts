@@ -54,4 +54,7 @@ export * from './resolvers/proposal.resolver';
 export * from './resolvers/review.resolver';
 
 // WebSocket Controllers
-export * from './websocket/websocket.gateway';
+export * from './websocket/websocket.gateway';export * from './http/admin/subscription.controller';
+export * from './http/client/subscription.controller';
+export * from './http/admin/quota.controller';
+export * from './http/client/quota.controller';

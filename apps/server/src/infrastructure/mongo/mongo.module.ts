@@ -78,10 +78,14 @@ import {
   MongoNotificationReadService,
   MongoUploadedFileReadService,
   MongoKpiLogReadService,
+  MongoPaymentProviderReadService,
   MongoPackageReadService,
   MongoBillReadService,
-  MongoPaymentProviderReadService,
   MongoEnterpriseInvitationReadService,
+  MongoSubscriptionReadService,
+  MongoSubscriptionHistoryReadService,
+  MongoQuotaUsageReadService,
+  MongoEnterpriseQuotaAllocationReadService,
 } from './read-services';
 
 // Repository symbols
@@ -120,6 +124,7 @@ import {
   ENTERPRISE_READ_SERVICE,
   PLATFORM_READ_SERVICE,
   KOL_PROFILE_READ_SERVICE,
+  PAYMENT_PROVIDER_READ_SERVICE,
   CAMPAIGN_READ_SERVICE,
   CAMPAIGN_PARTICIPANT_READ_SERVICE,
   NOTIFICATION_READ_SERVICE,
@@ -127,8 +132,11 @@ import {
   KPI_LOG_READ_SERVICE,
   PACKAGE_READ_SERVICE,
   BILL_READ_SERVICE,
-  PAYMENT_PROVIDER_READ_SERVICE,
   ENTERPRISE_INVITATION_READ_SERVICE,
+  SUBSCRIPTION_READ_SERVICE,
+  SUBSCRIPTION_HISTORY_READ_SERVICE,
+  QUOTA_USAGE_READ_SERVICE,
+  ENTERPRISE_QUOTA_ALLOCATION_READ_SERVICE,
 } from '@/application/interfaces';
 
 import { RoleSeedService } from './seeding/role-seed.service';
@@ -359,6 +367,22 @@ import { MongoCampaignProposalReadService } from './read-services/campaign-propo
       provide: ENTERPRISE_INVITATION_READ_SERVICE,
       useClass: MongoEnterpriseInvitationReadService,
     },
+    {
+      provide: SUBSCRIPTION_READ_SERVICE,
+      useClass: MongoSubscriptionReadService,
+    },
+    {
+      provide: SUBSCRIPTION_HISTORY_READ_SERVICE,
+      useClass: MongoSubscriptionHistoryReadService,
+    },
+    {
+      provide: QUOTA_USAGE_READ_SERVICE,
+      useClass: MongoQuotaUsageReadService,
+    },
+    {
+      provide: ENTERPRISE_QUOTA_ALLOCATION_READ_SERVICE,
+      useClass: MongoEnterpriseQuotaAllocationReadService,
+    },
     // Seed service
     RoleSeedService,
   ],
@@ -407,6 +431,10 @@ import { MongoCampaignProposalReadService } from './read-services/campaign-propo
     BILL_READ_SERVICE,
     PAYMENT_PROVIDER_READ_SERVICE,
     ENTERPRISE_INVITATION_READ_SERVICE,
+    SUBSCRIPTION_READ_SERVICE,
+    SUBSCRIPTION_HISTORY_READ_SERVICE,
+    QUOTA_USAGE_READ_SERVICE,
+    ENTERPRISE_QUOTA_ALLOCATION_READ_SERVICE,
     // Export MongooseModule so domain modules can use the models if needed
     MongooseModule,
     RoleSeedService,

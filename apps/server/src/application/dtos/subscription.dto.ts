@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { GrantDtoSchema, GrantDto } from './package.dto';
+import { SortOrder } from './pagination.dto';
 
 const PlanItemSchema = z.object({
   packageId: z.string(),
@@ -8,6 +9,8 @@ const PlanItemSchema = z.object({
   expiresAt: z.date(),
   billId: z.string(),
   autoRenew: z.boolean(),
+  price: z.number().optional(),
+  priceAfterDiscount: z.number().optional(),
 });
 
 const AddonItemSchema = z.object({
@@ -16,10 +19,20 @@ const AddonItemSchema = z.object({
   purchasedAt: z.date(),
   expiresAt: z.date().nullable(),
   billId: z.string(),
+  price: z.number().optional(),
+  priceAfterDiscount: z.number().optional(),
 });
 
 export type PlanItemDTO = z.infer<typeof PlanItemSchema>;
 export type AddonItemDTO = z.infer<typeof AddonItemSchema>;
+
+export class SubscriptionFilterDto {
+  userId?: string;
+  status?: string;
+  cursor?: string;
+  limit?: number;
+  sort?: SortOrder;
+}
 
 export class SubscriptionResponseDto {
   id: string;

@@ -23,3 +23,5 @@ export * from './scheduled-post.dto';
 export * from './auto-reply-rule.dto';
 export * from './enterprise-invitation.dto';
 
+export * from './quota-usage.dto';
+export * from './enterprise-quota-allocation.dto';

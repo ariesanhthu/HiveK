@@ -29,6 +29,7 @@ import { RedisCacheModule } from '../cache/redis/redis-cache.module';
 import { EventsModule } from '../events/events.module';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { BillingModule } from '@/infrastructure/modules/billing.module';
+import { SubscriptionModule } from '@/infrastructure/modules/subscription.module';
 import { SocialNetworkModule } from '@/infrastructure/social-network/common/social-network.module';
 
 @Module({
@@ -57,6 +58,7 @@ import { SocialNetworkModule } from '@/infrastructure/social-network/common/soci
     RedisCacheModule,
     EventsModule,
     BillingModule,
+    SubscriptionModule,
     SocialNetworkModule,
     // ThrottlerModule.forRoot([
     //   {

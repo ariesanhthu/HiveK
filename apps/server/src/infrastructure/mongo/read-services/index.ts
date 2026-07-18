@@ -14,3 +14,7 @@ export * from './package.read-service';
 export * from './bill.read-service';
 export * from './payment-provider.read-service';
 export * from './enterprise-invitation.read-service';
+export * from './subscription.read-service';
+export * from './subscription-history.read-service';
+export * from './quota-usage.read-service';
+export * from './enterprise-quota-allocation.read-service';

@@ -22,12 +22,7 @@ import {
   PaymentCaptureHandler,
   PaymentCancelHandler,
   PaymentVoidAuthorizationHandler,
-  SubscriptionUpdateHandler,
 } from '@/application/commands';
-import { SubscriptionUpdatedEventHandler, PaymentCompletedEventHandler } from '@/application/events';
-import { SubscriptionCronService } from './subscription-cron.service';
-import { MongoEnterpriseQuotaAllocationRepository } from '@/infrastructure/mongo/repositories';
-import { ENTERPRISE_QUOTA_ALLOCATION_REPOSITORY } from '@/core/interfaces/repositories';
 
 @Module({
   imports: [
@@ -35,6 +30,7 @@ import { ENTERPRISE_QUOTA_ALLOCATION_REPOSITORY } from '@/core/interfaces/reposi
     MongoModule,
     PaymentProvidersModule,
   ],
+  controllers: [],
   providers: [
     PaymentService,
     // Package Handlers
@@ -59,16 +55,6 @@ import { ENTERPRISE_QUOTA_ALLOCATION_REPOSITORY } from '@/core/interfaces/reposi
     PaymentCaptureHandler,
     PaymentCancelHandler,
     PaymentVoidAuthorizationHandler,
-    // Subscription Handlers
-    ProrationService,
-    SubscriptionUpdateHandler,
-    SubscriptionUpdatedEventHandler,
-    PaymentCompletedEventHandler,
-    SubscriptionCronService,
-    {
-      provide: ENTERPRISE_QUOTA_ALLOCATION_REPOSITORY,
-      useClass: MongoEnterpriseQuotaAllocationRepository,
-    },
   ],
   exports: [
     PaymentService,

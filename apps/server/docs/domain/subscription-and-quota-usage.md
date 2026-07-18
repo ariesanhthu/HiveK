@@ -460,7 +460,31 @@ SubscriptionUpdatedEventHandler (consumes the event)
 
 ### 4.3 Queries (Read Side)
 
-The Subscription domain currently has **no dedicated read queries**. Subscription data is fetched directly via the repository in other handlers/services (e.g. `BillService` reads the subscription to determine purchase types).
+The domain implements dedicated Read Services and CQRS queries for reading data:
+
+| Query | Handler | DTO | Description |
+|-------|---------|-----|-------------|
+| `SubscriptionGetByIdQuery` | `SubscriptionGetByIdHandler` | `SubscriptionResponseDto` | Fetches a subscription by its ID |
+| `SubscriptionGetByUserIdQuery` | `SubscriptionGetByUserIdHandler` | `SubscriptionResponseDto` | Fetches a subscription by the owner user ID |
+| `SubscriptionGetListQuery` | `SubscriptionGetListHandler` | `PaginatedResponseDto<SubscriptionResponseDto>` | Lists subscriptions with pagination |
+| `SubscriptionHistoryGetListQuery` | `SubscriptionHistoryGetListHandler` | `PaginatedResponseDto<SubscriptionHistoryResponseDto>` | Lists history log for subscriptions |
+| `QuotaUsageGetByEnterpriseIdQuery` | `QuotaUsageGetByEnterpriseIdHandler` | `QuotaUsageResponseDto` | Fetches quota usages for an enterprise |
+| `EnterpriseQuotaAllocationGetByOwnerIdQuery` | `EnterpriseQuotaAllocationGetByOwnerIdHandler` | `EnterpriseQuotaAllocationResponseDto` | Fetches quota allocations by owner |
+
+**Query Flow Architecture**:
+```
+GET /api/v1/...
+  │
+  ▼
+Controller.method()
+  │
+  ▼
+QueryBus.execute(new {Feature}Query(filters))
+  │
+  ▼
+{Feature}QueryHandler.execute()
+  └─ ReadService.findById/findAll(filters) → DTO/PaginatedResponse
+```
 
 ### 4.4 Mappers
 
@@ -583,7 +607,9 @@ The Subscription domain currently has **no dedicated read queries**. Subscriptio
 **Indexes**:
 - `{ owner_id: 1 }` — Unique index for 1:1 owner lookup
 
-### 5.2 Repository Implementations
+### 5.2 Repository & Read Service Implementations
+
+#### Repositories (Write Side)
 
 | Implementation | File | Implements |
 |----------------|------|------------|
@@ -621,31 +647,74 @@ The Subscription domain currently has **no dedicated read queries**. Subscriptio
 
 All repositories integrate with Redis cache under their respective domain key patterns.
 
+#### Read Services (Read Side)
+
+Direct database queries bypassing aggregates for optimized performance:
+
+| Implementation | File | Implements |
+|----------------|------|------------|
+| `MongoSubscriptionReadService` | `src/infrastructure/mongo/read-services/subscription.read-service.ts` | `ISubscriptionReadService` |
+| `MongoSubscriptionHistoryReadService` | `src/infrastructure/mongo/read-services/subscription-history.read-service.ts` | `ISubscriptionHistoryRepository` |
+| `MongoQuotaUsageReadService` | `src/infrastructure/mongo/read-services/quota-usage.read-service.ts` | `IQuotaUsageReadService` |
+| `MongoEnterpriseQuotaAllocationReadService` | `src/infrastructure/mongo/read-services/enterprise-quota-allocation.read-service.ts` | `IEnterpriseQuotaAllocationReadService` |
+
+**Read Service Methods**:
+- `findById(id)` — Lookup DTO by ID.
+- `findAll(filters)` — Lookup list of DTOs with pagination (using cursor pagination and `SortOrder` sorting logic).
+
 ### 5.3 Module Wiring
 
-All handlers and repositories are registered in the **BillingModule**:
+#### SubscriptionModule
 
-**File**: `src/infrastructure/modules/billing.module.ts`
+All subscription and quota write handlers, services, and REST controllers are wired in `SubscriptionModule`:
+
+**File**: `src/infrastructure/modules/subscription.module.ts`
 
 ```typescript
 @Module({
-  imports: [CqrsModule, MongoModule, PaymentProvidersModule],
+  imports: [CqrsModule, MongoModule],
+  controllers: [
+    SubscriptionAdminController,
+    SubscriptionClientController,
+    QuotaAdminController,
+    QuotaClientController,
+  ],
   providers: [
-    // Subscription
+    ProrationService,
+    SubscriptionCronService,
     SubscriptionUpdateHandler,
     SubscriptionUpdatedEventHandler,
-    SubscriptionCronService,
-    ProrationService,
+    PaymentCompletedEventHandler,
+    SubscriptionGetByIdHandler,
+    SubscriptionGetByUserIdHandler,
+    SubscriptionGetListHandler,
+    SubscriptionHistoryGetListHandler,
+    QuotaUsageGetByEnterpriseIdHandler,
+    EnterpriseQuotaAllocationGetByOwnerIdHandler,
     {
       provide: ENTERPRISE_QUOTA_ALLOCATION_REPOSITORY,
       useClass: MongoEnterpriseQuotaAllocationRepository,
     },
-    // ... other handlers
   ],
-  exports: [PaymentService],
 })
-export class BillingModule {}
+export class SubscriptionModule {}
 ```
+
+#### MongoModule
+
+Repositories and Read Services are registered and exported from `MongoModule` for use across modules:
+
+**File**: `src/infrastructure/mongo/mongo.module.ts`
+
+- **Providers/Exports**:
+  - `SUBSCRIPTION_REPOSITORY` ↔ `MongoSubscriptionRepository`
+  - `SUBSCRIPTION_HISTORY_REPOSITORY` ↔ `MongoSubscriptionHistoryRepository`
+  - `QUOTA_USAGE_REPOSITORY` ↔ `MongoQuotaUsageRepository`
+  - `ENTERPRISE_QUOTA_ALLOCATION_REPOSITORY` ↔ `MongoEnterpriseQuotaAllocationRepository`
+  - `SUBSCRIPTION_READ_SERVICE` ↔ `MongoSubscriptionReadService`
+  - `SUBSCRIPTION_HISTORY_READ_SERVICE` ↔ `MongoSubscriptionHistoryReadService`
+  - `QUOTA_USAGE_READ_SERVICE` ↔ `MongoQuotaUsageReadService`
+  - `ENTERPRISE_QUOTA_ALLOCATION_READ_SERVICE` ↔ `MongoEnterpriseQuotaAllocationReadService`
 
 ### 5.4 Cron Services
 
@@ -671,17 +740,19 @@ The `SubscriptionCronService` runs periodic maintenance tasks:
 
 ### 6.1 REST Endpoints
 
-The Subscription & QuotaUsage domains currently have **no dedicated REST controllers**. They are updated programmatically:
+The Subscription & Quotas domains expose both Client and Admin endpoints:
 
-- **Subscription update** is triggered by `PaymentCompletedEventHandler` after a successful payment
-- **Quota consumption** is triggered by domain commands (e.g. campaign creation) that call `quotaUsage.tryConsume()`
-- **Quota reset** and **subscription expiry** are handled by `SubscriptionCronService`
-- **Enterprise quota allocation** is managed via `EnterpriseQuotaAllocationRoot` (future: agency admin UI)
-
-> ⚠️ **Gap**: No public API exists for:
-> - Reading an owner's current subscription
-> - Checking quota consumption
-> - Manually triggering subscription changes
+| Method | Path | Guards | Controller | Description |
+|--------|------|--------|------------|-------------|
+| `GET` | `/client/v1/subscriptions/me` | 🔒 JwtAuth + Roles(Enterprise) | `SubscriptionClientController` | Get current user's subscription |
+| `GET` | `/client/v1/subscriptions/history/me` | 🔒 JwtAuth + Roles(Enterprise) | `SubscriptionClientController` | Get current user's subscription history |
+| `GET` | `/client/v1/quotas/usage/me` | 🔒 JwtAuth + Roles(Enterprise) | `QuotaClientController` | Get current enterprise's quota usage |
+| `GET` | `/client/v1/quotas/allocations/me` | 🔒 JwtAuth + Roles(Enterprise) | `QuotaClientController` | Get current enterprise's quota allocations |
+| `GET` | `/admin/v1/subscriptions` | 🔒 JwtAuth + Roles(Admin) | `SubscriptionAdminController` | Get all subscriptions (paginated) |
+| `GET` | `/admin/v1/subscriptions/:id` | 🔒 JwtAuth + Roles(Admin) | `SubscriptionAdminController` | Get subscription by ID |
+| `GET` | `/admin/v1/subscriptions/:id/history` | 🔒 JwtAuth + Roles(Admin) | `SubscriptionAdminController` | Get history of a subscription |
+| `GET` | `/admin/v1/quotas/usage/:enterpriseId` | 🔒 JwtAuth + Roles(Admin) | `QuotaAdminController` | Get quota usage of an enterprise |
+| `GET` | `/admin/v1/quotas/allocations/:ownerId` | 🔒 JwtAuth + Roles(Admin) | `QuotaAdminController` | Get quota allocations of an owner |
 
 ### 6.2 Guard Stack
 
@@ -857,10 +928,22 @@ Campaign Create Command
 | Layer | File | Responsibility |
 |-------|------|---------------|
 | **Application** | `src/application/commands/subscription-update/` | SubscriptionUpdate command, DTO, and handler |
+| **Application** | `src/application/queries/subscription-get-by-id/` | SubscriptionGetById query and handler |
+| **Application** | `src/application/queries/subscription-get-by-user-id/` | SubscriptionGetByUserId query and handler |
+| **Application** | `src/application/queries/subscription-get-list/` | SubscriptionGetList query and handler |
+| **Application** | `src/application/queries/subscription-history-get-list/` | SubscriptionHistoryGetList query and handler |
+| **Application** | `src/application/queries/quota-usage-get-by-enterprise-id/` | QuotaUsageGetByEnterpriseId query and handler |
+| **Application** | `src/application/queries/enterprise-quota-allocation-get-by-owner-id/` | EnterpriseQuotaAllocationGetByOwnerId query and handler |
+| **Application** | `src/application/interfaces/read-service/subscription.read-service.interface.ts` | ISubscriptionReadService interface |
+| **Application** | `src/application/interfaces/read-service/subscription-history.read-service.interface.ts` | ISubscriptionHistoryReadService interface |
+| **Application** | `src/application/interfaces/read-service/quota-usage.read-service.interface.ts` | IQuotaUsageReadService interface |
+| **Application** | `src/application/interfaces/read-service/enterprise-quota-allocation.read-service.interface.ts` | IEnterpriseQuotaAllocationReadService interface |
 | **Application** | `src/application/events/subscription-updated/` | SubscriptionUpdatedEventHandler — recomputes QuotaUsage + allocations |
 | **Application** | `src/application/events/request-auth-update-subscription.event.ts` | RequestAuthUpdateSubscriptionEvent — integration event for auth sync |
 | **Application** | `src/application/dtos/subscription.dto.ts` | Subscription DTOs and Zod schemas |
 | **Application** | `src/application/dtos/subscription-history.dto.ts` | SubscriptionHistory DTO |
+| **Application** | `src/application/dtos/quota-usage.dto.ts` | QuotaUsage DTO |
+| **Application** | `src/application/dtos/enterprise-quota-allocation.dto.ts` | EnterpriseQuotaAllocation DTO |
 | **Application** | `src/application/mappers/subscription.mapper.ts` | SubscriptionMapper — entity ↔ DTO |
 
 ### Infrastructure
@@ -875,8 +958,21 @@ Campaign Create Command
 | **Infrastructure** | `src/infrastructure/mongo/repositories/mongo-subscription-history.repository.ts` | MongoSubscriptionHistoryRepository |
 | **Infrastructure** | `src/infrastructure/mongo/repositories/mongo-quota-usage.repository.ts` | MongoQuotaUsageRepository with cache |
 | **Infrastructure** | `src/infrastructure/mongo/repositories/mongo-enterprise-quota-allocation.repository.ts` | MongoEnterpriseQuotaAllocationRepository with cache |
+| **Infrastructure** | `src/infrastructure/mongo/read-services/subscription.read-service.ts` | MongoSubscriptionReadService |
+| **Infrastructure** | `src/infrastructure/mongo/read-services/subscription-history.read-service.ts` | MongoSubscriptionHistoryReadService |
+| **Infrastructure** | `src/infrastructure/mongo/read-services/quota-usage.read-service.ts` | MongoQuotaUsageReadService |
+| **Infrastructure** | `src/infrastructure/mongo/read-services/enterprise-quota-allocation.read-service.ts` | MongoEnterpriseQuotaAllocationReadService |
 | **Infrastructure** | `src/infrastructure/modules/subscription-cron.service.ts` | SubscriptionCronService — periodic quota reset + expiry |
-| **Infrastructure** | `src/infrastructure/modules/billing.module.ts` | Module wiring for all handlers and repos |
+| **Infrastructure** | `src/infrastructure/modules/subscription.module.ts` | SubscriptionModule wiring for subscription/quota handlers and controllers |
+
+### Presentation
+
+| Layer | File | Responsibility |
+|-------|------|---------------|
+| **Presentation** | `src/presentation/controllers/http/client/subscription.controller.ts` | SubscriptionClientController — client REST endpoints |
+| **Presentation** | `src/presentation/controllers/http/admin/subscription.controller.ts` | SubscriptionAdminController — admin REST endpoints |
+| **Presentation** | `src/presentation/controllers/http/client/quota.controller.ts` | QuotaClientController — client REST endpoints |
+| **Presentation** | `src/presentation/controllers/http/admin/quota.controller.ts` | QuotaAdminController — admin REST endpoints |
 
 ---
 

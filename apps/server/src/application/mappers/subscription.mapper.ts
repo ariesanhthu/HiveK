@@ -15,6 +15,8 @@ export class SubscriptionMapper {
             expiresAt: entity.planItem.expiresAt,
             billId: entity.planItem.billId,
             autoRenew: entity.planItem.autoRenew,
+            price: entity.planItem.price,
+            priceAfterDiscount: entity.planItem.priceAfterDiscount,
           }
         : null,
       addonItems: entity.addonItems.map((item) => ({
@@ -23,6 +25,8 @@ export class SubscriptionMapper {
         purchasedAt: item.purchasedAt,
         expiresAt: item.expiresAt,
         billId: item.billId,
+        price: item.price,
+        priceAfterDiscount: item.priceAfterDiscount,
       })),
       computedGrants: entity.computedGrants.map((g) => ({
         type: g.type,

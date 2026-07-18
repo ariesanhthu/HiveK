@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { GrantDtoSchema, GrantDto } from './package.dto';
+import { SortOrder } from './pagination.dto';
 
 const SubscriptionChangeDetailsSchema = z.object({
   oldPlanId: z.string().nullable(),
@@ -22,4 +23,12 @@ export class SubscriptionHistoryResponseDto {
   actorId: string | null;
   details: SubscriptionChangeDetailsDTO;
   createdAt: Date;
+}
+
+export class SubscriptionHistoryFilterDto {
+  subscriptionId?: string;
+  userId?: string;
+  cursor?: string;
+  limit?: number;
+  sort?: SortOrder;
 }

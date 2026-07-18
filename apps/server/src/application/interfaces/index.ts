@@ -28,3 +28,7 @@ export * from './cache.interface';
 export * from './event-service.interface';
 export * from './domain-event-mapper.interface';
 export * from './image-processor.interface';
+export * from './read-service/subscription.read-service.interface';
+export * from './read-service/subscription-history.read-service.interface';
+export * from './read-service/quota-usage.read-service.interface';
+export * from './read-service/enterprise-quota-allocation.read-service.interface';
