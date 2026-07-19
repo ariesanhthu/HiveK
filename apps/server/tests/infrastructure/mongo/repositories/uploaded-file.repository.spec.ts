@@ -16,7 +16,7 @@ jest.mock('mongoose', () => {
 import { Types } from 'mongoose';
 import { MongoUploadedFileRepository } from '@/infrastructure/mongo/repositories/uploaded-file.repository';
 import { UploadedFileRoot } from '@/core/aggregate-roots';
-import { TargetType } from '@/core/enums';
+import { ETargetType } from '@/core/enums';
 
 describe('MongoUploadedFileRepository', () => {
   let repo: MongoUploadedFileRepository;
@@ -30,7 +30,7 @@ describe('MongoUploadedFileRepository', () => {
     size: 1024,
     format: 'png',
     title: 'test-file',
-    target_type: TargetType.USER,
+    target_type: ETargetType.USER,
     target_id: 'user-1',
     target_field: 'avatar',
     delete_at: null,
@@ -73,11 +73,11 @@ describe('MongoUploadedFileRepository', () => {
     it('should return array of UploadedFileRoots when found by target', async () => {
       (mockModel.exec as jest.Mock).mockResolvedValueOnce([fileDoc]);
 
-      const result = await repo.findByTarget('user-1', TargetType.USER);
+      const result = await repo.findByTarget('user-1', ETargetType.USER);
 
       expect(mockModel.find).toHaveBeenCalledWith({
         target_id: 'user-1',
-        target_type: TargetType.USER,
+        target_type: ETargetType.USER,
       });
       expect(result).toHaveLength(1);
       expect(result[0].id).toBe('507f1f77bcf86cd799439015');
@@ -91,7 +91,7 @@ describe('MongoUploadedFileRepository', () => {
         publicId: 'pub-id',
         size: 500,
         format: 'jpg',
-        targetType: TargetType.PLATFORM,
+        targetType: ETargetType.PLATFORM,
         targetId: 'plat-1',
         targetField: 'icon',
       });
@@ -112,7 +112,7 @@ describe('MongoUploadedFileRepository', () => {
         size: 1024,
         format: 'png',
         title: 'updated',
-        targetType: TargetType.USER,
+        targetType: ETargetType.USER,
         targetId: 'user-1',
         targetField: 'avatar',
         deleteAt: null,

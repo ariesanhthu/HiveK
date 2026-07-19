@@ -94,7 +94,7 @@ describe('ThreadsPublisherService', () => {
 
       expect(result.platformPostId).toBe('media-1');
       expect(apiClient.getContainerStatus).toHaveBeenCalledWith('container-1');
-      expect(apiClient.publishContainer).toHaveBeenCalledWith('123', 'container-1');
+      expect(apiClient.publishContainer).toHaveBeenCalledWith('123', 'container-1', 'token');
     });
 
     it('should throw when video processing FAILED', async () => {

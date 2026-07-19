@@ -2,7 +2,7 @@ import { UploadedFileRestoreCommandHandler } from '@/application/commands/upload
 import { UploadedFileRestoreCommand } from '@/application/commands/uploaded-file-restore/uploaded-file-restore.command';
 import { UploadedFileNotFoundException } from '@/core/exceptions';
 import { UploadedFileRoot } from '@/core/aggregate-roots';
-import { TargetType } from '@/core/enums';
+import { ETargetType } from '@/core/enums';
 import { createMockUploadedFileRepository } from '../../../__mocks__/mock-repositories';
 
 describe('UploadedFileRestoreCommandHandler', () => {
@@ -21,7 +21,7 @@ describe('UploadedFileRestoreCommandHandler', () => {
     size: 1000,
     format: 'jpg',
     title: 'Test File',
-    targetType: TargetType.USER,
+    targetType: ETargetType.USER,
     targetId: 'user-1',
     targetField: 'avatar',
     createdAt: new Date(),

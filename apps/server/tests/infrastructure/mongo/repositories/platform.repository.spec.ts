@@ -16,7 +16,7 @@ jest.mock('mongoose', () => {
 import { Types } from 'mongoose';
 import { MongoPlatformRepository } from '@/infrastructure/mongo/repositories/platform.repository';
 import { PlatformRoot } from '@/core/aggregate-roots';
-import { PlatformApiStatus } from '@/core/enums/platform-api-status.enum';
+import { EPlatformApiStatus } from '@/core/enums/platform-api-status.enum';
 
 describe('MongoPlatformRepository', () => {
   let repo: MongoPlatformRepository;
@@ -27,7 +27,7 @@ describe('MongoPlatformRepository', () => {
     _id: new Types.ObjectId('507f1f77bcf86cd799439013'),
     name: 'youtube',
     base_url: 'https://youtube.com',
-    api_status: PlatformApiStatus.STABLE,
+    api_status: EPlatformApiStatus.STABLE,
     icon: '507f1f77bcf86cd79943901c',
     delete_at: null,
     delete_by: null,
@@ -77,7 +77,7 @@ describe('MongoPlatformRepository', () => {
       const platform = PlatformRoot.create({
         name: 'Twitter',
         baseUrl: 'https://twitter.com',
-        apiStatus: PlatformApiStatus.STABLE,
+        apiStatus: EPlatformApiStatus.STABLE,
       });
 
       const saveMock = jest.fn().mockResolvedValue({ _id: new Types.ObjectId('507f1f77bcf86cd799439014') });
@@ -93,7 +93,7 @@ describe('MongoPlatformRepository', () => {
       const platform = PlatformRoot.instantiate('507f1f77bcf86cd799439013', {
         name: 'youtube',
         baseUrl: 'https://youtube.com',
-        apiStatus: PlatformApiStatus.MAINTENANCE,
+        apiStatus: EPlatformApiStatus.MAINTENANCE,
         icon: '507f1f77bcf86cd79943901c',
         deleteAt: null,
         deleteBy: null,
@@ -108,7 +108,7 @@ describe('MongoPlatformRepository', () => {
       expect(mockModel.findByIdAndUpdate).toHaveBeenCalledWith(
         '507f1f77bcf86cd799439013',
         expect.objectContaining({
-          api_status: PlatformApiStatus.MAINTENANCE,
+          api_status: EPlatformApiStatus.MAINTENANCE,
         }),
         { upsert: true }
       );

@@ -2,7 +2,7 @@ import { UploadedFileSoftDeleteCommandHandler } from '@/application/commands/upl
 import { UploadedFileSoftDeleteCommand } from '@/application/commands/uploaded-file-soft-delete/uploaded-file-soft-delete.command';
 import { UploadedFileNotFoundException } from '@/core/exceptions';
 import { UploadedFileRoot } from '@/core/aggregate-roots';
-import { TargetType } from '@/core/enums';
+import { ETargetType } from '@/core/enums';
 import { createMockUploadedFileRepository } from '../../../__mocks__/mock-repositories';
 
 describe('UploadedFileSoftDeleteCommandHandler', () => {
@@ -21,7 +21,7 @@ describe('UploadedFileSoftDeleteCommandHandler', () => {
     size: 1000,
     format: 'jpg',
     title: 'Test File',
-    targetType: TargetType.USER,
+    targetType: ETargetType.USER,
     targetId: 'user-1',
     targetField: 'avatar',
     createdAt: new Date(),

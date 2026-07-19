@@ -9,9 +9,11 @@ import { UploadedFileGetByIdQuery } from '@/application/queries/uploaded-file-ge
 import { UploadedFileGetListHandler } from '@/application/queries/uploaded-file-get-list/uploaded-file-get-list.handler';
 import { UploadedFileGetListQuery } from '@/application/queries/uploaded-file-get-list/uploaded-file-get-list.query';
 import { UploadedFileRoot } from '@/core/aggregate-roots';
-import { TargetType } from '@/core/enums/target-type.enum';
+import { ETargetType } from '@/core/enums/target-type.enum';
+import { PaginatedResponseDto } from '@/application/dtos/pagination.dto';
 
 import { UploadService } from '@/application/services';
+import { IMAGE_PROCESSOR_SERVICE, type IImageProcessorService } from '@/application/interfaces';
 
 describe('Uploaded File Operations', () => {
   let mockRepository: any;
@@ -19,6 +21,7 @@ describe('Uploaded File Operations', () => {
   let mockReadService: any;
   let fileAggregate: UploadedFileRoot;
   let uploadService: UploadService;
+  let mockImageProcessor: jest.Mocked<IImageProcessorService>;
 
   beforeEach(() => {
     fileAggregate = UploadedFileRoot.create({
@@ -26,9 +29,9 @@ describe('Uploaded File Operations', () => {
       publicId: 'file-123',
       size: 1000,
       format: 'pdf',
-      targetType: TargetType.CAMPAIGN,
+      targetType: ETargetType.CAMPAIGN,
       targetId: 'camp-1',
-      targetField: 'contract',
+      targetField: 'raw',
     });
 
     mockRepository = {
@@ -43,10 +46,11 @@ describe('Uploaded File Operations', () => {
 
     mockReadService = {
       findById: jest.fn().mockResolvedValue({ id: 'file-123', format: 'pdf' }),
-      findAll: jest.fn().mockResolvedValue({ items: [], nextCursor: null }),
+      findAll: jest.fn().mockResolvedValue(new PaginatedResponseDto([], null, false, 10)),
     };
 
-    uploadService = new UploadService();
+    mockImageProcessor = { compress: jest.fn() };
+    uploadService = new UploadService(mockImageProcessor);
   });
 
   describe('UploadedFileSoftDeleteCommandHandler', () => {

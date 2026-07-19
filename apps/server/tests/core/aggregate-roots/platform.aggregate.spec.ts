@@ -1,17 +1,17 @@
 import { PlatformRoot } from '@core/aggregate-roots/platform.aggregate';
-import { PlatformApiStatus } from '@core/enums/platform-api-status.enum';
+import { EPlatformApiStatus } from '@core/enums/platform-api-status.enum';
 
 describe('PlatformRoot Aggregate Root', () => {
   const createProps = {
     name: 'YouTube',
     baseUrl: 'https://youtube.com',
-    apiStatus: PlatformApiStatus.STABLE,
+    apiStatus: EPlatformApiStatus.STABLE,
   };
 
   const fullProps = {
     name: 'YouTube',
     baseUrl: 'https://youtube.com',
-    apiStatus: PlatformApiStatus.STABLE,
+    apiStatus: EPlatformApiStatus.STABLE,
     icon: 'icon-youtube-id',
     deleteAt: null,
     deleteBy: null,
@@ -41,8 +41,8 @@ describe('PlatformRoot Aggregate Root', () => {
   it('should update api status and icon url correctly', () => {
     const root = PlatformRoot.create(createProps);
 
-    root.updateApiStatus(PlatformApiStatus.MAINTENANCE);
-    expect(root.apiStatus).toBe(PlatformApiStatus.MAINTENANCE);
+    root.updateApiStatus(EPlatformApiStatus.MAINTENANCE);
+    expect(root.apiStatus).toBe(EPlatformApiStatus.MAINTENANCE);
 
     root.updateIcon('newicon-id');
     expect(root.icon).toBe('newicon-id');

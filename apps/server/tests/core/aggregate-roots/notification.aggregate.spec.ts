@@ -1,5 +1,5 @@
 import { NotificationRoot, NotificationCreateProps } from '@core/aggregate-roots/notification.aggregate';
-import { NotificationType, TargetType } from '@core/enums';
+import { NotificationType, ETargetType } from '@core/enums';
 
 describe('NotificationRoot Aggregate Root', () => {
   const defaultCreateProps: NotificationCreateProps = {
@@ -27,12 +27,12 @@ describe('NotificationRoot Aggregate Root', () => {
     it('should create notification with target info', () => {
       const props: NotificationCreateProps = {
         ...defaultCreateProps,
-        targetType: TargetType.CAMPAIGN,
+        targetType: ETargetType.CAMPAIGN,
         targetId: 'campaign-123',
       };
       const notification = NotificationRoot.create(props);
 
-      expect(notification.targetType).toBe(TargetType.CAMPAIGN);
+      expect(notification.targetType).toBe(ETargetType.CAMPAIGN);
       expect(notification.targetId).toBe('campaign-123');
     });
   });

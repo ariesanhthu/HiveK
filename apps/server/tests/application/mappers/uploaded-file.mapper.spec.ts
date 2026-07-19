@@ -1,6 +1,6 @@
 import { UploadedFileMapper } from '@application/mappers/uploaded-file.mapper';
 import { UploadedFileRoot } from '@core/aggregate-roots';
-import { TargetType } from '@core/enums';
+import { ETargetType } from '@core/enums';
 
 describe('UploadedFileMapper', () => {
   const mockRoot = UploadedFileRoot.instantiate('file-1', {
@@ -9,7 +9,7 @@ describe('UploadedFileMapper', () => {
     size: 1024,
     format: 'png',
     title: 'test-file',
-    targetType: TargetType.USER,
+    targetType: ETargetType.USER,
     targetId: 'user-1',
     targetField: 'avatar',
     createdAt: new Date('2026-01-01T00:00:00Z'),
@@ -27,7 +27,7 @@ describe('UploadedFileMapper', () => {
     expect(dto.size).toBe(1024);
     expect(dto.format).toBe('png');
     expect(dto.title).toBe('test-file');
-    expect(dto.targetType).toBe(TargetType.USER);
+    expect(dto.targetType).toBe(ETargetType.USER);
     expect(dto.targetId).toBe('user-1');
     expect(dto.targetField).toBe('avatar');
   });
