@@ -26,6 +26,25 @@ export class MongoUserReadService implements IUserReadService {
     return doc ? this.mapToDto(doc) : null;
   }
 
+  async findByRoleType(type: ERoleType): Promise<string[]> {
+    const users = await this.userModel.find({ type, delete_at: null }).select('_id').lean().exec();
+    return users.map(u => u._id.toString());
+  }
+
+  async findByEnterprise(enterpriseId: string): Promise<string[]> {
+    const users = await this.userModel
+      .find({ type: ERoleType.ENTERPRISE, enterprise_id: enterpriseId, delete_at: null })
+      .select('_id')
+      .lean()
+      .exec();
+    return users.map(u => u._id.toString());
+  }
+
+  async findAllActive(): Promise<string[]> {
+    const users = await this.userModel.find({ delete_at: null }).select('_id').lean().exec();
+    return users.map(u => u._id.toString());
+  }
+
   async findAll(filters: UserFilterDto = {}): Promise<PaginatedResponseDto<UserDetailDto>> {
     const { cursor, limit = 10, sort = SortOrder.DESC, email, phone, fullName, type, roleId, isEmailVerified } = filters;
     const query: QueryFilter<UserDocument> = {};

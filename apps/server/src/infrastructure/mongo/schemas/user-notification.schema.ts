@@ -30,3 +30,7 @@ export class UserNotificationModel {
 
 export type UserNotificationDocument = HydratedDocument<UserNotificationModel>;
 export const UserNotificationSchema = SchemaFactory.createForClass(UserNotificationModel);
+
+// Add indexes for common query patterns
+UserNotificationSchema.index({ recipient_id: 1, delete_at: 1 });
+UserNotificationSchema.index({ recipient_id: 1, is_read: 1 });
