@@ -237,12 +237,12 @@ The Package aggregate itself does **not** raise domain events during its lifecyc
             ┌──────────┐
             │  DRAFT   │
             └────┬─────┘
-                 │ publish()
+                 │ update-status: active
                  ▼
           ┌─────────────┐
           │   ACTIVE    │
           └──────┬──────┘
-                 │ archive()
+                 │ update-status: archived
                  ▼
           ┌─────────────┐
           │  ARCHIVED   │
@@ -253,10 +253,10 @@ The Package aggregate itself does **not** raise domain events during its lifecyc
 
 | From | To | Method | Conditions |
 |------|----|--------|------------|
-| `DRAFT` | `ACTIVE` | `activate()` | Package must have at least one variant |
-| `ARCHIVED` | `ACTIVE` | `activate()` (via re-publish) | Same constraints as publish |
+| `DRAFT` | `ACTIVE` | `update-status: active` | Package must have at least one variant |
+| `ARCHIVED` | `ACTIVE` | `update-status: active` (re-publish) | Same constraints as publish |
 | `DRAFT` | `(deleted)` | `delete()` | Only allowed in DRAFT |
-| `ACTIVE` | `ARCHIVED` | `archive()` | Must not be in use by active subscriptions |
+| `ACTIVE` | `ARCHIVED` | `update-status: archived` | Must not be in use by active subscriptions |
 
 **Constraints**:
 - Only `DRAFT` or `ARCHIVED` packages can be deleted
@@ -272,9 +272,8 @@ The Package aggregate itself does **not** raise domain events during its lifecyc
 | Command | Handler | DTO | Description |
 |---------|---------|-----|-------------|
 | `PackageCreateCommand` | `PackageCreateCommandHandler` | `PackageCreateInputDto` | Creates a new package in `DRAFT` status with code, name, description, type, scope |
-| `PackageUpdateCommand` | `PackageUpdateHandler` | `PackageUpdateInputDto` | Updates package metadata, features, base grants, and manages variants (add/update/delete). Only allowed in `DRAFT`. |
-| `PackagePublishCommand` | `PackagePublishHandler` | `PackagePublishInputDto` | Publishes a `DRAFT` or `ARCHIVED` package to `ACTIVE`. Automatically archives any existing `ACTIVE` version with the same code. |
-| `PackageArchiveCommand` | `PackageArchiveHandler` | `PackageArchiveInputDto` | Archives an `ACTIVE` package to `ARCHIVED`. |
+| `PackageUpdateCommand` | `PackageUpdateHandler` | `PackageUpdateInputDto` | Updates package metadata, features, base grants, and manages variants (add/update/delete). Accepts `id` as separate constructor param. Only allowed in `DRAFT`. |
+| `PackageUpdateStatusCommand` | `PackageUpdateStatusHandler` | `PackageUpdateStatusInputDto` | Unified status transition: publishes (`DRAFT`/`ARCHIVED` → `ACTIVE`) or archives (`ACTIVE` → `ARCHIVED`). Accepts `id` as separate constructor param + `{ status }` in DTO. |
 | `PackageDeleteCommand` | `PackageDeleteHandler` | `PackageDeleteInputDto` | Deletes a `DRAFT` package outright, or an `ARCHIVED` package if no active subscription references it. |
 
 **Command Flow Architecture**:
@@ -285,13 +284,13 @@ External Request
 Controller / GraphQL Resolver
   │ Validate DTO (Zod schema)
   ▼
-CommandBus.execute(new Package{Xxx}Command(dto))
+CommandBus.execute(new Package{Xxx}Command(id, dto))
   │
   ▼
 Package{Xxx}Handler.execute()
   │
   ├─ this.uow.execute(async () => {
-  │     const pkg = await this.packageRepository.findById(input.id);
+  │     const pkg = await this.packageRepository.findById(id);
   │     if (!pkg) throw new PackageNotFoundException(...);
   │     // Domain logic: pkg.activate(), pkg.archive(), etc.
   │     await this.packageRepository.save(pkg);
@@ -299,7 +298,7 @@ Package{Xxx}Handler.execute()
   │   });
   │
   ▼
-Response: PackageResponseDto (or void for delete/archive)
+Response: PackageResponseDto
 ```
 
 **Note**: Package commands do **not** publish domain events or use the outbox/event pipeline, as the Package aggregate itself is a configuration entity — downstream effects (e.g. subscription recomputation) are handled by the **Subscription** domain when it consumes the package.
@@ -437,19 +436,26 @@ PackageGetXxxHandler
 
 ### 5.4 Module Wiring
 
-Package command handlers (update, publish, archive, delete) are registered in the **BillingModule**, not in a standalone PackageModule.
+All Package command handlers, query handlers, and controllers are registered in the **BillingModule**.
 
 **File**: `src/infrastructure/modules/billing.module.ts`
 
 ```typescript
 @Module({
   imports: [CqrsModule, MongoModule, PaymentProvidersModule],
+  controllers: [
+    PackageAdminController,      // Admin REST endpoints
+    PackageClientController,     // Client REST endpoints
+  ],
   providers: [
-    // Package Handlers
+    // Package Command Handlers
+    PackageCreateCommandHandler,
     PackageUpdateHandler,
-    PackagePublishHandler,
-    PackageArchiveHandler,
+    PackageUpdateStatusHandler,  // Merged publish + archive
     PackageDeleteHandler,
+    // Package Query Handlers
+    PackageGetListHandler,
+    PackageGetByIdHandler,
     // Bill, Payment, Subscription handlers...
   ],
   exports: [PaymentService],
@@ -457,7 +463,7 @@ Package command handlers (update, publish, archive, delete) are registered in th
 export class BillingModule {}
 ```
 
-> ⚠️ **Note**: `PackageCreateCommandHandler`, `PackageCreate`, and query handlers (`PackageGetListHandler`, `PackageGetByIdHandler`, `PackageGetByCodeHandler`) are registered elsewhere — likely in `BillingModule` or a parent module. The query handlers use `PACKAGE_READ_SERVICE` (wired to `MongoPackageReadService`).
+> **ℹ️ Note**: `PackageGetByCodeHandler` and `PackageSeedService` are available but registered separately through `MongoModule` providers/exports.
 
 ---
 
@@ -465,18 +471,35 @@ export class BillingModule {}
 
 ### 6.1 REST Endpoints
 
-The Package domain currently has **no dedicated REST controller**. Package operations are invoked through:
+#### Admin Controller: `PackageAdminController`
 
-- **Admin UI / Internal Admin controllers** — likely via generic admin CRUD endpoints or the Billing module's GraphQL resolvers
-- **Programmatic calls** — Commands are dispatched via `CommandBus` and queries via `QueryBus` from other controllers/services
+**File**: `src/presentation/controllers/http/admin/package.controller.ts`
+**Base Path**: `/api/v1/admin/packages`
+**Guards**: `JwtAuthGuard` + `RolesGuard(ADMIN)`
 
-> ⚠️ **Gap**: No dedicated `PackageController` exists in `src/presentation/controllers/`. This means:
-> - Package CRUD operations must be triggered programmatically or via a shared admin controller
-> - There is no public REST API for listing/reading packages
+| Method | Path | Description | Returns |
+|--------|------|-------------|---------|
+| `POST` | `/` | Create a new package in `DRAFT` status | `PackageResponseDto` |
+| `PATCH` | `/:id` | Update package metadata and variants (DRAFT only) | `PackageResponseDto` |
+| `PATCH` | `/:id/status` | Update package status — publish (`active`) or archive (`archived`) | `PackageResponseDto` |
+| `DELETE` | `/:id` | Delete a DRAFT or ARCHIVED package | `204 No Content` |
+| `GET` | `/` | List all packages with filters + pagination | `PaginatedResponseDto<PackageResponseDto>` |
+| `GET` | `/:id` | Get a single package by ID | `PackageResponseDto` |
+
+#### Client Controller: `PackageClientController`
+
+**File**: `src/presentation/controllers/http/client/package.controller.ts`
+**Base Path**: `/api/v1/client/packages`
+**Guards**: `JwtAuthGuard` + `UserVerifiedGuard`
+
+| Method | Path | Description | Returns |
+|--------|------|-------------|---------|
+| `GET` | `/` | List packages with filters + pagination | `PaginatedResponseDto<PackageResponseDto>` |
+| `GET` | `/:id` | Get a single package by ID | `PackageResponseDto` |
 
 ### 6.2 Guard Stack
 
-The following guard hierarchy applies to all protected routes (when eventually exposed):
+The following guard hierarchy applies to all protected routes:
 
 | Layer | Guard | Bypass |
 |-------|-------|--------|
@@ -500,11 +523,13 @@ The following guard hierarchy applies to all protected routes (when eventually e
 ┌─────────────┐
 │  Admin/App  │
 └──────┬──────┘
-       │ PackageCreateCommand({ code, name, type, scope })
+       │ POST /api/v1/admin/packages
+       │ { code, name, description, type, scope }
        ▼
 ┌──────────────────────────────┐
 │ Application Layer            │
 │  ┌─────────────────────────┐ │
+│  │ PackageCreateCommand    │ │
 │  │ PackageCreateHandler    │ │
 │  │  .execute()             │ │
 │  │                         │ │
@@ -533,40 +558,57 @@ The following guard hierarchy applies to all protected routes (when eventually e
 
 #### Step-by-Step
 
-1. **Admin creates package** — calls `PackageCreateCommand` with code, name, description, type, scope
-2. **Handler executes** within UoW:
+1. **Admin POST** to `/api/v1/admin/packages` with `{ code, name, description, type, scope }`
+2. **Zod validation** — `PackageCreateSchema` validates the body
+3. **Handler executes** within UoW:
    - Checks for existing package with the same `code`; throws `PackageCodeAlreadyExistsException` if found
    - Creates `PackageRoot` in `DRAFT` status with empty features, base grants, and variants
    - Saves via repository
-3. **Response** — Returns `PackageResponseDto` with the new package ID
+4. **Response** — Returns `PackageResponseDto` with the new package ID
 
-### 7.2 Publish Package (DRAFT → ACTIVE)
+### 7.2 Update Package Status (Publish / Archive)
+
+This is a **unified** endpoint that replaces the old separate `PackagePublish` and `PackageArchive` commands.
 
 #### Diagram
 
 ```
-DRAFT ──────────────► ACTIVE ───────► ARCHIVED
-  │  publish()            archive()
-  │
-  └──► Check variants (>0)
-  └──► Archive existing ACTIVE version (if same code)
+┌─────────────┐
+│  Admin App  │
+└──────┬──────┘
+       │ PATCH /api/v1/admin/packages/:id/status
+       │ { status: "active" | "archived" }
+       ▼
+┌──────────────────────────────────────┐
+│ PackageUpdateStatusHandler           │
+│                                      │
+│ 1. Fetch package by id               │
+│ 2. Branch on input.status:           │
+│    ├─ "active"   → handlePublish()   │
+│    └─ "archived" → handleArchive()   │
+│ 3. Return PackageResponseDto         │
+└──────────────────────────────────────┘
 ```
 
-#### Step-by-Step
+#### Publish Flow (status = `"active"`)
 
-1. **Admin publishes** — calls `PackagePublishCommand` with the package ID
-2. **Validation**:
-   - Package must be in `DRAFT` or `ARCHIVED` status
-   - Package must have at least one variant
-3. **Archive previous version** — If another version with the same `code` is `ACTIVE`, it is archived automatically
-4. **Activate** — `package.activate()` sets status to `ACTIVE` and records `activatedAt`
+1. **Validation**: Package must be in `DRAFT` or `ARCHIVED` status
+2. **Validation**: Package must have at least one variant
+3. **Auto-archive previous**: If another version with the same `code` is `ACTIVE`, it is archived automatically
+4. **Activate**: `package.activate()` sets status to `ACTIVE` and records `activatedAt`
 5. **Response** — Returns updated `PackageResponseDto`
+
+#### Archive Flow (status = `"archived"`)
+
+1. **Validation**: Package must be in `ACTIVE` status
+2. **Archive**: `package.archive()` sets status to `ARCHIVED`
+3. **Response** — Returns updated `PackageResponseDto`
 
 ### 7.3 Update Package (DRAFT only)
 
 #### Step-by-Step
 
-1. **Admin updates** — calls `PackageUpdateCommand` with package ID and update payload
+1. **Admin PATCH** to `/api/v1/admin/packages/:id` with update payload
 2. **Validation** — Only `DRAFT` packages can be updated
 3. **Updates applied**:
    - General info: name, description, type, scope, features, base grants
@@ -574,26 +616,52 @@ DRAFT ──────────────► ACTIVE ───────
    - Validates unique variant titles
 4. **Response** — Returns updated `PackageResponseDto`
 
-### 7.4 Archive Package (ACTIVE → ARCHIVED)
+### 7.4 Delete Package
 
 #### Step-by-Step
 
-1. **Admin archives** — calls `PackageArchiveCommand` with package ID
-2. **Validation** — Package must be in `ACTIVE` status
-3. **Archive** — `package.archive()` sets status to `ARCHIVED`
-4. **Response** — Void (no return data)
-
-### 7.5 Delete Package
-
-#### Step-by-Step
-
-1. **Admin deletes** — calls `PackageDeleteCommand` with package ID
+1. **Admin DELETE** to `/api/v1/admin/packages/:id`
 2. **Validation**:
    - Package must be in `DRAFT` or `ARCHIVED` status
    - If `ARCHIVED`, checks that no active subscription references this package (`subscriptionRepository.existsByPackageId()`)
    - Throws `PackageInUseException` if referenced
 3. **Delete** — `packageRepository.delete(id)` removes the document from MongoDB
-4. **Response** — Void
+4. **Response** — `204 No Content`
+
+### 7.5 Client Package Listing
+
+#### Diagram
+
+```
+┌────────────────┐
+│  Client / App  │
+└───────┬────────┘
+        │ GET /api/v1/client/packages
+        │ GET /api/v1/client/packages/:id
+        ▼
+┌───────────────────────────────┐
+│ PackageClientController       │
+│  ┌─────────────────────────┐  │
+│  │ QueryBus.execute(       │  │
+│  │   PackageGetListQuery   │  │
+│  │   or GetByIdQuery)      │  │
+│  └───────────┬─────────────┘  │
+└──────────────┼────────────────┘
+               │
+               ▼
+┌───────────────────────────────┐
+│ PackageGetListHandler /       │
+│ PackageGetByIdHandler         │
+│  └─ readService.findAll()     │
+│     or .findById()            │
+└───────────────────────────────┘
+```
+
+#### Step-by-Step
+
+1. **Client GET** to `/api/v1/client/packages` (with optional filters) or `/:id`
+2. **Handler delegates** to `MongoPackageReadService` for cursor-based pagination or direct ID lookup
+3. **Response** — Returns `PaginatedResponseDto<PackageResponseDto>` or `PackageResponseDto`
 
 ---
 
@@ -612,8 +680,7 @@ DRAFT ──────────────► ACTIVE ───────
 | **Core** | `src/core/interfaces/repositories/package.repository.ts` | IPackageRepository contract + PACKAGE_REPOSITORY DI token |
 | **Application** | `src/application/commands/package-create/` | Create command, DTO (Zod), and handler |
 | **Application** | `src/application/commands/package-update/` | Update command, DTO, and handler (updates metadata + variants) |
-| **Application** | `src/application/commands/package-publish/` | Publish command, DTO, and handler (DRAFT/ARCHIVED → ACTIVE) |
-| **Application** | `src/application/commands/package-archive/` | Archive command, DTO, and handler (ACTIVE → ARCHIVED) |
+| **Application** | `src/application/commands/package-update-status/` | ✅ Unified status update command (replaces old publish + archive) |
 | **Application** | `src/application/commands/package-delete/` | Delete command, DTO, and handler (DRAFT delete / ARCHIVED cleanup) |
 | **Application** | `src/application/queries/package-get-list/` | List query and handler with cursor pagination |
 | **Application** | `src/application/queries/package-get-by-id/` | Get-by-ID query and handler |
@@ -624,9 +691,10 @@ DRAFT ──────────────► ACTIVE ───────
 | **Infrastructure** | `src/infrastructure/mongo/schemas/package.schema.ts` | Mongoose schema (PackageModel, GrantSchema, PackageVariantSchema) |
 | **Infrastructure** | `src/infrastructure/mongo/repositories/mongo-package.repository.ts` | MongoPackageRepository — IPackageRepository implementation with cache |
 | **Infrastructure** | `src/infrastructure/mongo/read-services/package.read-service.ts` | MongoPackageReadService — IPackageReadService implementation |
-| **Infrastructure** | `src/infrastructure/mongo/seeding/package-migration.service.ts` | PackageMigrationService — data migration from old quota-based schema |
-| **Infrastructure** | `src/infrastructure/modules/billing.module.ts` | BillingModule — registers PackageUpdate/Publish/Archive/Delete handlers |
-| **Presentation** | *(none)* | ❌ No dedicated PackageController — operations are triggered programmatically |
+| **Infrastructure** | `src/infrastructure/mongo/seeding/package-seed.service.ts` | PackageSeedService — seeds default package on module init |
+| **Infrastructure** | `src/infrastructure/modules/billing.module.ts` | BillingModule — registers all package handlers, query handlers, and controllers |
+| **Presentation** | `src/presentation/controllers/http/admin/package.controller.ts` | ✅ PackageAdminController — admin full CRUD endpoints |
+| **Presentation** | `src/presentation/controllers/http/client/package.controller.ts` | ✅ PackageClientController — client read-only endpoints |
 
 ---
 
@@ -642,5 +710,3 @@ DRAFT ──────────────► ACTIVE ───────
 - **Grants are versioned**: Grants (quotas, permissions) are defined on the package variant, not on the subscription. Changing a package's grants affects only new subscriptions; active subscriptions retain their computed grants at time of purchase.
 - **Immutable after publish**: Once a package is `ACTIVE`, its variants' pricing, duration, and grants cannot be changed. Changes require creating a new version (new `DRAFT` → publish).
 - **Renewable quotas must define reset cycle**: `GrantVO` with `type = quota_renewable` must specify a `resetCycle` (`monthly`, `weekly`, or `daily`).
-</content>
-</content>

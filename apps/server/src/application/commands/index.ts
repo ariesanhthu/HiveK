@@ -250,8 +250,7 @@ export * from './review-restore/review-restore.handler';
 // Package Commands
 export * from './package-create';
 export * from './package-update';
-export * from './package-publish';
-export * from './package-archive';
+export * from './package-update-status';
 export * from './package-delete';
 
 // Bill Commands

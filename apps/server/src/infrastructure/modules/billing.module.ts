@@ -5,9 +5,9 @@ import { PaymentProvidersModule } from '../payment-providers/payment-providers.m
 import { BillService, PaymentService, ProrationService } from '@/application/services';
 
 import {
+  PackageCreateCommandHandler,
   PackageUpdateHandler,
-  PackagePublishHandler,
-  PackageArchiveHandler,
+  PackageUpdateStatusHandler,
   PackageDeleteHandler,
   BillCalculateHandler,
   BillCreateHandler,
@@ -24,20 +24,36 @@ import {
   PaymentVoidAuthorizationHandler,
 } from '@/application/commands';
 
+import {
+  PackageGetListHandler,
+  PackageGetByIdHandler,
+} from '@/application/queries';
+
+import {
+  PackageAdminController,
+  PackageClientController,
+} from '@/presentation/controllers';
+
 @Module({
   imports: [
     CqrsModule,
     MongoModule,
     PaymentProvidersModule,
   ],
-  controllers: [],
+  controllers: [
+    PackageAdminController,
+    PackageClientController,
+  ],
   providers: [
     PaymentService,
-    // Package Handlers
+    // Package Command Handlers
+    PackageCreateCommandHandler,
     PackageUpdateHandler,
-    PackagePublishHandler,
-    PackageArchiveHandler,
+    PackageUpdateStatusHandler,
     PackageDeleteHandler,
+    // Package Query Handlers
+    PackageGetListHandler,
+    PackageGetByIdHandler,
     // Bill Handlers
     BillCalculateHandler,
     BillCreateHandler,

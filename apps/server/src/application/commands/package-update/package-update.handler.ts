@@ -22,13 +22,13 @@ export class PackageUpdateHandler implements ICommandHandler<PackageUpdateComman
   ) {}
 
   async execute(command: PackageUpdateCommand): Promise<PackageResponseDto> {
-    const { input } = command;
+    const { id, input } = command;
 
     return this.uow.execute(async () => {
       // 1. Fetch package
-      const pkg = await this.packageRepository.findById(input.id);
+      const pkg = await this.packageRepository.findById(id);
       if (!pkg) {
-        throw new PackageNotFoundException(input.id);
+        throw new PackageNotFoundException(id);
       }
 
       // 2. Reject changes to non-draft packages

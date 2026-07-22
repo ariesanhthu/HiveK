@@ -9,9 +9,6 @@ const UpdateVariantSchema = VariantSchema.partial().extend({
 });
 
 export const PackageUpdateSchema = z.object({
-  id: z.string().min(1),
-  updatedBy: z.string().min(1),
-
   // Metadata
   name: z.string().min(1).optional(),
   description: z.string().optional(),

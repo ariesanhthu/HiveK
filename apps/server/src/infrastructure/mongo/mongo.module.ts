@@ -140,6 +140,7 @@ import {
 } from '@/application/interfaces';
 
 import { RoleSeedService } from './seeding/role-seed.service';
+import { PackageSeedService } from './seeding/package-seed.service';
 import { ERoleType } from '@/core/enums';
 import { MongoPublicReviewReadService } from './read-services/public-review.read-service';
 import { MongoPublicReviewRepository } from './repositories/public-review.repository';
@@ -383,8 +384,9 @@ import { MongoCampaignProposalReadService } from './read-services/campaign-propo
       provide: ENTERPRISE_QUOTA_ALLOCATION_READ_SERVICE,
       useClass: MongoEnterpriseQuotaAllocationReadService,
     },
-    // Seed service
+    // Seed services
     RoleSeedService,
+    PackageSeedService,
   ],
   exports: [
     UNIT_OF_WORK,
@@ -438,6 +440,7 @@ import { MongoCampaignProposalReadService } from './read-services/campaign-propo
     // Export MongooseModule so domain modules can use the models if needed
     MongooseModule,
     RoleSeedService,
+    PackageSeedService,
   ],
 })
 export class MongoModule {}

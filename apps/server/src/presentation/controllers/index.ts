@@ -1,4 +1,5 @@
 // HTTP Admin Controllers
+export * from './http/admin/package.controller';
 export * from './http/admin/auth.controller';
 export * from './http/admin/campaign.controller';
 export * from './http/admin/proposal.controller';
@@ -14,6 +15,7 @@ export * from './http/admin/uploaded-file.controller';
 export * from './http/admin/user.controller';
 
 // HTTP Client Controllers
+export * from './http/client/package.controller';
 export * from './http/client/auth.controller';
 export * from './http/client/campaign.controller';
 export * from './http/client/proposal.controller';
