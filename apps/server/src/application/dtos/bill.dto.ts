@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { createZodDto } from 'nestjs-zod';
 import { EBillType, EBillStatus, EPurchaseType, EBillLineType } from '@/core/enums';
 
 export const BillItemResponseSchema = z.object({
@@ -10,9 +11,9 @@ export const BillItemResponseSchema = z.object({
   price: z.number(),
   taxPercent: z.number(),
   purchaseType: z.enum(EPurchaseType),
-});
+}).strict();
 
-export type BillItemResponseDto = z.infer<typeof BillItemResponseSchema>;
+export class BillItemResponseDto extends createZodDto(BillItemResponseSchema) {}
 
 export const BillResponseSchema = z.object({
   id: z.string(),
@@ -25,16 +26,19 @@ export const BillResponseSchema = z.object({
   taxAmount: z.number(),
   finalAmount: z.number(),
   currency: z.string(),
-  expiresAt: z.date().nullable(),
-  createdAt: z.date(),
-});
+  expiresAt: z.iso.datetime().nullable(),
+  createdAt: z.iso.datetime(),
+}).strict();
 
-export type BillResponseDto = z.infer<typeof BillResponseSchema>;
+export class BillResponseDto extends createZodDto(BillResponseSchema) {}
 
-export interface BillCalculateResponseDto {
-  items: BillItemResponseDto[];
-  totalAmount: number;
-  taxAmount: number;
-  finalAmount: number;
-  currency: string;
-}
+export const BillCalculateResponseSchema = z.object({
+  items: z.array(BillItemResponseSchema),
+  totalAmount: z.number(),
+  taxAmount: z.number(),
+  finalAmount: z.number(),
+  currency: z.string(),
+}).strict();
+
+export class BillCalculateResponseDto extends createZodDto(BillCalculateResponseSchema) {}
+

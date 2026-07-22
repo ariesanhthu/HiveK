@@ -70,6 +70,7 @@ export class MongoEnterpriseQuotaAllocationReadService implements IEnterpriseQuo
   }
 
   private mapToDto(doc: FlattenMaps<EnterpriseQuotaAllocationDocument>): EnterpriseQuotaAllocationResponseDto {
+    const updatedAt = doc.updated_at || doc.get?.('updated_at');
     return {
       id: doc._id.toString(),
       ownerId: doc.owner_id,
@@ -80,7 +81,7 @@ export class MongoEnterpriseQuotaAllocationReadService implements IEnterpriseQuo
         kind: a.kind as any,
         isPool: a.is_pool,
       })),
-      updatedAt: doc.get('updated_at'),
+      updatedAt: updatedAt instanceof Date ? updatedAt.toISOString() : new Date(updatedAt || Date.now()).toISOString(),
     };
   }
 }

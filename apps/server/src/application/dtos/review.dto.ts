@@ -10,7 +10,7 @@ export const ReviewDtoSchema = z.object({
   rating: z.number().int().min(1).max(5),
   comment: z.string(),
   status: z.enum(EReviewStatus),
-  createdAt: z.coerce.date(),
+  createdAt: z.iso.datetime(),
 }).strict();
 
 export class ReviewDto extends createZodDto(ReviewDtoSchema) {}

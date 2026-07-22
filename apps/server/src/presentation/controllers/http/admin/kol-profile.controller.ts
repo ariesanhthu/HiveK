@@ -1,16 +1,14 @@
-import { Controller, Get, Param, Query, Body, Patch, Delete, Post, HttpCode, HttpStatus, UseGuards, Req, Res, Injectable } from '@nestjs/common';
+import { Controller, Get, Param, Query, Body, Patch, Delete, Post, HttpCode, HttpStatus, UseGuards } from '@nestjs/common';
 import { QueryBus, CommandBus } from '@nestjs/cqrs';
 import { ApiTags, ApiOperation, ApiBearerAuth, ApiSecurity } from '@nestjs/swagger';
 import { buildVersionedRoute } from '@presentation/utils';
-import { KolProfileGetListQuery, KolProfileGetByIdQuery, KolProfileGetHandlesDevQuery, KolProfileFilterDto } from '@/application/queries';
+import { KolProfileGetListQuery, KolProfileGetByIdQuery, KolProfileFilterDto } from '@/application/queries';
 import { KolProfileUpdateCommand, KolProfileSoftDeleteCommand, KolProfileHardDeleteCommand, KolProfileRestoreCommand, UpdateKolProfileDto } from '@/application/commands';
 import { KolProfileDto, SoftDeleteInputDto } from '@/application/dtos';
-import { PaginatedResponseDto, CursorPaginationRequestDto } from '@/application/dtos/pagination.dto';
-import { JwtAuthGuard, YoutubeAuthGuard, FacebookAuthGuard, RolesGuard } from '@/presentation/middleware/guards';
-import { Public } from '@/presentation/decorators/public.decorator';
-import { AuthGuard } from '@nestjs/passport';
+import { PaginatedResponseDto } from '@/application/dtos/pagination.dto';
+import { JwtAuthGuard, RolesGuard } from '@/presentation/middleware/guards';
+import { Roles, ApiOkResponseEnvelope, ApiPaginatedResponseEnvelope } from '@/presentation/decorators';
 import { ERoleType } from '@/core/enums/role-type.enum';
-import { Roles } from '@/presentation/decorators/roles.decorator';
 
 @ApiTags('ADMIN-kol-profiles')
 @ApiBearerAuth()
@@ -23,20 +21,24 @@ export class KolProfileAdminController {
     private readonly queryBus: QueryBus,
     private readonly commandBus: CommandBus,
   ) { }
+
   @Get()
   @ApiOperation({ summary: 'Search/List KOL profiles' })
+  @ApiPaginatedResponseEnvelope(KolProfileDto)
   async findAll(@Query() filters: KolProfileFilterDto): Promise<PaginatedResponseDto<KolProfileDto>> {
     return this.queryBus.execute(new KolProfileGetListQuery(filters));
   }
 
   @Get(':id')
   @ApiOperation({ summary: 'Get KOL profile by ID' })
+  @ApiOkResponseEnvelope(KolProfileDto)
   async findById(@Param('id') id: string): Promise<KolProfileDto> {
     return this.queryBus.execute(new KolProfileGetByIdQuery(id));
   }
 
   @Patch(':id')
   @ApiOperation({ summary: 'Update anything of an influencer (PATCH)' })
+  @ApiOkResponseEnvelope(KolProfileDto)
   async update(@Param('id') id: string, @Body() input: UpdateKolProfileDto): Promise<KolProfileDto> {
     return this.commandBus.execute(new KolProfileUpdateCommand(id, input));
   }
@@ -68,3 +70,4 @@ export class KolProfileAdminController {
     return this.commandBus.execute(new KolProfileRestoreCommand(id));
   }
 }
+

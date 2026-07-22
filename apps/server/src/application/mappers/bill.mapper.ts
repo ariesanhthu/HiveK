@@ -24,8 +24,8 @@ export class BillMapper {
       taxAmount: entity.taxAmount,
       finalAmount: entity.finalAmount,
       currency: entity.currency,
-      expiresAt: entity.expiresAt,
-      createdAt: entity.createdAt,
+      expiresAt: entity.expiresAt.toISOString(),
+      createdAt: entity.createdAt.toISOString(),
     };
   }
 

@@ -40,9 +40,8 @@ import {
 } from '@/application/dtos';
 import { PaginatedResponseDto } from '@/application/dtos/pagination.dto';
 import { JwtAuthGuard, RolesGuard } from '@/presentation/middleware/guards';
-import { Public } from '@/presentation/decorators/public.decorator';
+import { Public, Roles, ApiOkResponseEnvelope, ApiPaginatedResponseEnvelope } from '@/presentation/decorators';
 import { ERoleType } from '@/core/enums/role-type.enum';
-import { Roles } from '@/presentation/decorators/roles.decorator';
 
 @ApiTags('ADMIN-platforms')
 @ApiBearerAuth()
@@ -59,6 +58,7 @@ export class PlatformAdminController {
   @Public()
   @Get()
   @ApiOperation({ summary: 'Get all platforms' })
+  @ApiPaginatedResponseEnvelope(PlatformDetailDto)
   async findAll(
     @Query() filters: PlatformFilterDto,
   ): Promise<PaginatedResponseDto<PlatformDetailDto>> {
@@ -68,6 +68,7 @@ export class PlatformAdminController {
   @Public()
   @Get(':id')
   @ApiOperation({ summary: 'Get platform by ID' })
+  @ApiOkResponseEnvelope(PlatformDetailDto)
   async findById(@Param('id') id: string): Promise<PlatformDetailDto> {
     return this.queryBus.execute(new PlatformGetByIdQuery(id));
   }
@@ -75,6 +76,7 @@ export class PlatformAdminController {
   @Post()
   @UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: 'Create new platform' })
+  @ApiOkResponseEnvelope(PlatformDto)
   async create(@Body() input: PlatformCreateInputDto): Promise<PlatformDto> {
     return this.commandBus.execute(new PlatformCreateCommand(input));
   }
@@ -82,6 +84,7 @@ export class PlatformAdminController {
   @Patch(':id')
   @UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: 'Update platform' })
+  @ApiOkResponseEnvelope(PlatformDto)
   async update(
     @Param('id') id: string,
     @Body() input: PlatformUpdateInputDto,
@@ -118,3 +121,4 @@ export class PlatformAdminController {
     return this.commandBus.execute(new PlatformRestoreCommand(id));
   }
 }
+

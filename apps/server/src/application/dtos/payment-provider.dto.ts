@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { createZodDto } from 'nestjs-zod';
 import { EPaymentMethod, ECurrency } from '@/core/enums';
 
 export const PaymentProviderReducedResponseSchema = z.object({
@@ -10,9 +11,9 @@ export const PaymentProviderReducedResponseSchema = z.object({
   isActive: z.boolean(),
   supportsRefund: z.boolean(),
   supportsPartialRefund: z.boolean(),
-  createdAt: z.date(),
-  updatedAt: z.date(),
-});
+  createdAt: z.iso.datetime(),
+  updatedAt: z.iso.datetime(),
+}).strict();
 
 export const PaymentProviderResponseSchema = PaymentProviderReducedResponseSchema.extend({
   supportsWebhook: z.boolean(),
@@ -20,11 +21,10 @@ export const PaymentProviderResponseSchema = PaymentProviderReducedResponseSchem
   baseUrl: z.string().optional(),
   testUrl: z.string().optional(),
   webhookUrl: z.string().optional(),
-  deletedAt: z.date().nullable().optional(),
+  deletedAt: z.iso.datetime().nullable().optional(),
   deletedBy: z.string().nullable().optional(),
-});
+}).strict();
 
-export type PaymentProviderReducedResponseDto = z.infer<
-  typeof PaymentProviderReducedResponseSchema
->;
-export type PaymentProviderResponseDto = z.infer<typeof PaymentProviderResponseSchema>;
+export class PaymentProviderReducedResponseDto extends createZodDto(PaymentProviderReducedResponseSchema) {}
+export class PaymentProviderResponseDto extends createZodDto(PaymentProviderResponseSchema) {}
+

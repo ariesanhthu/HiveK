@@ -1,8 +1,8 @@
 import { Controller, Get, Param, Query, UseGuards } from '@nestjs/common';
 import { QueryBus } from '@nestjs/cqrs';
-import { ApiBearerAuth, ApiOperation, ApiTags, ApiResponse, ApiSecurity } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiTags, ApiSecurity } from '@nestjs/swagger';
 import { JwtAuthGuard, RolesGuard } from '@/presentation/middleware/guards';
-import { Roles } from '@/presentation/decorators/roles.decorator';
+import { Roles, ApiOkResponseEnvelope, ApiPaginatedResponseEnvelope } from '@/presentation/decorators';
 import { ERoleType } from '@/core/enums';
 import { SubscriptionResponseDto, SubscriptionFilterDto, SubscriptionHistoryFilterDto, SubscriptionHistoryResponseDto } from '@/application/dtos';
 import { SubscriptionGetListQuery, SubscriptionGetByIdQuery, SubscriptionHistoryGetListQuery } from '@/application/queries';
@@ -20,7 +20,7 @@ export class SubscriptionAdminController {
   @Get()
   @Roles(ERoleType.ADMIN)
   @ApiOperation({ summary: 'Get all subscriptions' })
-  @ApiResponse({ status: 200 })
+  @ApiPaginatedResponseEnvelope(SubscriptionResponseDto)
   async getAllSubscriptions(
     @Query() filter: SubscriptionFilterDto,
   ): Promise<PaginatedResponseDto<SubscriptionResponseDto>> {
@@ -30,7 +30,7 @@ export class SubscriptionAdminController {
   @Get(':id')
   @Roles(ERoleType.ADMIN)
   @ApiOperation({ summary: 'Get a subscription by ID' })
-  @ApiResponse({ status: 200, type: SubscriptionResponseDto })
+  @ApiOkResponseEnvelope(SubscriptionResponseDto)
   async getSubscriptionById(@Param('id') id: string): Promise<SubscriptionResponseDto> {
     return this.queryBus.execute(new SubscriptionGetByIdQuery(id));
   }
@@ -38,7 +38,7 @@ export class SubscriptionAdminController {
   @Get(':id/history')
   @Roles(ERoleType.ADMIN)
   @ApiOperation({ summary: 'Get history for a subscription' })
-  @ApiResponse({ status: 200 })
+  @ApiPaginatedResponseEnvelope(SubscriptionHistoryResponseDto)
   async getSubscriptionHistory(
     @Param('id') id: string,
     @Query() filter: SubscriptionHistoryFilterDto,
@@ -47,3 +47,4 @@ export class SubscriptionAdminController {
     return this.queryBus.execute(new SubscriptionHistoryGetListQuery(filter));
   }
 }
+

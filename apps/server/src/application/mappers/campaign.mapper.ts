@@ -26,7 +26,7 @@ export class CampaignMapper {
       extras: root.extras,
       schedule: root.schedule ? {
         timeline: root.schedule.timeline.map((day) => ({
-          date: day.date,
+          date: day.date.toISOString(),
           label: day.label,
           posts: day.posts,  // ScheduledPost IDs
         })),
@@ -35,7 +35,7 @@ export class CampaignMapper {
         id: p.id!,
         kolProfileId: p.kolProfileId,
         status: p.status,
-        joinedAt: p.joinedAt,
+        joinedAt: p.joinedAt ? p.joinedAt.toISOString() : null,
       })),
     };
   }

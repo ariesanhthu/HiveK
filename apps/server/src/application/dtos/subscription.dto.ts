@@ -1,48 +1,54 @@
 import { z } from 'zod';
-import { GrantDtoSchema, GrantDto } from './package.dto';
-import { SortOrder } from './pagination.dto';
+import { createZodDto } from 'nestjs-zod';
+import { GrantDtoSchema } from './package.dto';
+import { CursorPaginationRequestSchema } from './pagination.dto';
 
-const PlanItemSchema = z.object({
+export const PlanItemSchema = z.object({
   packageId: z.string(),
   packageVariantId: z.string(),
-  startDate: z.date(),
-  expiresAt: z.date(),
+  startDate: z.iso.datetime(),
+  expiresAt: z.iso.datetime(),
   billId: z.string(),
   autoRenew: z.boolean(),
   price: z.number().optional(),
   priceAfterDiscount: z.number().optional(),
-});
+}).strict();
 
-const AddonItemSchema = z.object({
+export class PlanItemDto extends createZodDto(PlanItemSchema) {}
+export type PlanItemDTO = PlanItemDto;
+
+export const AddonItemSchema = z.object({
   packageId: z.string(),
   packageVariantId: z.string(),
-  purchasedAt: z.date(),
-  expiresAt: z.date().nullable(),
+  purchasedAt: z.iso.datetime(),
+  expiresAt: z.iso.datetime().nullable(),
   billId: z.string(),
   price: z.number().optional(),
   priceAfterDiscount: z.number().optional(),
+}).strict();
+
+export class AddonItemDto extends createZodDto(AddonItemSchema) {}
+export type AddonItemDTO = AddonItemDto;
+
+export const SubscriptionFilterDtoSchema = CursorPaginationRequestSchema.extend({
+  userId: z.string().optional(),
+  status: z.string().optional(),
 });
 
-export type PlanItemDTO = z.infer<typeof PlanItemSchema>;
-export type AddonItemDTO = z.infer<typeof AddonItemSchema>;
+export class SubscriptionFilterDto extends createZodDto(SubscriptionFilterDtoSchema) {}
 
-export class SubscriptionFilterDto {
-  userId?: string;
-  status?: string;
-  cursor?: string;
-  limit?: number;
-  sort?: SortOrder;
-}
+export const SubscriptionResponseDtoSchema = z.object({
+  id: z.string(),
+  userId: z.string(),
+  status: z.string(),
+  planItem: PlanItemSchema.nullable(),
+  addonItems: z.array(AddonItemSchema),
+  computedGrants: z.array(GrantDtoSchema),
+  computedPermissions: z.array(z.string()),
+  nextExpiryCheckAt: z.iso.datetime(),
+  createdAt: z.iso.datetime(),
+  updatedAt: z.iso.datetime(),
+}).strict();
 
-export class SubscriptionResponseDto {
-  id: string;
-  userId: string;
-  status: string;
-  planItem: PlanItemDTO | null;
-  addonItems: AddonItemDTO[];
-  computedGrants: GrantDto[];
-  computedPermissions: string[];
-  nextExpiryCheckAt: Date;
-  createdAt: Date;
-  updatedAt: Date;
-}
+export class SubscriptionResponseDto extends createZodDto(SubscriptionResponseDtoSchema) {}
+

@@ -12,23 +12,26 @@ import {
   AuthChangePasswordCommand,
   AuthVerifyOtpCommand,
   AuthSignInInputDto,
+  AuthSignInOutputDto,
   AuthResetPasswordInputDto,
   AuthRefreshTokenInputDto,
+  AuthRefreshTokenOutputDto,
   AuthSendOtpInputDto,
   AuthChangePasswordInputDto,
   AuthVerifyOtpInputDto,
   UserUpdateCommand
 } from '@/application/commands';
 import { AuthGetProfileQuery } from '@/application/queries';
+import { UserDetailDto } from '@/application/dtos';
+import { UserUpdateInputDto } from '@/application/commands/user-update/user-update.dto';
 import { ERoleType } from '@/core/enums';
-import { JwtAuthGuard } from '@/presentation/middleware/guards/jwt-auth.guard';
+import { JwtAuthGuard, RolesGuard } from '@/presentation/middleware/guards';
 import { CurrentUser } from '@/presentation/decorators/current-user.decorator';
 import { Public } from '@/presentation/decorators/public.decorator';
-import { Throttle } from '@nestjs/throttler';
-import { UserUpdateInputDto } from '@/application/commands/user-update/user-update.dto';
-import { RolesGuard } from '@/presentation/middleware/guards';
 import { Roles } from '@/presentation/decorators/roles.decorator';
+import { ApiOkResponseEnvelope } from '@/presentation/decorators/api-response-envelope.decorator';
 import { env } from '@/shared/utils';
+import { Throttle } from '@nestjs/throttler';
 
 @ApiTags('ADMIN-auth')
 @ApiBearerAuth()
@@ -41,12 +44,14 @@ export class AuthAdminController {
     private readonly commandBus: CommandBus,
     private readonly queryBus: QueryBus,
   ) { }
+
   @Public()
   @Post('sign-in')
   @Throttle({ default: { limit: 5, ttl: 60000 } })
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Sign in (Rate limited: 5/min)' })
   @ApiTooManyRequestsResponse({ description: 'Too many requests' })
+  @ApiOkResponseEnvelope(AuthSignInOutputDto)
   async signIn(
     @Body() input: AuthSignInInputDto,
     @Res({ passthrough: true }) response: Response,
@@ -75,6 +80,7 @@ export class AuthAdminController {
   @Post('refresh-token')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Refresh tokens' })
+  @ApiOkResponseEnvelope(AuthRefreshTokenOutputDto)
   async refreshToken(
     @Req() req: Request,
     @Body() input: AuthRefreshTokenInputDto,
@@ -130,6 +136,7 @@ export class AuthAdminController {
   @Post('reset-password')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Reset password' })
+  @ApiOkResponseEnvelope()
   async resetPassword(@Body() input: AuthResetPasswordInputDto) {
     return this.commandBus.execute(new AuthResetPasswordCommand(input));
   }
@@ -140,6 +147,7 @@ export class AuthAdminController {
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Send OTP verification code (Rate limited: 5/min)' })
   @ApiTooManyRequestsResponse({ description: 'Too many requests' })
+  @ApiOkResponseEnvelope()
   async sendOtp(@Body() input: AuthSendOtpInputDto) {
     return this.commandBus.execute(new AuthSendOtpCommand(input));
   }
@@ -148,6 +156,7 @@ export class AuthAdminController {
   @Post('verify-otp')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Verify OTP verification code' })
+  @ApiOkResponseEnvelope()
   async verifyOtp(@Body() input: AuthVerifyOtpInputDto) {
     return this.commandBus.execute(new AuthVerifyOtpCommand(input));
   }
@@ -156,6 +165,7 @@ export class AuthAdminController {
   @ApiBearerAuth()
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Change current user password' })
+  @ApiOkResponseEnvelope()
   async changePassword(
     @CurrentUser('sub') userId: string,
     @Body() input: AuthChangePasswordInputDto,
@@ -166,6 +176,7 @@ export class AuthAdminController {
   @Get('profile')
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Get current user profile' })
+  @ApiOkResponseEnvelope(UserDetailDto)
   async getProfile(@CurrentUser('sub') userId: string) {
     return this.queryBus.execute(new AuthGetProfileQuery(userId));
   }
@@ -173,6 +184,7 @@ export class AuthAdminController {
   @Patch('profile')
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Update current user profile' })
+  @ApiOkResponseEnvelope(UserDetailDto)
   async updateProfile(
     @CurrentUser('sub') userId: string,
     @Body() input: UserUpdateInputDto,
@@ -180,3 +192,4 @@ export class AuthAdminController {
     return this.commandBus.execute(new UserUpdateCommand(userId, input));
   }
 }
+

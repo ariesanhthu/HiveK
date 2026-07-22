@@ -3,7 +3,7 @@ import { createZodDto } from 'nestjs-zod';
 import { EEnterpriseMemberMode } from '@/core/enums';
 
 export const EnterpriseInviteMemberInputSchema = z.object({
-  email: z.string().email().trim().toLowerCase(),
+  email: z.email().trim().toLowerCase(),
   mode: z.enum(EEnterpriseMemberMode),
 }).strict();
 

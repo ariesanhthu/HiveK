@@ -107,9 +107,9 @@ export class MongoPackageReadService implements IPackageReadService {
       features: doc.features || [],
       baseGrants: mapGrantsList(doc.base_grants),
       variants,
-      createdAt: doc.created_at || new Date(),
-      updatedAt: doc.updated_at || new Date(),
-      activatedAt: doc.activated_at || undefined,
+      createdAt: (doc.created_at || new Date()).toISOString(),
+      updatedAt: (doc.updated_at || new Date()).toISOString(),
+      activatedAt: doc.activated_at ? doc.activated_at.toISOString() : undefined,
     };
   }
 }

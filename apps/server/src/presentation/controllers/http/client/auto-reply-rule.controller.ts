@@ -17,8 +17,7 @@ import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { ApiTags, ApiOperation, ApiBearerAuth, ApiSecurity } from '@nestjs/swagger';
 import { buildVersionedRoute } from '@presentation/utils';
 import { JwtAuthGuard, RolesGuard, UserVerifiedGuard } from '@/presentation/middleware/guards';
-import { CurrentUser } from '@/presentation/decorators/current-user.decorator';
-import { Roles } from '@/presentation/decorators/roles.decorator';
+import { CurrentUser, Roles, ApiOkResponseEnvelope, ApiPaginatedResponseEnvelope } from '@/presentation/decorators';
 import { ERoleType } from '@/core/enums';
 import { ENTERPRISE_REPOSITORY, type IEnterpriseRepository } from '@/core/interfaces/repositories';
 import {
@@ -55,6 +54,7 @@ export class AutoReplyRuleController {
 
   @Post()
   @ApiOperation({ summary: 'Create a new auto-reply rule' })
+  @ApiOkResponseEnvelope(AutoReplyRuleDto)
   async create(
     @CurrentUser('sub') userId: string,
     @Body() input: AutoReplyRuleCreateInputDto,
@@ -65,6 +65,7 @@ export class AutoReplyRuleController {
 
   @Get()
   @ApiOperation({ summary: 'Get all auto-reply rules for a connected social page' })
+  @ApiPaginatedResponseEnvelope(AutoReplyRuleDto)
   async findAll(
     @CurrentUser('sub') userId: string,
     @Query('socialPageId') socialPageId: string,
@@ -78,6 +79,7 @@ export class AutoReplyRuleController {
 
   @Patch(':id')
   @ApiOperation({ summary: 'Update an auto-reply rule' })
+  @ApiOkResponseEnvelope(AutoReplyRuleDto)
   async update(
     @CurrentUser('sub') userId: string,
     @Param('id') id: string,
@@ -90,6 +92,7 @@ export class AutoReplyRuleController {
   @Delete(':id')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Delete an auto-reply rule' })
+  @ApiOkResponseEnvelope()
   async delete(
     @CurrentUser('sub') userId: string,
     @Param('id') id: string,
@@ -98,3 +101,4 @@ export class AutoReplyRuleController {
     return this.commandBus.execute(new AutoReplyRuleDeleteCommand(id, enterpriseId));
   }
 }
+

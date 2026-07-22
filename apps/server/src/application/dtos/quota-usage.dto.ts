@@ -1,28 +1,31 @@
-import { SortOrder } from './pagination.dto';
+import { SortOrder, CursorPaginationRequestSchema } from './pagination.dto';
 import { z } from 'zod';
 import { createZodDto } from 'nestjs-zod';
-import { GrantDtoSchema, GrantDto } from './package.dto';
 
-const RenewableUsageSchema = z.object({
+export const RenewableUsageSchema = z.object({
   key: z.string(),
   allocated: z.number(),
   used: z.number(),
-  cycleStartAt: z.date(),
-  cycleEndsAt: z.date(),
+  cycleStartAt: z.iso.datetime(),
+  cycleEndsAt: z.iso.datetime(),
+}).strict();
+
+export class RenewableUsageDto extends createZodDto(RenewableUsageSchema) {}
+export type RenewableUsageDTO = RenewableUsageDto;
+
+export const QuotaUsageResponseDtoSchema = z.object({
+  id: z.string(),
+  enterpriseId: z.string(),
+  cycleAnchorDate: z.iso.datetime(),
+  usages: z.array(RenewableUsageSchema),
+  updatedAt: z.iso.datetime(),
+}).strict();
+
+export class QuotaUsageResponseDto extends createZodDto(QuotaUsageResponseDtoSchema) {}
+
+export const QuotaUsageFilterDtoSchema = CursorPaginationRequestSchema.extend({
+  enterpriseId: z.string().optional(),
 });
 
-export type RenewableUsageDTO = z.infer<typeof RenewableUsageSchema>;
+export class QuotaUsageFilterDto extends createZodDto(QuotaUsageFilterDtoSchema) {}
 
-export class QuotaUsageResponseDto {
-  id: string;
-  enterpriseId: string;
-  cycleAnchorDate: Date;
-  usages: RenewableUsageDTO[];
-  updatedAt: Date;
-}
-export class QuotaUsageFilterDto {
-  enterpriseId?: string;
-  cursor?: string;
-  limit?: number;
-  sort?: SortOrder;
-}

@@ -86,14 +86,14 @@ export class MongoCampaignProposalReadService implements ICampaignProposalReadSe
         platform: voucher.platform,
         discountValue: voucher.discount_value,
         description: voucher.description,
-        expirationDate: voucher.expiration_date,
+        expirationDate: voucher.expiration_date instanceof Date ? voucher.expiration_date.toISOString() : new Date(voucher.expiration_date).toISOString(),
       })),
       status: doc.status,
       metrics: doc.metrics instanceof Map
         ? Object.fromEntries(doc.metrics)
         : (doc.metrics || {}),
-      createdAt: doc.created_at,
-      updatedAt: doc.updated_at,
+      createdAt: doc.created_at instanceof Date ? doc.created_at.toISOString() : new Date(doc.created_at).toISOString(),
+      updatedAt: doc.updated_at instanceof Date ? doc.updated_at.toISOString() : new Date(doc.updated_at).toISOString(),
     };
   }
 }

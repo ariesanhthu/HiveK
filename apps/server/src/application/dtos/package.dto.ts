@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { createZodDto } from 'nestjs-zod';
 import { ECurrency, EPackageType, EPackageScope, EGrantType } from '@/core/enums';
 
 export const GrantDtoSchema = z.object({
@@ -10,7 +11,9 @@ export const GrantDtoSchema = z.object({
     creditType: z.string().min(1),
     creditsPerUnit: z.number().positive(),
   }).nullable().optional(),
-});
+}).strict();
+
+export class GrantDto extends createZodDto(GrantDtoSchema) {}
 
 export const VariantSchema = z.object({
   title: z.string().min(1),
@@ -20,35 +23,32 @@ export const VariantSchema = z.object({
   tax: z.number().min(0),
   currency: z.enum([ECurrency.VND, ECurrency.USD]),
   extraGrants: z.array(GrantDtoSchema),
+}).strict();
+
+export class VariantDto extends createZodDto(VariantSchema) {}
+
+export const PackageVariantDtoSchema = VariantSchema.extend({
+  id: z.string().optional(),
 });
 
-export type GrantDto = z.infer<typeof GrantDtoSchema>;
-export type VariantDto = z.infer<typeof VariantSchema>;
+export class PackageVariantDto extends createZodDto(PackageVariantDtoSchema) {}
 
-export class PackageVariantDto {
-  id: string;
-  title: string;
-  durationMonths: number | null;
-  price: number;
-  priceAfterDiscount: number;
-  tax: number;
-  currency: string;
-  extraGrants: GrantDto[];
-}
+export const PackageResponseDtoSchema = z.object({
+  id: z.string(),
+  code: z.string(),
+  name: z.string(),
+  description: z.string(),
+  type: z.string(),
+  scope: z.string(),
+  enterpriseId: z.string().nullable(),
+  status: z.string(),
+  features: z.array(z.string()),
+  baseGrants: z.array(GrantDtoSchema),
+  variants: z.array(PackageVariantDtoSchema),
+  createdAt: z.iso.datetime(),
+  updatedAt: z.iso.datetime(),
+  activatedAt: z.iso.datetime().optional(),
+}).strict();
 
-export class PackageResponseDto {
-  id: string;
-  code: string;
-  name: string;
-  description: string;
-  type: string;
-  scope: string;
-  enterpriseId: string | null;
-  status: string;
-  features: string[];
-  baseGrants: GrantDto[];
-  variants: PackageVariantDto[];
-  createdAt: Date;
-  updatedAt: Date;
-  activatedAt?: Date;
-}
+export class PackageResponseDto extends createZodDto(PackageResponseDtoSchema) {}
+

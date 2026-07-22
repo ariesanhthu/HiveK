@@ -7,7 +7,7 @@ import { PaginatedResponseDto } from '@/application/dtos/pagination.dto';
 import { KpiLogGetListQuery, KpiLogFilterDto } from '@/application/queries';
 import { JwtAuthGuard, RolesGuard } from '@/presentation/middleware/guards';
 import { ERoleType } from '@/core/enums/role-type.enum';
-import { Roles } from '@/presentation/decorators/roles.decorator';
+import { Roles, ApiPaginatedResponseEnvelope } from '@/presentation/decorators';
 
 @ApiTags('ADMIN-analytics')
 @ApiBearerAuth()
@@ -21,7 +21,9 @@ export class KpiLogAdminController {
   @Get()
   @UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: 'Get paginated KPI logs' })
+  @ApiPaginatedResponseEnvelope(KpiLogDto)
   async findAll(@Query() filters: KpiLogFilterDto): Promise<PaginatedResponseDto<KpiLogDto>> {
     return this.queryBus.execute(new KpiLogGetListQuery(filters));
   }
 }
+

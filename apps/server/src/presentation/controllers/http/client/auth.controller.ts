@@ -13,20 +13,22 @@ import {
   AuthChangePasswordCommand,
   AuthVerifyOtpCommand,
   AuthSignInInputDto,
+  AuthSignInOutputDto,
   AuthSignUpInputDto,
   AuthResetPasswordInputDto,
   AuthSignOutInputDto,
   AuthRefreshTokenInputDto,
+  AuthRefreshTokenOutputDto,
   AuthSendOtpInputDto,
   AuthChangePasswordInputDto,
   AuthVerifyOtpInputDto,
   UserUpdateCommand
 } from '@/application/commands';
 import { AuthGetProfileQuery } from '@/application/queries';
+import { UserDetailDto } from '@/application/dtos';
 import { ERoleType } from '@/core/enums';
 import { JwtAuthGuard } from '@/presentation/middleware/guards/jwt-auth.guard';
-import { CurrentUser } from '@/presentation/decorators/current-user.decorator';
-import { Public } from '@/presentation/decorators/public.decorator';
+import { CurrentUser, Public, ApiOkResponseEnvelope } from '@/presentation/decorators';
 import { AuthGuard } from '@nestjs/passport';
 import { Throttle } from '@nestjs/throttler';
 import { UserUpdateInputDto } from '@/application/commands/user-update/user-update.dto';
@@ -47,6 +49,7 @@ export class AuthClientController {
   @Throttle({ default: { limit: 5, ttl: 60000 } })
   @ApiOperation({ summary: 'Sign up as KOL (Rate limited: 5/min)' })
   @ApiTooManyRequestsResponse({ description: 'Too many requests' })
+  @ApiOkResponseEnvelope()
   async signUpKOL(@Body() input: AuthSignUpInputDto) {
     return this.commandBus.execute(new AuthSignUpCommand(ERoleType.KOL, input));
   }
@@ -56,6 +59,7 @@ export class AuthClientController {
   @Throttle({ default: { limit: 5, ttl: 60000 } })
   @ApiOperation({ summary: 'Sign up as Enterprise (Rate limited: 5/min)' })
   @ApiTooManyRequestsResponse({ description: 'Too many requests' })
+  @ApiOkResponseEnvelope()
   async signUpEnterprise(@Body() input: AuthSignUpInputDto) {
     return this.commandBus.execute(new AuthSignUpCommand(ERoleType.ENTERPRISE, input));
   }
@@ -66,6 +70,7 @@ export class AuthClientController {
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Sign in (Rate limited: 5/min)' })
   @ApiTooManyRequestsResponse({ description: 'Too many requests' })
+  @ApiOkResponseEnvelope(AuthSignInOutputDto)
   async signIn(
     @Body() input: AuthSignInInputDto,
     @Res({ passthrough: true }) response: Response,
@@ -94,6 +99,7 @@ export class AuthClientController {
   @Post('refresh-token')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Refresh tokens' })
+  @ApiOkResponseEnvelope(AuthRefreshTokenOutputDto)
   async refreshToken(
     @Req() req: Request,
     @Body() input: AuthRefreshTokenInputDto,
@@ -149,6 +155,7 @@ export class AuthClientController {
   @Post('reset-password')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Reset password' })
+  @ApiOkResponseEnvelope()
   async resetPassword(@Body() input: AuthResetPasswordInputDto) {
     return this.commandBus.execute(new AuthResetPasswordCommand(input));
   }
@@ -159,6 +166,7 @@ export class AuthClientController {
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Send OTP verification code (Rate limited: 5/min)' })
   @ApiTooManyRequestsResponse({ description: 'Too many requests' })
+  @ApiOkResponseEnvelope()
   async sendOtp(@Body() input: AuthSendOtpInputDto) {
     return this.commandBus.execute(new AuthSendOtpCommand(input));
   }
@@ -167,6 +175,7 @@ export class AuthClientController {
   @Post('verify-otp')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Verify OTP verification code' })
+  @ApiOkResponseEnvelope()
   async verifyOtp(@Body() input: AuthVerifyOtpInputDto) {
     return this.commandBus.execute(new AuthVerifyOtpCommand(input));
   }
@@ -175,6 +184,7 @@ export class AuthClientController {
   @ApiBearerAuth()
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Change current user password' })
+  @ApiOkResponseEnvelope()
   async changePassword(
     @CurrentUser('sub') userId: string,
     @Body() input: AuthChangePasswordInputDto,
@@ -185,6 +195,7 @@ export class AuthClientController {
   @Get('profile')
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Get current user profile' })
+  @ApiOkResponseEnvelope(UserDetailDto)
   async getProfile(@CurrentUser('sub') userId: string) {
     return this.queryBus.execute(new AuthGetProfileQuery(userId));
   }
@@ -192,6 +203,7 @@ export class AuthClientController {
   @Patch('profile')
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Update current user profile' })
+  @ApiOkResponseEnvelope(UserDetailDto)
   async updateProfile(
     @CurrentUser('sub') userId: string,
     @Body() input: UserUpdateInputDto,
@@ -199,3 +211,4 @@ export class AuthClientController {
     return this.commandBus.execute(new UserUpdateCommand(userId, input));
   }
 }
+

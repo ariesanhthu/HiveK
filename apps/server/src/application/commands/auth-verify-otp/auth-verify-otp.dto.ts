@@ -2,14 +2,14 @@ import { z } from 'zod';
 import { createZodDto } from 'nestjs-zod';
 
 export const AuthVerifyOtpInputSchema = z.object({
-  email: z.string().email(),
+  email: z.email(),
   otpCode: z.string().length(6),
 }).strict();
 
-export class AuthVerifyOtpInputDto extends createZodDto(AuthVerifyOtpInputSchema) {}
+export class AuthVerifyOtpInputDto extends createZodDto(AuthVerifyOtpInputSchema) { }
 
 export const AuthVerifyOtpOutputSchema = z.object({
   success: z.boolean(),
 }).strict();
 
-export class AuthVerifyOtpOutputDto extends createZodDto(AuthVerifyOtpOutputSchema) {}
+export class AuthVerifyOtpOutputDto extends createZodDto(AuthVerifyOtpOutputSchema) { }

@@ -1,8 +1,9 @@
 import { z } from 'zod';
+import { createZodDto } from 'nestjs-zod';
 
 export const KpiLogSchema = z.object({
   id: z.string(),
-  timestamp: z.string(),
+  timestamp: z.iso.datetime(),
   participantId: z.string(),
   metrics: z.object({
     views: z.number(),
@@ -12,4 +13,5 @@ export const KpiLogSchema = z.object({
   }).strict(),
 }).strict();
 
-export type KpiLogDto = z.infer<typeof KpiLogSchema>;
+export class KpiLogDto extends createZodDto(KpiLogSchema) {}
+

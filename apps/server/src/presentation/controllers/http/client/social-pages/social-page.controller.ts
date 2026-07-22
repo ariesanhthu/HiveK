@@ -13,8 +13,7 @@ import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { ApiTags, ApiOperation, ApiBearerAuth, ApiSecurity } from '@nestjs/swagger';
 import { buildVersionedRoute } from '@presentation/utils';
 import { JwtAuthGuard, RolesGuard, UserVerifiedGuard } from '@/presentation/middleware/guards';
-import { CurrentUser } from '@/presentation/decorators/current-user.decorator';
-import { Roles } from '@/presentation/decorators/roles.decorator';
+import { CurrentUser, Roles, ApiOkResponseEnvelope, ApiPaginatedResponseEnvelope } from '@/presentation/decorators';
 import { ERoleType } from '@/core/enums';
 import { ENTERPRISE_REPOSITORY, type IEnterpriseRepository } from '@/core/interfaces/repositories';
 import {
@@ -50,6 +49,7 @@ export class SocialPageController {
 
   @Get()
   @ApiOperation({ summary: 'Get all connected social pages' })
+  @ApiPaginatedResponseEnvelope(SocialPageDto)
   async findAll(@CurrentUser('sub') userId: string): Promise<SocialPageDto[]> {
     const enterpriseId = await this.getEnterpriseId(userId);
     return this.queryBus.execute(new SocialPageGetListQuery(enterpriseId));
@@ -57,6 +57,7 @@ export class SocialPageController {
 
   @Delete(':id')
   @ApiOperation({ summary: 'Disconnect a social page' })
+  @ApiOkResponseEnvelope()
   async disconnect(
     @CurrentUser('sub') userId: string,
     @Param('id') id: string,
@@ -67,6 +68,7 @@ export class SocialPageController {
 
   @Post('facebook/connect')
   @ApiOperation({ summary: 'Link a selected Facebook page to the enterprise account' })
+  @ApiOkResponseEnvelope(SocialPageDto)
   async connectPage(
     @CurrentUser('sub') userId: string,
     @Body() input: SocialPageConnectInputDto,
@@ -77,6 +79,7 @@ export class SocialPageController {
 
   @Post('facebook/refresh-token')
   @ApiOperation({ summary: 'Refresh Facebook page access token using user credentials' })
+  @ApiOkResponseEnvelope(SocialPageDto)
   async refreshToken(
     @CurrentUser('sub') userId: string,
     @Body('socialPageId') socialPageId: string,
@@ -86,3 +89,4 @@ export class SocialPageController {
     return this.commandBus.execute(new SocialPageRefreshTokenCommand(socialPageId, enterpriseId, userAccessToken));
   }
 }
+

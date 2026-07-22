@@ -22,9 +22,9 @@ export class PackageMapper {
         creditFallback: g.creditFallback,
       })),
       variants: entity.variants.map((v) => this.toVariantDto(v)),
-      createdAt: entity.createdAt,
-      updatedAt: entity.updatedAt,
-      activatedAt: entity.activatedAt || undefined,
+      createdAt: entity.createdAt.toISOString(),
+      updatedAt: entity.updatedAt.toISOString(),
+      activatedAt: entity.activatedAt ? entity.activatedAt.toISOString() : undefined,
     };
   }
 

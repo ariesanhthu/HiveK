@@ -2,8 +2,8 @@ import { z } from 'zod';
 import { createZodDto } from 'nestjs-zod';
 import { ERoleType } from '@/core/enums';
 import { CursorPaginationRequestSchema } from '@/application/dtos/pagination.dto';
-import { RoleDto } from './role.dto';
-import { UploadedFileDto } from './uploaded-file.dto';
+import { RoleDto, RoleDtoSchema } from './role.dto';
+import { UploadedFileDto, UploadedFileDtoSchema } from './uploaded-file.dto';
 
 const BaseUserDtoSchema = z.object({
   id: z.string(),
@@ -13,8 +13,8 @@ const BaseUserDtoSchema = z.object({
   avatar: z.string().nullable(),
   roleId: z.string(),
   isEmailVerified: z.boolean(),
-  createdAt: z.string(),
-  updatedAt: z.string(),
+  createdAt: z.iso.datetime(),
+  updatedAt: z.iso.datetime(),
 }).strict();
 
 export const AdminDtoSchema = BaseUserDtoSchema.extend({
@@ -52,9 +52,11 @@ export const UserFilterSchema = CursorPaginationRequestSchema.extend({
 
 export class UserFilterDto extends createZodDto(UserFilterSchema) {}
 
-type DistributiveOmit<T, K extends keyof any> = T extends any ? Omit<T, K> : never;
+export const UserDetailDtoSchema = BaseUserDtoSchema.extend({
+  avatar: UploadedFileDtoSchema.nullable(),
+  role: RoleDtoSchema.optional(),
+  type: z.enum(ERoleType),
+});
 
-export type UserDetailDto = DistributiveOmit<UserDto, 'avatar'> & {
-  avatar: UploadedFileDto | null;
-  role?: RoleDto;
-};
+export class UserDetailDto extends createZodDto(UserDetailDtoSchema) {}
+

@@ -13,8 +13,8 @@ export const NotificationDtoSchema = z.object({
   targetType: z.enum(ETargetType).nullable().optional(),
   targetId: z.string().nullable().optional(),
   isRead: z.boolean(),
-  readAt: z.string().nullable().optional(),
-  createdAt: z.string(),
+  readAt: z.iso.datetime().nullable().optional(),
+  createdAt: z.iso.datetime(),
 }).strict();
 
 export class NotificationDto extends createZodDto(NotificationDtoSchema) { }

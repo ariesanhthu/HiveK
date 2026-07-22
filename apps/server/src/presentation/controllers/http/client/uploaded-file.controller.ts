@@ -26,6 +26,7 @@ import {
 import { UploadedFileDto } from '@/application/dtos';
 import { JwtAuthGuard } from '@/presentation/middleware/guards';
 import { FileUploadValidationPipe } from '@/presentation/middleware/pipes/file-upload-validation.pipe';
+import { ApiOkResponseEnvelope } from '@/presentation/decorators';
 import { isEmpty } from '@/shared/utils';
 
 @ApiTags('CLIENT-upload')
@@ -38,8 +39,10 @@ export class UploadedFileClientController {
     private readonly commandBus: CommandBus,
     private readonly queryBus: QueryBus,
   ) { }
+
   @Get(':id')
   @ApiOperation({ summary: 'Get uploaded file by ID' })
+  @ApiOkResponseEnvelope(UploadedFileDto)
   async findById(@Param('id') id: string): Promise<UploadedFileDto> {
     return this.queryBus.execute(new UploadedFileGetByIdQuery(id));
   }
@@ -78,6 +81,7 @@ export class UploadedFileClientController {
     },
   })
   @ApiOperation({ summary: 'Upload and create new file (Max 25MB, Images/Docs/PDF only)' })
+  @ApiOkResponseEnvelope(UploadedFileDto)
   async create(
     @UploadedFile(new FileUploadValidationPipe()) file: Express.Multer.File,
     @Body() input: UploadedFileCreateInputDto,
@@ -134,6 +138,7 @@ export class UploadedFileClientController {
     },
   })
   @ApiOperation({ summary: 'Upload and create multiple files (limit to 10, Max 25MB each)' })
+  @ApiOkResponseEnvelope(UploadedFileDto)
   async createBulk(
     @UploadedFiles(new FileUploadValidationPipe()) files: Express.Multer.File[],
     @Body() input: UploadedFileCreateInputDto,
@@ -153,3 +158,4 @@ export class UploadedFileClientController {
     );
   }
 }
+

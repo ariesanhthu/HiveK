@@ -1,27 +1,31 @@
-import { SortOrder } from './pagination.dto';
+import { CursorPaginationRequestSchema } from './pagination.dto';
 import { z } from 'zod';
+import { createZodDto } from 'nestjs-zod';
 import { EGrantType } from '@/core/enums';
 
-const QuotaAllocationItemSchema = z.object({
+export const QuotaAllocationItemSchema = z.object({
   enterpriseId: z.string(),
   key: z.string(),
   allocated: z.number(),
-  kind: z.nativeEnum(EGrantType),
+  kind: z.enum(EGrantType),
   isPool: z.boolean(),
+}).strict();
+
+export class QuotaAllocationItemDto extends createZodDto(QuotaAllocationItemSchema) { }
+export type QuotaAllocationItemDTO = QuotaAllocationItemDto;
+
+export const EnterpriseQuotaAllocationResponseDtoSchema = z.object({
+  id: z.string(),
+  ownerId: z.string(),
+  allocations: z.array(QuotaAllocationItemSchema),
+  updatedAt: z.iso.datetime(),
+}).strict();
+
+export class EnterpriseQuotaAllocationResponseDto extends createZodDto(EnterpriseQuotaAllocationResponseDtoSchema) { }
+
+export const EnterpriseQuotaAllocationFilterDtoSchema = CursorPaginationRequestSchema.extend({
+  ownerId: z.string().optional(),
 });
 
-export type QuotaAllocationItemDTO = z.infer<typeof QuotaAllocationItemSchema>;
+export class EnterpriseQuotaAllocationFilterDto extends createZodDto(EnterpriseQuotaAllocationFilterDtoSchema) { }
 
-export class EnterpriseQuotaAllocationResponseDto {
-  id: string;
-  ownerId: string;
-  allocations: QuotaAllocationItemDTO[];
-  updatedAt: Date;
-}
-
-export class EnterpriseQuotaAllocationFilterDto {
-  ownerId?: string;
-  cursor?: string;
-  limit?: number;
-  sort?: SortOrder;
-}

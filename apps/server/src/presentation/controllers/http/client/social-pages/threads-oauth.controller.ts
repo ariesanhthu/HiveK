@@ -10,8 +10,7 @@ import { CommandBus } from '@nestjs/cqrs';
 import { ApiTags, ApiOperation, ApiBearerAuth, ApiSecurity } from '@nestjs/swagger';
 import { buildVersionedRoute } from '@presentation/utils';
 import { JwtAuthGuard, RolesGuard, UserVerifiedGuard, StateAuthGuard } from '@/presentation/middleware/guards';
-import { CurrentUser } from '@/presentation/decorators/current-user.decorator';
-import { Roles } from '@/presentation/decorators/roles.decorator';
+import { CurrentUser, Roles, ApiOkResponseEnvelope } from '@/presentation/decorators';
 import { ERoleType, ESocialPlatformCode } from '@/core/enums';
 import { ENTERPRISE_REPOSITORY, type IEnterpriseRepository } from '@/core/interfaces/repositories';
 import { SocialPageBulkConnectCommand } from '@/application/commands';
@@ -52,6 +51,7 @@ export class ThreadsOAuthController {
   @Roles(ERoleType.ENTERPRISE)
   @Get('threads/oauth')
   @ApiOperation({ summary: 'Get Threads OAuth Redirect URL' })
+  @ApiOkResponseEnvelope()
   async getThreadsOauthUrl(@CurrentUser() user: IJwtPayload) {
     // Sign a short-lived JWT with the user's identity as the OAuth state
     // so the callback can verify and extract userId, email, role via StateAuthGuard

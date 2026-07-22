@@ -14,8 +14,8 @@ export class SocialPageMapper {
       followerCount: root.followerCount,
       webhookVerifyToken: root.webhookVerifyToken,
       isActive: root.isActive,
-      createdAt: root.createdAt,
-      updatedAt: root.updatedAt,
+      createdAt: root.createdAt.toISOString(),
+      updatedAt: root.updatedAt.toISOString(),
     };
   }
 

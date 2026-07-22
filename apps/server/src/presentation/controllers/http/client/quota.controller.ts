@@ -1,10 +1,9 @@
 import { Controller, Get, Param, Query, UseGuards } from '@nestjs/common';
 import { QueryBus } from '@nestjs/cqrs';
-import { ApiBearerAuth, ApiOperation, ApiTags, ApiResponse, ApiSecurity } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiTags, ApiSecurity } from '@nestjs/swagger';
 import { JwtAuthGuard, RolesGuard } from '@/presentation/middleware/guards';
-import { Roles } from '@/presentation/decorators/roles.decorator';
+import { CurrentUser, Roles, ApiOkResponseEnvelope } from '@/presentation/decorators';
 import { ERoleType } from '@/core/enums';
-import { CurrentUser } from '@/presentation/decorators/current-user.decorator';
 import type { IJwtPayload } from '@/application/interfaces';
 import { QuotaUsageResponseDto, EnterpriseQuotaAllocationResponseDto } from '@/application/dtos';
 import { QuotaUsageGetByEnterpriseIdQuery, EnterpriseQuotaAllocationGetByOwnerIdQuery } from '@/application/queries';
@@ -21,7 +20,7 @@ export class QuotaClientController {
   @Get('usage/me')
   @Roles(ERoleType.ENTERPRISE)
   @ApiOperation({ summary: 'Get current enterprise quota usage' })
-  @ApiResponse({ status: 200, type: QuotaUsageResponseDto })
+  @ApiOkResponseEnvelope(QuotaUsageResponseDto)
   async getMyQuotaUsage(@CurrentUser() user: IJwtPayload): Promise<QuotaUsageResponseDto> {
     return this.queryBus.execute(new QuotaUsageGetByEnterpriseIdQuery(user.enterpriseId as string));
   }
@@ -29,8 +28,9 @@ export class QuotaClientController {
   @Get('allocations/me')
   @Roles(ERoleType.ENTERPRISE)
   @ApiOperation({ summary: 'Get current enterprise quota allocations' })
-  @ApiResponse({ status: 200, type: EnterpriseQuotaAllocationResponseDto })
+  @ApiOkResponseEnvelope(EnterpriseQuotaAllocationResponseDto)
   async getMyQuotaAllocations(@CurrentUser() user: IJwtPayload): Promise<EnterpriseQuotaAllocationResponseDto> {
     return this.queryBus.execute(new EnterpriseQuotaAllocationGetByOwnerIdQuery(user.enterpriseId as string));
   }
 }
+

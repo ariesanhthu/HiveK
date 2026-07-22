@@ -11,8 +11,8 @@ export class SubscriptionMapper {
         ? {
             packageId: entity.planItem.packageId,
             packageVariantId: entity.planItem.packageVariantId,
-            startDate: entity.planItem.startDate,
-            expiresAt: entity.planItem.expiresAt,
+            startDate: entity.planItem.startDate.toISOString(),
+            expiresAt: entity.planItem.expiresAt.toISOString(),
             billId: entity.planItem.billId,
             autoRenew: entity.planItem.autoRenew,
             price: entity.planItem.price,
@@ -22,8 +22,8 @@ export class SubscriptionMapper {
       addonItems: entity.addonItems.map((item) => ({
         packageId: item.packageId,
         packageVariantId: item.packageVariantId,
-        purchasedAt: item.purchasedAt,
-        expiresAt: item.expiresAt,
+        purchasedAt: item.purchasedAt.toISOString(),
+        expiresAt: item.expiresAt ? item.expiresAt.toISOString() : null,
         billId: item.billId,
         price: item.price,
         priceAfterDiscount: item.priceAfterDiscount,
@@ -36,9 +36,9 @@ export class SubscriptionMapper {
         creditFallback: g.creditFallback,
       })),
       computedPermissions: entity.computedPermissions,
-      nextExpiryCheckAt: entity.nextExpiryCheckAt,
-      createdAt: entity.createdAt,
-      updatedAt: entity.updatedAt,
+      nextExpiryCheckAt: entity.nextExpiryCheckAt.toISOString(),
+      createdAt: entity.createdAt.toISOString(),
+      updatedAt: entity.updatedAt.toISOString(),
     };
   }
 
@@ -71,7 +71,7 @@ export class SubscriptionMapper {
         oldPermissions: entity.details.oldPermissions,
         newPermissions: entity.details.newPermissions,
       },
-      createdAt: entity.createdAt,
+      createdAt: entity.createdAt.toISOString(),
     };
   }
 

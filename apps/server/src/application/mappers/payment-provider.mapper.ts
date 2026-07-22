@@ -18,9 +18,9 @@ export class PaymentProviderMapper {
       baseUrl: entity.baseUrl || undefined,
       testUrl: entity.testUrl || undefined,
       webhookUrl: entity.webhookUrl || undefined,
-      createdAt: entity.createdAt,
-      updatedAt: entity.updatedAt,
-      deletedAt: entity.deletedAt || null,
+      createdAt: entity.createdAt.toISOString(),
+      updatedAt: entity.updatedAt.toISOString(),
+      deletedAt: entity.deletedAt?.toISOString() || null,
       deletedBy: entity.deletedBy || null,
     };
   }
@@ -35,8 +35,8 @@ export class PaymentProviderMapper {
       isActive: entity.isActive,
       supportsRefund: entity.supportsRefund,
       supportsPartialRefund: entity.supportsPartialRefund,
-      createdAt: entity.createdAt,
-      updatedAt: entity.updatedAt,
+      createdAt: entity.createdAt.toISOString(),
+      updatedAt: entity.updatedAt.toISOString(),
     };
   }
 

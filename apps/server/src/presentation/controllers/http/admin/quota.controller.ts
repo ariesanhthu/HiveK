@@ -1,8 +1,8 @@
 import { Controller, Get, Param, UseGuards } from '@nestjs/common';
 import { QueryBus } from '@nestjs/cqrs';
-import { ApiBearerAuth, ApiOperation, ApiTags, ApiResponse, ApiSecurity } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiTags, ApiSecurity } from '@nestjs/swagger';
 import { JwtAuthGuard, RolesGuard } from '@/presentation/middleware/guards';
-import { Roles } from '@/presentation/decorators/roles.decorator';
+import { Roles, ApiOkResponseEnvelope } from '@/presentation/decorators';
 import { ERoleType } from '@/core/enums';
 import { QuotaUsageResponseDto, EnterpriseQuotaAllocationResponseDto } from '@/application/dtos';
 import { QuotaUsageGetByEnterpriseIdQuery, EnterpriseQuotaAllocationGetByOwnerIdQuery } from '@/application/queries';
@@ -19,7 +19,7 @@ export class QuotaAdminController {
   @Get('usage/:enterpriseId')
   @Roles(ERoleType.ADMIN)
   @ApiOperation({ summary: 'Get quota usage for an enterprise' })
-  @ApiResponse({ status: 200, type: QuotaUsageResponseDto })
+  @ApiOkResponseEnvelope(QuotaUsageResponseDto)
   async getQuotaUsageByEnterpriseId(@Param('enterpriseId') enterpriseId: string): Promise<QuotaUsageResponseDto> {
     return this.queryBus.execute(new QuotaUsageGetByEnterpriseIdQuery(enterpriseId));
   }
@@ -27,8 +27,9 @@ export class QuotaAdminController {
   @Get('allocations/:ownerId')
   @Roles(ERoleType.ADMIN)
   @ApiOperation({ summary: 'Get quota allocations for an enterprise' })
-  @ApiResponse({ status: 200, type: EnterpriseQuotaAllocationResponseDto })
+  @ApiOkResponseEnvelope(EnterpriseQuotaAllocationResponseDto)
   async getQuotaAllocationsByOwnerId(@Param('ownerId') ownerId: string): Promise<EnterpriseQuotaAllocationResponseDto> {
     return this.queryBus.execute(new EnterpriseQuotaAllocationGetByOwnerIdQuery(ownerId));
   }
 }
+

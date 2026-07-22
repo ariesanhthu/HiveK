@@ -14,8 +14,7 @@ import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { ApiTags, ApiOperation, ApiBearerAuth, ApiSecurity } from '@nestjs/swagger';
 import { buildVersionedRoute } from '@presentation/utils';
 import { JwtAuthGuard, RolesGuard, UserVerifiedGuard } from '@/presentation/middleware/guards';
-import { CurrentUser } from '@/presentation/decorators/current-user.decorator';
-import { Roles } from '@/presentation/decorators/roles.decorator';
+import { CurrentUser, Roles, ApiOkResponseEnvelope, ApiPaginatedResponseEnvelope } from '@/presentation/decorators';
 import { ERoleType } from '@/core/enums';
 import { ENTERPRISE_REPOSITORY, type IEnterpriseRepository } from '@/core/interfaces/repositories';
 import {
@@ -53,6 +52,7 @@ export class ScheduledPostController {
 
   @Post()
   @ApiOperation({ summary: 'Create and optionally schedule a new social post' })
+  @ApiOkResponseEnvelope(ScheduledPostDto)
   async create(
     @CurrentUser('sub') userId: string,
     @Body() input: ScheduledPostCreateInputDto,
@@ -63,6 +63,7 @@ export class ScheduledPostController {
 
   @Get()
   @ApiOperation({ summary: 'Get all scheduled posts' })
+  @ApiPaginatedResponseEnvelope(ScheduledPostDto)
   async findAll(@CurrentUser('sub') userId: string): Promise<ScheduledPostDto[]> {
     const enterpriseId = await this.getEnterpriseId(userId);
     return this.queryBus.execute(new ScheduledPostGetListQuery(enterpriseId));
@@ -70,6 +71,7 @@ export class ScheduledPostController {
 
   @Get(':id')
   @ApiOperation({ summary: 'Get scheduled post details by ID' })
+  @ApiOkResponseEnvelope(ScheduledPostDto)
   async findById(
     @CurrentUser('sub') userId: string,
     @Param('id') id: string,
@@ -81,6 +83,7 @@ export class ScheduledPostController {
   @Post('test')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: '[TEST] Create a post and publish it immediately (bypasses outbox delay)' })
+  @ApiOkResponseEnvelope(ScheduledPostDto)
   async createAndPublish(
     @CurrentUser('sub') userId: string,
     @Body() input: ScheduledPostCreateAndPublishInputDto,
@@ -92,6 +95,7 @@ export class ScheduledPostController {
   @Post(':id/cancel')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Cancel a pending scheduled post' })
+  @ApiOkResponseEnvelope()
   async cancel(
     @CurrentUser('sub') userId: string,
     @Param('id') id: string,
@@ -103,6 +107,7 @@ export class ScheduledPostController {
   @Post(':id/reschedule')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Reschedule a post for a new publish time' })
+  @ApiOkResponseEnvelope(ScheduledPostDto)
   async reschedule(
     @CurrentUser('sub') userId: string,
     @Param('id') id: string,
@@ -115,3 +120,4 @@ export class ScheduledPostController {
     return this.commandBus.execute(new ScheduledPostRescheduleCommand(id, enterpriseId, new Date(scheduledAt)));
   }
 }
+

@@ -22,8 +22,7 @@ import { PaginatedResponseDto } from '@/application/dtos/pagination.dto';
 import { ApiTags, ApiOperation, ApiBearerAuth, ApiSecurity } from '@nestjs/swagger';
 import { buildVersionedRoute } from '@presentation/utils';
 import { JwtAuthGuard, RolesGuard, UserVerifiedGuard } from '@/presentation/middleware/guards';
-import { CurrentUser } from '@/presentation/decorators/current-user.decorator';
-import { Roles } from '@/presentation/decorators/roles.decorator';
+import { CurrentUser, Roles, ApiOkResponseEnvelope, ApiPaginatedResponseEnvelope } from '@/presentation/decorators';
 import { ERoleType } from '@/core/enums/role-type.enum';
 
 @ApiTags('CLIENT-enterprises')
@@ -40,6 +39,7 @@ export class EnterpriseClientController {
 
   @Post()
   @ApiOperation({ summary: 'Create new enterprise profile' })
+  @ApiOkResponseEnvelope(EnterpriseDto)
   async create(
     @CurrentUser('sub') userId: string,
     @Body() input: EnterpriseCreateInputDto,
@@ -49,6 +49,7 @@ export class EnterpriseClientController {
 
   @Patch(':id')
   @ApiOperation({ summary: 'Update enterprise profile' })
+  @ApiOkResponseEnvelope(EnterpriseDto)
   async update(
     @Param('id') id: string,
     @CurrentUser('sub') userId: string,
@@ -59,6 +60,7 @@ export class EnterpriseClientController {
 
   @Get('me')
   @ApiOperation({ summary: 'Get my enterprises list (owned or member)' })
+  @ApiPaginatedResponseEnvelope(EnterpriseDetailDto)
   async getMyList(
     @CurrentUser('sub') userId: string,
     @Query() filters: EnterpriseFilterDto,
@@ -68,6 +70,7 @@ export class EnterpriseClientController {
 
   @Get('invitations/me')
   @ApiOperation({ summary: 'Get current user enterprise invitations' })
+  @ApiPaginatedResponseEnvelope(EnterpriseInvitationDto)
   async getMyInvitations(
     @CurrentUser('email') email: string,
     @Query() filters: EnterpriseGetMyInvitationsInputDto,
@@ -77,6 +80,7 @@ export class EnterpriseClientController {
 
   @Get(':id')
   @ApiOperation({ summary: 'Get enterprise by ID' })
+  @ApiOkResponseEnvelope(EnterpriseDetailDto)
   async getById(@Param('id') id: string): Promise<EnterpriseDetailDto> {
     const enterprise = await this.queryBus.execute<EnterpriseGetByIdQuery, EnterpriseDetailDto>(
       new EnterpriseGetByIdQuery(id),
@@ -86,6 +90,7 @@ export class EnterpriseClientController {
 
   @Post(':id/invitations')
   @ApiOperation({ summary: 'Invite a user to the enterprise' })
+  @ApiOkResponseEnvelope(EnterpriseInvitationDto)
   async inviteMember(
     @Param('id') enterpriseId: string,
     @CurrentUser('sub') requestedBy: string,
@@ -96,6 +101,7 @@ export class EnterpriseClientController {
 
   @Post(':id/invitations/:invitationId/accept')
   @ApiOperation({ summary: 'Accept an enterprise invitation' })
+  @ApiOkResponseEnvelope()
   async acceptInvitation(
     @Param('id') enterpriseId: string,
     @Param('invitationId') invitationId: string,
@@ -104,7 +110,6 @@ export class EnterpriseClientController {
     await this.commandBus.execute(new EnterpriseAcceptInvitationCommand(enterpriseId, invitationId, userId));
     return { success: true };
   }
-
 
   @Delete(':id/invitations/:invitationId')
   @UseGuards(JwtAuthGuard)
@@ -142,3 +147,4 @@ export class EnterpriseClientController {
     return this.commandBus.execute(new EnterpriseChangeMemberModeCommand(enterpriseId, requestedBy, dto));
   }
 }
+

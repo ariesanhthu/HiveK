@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { createZodDto } from 'nestjs-zod';
 import { EPaymentAttemptStatus, EPaymentStatus, ETransactionStatus } from '@/core/enums';
 
 export const PaymentTransactionResponseSchema = z.object({
@@ -10,13 +11,15 @@ export const PaymentTransactionResponseSchema = z.object({
   providerTransactionId: z.string().optional(),
   providerRequest: z.record(z.string(), z.unknown()).optional(),
   providerRequestHeaders: z.record(z.string(), z.unknown()).optional(),
-  providerRequestTimestamp: z.date().optional(),
+  providerRequestTimestamp: z.iso.datetime().optional(),
   providerResponse: z.record(z.string(), z.unknown()).optional(),
   providerResponseHeaders: z.record(z.string(), z.unknown()).optional(),
-  providerResponseTimestamp: z.date().optional(),
+  providerResponseTimestamp: z.iso.datetime().optional(),
   metadata: z.record(z.string(), z.unknown()).optional(),
-  createdAt: z.date(),
-});
+  createdAt: z.iso.datetime(),
+}).strict();
+
+export class PaymentTransactionResponseDto extends createZodDto(PaymentTransactionResponseSchema) {}
 
 export const PaymentAttemptResponseSchema = z.object({
   paymentProviderId: z.string(),
@@ -35,9 +38,11 @@ export const PaymentAttemptResponseSchema = z.object({
   failureType: z.string().optional(),
   totalRefundedAmount: z.number().optional(),
   transactions: z.array(PaymentTransactionResponseSchema),
-  createdAt: z.date(),
-  updatedAt: z.date(),
-});
+  createdAt: z.iso.datetime(),
+  updatedAt: z.iso.datetime(),
+}).strict();
+
+export class PaymentAttemptResponseDto extends createZodDto(PaymentAttemptResponseSchema) {}
 
 export const PaymentResponseSchema = z.object({
   id: z.string(),
@@ -59,16 +64,18 @@ export const PaymentResponseSchema = z.object({
   description: z.string().optional(),
   idempotencyKey: z.string().optional(),
   version: z.number(),
-  expiresAt: z.date().optional(),
-  canceledAt: z.date().optional(),
+  expiresAt: z.iso.datetime().optional(),
+  canceledAt: z.iso.datetime().optional(),
   canceledBy: z.string().optional(),
   cancelReason: z.string().optional(),
   metadata: z.record(z.string(), z.unknown()),
-  createdAt: z.date(),
-  updatedAt: z.date(),
-  deletedAt: z.date().nullable().optional(),
+  createdAt: z.iso.datetime(),
+  updatedAt: z.iso.datetime(),
+  deletedAt: z.iso.datetime().nullable().optional(),
   deletedBy: z.string().optional(),
-});
+}).strict();
+
+export class PaymentResponseDto extends createZodDto(PaymentResponseSchema) {}
 
 export const PaymentDetailResponseSchema = z.object({
   id: z.string(),
@@ -91,18 +98,16 @@ export const PaymentDetailResponseSchema = z.object({
   description: z.string().optional(),
   idempotencyKey: z.string().optional(),
   version: z.number(),
-  expiresAt: z.date().optional(),
-  canceledAt: z.date().optional(),
+  expiresAt: z.iso.datetime().optional(),
+  canceledAt: z.iso.datetime().optional(),
   canceledBy: z.string().optional(),
   cancelReason: z.string().optional(),
   metadata: z.record(z.string(), z.unknown()),
-  createdAt: z.date(),
-  updatedAt: z.date(),
-  deletedAt: z.date().nullable().optional(),
+  createdAt: z.iso.datetime(),
+  updatedAt: z.iso.datetime(),
+  deletedAt: z.iso.datetime().nullable().optional(),
   deletedBy: z.string().optional(),
-});
+}).strict();
 
-export type PaymentAttemptResponseDto = z.infer<typeof PaymentAttemptResponseSchema>;
-export type PaymentTransactionResponseDto = z.infer<typeof PaymentTransactionResponseSchema>;
-export type PaymentResponseDto = z.infer<typeof PaymentResponseSchema>;
-export type PaymentDetailResponseDto = z.infer<typeof PaymentDetailResponseSchema>;
+export class PaymentDetailResponseDto extends createZodDto(PaymentDetailResponseSchema) {}
+

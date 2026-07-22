@@ -1,10 +1,9 @@
 import { Controller, Get, Param, Query, UseGuards } from '@nestjs/common';
 import { QueryBus } from '@nestjs/cqrs';
-import { ApiBearerAuth, ApiOperation, ApiTags, ApiResponse, ApiSecurity } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiTags, ApiSecurity } from '@nestjs/swagger';
 import { JwtAuthGuard, RolesGuard } from '@/presentation/middleware/guards';
-import { Roles } from '@/presentation/decorators/roles.decorator';
+import { CurrentUser, Roles, ApiOkResponseEnvelope, ApiPaginatedResponseEnvelope } from '@/presentation/decorators';
 import { ERoleType } from '@/core/enums';
-import { CurrentUser } from '@/presentation/decorators/current-user.decorator';
 import type { IJwtPayload } from '@/application/interfaces';
 import { SubscriptionResponseDto, SubscriptionHistoryFilterDto, SubscriptionHistoryResponseDto } from '@/application/dtos';
 import { SubscriptionGetByUserIdQuery, SubscriptionHistoryGetListQuery } from '@/application/queries';
@@ -22,7 +21,7 @@ export class SubscriptionClientController {
   @Get('me')
   @Roles(ERoleType.ENTERPRISE)
   @ApiOperation({ summary: 'Get current user subscription' })
-  @ApiResponse({ status: 200, type: SubscriptionResponseDto })
+  @ApiOkResponseEnvelope(SubscriptionResponseDto)
   async getMySubscription(@CurrentUser() user: IJwtPayload): Promise<SubscriptionResponseDto> {
     return this.queryBus.execute(new SubscriptionGetByUserIdQuery(user.sub as string));
   }
@@ -30,7 +29,7 @@ export class SubscriptionClientController {
   @Get('history/me')
   @Roles(ERoleType.ENTERPRISE)
   @ApiOperation({ summary: 'Get current user subscription history' })
-  @ApiResponse({ status: 200 })
+  @ApiPaginatedResponseEnvelope(SubscriptionHistoryResponseDto)
   async getMySubscriptionHistory(
     @CurrentUser() user: IJwtPayload,
     @Query() filter: SubscriptionHistoryFilterDto,
@@ -39,3 +38,4 @@ export class SubscriptionClientController {
     return this.queryBus.execute(new SubscriptionHistoryGetListQuery(filter));
   }
 }
+

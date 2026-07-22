@@ -27,12 +27,12 @@ export class ProposalMapper {
         platform: voucher.platform,
         discountValue: voucher.discountValue,
         description: voucher.description,
-        expirationDate: voucher.expirationDate,
+        expirationDate: voucher.expirationDate.toISOString(),
       })),
       status: root.status,
       metrics: root.metrics,
-      createdAt: root.createdAt,
-      updatedAt: root.updatedAt,
+      createdAt: root.createdAt.toISOString(),
+      updatedAt: root.updatedAt.toISOString(),
     };
   }
 

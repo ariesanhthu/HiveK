@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { createZodDto } from 'nestjs-zod';
 import { EPlatformApiStatus } from '@/core/enums/platform-api-status.enum';
-import { UploadedFileDto } from './uploaded-file.dto';
+import { UploadedFileDto, UploadedFileDtoSchema } from './uploaded-file.dto';
 
 export const PlatformDtoSchema = z.object({
   id: z.string(),
@@ -13,6 +13,9 @@ export const PlatformDtoSchema = z.object({
 
 export class PlatformDto extends createZodDto(PlatformDtoSchema) { }
 
-export type PlatformDetailDto = Omit<PlatformDto, 'icon'> & {
-  icon: UploadedFileDto | null;
-};
+export const PlatformDetailDtoSchema = PlatformDtoSchema.extend({
+  icon: UploadedFileDtoSchema.nullable(),
+});
+
+export class PlatformDetailDto extends createZodDto(PlatformDetailDtoSchema) { }
+

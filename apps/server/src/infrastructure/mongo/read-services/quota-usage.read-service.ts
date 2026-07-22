@@ -70,18 +70,19 @@ export class MongoQuotaUsageReadService implements IQuotaUsageReadService {
   }
 
   private mapToDto(doc: FlattenMaps<QuotaUsageDocument>): QuotaUsageResponseDto {
+    const updatedAt = doc.updated_at || doc.get?.('updated_at');
     return {
       id: doc._id.toString(),
       enterpriseId: doc.enterprise_id,
-      cycleAnchorDate: doc.cycle_anchor_date,
+      cycleAnchorDate: doc.cycle_anchor_date instanceof Date ? doc.cycle_anchor_date.toISOString() : new Date(doc.cycle_anchor_date).toISOString(),
       usages: (doc.usages || []).map(u => ({
         key: u.key,
         allocated: u.allocated,
         used: u.used,
-        cycleStartAt: u.cycle_start_at,
-        cycleEndsAt: u.cycle_ends_at,
+        cycleStartAt: u.cycle_start_at instanceof Date ? u.cycle_start_at.toISOString() : new Date(u.cycle_start_at).toISOString(),
+        cycleEndsAt: u.cycle_ends_at instanceof Date ? u.cycle_ends_at.toISOString() : new Date(u.cycle_ends_at).toISOString(),
       })),
-      updatedAt: doc.get('updated_at'),
+      updatedAt: updatedAt instanceof Date ? updatedAt.toISOString() : new Date(updatedAt).toISOString(),
     };
   }
 }

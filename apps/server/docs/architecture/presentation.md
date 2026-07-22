@@ -38,21 +38,39 @@ export class JwtAuthGuard implements CanActivate {
 }
 ```
 
+## Swagger & Response Envelopes
+Since all REST responses are automatically wrapped by `TransformInterceptor` into standard envelope formats (`ResponseEnvelopeDto` or `PaginatedResponseDto`), default NestJS `@ApiOkResponse` decorators produce incorrect OpenAPI schemas.
+
+Always annotate HTTP controller endpoints with the custom envelope response decorators:
+- `@ApiOkResponseEnvelope(DtoClass, options?)` for single object responses.
+- `@ApiPaginatedResponseEnvelope(DtoClass, options?)` for paginated list responses.
+
 ## Example Controller
 ```ts
-@Controller('campaigns')
+@ApiTags('Campaigns')
+@Controller('client/v1/campaigns')
 @UseGuards(JwtAuthGuard)
 export class CampaignController {
-  constructor(private readonly commandBus: CommandBus) {}
+  constructor(
+    private readonly commandBus: CommandBus,
+    private readonly queryBus: QueryBus,
+  ) {}
 
   @Post()
+  @ApiOkResponseEnvelope(CampaignDto, { description: 'Campaign created successfully' })
   async create(@Body() dto: CreateCampaignDto) {
     return this.commandBus.execute(new CreateCampaignCommand(dto));
+  }
+
+  @Get()
+  @ApiPaginatedResponseEnvelope(CampaignDto, { description: 'Paginated campaign list' })
+  async findAll(@Query() query: CampaignFilterDto) {
+    return this.queryBus.execute(new CampaignGetListQuery(query));
   }
 }
 ```
 
-The controller simply forwards the validated DTO to the command bus; all business rules are enforced inside the Core layer.
+The controller simply forwards the validated DTO to the command bus or query bus; all business rules are enforced inside the Core layer.
 
 ---
 

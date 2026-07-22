@@ -38,7 +38,7 @@ import { PaginatedResponseDto } from '@/application/dtos/pagination.dto';
 import { JwtAuthGuard, RolesGuard } from '@/presentation/middleware/guards';
 import { FileUploadValidationPipe } from '@/presentation/middleware/pipes/file-upload-validation.pipe';
 import { ERoleType } from '@/core/enums/role-type.enum';
-import { Roles } from '@/presentation/decorators/roles.decorator';
+import { Roles, ApiOkResponseEnvelope, ApiPaginatedResponseEnvelope } from '@/presentation/decorators';
 import { isEmpty } from '@/shared/utils';
 
 @ApiTags('ADMIN-upload')
@@ -55,12 +55,14 @@ export class UploadedFileAdminController {
 
   @Get()
   @ApiOperation({ summary: 'Get all uploaded files' })
+  @ApiPaginatedResponseEnvelope(UploadedFileDto)
   async findAll(@Query() filters: UploadedFileFilterDto): Promise<PaginatedResponseDto<UploadedFileDto>> {
     return this.queryBus.execute(new UploadedFileGetListQuery(filters));
   }
 
   @Get(':id')
   @ApiOperation({ summary: 'Get uploaded file by ID' })
+  @ApiOkResponseEnvelope(UploadedFileDto)
   async findById(@Param('id') id: string): Promise<UploadedFileDto> {
     return this.queryBus.execute(new UploadedFileGetByIdQuery(id));
   }
@@ -99,6 +101,7 @@ export class UploadedFileAdminController {
     },
   })
   @ApiOperation({ summary: 'Upload and create new file (Max 25MB, Images/Docs/PDF only)' })
+  @ApiOkResponseEnvelope(UploadedFileDto)
   async create(
     @UploadedFile(new FileUploadValidationPipe()) file: Express.Multer.File,
     @Body() input: UploadedFileCreateInputDto,
@@ -155,6 +158,7 @@ export class UploadedFileAdminController {
     },
   })
   @ApiOperation({ summary: 'Upload and create multiple files (limit to 10, Max 25MB each)' })
+  @ApiOkResponseEnvelope(UploadedFileDto)
   async createBulk(
     @UploadedFiles(new FileUploadValidationPipe()) files: Express.Multer.File[],
     @Body() input: UploadedFileCreateInputDto,
@@ -198,3 +202,4 @@ export class UploadedFileAdminController {
     await this.commandBus.execute(new UploadedFileRestoreCommand(id));
   }
 }
+

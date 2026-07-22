@@ -79,9 +79,9 @@ export class MongoPaymentProviderReadService implements IPaymentProviderReadServ
       baseUrl: doc.base_url || undefined,
       testUrl: doc.test_url || undefined,
       webhookUrl: doc.webhook_url || undefined,
-      createdAt: doc.created_at || new Date(),
-      updatedAt: doc.updated_at || new Date(),
-      deletedAt: doc.deleted_at || null,
+      createdAt: doc.created_at.toISOString() || new Date().toISOString(),
+      updatedAt: doc.updated_at.toISOString() || new Date().toISOString(),
+      deletedAt: doc.deleted_at?.toISOString() || null,
       deletedBy: doc.deleted_by || null,
     };
   }

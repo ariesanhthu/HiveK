@@ -21,7 +21,7 @@ export const CampaignParticipantSubDtoSchema = z.object({
   id: z.string(),
   kolProfileId: z.string(),
   status: z.string(),
-  joinedAt: z.coerce.date().nullable(),
+  joinedAt: z.iso.datetime().nullable(),
 }).strict();
 
 export const CampaignKOLOutputDtoSchema = z.object({
@@ -32,11 +32,11 @@ export const CampaignKOLOutputDtoSchema = z.object({
   outputType: z.string(),
   title: z.string(),
   isScheduleForPost: z.boolean(),
-  scheduledAt: z.coerce.date().nullable(),
+  scheduledAt: z.iso.datetime().nullable(),
   fileId: z.string().nullable(),
   status: z.string(),
   url: z.string().nullable(),
-  postedAt: z.coerce.date().nullable(),
+  postedAt: z.iso.datetime().nullable(),
   isTrackingActive: z.boolean(),
 }).strict();
 
@@ -47,11 +47,11 @@ export const CampaignEnterpriseOutputDtoSchema = z.object({
   outputType: z.string(),
   title: z.string(),
   isScheduleForPost: z.boolean(),
-  scheduledAt: z.coerce.date().nullable(),
+  scheduledAt: z.iso.datetime().nullable(),
   fileId: z.string().nullable(),
   status: z.string(),
   url: z.string().nullable(),
-  postedAt: z.coerce.date().nullable(),
+  postedAt: z.iso.datetime().nullable(),
   isTrackingActive: z.boolean(),
 }).strict();
 
@@ -59,7 +59,7 @@ export const CampaignEnterpriseOutputDtoSchema = z.object({
 // export const SchedulePostDtoSchema = z.object({ ... }).strict();
 
 export const ScheduleDayDtoSchema = z.object({
-  date: z.coerce.date(),
+  date: z.iso.datetime(),
   label: z.string().optional(),
   posts: z.array(z.string()),  // ScheduledPost IDs
 }).strict();

@@ -21,14 +21,14 @@ export class PaymentMapper {
       description: entity.description || undefined,
       idempotencyKey: entity.idempotencyKey || undefined,
       version: entity.version,
-      expiresAt: entity.expiresAt || undefined,
-      canceledAt: entity.canceledAt || undefined,
+      expiresAt: entity.expiresAt?.toISOString() || undefined,
+      canceledAt: entity.canceledAt?.toISOString() || undefined,
       canceledBy: entity.canceledBy || undefined,
       cancelReason: entity.cancelReason || undefined,
       metadata: entity.metadata || {},
-      createdAt: entity.createdAt,
-      updatedAt: entity.updatedAt,
-      deletedAt: entity.deletedAt || null,
+      createdAt: entity.createdAt.toISOString(),
+      updatedAt: entity.updatedAt.toISOString(),
+      deletedAt: entity.deletedAt?.toISOString() || null,
       deletedBy: entity.deletedBy || undefined,
     };
   }
@@ -46,14 +46,14 @@ export class PaymentMapper {
       attempts: entity.paymentAttempts.map((attempt) => this.toDtoAttempt(attempt)),
       idempotencyKey: entity.idempotencyKey || undefined,
       version: entity.version,
-      expiresAt: entity.expiresAt || undefined,
-      canceledAt: entity.canceledAt || undefined,
+      expiresAt: entity.expiresAt?.toISOString() || undefined,
+      canceledAt: entity.canceledAt?.toISOString() || undefined,
       canceledBy: entity.canceledBy || undefined,
       cancelReason: entity.cancelReason || undefined,
       metadata: entity.metadata || {},
-      createdAt: entity.createdAt,
-      updatedAt: entity.updatedAt,
-      deletedAt: entity.deletedAt || null,
+      createdAt: entity.createdAt.toISOString(),
+      updatedAt: entity.updatedAt.toISOString(),
+      deletedAt: entity.deletedAt?.toISOString() || null,
       deletedBy: entity.deletedBy || undefined,
     };
   }
@@ -69,8 +69,8 @@ export class PaymentMapper {
       failureReason: entity.failureReason,
       failureType: entity.failureType?.type,
       totalRefundedAmount: entity.totalRefundedAmount?.amount || undefined,
-      createdAt: entity.createdAt,
-      updatedAt: entity.updatedAt,
+      createdAt: entity.createdAt.toISOString(),
+      updatedAt: entity.updatedAt.toISOString(),
     };
   }
 
@@ -80,7 +80,7 @@ export class PaymentMapper {
       amount: entity.amount.amount,
       currency: entity.amount.currency,
       status: entity.status as ETransactionStatus,
-      createdAt: entity.createdAt,
+      createdAt: entity.createdAt.toISOString(),
       description: entity.description || undefined,
       providerTransactionId: entity.providerTransactionId || undefined,
       metadata: entity.metadata || {},
@@ -88,8 +88,8 @@ export class PaymentMapper {
       providerResponse: entity.providerResponse,
       providerRequestHeaders: entity.providerRequestHeaders,
       providerResponseHeaders: entity.providerResponseHeaders,
-      providerRequestTimestamp: entity.providerRequestTimestamp,
-      providerResponseTimestamp: entity.providerResponseTimestamp,
+      providerRequestTimestamp: entity.providerRequestTimestamp?.toISOString(),
+      providerResponseTimestamp: entity.providerResponseTimestamp?.toISOString(),
     };
   }
 

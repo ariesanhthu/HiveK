@@ -88,8 +88,8 @@ export class MongoBillReadService implements IBillReadService {
       taxAmount: doc.tax_amount,
       finalAmount: doc.final_amount,
       currency: doc.currency,
-      expiresAt: doc.expires_at || null,
-      createdAt: doc.created_at || new Date(),
+      expiresAt: doc.expires_at?.toISOString() || null,
+      createdAt: doc.created_at.toISOString(),
     };
   }
 }

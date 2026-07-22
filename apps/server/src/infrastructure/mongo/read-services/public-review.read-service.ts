@@ -69,7 +69,7 @@ export class MongoPublicReviewReadService implements IPublicReviewReadService {
       rating: doc.rating,
       comment: doc.comment,
       status: doc.status,
-      createdAt: doc.created_at,
+      createdAt: doc.created_at instanceof Date ? doc.created_at.toISOString() : new Date(doc.created_at).toISOString(),
     };
   }
 }

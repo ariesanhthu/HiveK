@@ -21,10 +21,9 @@ import { CampaignGetListQuery, CampaignGetByIdQuery, CampaignFilterDto } from '@
 import { CampaignDto, SoftDeleteInputDto } from '@/application/dtos';
 import { PaginatedResponseDto } from '@/application/dtos/pagination.dto';
 import { JwtAuthGuard, RolesGuard } from '@/presentation/middleware/guards';
-import { CurrentUser } from '@/presentation/decorators/current-user.decorator';
+import { CurrentUser, Roles, ApiOkResponseEnvelope, ApiPaginatedResponseEnvelope } from '@/presentation/decorators';
 import { CampaignInviteCollaboratorCommand, CampaignRevokeCollaboratorCommand, CampaignUpdateStatusCommand, CampaignUpdateStatusInputDto, CampaignInviteCollaboratorInputDto, CampaignRevokeCollaboratorInputDto } from '@/application/commands';
 import { ERoleType } from '@/core/enums/role-type.enum';
-import { Roles } from '@/presentation/decorators/roles.decorator';
 
 @ApiTags('ADMIN-campaigns')
 @ApiBearerAuth()
@@ -40,18 +39,21 @@ export class CampaignAdminController {
 
   @Get()
   @ApiOperation({ summary: 'Get all campaigns' })
+  @ApiPaginatedResponseEnvelope(CampaignDto)
   async findAll(@Query() filters: CampaignFilterDto): Promise<PaginatedResponseDto<CampaignDto>> {
     return this.queryBus.execute(new CampaignGetListQuery(filters));
   }
 
   @Get(':id')
   @ApiOperation({ summary: 'Get campaign by ID' })
+  @ApiOkResponseEnvelope(CampaignDto)
   async findById(@Param('id') id: string): Promise<CampaignDto> {
     return this.queryBus.execute(new CampaignGetByIdQuery(id));
   }
 
   @Post()
   @ApiOperation({ summary: 'Create new campaign' })
+  @ApiOkResponseEnvelope(CampaignDto)
   async create(
     @CurrentUser('sub') userId: string,
     @Body() input: CampaignCreateInputDto
@@ -62,6 +64,7 @@ export class CampaignAdminController {
 
   @Patch(':id')
   @ApiOperation({ summary: 'Update campaign' })
+  @ApiOkResponseEnvelope(CampaignDto)
   async update(
     @CurrentUser('sub') userId: string,
     @Param('id') id: string,
@@ -123,20 +126,9 @@ export class CampaignAdminController {
 
   // --- Campaign Participant Routes ---
 
-  // @Get(':campaignId/participants')
-  // @ApiOperation({ summary: 'Get all campaign participants' })
-  // async findAllParticipants(@Query() filters: CampaignParticipantFilterDto): Promise<PaginatedResponseDto<CampaignParticipantDto>> {
-  //   return this.queryBus.execute(new CampaignParticipantGetListQuery(filters));
-  // }
-
-  // @Get(':campaignId/participants/:participantId')
-  // @ApiOperation({ summary: 'Get campaign participant by ID' })
-  // async findParticipantById(@Param('participantId') participantId: string): Promise<CampaignParticipantDto> {
-  //   return this.queryBus.execute(new CampaignParticipantGetByIdQuery(participantId));
-  // }
-
   @Post(':campaignId/participants')
   @ApiOperation({ summary: 'Create new campaign participant' })
+  @ApiOkResponseEnvelope()
   async createParticipant(
     @Param('campaignId') campaignId: string,
     @Body() input: CampaignParticipantCreateInputDto,
@@ -147,6 +139,7 @@ export class CampaignAdminController {
 
   @Patch(':campaignId/participants/:participantId')
   @ApiOperation({ summary: 'Update campaign participant' })
+  @ApiOkResponseEnvelope()
   async updateParticipant(
     @Param('campaignId') campaignId: string,
     @Param('participantId') participantId: string,
@@ -186,3 +179,4 @@ export class CampaignAdminController {
     await this.commandBus.execute(new CampaignParticipantRestoreCommand(participantId));
   }
 }
+

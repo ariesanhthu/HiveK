@@ -11,8 +11,8 @@ export class AutoReplyRuleMapper {
       isEnabled: root.isEnabled,
       keywords: root.keywords,
       replyContent: root.replyContent,
-      createdAt: root.createdAt,
-      updatedAt: root.updatedAt,
+      createdAt: root.createdAt.toISOString(),
+      updatedAt: root.updatedAt.toISOString(),
     };
   }
 

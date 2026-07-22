@@ -11,14 +11,14 @@ export class ScheduledPostMapper {
       platformCode: root.platformCode,
       content: root.content,
       mediaFileIds: root.mediaFileIds,
-      scheduledAt: root.scheduledAt,
+      scheduledAt: root.scheduledAt.toISOString(),
       status: root.status,
-      publishedAt: root.publishedAt,
+      publishedAt: root.publishedAt ? root.publishedAt.toISOString() : null,
       platformPostId: root.platformPostId,
       failReason: root.failReason,
       createdBy: root.createdBy,
-      createdAt: root.createdAt,
-      updatedAt: root.updatedAt,
+      createdAt: root.createdAt.toISOString(),
+      updatedAt: root.updatedAt.toISOString(),
     };
   }
 
