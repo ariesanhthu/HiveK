@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { IsInt, IsNotEmpty, IsString } from 'class-validator';
 
 /**
- * 1. DTO Schema containing the validation rules for the Application configuration.
+ * 1. DTO Schema containing validation rules for environment/runtime variables.
  */
 export class AppConfigDto {
   @IsString()
@@ -15,45 +15,30 @@ export class AppConfigDto {
 
   @IsString()
   @IsNotEmpty()
-  globalPrefix: string;
-
-  @IsString()
-  @IsNotEmpty()
   env: string;
-
-  // Swagger configs
-  @IsString()
-  @IsNotEmpty()
-  swaggerTitle: string;
-
-  @IsString()
-  @IsNotEmpty()
-  swaggerDescription: string;
-
-  @IsString()
-  @IsNotEmpty()
-  swaggerVersion: string;
 }
 
 /**
- * 2. AppConfig Service that utilizes AppConfigDto to validate the config,
- * exposes getter methods, and is registered for NestJS Dependency Injection.
+ * 2. AppConfig Service utilizing AppConfigDto for env validation
+ * and private static readonly constants for non-sensitive static values.
  */
 @Injectable()
 export class AppConfig extends BaseConfigService<AppConfigDto> {
+  private static readonly GLOBAL_PREFIX = 'hivek';
+  private static readonly SWAGGER_TITLE = 'HiveK API';
+  private static readonly SWAGGER_DESCRIPTION =
+    'The API documentation for the HiveK Platform.\n\nNOTE: Sensitive endpoints (Sign-In, Sign-Up, OTP) are rate-limited to 5 requests per minute.';
+  private static readonly SWAGGER_VERSION = '1.0';
+
   constructor() {
     super(AppConfigDto, {
       host: process.env.HOST || '0.0.0.0',
       port: parseInt(process.env.PORT || '3000', 10),
-      globalPrefix: process.env.GLOBAL_PREFIX || 'hivek',
       env: process.env.NODE_ENV || 'development',
-      swaggerTitle: process.env.SWAGGER_TITLE || 'HiveK API',
-      swaggerDescription: process.env.SWAGGER_DESCRIPTION
-        || 'The API documentation for the HiveK Platform.\n\nNOTE: Sensitive endpoints (Sign-In, Sign-Up, OTP) are rate-limited to 5 requests per minute.',
-      swaggerVersion: process.env.SWAGGER_VERSION || '1.0',
     });
   }
 
+  // Dynamic environment variables
   getHost(): string {
     return this.config.host;
   }
@@ -62,23 +47,24 @@ export class AppConfig extends BaseConfigService<AppConfigDto> {
     return this.config.port;
   }
 
-  getGlobalPrefix(): string {
-    return this.config.globalPrefix;
-  }
-
   getEnv(): string {
     return this.config.env;
   }
 
+  // Static non-sensitive constant configurations
+  getGlobalPrefix(): string {
+    return AppConfig.GLOBAL_PREFIX;
+  }
+
   getSwaggerTitle(): string {
-    return this.config.swaggerTitle;
+    return AppConfig.SWAGGER_TITLE;
   }
 
   getSwaggerDescription(): string {
-    return this.config.swaggerDescription;
+    return AppConfig.SWAGGER_DESCRIPTION;
   }
 
   getSwaggerVersion(): string {
-    return this.config.swaggerVersion;
+    return AppConfig.SWAGGER_VERSION;
   }
 }
