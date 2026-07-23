@@ -1,0 +1,8 @@
+{
+  "name": "agentic-system",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "uv run uvicorn hivek_agent.api.app:app --reload --port 8100"
+  }
+}
