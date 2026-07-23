@@ -1,7 +1,7 @@
 import { AuthGoogleSignInCommand } from '@/application/commands';
+import { AuthConfig } from '@/configs';
 import { ERoleType } from '@/core/enums';
 import { Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import { CommandBus } from '@nestjs/cqrs';
 import { PassportStrategy } from '@nestjs/passport';
 import { Strategy } from 'passport-google-oauth20';
@@ -9,13 +9,13 @@ import { Strategy } from 'passport-google-oauth20';
 @Injectable()
 export class GoogleStrategy extends PassportStrategy(Strategy) {
   constructor(
-    configService: ConfigService,
+    authConfig: AuthConfig,
     private readonly commandBus: CommandBus,
   ) {
     super({
-      clientID: configService.get<string>('GOOGLE_CLIENT_ID'),
-      clientSecret: configService.get<string>('GOOGLE_CLIENT_SECRET'),
-      callbackURL: configService.get<string>('GOOGLE_CALLBACK_URL'),
+      clientID: authConfig.getGoogleClientId() || 'dummy-id',
+      clientSecret: authConfig.getGoogleClientSecret() || 'dummy-secret',
+      callbackURL: authConfig.getGoogleCallbackUrl() || 'http://localhost/dummy-callback',
       scope: ['email', 'profile'],
       passReqToCallback: true,
     });

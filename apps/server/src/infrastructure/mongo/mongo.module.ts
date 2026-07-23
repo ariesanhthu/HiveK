@@ -3,8 +3,8 @@ import {
   PUBLIC_REVIEW_READ_SERVICE,
   UNIT_OF_WORK,
 } from '@/application/interfaces';
+import { MongoConfig } from '@/configs';
 import { Global, Module } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { MongoUnitOfWork } from './mongo-uow';
 import {
@@ -116,9 +116,9 @@ import { RoleSeedService } from './seeding/role-seed.service';
   imports: [
     // Root MongoDB connection
     MongooseModule.forRootAsync({
-      inject: [ConfigService],
-      useFactory: (configService: ConfigService) => ({
-        uri: configService.get<string>('MONGODB_URI'),
+      inject: [MongoConfig],
+      useFactory: (mongoConfig: MongoConfig) => ({
+        uri: mongoConfig.getUri(),
       }),
     }),
     // Register ALL schemas here

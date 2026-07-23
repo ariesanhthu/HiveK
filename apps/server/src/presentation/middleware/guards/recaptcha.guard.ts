@@ -1,10 +1,10 @@
+import { SecurityConfig } from '@/configs';
 import { CanActivate, ExecutionContext, ForbiddenException, Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import axios from 'axios';
 
 @Injectable()
 export class RecaptchaGuard implements CanActivate {
-  constructor(private readonly configService: ConfigService) {}
+  constructor(private readonly securityConfig: SecurityConfig) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const { body } = context.switchToHttp().getRequest();
@@ -14,7 +14,7 @@ export class RecaptchaGuard implements CanActivate {
       throw new ForbiddenException('reCAPTCHA token is missing');
     }
 
-    const secretKey = this.configService.get<string>('RECAPTCHA_SECRET_KEY');
+    const secretKey = this.securityConfig.getRecaptchaSecretKey();
     if (!secretKey) {
       // If not configured, bypass or fail depending on environment
       return true;

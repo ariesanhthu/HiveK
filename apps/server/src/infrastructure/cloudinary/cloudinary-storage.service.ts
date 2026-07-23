@@ -1,17 +1,17 @@
+import { CloudinaryConfig } from '@/configs';
 import { IStorageService, StorageResourceType, UploadResult } from '@/core/interfaces/storage';
 import { errorMessage, isEmpty, toError } from '@/shared/utils';
 import { Injectable, Logger } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import { UploadApiResponse, v2 as cloudinary } from 'cloudinary';
 
 @Injectable()
 export class CloudinaryStorageService implements IStorageService {
   private readonly logger = new Logger(CloudinaryStorageService.name);
-  private readonly DEFAULT_FOLDER;
-  constructor(private readonly configService: ConfigService) {
-    const cloudName = this.configService.get<string>('CLOUDINARY_CLOUD_NAME');
-    const apiKey = this.configService.get<string>('CLOUDINARY_API_KEY');
-    const apiSecret = this.configService.get<string>('CLOUDINARY_API_SECRET');
+  private readonly DEFAULT_FOLDER: string;
+  constructor(private readonly cloudinaryConfig: CloudinaryConfig) {
+    const cloudName = this.cloudinaryConfig.getCloudName();
+    const apiKey = this.cloudinaryConfig.getApiKey();
+    const apiSecret = this.cloudinaryConfig.getApiSecret();
 
     if (!cloudName || !apiKey || !apiSecret) {
       this.logger.warn(
@@ -26,7 +26,7 @@ export class CloudinaryStorageService implements IStorageService {
       api_secret: apiSecret,
     });
 
-    this.DEFAULT_FOLDER = this.configService.get<string>('CLOUDINARY_UPLOAD_PRESET');
+    this.DEFAULT_FOLDER = this.cloudinaryConfig.getUploadPreset();
   }
 
   /**

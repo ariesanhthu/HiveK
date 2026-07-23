@@ -1,6 +1,6 @@
 import { KolProfileVerifyPlatformAccountCommand } from '@/application/commands';
+import { AuthConfig } from '@/configs';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import { CommandBus } from '@nestjs/cqrs';
 import { PassportStrategy } from '@nestjs/passport';
 import { Strategy } from 'passport-google-oauth20';
@@ -8,14 +8,13 @@ import { Strategy } from 'passport-google-oauth20';
 @Injectable()
 export class YoutubeStrategy extends PassportStrategy(Strategy, 'youtube') {
   constructor(
-    configService: ConfigService,
+    authConfig: AuthConfig,
     private readonly commandBus: CommandBus,
   ) {
     super({
-      clientID: configService.get<string>('YOUTUBE_CLIENT_ID') || 'dummy-id',
-      clientSecret: configService.get<string>('YOUTUBE_CLIENT_SECRET') || 'dummy-secret',
-      callbackURL: configService.get<string>('YOUTUBE_CALLBACK_URL')
-        || 'http://localhost/dummy-callback',
+      clientID: authConfig.getYoutubeClientId(),
+      clientSecret: authConfig.getYoutubeClientSecret(),
+      callbackURL: authConfig.getYoutubeCallbackUrl() || 'http://localhost/dummy-callback',
       scope: ['email', 'profile', 'https://www.googleapis.com/auth/youtube.readonly'],
       passReqToCallback: true,
     });

@@ -1,13 +1,13 @@
 import { AUTH_JWT_SERVICE, type IAuthJwtService, type IJwtPayload } from '@/application/interfaces';
+import { AuthConfig } from '@/configs';
 import { Inject, Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class AuthService {
   constructor(
     @Inject(AUTH_JWT_SERVICE) private readonly jwtService: IAuthJwtService,
-    private readonly configService: ConfigService,
+    private readonly authConfig: AuthConfig,
   ) {
     console.log('=== AuthService constructor executed ===');
   }
@@ -27,11 +27,8 @@ export class AuthService {
   async generateTokens(
     payload: IJwtPayload,
   ): Promise<{ accessToken: string; refreshToken: string; }> {
-    const accessExpiration = this.configService.get<number>('JWT_ACCESS_EXPIRATION_MINUTES', 30);
-    const refreshExpiration = this.configService.get<number>(
-      'JWT_REFRESH_EXPIRATION_MINUTES',
-      10080,
-    );
+    const accessExpiration = this.authConfig.getJwtAccessExpirationMinutes();
+    const refreshExpiration = this.authConfig.getJwtRefreshExpirationDays() * 24 * 60;
 
     const accessToken = this.jwtService.sign(payload, { expiresInMinutes: accessExpiration });
     const refreshToken = this.jwtService.sign(payload, { expiresInMinutes: refreshExpiration });

@@ -1,11 +1,11 @@
+import { SecurityConfig } from '@/configs';
 import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import { GqlExecutionContext } from '@nestjs/graphql';
 import { Observable } from 'rxjs';
 
 @Injectable()
 export class ApiKeyGuard implements CanActivate {
-  constructor(private readonly configService: ConfigService) {}
+  constructor(private readonly securityConfig: SecurityConfig) {}
 
   canActivate(
     context: ExecutionContext,
@@ -34,7 +34,7 @@ export class ApiKeyGuard implements CanActivate {
     }
 
     const apiKey = request?.headers['x-api-key'];
-    const validApiKey = this.configService.get<string>('API_KEY');
+    const validApiKey = this.securityConfig.getApiKey();
 
     if (!validApiKey) {
       return false;

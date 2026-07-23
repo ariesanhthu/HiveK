@@ -1,10 +1,18 @@
 import { LOGGER_SERVICE, MAILER_SERVICE } from '@/application/interfaces';
-import { AppConfig } from '@/configs/app.config';
+import {
+  AppConfig,
+  AuthConfig,
+  CloudinaryConfig,
+  MailerConfig,
+  MongoConfig,
+  RabbitMQConfig,
+  RedisConfig,
+  SecurityConfig,
+} from '@/configs';
 import { STORAGE_SERVICE } from '@/core/interfaces/storage';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/adapters/handlebars.adapter';
 import { Global, Module } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import * as path from 'path';
 import { CloudinaryStorageService } from '../cloudinary';
 import { WinstonLoggerService } from '../logger';
@@ -14,19 +22,19 @@ import { NestjsMailerService } from '../mailer';
 @Module({
   imports: [
     MailerModule.forRootAsync({
-      inject: [ConfigService],
-      useFactory: (configService: ConfigService) => ({
+      inject: [MailerConfig],
+      useFactory: (mailerConfig: MailerConfig) => ({
         transport: {
-          host: configService.get<string>('SMTP_HOST'),
-          port: configService.get<number>('SMTP_PORT', 587),
+          host: mailerConfig.getHost(),
+          port: mailerConfig.getPort(),
           auth: {
-            user: configService.get<string>('SMTP_USER'),
-            pass: configService.get<string>('SMTP_PASS'),
+            user: mailerConfig.getUser(),
+            pass: mailerConfig.getPass(),
           },
-          secure: configService.get<number>('SMTP_PORT') === 465,
+          secure: mailerConfig.isSecure(),
         },
         defaults: {
-          from: configService.get<string>('SMTP_FROM', '"HiveK" <noreply@hivek.com>'),
+          from: mailerConfig.getFrom(),
         },
         template: {
           dir: path.join(__dirname, '..', 'mailer', 'templates'),
@@ -40,6 +48,13 @@ import { NestjsMailerService } from '../mailer';
   ],
   providers: [
     AppConfig,
+    AuthConfig,
+    CloudinaryConfig,
+    MailerConfig,
+    MongoConfig,
+    RabbitMQConfig,
+    RedisConfig,
+    SecurityConfig,
     {
       provide: LOGGER_SERVICE,
       useClass: WinstonLoggerService,
@@ -53,6 +68,18 @@ import { NestjsMailerService } from '../mailer';
       useClass: NestjsMailerService,
     },
   ],
-  exports: [AppConfig, LOGGER_SERVICE, STORAGE_SERVICE, MAILER_SERVICE],
+  exports: [
+    AppConfig,
+    AuthConfig,
+    CloudinaryConfig,
+    MailerConfig,
+    MongoConfig,
+    RabbitMQConfig,
+    RedisConfig,
+    SecurityConfig,
+    LOGGER_SERVICE,
+    STORAGE_SERVICE,
+    MAILER_SERVICE,
+  ],
 })
 export class InfrastructureModule {}

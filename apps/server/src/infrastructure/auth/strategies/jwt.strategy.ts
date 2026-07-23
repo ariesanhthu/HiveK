@@ -1,7 +1,7 @@
 import { type ILoggerService, LOGGER_SERVICE, UserCheckValidCommand } from '@/application';
 import type { IJwtPayload } from '@/application/interfaces/auth-jwt.interface';
+import { AuthConfig } from '@/configs';
 import { Inject, Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import { CommandBus } from '@nestjs/cqrs';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
@@ -9,7 +9,7 @@ import { ExtractJwt, Strategy } from 'passport-jwt';
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(
-    configService: ConfigService,
+    authConfig: AuthConfig,
     private readonly commandBus: CommandBus,
     @Inject(LOGGER_SERVICE) private readonly logger: ILoggerService,
   ) {
@@ -24,7 +24,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
         },
       ]),
       ignoreExpiration: false,
-      secretOrKey: configService.get<string>('JWT_SECRET', 'secret'),
+      secretOrKey: authConfig.getJwtSecret(),
     });
     this.logger.setContext(JwtStrategy.name);
   }

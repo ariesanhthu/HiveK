@@ -1,18 +1,17 @@
 import { type ILoggerService, LOGGER_SERVICE } from '@/application';
+import { RabbitMQConfig } from '@/configs';
 import { errorMessage } from '@/shared/utils';
 import { BadRequestException, Inject, Injectable, Logger } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import { RmqOptions, Transport } from '@nestjs/microservices';
 import * as fs from 'fs';
 import * as path from 'path';
-import { getRmqUri } from '../rabbitmq/rmq.env';
 import { RabbitMQConsumerConfig, RabbitMQProducerConfig } from './types/rabbitmq.types';
 
 @Injectable()
 export class RabbitMQFactoryService {
   constructor(
     @Inject(LOGGER_SERVICE) private loggerService: ILoggerService,
-    private configService: ConfigService,
+    private rabbitmqConfig: RabbitMQConfig,
   ) {
     this.loggerService.setContext(RabbitMQFactoryService.name);
   }
@@ -100,7 +99,7 @@ export class RabbitMQFactoryService {
   /** Replace placeholder {{RABBITMQ_URI}} with actual URI from env */
   private replacePlaceholders<T>(obj: T): T {
     const json = JSON.stringify(obj);
-    const replaced = json.replace(/"\{\{RABBITMQ_URI\}\}"/g, `"${getRmqUri()}"`);
+    const replaced = json.replace(/"\{\{RABBITMQ_URI\}\}"/g, `"${this.getRmqUri()}"`);
     return JSON.parse(replaced) as T;
   }
 
@@ -204,21 +203,16 @@ export class RabbitMQFactoryService {
   }
 
   getRmqUri(): string {
-    const RMQ_USER = this.configService.get<string>('RMQ_USER');
-    const RMQ_PASSWORD = this.configService.get<string>('RMQ_PASSWORD');
-    const RMQ_HOST = this.configService.get<string>('RMQ_HOST');
-    const RMQ_PORT = this.configService.get<number>('RMQ_PORT');
-    const RMQ_VHOST = this.configService.get<string>('RMQ_VHOST');
+    const user = this.rabbitmqConfig.getUser();
+    const password = this.rabbitmqConfig.getPassword();
+    const host = this.rabbitmqConfig.getHost();
+    const port = this.rabbitmqConfig.getPort();
+    const vhost = this.rabbitmqConfig.getVhost().replace(/^\//, '');
 
-    if (!RMQ_USER || !RMQ_PASSWORD || !RMQ_HOST) {
-      throw new Error('Missing required RabbitMQ env vars (RMQ_USER, RMQ_PASSWORD, RMQ_HOST)');
-    }
+    const vhostPart = vhost ? `/${encodeURIComponent(vhost)}` : '';
 
-    const portPart = RMQ_PORT ? `:${RMQ_PORT}` : '';
-    const vhostPart = RMQ_VHOST ? `/${encodeURIComponent(RMQ_VHOST)}` : '';
-
-    return `amqps://${encodeURIComponent(RMQ_USER)}:${
-      encodeURIComponent(RMQ_PASSWORD)
-    }@${RMQ_HOST}${portPart}${vhostPart}`;
+    return `amqp://${encodeURIComponent(user)}:${
+      encodeURIComponent(password)
+    }@${host}:${port}${vhostPart}`;
   }
 }
