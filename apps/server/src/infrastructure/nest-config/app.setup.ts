@@ -1,20 +1,26 @@
 import { INestApplication, Logger } from '@nestjs/common';
+import { NestFastifyApplication } from '@nestjs/platform-fastify';
+import fastifyHelmet from '@fastify/helmet';
 import { ZodValidationPipe } from 'nestjs-zod';
-import helmet from 'helmet';
 import { LoggingInterceptor, TransformInterceptor } from '@/presentation/middleware/interceptors';
 import { HttpExceptionFilter } from '@/presentation/middleware/filters';
 import { RabbitMQFactoryService } from '@infrastructure/rabbitmq';
 import { errorMessage } from '@/shared/utils';
+import { AppConfig } from '@/app.config';
 
-export function setupApplication(app: INestApplication): void {
-  // Apply Security Headers
-  app.use((req, res, next) => {
-    if (!req.path?.startsWith('/hivek/graphql')) {
-      return helmet()(req, res, next);
-    }
-    return next();
+export async function setupApplication(app: NestFastifyApplication, appConfig: AppConfig): Promise<void> {
+  // Apply Security Headers with Fastify Helmet (custom CSP for GraphQL Playground/Sandbox)
+  await app.register(fastifyHelmet, {
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: [`'self'`],
+        styleSrc: [`'self'`, `'unsafe-inline'`, 'cdn.jsdelivr.net', 'fonts.googleapis.com'],
+        fontSrc: [`'self'`, 'fonts.gstatic.com'],
+        imgSrc: [`'self'`, 'data:', 'cdn.jsdelivr.net', 'apollo-server-landing-page.cdn.apollographql.com'],
+        scriptSrc: [`'self'`, `'unsafe-inline'`, 'cdn.jsdelivr.net'],
+      },
+    },
   });
-
 
   // Apply CORS
   app.enableCors({
@@ -24,7 +30,7 @@ export function setupApplication(app: INestApplication): void {
   });
 
   // Global Prefix for all routes
-  app.setGlobalPrefix('hivek');
+  app.setGlobalPrefix(appConfig.getGlobalPrefix());
 
   // // Apply Global Pipes
   // app.useGlobalPipes(new ZodValidationPipe());
@@ -38,6 +44,7 @@ export function setupApplication(app: INestApplication): void {
   // // Apply Global Filters (single catch-all filter handles all exceptions)
   // app.useGlobalFilters(new HttpExceptionFilter());
 }
+
 
 /**
  * Sleep utility for retry delays

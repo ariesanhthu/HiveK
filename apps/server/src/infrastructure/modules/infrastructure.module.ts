@@ -8,6 +8,7 @@ import { STORAGE_SERVICE } from '@/core/interfaces/storage';
 import { CloudinaryStorageService } from '../cloudinary';
 import { NestjsMailerService } from '../mailer';
 import { WinstonLoggerService } from '../logger';
+import { AppConfig } from '@/app.config';
 
 @Global()
 @Module({
@@ -39,6 +40,7 @@ import { WinstonLoggerService } from '../logger';
     }),
   ],
   providers: [
+    AppConfig,
     {
       provide: LOGGER_SERVICE,
       useClass: WinstonLoggerService
@@ -52,6 +54,7 @@ import { WinstonLoggerService } from '../logger';
       useClass: NestjsMailerService
     }
   ],
-  exports: [LOGGER_SERVICE, STORAGE_SERVICE, MAILER_SERVICE],
+  exports: [AppConfig, LOGGER_SERVICE, STORAGE_SERVICE, MAILER_SERVICE],
 })
 export class InfrastructureModule {}
+

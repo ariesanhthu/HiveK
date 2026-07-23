@@ -1,24 +1,32 @@
 import { NestFactory } from '@nestjs/core';
+import { FastifyAdapter, NestFastifyApplication } from '@nestjs/platform-fastify';
 import { AppModule } from './infrastructure/modules/app.module';
 import { setupApplication, setupSwagger } from '@infrastructure/nest-config';
 import { Logger } from '@nestjs/common';
-import { env, envInt } from '@/shared/utils';
+import { AppConfig } from './app.config';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const appConfig = new AppConfig();
 
-  setupApplication(app);
-  setupSwagger(app);
+  const app = await NestFactory.create<NestFastifyApplication>(
+    AppModule,
+    new FastifyAdapter(),
+  );
 
-  // Start HTTP server first (prioritize HTTP availability)
-  const host = env('HOST', '[IP_ADDRESS]');
-  const port = envInt('PORT', 3000);
+  await setupApplication(app, appConfig);
+  setupSwagger(app, appConfig);
+
+  const host = appConfig.getHost();
+  const port = appConfig.getPort();
+  const globalPrefix = appConfig.getGlobalPrefix();
+
   await app.listen(port, host);
 
   Logger.log(`==========================================================`);
-  Logger.log(`🚀 Application is running on: http://${host}:${port}/hivek/api`);
-  Logger.log(`📖 Swagger admin docs available at: http://${host}:${port}/hivek/admin/docs`);
-  Logger.log(`📖 Swagger client docs available at: http://${host}:${port}/hivek/client/docs`);
+  Logger.log(`🚀 Application is running on: http://${host}:${port}/${globalPrefix}/api`);
+  Logger.log(`📖 Swagger admin docs available at: http://${host}:${port}/${globalPrefix}/admin/docs`);
+  Logger.log(`📖 Swagger client docs available at: http://${host}:${port}/${globalPrefix}/client/docs`);
   Logger.log(`==========================================================`);
 }
 bootstrap();
+
