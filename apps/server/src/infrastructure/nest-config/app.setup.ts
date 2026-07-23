@@ -1,4 +1,4 @@
-import { AppConfig } from '@/configs/app.config';
+import { AppConfig } from '@/configs';
 import { HttpExceptionFilter } from '@/presentation/middleware/filters';
 import { LoggingInterceptor, TransformInterceptor } from '@/presentation/middleware/interceptors';
 import { errorMessage } from '@/shared/utils';
@@ -39,18 +39,6 @@ export async function setupApplication(
 
   // Global Prefix for all routes
   app.setGlobalPrefix(appConfig.getGlobalPrefix());
-
-  // // Apply Global Pipes
-  // app.useGlobalPipes(new ZodValidationPipe());
-
-  // // Apply Global Interceptors
-  // app.useGlobalInterceptors(
-  //   new LoggingInterceptor(),
-  //   new TransformInterceptor(),
-  // );
-
-  // // Apply Global Filters (single catch-all filter handles all exceptions)
-  // app.useGlobalFilters(new HttpExceptionFilter());
 }
 
 /**
