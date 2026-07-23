@@ -1,13 +1,13 @@
 # HiveK Project Guidelines & Coding Standards
 
 Hướng dẫn chuẩn hóa comment, cấu trúc mã nguồn và quản lý cấu hình cho dự án **HiveK**.
-Dự án áp dụng quy chuẩn phân đoạn comment theo chuẩn của extension [comment-divider](https://github.com/stackbreak/comment-divider).
+Dự án áp dụng quy chuẩn phân đoạn comment theo chuẩn của extension [comment-divider](https://github.com/stackbreak/comment-divider) với độ dài chuẩn **80 kí tự** (`"comment-divider.length": 80`).
 
 ---
 
 ## 1. Quy chuẩn Comment & Phân đoạn Mã nguồn (Comment Divider Standards)
 
-Để mã nguồn luôn sạch sẽ, dễ đọc và nhất quán giữa các thành viên, dự án áp dụng các cấp độ comment theo chuẩn **comment-divider**:
+Tất cả các đường phân cách comment trong dự án đều tuân thủ **độ dài chuẩn 80 ký tự** (`length: 80`):
 
 ### A. Main Header (Phân đoạn chính / Block Header lớn)
 
@@ -49,7 +49,7 @@ Sử dụng bên trong một Main Header để chia nhỏ các nhóm chức năn
 
 ### C. Solid Line (Dòng phân cách đơn)
 
-Sử dụng để tạo đường kẻ mỏng phân tách giữa các hàm hoặc các đoạn logic ngắn.
+Sử dụng để tạo đường kẻ mỏng phân tách giữa các hàm hoặc các đoạn logic ngắn (độ dài 80 ký tự).
 
 ```typescript
 // ----------------------------------------------------------------------------
