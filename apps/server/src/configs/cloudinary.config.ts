@@ -3,6 +3,13 @@ import { Injectable } from '@nestjs/common';
 import { registerAs } from '@nestjs/config';
 import { IsOptional, IsString } from 'class-validator';
 
+/* -------------------------------------------------------------------------- */
+/*                                1. DTO SCHEMA                               */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * DTO containing validation rules for Cloudinary storage credentials.
+ */
 export class CloudinaryConfigDto {
   @IsString()
   @IsOptional()
@@ -21,6 +28,13 @@ export class CloudinaryConfigDto {
   uploadPreset?: string;
 }
 
+/* -------------------------------------------------------------------------- */
+/*                               2. CONFIG SERVICE                            */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * Cloudinary Storage file upload configuration service.
+ */
 @Injectable()
 export class CloudinaryConfig extends BaseConfigService<CloudinaryConfigDto> {
   private static readonly DEFAULT_PRESET = 'hivek_uploads';
@@ -34,21 +48,44 @@ export class CloudinaryConfig extends BaseConfigService<CloudinaryConfigDto> {
     });
   }
 
+  /**
+   * Get Cloudinary Cloud Name.
+   * @returns Cloud name string or undefined
+   */
   getCloudName(): string | undefined {
     return this.config.cloudName;
   }
 
+  /**
+   * Get Cloudinary API Key.
+   * @returns API key string or undefined
+   */
   getApiKey(): string | undefined {
     return this.config.apiKey;
   }
 
+  /**
+   * Get Cloudinary API Secret.
+   * @returns API secret string or undefined
+   */
   getApiSecret(): string | undefined {
     return this.config.apiSecret;
   }
 
+  /**
+   * Get Cloudinary Upload Preset string.
+   * @returns Upload preset string
+   */
   getUploadPreset(): string {
     return this.config.uploadPreset || CloudinaryConfig.DEFAULT_PRESET;
   }
 }
 
+/* -------------------------------------------------------------------------- */
+/*                          3. NESTJS CONFIG FACTORY                          */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * Register 'cloudinary' namespace with NestJS ConfigModule.
+ */
 export const cloudinaryConfig = registerAs('cloudinary', () => new CloudinaryConfig());

@@ -3,11 +3,15 @@
 Hướng dẫn chuẩn hóa comment, cấu trúc mã nguồn và quản lý cấu hình cho dự án **HiveK**.
 Dự án áp dụng quy chuẩn phân đoạn comment theo chuẩn của extension [comment-divider](https://github.com/stackbreak/comment-divider) với độ dài chuẩn **80 kí tự** (`"comment-divider.length": 80`).
 
+> [!IMPORTANT]
+> **QUY TẮC NGÔN NGỮ COMMENT**:
+> Tất cả các comment trong mã nguồn (JSDoc, Inline comments, Section Dividers) **BẮT BUỘC PHẢI DÙNG TIẾNG ANH** (English only). Không sử dụng tiếng Việt trong bất kỳ comment code nào.
+
 ---
 
 ## 1. Quy chuẩn Comment & Phân đoạn Mã nguồn (Comment Divider Standards)
 
-Tất cả các đường phân cách comment trong dự án đều tuân thủ **độ dài chuẩn 80 ký tự** (`length: 80`):
+Tất cả các đường phân cách comment trong dự án đều tuân thủ **độ dài chuẩn 80 ký tự** (`length: 80`) và **viết bằng Tiếng Anh**:
 
 ### A. Main Header (Phân đoạn chính / Block Header lớn)
 
@@ -57,18 +61,18 @@ Sử dụng để tạo đường kẻ mỏng phân tách giữa các hàm hoặ
 
 ### D. JSDoc Comments (Mô tả Class, Method, DTO, Interface)
 
-Tất cả các Class, Service, DTO, Interface hoặc Helper Method quan trọng đều **phải** được mô tả bằng JSDoc để hỗ trợ gợi ý code (IntelliSense) và tạo tự động API docs.
+Tất cả các Class, Service, DTO, Interface hoặc Helper Method quan trọng đều **phải** được mô tả bằng JSDoc bằng **Tiếng Anh**.
 
 ```typescript
 /**
- * Service quản lý các thông số cấu hình Authentication & OAuth.
- * Tự động validate các biến môi trường thông qua AuthConfigDto.
+ * Authentication and OAuth configuration service.
+ * Automatically validates environment variables via AuthConfigDto.
  */
 @Injectable()
 export class AuthConfig extends BaseConfigService<AuthConfigDto> {
   /**
-   * Lấy JWT Access Token Expiration Time (tính bằng phút).
-   * @returns Số phút hết hạn của access token
+   * Get JWT Access Token expiration time in minutes.
+   * @returns Expiration time in minutes
    */
   getJwtAccessExpirationMinutes(): number {
     return this.config.jwtAccessExpirationMinutes;
