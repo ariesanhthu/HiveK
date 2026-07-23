@@ -24,7 +24,8 @@ export class RabbitMQConfigDto {
   host?: string;
 
   @IsInt()
-  port: number;
+  @IsOptional()
+  port?: number;
 
   @IsString()
   @IsOptional()
@@ -42,52 +43,52 @@ export class RabbitMQConfigDto {
 export class RabbitMQConfig extends BaseConfigService<RabbitMQConfigDto> {
   constructor() {
     super(RabbitMQConfigDto, {
-      user: process.env.RMQ_USER || 'guest',
-      password: process.env.RMQ_PASSWORD || 'guest',
-      host: process.env.RMQ_HOST || 'localhost',
-      port: parseInt(process.env.RMQ_PORT || '5672', 10),
-      vhost: process.env.RMQ_VHOST || '/',
+      user: process.env.RMQ_USER,
+      password: process.env.RMQ_PASSWORD,
+      host: process.env.RMQ_HOST,
+      port: process.env.RMQ_PORT ? parseInt(process.env.RMQ_PORT, 10) : undefined,
+      vhost: process.env.RMQ_VHOST,
     });
   }
 
   /**
    * Get RabbitMQ account username.
-   * @returns User string (default: 'guest')
+   * @returns User string or undefined
    */
-  getUser(): string {
-    return this.config.user || 'guest';
+  getUser(): string | undefined {
+    return this.config.user;
   }
 
   /**
    * Get RabbitMQ account password.
-   * @returns Password string (default: 'guest')
+   * @returns Password string or undefined
    */
-  getPassword(): string {
-    return this.config.password || 'guest';
+  getPassword(): string | undefined {
+    return this.config.password;
   }
 
   /**
    * Get RabbitMQ broker host.
-   * @returns Host string (default: 'localhost')
+   * @returns Host string or undefined
    */
-  getHost(): string {
-    return this.config.host || 'localhost';
+  getHost(): string | undefined {
+    return this.config.host;
   }
 
   /**
    * Get RabbitMQ AMQP port.
-   * @returns Port number (default: 5672)
+   * @returns Port number or undefined
    */
-  getPort(): number {
+  getPort(): number | undefined {
     return this.config.port;
   }
 
   /**
    * Get RabbitMQ Virtual Host (vhost).
-   * @returns Vhost string (default: '/')
+   * @returns Vhost string or undefined
    */
-  getVhost(): string {
-    return this.config.vhost || '/';
+  getVhost(): string | undefined {
+    return this.config.vhost;
   }
 }
 

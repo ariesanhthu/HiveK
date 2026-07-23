@@ -16,7 +16,8 @@ export class MailerConfigDto {
   host?: string;
 
   @IsInt()
-  port: number;
+  @IsOptional()
+  port?: number;
 
   @IsString()
   @IsOptional()
@@ -40,15 +41,13 @@ export class MailerConfigDto {
  */
 @Injectable()
 export class MailerConfig extends BaseConfigService<MailerConfigDto> {
-  private static readonly DEFAULT_FROM = '"HiveK" <noreply@hivek.com>';
-
   constructor() {
     super(MailerConfigDto, {
-      host: process.env.SMTP_HOST || '',
-      port: parseInt(process.env.SMTP_PORT || '587', 10),
-      user: process.env.SMTP_USER || '',
-      pass: process.env.SMTP_PASS || '',
-      from: process.env.SMTP_FROM || MailerConfig.DEFAULT_FROM,
+      host: process.env.SMTP_HOST,
+      port: process.env.SMTP_PORT ? parseInt(process.env.SMTP_PORT, 10) : undefined,
+      user: process.env.SMTP_USER,
+      pass: process.env.SMTP_PASS,
+      from: process.env.SMTP_FROM,
     });
   }
 
@@ -62,9 +61,9 @@ export class MailerConfig extends BaseConfigService<MailerConfigDto> {
 
   /**
    * Get SMTP connection port.
-   * @returns Port number (default: 587)
+   * @returns Port number or undefined
    */
-  getPort(): number {
+  getPort(): number | undefined {
     return this.config.port;
   }
 
@@ -86,10 +85,10 @@ export class MailerConfig extends BaseConfigService<MailerConfigDto> {
 
   /**
    * Get default 'From' email address header.
-   * @returns Standard From email string
+   * @returns From email string or undefined
    */
-  getFrom(): string {
-    return this.config.from || MailerConfig.DEFAULT_FROM;
+  getFrom(): string | undefined {
+    return this.config.from;
   }
 
   /**

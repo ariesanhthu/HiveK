@@ -34,15 +34,17 @@ export class RedisConfigDto {
 export class RedisConfig extends BaseConfigService<RedisConfigDto> {
   constructor() {
     super(RedisConfigDto, {
-      host: process.env.REDIS_HOST || 'localhost',
-      port: parseInt(process.env.REDIS_PORT || '6379', 10),
+      host: process.env.REDIS_HOST as string,
+      port: process.env.REDIS_PORT
+        ? parseInt(process.env.REDIS_PORT, 10)
+        : (undefined as unknown as number),
       password: process.env.REDIS_PASSWORD || undefined,
     });
   }
 
   /**
    * Get Redis server host.
-   * @returns Host string (default: 'localhost')
+   * @returns Host string
    */
   getHost(): string {
     return this.config.host;
@@ -50,7 +52,7 @@ export class RedisConfig extends BaseConfigService<RedisConfigDto> {
 
   /**
    * Get Redis server listening port.
-   * @returns Port number (default: 6379)
+   * @returns Port number
    */
   getPort(): number {
     return this.config.port;

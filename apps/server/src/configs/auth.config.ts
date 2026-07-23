@@ -81,27 +81,25 @@ export class AuthConfigDto {
 export class AuthConfig extends BaseConfigService<AuthConfigDto> {
   constructor() {
     super(AuthConfigDto, {
-      jwtSecret: process.env.JWT_SECRET || 'secret',
-      jwtAccessExpirationMinutes: parseInt(
-        process.env.JWT_ACCESS_EXPIRATION_MINUTES || '30',
-        10,
-      ),
-      jwtRefreshExpirationDays: parseInt(
-        process.env.JWT_REFRESH_EXPIRATION_DAYS || '7',
-        10,
-      ),
-      facebookAppId: process.env.FACEBOOK_APP_ID || 'dummy-id',
-      facebookAppSecret: process.env.FACEBOOK_APP_SECRET || 'dummy-secret',
-      facebookCallbackUrl: process.env.FACEBOOK_CALLBACK_URL || '',
-      googleClientId: process.env.GOOGLE_CLIENT_ID || '',
-      googleClientSecret: process.env.GOOGLE_CLIENT_SECRET || '',
-      googleCallbackUrl: process.env.GOOGLE_CALLBACK_URL || '',
-      twitterConsumerKey: process.env.TWITTER_CONSUMER_KEY || 'dummy-key',
-      twitterConsumerSecret: process.env.TWITTER_CONSUMER_SECRET || 'dummy-secret',
-      twitterCallbackUrl: process.env.TWITTER_CALLBACK_URL || '',
-      youtubeClientId: process.env.YOUTUBE_CLIENT_ID || 'dummy-id',
-      youtubeClientSecret: process.env.YOUTUBE_CLIENT_SECRET || 'dummy-secret',
-      youtubeCallbackUrl: process.env.YOUTUBE_CALLBACK_URL || '',
+      jwtSecret: process.env.JWT_SECRET as string,
+      jwtAccessExpirationMinutes: process.env.JWT_ACCESS_EXPIRATION_MINUTES
+        ? parseInt(process.env.JWT_ACCESS_EXPIRATION_MINUTES, 10)
+        : (undefined as unknown as number),
+      jwtRefreshExpirationDays: process.env.JWT_REFRESH_EXPIRATION_DAYS
+        ? parseInt(process.env.JWT_REFRESH_EXPIRATION_DAYS, 10)
+        : (undefined as unknown as number),
+      facebookAppId: process.env.FACEBOOK_APP_ID,
+      facebookAppSecret: process.env.FACEBOOK_APP_SECRET,
+      facebookCallbackUrl: process.env.FACEBOOK_CALLBACK_URL,
+      googleClientId: process.env.GOOGLE_CLIENT_ID,
+      googleClientSecret: process.env.GOOGLE_CLIENT_SECRET,
+      googleCallbackUrl: process.env.GOOGLE_CALLBACK_URL,
+      twitterConsumerKey: process.env.TWITTER_CONSUMER_KEY,
+      twitterConsumerSecret: process.env.TWITTER_CONSUMER_SECRET,
+      twitterCallbackUrl: process.env.TWITTER_CALLBACK_URL,
+      youtubeClientId: process.env.YOUTUBE_CLIENT_ID,
+      youtubeClientSecret: process.env.YOUTUBE_CLIENT_SECRET,
+      youtubeCallbackUrl: process.env.YOUTUBE_CALLBACK_URL,
     });
   }
 
@@ -135,104 +133,104 @@ export class AuthConfig extends BaseConfigService<AuthConfigDto> {
 
   /**
    * Get Facebook App ID.
-   * @returns Facebook App ID string
+   * @returns Facebook App ID string or undefined
    */
-  getFacebookAppId(): string {
-    return this.config.facebookAppId || 'dummy-id';
+  getFacebookAppId(): string | undefined {
+    return this.config.facebookAppId;
   }
 
   /**
    * Get Facebook App Secret.
-   * @returns Facebook App Secret string
+   * @returns Facebook App Secret string or undefined
    */
-  getFacebookAppSecret(): string {
-    return this.config.facebookAppSecret || 'dummy-secret';
+  getFacebookAppSecret(): string | undefined {
+    return this.config.facebookAppSecret;
   }
 
   /**
    * Get Facebook Callback URL.
-   * @returns Facebook Callback URL string
+   * @returns Facebook Callback URL string or undefined
    */
-  getFacebookCallbackUrl(): string {
-    return this.config.facebookCallbackUrl || '';
+  getFacebookCallbackUrl(): string | undefined {
+    return this.config.facebookCallbackUrl;
   }
 
   /* -------------------------- Google OAuth Config ------------------------- */
 
   /**
    * Get Google Client ID.
-   * @returns Google Client ID string
+   * @returns Google Client ID string or undefined
    */
-  getGoogleClientId(): string {
-    return this.config.googleClientId || '';
+  getGoogleClientId(): string | undefined {
+    return this.config.googleClientId;
   }
 
   /**
    * Get Google Client Secret.
-   * @returns Google Client Secret string
+   * @returns Google Client Secret string or undefined
    */
-  getGoogleClientSecret(): string {
-    return this.config.googleClientSecret || '';
+  getGoogleClientSecret(): string | undefined {
+    return this.config.googleClientSecret;
   }
 
   /**
    * Get Google Callback URL.
-   * @returns Google Callback URL string
+   * @returns Google Callback URL string or undefined
    */
-  getGoogleCallbackUrl(): string {
-    return this.config.googleCallbackUrl || '';
+  getGoogleCallbackUrl(): string | undefined {
+    return this.config.googleCallbackUrl;
   }
 
   /* ------------------------- Twitter OAuth Config ------------------------- */
 
   /**
    * Get Twitter Consumer Key.
-   * @returns Twitter Consumer Key string
+   * @returns Twitter Consumer Key string or undefined
    */
-  getTwitterConsumerKey(): string {
-    return this.config.twitterConsumerKey || 'dummy-key';
+  getTwitterConsumerKey(): string | undefined {
+    return this.config.twitterConsumerKey;
   }
 
   /**
    * Get Twitter Consumer Secret.
-   * @returns Twitter Consumer Secret string
+   * @returns Twitter Consumer Secret string or undefined
    */
-  getTwitterConsumerSecret(): string {
-    return this.config.twitterConsumerSecret || 'dummy-secret';
+  getTwitterConsumerSecret(): string | undefined {
+    return this.config.twitterConsumerSecret;
   }
 
   /**
    * Get Twitter Callback URL.
-   * @returns Twitter Callback URL string
+   * @returns Twitter Callback URL string or undefined
    */
-  getTwitterCallbackUrl(): string {
-    return this.config.twitterCallbackUrl || '';
+  getTwitterCallbackUrl(): string | undefined {
+    return this.config.twitterCallbackUrl;
   }
 
   /* ------------------------- YouTube OAuth Config ------------------------- */
 
   /**
    * Get YouTube Client ID.
-   * @returns YouTube Client ID string
+   * @returns YouTube Client ID string or undefined
    */
-  getYoutubeClientId(): string {
-    return this.config.youtubeClientId || 'dummy-id';
+  getYoutubeClientId(): string | undefined {
+    return this.config.youtubeClientId;
   }
 
   /**
    * Get YouTube Client Secret.
-   * @returns YouTube Client Secret string
+   * @returns YouTube Client Secret string or undefined
    */
-  getYoutubeClientSecret(): string {
-    return this.config.youtubeClientSecret || 'dummy-secret';
+  getYoutubeClientSecret(): string | undefined {
+    return this.config.youtubeClientSecret;
   }
 
   /**
    * Get YouTube Callback URL.
-   * @returns YouTube Callback URL string
+   * @returns YouTube Callback URL string or undefined
    */
-  getYoutubeCallbackUrl(): string {
-    return this.config.youtubeCallbackUrl || '';
+  getYoutubeCallbackUrl(): string | undefined {
+    return this.config.youtubeCallbackUrl;
   }
 }
 

@@ -41,9 +41,9 @@ export class AppConfig extends BaseConfigService<AppConfigDto> {
 
   constructor() {
     super(AppConfigDto, {
-      host: process.env.HOST || '0.0.0.0',
-      port: parseInt(process.env.PORT || '3000', 10),
-      env: process.env.NODE_ENV || 'development',
+      host: process.env.HOST as string,
+      port: process.env.PORT ? parseInt(process.env.PORT, 10) : (undefined as unknown as number),
+      env: process.env.NODE_ENV as string,
     });
   }
 

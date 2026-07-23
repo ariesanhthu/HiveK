@@ -31,8 +31,8 @@ export class SecurityConfigDto {
 export class SecurityConfig extends BaseConfigService<SecurityConfigDto> {
   constructor() {
     super(SecurityConfigDto, {
-      apiKey: process.env.API_KEY || '',
-      recaptchaSecretKey: process.env.RECAPTCHA_SECRET_KEY || '',
+      apiKey: process.env.API_KEY,
+      recaptchaSecretKey: process.env.RECAPTCHA_SECRET_KEY,
     });
   }
 

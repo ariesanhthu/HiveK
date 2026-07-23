@@ -37,14 +37,12 @@ export class CloudinaryConfigDto {
  */
 @Injectable()
 export class CloudinaryConfig extends BaseConfigService<CloudinaryConfigDto> {
-  private static readonly DEFAULT_PRESET = 'hivek_uploads';
-
   constructor() {
     super(CloudinaryConfigDto, {
-      cloudName: process.env.CLOUDINARY_CLOUD_NAME || '',
-      apiKey: process.env.CLOUDINARY_API_KEY || '',
-      apiSecret: process.env.CLOUDINARY_API_SECRET || '',
-      uploadPreset: process.env.CLOUDINARY_UPLOAD_PRESET || CloudinaryConfig.DEFAULT_PRESET,
+      cloudName: process.env.CLOUDINARY_CLOUD_NAME,
+      apiKey: process.env.CLOUDINARY_API_KEY,
+      apiSecret: process.env.CLOUDINARY_API_SECRET,
+      uploadPreset: process.env.CLOUDINARY_UPLOAD_PRESET,
     });
   }
 
@@ -74,10 +72,10 @@ export class CloudinaryConfig extends BaseConfigService<CloudinaryConfigDto> {
 
   /**
    * Get Cloudinary Upload Preset string.
-   * @returns Upload preset string
+   * @returns Upload preset string or undefined
    */
-  getUploadPreset(): string {
-    return this.config.uploadPreset || CloudinaryConfig.DEFAULT_PRESET;
+  getUploadPreset(): string | undefined {
+    return this.config.uploadPreset;
   }
 }
 
