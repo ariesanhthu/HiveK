@@ -3675,7 +3675,7 @@
     }
   }
   .\[\&_\.recharts-dot\[stroke\=\#fff\]\]\:stroke-transparent {
-    & .recharts-dot[stroke='#fff'] {
+    & .recharts-dot[stroke="#fff"] {
       stroke: transparent;
     }
   }

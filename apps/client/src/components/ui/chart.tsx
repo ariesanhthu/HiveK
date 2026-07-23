@@ -62,7 +62,7 @@ export function ChartContainer({
         data-slot='chart'
         data-chart={chartId}
         className={cn(
-          '[&_.recharts-cartesian-axis-tick_text]:fill-muted-foreground [&_.recharts-cartesian-grid_line[stroke=\'#ccc\']]:stroke-primary-soft [&_.recharts-tooltip-cursor]:stroke-primary-soft [&_.recharts-curve.recharts-tooltip-cursor]:stroke-primary-soft [&_.recharts-dot[stroke=\'#fff\']]:stroke-transparent [&_.recharts-layer]:outline-none',
+          '[&_.recharts-cartesian-axis-tick_text]:fill-muted-foreground [&_.recharts-cartesian-grid_line[stroke="#ccc"]]:stroke-primary-soft [&_.recharts-tooltip-cursor]:stroke-primary-soft [&_.recharts-curve.recharts-tooltip-cursor]:stroke-primary-soft [&_.recharts-dot[stroke="#fff"]]:stroke-transparent [&_.recharts-layer]:outline-none',
           className,
         )}
         {...props}

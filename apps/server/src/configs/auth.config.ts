@@ -90,10 +90,16 @@ export class AuthConfigDto {
 export class AuthConfig extends BaseConfigService<AuthConfigDto> {
   constructor() {
     super(AuthConfigDto, {
-      jwtSecret: process.env.JWT_SECRET,
-      jwtAccessExpirationMinutes: process.env.JWT_ACCESS_EXPIRATION_MINUTES,
-      jwtRefreshExpirationDays: process.env.JWT_REFRESH_EXPIRATION_DAYS,
-      jwtRefreshExpirationMinutes: process.env.JWT_REFRESH_EXPIRATION_MINUTES,
+      jwtSecret: process.env.JWT_SECRET as string,
+      jwtAccessExpirationMinutes: process.env.JWT_ACCESS_EXPIRATION_MINUTES
+        ? parseInt(process.env.JWT_ACCESS_EXPIRATION_MINUTES, 10)
+        : (undefined as unknown as number),
+      jwtRefreshExpirationDays: process.env.JWT_REFRESH_EXPIRATION_DAYS
+        ? parseInt(process.env.JWT_REFRESH_EXPIRATION_DAYS, 10)
+        : undefined,
+      jwtRefreshExpirationMinutes: process.env.JWT_REFRESH_EXPIRATION_MINUTES
+        ? parseInt(process.env.JWT_REFRESH_EXPIRATION_MINUTES, 10)
+        : undefined,
       facebookAppId: process.env.FACEBOOK_APP_ID,
       facebookAppSecret: process.env.FACEBOOK_APP_SECRET,
       facebookCallbackUrl: process.env.FACEBOOK_CALLBACK_URL,
