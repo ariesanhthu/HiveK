@@ -1,16 +1,27 @@
 # HiveK Project Guidelines & Coding Standards
 
 Hướng dẫn chuẩn hóa comment, cấu trúc mã nguồn và quản lý cấu hình cho dự án **HiveK**.
+Dự án áp dụng quy chuẩn phân đoạn comment theo chuẩn của extension [comment-divider](https://github.com/stackbreak/comment-divider).
 
 ---
 
-## 1. Quy chuẩn Comment & Phân đoạn Mã nguồn
+## 1. Quy chuẩn Comment & Phân đoạn Mã nguồn (Comment Divider Standards)
 
-Để mã nguồn luôn sạch sẻ, dễ đọc và nhất quán giữa các thành viên, dự án áp dụng 3 cấp độ comment sau:
+Để mã nguồn luôn sạch sẽ, dễ đọc và nhất quán giữa các thành viên, dự án áp dụng các cấp độ comment theo chuẩn **comment-divider**:
 
-### A. Main Header (Phân đoạn chính / Khu vực lớn)
+### A. Main Header (Phân đoạn chính / Block Header lớn)
 
-Sử dụng cho các khối chức năng lớn nhất trong file (ví dụ: các phân đoạn chính của `@Module`, chia khối các phương thức trong Class lớn, hoặc nhóm API trong Controller).
+Sử dụng cho các khối chức năng lớn nhất trong file (ví dụ: các phân đoạn chính của `@Module`, chia khối các phương thức trong Class lớn, hoặc nhóm API chính).
+
+- **Kiểu C/C++ style (`/* ... */`)**:
+
+```typescript
+/* -------------------------------------------------------------------------- */
+/*                  1. CORE & FRAMEWORK CONFIGURATION MODULES                 */
+/* -------------------------------------------------------------------------- */
+```
+
+- **Kiểu Line comment style (`// ...`)**:
 
 ```typescript
 // ============================================================================
@@ -18,9 +29,17 @@ Sử dụng cho các khối chức năng lớn nhất trong file (ví dụ: các
 // ============================================================================
 ```
 
-### B. Sub Header (Phân đoạn nhỏ / Nhóm con)
+### B. Sub Header (Phân đoạn con / Subheader)
 
-Sử dụng bên trong một Main Header để chia nhỏ các nhóm chức năng phụ hoặc chi tiết hơn.
+Sử dụng bên trong một Main Header để chia nhỏ các nhóm chức năng phụ hoặc các thành phần chi tiết hơn.
+
+- **Kiểu C/C++ style (`/* ... */`)**:
+
+```typescript
+/* ------------------------ Global Pipes & Filters ------------------------ */
+```
+
+- **Kiểu Line comment style (`// ...`)**:
 
 ```typescript
 // ----------------------------------------------------------------------------
@@ -28,7 +47,15 @@ Sử dụng bên trong một Main Header để chia nhỏ các nhóm chức năn
 // ----------------------------------------------------------------------------
 ```
 
-### C. JSDoc Comments (Mô tả Class, Method, DTO, Interface)
+### C. Solid Line (Dòng phân cách đơn)
+
+Sử dụng để tạo đường kẻ mỏng phân tách giữa các hàm hoặc các đoạn logic ngắn.
+
+```typescript
+// ----------------------------------------------------------------------------
+```
+
+### D. JSDoc Comments (Mô tả Class, Method, DTO, Interface)
 
 Tất cả các Class, Service, DTO, Interface hoặc Helper Method quan trọng đều **phải** được mô tả bằng JSDoc để hỗ trợ gợi ý code (IntelliSense) và tạo tự động API docs.
 
