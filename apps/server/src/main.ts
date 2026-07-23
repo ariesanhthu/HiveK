@@ -1,9 +1,9 @@
 import { AppConfig } from '@/configs';
+import { AppModule } from '@infrastructure/modules/app.module';
 import { setupApplication, setupSwagger } from '@infrastructure/nest-config';
 import { Logger } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { FastifyAdapter, NestFastifyApplication } from '@nestjs/platform-fastify';
-import { AppModule } from './infrastructure/modules/app.module';
 
 async function bootstrap() {
   const appConfig = new AppConfig();
