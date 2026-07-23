@@ -61,7 +61,7 @@ export class PublicReviewClientController {
 
   // --- Enterprise Moderation Endpoints ---
 
-  @Get()
+  @Get('moderation')
   @ApiBearerAuth()
   @ApiSecurity('x-api-key')
   @UseGuards(JwtAuthGuard, RolesGuard)
@@ -72,19 +72,4 @@ export class PublicReviewClientController {
   ): Promise<PaginatedResponseDto<ReviewDto>> {
     return this.queryBus.execute(new ReviewGetListQuery(filters));
   }
-
-  // @Patch(':id/moderate')
-  // @ApiBearerAuth()
-  // @ApiSecurity('x-api-key')
-  // @UseGuards(JwtAuthGuard, RolesGuard)
-  // @Roles(ERoleType.ENTERPRISE)
-  // @HttpCode(HttpStatus.NO_CONTENT)
-  // @ApiOperation({ summary: 'Approve or reject a review' })
-  // async moderate(
-  //   @CurrentUser('sub') userId: string,
-  //   @Param('id') id: string,
-  //   @Body() input: ReviewModerateInputDto,
-  // ): Promise<void> {
-  //   return this.commandBus.execute(new ReviewModerateCommand(id, input.action, userId));
-  // }
 }
