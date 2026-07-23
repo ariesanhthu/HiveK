@@ -5,7 +5,7 @@
   "type": "commonjs",
   "packageManager": "pnpm@10.26.1",
   "scripts": {
-    "dev": "turbo dev",
+    "dev": "turbo dev --ui tui",
     "build": "turbo build",
     "install:ai": "cd apps/server-ai && pip install -r requirements.txt",
     "install:agentic": "cd apps/agentic-system && uv venv --python 3.12 && uv pip install -e \".[dev]\"",
