@@ -1,5 +1,5 @@
 export type VerificationCompetency = {
-  key: "authentic" | "impact" | "history";
+  key: 'authentic' | 'impact' | 'history';
   title: string;
   subtext: string;
 };

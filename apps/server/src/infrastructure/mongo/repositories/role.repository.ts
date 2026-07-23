@@ -1,25 +1,22 @@
-import { Injectable, Inject } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model, ClientSession } from 'mongoose';
-import { IRoleRepository } from '@/core/interfaces/repositories';
-import { RoleRoot } from '@/core/aggregate-roots';
-import { RoleModel, RoleDocument } from '../schemas';
-import { Nullable } from '@/core/types';
-import { type IUnitOfWork, UNIT_OF_WORK, CACHE_SERVICE } from '@/application/interfaces';
+import { CACHE_SERVICE, type IUnitOfWork, UNIT_OF_WORK } from '@/application/interfaces';
 import type { ICacheService } from '@/application/interfaces';
-import { MongoUnitOfWork } from '../mongo-uow';
+import { RoleRoot } from '@/core/aggregate-roots';
+import { IRoleRepository } from '@/core/interfaces/repositories';
+import { Nullable } from '@/core/types';
 import { CacheKeyUtil } from '@/shared/utils/cache-key.util';
+import { Inject, Injectable } from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
+import { ClientSession, Model } from 'mongoose';
+import { MongoUnitOfWork } from '../mongo-uow';
+import { RoleDocument, RoleModel } from '../schemas';
 
 @Injectable()
 export class MongoRoleRepository implements IRoleRepository {
   constructor(
-    @InjectModel(RoleModel.name)
-    private readonly roleModel: Model<RoleDocument>,
-    @Inject(UNIT_OF_WORK)
-    private readonly uow: IUnitOfWork,
-    @Inject(CACHE_SERVICE)
-    private readonly cacheService: ICacheService,
-  ) { }
+    @InjectModel(RoleModel.name) private readonly roleModel: Model<RoleDocument>,
+    @Inject(UNIT_OF_WORK) private readonly uow: IUnitOfWork,
+    @Inject(CACHE_SERVICE) private readonly cacheService: ICacheService,
+  ) {}
 
   private get session(): ClientSession | undefined {
     return (this.uow as MongoUnitOfWork).getSession() || undefined;
@@ -43,7 +40,8 @@ export class MongoRoleRepository implements IRoleRepository {
       const saved = await created.save({ session: this.session });
       role.setId(saved._id.toString());
     } else {
-      await this.roleModel.findByIdAndUpdate(role.id, data, { upsert: true }).session(this.session).exec();
+      await this.roleModel.findByIdAndUpdate(role.id, data, { upsert: true }).session(this.session)
+        .exec();
     }
 
     await this.invalidateCache(role.id!, role.title);

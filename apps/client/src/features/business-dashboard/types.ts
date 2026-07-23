@@ -8,7 +8,7 @@ export type DashboardNavItem = {
   badgeLabel?: string;
 };
 
-export type DashboardMetricTrend = "up" | "down";
+export type DashboardMetricTrend = 'up' | 'down';
 
 export type DashboardMetric = {
   id: string;
@@ -29,7 +29,7 @@ export type DashboardBarPoint = {
   value: number;
 };
 
-export type DashboardActivityStatus = "review" | "active" | "paid" | "alert";
+export type DashboardActivityStatus = 'review' | 'active' | 'paid' | 'alert';
 
 export type DashboardActivity = {
   id: string;
@@ -40,7 +40,7 @@ export type DashboardActivity = {
   icon: string;
 };
 
-export type DashboardPeriod = "weekly" | "monthly";
+export type DashboardPeriod = 'weekly' | 'monthly';
 
 export type DashboardData = {
   navItems: DashboardNavItem[];

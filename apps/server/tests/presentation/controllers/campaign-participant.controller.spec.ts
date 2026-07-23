@@ -1,17 +1,17 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { CommandBus, QueryBus } from '@nestjs/cqrs';
-import { CampaignParticipantClientController } from '@/presentation/controllers/http/client/campaign-participant.controller';
 import {
   CampaignParticipantCreateCommand,
-  CampaignParticipantUpdateCommand,
-  CampaignParticipantSoftDeleteCommand,
-  CampaignParticipantRestoreCommand,
   CampaignParticipantHardDeleteCommand,
+  CampaignParticipantRestoreCommand,
+  CampaignParticipantSoftDeleteCommand,
+  CampaignParticipantUpdateCommand,
 } from '@/application/commands';
 import {
   CampaignParticipantGetByIdQuery,
   CampaignParticipantGetListQuery,
 } from '@/application/queries';
+import { CampaignParticipantClientController } from '@/presentation/controllers/http/client/campaign-participant.controller';
+import { CommandBus, QueryBus } from '@nestjs/cqrs';
+import { Test, TestingModule } from '@nestjs/testing';
 
 describe('CampaignParticipantClientController', () => {
   let controller: CampaignParticipantClientController;
@@ -34,7 +34,9 @@ describe('CampaignParticipantClientController', () => {
       ],
     }).compile();
 
-    controller = module.get<CampaignParticipantClientController>(CampaignParticipantClientController);
+    controller = module.get<CampaignParticipantClientController>(
+      CampaignParticipantClientController,
+    );
   });
 
   it('should be defined', () => {
@@ -48,7 +50,9 @@ describe('CampaignParticipantClientController', () => {
 
       const result = await controller.create(input as any);
 
-      expect(mockCommandBus.execute).toHaveBeenCalledWith(new CampaignParticipantCreateCommand(input as any));
+      expect(mockCommandBus.execute).toHaveBeenCalledWith(
+        new CampaignParticipantCreateCommand(input as any),
+      );
       expect(result).toBe('new-participant-id');
     });
   });
@@ -74,7 +78,9 @@ describe('CampaignParticipantClientController', () => {
 
       const result = await controller.findAll(query as any);
 
-      expect(mockQueryBus.execute).toHaveBeenCalledWith(new CampaignParticipantGetListQuery(query as any));
+      expect(mockQueryBus.execute).toHaveBeenCalledWith(
+        new CampaignParticipantGetListQuery(query as any),
+      );
       expect(result).toEqual(mockList);
     });
   });
@@ -87,7 +93,9 @@ describe('CampaignParticipantClientController', () => {
 
       await controller.update(id, input as any);
 
-      expect(mockCommandBus.execute).toHaveBeenCalledWith(new CampaignParticipantUpdateCommand(id, input as any));
+      expect(mockCommandBus.execute).toHaveBeenCalledWith(
+        new CampaignParticipantUpdateCommand(id, input as any),
+      );
     });
   });
 
@@ -98,7 +106,9 @@ describe('CampaignParticipantClientController', () => {
 
       await controller.delete(id, { deletedBy: 'Admin-User' });
 
-      expect(mockCommandBus.execute).toHaveBeenCalledWith(new CampaignParticipantSoftDeleteCommand(id, 'Admin-User'));
+      expect(mockCommandBus.execute).toHaveBeenCalledWith(
+        new CampaignParticipantSoftDeleteCommand(id, 'Admin-User'),
+      );
     });
   });
 
@@ -109,7 +119,9 @@ describe('CampaignParticipantClientController', () => {
 
       await controller.restore(id);
 
-      expect(mockCommandBus.execute).toHaveBeenCalledWith(new CampaignParticipantRestoreCommand(id));
+      expect(mockCommandBus.execute).toHaveBeenCalledWith(
+        new CampaignParticipantRestoreCommand(id),
+      );
     });
   });
 
@@ -120,7 +132,9 @@ describe('CampaignParticipantClientController', () => {
 
       await controller.hardDelete(id);
 
-      expect(mockCommandBus.execute).toHaveBeenCalledWith(new CampaignParticipantHardDeleteCommand(id));
+      expect(mockCommandBus.execute).toHaveBeenCalledWith(
+        new CampaignParticipantHardDeleteCommand(id),
+      );
     });
   });
 });

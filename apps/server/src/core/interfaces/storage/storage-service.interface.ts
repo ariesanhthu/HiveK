@@ -48,7 +48,7 @@ export interface IStorageService {
     },
   ): Promise<{
     success: string[];
-    failed: Array<{ publicId: string; error: string }>;
+    failed: Array<{ publicId: string; error: string; }>;
   }>;
 
   /**

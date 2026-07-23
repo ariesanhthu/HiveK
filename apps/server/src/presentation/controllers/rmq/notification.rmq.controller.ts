@@ -1,22 +1,28 @@
-import { Controller, Inject } from '@nestjs/common';
-import { RmqHandler } from '@/infrastructure/rabbitmq/rmq-consumer.registry';
-import { type ILoggerService, LOGGER_SERVICE, MAILER_SERVICE, type IMailerService } from '@/application/interfaces';
-import type { NotifyEnterpriseInvitationPayload, SendVerificationEmailRequestedPayload } from '@/application/events';
-import { CommandBus } from '@nestjs/cqrs';
 import { NotificationSendCommand } from '@/application';
+import type {
+  NotifyEnterpriseInvitationPayload,
+  SendVerificationEmailRequestedPayload,
+} from '@/application/events';
+import {
+  type ILoggerService,
+  type IMailerService,
+  LOGGER_SERVICE,
+  MAILER_SERVICE,
+} from '@/application/interfaces';
 import { NotificationChannel, NotificationType } from '@/core/enums';
+import { RmqHandler } from '@/infrastructure/rabbitmq/rmq-consumer.registry';
 import { toDate } from '@/shared/date';
+import { Controller, Inject } from '@nestjs/common';
+import { CommandBus } from '@nestjs/cqrs';
 
 @Controller()
 export class NotificationRmqController {
   constructor(
-    @Inject(MAILER_SERVICE)
-    private readonly mailerService: IMailerService,
-    @Inject(LOGGER_SERVICE)
-    private readonly logger: ILoggerService,
-    private readonly commandBus: CommandBus
+    @Inject(MAILER_SERVICE) private readonly mailerService: IMailerService,
+    @Inject(LOGGER_SERVICE) private readonly logger: ILoggerService,
+    private readonly commandBus: CommandBus,
   ) {
-    this.logger.setContext(NotificationRmqController.name)
+    this.logger.setContext(NotificationRmqController.name);
   }
 
   @RmqHandler({ queue: 'notification_queue', pattern: 'notification.verification_otp' })
@@ -56,7 +62,9 @@ export class NotificationRmqController {
   }
 
   @RmqHandler({ queue: 'notification_queue', pattern: 'notification.enterprise_invitation' })
-  async handleSendEnterpriseInvitationEmail(data: NotifyEnterpriseInvitationPayload): Promise<void> {
+  async handleSendEnterpriseInvitationEmail(
+    data: NotifyEnterpriseInvitationPayload,
+  ): Promise<void> {
     const { userId, userEmail, enterpriseName, enterpriseId } = data;
 
     this.logger.log(`Processing email request for ${userEmail} ...`);
@@ -71,14 +79,16 @@ export class NotificationRmqController {
           broadcastType: 'direct',
           userIds: [userId],
         },
-      })
+      }),
     );
 
     this.logger.log(`Processing email request for ${userEmail} done`);
   }
 
   @RmqHandler({ queue: 'notification_queue', pattern: 'notification.enterprise_revocation' })
-  async handleSendEnterpriseRevocationEmail(data: NotifyEnterpriseInvitationPayload): Promise<void> {
+  async handleSendEnterpriseRevocationEmail(
+    data: NotifyEnterpriseInvitationPayload,
+  ): Promise<void> {
     const { userId, userEmail, enterpriseName, enterpriseId } = data;
 
     this.logger.log(`Processing revoked request for ${userEmail} ...`);
@@ -93,7 +103,7 @@ export class NotificationRmqController {
           broadcastType: 'direct',
           userIds: [userId],
         },
-      })
+      }),
     );
 
     this.logger.log(`Processing revoke request for ${userEmail} done`);

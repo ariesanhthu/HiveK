@@ -17,7 +17,10 @@ export class CampaignParticipantEntity extends BaseEntity<CampaignParticipantPro
     super(props, id);
   }
 
-  public static create(props: Omit<CampaignParticipantProps, 'createdAt' | 'updatedAt' | 'deleteAt' | 'deleteBy'>, id?: string): CampaignParticipantEntity {
+  public static create(
+    props: Omit<CampaignParticipantProps, 'createdAt' | 'updatedAt' | 'deleteAt' | 'deleteBy'>,
+    id?: string,
+  ): CampaignParticipantEntity {
     const now = new Date();
     return new CampaignParticipantEntity({
       ...props,
@@ -28,7 +31,10 @@ export class CampaignParticipantEntity extends BaseEntity<CampaignParticipantPro
     }, id);
   }
 
-  public static instantiate(id: string, props: CampaignParticipantProps): CampaignParticipantEntity {
+  public static instantiate(
+    id: string,
+    props: CampaignParticipantProps,
+  ): CampaignParticipantEntity {
     return new CampaignParticipantEntity(props, id);
   }
 

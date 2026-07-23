@@ -1,5 +1,5 @@
-import { MongoClient, ObjectId } from 'mongodb';
 import * as fs from 'fs';
+import { MongoClient, ObjectId } from 'mongodb';
 import * as path from 'path';
 
 // Load .env file manually to support standalone execution
@@ -22,7 +22,8 @@ const loadEnv = () => {
 
 loadEnv();
 
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://root:root%40123@localhost:27017/hivek?authSource=admin';
+const MONGODB_URI = process.env.MONGODB_URI
+  || 'mongodb://root:root%40123@localhost:27017/hivek?authSource=admin';
 
 async function enqueueTiktokScraping() {
   console.log('⚡ Starting TikTok Enqueue Scraping Script...');
@@ -54,7 +55,7 @@ async function enqueueTiktokScraping() {
       heartCount: 1000000,
       id: user.id || user._id.toString(),
       status: 'IN_PROGRESS',
-      started_at: new Date()
+      started_at: new Date(),
     }));
 
     // Batch insert documents in chunks of 500
@@ -67,7 +68,6 @@ async function enqueueTiktokScraping() {
 
     console.log('\n🎉 SUCCESS! All users have been enqueued for scraping.');
     console.log(`Total Enqueued: ${queueDocs.length} users inside 'tiktok_queue_user'.`);
-
   } catch (error) {
     console.error('❌ Error during enqueuing:', error);
   } finally {

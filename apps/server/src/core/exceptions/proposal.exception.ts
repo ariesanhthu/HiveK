@@ -1,7 +1,7 @@
 import {
-  NotFoundDomainException,
-  ForbiddenDomainException,
   BadRequestDomainException,
+  ForbiddenDomainException,
+  NotFoundDomainException,
 } from '../common/exceptions/domain.exception';
 
 export class ProposalNotFoundException extends NotFoundDomainException {

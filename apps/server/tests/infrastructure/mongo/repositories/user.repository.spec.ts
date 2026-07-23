@@ -1,11 +1,11 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { getModelToken } from '@nestjs/mongoose';
+import { UNIT_OF_WORK } from '@/application/interfaces';
+import { AdminRoot, EnterpriseUserRoot, KOLUserRoot } from '@/core/aggregate-roots';
+import { ERoleType } from '@/core/enums';
 import { MongoUserRepository } from '@/infrastructure/mongo/repositories/user.repository';
 import { UserModel } from '@/infrastructure/mongo/schemas/user.schema';
-import { ERoleType } from '@/core/enums';
-import { KOLUserRoot, AdminRoot, EnterpriseUserRoot } from '@/core/aggregate-roots';
+import { getModelToken } from '@nestjs/mongoose';
+import { Test, TestingModule } from '@nestjs/testing';
 import { Types } from 'mongoose';
-import { UNIT_OF_WORK } from '@/application/interfaces';
 
 describe('MongoUserRepository', () => {
   let repository: MongoUserRepository;
@@ -41,14 +41,14 @@ describe('MongoUserRepository', () => {
       save: jest.fn(),
     };
     mockUserModel.constructor = jest.fn().mockImplementation((data) => {
-        return {
-            ...data,
-            save: jest.fn().mockResolvedValue({ _id: new Types.ObjectId() }),
-        };
+      return {
+        ...data,
+        save: jest.fn().mockResolvedValue({ _id: new Types.ObjectId() }),
+      };
     });
 
     mockUow = {
-        getSession: jest.fn().mockReturnValue(null),
+      getSession: jest.fn().mockReturnValue(null),
     };
 
     const module: TestingModule = await Test.createTestingModule({

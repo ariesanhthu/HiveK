@@ -1,26 +1,32 @@
-import { ExceptionFilter, Catch, ArgumentsHost, HttpStatus, HttpException, Inject } from '@nestjs/common';
-import { Response } from 'express';
+import { type ILoggerService, LOGGER_SERVICE } from '@/application';
 import {
-  DomainException,
-  NotFoundDomainException,
-  ConflictDomainException,
-  ForbiddenDomainException,
-  UnauthorizedDomainException,
   BadRequestDomainException,
+  ConflictDomainException,
+  DomainException,
+  ForbiddenDomainException,
+  NotFoundDomainException,
+  UnauthorizedDomainException,
 } from '@/core/exceptions';
 import { ApiResponseHelper } from '@/presentation/utils/api-response.helper';
-import { type ILoggerService, LOGGER_SERVICE } from '@/application';
 import { isFunction, isObject, isString } from '@/shared/utils';
+import {
+  ArgumentsHost,
+  Catch,
+  ExceptionFilter,
+  HttpException,
+  HttpStatus,
+  Inject,
+} from '@nestjs/common';
+import { Response } from 'express';
 
-type ErrorDetail = { field?: string; message: string };
+type ErrorDetail = { field?: string; message: string; };
 
 @Catch()
 export class HttpExceptionFilter implements ExceptionFilter {
-  constructor (
-    @Inject(LOGGER_SERVICE)
-    private readonly logger: ILoggerService,
+  constructor(
+    @Inject(LOGGER_SERVICE) private readonly logger: ILoggerService,
   ) {
-    this.logger.setContext(HttpExceptionFilter.name)
+    this.logger.setContext(HttpExceptionFilter.name);
   }
 
   catch(exception: any, host: ArgumentsHost) {
@@ -36,7 +42,9 @@ export class HttpExceptionFilter implements ExceptionFilter {
     if (exception instanceof DomainException) {
       const { status, code } = this.mapDomainException(exception);
       const body = ApiResponseHelper.error(code, exception.message);
-      this.logger.warn(`${request.method} ${request.url} ${status} - ${code}: ${exception.message}`);
+      this.logger.warn(
+        `${request.method} ${request.url} ${status} - ${code}: ${exception.message}`,
+      );
       return response.status(status).json(body);
     }
 
@@ -51,7 +59,10 @@ export class HttpExceptionFilter implements ExceptionFilter {
       const body = ApiResponseHelper.error(code, message, details);
 
       if (status >= 500) {
-        this.logger.error(`${request.method} ${request.url} ${status} - ${exception.message}`, exception.stack);
+        this.logger.error(
+          `${request.method} ${request.url} ${status} - ${exception.message}`,
+          exception.stack,
+        );
       } else {
         this.logger.warn(`${request.method} ${request.url} ${status} - ${code}: ${message}`);
       }
@@ -66,12 +77,22 @@ export class HttpExceptionFilter implements ExceptionFilter {
     );
   }
 
-  private mapDomainException(exception: DomainException): { status: HttpStatus; code: string } {
-    if (exception instanceof NotFoundDomainException) return { status: HttpStatus.NOT_FOUND, code: 'NOT_FOUND' };
-    if (exception instanceof ConflictDomainException) return { status: HttpStatus.CONFLICT, code: 'CONFLICT' };
-    if (exception instanceof ForbiddenDomainException) return { status: HttpStatus.FORBIDDEN, code: 'FORBIDDEN' };
-    if (exception instanceof UnauthorizedDomainException) return { status: HttpStatus.UNAUTHORIZED, code: 'UNAUTHORIZED' };
-    if (exception instanceof BadRequestDomainException) return { status: HttpStatus.BAD_REQUEST, code: 'BAD_REQUEST' };
+  private mapDomainException(exception: DomainException): { status: HttpStatus; code: string; } {
+    if (exception instanceof NotFoundDomainException) {
+      return { status: HttpStatus.NOT_FOUND, code: 'NOT_FOUND' };
+    }
+    if (exception instanceof ConflictDomainException) {
+      return { status: HttpStatus.CONFLICT, code: 'CONFLICT' };
+    }
+    if (exception instanceof ForbiddenDomainException) {
+      return { status: HttpStatus.FORBIDDEN, code: 'FORBIDDEN' };
+    }
+    if (exception instanceof UnauthorizedDomainException) {
+      return { status: HttpStatus.UNAUTHORIZED, code: 'UNAUTHORIZED' };
+    }
+    if (exception instanceof BadRequestDomainException) {
+      return { status: HttpStatus.BAD_REQUEST, code: 'BAD_REQUEST' };
+    }
     return { status: HttpStatus.BAD_REQUEST, code: 'DOMAIN_ERROR' };
   }
 
@@ -94,7 +115,11 @@ export class HttpExceptionFilter implements ExceptionFilter {
     if (Array.isArray(body.errors)) {
       return body.errors.map((e: any) => ({
         field: e.property || e.field || e.path,
-        message: isString(e) ? e : e.constraints ? Object.values(e.constraints).join('; ') : e.message,
+        message: isString(e)
+          ? e
+          : e.constraints
+          ? Object.values(e.constraints).join('; ')
+          : e.message,
       }));
     }
     if (Array.isArray(body.message)) {

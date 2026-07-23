@@ -1,5 +1,5 @@
-import { RoleCreateCommandHandler } from '@/application/commands/role-create/role-create.handler';
 import { RoleCreateCommand } from '@/application/commands/role-create/role-create.command';
+import { RoleCreateCommandHandler } from '@/application/commands/role-create/role-create.handler';
 import { ERoleType } from '@/core/enums';
 import { RoleConflictException } from '@/core/exceptions';
 

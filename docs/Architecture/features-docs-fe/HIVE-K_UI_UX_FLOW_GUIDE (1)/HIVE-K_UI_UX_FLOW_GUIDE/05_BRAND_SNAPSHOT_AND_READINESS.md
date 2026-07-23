@@ -87,7 +87,7 @@ Mỗi mục thiếu phải có:
 Hiển thị hai hoặc nhiều giá trị song song:
 
 | Giá trị | Nguồn | Ngày | Trạng thái |
-|---|---|---|---|
+| ------- | ----- | ---- | ---------- |
 
 Hành động:
 

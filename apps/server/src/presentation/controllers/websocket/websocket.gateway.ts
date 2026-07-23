@@ -1,19 +1,19 @@
-import {
-  WebSocketGateway as NestWebSocketGateway,
-  WebSocketServer,
-  OnGatewayConnection,
-  OnGatewayDisconnect,
-  SubscribeMessage,
-  MessageBody,
-  ConnectedSocket,
-} from '@nestjs/websockets';
-import { Server, Socket } from 'socket.io';
-import { Inject } from '@nestjs/common';
 import { AUTH_JWT_SERVICE } from '@/application/interfaces/auth-jwt.interface';
 import type { IAuthJwtService } from '@/application/interfaces/auth-jwt.interface';
 import { LOGGER_SERVICE } from '@/application/interfaces/logger.interface';
 import type { ILoggerService } from '@/application/interfaces/logger.interface';
 import { errorMessage } from '@/shared/utils';
+import { Inject } from '@nestjs/common';
+import {
+  ConnectedSocket,
+  MessageBody,
+  OnGatewayConnection,
+  OnGatewayDisconnect,
+  SubscribeMessage,
+  WebSocketGateway as NestWebSocketGateway,
+  WebSocketServer,
+} from '@nestjs/websockets';
+import { Server, Socket } from 'socket.io';
 
 @NestWebSocketGateway({
   cors: { origin: '*' },
@@ -21,10 +21,8 @@ import { errorMessage } from '@/shared/utils';
 })
 export class WebSocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
   constructor(
-    @Inject(AUTH_JWT_SERVICE)
-    private readonly jwtService: IAuthJwtService,
-    @Inject(LOGGER_SERVICE)
-    private readonly logger: ILoggerService,
+    @Inject(AUTH_JWT_SERVICE) private readonly jwtService: IAuthJwtService,
+    @Inject(LOGGER_SERVICE) private readonly logger: ILoggerService,
   ) {
     this.logger.setContext(WebSocketGateway.name);
   }
@@ -44,7 +42,9 @@ export class WebSocketGateway implements OnGatewayConnection, OnGatewayDisconnec
       await client.join(room);
       this.logger.log(`Client ${client.id} authenticated and joined user room: ${room}`);
     } catch (error) {
-      this.logger.warn(`Connection rejected: Invalid token (Client: ${client.id}). Error: ${errorMessage(error)}`);
+      this.logger.warn(
+        `Connection rejected: Invalid token (Client: ${client.id}). Error: ${errorMessage(error)}`,
+      );
       client.disconnect(true);
     }
   }

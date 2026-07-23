@@ -104,14 +104,14 @@ yarn start:debug
 
 All scripts are located in the [`package-script`](./package-script/) directory:
 
-| Script | Description |
-|--------|-------------|
-| [`authentication.sh`](./package-script/authentication.sh) | JWT, Passport, Auth0, OAuth2, etc. |
-| [`common.sh`](./package-script/common.sh) | Common utilities (Logger, Config, Validation, etc.) |
-| [`database.sh`](./package-script/database.sh) | MongoDB, Prisma, Redis, GraphQL, Elasticsearch |
-| [`microservice.sh`](./package-script/microservice.sh) | Kafka, Redis, gRPC, MQTT, NATS, RabbitMQ |
-| [`websocket.sh`](./package-script/websocket.sh) | WebSocket and Socket.io |
-| [`testing.sh`](./package-script/testing.sh) | Additional testing tools |
+| Script                                                    | Description                                         |
+| --------------------------------------------------------- | --------------------------------------------------- |
+| [`authentication.sh`](./package-script/authentication.sh) | JWT, Passport, Auth0, OAuth2, etc.                  |
+| [`common.sh`](./package-script/common.sh)                 | Common utilities (Logger, Config, Validation, etc.) |
+| [`database.sh`](./package-script/database.sh)             | MongoDB, Prisma, Redis, GraphQL, Elasticsearch      |
+| [`microservice.sh`](./package-script/microservice.sh)     | Kafka, Redis, gRPC, MQTT, NATS, RabbitMQ            |
+| [`websocket.sh`](./package-script/websocket.sh)           | WebSocket and Socket.io                             |
+| [`testing.sh`](./package-script/testing.sh)               | Additional testing tools                            |
 
 See [`package-script/README.md`](./package-script/README.md) for detailed information about each script.
 
@@ -124,6 +124,7 @@ See [`package-script/README.md`](./package-script/README.md) for detailed inform
 ```
 
 **Available Options:**
+
 - MongoDB (Mongoose)
 - MongoDB (@nestjs/mongoose)
 - Prisma ORM
@@ -138,6 +139,7 @@ See [`package-script/README.md`](./package-script/README.md) for detailed inform
 ```
 
 **Available Transports:**
+
 - Kafka
 - Redis
 - gRPC
@@ -153,6 +155,7 @@ See [`package-script/README.md`](./package-script/README.md) for detailed inform
 ```
 
 **Available Options:**
+
 - JWT (@nestjs/jwt)
 - Passport (@nestjs/passport)
 - bcrypt (password hashing)
@@ -166,6 +169,7 @@ See [`package-script/README.md`](./package-script/README.md) for detailed inform
 ```
 
 **Available Categories:**
+
 - Essential packages (Config, Validation, Logger, etc.)
 - Utilities (Date-fns, Lodash, UUID, etc.)
 - HTTP clients (Axios, Fetch)
@@ -251,14 +255,15 @@ Contributions are welcome! Feel free to:
 ## 📚 Resources
 
 ### NestJS Documentation
+
 - [Official Documentation](https://docs.nestjs.com)
 - [Discord Community](https://discord.gg/G7Qnnhy)
 - [Video Courses](https://courses.nestjs.com/)
 
 ### Useful Tools
+
 - [NestJS DevTools](https://devtools.nestjs.com)
 - [NestJS CLI](https://docs.nestjs.com/cli/overview)
-
 
 ---
 

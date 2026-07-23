@@ -1,17 +1,17 @@
-import type { Metadata } from "next";
-import { notFound } from "next/navigation";
-import { CampaignDetailView } from "@/features/campaign-detail/components/campaign-detail-view";
-import { getCampaignDetailById } from "@/features/campaign-detail/server/get-connected-campaign-detail-by-id";
+import { CampaignDetailView } from '@/features/campaign-detail/components/campaign-detail-view';
+import { getCampaignDetailById } from '@/features/campaign-detail/server/get-connected-campaign-detail-by-id';
+import type { Metadata } from 'next';
+import { notFound } from 'next/navigation';
 
 type PageProps = {
-  params: Promise<{ id: string }>;
+  params: Promise<{ id: string; }>;
 };
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { id } = await params;
   const detail = await getCampaignDetailById(id);
   if (!detail) {
-    return { title: "Chiến dịch | Hive-K" };
+    return { title: 'Chiến dịch | Hive-K' };
   }
   return {
     title: `${detail.title} | Hive-K`,

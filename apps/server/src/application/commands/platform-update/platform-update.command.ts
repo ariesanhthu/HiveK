@@ -1,6 +1,6 @@
+import { PlatformDto } from '@/application/dtos';
 import { Command } from '@nestjs/cqrs';
 import { PlatformUpdateInputDto } from './platform-update.dto';
-import { PlatformDto } from '@/application/dtos';
 
 export class PlatformUpdateCommand extends Command<PlatformDto> {
   constructor(

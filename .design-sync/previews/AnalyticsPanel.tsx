@@ -2,8 +2,8 @@ import { AnalyticsPanel } from 'client';
 
 function avatar(hue: number) {
   return (
-    'data:image/svg+xml;utf8,' +
-    encodeURIComponent(
+    'data:image/svg+xml;utf8,'
+    + encodeURIComponent(
       `<svg xmlns="http://www.w3.org/2000/svg" width="72" height="72"><rect width="72" height="72" fill="hsl(${hue},70%,88%)"/><circle cx="36" cy="28" r="15" fill="hsl(${hue},65%,55%)"/><rect x="14" y="46" width="44" height="26" rx="12" fill="hsl(${hue},65%,55%)"/></svg>`,
     )
   );
@@ -11,19 +11,52 @@ function avatar(hue: number) {
 
 const profiles = [
   {
-    id: 'kol-01', name: 'Nguyễn Linh Chi', niche: 'Làm đẹp', platform: 'TikTok', followers: 1_280_000,
-    rating: 4.7, engagementRate: 6.42, avatarUrl: avatar(330), youtubeHandle: 'linhchibeauty',
-    sentimentScoreComponent: 82.5, engagementQuality: 78.1, topicAuthority: 74.9, controversyRisk: 1.8, kolScore: 87.64,
+    id: 'kol-01',
+    name: 'Nguyễn Linh Chi',
+    niche: 'Làm đẹp',
+    platform: 'TikTok',
+    followers: 1_280_000,
+    rating: 4.7,
+    engagementRate: 6.42,
+    avatarUrl: avatar(330),
+    youtubeHandle: 'linhchibeauty',
+    sentimentScoreComponent: 82.5,
+    engagementQuality: 78.1,
+    topicAuthority: 74.9,
+    controversyRisk: 1.8,
+    kolScore: 87.64,
   },
   {
-    id: 'kol-02', name: 'Trần Minh Quang', niche: 'Công nghệ', platform: 'YouTube', followers: 542_000,
-    rating: 4.4, engagementRate: 3.18, avatarUrl: avatar(210), youtubeHandle: 'quangtech',
-    sentimentScoreComponent: 71.2, engagementQuality: 64.8, topicAuthority: 88.3, controversyRisk: 6.9, kolScore: 72.09,
+    id: 'kol-02',
+    name: 'Trần Minh Quang',
+    niche: 'Công nghệ',
+    platform: 'YouTube',
+    followers: 542_000,
+    rating: 4.4,
+    engagementRate: 3.18,
+    avatarUrl: avatar(210),
+    youtubeHandle: 'quangtech',
+    sentimentScoreComponent: 71.2,
+    engagementQuality: 64.8,
+    topicAuthority: 88.3,
+    controversyRisk: 6.9,
+    kolScore: 72.09,
   },
   {
-    id: 'kol-03', name: 'Phạm Thu Hà', niche: 'Đời sống', platform: 'Instagram', followers: 890_000,
-    rating: 4.5, engagementRate: 5.11, avatarUrl: avatar(20), youtubeHandle: 'thuha.daily',
-    sentimentScoreComponent: 76.4, engagementQuality: 71.2, topicAuthority: 69.5, controversyRisk: 4.2, kolScore: 80.31,
+    id: 'kol-03',
+    name: 'Phạm Thu Hà',
+    niche: 'Đời sống',
+    platform: 'Instagram',
+    followers: 890_000,
+    rating: 4.5,
+    engagementRate: 5.11,
+    avatarUrl: avatar(20),
+    youtubeHandle: 'thuha.daily',
+    sentimentScoreComponent: 76.4,
+    engagementQuality: 71.2,
+    topicAuthority: 69.5,
+    controversyRisk: 4.2,
+    kolScore: 80.31,
   },
 ];
 
@@ -67,11 +100,29 @@ const nicheEngagement = [
 ];
 
 const scatterPoints = [
-  { name: 'Linh Chi', niche: 'Làm đẹp', engagementQuality: 78, kolScore: 87.6, followers: 1_280_000 },
-  { name: 'Minh Quang', niche: 'Công nghệ', engagementQuality: 65, kolScore: 72.1, followers: 542_000 },
+  {
+    name: 'Linh Chi',
+    niche: 'Làm đẹp',
+    engagementQuality: 78,
+    kolScore: 87.6,
+    followers: 1_280_000,
+  },
+  {
+    name: 'Minh Quang',
+    niche: 'Công nghệ',
+    engagementQuality: 65,
+    kolScore: 72.1,
+    followers: 542_000,
+  },
   { name: 'Thu Hà', niche: 'Đời sống', engagementQuality: 71, kolScore: 80.3, followers: 890_000 },
   { name: 'Đức Anh', niche: 'Game', engagementQuality: 58, kolScore: 66.4, followers: 320_000 },
-  { name: 'Bảo Ngọc', niche: 'Thể hình', engagementQuality: 69, kolScore: 76.8, followers: 610_000 },
+  {
+    name: 'Bảo Ngọc',
+    niche: 'Thể hình',
+    engagementQuality: 69,
+    kolScore: 76.8,
+    followers: 610_000,
+  },
 ];
 
 const platformRisk = [

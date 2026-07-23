@@ -1,10 +1,10 @@
-import request from 'supertest';
-import { Test, TestingModule } from '@nestjs/testing';
+import { setupApplication } from '@/infrastructure/nest-config/app.setup';
 import { INestApplication } from '@nestjs/common';
 import { getModelToken } from '@nestjs/mongoose';
+import { Test, TestingModule } from '@nestjs/testing';
 import { Model } from 'mongoose';
+import request from 'supertest';
 import { AppModule } from '../../src/infrastructure/modules/app.module';
-import { setupApplication } from '@/infrastructure/nest-config/app.setup';
 
 describe('Auth Domain (e2e)', () => {
   let app: INestApplication;
@@ -84,7 +84,7 @@ describe('Auth Domain (e2e)', () => {
       .get('/hivek/client/v1/auth/profile')
       .set('x-api-key', API_KEY)
       .expect(401);
-    
+
     expect(res.body.success).toBe(false);
     expect(res.body.error.code).toBe('UNAUTHORIZED');
   });

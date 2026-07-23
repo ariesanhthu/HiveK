@@ -1,6 +1,6 @@
 import { BaseAggregateRoot } from '@/core/common/base.aggregate-root';
-import { Nullable } from '@/core/types';
 import { NotificationType, TargetType } from '@/core/enums';
+import { Nullable } from '@/core/types';
 
 export interface NotificationProps {
   type: NotificationType;

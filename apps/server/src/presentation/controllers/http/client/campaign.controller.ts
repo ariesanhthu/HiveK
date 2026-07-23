@@ -1,32 +1,55 @@
-import { Controller, Get, Post, Patch, Param, Query, Body, HttpCode, HttpStatus, UseGuards, Delete } from '@nestjs/common';
-import { CommandBus, QueryBus } from '@nestjs/cqrs';
-import { ApiTags, ApiOperation, ApiBearerAuth, ApiSecurity } from '@nestjs/swagger';
-import { buildVersionedRoute } from '@presentation/utils';
 import {
   CampaignCreateCommand,
-  CampaignUpdateCommand,
-  CampaignSoftDeleteCommand,
-  CampaignRestoreCommand,
   CampaignCreateInputDto,
-  CampaignUpdateInputDto,
   CampaignParticipantCreateCommand,
-  CampaignParticipantUpdateCommand,
-  CampaignParticipantSoftDeleteCommand,
+  CampaignParticipantCreateInputDto,
   CampaignParticipantHardDeleteCommand,
   CampaignParticipantRestoreCommand,
-  CampaignParticipantUpdateStatusCommand,
-  CampaignParticipantCreateInputDto,
+  CampaignParticipantSoftDeleteCommand,
+  CampaignParticipantUpdateCommand,
   CampaignParticipantUpdateInputDto,
+  CampaignParticipantUpdateStatusCommand,
   CampaignParticipantUpdateStatusInputDto,
+  CampaignRestoreCommand,
+  CampaignSoftDeleteCommand,
+  CampaignUpdateCommand,
+  CampaignUpdateInputDto,
 } from '@/application/commands';
-import { CampaignGetListQuery, CampaignGetByIdQuery, CampaignFilterDto } from '@/application/queries';
+import {
+  CampaignInviteCollaboratorCommand,
+  CampaignInviteCollaboratorInputDto,
+  CampaignRevokeCollaboratorCommand,
+  CampaignRevokeCollaboratorInputDto,
+  CampaignUpdateStatusCommand,
+  CampaignUpdateStatusInputDto,
+} from '@/application/commands';
 import { CampaignDto, SoftDeleteInputDto } from '@/application/dtos';
 import { PaginatedResponseDto } from '@/application/dtos/pagination.dto';
-import { JwtAuthGuard, RolesGuard } from '@/presentation/middleware/guards';
-import { CurrentUser } from '@/presentation/decorators/current-user.decorator';
-import { CampaignInviteCollaboratorCommand, CampaignRevokeCollaboratorCommand, CampaignUpdateStatusCommand, CampaignUpdateStatusInputDto, CampaignInviteCollaboratorInputDto, CampaignRevokeCollaboratorInputDto } from '@/application/commands';
-import { Roles } from '@/presentation/decorators/roles.decorator';
+import {
+  CampaignFilterDto,
+  CampaignGetByIdQuery,
+  CampaignGetListQuery,
+} from '@/application/queries';
 import { ERoleType } from '@/core/enums';
+import { CurrentUser } from '@/presentation/decorators/current-user.decorator';
+import { Roles } from '@/presentation/decorators/roles.decorator';
+import { JwtAuthGuard, RolesGuard } from '@/presentation/middleware/guards';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Param,
+  Patch,
+  Post,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
+import { CommandBus, QueryBus } from '@nestjs/cqrs';
+import { ApiBearerAuth, ApiOperation, ApiSecurity, ApiTags } from '@nestjs/swagger';
+import { buildVersionedRoute } from '@presentation/utils';
 
 @ApiTags('CLIENT-campaigns')
 @ApiBearerAuth()
@@ -37,7 +60,7 @@ export class CampaignClientController {
   constructor(
     private readonly commandBus: CommandBus,
     private readonly queryBus: QueryBus,
-  ) { }
+  ) {}
 
   @Get()
   @ApiOperation({ summary: 'Get all campaigns' })
@@ -57,7 +80,7 @@ export class CampaignClientController {
   @ApiOperation({ summary: 'Create new campaign' })
   async create(
     @CurrentUser('sub') userId: string,
-    @Body() input: CampaignCreateInputDto
+    @Body() input: CampaignCreateInputDto,
   ): Promise<CampaignDto> {
     input.ownerId = userId;
     return this.commandBus.execute(new CampaignCreateCommand(input));
@@ -184,7 +207,9 @@ export class CampaignClientController {
     @Param('participantId') participantId: string,
     @Query() dto: SoftDeleteInputDto,
   ): Promise<void> {
-    return this.commandBus.execute(new CampaignParticipantSoftDeleteCommand(participantId, dto.deletedBy));
+    return this.commandBus.execute(
+      new CampaignParticipantSoftDeleteCommand(participantId, dto.deletedBy),
+    );
   }
 
   @Delete(':campaignId/participants/:participantId')
@@ -222,6 +247,8 @@ export class CampaignClientController {
     @CurrentUser('sub') userId: string,
     @Body() input: CampaignParticipantUpdateStatusInputDto,
   ): Promise<void> {
-    return this.commandBus.execute(new CampaignParticipantUpdateStatusCommand(participantId, userId, input));
+    return this.commandBus.execute(
+      new CampaignParticipantUpdateStatusCommand(participantId, userId, input),
+    );
   }
 }

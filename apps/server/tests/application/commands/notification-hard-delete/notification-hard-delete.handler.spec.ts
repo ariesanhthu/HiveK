@@ -1,5 +1,5 @@
-import { NotificationHardDeleteCommandHandler } from '@/application/commands/notification-hard-delete/notification-hard-delete.handler';
 import { NotificationHardDeleteCommand } from '@/application/commands/notification-hard-delete/notification-hard-delete.command';
+import { NotificationHardDeleteCommandHandler } from '@/application/commands/notification-hard-delete/notification-hard-delete.handler';
 
 describe('NotificationHardDeleteCommandHandler', () => {
   let handler: NotificationHardDeleteCommandHandler;

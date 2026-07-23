@@ -1,20 +1,23 @@
-import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { Inject } from '@nestjs/common';
-import { Types } from 'mongoose';
-import { CAMPAIGN_REPOSITORY, type ICampaignRepository } from '@/core/interfaces/repositories/campaign.repository';
-import { MESSAGE_QUEUE_SERVICE, type IMessageQueueService } from '@/application/interfaces';
-import { CampaignParticipantNotFoundException, InvalidOperationException } from '@/core/exceptions';
-import { EParticipantStatus, EOutputStatus } from '@/core/enums';
-import { CampaignParticipantUpdateCommand } from './campaign-participant-update.command';
+import { type IMessageQueueService, MESSAGE_QUEUE_SERVICE } from '@/application/interfaces';
 import { CampaignKOLOutputEntity } from '@/core/entities';
+import { EOutputStatus, EParticipantStatus } from '@/core/enums';
+import { CampaignParticipantNotFoundException, InvalidOperationException } from '@/core/exceptions';
+import {
+  CAMPAIGN_REPOSITORY,
+  type ICampaignRepository,
+} from '@/core/interfaces/repositories/campaign.repository';
+import { Inject } from '@nestjs/common';
+import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
+import { Types } from 'mongoose';
+import { CampaignParticipantUpdateCommand } from './campaign-participant-update.command';
 
 @CommandHandler(CampaignParticipantUpdateCommand)
-export class CampaignParticipantUpdateCommandHandler implements ICommandHandler<CampaignParticipantUpdateCommand, void> {
+export class CampaignParticipantUpdateCommandHandler
+  implements ICommandHandler<CampaignParticipantUpdateCommand, void>
+{
   constructor(
-    @Inject(CAMPAIGN_REPOSITORY)
-    private readonly campaignRepository: ICampaignRepository,
-    @Inject(MESSAGE_QUEUE_SERVICE)
-    private readonly messageQueueService: IMessageQueueService,
+    @Inject(CAMPAIGN_REPOSITORY) private readonly campaignRepository: ICampaignRepository,
+    @Inject(MESSAGE_QUEUE_SERVICE) private readonly messageQueueService: IMessageQueueService,
   ) {}
 
   async execute(command: CampaignParticipantUpdateCommand): Promise<void> {
@@ -31,7 +34,10 @@ export class CampaignParticipantUpdateCommandHandler implements ICommandHandler<
     }
 
     if (input.status) {
-      if (input.status === EParticipantStatus.JOINED && participant.status === EParticipantStatus.PENDING_APPROVAL) {
+      if (
+        input.status === EParticipantStatus.JOINED
+        && participant.status === EParticipantStatus.PENDING_APPROVAL
+      ) {
         campaign.joinParticipant(participant.kolProfileId);
       } else if (input.status === EParticipantStatus.REJECTED) {
         campaign.rejectParticipant(participant.kolProfileId);
@@ -69,7 +75,9 @@ export class CampaignParticipantUpdateCommandHandler implements ICommandHandler<
           throw new InvalidOperationException('Published output requires a URL');
         }
 
-        const isNewlyPublished = status === EOutputStatus.PUBLISHED && url && (!existingOutput || existingOutput.status !== EOutputStatus.PUBLISHED || !existingOutput.isTrackingActive);
+        const isNewlyPublished = status === EOutputStatus.PUBLISHED && url
+          && (!existingOutput || existingOutput.status !== EOutputStatus.PUBLISHED
+            || !existingOutput.isTrackingActive);
 
         if (isNewlyPublished) {
           trackingEventsToEmit.push({
@@ -92,8 +100,12 @@ export class CampaignParticipantUpdateCommandHandler implements ICommandHandler<
           scheduledAt: o.scheduledAt ? new Date(o.scheduledAt) : null,
           status,
           url,
-          postedAt: existingOutput && existingOutput.status === EOutputStatus.PUBLISHED ? existingOutput.postedAt : postedAt,
-          isTrackingActive: existingOutput ? existingOutput.isTrackingActive : (status === EOutputStatus.PUBLISHED),
+          postedAt: existingOutput && existingOutput.status === EOutputStatus.PUBLISHED
+            ? existingOutput.postedAt
+            : postedAt,
+          isTrackingActive: existingOutput
+            ? existingOutput.isTrackingActive
+            : (status === EOutputStatus.PUBLISHED),
           createdAt: existingOutput ? existingOutput.createdAt : new Date(),
           updatedAt: new Date(),
         });

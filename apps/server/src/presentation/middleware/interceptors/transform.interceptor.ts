@@ -1,15 +1,10 @@
-import {
-  Injectable,
-  NestInterceptor,
-  ExecutionContext,
-  CallHandler,
-} from '@nestjs/common';
+import { PaginatedResponseDto } from '@/application/dtos/pagination.dto';
+import { ApiResponseHelper } from '@/presentation/utils/api-response.helper';
+import type { ApiResponse } from '@/presentation/utils/api-response.type';
+import { CallHandler, ExecutionContext, Injectable, NestInterceptor } from '@nestjs/common';
 import { GqlExecutionContext } from '@nestjs/graphql';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { ApiResponseHelper } from '@/presentation/utils/api-response.helper';
-import type { ApiResponse } from '@/presentation/utils/api-response.type';
-import { PaginatedResponseDto } from '@/application/dtos/pagination.dto';
 
 @Injectable()
 export class TransformInterceptor<T> implements NestInterceptor<T, ApiResponse<T>> {
@@ -26,10 +21,10 @@ export class TransformInterceptor<T> implements NestInterceptor<T, ApiResponse<T
       map((responseBody) => {
         // Already in ApiResponse shape — pass through
         if (
-          responseBody &&
-          typeof responseBody === 'object' &&
-          'success' in (responseBody as Record<string, unknown>) &&
-          'data' in (responseBody as Record<string, unknown>)
+          responseBody
+          && typeof responseBody === 'object'
+          && 'success' in (responseBody as Record<string, unknown>)
+          && 'data' in (responseBody as Record<string, unknown>)
         ) {
           return responseBody as unknown as ApiResponse<T>;
         }

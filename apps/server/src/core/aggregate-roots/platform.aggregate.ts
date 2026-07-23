@@ -1,6 +1,6 @@
 import { BaseAggregateRoot } from '@/core/common/base.aggregate-root';
-import { PlatformApiStatus } from '../enums/platform-api-status.enum';
 import { Nullable } from '@/core/types';
+import { PlatformApiStatus } from '../enums/platform-api-status.enum';
 
 export interface PlatformProps {
   name: string;

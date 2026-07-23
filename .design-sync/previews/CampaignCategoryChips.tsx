@@ -15,7 +15,7 @@ const noop = () => {};
 export function AllSelected() {
   return (
     <div style={{ width: 820 }}>
-      <CampaignCategoryChips categories={categories} selected="all" onSelect={noop} />
+      <CampaignCategoryChips categories={categories} selected='all' onSelect={noop} />
     </div>
   );
 }
@@ -23,7 +23,7 @@ export function AllSelected() {
 export function CategorySelected() {
   return (
     <div style={{ width: 820 }}>
-      <CampaignCategoryChips categories={categories} selected="Công nghệ" onSelect={noop} />
+      <CampaignCategoryChips categories={categories} selected='Công nghệ' onSelect={noop} />
     </div>
   );
 }

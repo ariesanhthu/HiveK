@@ -1,5 +1,5 @@
-import { IBaseRepository } from '../../common';
 import { UserNotificationRoot } from '../../aggregate-roots/user-notification.aggregate';
+import { IBaseRepository } from '../../common';
 
 export interface IUserNotificationRepository extends IBaseRepository<UserNotificationRoot> {
   saveMany(userNotifications: UserNotificationRoot[]): Promise<void>;

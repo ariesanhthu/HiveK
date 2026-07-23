@@ -1,6 +1,6 @@
+import { ProposalDto } from '@/application/dtos';
 import { Command } from '@nestjs/cqrs';
 import { ProposalCreateInputDto } from './proposal-create.dto';
-import { ProposalDto } from '@/application/dtos';
 
 export class ProposalCreateCommand extends Command<ProposalDto> {
   constructor(

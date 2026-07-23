@@ -1,5 +1,5 @@
-import { Command } from '@nestjs/cqrs';
 import { ECampaignStatus } from '@/core/enums/campaign-status.enum';
+import { Command } from '@nestjs/cqrs';
 
 export class CampaignUpdateStatusCommand extends Command<void> {
   constructor(

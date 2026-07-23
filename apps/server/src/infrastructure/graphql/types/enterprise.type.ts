@@ -1,6 +1,6 @@
-import { Field, ObjectType, ID } from '@nestjs/graphql';
-import { UserType } from './user.type';
+import { Field, ID, ObjectType } from '@nestjs/graphql';
 import { UploadedFileType } from './uploaded-file.type';
+import { UserType } from './user.type';
 
 @ObjectType()
 export class EnterpriseType {

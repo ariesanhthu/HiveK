@@ -1,5 +1,5 @@
-import { UserHardDeleteCommandHandler } from '@/application/commands/user-hard-delete/user-hard-delete.handler';
 import { UserHardDeleteCommand } from '@/application/commands/user-hard-delete/user-hard-delete.command';
+import { UserHardDeleteCommandHandler } from '@/application/commands/user-hard-delete/user-hard-delete.handler';
 import { UserNotFoundException } from '@/core/exceptions';
 
 describe('UserHardDeleteCommandHandler', () => {

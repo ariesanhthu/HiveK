@@ -1,40 +1,40 @@
 export const ONBOARDING_STAGES = [
-  "welcome",
-  "mode",
-  "discovery",
-  "connect",
-  "details",
-  "initializing",
-  "ready",
+  'welcome',
+  'mode',
+  'discovery',
+  'connect',
+  'details',
+  'initializing',
+  'ready',
 ] as const;
 
 export type OnboardingStage = (typeof ONBOARDING_STAGES)[number];
 
-export type OnboardingExecutionMode = "automatic" | "step_by_step";
+export type OnboardingExecutionMode = 'automatic' | 'step_by_step';
 
 export type DiscoveryStatus =
-  | "idle"
-  | "searching"
-  | "partial"
-  | "failed"
-  | "complete";
+  | 'idle'
+  | 'searching'
+  | 'partial'
+  | 'failed'
+  | 'complete';
 
 export type DiscoverySourceKind =
-  | "website"
-  | "facebook"
-  | "tiktok"
-  | "youtube"
-  | "linkedin"
-  | "x"
-  | "google_drive"
-  | "other";
+  | 'website'
+  | 'facebook'
+  | 'tiktok'
+  | 'youtube'
+  | 'linkedin'
+  | 'x'
+  | 'google_drive'
+  | 'other';
 
 export type DiscoverySourceStatus =
-  | "searching"
-  | "found_public"
-  | "connection_required"
-  | "not_found"
-  | "error";
+  | 'searching'
+  | 'found_public'
+  | 'connection_required'
+  | 'not_found'
+  | 'error';
 
 export interface DiscoveredField {
   key: string;
@@ -49,7 +49,7 @@ export interface DiscoverySource {
   url: string | null;
   handle: string | null;
   status: DiscoverySourceStatus;
-  connectionCapability: "oauth" | "public_read" | "manual" | "unavailable";
+  connectionCapability: 'oauth' | 'public_read' | 'manual' | 'unavailable';
   discoveredFields: DiscoveredField[];
   statusMessage: string | null;
   checkedAt: string | null;
@@ -65,15 +65,15 @@ export interface DiscoveryResult {
   completedAt: string | null;
 }
 
-export type ConnectionDecision = "connect" | "public_read" | "manual" | "skip";
+export type ConnectionDecision = 'connect' | 'public_read' | 'manual' | 'skip';
 
-export type ConnectionPermission = "read_only" | "read_publish";
+export type ConnectionPermission = 'read_only' | 'read_publish';
 
 export type ConnectionStatus =
-  | "selected"
-  | "connected"
-  | "needs_input"
-  | "skipped";
+  | 'selected'
+  | 'connected'
+  | 'needs_input'
+  | 'skipped';
 
 export interface OnboardingConnectionChoice {
   sourceId: string;
@@ -102,22 +102,22 @@ export interface BusinessDetails {
 export type BusinessDetailsInput = Partial<BusinessDetails>;
 
 export const INITIALIZATION_STEP_IDS = [
-  "validate_sources",
-  "build_brand_profile",
-  "build_channel_profiles",
-  "suggest_satellites",
-  "draft_strategy",
-  "prepare_analytics",
+  'validate_sources',
+  'build_brand_profile',
+  'build_channel_profiles',
+  'suggest_satellites',
+  'draft_strategy',
+  'prepare_analytics',
 ] as const;
 
 export type InitializationStepId = (typeof INITIALIZATION_STEP_IDS)[number];
 
 export type InitializationStepStatus =
-  | "pending"
-  | "in_progress"
-  | "complete"
-  | "needs_input"
-  | "failed";
+  | 'pending'
+  | 'in_progress'
+  | 'complete'
+  | 'needs_input'
+  | 'failed';
 
 export interface InitializationStep {
   id: InitializationStepId;
@@ -130,11 +130,11 @@ export interface InitializationStep {
 }
 
 export type InitializationStatus =
-  | "idle"
-  | "running"
-  | "needs_input"
-  | "failed"
-  | "complete";
+  | 'idle'
+  | 'running'
+  | 'needs_input'
+  | 'failed'
+  | 'complete';
 
 export interface InitializationChecklist {
   status: InitializationStatus;
@@ -159,7 +159,7 @@ export interface CompleteDiscoveryInput {
   query?: string;
   sources: DiscoverySource[];
   summary?: string | null;
-  result?: "complete" | "partial";
+  result?: 'complete' | 'partial';
 }
 
 export interface DiscoveryFailureInput {
@@ -170,15 +170,15 @@ export interface DiscoveryFailureInput {
 
 export interface AdvanceInitializationInput {
   stepId?: InitializationStepId;
-  outcome?: "complete" | "needs_input" | "failed";
+  outcome?: 'complete' | 'needs_input' | 'failed';
   note?: string | null;
 }
 
 export type OnboardingStorageStatus =
-  | "loading"
-  | "ready"
-  | "saved"
-  | "unavailable";
+  | 'loading'
+  | 'ready'
+  | 'saved'
+  | 'unavailable';
 
 export interface UseAgentOnboardingResult {
   state: AgentOnboardingState;

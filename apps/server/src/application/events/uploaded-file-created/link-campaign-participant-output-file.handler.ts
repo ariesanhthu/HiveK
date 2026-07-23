@@ -1,14 +1,18 @@
-import { EventsHandler, IEventHandler } from '@nestjs/cqrs';
-import { Inject } from '@nestjs/common';
-import { CAMPAIGN_REPOSITORY, type ICampaignRepository } from '@/core/interfaces/repositories/campaign.repository';
 import { TargetType } from '@/core/enums/target-type.enum';
+import {
+  CAMPAIGN_REPOSITORY,
+  type ICampaignRepository,
+} from '@/core/interfaces/repositories/campaign.repository';
+import { Inject } from '@nestjs/common';
+import { EventsHandler, IEventHandler } from '@nestjs/cqrs';
 import { UploadedFileCreatedEvent } from './uploaded-file-created.event';
 
 @EventsHandler(UploadedFileCreatedEvent)
-export class LinkCampaignParticipantOutputFileHandler implements IEventHandler<UploadedFileCreatedEvent> {
+export class LinkCampaignParticipantOutputFileHandler
+  implements IEventHandler<UploadedFileCreatedEvent>
+{
   constructor(
-    @Inject(CAMPAIGN_REPOSITORY)
-    private readonly campaignRepository: ICampaignRepository,
+    @Inject(CAMPAIGN_REPOSITORY) private readonly campaignRepository: ICampaignRepository,
   ) {}
 
   async handle(event: UploadedFileCreatedEvent): Promise<void> {

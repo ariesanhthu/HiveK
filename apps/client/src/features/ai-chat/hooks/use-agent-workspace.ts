@@ -1,11 +1,8 @@
-"use client";
+'use client';
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from 'react';
 
-import {
-  loadAgentWorkspaceDemo,
-  saveAgentWorkspaceDemo,
-} from "../services/workspace-demo-service";
+import { loadAgentWorkspaceDemo, saveAgentWorkspaceDemo } from '../services/workspace-demo-service';
 import type {
   AgentWorkspaceData,
   BrandFact,
@@ -19,7 +16,7 @@ import type {
   StudioConfigPatch,
   UseAgentWorkspaceResult,
   WorkspaceSource,
-} from "../types/workspace-types";
+} from '../types/workspace-types';
 
 function ratio(confirmed: number, total: number): number {
   return total === 0 ? 1 : confirmed / total;
@@ -27,31 +24,30 @@ function ratio(confirmed: number, total: number): number {
 
 function calculateReadiness(
   facts: BrandFact[],
-  channels: ChannelProfile[]
+  channels: ChannelProfile[],
 ): BrandReadiness {
   const requiredFacts = facts.filter((fact) => fact.isRequired);
   const confirmedRequired = requiredFacts.filter(
-    (fact) => fact.status === "confirmed"
+    (fact) => fact.status === 'confirmed',
   ).length;
   const confirmedFacts = facts.filter(
-    (fact) => fact.status === "confirmed"
+    (fact) => fact.status === 'confirmed',
   ).length;
   const confirmedChannelProfiles = channels.filter(
-    (channel) => channel.status === "confirmed"
+    (channel) => channel.status === 'confirmed',
   ).length;
   const connectedChannels = channels.filter(
-    (channel) => channel.connectionStatus === "connected"
+    (channel) => channel.connectionStatus === 'connected',
   ).length;
-  const unresolvedItems =
-    facts.length -
-    confirmedFacts +
-    (channels.length - confirmedChannelProfiles) +
-    (channels.length - connectedChannels);
+  const unresolvedItems = facts.length
+    - confirmedFacts
+    + (channels.length - confirmedChannelProfiles)
+    + (channels.length - connectedChannels);
   const score = Math.round(
-    (ratio(confirmedRequired, requiredFacts.length) * 0.55 +
-      ratio(confirmedFacts, facts.length) * 0.25 +
-      ratio(connectedChannels, channels.length) * 0.2) *
-      100
+    (ratio(confirmedRequired, requiredFacts.length) * 0.55
+      + ratio(confirmedFacts, facts.length) * 0.25
+      + ratio(connectedChannels, channels.length) * 0.2)
+      * 100,
   );
 
   return {
@@ -66,62 +62,59 @@ function calculateReadiness(
       total: channels.length,
     },
     unresolvedItems,
-    summary:
-      unresolvedItems === 0
-        ? "Hồ sơ đã được xác nhận đầy đủ và sẵn sàng cho các bước tiếp theo."
-        : `Còn ${unresolvedItems} mục về hồ sơ hoặc kết nối cần xử lý trước khi xuất bản.`,
+    summary: unresolvedItems === 0
+      ? 'Hồ sơ đã được xác nhận đầy đủ và sẵn sàng cho các bước tiếp theo.'
+      : `Còn ${unresolvedItems} mục về hồ sơ hoặc kết nối cần xử lý trước khi xuất bản.`,
   };
 }
 
 function logMutation(label: string, detail: string): void {
   console.group(`[HIVE-K demo] ${label}`);
   console.info(detail);
-  console.info("Đã lưu snapshot mới vào localStorage nếu trình duyệt cho phép.");
+  console.info('Đã lưu snapshot mới vào localStorage nếu trình duyệt cho phép.');
   console.groupEnd();
 }
 
 function getFactValue(
   facts: BrandFact[],
   factId: string,
-  fallback: string
+  fallback: string,
 ): string {
   return facts.find((fact) => fact.id === factId)?.value ?? fallback;
 }
 
 function updateSourcesForChannel(
   sources: WorkspaceSource[],
-  channel: ChannelProfile
+  channel: ChannelProfile,
 ): WorkspaceSource[] {
   return sources.map((source) =>
     source.channelId === channel.id
       ? {
-          ...source,
-          name: `${channel.displayName} (${channel.platform})`,
-          url: channel.url,
-          status:
-            channel.connectionStatus === "connected"
-              ? "connected"
-              : channel.connectionStatus === "needs_reconnect"
-                ? "needs_reconnect"
-                : "public_only",
-          canRead: channel.canRead,
-          canWrite: channel.canPublish,
-        }
+        ...source,
+        name: `${channel.displayName} (${channel.platform})`,
+        url: channel.url,
+        status: channel.connectionStatus === 'connected'
+          ? 'connected'
+          : channel.connectionStatus === 'needs_reconnect'
+          ? 'needs_reconnect'
+          : 'public_only',
+        canRead: channel.canRead,
+        canWrite: channel.canPublish,
+      }
       : source
   );
 }
 
 export function useAgentWorkspace(): UseAgentWorkspaceResult {
   const [data, setData] = useState<AgentWorkspaceData | null>(null);
-  const [status, setStatus] =
-    useState<UseAgentWorkspaceResult["status"]>("loading");
+  const [status, setStatus] = useState<UseAgentWorkspaceResult['status']>('loading');
   const [error, setError] = useState<string | null>(null);
   const dataRef = useRef<AgentWorkspaceData | null>(null);
   const requestIdRef = useRef(0);
 
   const reload = useCallback(async (): Promise<void> => {
     const requestId = ++requestIdRef.current;
-    setStatus("loading");
+    setStatus('loading');
     setError(null);
 
     try {
@@ -130,16 +123,15 @@ export function useAgentWorkspace(): UseAgentWorkspaceResult {
 
       dataRef.current = workspace;
       setData(workspace);
-      setStatus("success");
+      setStatus('success');
     } catch (loadError: unknown) {
       if (requestId !== requestIdRef.current) return;
 
-      const message =
-        loadError instanceof Error
-          ? loadError.message
-          : "Không thể nạp dữ liệu workspace.";
+      const message = loadError instanceof Error
+        ? loadError.message
+        : 'Không thể nạp dữ liệu workspace.';
       setError(message);
-      setStatus("error");
+      setStatus('error');
     }
   }, []);
 
@@ -155,7 +147,7 @@ export function useAgentWorkspace(): UseAgentWorkspaceResult {
     (
       mutation: (current: AgentWorkspaceData) => AgentWorkspaceData,
       label: string,
-      detail: string
+      detail: string,
     ): boolean => {
       const current = dataRef.current;
       if (!current) return false;
@@ -169,7 +161,7 @@ export function useAgentWorkspace(): UseAgentWorkspaceResult {
       logMutation(label, detail);
       return persisted;
     },
-    []
+    [],
   );
 
   const updateFact = useCallback(
@@ -185,20 +177,20 @@ export function useAgentWorkspace(): UseAgentWorkspaceResult {
             return {
               ...fact,
               ...patch,
-              dataQuality: "user_provided" as const,
+              dataQuality: 'user_provided' as const,
               confidence: 1,
-              status: "needs_review" as const,
+              status: 'needs_review' as const,
               updatedAt: now,
               confirmedAt: null,
               provenance: [
                 ...fact.provenance,
                 {
                   id: `prov-edit-${fact.id}-${Date.now()}`,
-                  sourceType: "user" as const,
-                  label: "Chỉnh sửa trong workspace",
+                  sourceType: 'user' as const,
+                  label: 'Chỉnh sửa trong workspace',
                   url: null,
                   observedAt: now,
-                  note: "Giá trị đã được người dùng chỉnh sửa và đang chờ xác nhận.",
+                  note: 'Giá trị đã được người dùng chỉnh sửa và đang chờ xác nhận.',
                 },
               ],
             };
@@ -209,18 +201,18 @@ export function useAgentWorkspace(): UseAgentWorkspaceResult {
             ...current,
             brand: {
               ...current.brand,
-              name: getFactValue(facts, "fact-brand-name", current.brand.name),
-              tagline: getFactValue(facts, "fact-tagline", current.brand.tagline),
+              name: getFactValue(facts, 'fact-brand-name', current.brand.name),
+              tagline: getFactValue(facts, 'fact-tagline', current.brand.tagline),
               facts,
               readiness: calculateReadiness(facts, current.channels),
             },
           };
         },
-        "Chỉnh sửa dữ kiện",
-        `Đã cập nhật fact ${factId}; trạng thái chuyển về chờ xác nhận.`
+        'Chỉnh sửa dữ kiện',
+        `Đã cập nhật fact ${factId}; trạng thái chuyển về chờ xác nhận.`,
       );
     },
-    [commit]
+    [commit],
   );
 
   const confirmFact = useCallback(
@@ -230,23 +222,23 @@ export function useAgentWorkspace(): UseAgentWorkspaceResult {
           let changed = false;
           const now = new Date().toISOString();
           const facts = current.brand.facts.map((fact) => {
-            if (fact.id !== factId || fact.status === "confirmed") return fact;
+            if (fact.id !== factId || fact.status === 'confirmed') return fact;
             changed = true;
 
             return {
               ...fact,
-              status: "confirmed" as const,
+              status: 'confirmed' as const,
               updatedAt: now,
               confirmedAt: now,
               provenance: [
                 ...fact.provenance,
                 {
                   id: `prov-confirm-${fact.id}-${Date.now()}`,
-                  sourceType: "user" as const,
-                  label: "Xác nhận trong workspace",
+                  sourceType: 'user' as const,
+                  label: 'Xác nhận trong workspace',
                   url: null,
                   observedAt: now,
-                  note: "Người dùng đã xác nhận giá trị hiện tại.",
+                  note: 'Người dùng đã xác nhận giá trị hiện tại.',
                 },
               ],
             };
@@ -257,18 +249,18 @@ export function useAgentWorkspace(): UseAgentWorkspaceResult {
             ...current,
             brand: {
               ...current.brand,
-              name: getFactValue(facts, "fact-brand-name", current.brand.name),
-              tagline: getFactValue(facts, "fact-tagline", current.brand.tagline),
+              name: getFactValue(facts, 'fact-brand-name', current.brand.name),
+              tagline: getFactValue(facts, 'fact-tagline', current.brand.tagline),
               facts,
               readiness: calculateReadiness(facts, current.channels),
             },
           };
         },
-        "Xác nhận dữ kiện",
-        `Đã xác nhận fact ${factId}.`
+        'Xác nhận dữ kiện',
+        `Đã xác nhận fact ${factId}.`,
       );
     },
-    [commit]
+    [commit],
   );
 
   const updateChannel = useCallback(
@@ -276,15 +268,15 @@ export function useAgentWorkspace(): UseAgentWorkspaceResult {
       commit(
         (current) => {
           const existingChannel = current.channels.find(
-            (channel) => channel.id === channelId
+            (channel) => channel.id === channelId,
           );
           if (!existingChannel) return current;
 
           const updatedChannel: ChannelProfile = {
             ...existingChannel,
             ...patch,
-            dataQuality: "user_provided",
-            status: "needs_review",
+            dataQuality: 'user_provided',
+            status: 'needs_review',
             confirmedAt: null,
           };
           const channels = current.channels.map((channel) =>
@@ -292,21 +284,21 @@ export function useAgentWorkspace(): UseAgentWorkspaceResult {
           );
           const sources = updateSourcesForChannel(
             current.sources,
-            updatedChannel
+            updatedChannel,
           );
           const studioSources = updateSourcesForChannel(
             current.studio.sources,
-            updatedChannel
+            updatedChannel,
           );
           const channelRules = current.studio.channelRules.map((rule) =>
             rule.channelId === updatedChannel.id
               ? {
-                  ...rule,
-                  role: updatedChannel.role,
-                  tone: updatedChannel.tone,
-                  cadence: updatedChannel.cadence,
-                  contentPillars: updatedChannel.contentPillars,
-                }
+                ...rule,
+                role: updatedChannel.role,
+                tone: updatedChannel.tone,
+                cadence: updatedChannel.cadence,
+                contentPillars: updatedChannel.contentPillars,
+              }
               : rule
           );
 
@@ -325,11 +317,11 @@ export function useAgentWorkspace(): UseAgentWorkspaceResult {
             },
           };
         },
-        "Chỉnh sửa hồ sơ kênh",
-        `Đã cập nhật channel ${channelId}; trạng thái chuyển về chờ xác nhận.`
+        'Chỉnh sửa hồ sơ kênh',
+        `Đã cập nhật channel ${channelId}; trạng thái chuyển về chờ xác nhận.`,
       );
     },
-    [commit]
+    [commit],
   );
 
   const confirmChannel = useCallback(
@@ -339,14 +331,14 @@ export function useAgentWorkspace(): UseAgentWorkspaceResult {
           let changed = false;
           const now = new Date().toISOString();
           const channels = current.channels.map((channel) => {
-            if (channel.id !== channelId || channel.status === "confirmed") {
+            if (channel.id !== channelId || channel.status === 'confirmed') {
               return channel;
             }
 
             changed = true;
             return {
               ...channel,
-              status: "confirmed" as const,
+              status: 'confirmed' as const,
               confirmedAt: now,
             };
           });
@@ -361,17 +353,17 @@ export function useAgentWorkspace(): UseAgentWorkspaceResult {
             },
           };
         },
-        "Xác nhận hồ sơ kênh",
-        `Đã xác nhận channel ${channelId}.`
+        'Xác nhận hồ sơ kênh',
+        `Đã xác nhận channel ${channelId}.`,
       );
     },
-    [commit]
+    [commit],
   );
 
   const updateSatellite = useCallback(
     (
       satelliteId: string,
-      patch: SatelliteRecommendationPatch
+      patch: SatelliteRecommendationPatch,
     ): void => {
       commit(
         (current) => {
@@ -380,11 +372,10 @@ export function useAgentWorkspace(): UseAgentWorkspaceResult {
             if (satellite.id !== satelliteId) return satellite;
             changed = true;
 
-            const nextStatus =
-              patch.status ??
-              (patch.profile &&
-              (satellite.status === "accepted" || satellite.status === "active")
-                ? "suggested"
+            const nextStatus = patch.status
+              ?? (patch.profile
+                  && (satellite.status === 'accepted' || satellite.status === 'active')
+                ? 'suggested'
                 : satellite.status);
 
             return {
@@ -395,20 +386,19 @@ export function useAgentWorkspace(): UseAgentWorkspaceResult {
                 ...satellite.profile,
                 ...patch.profile,
               },
-              confirmedAt:
-                nextStatus === "accepted" || nextStatus === "active"
-                  ? new Date().toISOString()
-                  : null,
+              confirmedAt: nextStatus === 'accepted' || nextStatus === 'active'
+                ? new Date().toISOString()
+                : null,
             };
           });
 
           return changed ? { ...current, satellites } : current;
         },
-        "Chỉnh sửa kênh vệ tinh",
-        `Đã cập nhật đề xuất ${satelliteId}.`
+        'Chỉnh sửa kênh vệ tinh',
+        `Đã cập nhật đề xuất ${satelliteId}.`,
       );
     },
-    [commit]
+    [commit],
   );
 
   const confirmSatellite = useCallback(
@@ -419,10 +409,10 @@ export function useAgentWorkspace(): UseAgentWorkspaceResult {
           const now = new Date().toISOString();
           const satellites = current.satellites.map((satellite) => {
             if (
-              satellite.id !== satelliteId ||
-              satellite.status === "accepted" ||
-              satellite.status === "active" ||
-              satellite.status === "dismissed"
+              satellite.id !== satelliteId
+              || satellite.status === 'accepted'
+              || satellite.status === 'active'
+              || satellite.status === 'dismissed'
             ) {
               return satellite;
             }
@@ -430,18 +420,18 @@ export function useAgentWorkspace(): UseAgentWorkspaceResult {
             changed = true;
             return {
               ...satellite,
-              status: "accepted" as const,
+              status: 'accepted' as const,
               confirmedAt: now,
             };
           });
 
           return changed ? { ...current, satellites } : current;
         },
-        "Duyệt kênh vệ tinh",
-        `Đã chuyển đề xuất ${satelliteId} sang trạng thái accepted.`
+        'Duyệt kênh vệ tinh',
+        `Đã chuyển đề xuất ${satelliteId} sang trạng thái accepted.`,
       );
     },
-    [commit]
+    [commit],
   );
 
   const updateStrategy = useCallback(
@@ -456,59 +446,61 @@ export function useAgentWorkspace(): UseAgentWorkspaceResult {
             strategy: {
               ...current.strategy,
               ...patch,
-              status: "needs_review",
+              status: 'needs_review',
               updatedAt: now,
               confirmedAt: null,
               provenance: [
                 ...current.strategy.provenance,
                 {
                   id: `prov-strategy-edit-${Date.now()}`,
-                  sourceType: "user",
-                  label: "Chỉnh sửa chiến lược trong workspace",
+                  sourceType: 'user',
+                  label: 'Chỉnh sửa chiến lược trong workspace',
                   url: null,
                   observedAt: now,
-                  note: "Kế hoạch đã được chỉnh sửa và chuyển về trạng thái chờ xác nhận.",
+                  note: 'Kế hoạch đã được chỉnh sửa và chuyển về trạng thái chờ xác nhận.',
                 },
               ],
             },
           };
         },
-        "Chỉnh sửa chiến lược",
-        `Đã cập nhật các trường: ${Object.keys(patch).join(", ") || "không có"}; chiến lược chuyển về chờ xác nhận.`
+        'Chỉnh sửa chiến lược',
+        `Đã cập nhật các trường: ${
+          Object.keys(patch).join(', ') || 'không có'
+        }; chiến lược chuyển về chờ xác nhận.`,
       );
     },
-    [commit]
+    [commit],
   );
 
   const confirmStrategy = useCallback((): void => {
     commit(
       (current) => {
-        if (current.strategy.status === "confirmed") return current;
+        if (current.strategy.status === 'confirmed') return current;
 
         const now = new Date().toISOString();
         return {
           ...current,
           strategy: {
             ...current.strategy,
-            status: "confirmed",
+            status: 'confirmed',
             updatedAt: now,
             confirmedAt: now,
             provenance: [
               ...current.strategy.provenance,
               {
                 id: `prov-strategy-confirm-${Date.now()}`,
-                sourceType: "user",
-                label: "Xác nhận chiến lược trong workspace",
+                sourceType: 'user',
+                label: 'Xác nhận chiến lược trong workspace',
                 url: null,
                 observedAt: now,
-                note: "Người dùng đã xác nhận phiên bản kế hoạch hiện tại.",
+                note: 'Người dùng đã xác nhận phiên bản kế hoạch hiện tại.',
               },
             ],
           },
         };
       },
-      "Xác nhận chiến lược",
-      "Đã xác nhận phiên bản kế hoạch 90 ngày hiện tại."
+      'Xác nhận chiến lược',
+      'Đã xác nhận phiên bản kế hoạch 90 ngày hiện tại.',
     );
   }, [commit]);
 
@@ -534,17 +526,17 @@ export function useAgentWorkspace(): UseAgentWorkspaceResult {
             studio,
           };
         },
-        "Cập nhật Studio config",
-        `Đã cập nhật các nhóm: ${Object.keys(patch).join(", ") || "không có"}.`
+        'Cập nhật Studio config',
+        `Đã cập nhật các nhóm: ${Object.keys(patch).join(', ') || 'không có'}.`,
       );
 
       if (!persisted) {
         throw new Error(
-          "Cấu hình đã cập nhật trong phiên hiện tại nhưng trình duyệt không thể lưu bản cục bộ."
+          'Cấu hình đã cập nhật trong phiên hiện tại nhưng trình duyệt không thể lưu bản cục bộ.',
         );
       }
     },
-    [commit]
+    [commit],
   );
 
   return {

@@ -26,6 +26,9 @@ describe('KolProfileGetListHandler', () => {
     const result = await handler.execute(query);
 
     expect(result).toEqual(mockResponse);
-    expect(mockKolProfileReadService.findAll).toHaveBeenCalledWith({ limit: 10, sort: 'desc' }, undefined);
+    expect(mockKolProfileReadService.findAll).toHaveBeenCalledWith(
+      { limit: 10, sort: 'desc' },
+      undefined,
+    );
   });
 });

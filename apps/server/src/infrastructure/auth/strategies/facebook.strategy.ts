@@ -1,9 +1,9 @@
-import { Strategy } from 'passport-facebook';
-import { PassportStrategy } from '@nestjs/passport';
+import { KolProfileVerifyPlatformAccountCommand } from '@/application/commands';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { CommandBus } from '@nestjs/cqrs';
-import { KolProfileVerifyPlatformAccountCommand } from '@/application/commands';
+import { PassportStrategy } from '@nestjs/passport';
+import { Strategy } from 'passport-facebook';
 
 @Injectable()
 export class FacebookStrategy extends PassportStrategy(Strategy, 'facebook') {
@@ -14,7 +14,8 @@ export class FacebookStrategy extends PassportStrategy(Strategy, 'facebook') {
     super({
       clientID: configService.get<string>('FACEBOOK_APP_ID') || 'dummy-id',
       clientSecret: configService.get<string>('FACEBOOK_APP_SECRET') || 'dummy-secret',
-      callbackURL: configService.get<string>('FACEBOOK_CALLBACK_URL') || 'http://localhost/dummy-callback',
+      callbackURL: configService.get<string>('FACEBOOK_CALLBACK_URL')
+        || 'http://localhost/dummy-callback',
       profileFields: ['id', 'displayName', 'emails'],
       passReqToCallback: true,
     });

@@ -1,9 +1,4 @@
-import {
-  CanActivate,
-  ExecutionContext,
-  Injectable,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { GqlExecutionContext } from '@nestjs/graphql';
 import { Observable } from 'rxjs';
@@ -27,12 +22,12 @@ export class ApiKeyGuard implements CanActivate {
 
     // Bypass API key check for GraphQL playground GET requests or Swagger docs
     if (
-      request &&
-      request.method === 'GET' &&
-      (
-        request.url?.includes('/graphql') || 
-        request.url?.includes('/hivek/graphql') ||
-        request.url?.includes('/hivek/api/docs')
+      request
+      && request.method === 'GET'
+      && (
+        request.url?.includes('/graphql')
+        || request.url?.includes('/hivek/graphql')
+        || request.url?.includes('/hivek/api/docs')
       )
     ) {
       return true;

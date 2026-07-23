@@ -1,5 +1,5 @@
-import { MongoClient } from 'mongodb';
 import * as fs from 'fs';
+import { MongoClient } from 'mongodb';
 import * as path from 'path';
 
 // Load .env file manually to support standalone execution
@@ -24,7 +24,8 @@ loadEnv();
 
 // --- Configuration ---
 // Source database configuration (Local hivek)
-const SOURCE_URI = process.env.MONGODB_URI || 'mongodb://root:root%40123@localhost:27017/hivek?authSource=admin';
+const SOURCE_URI = process.env.MONGODB_URI
+  || 'mongodb://root:root%40123@localhost:27017/hivek?authSource=admin';
 const SOURCE_DB_NAME = 'hivek';
 
 // Target database configuration (User to replace)
@@ -38,7 +39,9 @@ async function migrateAllCollections() {
   console.log(`🔌 Target: ${TARGET_URI.split('@').pop()}`);
 
   if (TARGET_URI.includes('YOUR_TARGET_CONNECTION_STRING')) {
-    console.error('❌ Error: Please fill in the TARGET_URI connection string inside the script before running!');
+    console.error(
+      '❌ Error: Please fill in the TARGET_URI connection string inside the script before running!',
+    );
     process.exit(1);
   }
 
@@ -58,7 +61,7 @@ async function migrateAllCollections() {
 
     for (const colInfo of collections) {
       const colName = colInfo.name;
-      
+
       // Skip system collections
       if (colName.startsWith('system.')) {
         continue;
@@ -91,7 +94,7 @@ async function migrateAllCollections() {
             filter: { _id: doc._id },
             replacement: doc,
             upsert: true,
-          }
+          },
         });
 
         if (batch.length >= batchSize) {
@@ -113,7 +116,6 @@ async function migrateAllCollections() {
     }
 
     console.log('\n🎉 SUCCESS! Complete database migration finished successfully.');
-
   } catch (error) {
     console.error('❌ Error during database migration:', error);
   } finally {

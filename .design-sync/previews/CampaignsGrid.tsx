@@ -1,7 +1,8 @@
 import { CampaignsGrid } from 'client';
 
 function cover(bg: string, label: string) {
-  const svg = `<svg xmlns='http://www.w3.org/2000/svg' width='320' height='200'><rect width='320' height='200' fill='${bg}'/><text x='50%' y='54%' font-family='Arial' font-size='22' fill='white' text-anchor='middle' dominant-baseline='middle'>${label}</text></svg>`;
+  const svg =
+    `<svg xmlns='http://www.w3.org/2000/svg' width='320' height='200'><rect width='320' height='200' fill='${bg}'/><text x='50%' y='54%' font-family='Arial' font-size='22' fill='white' text-anchor='middle' dominant-baseline='middle'>${label}</text></svg>`;
   return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
 }
 

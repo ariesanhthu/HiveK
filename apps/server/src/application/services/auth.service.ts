@@ -1,13 +1,12 @@
-import { Injectable, Inject } from '@nestjs/common';
+import { AUTH_JWT_SERVICE, type IAuthJwtService, type IJwtPayload } from '@/application/interfaces';
+import { Inject, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as bcrypt from 'bcrypt';
-import { AUTH_JWT_SERVICE, type IAuthJwtService, type IJwtPayload } from '@/application/interfaces';
 
 @Injectable()
 export class AuthService {
   constructor(
-    @Inject(AUTH_JWT_SERVICE)
-    private readonly jwtService: IAuthJwtService,
+    @Inject(AUTH_JWT_SERVICE) private readonly jwtService: IAuthJwtService,
     private readonly configService: ConfigService,
   ) {
     console.log('=== AuthService constructor executed ===');
@@ -25,9 +24,14 @@ export class AuthService {
     return bcrypt.compare(password, hash);
   }
 
-  async generateTokens(payload: IJwtPayload): Promise<{ accessToken: string; refreshToken: string }> {
+  async generateTokens(
+    payload: IJwtPayload,
+  ): Promise<{ accessToken: string; refreshToken: string; }> {
     const accessExpiration = this.configService.get<number>('JWT_ACCESS_EXPIRATION_MINUTES', 30);
-    const refreshExpiration = this.configService.get<number>('JWT_REFRESH_EXPIRATION_MINUTES', 10080);
+    const refreshExpiration = this.configService.get<number>(
+      'JWT_REFRESH_EXPIRATION_MINUTES',
+      10080,
+    );
 
     const accessToken = this.jwtService.sign(payload, { expiresInMinutes: accessExpiration });
     const refreshToken = this.jwtService.sign(payload, { expiresInMinutes: refreshExpiration });

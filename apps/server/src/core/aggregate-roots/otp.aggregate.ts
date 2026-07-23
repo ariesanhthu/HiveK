@@ -33,12 +33,14 @@ export class OtpRoot extends BaseAggregateRoot<OtpProps> {
 
   public override setId(id: string): void {
     super.setId(id);
-    this.addDomainEvent(new VerificationOtpCreatedEvent(
-      this.id,
-      {
-        ...this.props,
-      },
-    ));
+    this.addDomainEvent(
+      new VerificationOtpCreatedEvent(
+        this.id,
+        {
+          ...this.props,
+        },
+      ),
+    );
   }
 
   get email(): string {

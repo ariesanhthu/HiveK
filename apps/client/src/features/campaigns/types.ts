@@ -1,4 +1,4 @@
-export type CampaignStatus = "active" | "draft" | "closed";
+export type CampaignStatus = 'active' | 'draft' | 'closed';
 
 export type CampaignListItem = {
   id: string;

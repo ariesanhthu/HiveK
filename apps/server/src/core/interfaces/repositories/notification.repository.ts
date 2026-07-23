@@ -1,5 +1,5 @@
-import { IBaseRepository } from '../../common';
 import { NotificationRoot } from '../../aggregate-roots/notification.aggregate';
+import { IBaseRepository } from '../../common';
 
 export interface INotificationRepository extends IBaseRepository<NotificationRoot> {}
 

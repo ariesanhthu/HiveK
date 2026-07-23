@@ -12,7 +12,11 @@ const post: any = {
   content:
     'Có những ngày chỉ cần một chiếc áo khoác gọn là outfit nhìn chỉn chu hơn hẳn. ON TOP Jacket nhẹ, dễ phối, hợp đi học, đi làm lẫn cafe cuối tuần. Comment chiều cao/cân nặng, tụi mình gợi ý size và cách phối phù hợp nha.',
   firstComment: 'Ai cần tư vấn size cứ comment chiều cao/cân nặng bên dưới nhé!',
-  suggestedReplies: ['Bạn cao bao nhiêu để shop tư vấn size?', 'Inbox shop để nhận mã OTOP10 nha', 'Áo còn đủ màu bạn nhé'],
+  suggestedReplies: [
+    'Bạn cao bao nhiêu để shop tư vấn size?',
+    'Inbox shop để nhận mã OTOP10 nha',
+    'Áo còn đủ màu bạn nhé',
+  ],
   mediaAsset: undefined,
   mediaPrompt: 'Ảnh hero outfit streetwear tối giản, nền phố sạch, màu áo nổi rõ.',
   status: 'needs-review',

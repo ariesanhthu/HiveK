@@ -1,6 +1,18 @@
 import { DomainEvent, IntegrationEvent } from '@/core/common';
-import { EntityHardDeletedEvent, UserSignedUpEvent, VerificationOtpCreatedEvent, UserAddedToEnterpriseEvent, UserRevokedFromEnterpriseEvent, CampaignParticipantCreatedEvent } from '@/core/events';
-import { SendVerificationEmailRequestedEvent, NotifyEnterpriseInvitationEvent, NotifyEnterpriseRevocationEvent, NotifyKolCampaignInvitationEvent } from '../events';
+import {
+  CampaignParticipantCreatedEvent,
+  EntityHardDeletedEvent,
+  UserAddedToEnterpriseEvent,
+  UserRevokedFromEnterpriseEvent,
+  UserSignedUpEvent,
+  VerificationOtpCreatedEvent,
+} from '@/core/events';
+import {
+  NotifyEnterpriseInvitationEvent,
+  NotifyEnterpriseRevocationEvent,
+  NotifyKolCampaignInvitationEvent,
+  SendVerificationEmailRequestedEvent,
+} from '../events';
 
 export class EventMapper {
   /**
@@ -17,9 +29,13 @@ export class EventMapper {
       case event instanceof UserAddedToEnterpriseEvent:
         return EventMapper.mapUserAddedToEnterpriseEvent(event as UserAddedToEnterpriseEvent);
       case event instanceof UserRevokedFromEnterpriseEvent:
-        return EventMapper.mapUserRevokedFromEnterpriseEvent(event as UserRevokedFromEnterpriseEvent);
+        return EventMapper.mapUserRevokedFromEnterpriseEvent(
+          event as UserRevokedFromEnterpriseEvent,
+        );
       case event instanceof CampaignParticipantCreatedEvent:
-        return EventMapper.mapCampaignParticipantCreatedEvent(event as CampaignParticipantCreatedEvent);
+        return EventMapper.mapCampaignParticipantCreatedEvent(
+          event as CampaignParticipantCreatedEvent,
+        );
       default:
         return [];
     }
@@ -40,7 +56,9 @@ export class EventMapper {
     return [];
   }
 
-  private static mapVerificationOtpCreatedEvent(event: VerificationOtpCreatedEvent): IntegrationEvent[] {
+  private static mapVerificationOtpCreatedEvent(
+    event: VerificationOtpCreatedEvent,
+  ): IntegrationEvent[] {
     const e = new SendVerificationEmailRequestedEvent(
       {
         email: event.payload.email,
@@ -51,13 +69,15 @@ export class EventMapper {
       undefined,
       {
         exchange: 'kpi_exchange',
-        routingKey: 'notification.verification_otp'
-      }
-    )
-    return [e]
+        routingKey: 'notification.verification_otp',
+      },
+    );
+    return [e];
   }
 
-  private static mapUserAddedToEnterpriseEvent(event: UserAddedToEnterpriseEvent): IntegrationEvent[] {
+  private static mapUserAddedToEnterpriseEvent(
+    event: UserAddedToEnterpriseEvent,
+  ): IntegrationEvent[] {
     const e = new NotifyEnterpriseInvitationEvent(
       {
         userId: event.payload.userId,
@@ -69,12 +89,14 @@ export class EventMapper {
       {
         exchange: 'kpi_exchange',
         routingKey: 'notification.enterprise_invitation',
-      }
+      },
     );
     return [e];
   }
 
-  private static mapUserRevokedFromEnterpriseEvent(event: UserRevokedFromEnterpriseEvent): IntegrationEvent[] {
+  private static mapUserRevokedFromEnterpriseEvent(
+    event: UserRevokedFromEnterpriseEvent,
+  ): IntegrationEvent[] {
     const e = new NotifyEnterpriseRevocationEvent(
       {
         userId: event.payload.userId,
@@ -86,12 +108,14 @@ export class EventMapper {
       {
         exchange: 'kpi_exchange',
         routingKey: 'notification.enterprise_revocation',
-      }
+      },
     );
     return [e];
   }
 
-  private static mapCampaignParticipantCreatedEvent(event: CampaignParticipantCreatedEvent): IntegrationEvent[] {
+  private static mapCampaignParticipantCreatedEvent(
+    event: CampaignParticipantCreatedEvent,
+  ): IntegrationEvent[] {
     const e = new NotifyKolCampaignInvitationEvent(
       {
         campaignParticipantId: event.payload.campaignParticipantId,
@@ -104,7 +128,7 @@ export class EventMapper {
       {
         exchange: 'kpi_exchange',
         routingKey: 'notification.kol_campaign_invitation',
-      }
+      },
     );
     return [e];
   }

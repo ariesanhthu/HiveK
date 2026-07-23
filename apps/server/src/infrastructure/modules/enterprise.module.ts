@@ -1,22 +1,22 @@
+import { EnterpriseGetByIdHandler, EnterpriseGetListHandler } from '@/application/queries';
+import { EnterpriseAdminController, EnterpriseClientController } from '@/presentation/controllers';
 import { Module } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
-import { EnterpriseAdminController, EnterpriseClientController } from '@/presentation/controllers';
-import { EnterpriseGetByIdHandler, EnterpriseGetListHandler } from '@/application/queries';
 
 import {
+  EnterpriseAddUserCommandHandler,
   EnterpriseCreateCommandHandler,
-  EnterpriseUpdateCommandHandler,
-  EnterpriseSoftDeleteCommandHandler,
   EnterpriseHardDeleteCommandHandler,
   EnterpriseRestoreCommandHandler,
-  EnterpriseAddUserCommandHandler,
   EnterpriseRevokeUserCommandHandler,
+  EnterpriseSoftDeleteCommandHandler,
+  EnterpriseUpdateCommandHandler,
 } from '@/application/commands';
 
-import { UploadedFileModule } from './uploaded-file.module';
-import { UserModule } from './user.module';
 import { LinkEnterpriseLogoHandler } from '@/application/events';
 import { EnterpriseUserRmqController } from '@/presentation/controllers';
+import { UploadedFileModule } from './uploaded-file.module';
+import { UserModule } from './user.module';
 
 const COMMAND_HANDLERS = [
   EnterpriseCreateCommandHandler,
@@ -30,12 +30,12 @@ const COMMAND_HANDLERS = [
 
 const QUERY_HANDLERS = [
   EnterpriseGetByIdHandler,
-  EnterpriseGetListHandler
-]
+  EnterpriseGetListHandler,
+];
 
 const EVENT_HANDLERS = [
   LinkEnterpriseLogoHandler,
-]
+];
 
 @Module({
   imports: [CqrsModule, UploadedFileModule, UserModule],

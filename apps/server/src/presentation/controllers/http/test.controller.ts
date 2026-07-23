@@ -1,13 +1,21 @@
-import { Body, Controller, Get, Inject, Logger, Param, Patch, Query } from '@nestjs/common';
-import { type IMessageQueueService, type IWebSocketService, MESSAGE_QUEUE_SERVICE, WEBSOCKET_SERVICE } from '@/application/interfaces';
-import { Public } from '@/presentation/decorators/public.decorator';
-import { ApiTags, ApiSecurity, ApiOperation } from '@nestjs/swagger';
-import { CursorPaginationRequestDto, PaginatedResponseDto } from '@/application/dtos/pagination.dto';
-import { CommandBus, QueryBus } from '@nestjs/cqrs';
-import { KolProfileGetHandlesDevQuery } from '@/application/queries/kol-profile-get-handles-dev/kol-profile-get-handles-dev.query';
 import { KolProfileUpdateCommand } from '@/application/commands/kol-profile-update/kol-profile-update.command';
 import { UpdateKolProfileDto } from '@/application/commands/kol-profile-update/kol-profile-update.dto';
 import { KolProfileDto } from '@/application/dtos/kol-profile.dto';
+import {
+  CursorPaginationRequestDto,
+  PaginatedResponseDto,
+} from '@/application/dtos/pagination.dto';
+import {
+  type IMessageQueueService,
+  type IWebSocketService,
+  MESSAGE_QUEUE_SERVICE,
+  WEBSOCKET_SERVICE,
+} from '@/application/interfaces';
+import { KolProfileGetHandlesDevQuery } from '@/application/queries/kol-profile-get-handles-dev/kol-profile-get-handles-dev.query';
+import { Public } from '@/presentation/decorators/public.decorator';
+import { Body, Controller, Get, Inject, Logger, Param, Patch, Query } from '@nestjs/common';
+import { CommandBus, QueryBus } from '@nestjs/cqrs';
+import { ApiOperation, ApiSecurity, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('test')
 @ApiSecurity('x-api-key')
@@ -29,7 +37,7 @@ export class TestController {
   testEmitMq() {
     this.logger.log('Emitting test event via RabbitMQ...');
     const payload = { message: 'Hello RabbitMQ', timestamp: new Date() };
-    
+
     this.mqService.emit('test_event', payload);
     this.mqService.emit('default', payload);
     return { status: 'MQ Event emitted!' };
@@ -74,19 +82,24 @@ export class TestController {
 @Public()
 @Controller('kol-profiles')
 export class TestKOLController {
-  constructor(private readonly queryBus: QueryBus, private readonly commandBus: CommandBus) { }
-  
+  constructor(private readonly queryBus: QueryBus, private readonly commandBus: CommandBus) {}
+
   @Public()
   @Get('platforms')
   @ApiOperation({ summary: 'Get KOL profile handles mapping (for dev)' })
-  async findHandlesDev(@Query() pagination: CursorPaginationRequestDto): Promise<PaginatedResponseDto<any>> {
+  async findHandlesDev(
+    @Query() pagination: CursorPaginationRequestDto,
+  ): Promise<PaginatedResponseDto<any>> {
     return this.queryBus.execute(new KolProfileGetHandlesDevQuery(pagination));
   }
 
   @Public()
   @Patch(':id')
   @ApiOperation({ summary: 'Update anything of an influencer (PATCH)' })
-  async update(@Param('id') id: string, @Body() input: UpdateKolProfileDto): Promise<KolProfileDto> {
+  async update(
+    @Param('id') id: string,
+    @Body() input: UpdateKolProfileDto,
+  ): Promise<KolProfileDto> {
     return this.commandBus.execute(new KolProfileUpdateCommand(id, input));
   }
 }

@@ -2,24 +2,24 @@ import { Module } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
 
 import { KpiLogCreateCommandHandler, KpiLogTerminateCommandHandler } from '@/application/commands';
-import { KpiLogGetListHandler } from '@/application/queries';
 import { KpiMetricsUpdatedWsHandler, KpiTrackingTerminatedWsHandler } from '@/application/events';
+import { KpiLogGetListHandler } from '@/application/queries';
 
-import { KpiLogAdminController, KpiLogRmqController } from '@/presentation/controllers'
+import { KpiLogAdminController, KpiLogRmqController } from '@/presentation/controllers';
 
 const COMMAND_HANDLERS = [
   KpiLogCreateCommandHandler,
-  KpiLogTerminateCommandHandler
+  KpiLogTerminateCommandHandler,
 ];
 
 const QUERY_HANDLERS = [
-  KpiLogGetListHandler
-]
+  KpiLogGetListHandler,
+];
 
 const EVENT_HANDLERS = [
   KpiMetricsUpdatedWsHandler,
-  KpiTrackingTerminatedWsHandler
-]
+  KpiTrackingTerminatedWsHandler,
+];
 
 @Module({
   imports: [CqrsModule],
@@ -28,7 +28,7 @@ const EVENT_HANDLERS = [
     KpiLogRmqController,
     ...COMMAND_HANDLERS,
     ...QUERY_HANDLERS,
-    ...EVENT_HANDLERS
+    ...EVENT_HANDLERS,
   ],
   exports: [],
 })

@@ -1,6 +1,6 @@
-import { z } from 'zod';
-import { createZodDto } from 'nestjs-zod';
 import { TargetType } from '@/core/enums/target-type.enum';
+import { createZodDto } from 'nestjs-zod';
+import { z } from 'zod';
 
 export const UploadedFileDtoSchema = z.object({
   id: z.string(),

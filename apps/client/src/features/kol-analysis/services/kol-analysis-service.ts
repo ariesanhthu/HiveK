@@ -4,7 +4,7 @@ import {
   KOL_ANALYSIS_PLATFORMS,
   KOL_ANALYSIS_SEED,
   KOL_ANALYSIS_WEIGHTS,
-} from "@/data/kol-analysis";
+} from '@/data/kol-analysis';
 import type {
   AudienceTreePoint,
   HistogramBin,
@@ -16,9 +16,9 @@ import type {
   PlatformScorePoint,
   RadarMetric,
   ScatterPoint,
-} from "@/features/kol-analysis/types";
+} from '@/features/kol-analysis/types';
 
-const NICHE_COLORS = ["#f59e0b", "#3b82f6", "#22c55e", "#8b5cf6", "#ef4444", "#14b8a6"];
+const NICHE_COLORS = ['#f59e0b', '#3b82f6', '#22c55e', '#8b5cf6', '#ef4444', '#14b8a6'];
 
 function createSeededRandom(seed: number) {
   let value = seed;
@@ -49,26 +49,26 @@ export function normalizeTo100(value: number, minValue: number, maxValue: number
 }
 
 export function buildAvatarUrl(name: string) {
-  const cleanName = encodeURIComponent(name.replaceAll(" ", "+"));
+  const cleanName = encodeURIComponent(name.replaceAll(' ', '+'));
   return `https://ui-avatars.com/api/?name=${cleanName}&background=0f766e&color=fff&rounded=true`;
 }
 
 export function getRadarMetrics(profile: KolAnalysisProfile): RadarMetric[] {
   return [
     {
-      metric: "Sentiment",
+      metric: 'Sentiment',
       value: round(normalizeTo100(profile.sentimentScoreComponent, 0, 30), 1),
     },
     {
-      metric: "Engagement",
+      metric: 'Engagement',
       value: round(normalizeTo100(profile.engagementQuality, 0, 25), 1),
     },
     {
-      metric: "Topic",
+      metric: 'Topic',
       value: round(normalizeTo100(profile.topicAuthority, 0, 1), 1),
     },
     {
-      metric: "Safety",
+      metric: 'Safety',
       value: round(100 - normalizeTo100(profile.controversyRisk, 0, 10), 1),
     },
   ];
@@ -80,7 +80,8 @@ export function generateKolAnalysisProfiles(size = KOL_ANALYSIS_NAMES.length) {
   return Array.from({ length: size }, (_, index): KolAnalysisProfile => {
     const name = KOL_ANALYSIS_NAMES[index % KOL_ANALYSIS_NAMES.length];
     const niche = KOL_ANALYSIS_NICHES[randomInt(random, 0, KOL_ANALYSIS_NICHES.length - 1)];
-    const platform = KOL_ANALYSIS_PLATFORMS[randomInt(random, 0, KOL_ANALYSIS_PLATFORMS.length - 1)];
+    const platform =
+      KOL_ANALYSIS_PLATFORMS[randomInt(random, 0, KOL_ANALYSIS_PLATFORMS.length - 1)];
     const followers = randomInt(random, 120_000, 4_800_000);
     const engagementRate = round(randomBetween(random, 1.4, 11.8));
     const rating = round(randomBetween(random, 3.8, 4.98));
@@ -93,14 +94,13 @@ export function generateKolAnalysisProfiles(size = KOL_ANALYSIS_NAMES.length) {
     const engagementNorm = normalizeTo100(engagementQuality, 0, 25);
     const topicNorm = normalizeTo100(topicAuthority, 0, 1);
     const riskSafetyNorm = 100 - normalizeTo100(controversyRisk, 0, 10);
-    const kolScore =
-      KOL_ANALYSIS_WEIGHTS.sentiment * sentimentNorm +
-      KOL_ANALYSIS_WEIGHTS.engagement * engagementNorm +
-      KOL_ANALYSIS_WEIGHTS.topic * topicNorm +
-      KOL_ANALYSIS_WEIGHTS.risk * riskSafetyNorm;
+    const kolScore = KOL_ANALYSIS_WEIGHTS.sentiment * sentimentNorm
+      + KOL_ANALYSIS_WEIGHTS.engagement * engagementNorm
+      + KOL_ANALYSIS_WEIGHTS.topic * topicNorm
+      + KOL_ANALYSIS_WEIGHTS.risk * riskSafetyNorm;
 
     return {
-      id: `kol-${String(index + 1).padStart(3, "0")}`,
+      id: `kol-${String(index + 1).padStart(3, '0')}`,
       name,
       niche,
       platform,
@@ -108,7 +108,7 @@ export function generateKolAnalysisProfiles(size = KOL_ANALYSIS_NAMES.length) {
       rating,
       engagementRate,
       avatarUrl: buildAvatarUrl(name),
-      youtubeHandle: name.toLowerCase().replaceAll(" ", ""),
+      youtubeHandle: name.toLowerCase().replaceAll(' ', ''),
       sentimentScoreComponent,
       engagementQuality,
       topicAuthority,
@@ -119,14 +119,14 @@ export function generateKolAnalysisProfiles(size = KOL_ANALYSIS_NAMES.length) {
 }
 
 function formatCompactNumber(value: number) {
-  return new Intl.NumberFormat("en", {
-    notation: "compact",
+  return new Intl.NumberFormat('en', {
+    notation: 'compact',
     maximumFractionDigits: 1,
   }).format(value);
 }
 
 function formatNumber(value: number) {
-  return new Intl.NumberFormat("en").format(value);
+  return new Intl.NumberFormat('en').format(value);
 }
 
 function average(values: number[]) {
@@ -143,46 +143,46 @@ function buildKpis(profiles: KolAnalysisProfile[]): KolAnalysisKpi[] {
 
   return [
     {
-      id: "total-kol",
-      label: "Total KOL/KOC",
+      id: 'total-kol',
+      label: 'Total KOL/KOC',
       value: String(profiles.length),
-      caption: "Profiles available for ranking and comparison.",
-      icon: "groups",
+      caption: 'Profiles available for ranking and comparison.',
+      icon: 'groups',
     },
     {
-      id: "followers",
-      label: "Total Followers",
+      id: 'followers',
+      label: 'Total Followers',
       value: formatCompactNumber(totalFollowers),
       caption: `${formatNumber(totalFollowers)} combined audience reach.`,
-      icon: "visibility",
+      icon: 'visibility',
     },
     {
-      id: "engagement",
-      label: "Avg Engagement",
+      id: 'engagement',
+      label: 'Avg Engagement',
       value: `${round(avgEngagement)}%`,
-      caption: "Baseline for campaign response potential.",
-      icon: "favorite",
+      caption: 'Baseline for campaign response potential.',
+      icon: 'favorite',
     },
     {
-      id: "kol-score",
-      label: "Avg KOL Score",
+      id: 'kol-score',
+      label: 'Avg KOL Score',
       value: String(round(avgKolScore)),
-      caption: "Weighted creator quality snapshot.",
-      icon: "monitoring",
+      caption: 'Weighted creator quality snapshot.',
+      icon: 'monitoring',
     },
     {
-      id: "topic-authority",
-      label: "Top Authority",
+      id: 'topic-authority',
+      label: 'Top Authority',
       value: String(round(highestTopicAuthority)),
-      caption: "Strongest subject-matter consistency.",
-      icon: "psychology",
+      caption: 'Strongest subject-matter consistency.',
+      icon: 'psychology',
     },
     {
-      id: "risk",
-      label: "Lowest Risk",
+      id: 'risk',
+      label: 'Lowest Risk',
       value: String(round(lowestControversy)),
-      caption: "Safest profile in the current sample.",
-      icon: "verified",
+      caption: 'Safest profile in the current sample.',
+      icon: 'verified',
     },
   ];
 }
@@ -233,7 +233,7 @@ function buildNicheEngagement(profiles: KolAnalysisProfile[]): NicheEngagementPo
       niche,
       engagementRate: round(average(nicheProfiles.map((profile) => profile.engagementRate))),
       fill: NICHE_COLORS[index % NICHE_COLORS.length],
-    })
+    }),
   );
 }
 
@@ -258,7 +258,7 @@ function buildPlatformRisk(profiles: KolAnalysisProfile[]): PlatformRiskPoint[] 
         avg: round(average(values)),
         max: round(Math.max(...values)),
       };
-    }
+    },
   );
 }
 
@@ -282,11 +282,11 @@ export function getKolAnalysisDataset(): KolAnalysisDataset {
     kpis: buildKpis(profiles),
     kolScoreHistogram: buildHistogram(
       profiles.map((profile) => profile.kolScore),
-      8
+      8,
     ),
     controversyHistogram: buildHistogram(
       profiles.map((profile) => profile.controversyRisk),
-      7
+      7,
     ),
     platformScores: buildPlatformScores(profiles),
     nicheEngagement: buildNicheEngagement(profiles),
@@ -295,4 +295,3 @@ export function getKolAnalysisDataset(): KolAnalysisDataset {
     audienceTree: buildAudienceTree(profiles),
   };
 }
-

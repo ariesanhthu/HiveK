@@ -8,7 +8,9 @@ export interface NotifyKolCampaignInvitationPayload {
   campaignName?: string;
 }
 
-export class NotifyKolCampaignInvitationEvent extends IntegrationEvent<NotifyKolCampaignInvitationPayload> {
+export class NotifyKolCampaignInvitationEvent
+  extends IntegrationEvent<NotifyKolCampaignInvitationPayload>
+{
   public readonly eventType = 'NotifyKolCampaignInvitation';
 
   constructor(

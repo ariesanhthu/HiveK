@@ -35,7 +35,7 @@ export type BackendUserProfile = {
   fullName?: string | null;
   avatar?: unknown;
   roleId?: string;
-  type?: "enterprise" | "kol" | "admin" | string;
+  type?: 'enterprise' | 'kol' | 'admin' | string;
   isEmailVerified?: boolean;
   enterpriseIds?: string[];
 };
@@ -79,19 +79,23 @@ export type BackendCampaign = {
   budget?: number | null;
   financialTarget?: Record<string, unknown> | null;
   description?: string | null;
-  platformTarget?: Array<{
-    platformId?: string;
-    minFollowers?: number;
-    maxFollowers?: number;
-    note?: string;
-    others?: Record<string, unknown>;
-  }> | null;
+  platformTarget?:
+    | Array<{
+      platformId?: string;
+      minFollowers?: number;
+      maxFollowers?: number;
+      note?: string;
+      others?: Record<string, unknown>;
+    }>
+    | null;
   status?: string | null;
   collaboratorIds?: string[] | null;
-  rawContents?: Array<{
-    fileId?: string;
-    rawContent?: string;
-  }> | null;
+  rawContents?:
+    | Array<{
+      fileId?: string;
+      rawContent?: string;
+    }>
+    | null;
   schedule?: {
     timeline?: Array<{
       date?: unknown;

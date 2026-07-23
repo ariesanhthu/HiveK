@@ -1,8 +1,8 @@
-import * as amqp from 'amqplib';
-import { RabbitMQConsumerConfig } from '@/infrastructure/rabbitmq/types/rabbitmq.types';
 import { ILoggerService } from '@/application/interfaces';
-import { RmqHandlerRegistry } from './rmq-consumer.registry';
+import { RabbitMQConsumerConfig } from '@/infrastructure/rabbitmq/types/rabbitmq.types';
 import { errorMessage } from '@/shared/utils';
+import * as amqp from 'amqplib';
+import { RmqHandlerRegistry } from './rmq-consumer.registry';
 
 /**
  * Raw RabbitMQ Consumer Client using amqplib
@@ -65,7 +65,9 @@ export class RawRabbitMQConsumerClient {
       this.connectionAttempts = 0;
       this.logger.log(`✅ RabbitMQ Consumer connected and listeners started`);
     } catch (error) {
-      this.logger.error(`Failed to start RabbitMQ Consumer: ${errorMessage(error)}. Retrying in background...`);
+      this.logger.error(
+        `Failed to start RabbitMQ Consumer: ${errorMessage(error)}. Retrying in background...`,
+      );
       this.isConnected = false;
 
       // Start background reconnection
@@ -123,7 +125,7 @@ export class RawRabbitMQConsumerClient {
         // Here we just bind assuming exchange exists.
         await this.channel.bindQueue(queueConfig.name, binding.exchange, binding.routing_key);
         this.logger.debug(
-          `Bound queue "${queueConfig.name}" to exchange "${binding.exchange}" with routing key "${binding.routing_key}"`
+          `Bound queue "${queueConfig.name}" to exchange "${binding.exchange}" with routing key "${binding.routing_key}"`,
         );
       }
     }
@@ -143,7 +145,9 @@ export class RawRabbitMQConsumerClient {
         continue;
       }
 
-      this.logger.log(`Starting consumer for queue "${queueConfig.name}" with ${handlers.length} handlers`);
+      this.logger.log(
+        `Starting consumer for queue "${queueConfig.name}" with ${handlers.length} handlers`,
+      );
 
       await this.channel.consume(
         queueConfig.name,
@@ -152,7 +156,7 @@ export class RawRabbitMQConsumerClient {
             await this.handleMessage(msg, handlers, queueConfig.name);
           }
         },
-        { noAck: this.config.consume.no_ack }
+        { noAck: this.config.consume.no_ack },
       );
     }
   }
@@ -163,7 +167,7 @@ export class RawRabbitMQConsumerClient {
   private async handleMessage(
     msg: amqp.ConsumeMessage,
     handlers: any[],
-    queueName: string
+    queueName: string,
   ): Promise<void> {
     if (!this.channel) return;
 
@@ -211,7 +215,9 @@ export class RawRabbitMQConsumerClient {
     if (handlerPattern === '*') return true;
 
     // Support simple topic wildcard (strip.pattern.*)
-    const regex = new RegExp('^' + handlerPattern.replace(/\./g, '\\.').replace(/\*/g, '[^.]+') + '$');
+    const regex = new RegExp(
+      '^' + handlerPattern.replace(/\./g, '\\.').replace(/\*/g, '[^.]+') + '$',
+    );
     return regex.test(incomingPattern);
   }
 
@@ -232,7 +238,7 @@ export class RawRabbitMQConsumerClient {
 
     const delayMs = Math.min(
       config.initial_delay_ms * Math.pow(config.factor, this.connectionAttempts),
-      config.max_delay_ms
+      config.max_delay_ms,
     );
 
     this.connectionAttempts++;

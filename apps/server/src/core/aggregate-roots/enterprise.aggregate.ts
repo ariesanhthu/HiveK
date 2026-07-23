@@ -1,8 +1,8 @@
 import { BaseAggregateRoot } from '@/core/common/base.aggregate-root';
 import { Nullable } from '@/core/types';
 import { PhoneNumberVO } from '@/core/value-objects/phone-number.value-object';
-import { EntityHardDeletedEvent } from '../events/entity-hard-deleted.domain-event';
 import { TargetType } from '../enums';
+import { EntityHardDeletedEvent } from '../events/entity-hard-deleted.domain-event';
 
 export interface EnterpriseProps {
   userId: string;
@@ -20,7 +20,10 @@ export interface EnterpriseProps {
   deleteBy: Nullable<string>;
 }
 
-export type EnterpriseCreateProps = Omit<EnterpriseProps, 'createdAt' | 'updatedAt' | 'deleteAt' | 'deleteBy'>;
+export type EnterpriseCreateProps = Omit<
+  EnterpriseProps,
+  'createdAt' | 'updatedAt' | 'deleteAt' | 'deleteBy'
+>;
 
 export class EnterpriseRoot extends BaseAggregateRoot<EnterpriseProps> {
   private constructor(props: EnterpriseProps, id?: string) {
@@ -117,12 +120,14 @@ export class EnterpriseRoot extends BaseAggregateRoot<EnterpriseProps> {
   }
 
   public markForHardDelete(): void {
-    this.addDomainEvent(new EntityHardDeletedEvent(
-      this.id!,
-      {
-        entityId: this.id!,
-        targetType: TargetType.ENTERPRISE,
-      }
-    ));
+    this.addDomainEvent(
+      new EntityHardDeletedEvent(
+        this.id!,
+        {
+          entityId: this.id!,
+          targetType: TargetType.ENTERPRISE,
+        },
+      ),
+    );
   }
 }

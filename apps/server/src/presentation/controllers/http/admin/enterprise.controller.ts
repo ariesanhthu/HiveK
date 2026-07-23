@@ -1,28 +1,40 @@
-import { Controller, Get, Post, Patch, Param, Query, Body, HttpCode, HttpStatus, UseGuards, Delete } from '@nestjs/common';
-import { CommandBus, QueryBus } from '@nestjs/cqrs';
-import { EnterpriseGetByIdQuery, EnterpriseGetListQuery } from '@/application/queries';
 import {
-  EnterpriseCreateCommand,
-  EnterpriseUpdateCommand,
-  EnterpriseSoftDeleteCommand,
-  EnterpriseRestoreCommand,
-  EnterpriseCreateInputDto,
-  EnterpriseUpdateInputDto,
   EnterpriseAddUserCommand,
-  EnterpriseRevokeUserCommand,
   EnterpriseAddUserInputDto,
+  EnterpriseCreateCommand,
+  EnterpriseCreateInputDto,
+  EnterpriseRestoreCommand,
+  EnterpriseRevokeUserCommand,
   EnterpriseRevokeUserInputDto,
+  EnterpriseSoftDeleteCommand,
+  EnterpriseUpdateCommand,
+  EnterpriseUpdateInputDto,
 } from '@/application/commands';
-import { EnterpriseDto, EnterpriseDetailDto, SoftDeleteInputDto } from '@/application/dtos';
-import { ApiTags, ApiOperation, ApiBearerAuth, ApiSecurity } from '@nestjs/swagger';
-import { buildVersionedRoute } from '@presentation/utils';
-import { JwtAuthGuard } from '@/presentation/middleware/guards/jwt-auth.guard';
-import { CurrentUser } from '@/presentation/decorators/current-user.decorator';
+import { EnterpriseDetailDto, EnterpriseDto, SoftDeleteInputDto } from '@/application/dtos';
 import { PaginatedResponseDto } from '@/application/dtos/pagination.dto';
+import { EnterpriseGetByIdQuery, EnterpriseGetListQuery } from '@/application/queries';
 import { EnterpriseFilterDto } from '@/application/queries/enterprise-get-list/enterprise-get-list.dto';
 import { ERoleType } from '@/core/enums/role-type.enum';
-import { RolesGuard } from '@/presentation/middleware/guards/roles.guard';
+import { CurrentUser } from '@/presentation/decorators/current-user.decorator';
 import { Roles } from '@/presentation/decorators/roles.decorator';
+import { JwtAuthGuard } from '@/presentation/middleware/guards/jwt-auth.guard';
+import { RolesGuard } from '@/presentation/middleware/guards/roles.guard';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Param,
+  Patch,
+  Post,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
+import { CommandBus, QueryBus } from '@nestjs/cqrs';
+import { ApiBearerAuth, ApiOperation, ApiSecurity, ApiTags } from '@nestjs/swagger';
+import { buildVersionedRoute } from '@presentation/utils';
 
 @ApiTags('ADMIN-enterprises')
 @ApiBearerAuth()
@@ -34,7 +46,7 @@ export class EnterpriseAdminController {
   constructor(
     private readonly commandBus: CommandBus,
     private readonly queryBus: QueryBus,
-  ) { }
+  ) {}
 
   @Post()
   @UseGuards(JwtAuthGuard)
@@ -62,7 +74,9 @@ export class EnterpriseAdminController {
   @Get()
   @UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: 'Get list of enterprises' })
-  async getList(@Query() filters: EnterpriseFilterDto): Promise<PaginatedResponseDto<EnterpriseDetailDto>> {
+  async getList(
+    @Query() filters: EnterpriseFilterDto,
+  ): Promise<PaginatedResponseDto<EnterpriseDetailDto>> {
     return this.queryBus.execute(new EnterpriseGetListQuery(filters));
   }
 

@@ -1,7 +1,7 @@
-import { Types } from 'mongoose';
-import { MongoRoleRepository } from '@/infrastructure/mongo/repositories/role.repository';
 import { RoleRoot } from '@/core/aggregate-roots';
 import { ERoleType } from '@/core/enums';
+import { MongoRoleRepository } from '@/infrastructure/mongo/repositories/role.repository';
+import { Types } from 'mongoose';
 
 jest.mock('mongoose', () => {
   const actual = jest.requireActual('mongoose');
@@ -109,7 +109,7 @@ describe('MongoRoleRepository', () => {
         expect.objectContaining({
           title: 'Admin Updated',
         }),
-        { upsert: true }
+        { upsert: true },
       );
     });
   });

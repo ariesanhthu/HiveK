@@ -1,48 +1,39 @@
 import {
-  Controller,
-  Get,
-  Post,
-  Patch,
-  Delete,
-  Param,
-  Query,
+  PlatformCreateCommand,
+  PlatformCreateInputDto,
+  PlatformHardDeleteCommand,
+  PlatformRestoreCommand,
+  PlatformSoftDeleteCommand,
+  PlatformUpdateCommand,
+  PlatformUpdateInputDto,
+} from '@/application/commands';
+import { PlatformDetailDto, PlatformDto, SoftDeleteInputDto } from '@/application/dtos';
+import { PaginatedResponseDto } from '@/application/dtos/pagination.dto';
+import {
+  PlatformFilterDto,
+  PlatformGetByIdQuery,
+  PlatformGetListQuery,
+} from '@/application/queries';
+import { ERoleType } from '@/core/enums/role-type.enum';
+import { Public } from '@/presentation/decorators/public.decorator';
+import { Roles } from '@/presentation/decorators/roles.decorator';
+import { JwtAuthGuard, RolesGuard } from '@/presentation/middleware/guards';
+import {
   Body,
+  Controller,
+  Delete,
+  Get,
   HttpCode,
   HttpStatus,
+  Param,
+  Patch,
+  Post,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
-import {
-  ApiTags,
-  ApiOperation,
-  ApiBearerAuth,
-  ApiSecurity,
-} from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiSecurity, ApiTags } from '@nestjs/swagger';
 import { buildVersionedRoute } from '@presentation/utils';
-import {
-  PlatformCreateCommand,
-  PlatformUpdateCommand,
-  PlatformSoftDeleteCommand,
-  PlatformHardDeleteCommand,
-  PlatformRestoreCommand,
-  PlatformCreateInputDto,
-  PlatformUpdateInputDto,
-} from '@/application/commands';
-import {
-  PlatformGetListQuery,
-  PlatformGetByIdQuery,
-  PlatformFilterDto,
-} from '@/application/queries';
-import {
-  PlatformDto,
-  PlatformDetailDto,
-  SoftDeleteInputDto,
-} from '@/application/dtos';
-import { PaginatedResponseDto } from '@/application/dtos/pagination.dto';
-import { JwtAuthGuard, RolesGuard } from '@/presentation/middleware/guards';
-import { Public } from '@/presentation/decorators/public.decorator';
-import { ERoleType } from '@/core/enums/role-type.enum';
-import { Roles } from '@/presentation/decorators/roles.decorator';
 
 @ApiTags('ADMIN-platforms')
 @ApiBearerAuth()

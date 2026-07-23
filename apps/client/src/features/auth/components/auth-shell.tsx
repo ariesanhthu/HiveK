@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import type { ReactNode } from "react";
-import Link from "next/link";
-import { motion } from "framer-motion";
-import { cn } from "@/lib/utils";
+import { cn } from '@/lib/utils';
+import { motion } from 'framer-motion';
+import Link from 'next/link';
+import type { ReactNode } from 'react';
 
 export type AuthAccent = {
   /** CSS color (var or literal) driving the page's glow/chip/focus states. */
@@ -41,85 +41,90 @@ type AuthShellProps = {
  * with a gradient border + corner glow. Each page passes its own accent
  * so sign-in (amber) and sign-up (purple) feel distinct.
  */
-export function AuthShell({ accent, heading, subtitle, children, footer, className }: AuthShellProps) {
+export function AuthShell(
+  { accent, heading, subtitle, children, footer, className }: AuthShellProps,
+) {
   return (
     <motion.div
       variants={container}
-      initial="hidden"
-      animate="show"
-      className={cn("w-full", className)}
-      style={
-        {
-          "--auth-accent": accent.color,
-          "--auth-ring": `color-mix(in srgb, ${accent.color} 22%, transparent)`,
-        } as React.CSSProperties
-      }
+      initial='hidden'
+      animate='show'
+      className={cn('w-full', className)}
+      style={{
+        '--auth-accent': accent.color,
+        '--auth-ring': `color-mix(in srgb, ${accent.color} 22%, transparent)`,
+      } as React.CSSProperties}
     >
-      <motion.div variants={riseIn} className="mb-8 flex flex-col items-center gap-4 text-center">
+      <motion.div variants={riseIn} className='mb-8 flex flex-col items-center gap-4 text-center'>
         <span
-          className="inline-flex items-center gap-2 rounded-full border px-4 py-1.5 text-xs font-bold"
+          className='inline-flex items-center gap-2 rounded-full border px-4 py-1.5 text-xs font-bold'
           style={{
             color: accent.color,
             borderColor: `color-mix(in srgb, ${accent.color} 35%, transparent)`,
             backgroundColor: `color-mix(in srgb, ${accent.color} 10%, transparent)`,
           }}
         >
-          <span className="material-symbols-outlined text-sm" aria-hidden>
+          <span className='material-symbols-outlined text-sm' aria-hidden>
             {accent.chipIcon}
           </span>
           {accent.chipLabel}
         </span>
 
-        <h1 className="text-3xl font-black leading-tight tracking-tight text-white md:text-4xl">
+        <h1 className='text-3xl font-black leading-tight tracking-tight text-white md:text-4xl'>
           {heading}
         </h1>
-        <p className="max-w-md text-sm leading-relaxed text-white/55">{subtitle}</p>
+        <p className='max-w-md text-sm leading-relaxed text-white/55'>{subtitle}</p>
       </motion.div>
 
       {/* Gradient-border glass card */}
       <motion.div
         variants={riseIn}
-        className="relative rounded-[1.75rem] p-px"
+        className='relative rounded-[1.75rem] p-px'
         style={{
-          background: `linear-gradient(165deg, color-mix(in srgb, ${accent.color} 50%, transparent) 0%, rgba(255,255,255,0.10) 30%, rgba(255,255,255,0.06) 62%, color-mix(in srgb, ${accent.color} 28%, transparent) 100%)`,
+          background:
+            `linear-gradient(165deg, color-mix(in srgb, ${accent.color} 50%, transparent) 0%, rgba(255,255,255,0.10) 30%, rgba(255,255,255,0.06) 62%, color-mix(in srgb, ${accent.color} 28%, transparent) 100%)`,
         }}
       >
         <div
-          className="relative overflow-hidden rounded-[calc(1.75rem-1px)] px-6 py-8 sm:px-9"
-          style={{ backgroundColor: "rgba(10, 14, 28, 0.86)", backdropFilter: "blur(16px)" }}
+          className='relative overflow-hidden rounded-[calc(1.75rem-1px)] px-6 py-8 sm:px-9'
+          style={{ backgroundColor: 'rgba(10, 14, 28, 0.86)', backdropFilter: 'blur(16px)' }}
         >
           {/* Top sheen line */}
           <span
-            className="pointer-events-none absolute inset-x-10 top-0 h-px"
+            className='pointer-events-none absolute inset-x-10 top-0 h-px'
             style={{
-              background: `linear-gradient(90deg, transparent, color-mix(in srgb, ${accent.color} 75%, white), transparent)`,
+              background:
+                `linear-gradient(90deg, transparent, color-mix(in srgb, ${accent.color} 75%, white), transparent)`,
             }}
             aria-hidden
           />
           {/* Corner nebula glow */}
           <span
-            className="pointer-events-none absolute -right-24 -top-24 h-56 w-56 rounded-full blur-[80px]"
+            className='pointer-events-none absolute -right-24 -top-24 h-56 w-56 rounded-full blur-[80px]'
             style={{ backgroundColor: `color-mix(in srgb, ${accent.color} 26%, transparent)` }}
             aria-hidden
           />
 
-          <div className="relative">{children}</div>
+          <div className='relative'>{children}</div>
         </div>
       </motion.div>
 
-      <motion.p variants={riseIn} className="mt-6 text-center text-sm font-medium text-white/55">
+      <motion.p variants={riseIn} className='mt-6 text-center text-sm font-medium text-white/55'>
         {footer}
       </motion.p>
 
-      <motion.p variants={riseIn} className="mt-3 text-center text-[11px] leading-relaxed text-white/35">
-        Bằng việc tiếp tục, bạn đồng ý với{" "}
-        <Link href="/terms" className="underline underline-offset-2 hover:text-white/60">
+      <motion.p
+        variants={riseIn}
+        className='mt-3 text-center text-[11px] leading-relaxed text-white/35'
+      >
+        Bằng việc tiếp tục, bạn đồng ý với{' '}
+        <Link href='/terms' className='underline underline-offset-2 hover:text-white/60'>
           Điều khoản dịch vụ
-        </Link>{" "}
-        và{" "}
-        <Link href="/privacy" className="underline underline-offset-2 hover:text-white/60">
+        </Link>{' '}
+        và{' '}
+        <Link href='/privacy' className='underline underline-offset-2 hover:text-white/60'>
           Chính sách quyền riêng tư
-        </Link>{" "}
+        </Link>{' '}
         của Hive-K.
       </motion.p>
     </motion.div>
@@ -127,6 +132,6 @@ export function AuthShell({ accent, heading, subtitle, children, footer, classNa
 }
 
 /** The accent-colored word inside the shell heading. */
-export function AccentWord({ color, children }: { color: string; children: ReactNode }) {
+export function AccentWord({ color, children }: { color: string; children: ReactNode; }) {
   return <span style={{ color }}>{children}</span>;
 }

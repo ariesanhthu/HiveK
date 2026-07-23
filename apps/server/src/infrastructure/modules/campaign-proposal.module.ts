@@ -2,22 +2,26 @@ import { Module } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
 
 // Controllers & Resolvers
-import { CampaignProposalAdminController, CampaignProposalClientController, CampaignProposalResolver } from '@/presentation/controllers';
+import {
+  CampaignProposalAdminController,
+  CampaignProposalClientController,
+  CampaignProposalResolver,
+} from '@/presentation/controllers';
 
 // Commands
 import {
   ProposalCreateCommandHandler,
-  ProposalUpdateCommandHandler,
-  ProposalUpdateStatusCommandHandler,
-  ProposalUpdateMetricsCommandHandler,
-  ProposalSoftDeleteCommandHandler,
   ProposalRestoreCommandHandler,
+  ProposalSoftDeleteCommandHandler,
+  ProposalUpdateCommandHandler,
+  ProposalUpdateMetricsCommandHandler,
+  ProposalUpdateStatusCommandHandler,
 } from '@/application/commands';
 
 // Queries
 import {
-  ProposalGetBySlugHandler,
   ProposalGetByIdHandler,
+  ProposalGetBySlugHandler,
   ProposalGetListHandler,
 } from '@/application/queries';
 

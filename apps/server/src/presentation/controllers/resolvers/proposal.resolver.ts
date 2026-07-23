@@ -1,9 +1,16 @@
-import { Resolver, Query, Args } from '@nestjs/graphql';
-import { QueryBus } from '@nestjs/cqrs';
-import { BadRequestException } from '@nestjs/common';
+import {
+  ProposalGetByIdQuery,
+  ProposalGetBySlugQuery,
+  ProposalGetListQuery,
+} from '@/application/queries';
+import {
+  CampaignProposalFilterInput,
+  CampaignProposalResponse,
+} from '@/infrastructure/graphql/types/pagination.type';
 import { CampaignProposalType } from '@/infrastructure/graphql/types/proposal.type';
-import { CampaignProposalFilterInput, CampaignProposalResponse } from '@/infrastructure/graphql/types/pagination.type';
-import { ProposalGetByIdQuery, ProposalGetListQuery, ProposalGetBySlugQuery } from '@/application/queries';
+import { BadRequestException } from '@nestjs/common';
+import { QueryBus } from '@nestjs/cqrs';
+import { Args, Query, Resolver } from '@nestjs/graphql';
 import { Public } from '@presentation/decorators/public.decorator';
 
 @Resolver(() => CampaignProposalType)
@@ -28,7 +35,8 @@ export class CampaignProposalResolver {
   @Public()
   @Query(() => CampaignProposalResponse, { name: 'campaignProposals' })
   async getCampaignProposals(
-    @Args('filters', { type: () => CampaignProposalFilterInput, nullable: true }) filters?: CampaignProposalFilterInput,
+    @Args('filters', { type: () => CampaignProposalFilterInput, nullable: true }) filters?:
+      CampaignProposalFilterInput,
   ) {
     return this.queryBus.execute(new ProposalGetListQuery(filters as any));
   }

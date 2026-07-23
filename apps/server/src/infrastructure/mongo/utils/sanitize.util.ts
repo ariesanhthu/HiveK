@@ -15,7 +15,7 @@ export class MongoSanitizeUtil {
   }
 
   /**
-   * Sanitizes a string for use in MongoDB queries by removing or escaping 
+   * Sanitizes a string for use in MongoDB queries by removing or escaping
    * characters that could be misinterpreted as operators.
    * Note: NestJS + Zod already prevent object-based injection by validating types.
    */

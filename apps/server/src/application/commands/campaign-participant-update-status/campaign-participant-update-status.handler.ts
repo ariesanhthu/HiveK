@@ -1,18 +1,28 @@
-import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { Inject } from '@nestjs/common';
-import { CAMPAIGN_REPOSITORY, type ICampaignRepository } from '@/core/interfaces/repositories/campaign.repository';
-import { KOL_PROFILE_REPOSITORY, type IKolProfileRepository } from '@/core/interfaces/repositories/kol-profile.repository';
-import { CampaignParticipantNotFoundException, UserForbiddenException, InvalidOperationException } from '@/core/exceptions';
 import { EParticipantStatus } from '@/core/enums';
+import {
+  CampaignParticipantNotFoundException,
+  InvalidOperationException,
+  UserForbiddenException,
+} from '@/core/exceptions';
+import {
+  CAMPAIGN_REPOSITORY,
+  type ICampaignRepository,
+} from '@/core/interfaces/repositories/campaign.repository';
+import {
+  type IKolProfileRepository,
+  KOL_PROFILE_REPOSITORY,
+} from '@/core/interfaces/repositories/kol-profile.repository';
+import { Inject } from '@nestjs/common';
+import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { CampaignParticipantUpdateStatusCommand } from './campaign-participant-update-status.command';
 
 @CommandHandler(CampaignParticipantUpdateStatusCommand)
-export class CampaignParticipantUpdateStatusCommandHandler implements ICommandHandler<CampaignParticipantUpdateStatusCommand, void> {
+export class CampaignParticipantUpdateStatusCommandHandler
+  implements ICommandHandler<CampaignParticipantUpdateStatusCommand, void>
+{
   constructor(
-    @Inject(CAMPAIGN_REPOSITORY)
-    private readonly campaignRepository: ICampaignRepository,
-    @Inject(KOL_PROFILE_REPOSITORY)
-    private readonly kolProfileRepository: IKolProfileRepository,
+    @Inject(CAMPAIGN_REPOSITORY) private readonly campaignRepository: ICampaignRepository,
+    @Inject(KOL_PROFILE_REPOSITORY) private readonly kolProfileRepository: IKolProfileRepository,
   ) {}
 
   async execute(command: CampaignParticipantUpdateStatusCommand): Promise<void> {

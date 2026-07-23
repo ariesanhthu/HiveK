@@ -3,25 +3,25 @@ import type {
   AiChatSetup,
   BrandToneId,
   SocialPlatformId,
-} from "@/features/ai-chat/types";
+} from '@/features/ai-chat/types';
 
-const STORAGE_KEY = "hivek.ai-chat.setup.v1";
+const STORAGE_KEY = 'hivek.ai-chat.setup.v1';
 const STORAGE_VERSION = 1;
-const IDENTITY_STORAGE_KEY = "hivek.ai-chat.identity.v1";
+const IDENTITY_STORAGE_KEY = 'hivek.ai-chat.identity.v1';
 const IDENTITY_STORAGE_VERSION = 1;
 
 const SOCIAL_PLATFORM_IDS = new Set<SocialPlatformId>([
-  "facebook",
-  "instagram",
-  "tiktok",
-  "youtube",
-  "threads",
+  'facebook',
+  'instagram',
+  'tiktok',
+  'youtube',
+  'threads',
 ]);
 const BRAND_TONE_IDS = new Set<BrandToneId>([
-  "professional",
-  "friendly",
-  "inspiring",
-  "playful",
+  'professional',
+  'friendly',
+  'inspiring',
+  'playful',
 ]);
 
 type StoredSetup = {
@@ -30,7 +30,7 @@ type StoredSetup = {
 };
 
 function isRecord(value: unknown): value is Record<string, unknown> {
-  return typeof value === "object" && value !== null;
+  return typeof value === 'object' && value !== null;
 }
 
 function parseStoredSetup(value: unknown): AiChatSetup | null {
@@ -44,18 +44,18 @@ function parseStoredSetup(value: unknown): AiChatSetup | null {
   const driveUrl = setup.driveUrl;
 
   if (
-    !Array.isArray(socialPlatforms) ||
-    !socialPlatforms.every(
+    !Array.isArray(socialPlatforms)
+    || !socialPlatforms.every(
       (platform): platform is SocialPlatformId =>
-        typeof platform === "string" &&
-        SOCIAL_PLATFORM_IDS.has(platform as SocialPlatformId)
-    ) ||
-    !isRecord(branding) ||
-    typeof branding.name !== "string" ||
-    (branding.tone !== null &&
-      (typeof branding.tone !== "string" ||
-        !BRAND_TONE_IDS.has(branding.tone as BrandToneId))) ||
-    typeof driveUrl !== "string"
+        typeof platform === 'string'
+        && SOCIAL_PLATFORM_IDS.has(platform as SocialPlatformId),
+    )
+    || !isRecord(branding)
+    || typeof branding.name !== 'string'
+    || (branding.tone !== null
+      && (typeof branding.tone !== 'string'
+        || !BRAND_TONE_IDS.has(branding.tone as BrandToneId)))
+    || typeof driveUrl !== 'string'
   ) {
     return null;
   }
@@ -71,7 +71,7 @@ function parseStoredSetup(value: unknown): AiChatSetup | null {
 }
 
 export function readAiChatSetup(): AiChatSetup | null {
-  if (typeof window === "undefined") return null;
+  if (typeof window === 'undefined') return null;
 
   try {
     const storedValue = window.sessionStorage.getItem(STORAGE_KEY);
@@ -83,7 +83,7 @@ export function readAiChatSetup(): AiChatSetup | null {
 }
 
 export function writeAiChatSetup(setup: AiChatSetup): void {
-  if (typeof window === "undefined") return;
+  if (typeof window === 'undefined') return;
 
   const storedSetup: StoredSetup = {
     version: STORAGE_VERSION,
@@ -98,7 +98,7 @@ export function writeAiChatSetup(setup: AiChatSetup): void {
 }
 
 export function clearAiChatSetup(): void {
-  if (typeof window === "undefined") return;
+  if (typeof window === 'undefined') return;
 
   try {
     window.sessionStorage.removeItem(STORAGE_KEY);
@@ -110,19 +110,18 @@ export function clearAiChatSetup(): void {
 function createId(prefix: string): string {
   // randomUUID only exists in secure contexts, so a demo served over plain HTTP
   // on a LAN address would otherwise throw here.
-  const unique =
-    typeof crypto !== "undefined" && typeof crypto.randomUUID === "function"
-      ? crypto.randomUUID()
-      : `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 10)}`;
+  const unique = typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function'
+    ? crypto.randomUUID()
+    : `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 10)}`;
 
   return `${prefix}-${unique}`;
 }
 
 function createIdentity(): AiChatIdentity {
   return {
-    workspaceId: createId("ws"),
-    userId: createId("user"),
-    threadId: createId("th"),
+    workspaceId: createId('ws'),
+    userId: createId('user'),
+    threadId: createId('th'),
   };
 }
 
@@ -135,12 +134,12 @@ function parseStoredIdentity(value: unknown): AiChatIdentity | null {
   const { workspaceId, userId, threadId } = identity;
 
   if (
-    typeof workspaceId !== "string" ||
-    typeof userId !== "string" ||
-    typeof threadId !== "string" ||
-    !workspaceId ||
-    !userId ||
-    !threadId
+    typeof workspaceId !== 'string'
+    || typeof userId !== 'string'
+    || typeof threadId !== 'string'
+    || !workspaceId
+    || !userId
+    || !threadId
   ) {
     return null;
   }
@@ -152,7 +151,7 @@ function writeIdentity(identity: AiChatIdentity): void {
   try {
     window.localStorage.setItem(
       IDENTITY_STORAGE_KEY,
-      JSON.stringify({ version: IDENTITY_STORAGE_VERSION, identity })
+      JSON.stringify({ version: IDENTITY_STORAGE_VERSION, identity }),
     );
   } catch {
     // Storage can be unavailable in private or restricted browser contexts.
@@ -165,7 +164,7 @@ let cachedIdentity: AiChatIdentity | null = null;
 
 export function getOrCreateChatIdentity(): AiChatIdentity {
   // Never cache on the server: module scope is shared across requests there.
-  if (typeof window === "undefined") return createIdentity();
+  if (typeof window === 'undefined') return createIdentity();
   if (cachedIdentity) return cachedIdentity;
 
   let identity: AiChatIdentity | null = null;
@@ -190,10 +189,10 @@ export function getOrCreateChatIdentity(): AiChatIdentity {
 export function resetChatThreadId(): AiChatIdentity {
   const identity: AiChatIdentity = {
     ...getOrCreateChatIdentity(),
-    threadId: createId("th"),
+    threadId: createId('th'),
   };
 
-  if (typeof window === "undefined") return identity;
+  if (typeof window === 'undefined') return identity;
 
   writeIdentity(identity);
   cachedIdentity = identity;

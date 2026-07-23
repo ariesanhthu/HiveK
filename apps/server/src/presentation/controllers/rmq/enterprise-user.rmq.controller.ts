@@ -1,8 +1,8 @@
+import { NotificationSendCommand } from '@/application/commands';
+import { NotificationChannel, NotificationType } from '@/core/enums';
+import { RmqHandler } from '@/infrastructure/rabbitmq/rmq-consumer.registry';
 import { Controller } from '@nestjs/common';
 import { CommandBus } from '@nestjs/cqrs';
-import { RmqHandler } from '@/infrastructure/rabbitmq/rmq-consumer.registry';
-import { NotificationSendCommand } from '@/application/commands';
-import { NotificationType, NotificationChannel } from '@/core/enums';
 
 @Controller()
 export class EnterpriseUserRmqController {
@@ -23,7 +23,7 @@ export class EnterpriseUserRmqController {
           broadcastType: 'direct',
           userIds: [userId],
         },
-      })
+      }),
     );
   }
 
@@ -41,7 +41,7 @@ export class EnterpriseUserRmqController {
           broadcastType: 'direct',
           userIds: [userId],
         },
-      })
+      }),
     );
   }
 }

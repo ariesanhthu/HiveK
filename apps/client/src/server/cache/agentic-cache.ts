@@ -1,5 +1,5 @@
-import { createClient } from "redis";
-import { serverEnv } from "@/server/config/env";
+import { serverEnv } from '@/server/config/env';
+import { createClient } from 'redis';
 
 type CacheEntry = {
   expiresAt: number;
@@ -70,7 +70,7 @@ export async function getCacheJson<TValue>(key: string): Promise<TValue | null> 
 export async function setCacheJson<TValue>(
   key: string,
   value: TValue,
-  ttlSeconds = serverEnv.aiCacheTtlSeconds
+  ttlSeconds = serverEnv.aiCacheTtlSeconds,
 ): Promise<void> {
   const serializedValue = JSON.stringify(value);
   const redisClient = await getRedisClient();

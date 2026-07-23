@@ -1,6 +1,6 @@
+import { AppConfig } from '@/app.config';
 import { INestApplication } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { AppConfig } from '@/app.config';
 
 export function setupSwagger(app: INestApplication, appConfig: AppConfig): void {
   const config = new DocumentBuilder()
@@ -33,16 +33,15 @@ export function setupSwagger(app: INestApplication, appConfig: AppConfig): void 
   fullDocument.tags = fullDocument.tags?.filter(tag => tag.name !== '');
   for (const path in fullDocument.paths) {
     for (const method in fullDocument.paths[path]) {
-      (fullDocument as any).paths[path][method].tags =
-        (fullDocument as any).paths[path][method].tags?.filter((tag: string) => tag !== '');
+      (fullDocument as any).paths[path][method].tags = (fullDocument as any).paths[path][method]
+        .tags?.filter((tag: string) => tag !== '');
     }
   }
-
 
   // ---- Separate paths ----
   const isAdminPath = (path: string) => path.includes(`/admin`);
   const isClientPath = (path: string) => path.includes(`/client`);
-  const isSharedPath = (path: string) => !isAdminPath(path) && !isClientPath(path)
+  const isSharedPath = (path: string) => !isAdminPath(path) && !isClientPath(path);
   const adminPaths = Object.fromEntries(
     Object.entries(fullDocument.paths).filter(([path]) => isAdminPath(path) || isSharedPath(path)),
   );
@@ -58,7 +57,12 @@ export function setupSwagger(app: INestApplication, appConfig: AppConfig): void 
 
   // ---- Setup Swagger UI ----
   const globalPrefix = appConfig.getGlobalPrefix();
-  SwaggerModule.setup(`${globalPrefix}/admin/docs`, app, adminDocument, { ...swaggerCustomOptions, jsonDocumentUrl: `${globalPrefix}/admin/docs/openapi-json` });
-  SwaggerModule.setup(`${globalPrefix}/client/docs`, app, clientDocument, { ...swaggerCustomOptions, jsonDocumentUrl: `${globalPrefix}/client/docs/openapi-json` });
+  SwaggerModule.setup(`${globalPrefix}/admin/docs`, app, adminDocument, {
+    ...swaggerCustomOptions,
+    jsonDocumentUrl: `${globalPrefix}/admin/docs/openapi-json`,
+  });
+  SwaggerModule.setup(`${globalPrefix}/client/docs`, app, clientDocument, {
+    ...swaggerCustomOptions,
+    jsonDocumentUrl: `${globalPrefix}/client/docs/openapi-json`,
+  });
 }
-

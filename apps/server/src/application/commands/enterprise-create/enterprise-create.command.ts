@@ -1,6 +1,6 @@
+import { EnterpriseDto } from '@/application/dtos';
 import { Command } from '@nestjs/cqrs';
 import { EnterpriseCreateInputDto } from './enterprise-create.dto';
-import { EnterpriseDto } from '@/application/dtos';
 
 export class EnterpriseCreateCommand extends Command<EnterpriseDto> {
   constructor(

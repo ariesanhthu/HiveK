@@ -1,15 +1,15 @@
-import { Injectable } from '@nestjs/common';
-import { InjectConnection } from '@nestjs/mongoose';
-import { Connection, ClientSession } from 'mongoose';
 import { IUnitOfWork } from '@/application/interfaces';
 import { Nullable } from '@/core/types';
+import { Injectable } from '@nestjs/common';
+import { InjectConnection } from '@nestjs/mongoose';
 import { AsyncLocalStorage } from 'async_hooks';
+import { ClientSession, Connection } from 'mongoose';
 
 @Injectable()
 export class MongoUnitOfWork implements IUnitOfWork {
   private readonly als = new AsyncLocalStorage<ClientSession>();
 
-  constructor(@InjectConnection() private readonly connection: Connection) { }
+  constructor(@InjectConnection() private readonly connection: Connection) {}
 
   /**
    * Starts a transaction and runs the operation within an AsyncLocalStorage context.
@@ -51,7 +51,7 @@ export class MongoUnitOfWork implements IUnitOfWork {
 
   /**
    * Manual transaction management (deprecated in favor of execute())
-   * These remain for interface compatibility but startTransaction() 
+   * These remain for interface compatibility but startTransaction()
    * should ideally not be used directly with ALS in this pattern.
    */
   async startTransaction(): Promise<void> {

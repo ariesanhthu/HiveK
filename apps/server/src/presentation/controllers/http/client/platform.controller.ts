@@ -1,20 +1,15 @@
-import { Controller, Get, Param, Query } from '@nestjs/common';
-import { QueryBus } from '@nestjs/cqrs';
-import {
-  ApiTags,
-  ApiOperation,
-  ApiBearerAuth,
-  ApiSecurity,
-} from '@nestjs/swagger';
-import { buildVersionedRoute } from '@presentation/utils';
-import {
-  PlatformGetListQuery,
-  PlatformGetByIdQuery,
-  PlatformFilterDto,
-} from '@/application/queries';
 import { PlatformDetailDto } from '@/application/dtos';
 import { PaginatedResponseDto } from '@/application/dtos/pagination.dto';
+import {
+  PlatformFilterDto,
+  PlatformGetByIdQuery,
+  PlatformGetListQuery,
+} from '@/application/queries';
 import { Public } from '@/presentation/decorators/public.decorator';
+import { Controller, Get, Param, Query } from '@nestjs/common';
+import { QueryBus } from '@nestjs/cqrs';
+import { ApiBearerAuth, ApiOperation, ApiSecurity, ApiTags } from '@nestjs/swagger';
+import { buildVersionedRoute } from '@presentation/utils';
 
 @ApiTags('CLIENT-platforms')
 @ApiBearerAuth()

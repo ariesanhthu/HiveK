@@ -1,8 +1,8 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { QueryBus } from '@nestjs/cqrs';
-import { CampaignResolver } from '@/presentation/controllers/resolvers/campaign.resolver';
-import { CampaignGetByIdQuery, CampaignGetListQuery } from '@/application/queries';
 import { ProjectionDto } from '@/application/dtos/projection.dto';
+import { CampaignGetByIdQuery, CampaignGetListQuery } from '@/application/queries';
+import { CampaignResolver } from '@/presentation/controllers/resolvers/campaign.resolver';
+import { QueryBus } from '@nestjs/cqrs';
+import { Test, TestingModule } from '@nestjs/testing';
 
 describe('CampaignResolver', () => {
   let resolver: CampaignResolver;

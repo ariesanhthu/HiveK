@@ -1,5 +1,5 @@
-import { z } from 'zod';
 import { createZodDto } from 'nestjs-zod';
+import { z } from 'zod';
 
 export const KolPlatformInfoDtoSchema = z.object({
   platformId: z.string(),
@@ -33,4 +33,3 @@ export class KolProfileDto extends createZodDto(KolProfileDtoSchema) {}
 export class KolProfileDetailDto extends KolProfileDto {
   user?: UserDto;
 }
-

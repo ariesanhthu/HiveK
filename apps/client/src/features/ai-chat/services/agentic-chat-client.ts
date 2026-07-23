@@ -1,15 +1,12 @@
-import { z } from "zod";
-import type {
-  BrandToneId,
-  SocialPlatformId,
-} from "@/features/ai-chat/types";
+import type { BrandToneId, SocialPlatformId } from '@/features/ai-chat/types';
+import { z } from 'zod';
 
 export {
   getOrCreateChatIdentity,
   resetChatThreadId,
-} from "@/features/ai-chat/services/ai-chat-storage";
+} from '@/features/ai-chat/services/ai-chat-storage';
 
-const DEFAULT_BASE_URL = "http://localhost:8100";
+const DEFAULT_BASE_URL = 'http://localhost:8100';
 
 // A chat turn runs the whole agent workflow (route, load knowledge, compile
 // context, generate, validate) against an LLM and regularly needs ~60s, so it
@@ -19,9 +16,9 @@ const DEFAULT_TIMEOUT_MS = 15_000;
 
 /** The service could not be reached at all: offline, DNS, CORS or timeout. */
 export class AgenticUnreachableError extends Error {
-  constructor(message: string, options?: { cause?: unknown }) {
+  constructor(message: string, options?: { cause?: unknown; }) {
     super(message, options);
-    this.name = "AgenticUnreachableError";
+    this.name = 'AgenticUnreachableError';
   }
 }
 
@@ -31,17 +28,17 @@ export class AgenticResponseError extends Error {
 
   constructor(message: string, status: number) {
     super(message);
-    this.name = "AgenticResponseError";
+    this.name = 'AgenticResponseError';
     this.status = status;
   }
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {
-  return typeof value === "object" && value !== null;
+  return typeof value === 'object' && value !== null;
 }
 
 function trimTrailingSlash(value: string): string {
-  return value.endsWith("/") ? value.slice(0, -1) : value;
+  return value.endsWith('/') ? value.slice(0, -1) : value;
 }
 
 function getAgenticPyUrl(path: string): string {
@@ -54,20 +51,20 @@ function extractDetail(body: unknown): string | null {
   if (!isRecord(body)) return null;
 
   const { detail } = body;
-  if (typeof detail === "string") return detail;
+  if (typeof detail === 'string') return detail;
 
   if (Array.isArray(detail)) {
     const issues = detail
       .filter(isRecord)
       .map((issue) => {
-        const location = Array.isArray(issue.loc) ? issue.loc.join(".") : null;
-        const message = typeof issue.msg === "string" ? issue.msg : null;
+        const location = Array.isArray(issue.loc) ? issue.loc.join('.') : null;
+        const message = typeof issue.msg === 'string' ? issue.msg : null;
         if (!message) return null;
         return location ? `${location}: ${message}` : message;
       })
       .filter((issue): issue is string => issue !== null);
 
-    if (issues.length > 0) return issues.join("; ");
+    if (issues.length > 0) return issues.join('; ');
   }
 
   return null;
@@ -82,7 +79,7 @@ async function readJson(response: Response): Promise<unknown> {
 }
 
 type RequestOptions = {
-  method: "GET" | "POST";
+  method: 'GET' | 'POST';
   body?: unknown;
   timeoutMs?: number;
 };
@@ -90,7 +87,7 @@ type RequestOptions = {
 async function requestJson<TSchema extends z.ZodType>(
   path: string,
   schema: TSchema,
-  { method, body, timeoutMs = DEFAULT_TIMEOUT_MS }: RequestOptions
+  { method, body, timeoutMs = DEFAULT_TIMEOUT_MS }: RequestOptions,
 ): Promise<z.infer<TSchema>> {
   const url = getAgenticPyUrl(path);
   let response: Response;
@@ -98,7 +95,7 @@ async function requestJson<TSchema extends z.ZodType>(
   try {
     response = await fetch(url, {
       method,
-      headers: body ? { "Content-Type": "application/json" } : undefined,
+      headers: body ? { 'Content-Type': 'application/json' } : undefined,
       body: body ? JSON.stringify(body) : undefined,
       signal: AbortSignal.timeout(timeoutMs),
     });
@@ -113,7 +110,7 @@ async function requestJson<TSchema extends z.ZodType>(
   if (!response.ok) {
     throw new AgenticResponseError(
       extractDetail(payload) ?? `${response.status} ${response.statusText}`,
-      response.status
+      response.status,
     );
   }
 
@@ -121,12 +118,12 @@ async function requestJson<TSchema extends z.ZodType>(
 
   if (!parsed.success) {
     const issues = parsed.error.issues
-      .map((issue) => `${issue.path.join(".") || "<root>"}: ${issue.message}`)
-      .join("; ");
+      .map((issue) => `${issue.path.join('.') || '<root>'}: ${issue.message}`)
+      .join('; ');
 
     throw new AgenticResponseError(
       `Unexpected response from ${path} (${issues})`,
-      response.status
+      response.status,
     );
   }
 
@@ -135,7 +132,7 @@ async function requestJson<TSchema extends z.ZodType>(
 
 const missingItemSchema = z.object({
   field: z.string(),
-  severity: z.enum(["blocking", "quality", "optional"]),
+  severity: z.enum(['blocking', 'quality', 'optional']),
   reason: z.string(),
   searchedSources: z.array(z.string()).default([]),
   suggestedAction: z.string(),
@@ -145,11 +142,11 @@ const missingItemSchema = z.object({
 
 const widgetSchema = z.object({
   type: z.enum([
-    "setup-overview",
-    "social-connect",
-    "brand-form",
-    "drive-form",
-    "setup-complete",
+    'setup-overview',
+    'social-connect',
+    'brand-form',
+    'drive-form',
+    'setup-complete',
   ]),
 });
 
@@ -158,11 +155,11 @@ const widgetSchema = z.object({
 const nextActionSchema = z.object({
   id: z.string(),
   label: z.string(),
-  kind: z.enum(["intent", "href", "decision"]),
+  kind: z.enum(['intent', 'href', 'decision']),
   intent: z.string().nullish(),
   href: z.string().nullish(),
   decision: z.string().nullish(),
-  variant: z.enum(["primary", "secondary"]),
+  variant: z.enum(['primary', 'secondary']),
   payload: z.record(z.string(), z.unknown()).default({}),
 });
 
@@ -190,7 +187,7 @@ const assetSchema = z.object({
           code: z.string(),
           severity: z.string(),
           message: z.string(),
-        })
+        }),
       )
       .default([]),
   }),
@@ -212,7 +209,7 @@ const planSchema = z.object({
         angle: z.string().nullish(),
         rationale: z.string().nullish(),
         score: z.number().nullish(),
-      })
+      }),
     )
     .default([]),
 });
@@ -228,13 +225,13 @@ const chatResponseSchema = z.object({
   runId: z.string(),
   threadId: z.string(),
   status: z.enum([
-    "running",
-    "completed",
-    "partial",
-    "needs_user_input",
-    "needs_approval",
-    "failed",
-    "cancelled",
+    'running',
+    'completed',
+    'partial',
+    'needs_user_input',
+    'needs_approval',
+    'failed',
+    'cancelled',
   ]),
   reply: z.string(),
   widget: widgetSchema.nullish(),
@@ -299,10 +296,10 @@ export type SendChatMessageInput = {
 };
 
 export function sendChatMessage(
-  input: SendChatMessageInput
+  input: SendChatMessageInput,
 ): Promise<AgenticChatResponse> {
-  return requestJson("/v1/chat/messages", chatResponseSchema, {
-    method: "POST",
+  return requestJson('/v1/chat/messages', chatResponseSchema, {
+    method: 'POST',
     body: input,
     timeoutMs: CHAT_TIMEOUT_MS,
   });
@@ -315,10 +312,10 @@ export type SetupSocialInput = {
 };
 
 export function setupSocial(
-  input: SetupSocialInput
+  input: SetupSocialInput,
 ): Promise<AgenticSetupResponse> {
-  return requestJson("/v1/setup/social", setupResponseSchema, {
-    method: "POST",
+  return requestJson('/v1/setup/social', setupResponseSchema, {
+    method: 'POST',
     body: input,
   });
 }
@@ -331,10 +328,10 @@ export type SetupBrandInput = {
 };
 
 export function setupBrand(
-  input: SetupBrandInput
+  input: SetupBrandInput,
 ): Promise<AgenticSetupResponse> {
-  return requestJson("/v1/setup/brand", setupResponseSchema, {
-    method: "POST",
+  return requestJson('/v1/setup/brand', setupResponseSchema, {
+    method: 'POST',
     body: input,
   });
 }
@@ -346,10 +343,10 @@ export type SetupDriveInput = {
 };
 
 export function setupDrive(
-  input: SetupDriveInput
+  input: SetupDriveInput,
 ): Promise<AgenticSetupResponse> {
-  return requestJson("/v1/setup/drive", setupResponseSchema, {
-    method: "POST",
+  return requestJson('/v1/setup/drive', setupResponseSchema, {
+    method: 'POST',
     body: input,
   });
 }
@@ -358,7 +355,7 @@ export type DecideOnAssetInput = {
   assetId: string;
   workspaceId: string;
   userId: string;
-  decision: "approve" | "reject" | "edit" | "regenerate" | "pin_as_good";
+  decision: 'approve' | 'reject' | 'edit' | 'regenerate' | 'pin_as_good';
   editedText?: string;
   reason?: string;
 };
@@ -370,13 +367,13 @@ export function decideOnAsset({
   return requestJson(
     `/v1/content-assets/${encodeURIComponent(assetId)}/decision`,
     decisionResponseSchema,
-    { method: "POST", body: input }
+    { method: 'POST', body: input },
   );
 }
 
 export function getHealth(): Promise<AgenticHealthResponse> {
-  return requestJson("/health", healthResponseSchema, {
-    method: "GET",
+  return requestJson('/health', healthResponseSchema, {
+    method: 'GET',
     timeoutMs: 5_000,
   });
 }

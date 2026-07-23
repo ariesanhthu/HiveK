@@ -2,8 +2,9 @@
 
 ## Purpose
 
-Mô tả kiến trúc frontend tham chiếu cho HIVEK, dùng làm **spec docs-first** cho team client và cho hệ thống graph React Flow (`docs/visual/`).  
+Mô tả kiến trúc frontend tham chiếu cho HIVEK, dùng làm **spec docs-first** cho team client và cho hệ thống graph React Flow (`docs/visual/`).\
 Đây không phải source code chạy production, mà là **mẫu kiến trúc Next.js 14 App Router + feature-based** cho:
+
 - public marketing website (landing, ranking, profile,…)
 - phân nhóm route theo role (public/auth/dashboard)
 - tách `features/`, `components/`, `styles/` rõ ràng.
@@ -54,6 +55,7 @@ components/
 ```
 
 Nguyên tắc:
+
 - `components/global/layout/`: layout-level primitives (navbar, footer, shell).
 - `components/global/sections/`: section reusable, có thể dùng lại giữa homepage, ranking page, dashboard marketing site.
 - Không chứa business logic (fetch API, hooks) – chỉ nhận props hoặc dùng dummy data cho docs.
@@ -83,12 +85,14 @@ features/
 ```
 
 Nguyên tắc:
+
 - Mỗi feature = 1 folder dưới `features/`.
 - `components/`: UI riêng cho feature (page-level, widget gắn business), compose từ global components.
 - `hooks/`: hooks đặc thù cho feature (data + UI state).
 - `server/`: hàm server-side / data fetching riêng cho feature (ví dụ: `getTopKols()`, `getFeaturedCampaigns()`).
 
 Hiện tại có 4 feature frontend:
+
 - `landing` cho `/` (homepage, public), mapping với các section: `HeroSection`, `PlatformBenefitsSection`, `TopPerformersSection`, `ActiveCampaignsSection`, `CallToActionSection`.
 - `kol-ranking` cho `/kol-ranking`, hỗ trợ filter + pagination + realtime stream để hiển thị bảng xếp hạng KOL.
 - `business-dashboard` cho `/dashboard` (group `(business)`), tách dashboard thành nhiều layer UI để dễ maintain và mở rộng dữ liệu thật.
@@ -135,6 +139,7 @@ styles/
 ## Relation to `docs/visual/graph.json`
 
 Graph React Flow (xem `docs/visual/PROMPT.md` + skill `react-flow.md`) yêu cầu node schema:
+
 - node type: `feature`, `workflow`, `file`, `folder`, `note`.
 - focus: **feature → workflow → file**.
 
@@ -155,6 +160,7 @@ Graph React Flow (xem `docs/visual/PROMPT.md` + skill `react-flow.md`) yêu cầ
 - `landing.final-cta`
 
 Mỗi workflow map tới 1–2 section:
+
 - `landing.hero-and-nav` → `HeroSection` + `MainHeader`.
 - `landing.discovery-and-social-proof` → `PlatformBenefitsSection` + `TopPerformersSection`.
 - `landing.campaign-preview` → `ActiveCampaignsSection`.
@@ -163,6 +169,7 @@ Mỗi workflow map tới 1–2 section:
 ### File nodes (gợi ý)
 
 Ví dụ các node `file` nên được thêm vào `graph.json`:
+
 - `docs/Architecture/frontend/structure.md` (file này)
 - `docs/Architecture/frontend/pages.md`
 - `docs/Architecture/frontend/ux-ui-style.md`
@@ -180,6 +187,7 @@ Ví dụ các node `file` nên được thêm vào `graph.json`:
 - `docs/Architecture/frontend/styles/globals.css`
 
 Các node `file` này nên:
+
 - có `feature: "landing"` khi liên quan trực tiếp tới landing.
 - có `workflow` tương ứng như phần trên để graph filter theo workflow.
 
@@ -204,4 +212,3 @@ Các node `file` này nên:
 - Luôn giữ đồng bộ:
   - `pages.md` ↔ `app/` ↔ `features/` ↔ `components/`
   - và `docs/visual/graph.json` (feature → workflow → file).
-

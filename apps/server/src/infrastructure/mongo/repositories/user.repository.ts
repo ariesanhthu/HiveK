@@ -1,29 +1,33 @@
-import { Injectable, Inject } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model, Types, ClientSession, Schema } from 'mongoose';
-import { IUserRepository } from '@/core/interfaces/repositories';
-import { UserRoot, AdminRoot, EnterpriseUserRoot, KOLUserRoot } from '@/core/aggregate-roots';
-import { UserModel, UserDocument, EnterpriseUserModel, EnterpriseUserDocument, AdminUserDocument, KOLUserDocument } from '../schemas/user.schema';
-import { Nullable } from '@/core/types';
-import { ERoleType } from '@/core/enums';
-import { PhoneNumberVO } from '@/core/value-objects/phone-number.value-object';
 import { type IUnitOfWork, UNIT_OF_WORK } from '@/application/interfaces';
+import { AdminRoot, EnterpriseUserRoot, KOLUserRoot, UserRoot } from '@/core/aggregate-roots';
+import { ERoleType } from '@/core/enums';
+import { IUserRepository } from '@/core/interfaces/repositories';
+import { Nullable } from '@/core/types';
+import { PhoneNumberVO } from '@/core/value-objects/phone-number.value-object';
+import { Inject, Injectable } from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
+import { ClientSession, Model, Schema, Types } from 'mongoose';
 import { MongoUnitOfWork } from '../mongo-uow';
+import {
+  AdminUserDocument,
+  EnterpriseUserDocument,
+  EnterpriseUserModel,
+  KOLUserDocument,
+  UserDocument,
+  UserModel,
+} from '../schemas/user.schema';
 
 @Injectable()
 export class MongoUserRepository implements IUserRepository {
   constructor(
-    @InjectModel(UserModel.name)
-    private readonly userModel: Model<UserDocument>,
-    @InjectModel(ERoleType.ENTERPRISE)
-    private readonly enterpriseUserModel: Model<EnterpriseUserDocument>,
-    @InjectModel(ERoleType.ADMIN)
-    private readonly adminUserModel: Model<AdminUserDocument>,
-    @InjectModel(ERoleType.KOL)
-    private readonly kolUserModel: Model<KOLUserDocument>,
-    @Inject(UNIT_OF_WORK)
-    private readonly uow: IUnitOfWork,
-  ) { }
+    @InjectModel(UserModel.name) private readonly userModel: Model<UserDocument>,
+    @InjectModel(ERoleType.ENTERPRISE) private readonly enterpriseUserModel: Model<
+      EnterpriseUserDocument
+    >,
+    @InjectModel(ERoleType.ADMIN) private readonly adminUserModel: Model<AdminUserDocument>,
+    @InjectModel(ERoleType.KOL) private readonly kolUserModel: Model<KOLUserDocument>,
+    @Inject(UNIT_OF_WORK) private readonly uow: IUnitOfWork,
+  ) {}
 
   private get session(): ClientSession | undefined {
     return (this.uow as MongoUnitOfWork).getSession() || undefined;
@@ -49,7 +53,8 @@ export class MongoUserRepository implements IUserRepository {
   }
 
   async findByEnterpriseId(enterpriseId: string): Promise<UserRoot[]> {
-    const docs = await this.userModel.find({ enterprise_ids: new Types.ObjectId(enterpriseId) }).session(this.session).exec();
+    const docs = await this.userModel.find({ enterprise_ids: new Types.ObjectId(enterpriseId) })
+      .session(this.session).exec();
     return docs.map(doc => this.mapToDomain(doc));
   }
 
@@ -59,14 +64,14 @@ export class MongoUserRepository implements IUserRepository {
         role_id: new Schema.Types.ObjectId(roleId),
         delete_at: null,
       },
-      { _id: 1 }
+      { _id: 1 },
     ).session(this.session).lean().exec();
     return !!doc;
   }
 
   async save(user: UserRoot): Promise<void> {
     const data = this.mapToPersistence(user);
-    let model: Model<EnterpriseUserDocument> | Model<AdminUserDocument> | Model<KOLUserDocument>
+    let model: Model<EnterpriseUserDocument> | Model<AdminUserDocument> | Model<KOLUserDocument>;
     switch (user.type) {
       case ERoleType.ENTERPRISE:
         model = this.enterpriseUserModel;
@@ -86,7 +91,8 @@ export class MongoUserRepository implements IUserRepository {
       const saved = await created.save({ session: this.session });
       user.setId(saved._id.toString());
     } else {
-      await (model as Model<UserDocument>).findByIdAndUpdate(new Types.ObjectId(user.id), data).session(this.session).exec();
+      await (model as Model<UserDocument>).findByIdAndUpdate(new Types.ObjectId(user.id), data)
+        .session(this.session).exec();
     }
   }
 
@@ -131,7 +137,9 @@ export class MongoUserRepository implements IUserRepository {
         return EnterpriseUserRoot.instantiate(id, {
           ...props,
           type: ERoleType.ENTERPRISE,
-          enterpriseIds: (doc as any).enterprise_ids ? (doc as any).enterprise_ids.map((eid: any) => eid.toString()) : [],
+          enterpriseIds: (doc as any).enterprise_ids
+            ? (doc as any).enterprise_ids.map((eid: any) => eid.toString())
+            : [],
         });
       case ERoleType.KOL:
         return KOLUserRoot.instantiate(id, {
@@ -162,7 +170,9 @@ export class MongoUserRepository implements IUserRepository {
     if (user instanceof EnterpriseUserRoot || user.type === ERoleType.ENTERPRISE) {
       return {
         ...base,
-        enterprise_ids: (user as EnterpriseUserRoot).enterpriseIds.map(id => new Types.ObjectId(id)),
+        enterprise_ids: (user as EnterpriseUserRoot).enterpriseIds.map(id =>
+          new Types.ObjectId(id)
+        ),
       };
     }
 

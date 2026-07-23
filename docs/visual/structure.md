@@ -14,4 +14,3 @@
 - **Ghi chú cho agent**:
   - Mọi thay đổi feature/workflow/file quan trọng phải được phản ánh cả trong docs và `graph.json`.
   - Nếu tạo thư mục mới dưới `docs/visual/`, hãy thêm/ cập nhật `structure.md` tương ứng.
-

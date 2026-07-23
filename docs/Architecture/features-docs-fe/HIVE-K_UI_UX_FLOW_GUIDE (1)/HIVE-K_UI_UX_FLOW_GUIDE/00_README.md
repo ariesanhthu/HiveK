@@ -42,25 +42,25 @@ HIVE-K không được tạo cảm giác như một chatbot yêu cầu người 
 
 ## 4. Cấu trúc tài liệu
 
-| File | Nội dung |
-|---|---|
-| `01_INFORMATION_ARCHITECTURE.md` | Điều hướng, sitemap và phân nhóm chức năng |
-| `02_GLOBAL_UX_MODEL.md` | Mô hình trạng thái, nguyên tắc tương tác toàn hệ thống |
-| `03_WORKSPACE_ONBOARDING.md` | Tạo workspace và khởi động thiết lập |
-| `04_CONNECT_SOURCES_AND_SETUP_PROGRESS.md` | Kết nối nguồn và theo dõi xử lý |
-| `05_BRAND_SNAPSHOT_AND_READINESS.md` | Duyệt bản chụp thương hiệu và mức sẵn sàng |
-| `06_KNOWLEDGE_CENTER.md` | Tri thức, nguồn, thiếu dữ liệu và mâu thuẫn |
-| `07_HOME_DASHBOARD_AND_AGENT_RUNS.md` | Trang chủ và tiến trình AI |
-| `08_CONTENT_PLAN_AND_CALENDAR.md` | Lập kế hoạch nội dung và lịch |
-| `09_CONTENT_GENERATION_EDITOR.md` | Tạo bài, chỉnh sửa, kiểm tra |
-| `10_REVIEW_APPROVAL_PUBLISH.md` | Duyệt, lên lịch, đăng và xử lý lỗi |
-| `11_ANALYTICS_TRENDS_LEARNING.md` | Phân tích, xu hướng và học phong cách |
-| `12_ACCOUNTS_TEAM_PERMISSIONS.md` | Tài khoản, vai trò kênh, thành viên và quyền |
-| `13_SHARED_STATES_COMPONENTS.md` | Trạng thái dùng chung và component hành vi |
-| `14_UX_COPY_AND_NOTIFICATIONS.md` | Quy tắc nội dung giao diện và thông báo |
-| `15_ROUTE_SCREEN_EVENT_MAP.md` | Route, object dữ liệu và sự kiện hệ thống |
-| `16_MVP_AND_ACCEPTANCE.md` | Phạm vi MVP và tiêu chí nghiệm thu |
-| `17_DESIGN_HANDOFF_PROMPT.md` | Brief giao cho UI/UX Designer hoặc design agent |
+| File                                       | Nội dung                                               |
+| ------------------------------------------ | ------------------------------------------------------ |
+| `01_INFORMATION_ARCHITECTURE.md`           | Điều hướng, sitemap và phân nhóm chức năng             |
+| `02_GLOBAL_UX_MODEL.md`                    | Mô hình trạng thái, nguyên tắc tương tác toàn hệ thống |
+| `03_WORKSPACE_ONBOARDING.md`               | Tạo workspace và khởi động thiết lập                   |
+| `04_CONNECT_SOURCES_AND_SETUP_PROGRESS.md` | Kết nối nguồn và theo dõi xử lý                        |
+| `05_BRAND_SNAPSHOT_AND_READINESS.md`       | Duyệt bản chụp thương hiệu và mức sẵn sàng             |
+| `06_KNOWLEDGE_CENTER.md`                   | Tri thức, nguồn, thiếu dữ liệu và mâu thuẫn            |
+| `07_HOME_DASHBOARD_AND_AGENT_RUNS.md`      | Trang chủ và tiến trình AI                             |
+| `08_CONTENT_PLAN_AND_CALENDAR.md`          | Lập kế hoạch nội dung và lịch                          |
+| `09_CONTENT_GENERATION_EDITOR.md`          | Tạo bài, chỉnh sửa, kiểm tra                           |
+| `10_REVIEW_APPROVAL_PUBLISH.md`            | Duyệt, lên lịch, đăng và xử lý lỗi                     |
+| `11_ANALYTICS_TRENDS_LEARNING.md`          | Phân tích, xu hướng và học phong cách                  |
+| `12_ACCOUNTS_TEAM_PERMISSIONS.md`          | Tài khoản, vai trò kênh, thành viên và quyền           |
+| `13_SHARED_STATES_COMPONENTS.md`           | Trạng thái dùng chung và component hành vi             |
+| `14_UX_COPY_AND_NOTIFICATIONS.md`          | Quy tắc nội dung giao diện và thông báo                |
+| `15_ROUTE_SCREEN_EVENT_MAP.md`             | Route, object dữ liệu và sự kiện hệ thống              |
+| `16_MVP_AND_ACCEPTANCE.md`                 | Phạm vi MVP và tiêu chí nghiệm thu                     |
+| `17_DESIGN_HANDOFF_PROMPT.md`              | Brief giao cho UI/UX Designer hoặc design agent        |
 
 ## 5. Đối tượng người dùng chính
 

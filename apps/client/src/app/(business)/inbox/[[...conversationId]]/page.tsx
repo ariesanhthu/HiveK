@@ -1,7 +1,7 @@
-import { InboxPage } from "@/features/inbox/components/inbox-page";
+import { InboxPage } from '@/features/inbox/components/inbox-page';
 
 type InboxRouteProps = {
-  params: Promise<{ conversationId?: string[] }>;
+  params: Promise<{ conversationId?: string[]; }>;
 };
 
 export default async function BusinessInboxRoute({ params }: InboxRouteProps) {

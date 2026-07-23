@@ -1,5 +1,5 @@
 import { CampaignParticipantRoot } from '@/core/aggregate-roots/campaign-participant.aggregate';
-import { EParticipantStatus, EOutputStatus, EOutputType } from '@/core/enums';
+import { EOutputStatus, EOutputType, EParticipantStatus } from '@/core/enums';
 
 describe('CampaignParticipantRoot', () => {
   const validProps = {
@@ -145,7 +145,9 @@ describe('CampaignParticipantRoot', () => {
 
     it('should throw error when publishing non-existent output', () => {
       const participant = CampaignParticipantRoot.create(validProps);
-      expect(() => participant.publishOutput('invalid-id', 'url')).toThrow("Output with ID 'invalid-id' not found");
+      expect(() => participant.publishOutput('invalid-id', 'url')).toThrow(
+        'Output with ID \'invalid-id\' not found',
+      );
     });
 
     it('should update tracking status', () => {
@@ -211,7 +213,9 @@ describe('CampaignParticipantRoot', () => {
         url: 'http://url',
       });
 
-      expect(() => participant.softDelete('admin-1')).toThrow('Cannot delete participant with published outputs');
+      expect(() => participant.softDelete('admin-1')).toThrow(
+        'Cannot delete participant with published outputs',
+      );
     });
 
     it('should update properties', () => {
@@ -252,7 +256,9 @@ describe('CampaignParticipantRoot', () => {
         url: 'http://url',
       });
 
-      expect(() => participant.updateOutputs([])).toThrow('Cannot delete published output: Published Video');
+      expect(() => participant.updateOutputs([])).toThrow(
+        'Cannot delete published output: Published Video',
+      );
     });
   });
 });

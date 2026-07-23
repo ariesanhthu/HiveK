@@ -1,19 +1,21 @@
-"use client";
+'use client';
 
-import * as React from "react";
-import * as RechartsPrimitive from "recharts";
-import { cn } from "@/lib/utils";
+import { cn } from '@/lib/utils';
+import * as React from 'react';
+import * as RechartsPrimitive from 'recharts';
 
-const THEMES = { light: "", dark: ".dark" } as const;
+const THEMES = { light: '', dark: '.dark' } as const;
 
 export type ChartConfig = {
-  [key: string]: {
-    label?: React.ReactNode;
-    icon?: React.ComponentType;
-  } & (
-    | { color?: string; theme?: never }
-    | { color?: never; theme: Record<keyof typeof THEMES, string> }
-  );
+  [key: string]:
+    & {
+      label?: React.ReactNode;
+      icon?: React.ComponentType;
+    }
+    & (
+      | { color?: string; theme?: never; }
+      | { color?: never; theme: Record<keyof typeof THEMES, string>; }
+    );
 };
 
 type ChartContextProps = {
@@ -26,17 +28,17 @@ function useChart() {
   const context = React.useContext(ChartContext);
 
   if (!context) {
-    throw new Error("useChart must be used inside a <ChartContainer />");
+    throw new Error('useChart must be used inside a <ChartContainer />');
   }
 
   return context;
 }
 
-type ChartContainerProps = React.ComponentProps<"div"> & {
+type ChartContainerProps = React.ComponentProps<'div'> & {
   config: ChartConfig;
   children: React.ComponentProps<
     typeof RechartsPrimitive.ResponsiveContainer
-  >["children"];
+  >['children'];
 };
 
 export function ChartContainer({
@@ -47,7 +49,7 @@ export function ChartContainer({
   ...props
 }: ChartContainerProps) {
   const uniqueId = React.useId();
-  const chartId = `chart-${id ?? uniqueId.replaceAll(":", "")}`;
+  const chartId = `chart-${id ?? uniqueId.replaceAll(':', '')}`;
   const [isMounted, setIsMounted] = React.useState(false);
 
   React.useEffect(() => {
@@ -57,30 +59,30 @@ export function ChartContainer({
   return (
     <ChartContext.Provider value={{ config }}>
       <div
-        data-slot="chart"
+        data-slot='chart'
         data-chart={chartId}
         className={cn(
-          "[&_.recharts-cartesian-axis-tick_text]:fill-muted-foreground [&_.recharts-cartesian-grid_line[stroke='#ccc']]:stroke-primary-soft [&_.recharts-tooltip-cursor]:stroke-primary-soft [&_.recharts-curve.recharts-tooltip-cursor]:stroke-primary-soft [&_.recharts-dot[stroke='#fff']]:stroke-transparent [&_.recharts-layer]:outline-none",
-          className
+          '[&_.recharts-cartesian-axis-tick_text]:fill-muted-foreground [&_.recharts-cartesian-grid_line[stroke=\'#ccc\']]:stroke-primary-soft [&_.recharts-tooltip-cursor]:stroke-primary-soft [&_.recharts-curve.recharts-tooltip-cursor]:stroke-primary-soft [&_.recharts-dot[stroke=\'#fff\']]:stroke-transparent [&_.recharts-layer]:outline-none',
+          className,
         )}
         {...props}
       >
         <ChartStyle id={chartId} config={config} />
-        {isMounted ? (
-          <RechartsPrimitive.ResponsiveContainer minWidth={0} minHeight={96} debounce={50}>
-            {children}
-          </RechartsPrimitive.ResponsiveContainer>
-        ) : (
-          <div aria-hidden className="h-full min-h-24 w-full" />
-        )}
+        {isMounted
+          ? (
+            <RechartsPrimitive.ResponsiveContainer minWidth={0} minHeight={96} debounce={50}>
+              {children}
+            </RechartsPrimitive.ResponsiveContainer>
+          )
+          : <div aria-hidden className='h-full min-h-24 w-full' />}
       </div>
     </ChartContext.Provider>
   );
 }
 
-function ChartStyle({ id, config }: { id: string; config: ChartConfig }) {
+function ChartStyle({ id, config }: { id: string; config: ChartConfig; }) {
   const entries = Object.entries(config).filter(
-    ([, configItem]) => configItem.theme || configItem.color
+    ([, configItem]) => configItem.theme || configItem.color,
   );
 
   if (entries.length === 0) return null;
@@ -92,19 +94,20 @@ function ChartStyle({ id, config }: { id: string; config: ChartConfig }) {
           .map(
             ([theme, prefix]) => `
 ${prefix} [data-chart=${id}] {
-${entries
-  .map(([key, itemConfig]) => {
-    const color =
-      itemConfig.theme?.[theme as keyof typeof itemConfig.theme] ??
-      itemConfig.color;
-    return color ? `  --color-${key}: ${color};` : null;
-  })
-  .filter(Boolean)
-  .join("\n")}
+${
+              entries
+                .map(([key, itemConfig]) => {
+                  const color = itemConfig.theme?.[theme as keyof typeof itemConfig.theme]
+                    ?? itemConfig.color;
+                  return color ? `  --color-${key}: ${color};` : null;
+                })
+                .filter(Boolean)
+                .join('\n')
+            }
 }
-`
+`,
           )
-          .join("\n"),
+          .join('\n'),
       }}
     />
   );
@@ -120,12 +123,12 @@ type TooltipPayload = {
   payload?: Record<string, unknown>;
 };
 
-type ChartTooltipContentProps = React.ComponentProps<"div"> & {
+type ChartTooltipContentProps = React.ComponentProps<'div'> & {
   active?: boolean;
   payload?: TooltipPayload[];
   label?: string | number;
   hideLabel?: boolean;
-  indicator?: "line" | "dot";
+  indicator?: 'line' | 'dot';
   nameKey?: string;
   labelFormatter?: (value: string | number) => string;
   valueFormatter?: (value: number | string) => string;
@@ -135,7 +138,7 @@ export function ChartTooltipContent({
   active,
   payload,
   className,
-  indicator = "dot",
+  indicator = 'dot',
   hideLabel = false,
   label,
   labelFormatter,
@@ -145,40 +148,38 @@ export function ChartTooltipContent({
 
   if (!active || !payload?.length) return null;
 
-  const formattedLabel = labelFormatter ? labelFormatter(label ?? "") : label;
+  const formattedLabel = labelFormatter ? labelFormatter(label ?? '') : label;
 
   return (
     <div
       className={cn(
-        "grid min-w-32 gap-1 rounded-lg border border-primary-soft bg-card px-2.5 py-1.5 text-xs shadow-sm",
-        className
+        'grid min-w-32 gap-1 rounded-lg border border-primary-soft bg-card px-2.5 py-1.5 text-xs shadow-sm',
+        className,
       )}
     >
-      {!hideLabel ? (
-        <div className="font-medium text-foreground">{formattedLabel}</div>
-      ) : null}
-      <div className="grid gap-1">
+      {!hideLabel ? <div className='font-medium text-foreground'>{formattedLabel}</div> : null}
+      <div className='grid gap-1'>
         {payload.map((item) => {
-          const key = String(item.dataKey ?? item.name ?? "");
+          const key = String(item.dataKey ?? item.name ?? '');
           const itemConfig = config[key];
           const indicatorColor = item.color ?? `var(--color-${key})`;
           const value = valueFormatter
-            ? valueFormatter(item.value ?? "")
-            : String(item.value ?? "");
+            ? valueFormatter(item.value ?? '')
+            : String(item.value ?? '');
 
           return (
-            <div key={key} className="flex items-center justify-between gap-2">
-              <div className="flex items-center gap-1.5">
+            <div key={key} className='flex items-center justify-between gap-2'>
+              <div className='flex items-center gap-1.5'>
                 <span
                   className={cn(
-                    "inline-flex shrink-0 rounded-full",
-                    indicator === "dot" ? "h-2 w-2" : "h-0.5 w-3"
+                    'inline-flex shrink-0 rounded-full',
+                    indicator === 'dot' ? 'h-2 w-2' : 'h-0.5 w-3',
                   )}
                   style={{ backgroundColor: indicatorColor }}
                 />
-                <span className="text-muted">{itemConfig?.label ?? item.name}</span>
+                <span className='text-muted'>{itemConfig?.label ?? item.name}</span>
               </div>
-              <span className="font-semibold text-foreground">{value}</span>
+              <span className='font-semibold text-foreground'>{value}</span>
             </div>
           );
         })}

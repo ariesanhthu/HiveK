@@ -1,10 +1,10 @@
-import { Strategy } from 'passport-google-oauth20';
-import { PassportStrategy } from '@nestjs/passport';
+import { AuthGoogleSignInCommand } from '@/application/commands';
+import { ERoleType } from '@/core/enums';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { CommandBus } from '@nestjs/cqrs';
-import { AuthGoogleSignInCommand } from '@/application/commands';
-import { ERoleType } from '@/core/enums';
+import { PassportStrategy } from '@nestjs/passport';
+import { Strategy } from 'passport-google-oauth20';
 
 @Injectable()
 export class GoogleStrategy extends PassportStrategy(Strategy) {

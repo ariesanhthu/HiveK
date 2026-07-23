@@ -72,14 +72,14 @@ Chỉ nhập thông tin cốt lõi để tạo bài thử. Hệ thống vẫn nh
 
 ## 6. Trạng thái workspace
 
-| Trạng thái | Điều kiện | Trải nghiệm |
-|---|---|---|
-| Chưa thiết lập | Chưa có nguồn hoặc hồ sơ | CTA kết nối nguồn |
-| Đang thiết lập | Có tiến trình xử lý | Hiển thị tiến độ |
-| Cần bổ sung | Có mục chặn | CTA xử lý dữ liệu thiếu |
-| Cần hiệu chỉnh | Đủ dữ kiện, chưa có voice profile | CTA hiệu chỉnh giọng văn |
-| Sẵn sàng | Đủ điều kiện MVP | CTA tạo kế hoạch |
-| Cần cập nhật | Dữ kiện quan trọng hết hạn/mâu thuẫn | Cảnh báo trên dashboard |
+| Trạng thái     | Điều kiện                            | Trải nghiệm              |
+| -------------- | ------------------------------------ | ------------------------ |
+| Chưa thiết lập | Chưa có nguồn hoặc hồ sơ             | CTA kết nối nguồn        |
+| Đang thiết lập | Có tiến trình xử lý                  | Hiển thị tiến độ         |
+| Cần bổ sung    | Có mục chặn                          | CTA xử lý dữ liệu thiếu  |
+| Cần hiệu chỉnh | Đủ dữ kiện, chưa có voice profile    | CTA hiệu chỉnh giọng văn |
+| Sẵn sàng       | Đủ điều kiện MVP                     | CTA tạo kế hoạch         |
+| Cần cập nhật   | Dữ kiện quan trọng hết hạn/mâu thuẫn | Cảnh báo trên dashboard  |
 
 ## 7. Thoát giữa chừng
 

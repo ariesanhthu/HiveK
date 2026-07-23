@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import { DashboardKpiCards } from "@/features/business-dashboard/components/dashboard-kpi-cards";
-import { DashboardPerformance } from "@/features/business-dashboard/components/dashboard-performance";
-import { DashboardRecentActivities } from "@/features/business-dashboard/components/dashboard-recent-activities";
-import { DashboardSidebar } from "@/features/business-dashboard/components/dashboard-sidebar";
-import { DashboardTopbar } from "@/features/business-dashboard/components/dashboard-topbar";
-import { useBusinessDashboardData } from "@/features/business-dashboard/hooks/use-business-dashboard-data";
+import { DashboardKpiCards } from '@/features/business-dashboard/components/dashboard-kpi-cards';
+import { DashboardPerformance } from '@/features/business-dashboard/components/dashboard-performance';
+import { DashboardRecentActivities } from '@/features/business-dashboard/components/dashboard-recent-activities';
+import { DashboardSidebar } from '@/features/business-dashboard/components/dashboard-sidebar';
+import { DashboardTopbar } from '@/features/business-dashboard/components/dashboard-topbar';
+import { useBusinessDashboardData } from '@/features/business-dashboard/hooks/use-business-dashboard-data';
 
 export function BusinessDashboardPage() {
   const {
@@ -18,21 +18,21 @@ export function BusinessDashboardPage() {
     activities,
   } = useBusinessDashboardData();
 
-  const periodLabel = period === "weekly" ? "Tổng quan Hàng tuần" : "Tổng quan Hàng tháng";
+  const periodLabel = period === 'weekly' ? 'Tổng quan Hàng tuần' : 'Tổng quan Hàng tháng';
 
   return (
-    <main className="flex min-h-screen w-full bg-background-light">
+    <main className='flex min-h-screen w-full bg-background-light'>
       <DashboardSidebar items={navItems} />
 
-      <div className="flex min-w-0 flex-1 flex-col">
+      <div className='flex min-w-0 flex-1 flex-col'>
         <DashboardTopbar />
 
-        <section className="mx-auto flex w-full max-w-6xl flex-col gap-4 px-4 py-6 md:px-6">
+        <section className='mx-auto flex w-full max-w-6xl flex-col gap-4 px-4 py-6 md:px-6'>
           <header>
-            <h1 className="text-3xl font-extrabold tracking-tight text-foreground">
+            <h1 className='text-3xl font-extrabold tracking-tight text-foreground'>
               Bảng điều khiển Doanh nghiệp
             </h1>
-            <p className="mt-1 text-sm text-foreground-muted">
+            <p className='mt-1 text-sm text-foreground-muted'>
               Quản lý đối tác sáng tạo và theo dõi ROI chiến dịch theo thời gian thực.
             </p>
           </header>

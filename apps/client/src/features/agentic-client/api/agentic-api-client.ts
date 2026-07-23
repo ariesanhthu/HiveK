@@ -1,9 +1,9 @@
-import { getAgenticApiUrl } from "@/features/agentic-client/api/agentic-api-config";
+import { getAgenticApiUrl } from '@/features/agentic-client/api/agentic-api-config';
 import type {
   CampaignInsightResponse,
+  CampaignPlanningSnapshot,
   CampaignPlanRequest,
   CampaignPlanResponse,
-  CampaignPlanningSnapshot,
   ContentValidationRequest,
   ContentValidationResult,
   GenerateSinglePostRequest,
@@ -12,16 +12,16 @@ import type {
   KolKocMatchingResponse,
   SaveFeedbackRequest,
   SaveFeedbackResponse,
-} from "@/server/ai/types/agent.types";
+} from '@/server/ai/types/agent.types';
 
 async function requestJson<TResponse>(
   path: string,
-  init?: RequestInit
+  init?: RequestInit,
 ): Promise<TResponse> {
   const response = await fetch(getAgenticApiUrl(path), {
     ...init,
     headers: {
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
       ...init?.headers,
     },
   });
@@ -38,53 +38,53 @@ export const agenticApiClient = {
   getCampaignPlanningSnapshot(campaignId: string): Promise<CampaignPlanningSnapshot> {
     return requestJson<CampaignPlanningSnapshot>(
       `/campaigns/${campaignId}/planning`,
-      { method: "GET" }
+      { method: 'GET' },
     );
   },
 
   generateCampaignPlan(
     campaignId: string,
-    payload: CampaignPlanRequest
+    payload: CampaignPlanRequest,
   ): Promise<CampaignPlanResponse> {
     return requestJson<CampaignPlanResponse>(
       `/campaigns/${campaignId}/generate-plan`,
       {
-        method: "POST",
+        method: 'POST',
         body: JSON.stringify(payload),
-      }
+      },
     );
   },
 
   generateSinglePost(
     campaignId: string,
-    payload: GenerateSinglePostRequest
+    payload: GenerateSinglePostRequest,
   ): Promise<GenerateSinglePostResponse> {
     return requestJson<GenerateSinglePostResponse>(
       `/campaigns/${campaignId}/generate-post`,
       {
-        method: "POST",
+        method: 'POST',
         body: JSON.stringify(payload),
-      }
+      },
     );
   },
 
   validateContent(payload: ContentValidationRequest): Promise<ContentValidationResult> {
-    return requestJson<ContentValidationResult>("/validation/content", {
-      method: "POST",
+    return requestJson<ContentValidationResult>('/validation/content', {
+      method: 'POST',
       body: JSON.stringify(payload),
     });
   },
 
   matchKolKoc(payload: KolKocMatchingRequest): Promise<KolKocMatchingResponse> {
-    return requestJson<KolKocMatchingResponse>("/matching/kol-koc", {
-      method: "POST",
+    return requestJson<KolKocMatchingResponse>('/matching/kol-koc', {
+      method: 'POST',
       body: JSON.stringify(payload),
     });
   },
 
   saveFeedback(payload: SaveFeedbackRequest): Promise<SaveFeedbackResponse> {
-    return requestJson<SaveFeedbackResponse>("/feedback", {
-      method: "POST",
+    return requestJson<SaveFeedbackResponse>('/feedback', {
+      method: 'POST',
       body: JSON.stringify(payload),
     });
   },
@@ -92,7 +92,7 @@ export const agenticApiClient = {
   generateInsight(campaignId: string): Promise<CampaignInsightResponse> {
     return requestJson<CampaignInsightResponse>(
       `/campaigns/${campaignId}/insights`,
-      { method: "POST" }
+      { method: 'POST' },
     );
   },
 };

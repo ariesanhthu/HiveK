@@ -1,28 +1,28 @@
-"use client";
+'use client';
 
-import { useCallback, useMemo, useState } from "react";
 import {
   getAgentStages,
   processAgentStages,
   searchKolCandidates,
-} from "@/features/kol-matching/services/kol-matching-service";
+} from '@/features/kol-matching/services/kol-matching-service';
 import {
   type FindKolEntryInput,
   type KolCandidate,
   type KolMatchingStep,
-} from "@/features/kol-matching/types";
+} from '@/features/kol-matching/types';
+import { useCallback, useMemo, useState } from 'react';
 
 const INITIAL_ENTRY: FindKolEntryInput = {
-  campaignOption: "Ra mắt Mùa hè 2024",
-  nicheCategory: "Đời sống & Thời trang",
-  summary: "",
-  campaignName: "",
-  creatorType: "both",
-  objective: "awareness",
-  targetPlatforms: ["tiktok", "youtube"],
-  niche: "Làm đẹp",
-  targetRegion: "Việt Nam",
-  budgetTier: "growth",
+  campaignOption: 'Ra mắt Mùa hè 2024',
+  nicheCategory: 'Đời sống & Thời trang',
+  summary: '',
+  campaignName: '',
+  creatorType: 'both',
+  objective: 'awareness',
+  targetPlatforms: ['tiktok', 'youtube'],
+  niche: 'Làm đẹp',
+  targetRegion: 'Việt Nam',
+  budgetTier: 'growth',
   minReach: 50_000,
   minCtr: 2.5,
   conversionTarget: 1.2,
@@ -31,7 +31,7 @@ const INITIAL_ENTRY: FindKolEntryInput = {
 };
 
 export function useKolMatchingFlow() {
-  const [step, setStep] = useState<KolMatchingStep>("find-entry");
+  const [step, setStep] = useState<KolMatchingStep>('find-entry');
   const [entry, setEntry] = useState<FindKolEntryInput>(INITIAL_ENTRY);
   const [processingStageIndex, setProcessingStageIndex] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
@@ -42,14 +42,14 @@ export function useKolMatchingFlow() {
   const stages = useMemo(() => getAgentStages(entry), [entry]);
   const selectedCandidates = useMemo(
     () => results.filter((candidate) => selectedCandidateIds.includes(candidate.id)),
-    [results, selectedCandidateIds]
+    [results, selectedCandidateIds],
   );
 
   async function submitEntry(nextEntry: FindKolEntryInput): Promise<void> {
     setEntry(nextEntry);
     setErrorMessage(null);
     setIsLoading(true);
-    setStep("agent-processing");
+    setStep('agent-processing');
     setProcessingStageIndex(0);
     setSelectedCandidateIds([]);
 
@@ -59,11 +59,11 @@ export function useKolMatchingFlow() {
       await processAgentStages(nextStages, setProcessingStageIndex);
       const shortlist = await searchKolCandidates(nextEntry);
       setResults(shortlist);
-      setStep("search-results");
+      setStep('search-results');
     } catch (error) {
-      const message = error instanceof Error ? error.message : "Unknown processing error";
+      const message = error instanceof Error ? error.message : 'Unknown processing error';
       setErrorMessage(message);
-      setStep("find-entry");
+      setStep('find-entry');
     } finally {
       setIsLoading(false);
     }
@@ -81,15 +81,15 @@ export function useKolMatchingFlow() {
 
   function goToComparison(): void {
     if (selectedCandidateIds.length < 2) return;
-    setStep("kol-comparison");
+    setStep('kol-comparison');
   }
 
   function backToResults(): void {
-    setStep("search-results");
+    setStep('search-results');
   }
 
   function restartFlow(): void {
-    setStep("find-entry");
+    setStep('find-entry');
     setResults([]);
     setSelectedCandidateIds([]);
     setErrorMessage(null);
@@ -98,7 +98,7 @@ export function useKolMatchingFlow() {
   const inviteSelected = useCallback((): void => {
     if (selectedCandidateIds.length === 0) return;
     // Wire: POST invite / open modal — placeholder for product flow
-    console.info("[kol-matching] inviteSelected", { candidateIds: selectedCandidateIds });
+    console.info('[kol-matching] inviteSelected', { candidateIds: selectedCandidateIds });
   }, [selectedCandidateIds]);
 
   return {

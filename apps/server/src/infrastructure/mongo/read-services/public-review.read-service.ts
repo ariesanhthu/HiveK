@@ -1,17 +1,16 @@
+import { ReviewDto, ReviewFilterDto } from '@/application/dtos';
+import { PaginatedResponseDto, SortOrder } from '@/application/dtos/pagination.dto';
+import { IPublicReviewReadService } from '@/application/interfaces/read-service/review.read-service.interface';
+import { Nullable } from '@/core/types';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, QueryFilter, Types } from 'mongoose';
-import { IPublicReviewReadService } from '@/application/interfaces/read-service/review.read-service.interface';
-import { ReviewDto, ReviewFilterDto } from '@/application/dtos';
-import { PublicReviewModel, PublicReviewDocument } from '../schemas/public-review.schema';
-import { PaginatedResponseDto, SortOrder } from '@/application/dtos/pagination.dto';
-import { Nullable } from '@/core/types';
+import { PublicReviewDocument, PublicReviewModel } from '../schemas/public-review.schema';
 
 @Injectable()
 export class MongoPublicReviewReadService implements IPublicReviewReadService {
   constructor(
-    @InjectModel(PublicReviewModel.name)
-    private readonly reviewModel: Model<PublicReviewDocument>,
+    @InjectModel(PublicReviewModel.name) private readonly reviewModel: Model<PublicReviewDocument>,
   ) {}
 
   async findById(id: string): Promise<Nullable<ReviewDto>> {

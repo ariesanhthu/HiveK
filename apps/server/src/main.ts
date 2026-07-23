@@ -1,9 +1,9 @@
-import { NestFactory } from '@nestjs/core';
-import { FastifyAdapter, NestFastifyApplication } from '@nestjs/platform-fastify';
-import { AppModule } from './infrastructure/modules/app.module';
 import { setupApplication, setupSwagger } from '@infrastructure/nest-config';
 import { Logger } from '@nestjs/common';
+import { NestFactory } from '@nestjs/core';
+import { FastifyAdapter, NestFastifyApplication } from '@nestjs/platform-fastify';
 import { AppConfig } from './app.config';
+import { AppModule } from './infrastructure/modules/app.module';
 
 async function bootstrap() {
   const appConfig = new AppConfig();
@@ -23,10 +23,15 @@ async function bootstrap() {
   await app.listen(port, host);
 
   Logger.log(`==========================================================`);
-  Logger.log(`🚀 Application is running on: http://${host}:${port}/${globalPrefix}/api`);
-  Logger.log(`📖 Swagger admin docs available at: http://${host}:${port}/${globalPrefix}/admin/docs`);
-  Logger.log(`📖 Swagger client docs available at: http://${host}:${port}/${globalPrefix}/client/docs`);
+  Logger.log(
+    `🚀 Application is running on: http://${host}:${port}/${globalPrefix}/api`,
+  );
+  Logger.log(
+    `📖 Swagger admin docs available at: http://${host}:${port}/${globalPrefix}/admin/docs`,
+  );
+  Logger.log(
+    `📖 Swagger client docs available at: http://${host}:${port}/${globalPrefix}/client/docs`,
+  );
   Logger.log(`==========================================================`);
 }
 bootstrap();
-

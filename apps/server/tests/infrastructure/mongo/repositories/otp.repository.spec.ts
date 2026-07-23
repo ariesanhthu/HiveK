@@ -1,6 +1,6 @@
-import { MongoOtpRepository } from '@/infrastructure/mongo/repositories/otp.repository';
-import { EOtpType } from '@/core/enums';
 import { OtpRoot } from '@/core/aggregate-roots/otp.aggregate';
+import { EOtpType } from '@/core/enums';
+import { MongoOtpRepository } from '@/infrastructure/mongo/repositories/otp.repository';
 
 describe('MongoOtpRepository', () => {
   let repo: MongoOtpRepository;
@@ -70,7 +70,7 @@ describe('MongoOtpRepository', () => {
             expired_at: expiresAt,
           },
         },
-        expect.any(Object)
+        expect.any(Object),
       );
     });
   });

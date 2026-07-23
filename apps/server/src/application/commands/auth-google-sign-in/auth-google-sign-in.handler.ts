@@ -1,30 +1,32 @@
+import { EVENT_SERVICE, type IUnitOfWork, UNIT_OF_WORK } from '@/application/interfaces';
+import type { IEventService } from '@/application/interfaces';
+import { AuthService } from '@/application/services/auth.service';
+import { AdminRoot, EnterpriseUserRoot, KOLUserRoot } from '@/core/aggregate-roots';
+import { ERoleType } from '@/core/enums';
+import {
+  InvalidUserTypeException,
+  RoleNotFoundException,
+  UserDeletedException,
+} from '@/core/exceptions';
+import { ROLE_REPOSITORY, USER_REPOSITORY } from '@/core/interfaces/repositories';
+import type { IRoleRepository, IUserRepository } from '@/core/interfaces/repositories';
+import { PhoneNumberVO } from '@/core/value-objects/phone-number.value-object';
+import { Inject } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { AuthGoogleSignInCommand } from './auth-google-sign-in.command';
 import { AuthGoogleSignInOutputDto } from './auth-google-sign-in.dto';
-import { Inject } from '@nestjs/common';
-import { USER_REPOSITORY, ROLE_REPOSITORY } from '@/core/interfaces/repositories';
-import type { IUserRepository, IRoleRepository } from '@/core/interfaces/repositories';
-import { ERoleType } from '@/core/enums';
-import { KOLUserRoot, EnterpriseUserRoot, AdminRoot } from '@/core/aggregate-roots';
-import { AuthService } from '@/application/services/auth.service';
-import { UserDeletedException, RoleNotFoundException, InvalidUserTypeException } from '@/core/exceptions';
-import { PhoneNumberVO } from '@/core/value-objects/phone-number.value-object';
-import { type IUnitOfWork, UNIT_OF_WORK, EVENT_SERVICE } from '@/application/interfaces';
-import type { IEventService } from '@/application/interfaces';
 
 @CommandHandler(AuthGoogleSignInCommand)
-export class AuthGoogleSignInCommandHandler implements ICommandHandler<AuthGoogleSignInCommand, AuthGoogleSignInOutputDto> {
+export class AuthGoogleSignInCommandHandler
+  implements ICommandHandler<AuthGoogleSignInCommand, AuthGoogleSignInOutputDto>
+{
   constructor(
-    @Inject(USER_REPOSITORY)
-    private readonly userRepository: IUserRepository,
-    @Inject(ROLE_REPOSITORY)
-    private readonly roleRepository: IRoleRepository,
+    @Inject(USER_REPOSITORY) private readonly userRepository: IUserRepository,
+    @Inject(ROLE_REPOSITORY) private readonly roleRepository: IRoleRepository,
     private readonly authService: AuthService,
-    @Inject(EVENT_SERVICE)
-    private readonly eventService: IEventService,
-    @Inject(UNIT_OF_WORK)
-    private readonly uow: IUnitOfWork,
-  ) { }
+    @Inject(EVENT_SERVICE) private readonly eventService: IEventService,
+    @Inject(UNIT_OF_WORK) private readonly uow: IUnitOfWork,
+  ) {}
 
   async execute(command: AuthGoogleSignInCommand): Promise<AuthGoogleSignInOutputDto> {
     return this.uow.execute(async () => {

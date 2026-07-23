@@ -1,10 +1,10 @@
-import { Field, ObjectType, ID, Float } from '@nestjs/graphql';
+import { Field, Float, ID, ObjectType } from '@nestjs/graphql';
 import { GraphQLJSONObject } from 'graphql-type-json';
-import { UserType } from './user.type';
+import { CampaignParticipantType } from './campaign-participant.type';
 import { EnterpriseType } from './enterprise.type';
 import { PlatformType } from './platform.type';
 import { UploadedFileType } from './uploaded-file.type';
-import { CampaignParticipantType } from './campaign-participant.type';
+import { UserType } from './user.type';
 
 @ObjectType()
 export class PlatformTargetItemType {

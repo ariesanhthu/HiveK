@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import { create } from "zustand";
-import type { CampaignDetailTab } from "@/features/campaign-planning/types/campaign-planning";
+import type { CampaignDetailTab } from '@/features/campaign-planning/types/campaign-planning';
+import { create } from 'zustand';
 
 type AgenticUiState = {
   selectedCampaignId: string;
@@ -16,17 +16,17 @@ type AgenticUiState = {
 };
 
 export const useAgenticUiStore = create<AgenticUiState>((set) => ({
-  selectedCampaignId: "tutorx-better-every-hour",
-  selectedPostId: "post-01",
-  activeCampaignDetailTab: "content",
+  selectedCampaignId: 'tutorx-better-every-hour',
+  selectedPostId: 'post-01',
+  activeCampaignDetailTab: 'content',
   isTimelineCompact: false,
-  visitedCampaignDetailTabs: ["content"],
+  visitedCampaignDetailTabs: ['content'],
   setSelectedCampaignId: (campaignId) =>
     set({
       selectedCampaignId: campaignId,
-      selectedPostId: "post-01",
-      activeCampaignDetailTab: "content",
-      visitedCampaignDetailTabs: ["content"],
+      selectedPostId: 'post-01',
+      activeCampaignDetailTab: 'content',
+      visitedCampaignDetailTabs: ['content'],
     }),
   setSelectedPostId: (postId) => set({ selectedPostId: postId }),
   setActiveCampaignDetailTab: (tab) =>

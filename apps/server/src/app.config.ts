@@ -1,6 +1,6 @@
-import { IsString, IsNotEmpty, IsInt, validateSync } from 'class-validator';
-import { plainToInstance } from 'class-transformer';
 import { Injectable } from '@nestjs/common';
+import { plainToInstance } from 'class-transformer';
+import { IsInt, IsNotEmpty, IsString, validateSync } from 'class-validator';
 
 /**
  * Base Config Service that automatically transforms raw configurations
@@ -9,7 +9,7 @@ import { Injectable } from '@nestjs/common';
 export abstract class BaseConfigService<T extends object> {
   protected readonly config: T;
 
-  constructor(dtoClass: new () => T, rawConfig: Record<string, any>) {
+  constructor(dtoClass: new() => T, rawConfig: Record<string, any>) {
     const dtoInstance = plainToInstance(dtoClass, rawConfig, {
       enableImplicitConversion: true,
     });
@@ -72,9 +72,8 @@ export class AppConfig extends BaseConfigService<AppConfigDto> {
       globalPrefix: process.env.GLOBAL_PREFIX || 'hivek',
       env: process.env.NODE_ENV || 'development',
       swaggerTitle: process.env.SWAGGER_TITLE || 'HiveK API',
-      swaggerDescription:
-        process.env.SWAGGER_DESCRIPTION ||
-        'The API documentation for the HiveK Platform.\n\nNOTE: Sensitive endpoints (Sign-In, Sign-Up, OTP) are rate-limited to 5 requests per minute.',
+      swaggerDescription: process.env.SWAGGER_DESCRIPTION
+        || 'The API documentation for the HiveK Platform.\n\nNOTE: Sensitive endpoints (Sign-In, Sign-Up, OTP) are rate-limited to 5 requests per minute.',
       swaggerVersion: process.env.SWAGGER_VERSION || '1.0',
     });
   }

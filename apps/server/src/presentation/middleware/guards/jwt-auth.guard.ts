@@ -1,9 +1,9 @@
+import { isFunction } from '@/shared/utils';
 import { ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { AuthGuard } from '@nestjs/passport';
 import { GqlExecutionContext } from '@nestjs/graphql';
+import { AuthGuard } from '@nestjs/passport';
 import { IS_PUBLIC_KEY } from '../../decorators/public.decorator';
-import { isFunction } from '@/shared/utils';
 
 @Injectable()
 export class JwtAuthGuard extends AuthGuard('jwt') {
@@ -36,18 +36,23 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
   override canActivate(context: ExecutionContext) {
     const type = isFunction(context.getType) ? (context.getType() as string) : 'http';
     let req: any;
-    
+
     if (type === 'http' && isFunction(context.switchToHttp)) {
       req = context.switchToHttp().getRequest();
       // Bypass authentication for GraphQL playground GET requests
-      if (req && req.method === 'GET' && (req.url?.includes('/graphql') || req.url?.includes('/hivek/graphql'))) {
+      if (
+        req && req.method === 'GET'
+        && (req.url?.includes('/graphql') || req.url?.includes('/hivek/graphql'))
+      ) {
         return true;
       }
     } else if (type === 'graphql') {
       const ctx = GqlExecutionContext.create(context);
       req = ctx.getContext().req;
       // Bypass authentication for schema introspection queries
-      if (req?.body?.operationName === 'IntrospectionQuery' || req?.body?.query?.includes('__schema')) {
+      if (
+        req?.body?.operationName === 'IntrospectionQuery' || req?.body?.query?.includes('__schema')
+      ) {
         return true;
       }
     }

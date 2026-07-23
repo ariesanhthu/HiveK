@@ -1,7 +1,7 @@
-import { Injectable, ExecutionContext } from '@nestjs/common';
-import { ThrottlerGuard } from '@nestjs/throttler';
-import { GqlExecutionContext } from '@nestjs/graphql';
 import { isFunction } from '@/shared/utils';
+import { ExecutionContext, Injectable } from '@nestjs/common';
+import { GqlExecutionContext } from '@nestjs/graphql';
+import { ThrottlerGuard } from '@nestjs/throttler';
 
 @Injectable()
 export class GqlThrottlerGuard extends ThrottlerGuard {
@@ -23,7 +23,10 @@ export class GqlThrottlerGuard extends ThrottlerGuard {
     if (type === 'http' && isFunction(context.switchToHttp)) {
       const req = context.switchToHttp().getRequest();
       // Bypass rate limiting for GraphQL playground GET requests
-      if (req && req.method === 'GET' && (req.url?.includes('/graphql') || req.url?.includes('/hivek/graphql'))) {
+      if (
+        req && req.method === 'GET'
+        && (req.url?.includes('/graphql') || req.url?.includes('/hivek/graphql'))
+      ) {
         return true;
       }
     }

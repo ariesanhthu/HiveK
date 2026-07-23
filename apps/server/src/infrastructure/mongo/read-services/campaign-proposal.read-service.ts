@@ -1,17 +1,21 @@
+import { ProposalDto, ProposalFilterDto } from '@/application/dtos';
+import { PaginatedResponseDto, SortOrder } from '@/application/dtos/pagination.dto';
+import { ICampaignProposalReadService } from '@/application/interfaces/read-service/proposal.read-service.interface';
+import { Nullable } from '@/core/types';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, QueryFilter, Types } from 'mongoose';
-import { ICampaignProposalReadService } from '@/application/interfaces/read-service/proposal.read-service.interface';
-import { ProposalDto, ProposalFilterDto } from '@/application/dtos';
-import { CampaignProposalModel, CampaignProposalDocument } from '../schemas/campaign-proposal.schema';
-import { PaginatedResponseDto, SortOrder } from '@/application/dtos/pagination.dto';
-import { Nullable } from '@/core/types';
+import {
+  CampaignProposalDocument,
+  CampaignProposalModel,
+} from '../schemas/campaign-proposal.schema';
 
 @Injectable()
 export class MongoCampaignProposalReadService implements ICampaignProposalReadService {
   constructor(
-    @InjectModel(CampaignProposalModel.name)
-    private readonly proposalModel: Model<CampaignProposalDocument>,
+    @InjectModel(CampaignProposalModel.name) private readonly proposalModel: Model<
+      CampaignProposalDocument
+    >,
   ) {}
 
   async findById(id: string): Promise<Nullable<ProposalDto>> {
@@ -24,7 +28,9 @@ export class MongoCampaignProposalReadService implements ICampaignProposalReadSe
     return doc ? this.mapToDto(doc) : null;
   }
 
-  async findAll(filters: ProposalFilterDto = {} as any): Promise<PaginatedResponseDto<ProposalDto>> {
+  async findAll(
+    filters: ProposalFilterDto = {} as any,
+  ): Promise<PaginatedResponseDto<ProposalDto>> {
     const { cursor, limit = 10, sort = SortOrder.DESC, campaignId, status } = filters;
     const query: QueryFilter<CampaignProposalDocument> = {};
 

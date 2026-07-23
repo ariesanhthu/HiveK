@@ -1,7 +1,8 @@
 import { CampaignRecentContentList } from 'client';
 
 function thumb(bg: string, label: string) {
-  const svg = `<svg xmlns='http://www.w3.org/2000/svg' width='144' height='144'><rect width='144' height='144' fill='${bg}'/><text x='50%' y='54%' font-family='Arial' font-size='22' fill='white' text-anchor='middle' dominant-baseline='middle'>${label}</text></svg>`;
+  const svg =
+    `<svg xmlns='http://www.w3.org/2000/svg' width='144' height='144'><rect width='144' height='144' fill='${bg}'/><text x='50%' y='54%' font-family='Arial' font-size='22' fill='white' text-anchor='middle' dominant-baseline='middle'>${label}</text></svg>`;
   return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
 }
 

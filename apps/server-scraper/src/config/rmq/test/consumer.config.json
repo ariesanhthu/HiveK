@@ -40,7 +40,7 @@
         {
           "exchange": "hivek_exchange",
           "routing_key": "default"
-        }        
+        }
       ]
     }
   ],

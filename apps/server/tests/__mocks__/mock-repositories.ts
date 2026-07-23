@@ -1,16 +1,16 @@
-import { jest } from '@jest/globals';
-import { type IUserRepository } from '@/core/interfaces/repositories/user.repository';
-import { type IRoleRepository } from '@/core/interfaces/repositories/role.repository';
-import { type ICampaignRepository } from '@/core/interfaces/repositories/campaign.repository';
 import { type ICampaignParticipantRepository } from '@/core/interfaces/repositories/campaign-participant.repository';
+import { type ICampaignRepository } from '@/core/interfaces/repositories/campaign.repository';
 import { type IEnterpriseRepository } from '@/core/interfaces/repositories/enterprise.repository';
 import { type IKolProfileRepository } from '@/core/interfaces/repositories/kol-profile.repository';
-import { type IPlatformRepository } from '@/core/interfaces/repositories/platform.repository';
-import { type INotificationRepository } from '@/core/interfaces/repositories/notification.repository';
-import { type IUserNotificationRepository } from '@/core/interfaces/repositories/user-notification.repository';
-import { type IUploadedFileRepository } from '@/core/interfaces/repositories/uploaded-file.repository';
-import { type IOtpRepository } from '@/core/interfaces/repositories/otp.repository';
 import { type IKpiLogRepository } from '@/core/interfaces/repositories/kpi-log.repository';
+import { type INotificationRepository } from '@/core/interfaces/repositories/notification.repository';
+import { type IOtpRepository } from '@/core/interfaces/repositories/otp.repository';
+import { type IPlatformRepository } from '@/core/interfaces/repositories/platform.repository';
+import { type IRoleRepository } from '@/core/interfaces/repositories/role.repository';
+import { type IUploadedFileRepository } from '@/core/interfaces/repositories/uploaded-file.repository';
+import { type IUserNotificationRepository } from '@/core/interfaces/repositories/user-notification.repository';
+import { type IUserRepository } from '@/core/interfaces/repositories/user.repository';
+import { jest } from '@jest/globals';
 
 /**
  * Centralized mock factories for all repository interfaces.
@@ -63,7 +63,9 @@ export const createMockCampaignRepository = (): jest.Mocked<ICampaignRepository>
   delete: jest.fn(),
 });
 
-export const createMockCampaignParticipantRepository = (): jest.Mocked<ICampaignParticipantRepository> => ({
+export const createMockCampaignParticipantRepository = (): jest.Mocked<
+  ICampaignParticipantRepository
+> => ({
   findById: jest.fn(),
   findByCampaignId: jest.fn(),
   findByKolProfileId: jest.fn(),
@@ -122,7 +124,9 @@ export const createMockNotificationRepository = (): jest.Mocked<INotificationRep
   delete: jest.fn(),
 });
 
-export const createMockUserNotificationRepository = (): jest.Mocked<IUserNotificationRepository> => ({
+export const createMockUserNotificationRepository = (): jest.Mocked<
+  IUserNotificationRepository
+> => ({
   findById: jest.fn(),
   findByUserId: jest.fn(),
   findByNotificationId: jest.fn(),

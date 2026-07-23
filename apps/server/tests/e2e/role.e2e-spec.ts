@@ -1,11 +1,14 @@
-import request from 'supertest';
-import { Test, TestingModule } from '@nestjs/testing';
+import {
+  AUTH_JWT_SERVICE,
+  type IAuthJwtService,
+} from '@/application/interfaces/auth-jwt.interface';
+import { setupApplication } from '@/infrastructure/nest-config/app.setup';
 import { INestApplication } from '@nestjs/common';
 import { getModelToken } from '@nestjs/mongoose';
+import { Test, TestingModule } from '@nestjs/testing';
 import { Model, Types } from 'mongoose';
+import request from 'supertest';
 import { AppModule } from '../../src/infrastructure/modules/app.module';
-import { AUTH_JWT_SERVICE, type IAuthJwtService } from '@/application/interfaces/auth-jwt.interface';
-import { setupApplication } from '@/infrastructure/nest-config/app.setup';
 
 describe('Role Domain (e2e)', () => {
   let app: INestApplication;
@@ -44,7 +47,9 @@ describe('Role Domain (e2e)', () => {
     userModel = app.get<Model<any>>(getModelToken('UserModel'));
 
     // Seed users for guard validation
-    await userModel.deleteMany({ _id: { $in: [new Types.ObjectId(adminId), new Types.ObjectId(kolId)] } });
+    await userModel.deleteMany({
+      _id: { $in: [new Types.ObjectId(adminId), new Types.ObjectId(kolId)] },
+    });
     await userModel.collection.insertMany([
       {
         _id: new Types.ObjectId(adminId),
@@ -71,7 +76,7 @@ describe('Role Domain (e2e)', () => {
         enterprise_ids: [],
         created_at: new Date(),
         updated_at: new Date(),
-      }
+      },
     ]);
 
     // Clean up and seed test role
@@ -97,7 +102,7 @@ describe('Role Domain (e2e)', () => {
       .set('x-api-key', API_KEY)
       .set('Authorization', `Bearer ${kolToken}`)
       .expect(403);
-    
+
     expect(res.body.success).toBe(false);
     expect(res.body.error.code).toBe('FORBIDDEN');
   });
@@ -138,7 +143,7 @@ describe('Role Domain (e2e)', () => {
         permissions: ['read', 'write'],
       })
       .expect(200);
-    
+
     expect(updateRes.body.success).toBe(true);
 
     // 4. Get List

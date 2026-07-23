@@ -25,7 +25,12 @@ export class OutboxModel {
   @Prop({ type: MongooseSchema.Types.Mixed, required: true })
   payload: any;
 
-  @Prop({ type: MongooseSchema.Types.String, required: true, enum: EOutboxStatus, default: EOutboxStatus.PENDING })
+  @Prop({
+    type: MongooseSchema.Types.String,
+    required: true,
+    enum: EOutboxStatus,
+    default: EOutboxStatus.PENDING,
+  })
   status: EOutboxStatus;
 
   @Prop({ type: MongooseSchema.Types.Number, required: true, default: 0 })

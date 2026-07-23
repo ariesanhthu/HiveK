@@ -1,4 +1,7 @@
-import { UserNotificationRoot, UserNotificationCreateProps } from '@core/aggregate-roots/user-notification.aggregate';
+import {
+  UserNotificationCreateProps,
+  UserNotificationRoot,
+} from '@core/aggregate-roots/user-notification.aggregate';
 
 describe('UserNotificationRoot Aggregate Root', () => {
   const defaultCreateProps: UserNotificationCreateProps = {

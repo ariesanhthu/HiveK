@@ -1,32 +1,24 @@
-import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { Inject } from '@nestjs/common';
-import {
-  KOL_PROFILE_REPOSITORY,
-  type IKolProfileRepository,
-} from '@/core/interfaces/repositories';
-import {
-  MESSAGE_QUEUE_SERVICE,
-  type IMessageQueueService,
-} from '@/application/interfaces';
-import { KolProfileVerifyPlatformAccountCommand } from './kol-profile-verify-platform-account.command';
 import { KolProfileDto } from '@/application/dtos';
+import { type IMessageQueueService, MESSAGE_QUEUE_SERVICE } from '@/application/interfaces';
 import { KolProfileMapper } from '@/application/mappers/kol-profile.mapper';
 import { KolProfileEntity } from '@/core/entities/kol-profile.entity';
+import { type IKolProfileRepository, KOL_PROFILE_REPOSITORY } from '@/core/interfaces/repositories';
 import { KolPlatformInfoVO } from '@/core/value-objects/kol-platform-info.value-object';
+import { Inject } from '@nestjs/common';
+import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
+import { KolProfileVerifyPlatformAccountCommand } from './kol-profile-verify-platform-account.command';
 
 @CommandHandler(KolProfileVerifyPlatformAccountCommand)
 export class KolProfileVerifyPlatformAccountCommandHandler
-  implements ICommandHandler<KolProfileVerifyPlatformAccountCommand, KolProfileDto> {
+  implements ICommandHandler<KolProfileVerifyPlatformAccountCommand, KolProfileDto>
+{
   constructor(
-    @Inject(KOL_PROFILE_REPOSITORY)
-    private readonly kolProfileRepository: IKolProfileRepository,
-    @Inject(MESSAGE_QUEUE_SERVICE)
-    private readonly mqService: IMessageQueueService,
-  ) { }
+    @Inject(KOL_PROFILE_REPOSITORY) private readonly kolProfileRepository: IKolProfileRepository,
+    @Inject(MESSAGE_QUEUE_SERVICE) private readonly mqService: IMessageQueueService,
+  ) {}
 
   async execute(command: KolProfileVerifyPlatformAccountCommand): Promise<KolProfileDto> {
-    const { userId, platformId, externalId, uniqueId, displayName, email } =
-      command;
+    const { userId, platformId, externalId, uniqueId, displayName, email } = command;
 
     // 1. Check if a profile with this platform already exists
     let profile = await this.kolProfileRepository.findByPlatformInfo(

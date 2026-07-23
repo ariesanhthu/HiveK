@@ -1,5 +1,5 @@
-import { Injectable, BadRequestException } from '@nestjs/common';
 import { StorageResourceType } from '@/core/interfaces/storage';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import sharp from 'sharp';
 
 const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2MB
@@ -10,8 +10,30 @@ export class UploadService {
    * Identifies the StorageResourceType ('image' | 'video' | 'raw') from format or mimetype.
    */
   getResourceType(formatOrMimetype: string): StorageResourceType {
-    const images = ['png', 'jpg', 'jpeg', 'gif', 'webp', 'svg', 'image/png', 'image/jpeg', 'image/jpg', 'image/gif', 'image/webp', 'image/svg+xml'];
-    const videos = ['mp4', 'webm', 'avi', 'mov', 'video/mp4', 'video/webm', 'video/x-msvideo', 'video/quicktime'];
+    const images = [
+      'png',
+      'jpg',
+      'jpeg',
+      'gif',
+      'webp',
+      'svg',
+      'image/png',
+      'image/jpeg',
+      'image/jpg',
+      'image/gif',
+      'image/webp',
+      'image/svg+xml',
+    ];
+    const videos = [
+      'mp4',
+      'webm',
+      'avi',
+      'mov',
+      'video/mp4',
+      'video/webm',
+      'video/x-msvideo',
+      'video/quicktime',
+    ];
     const normalized = formatOrMimetype.toLowerCase();
 
     if (images.some(img => normalized.includes(img))) return 'image';
@@ -26,8 +48,8 @@ export class UploadService {
   async processAndValidateFile(
     buffer: Buffer,
     mimetype: string,
-    originalName: string
-  ): Promise<{ buffer: Buffer; size: number }> {
+    originalName: string,
+  ): Promise<{ buffer: Buffer; size: number; }> {
     let currentBuffer = buffer;
     let size = currentBuffer.length;
 
@@ -46,7 +68,8 @@ export class UploadService {
 
           // Output based on format with standard quality reduction
           if (metadata.format === 'png') {
-            currentBuffer = await sharpInstance.png({ quality: 75, compressionLevel: 8 }).toBuffer();
+            currentBuffer = await sharpInstance.png({ quality: 75, compressionLevel: 8 })
+              .toBuffer();
           } else if (metadata.format === 'webp') {
             currentBuffer = await sharpInstance.webp({ quality: 75 }).toBuffer();
           } else {
@@ -59,7 +82,8 @@ export class UploadService {
           // Attempt 2: If still > 2MB, compress even harder and downscale further
           if (size > MAX_FILE_SIZE) {
             let sharpInstanceHard = sharp(currentBuffer);
-            const newWidthHard = newWidth || (metadata.width ? Math.min(metadata.width, 1280) : 1280);
+            const newWidthHard = newWidth
+              || (metadata.width ? Math.min(metadata.width, 1280) : 1280);
             sharpInstanceHard = sharpInstanceHard.resize({ width: newWidthHard });
 
             currentBuffer = await sharpInstanceHard.jpeg({ quality: 50 }).toBuffer();

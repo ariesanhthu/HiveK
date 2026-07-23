@@ -25,13 +25,13 @@ type ChannelCapabilities = {
   replyWindowExpiresAt?: string;
   policyNotice?: string;
   permissionStatus:
-    | "active"
-    | "limited"
-    | "expired"
-    | "revoked"
-    | "pending_review"
-    | "read_only"
-    | "unsupported";
+    | 'active'
+    | 'limited'
+    | 'expired'
+    | 'revoked'
+    | 'pending_review'
+    | 'read_only'
+    | 'unsupported';
 };
 ```
 

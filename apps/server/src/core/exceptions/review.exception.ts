@@ -1,7 +1,7 @@
 import {
-  NotFoundDomainException,
   BadRequestDomainException,
   ConflictDomainException,
+  NotFoundDomainException,
 } from '../common/exceptions/domain.exception';
 
 export class ReviewNotFoundException extends NotFoundDomainException {

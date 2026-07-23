@@ -1,6 +1,6 @@
-import { z } from 'zod';
+import { EMediaSlideType, EProductPlatform, EProposalStatus } from '@/core/enums';
 import { createZodDto } from 'nestjs-zod';
-import { EProposalStatus, EMediaSlideType, EProductPlatform } from '@/core/enums';
+import { z } from 'zod';
 import { CursorPaginationRequestSchema } from './pagination.dto';
 
 export const MediaSlideDtoSchema = z.object({

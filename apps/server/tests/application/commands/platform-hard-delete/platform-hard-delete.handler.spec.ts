@@ -1,6 +1,6 @@
-import { PlatformHardDeleteCommandHandler } from '@/application/commands/platform-hard-delete/platform-hard-delete.handler';
 import { PlatformHardDeleteCommand } from '@/application/commands/platform-hard-delete/platform-hard-delete.command';
-import { PlatformNotFoundException, InvalidOperationException } from '@/core/exceptions';
+import { PlatformHardDeleteCommandHandler } from '@/application/commands/platform-hard-delete/platform-hard-delete.handler';
+import { InvalidOperationException, PlatformNotFoundException } from '@/core/exceptions';
 
 describe('PlatformHardDeleteCommandHandler', () => {
   let handler: PlatformHardDeleteCommandHandler;
@@ -14,15 +14,15 @@ describe('PlatformHardDeleteCommandHandler', () => {
       delete: jest.fn(),
     };
     mockKolProfileRepository = {
-        existsByPlatformId: jest.fn(),
+      existsByPlatformId: jest.fn(),
     };
     mockUow = {
-        execute: jest.fn((fn: any) => fn()),
+      execute: jest.fn((fn: any) => fn()),
     };
     handler = new PlatformHardDeleteCommandHandler(
-        mockPlatformRepository, 
-        mockKolProfileRepository, 
-        mockUow
+      mockPlatformRepository,
+      mockKolProfileRepository,
+      mockUow,
     );
   });
 

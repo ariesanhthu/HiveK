@@ -1,10 +1,11 @@
 Always keep these in sync:
+
 - docs markdown
 - each folder’s `structure.md`
 - `docs/visual/graph.json`
 - React Flow UI in `docs/visual/`
-read .cursor\skills\react-flow.md, a guide how to create react-flow for visualize
-Rules:
+  read .cursor\skills\react-flow.md, a guide how to create react-flow for visualize
+  Rules:
 - Always read `structure.md` before modifying a folder.
 - Every folder must have a `structure.md`.
 - If a folder or file is created, deleted, renamed, moved, or reorganized, update affected docs and `structure.md`.

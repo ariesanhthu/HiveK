@@ -1,14 +1,14 @@
-import { Global, Module } from '@nestjs/common';
-import { MailerModule } from '@nestjs-modules/mailer';
-import { HandlebarsAdapter } from '@nestjs-modules/mailer/adapters/handlebars.adapter';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import * as path from 'path';
+import { AppConfig } from '@/app.config';
 import { LOGGER_SERVICE, MAILER_SERVICE } from '@/application/interfaces';
 import { STORAGE_SERVICE } from '@/core/interfaces/storage';
+import { MailerModule } from '@nestjs-modules/mailer';
+import { HandlebarsAdapter } from '@nestjs-modules/mailer/adapters/handlebars.adapter';
+import { Global, Module } from '@nestjs/common';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import * as path from 'path';
 import { CloudinaryStorageService } from '../cloudinary';
-import { NestjsMailerService } from '../mailer';
 import { WinstonLoggerService } from '../logger';
-import { AppConfig } from '@/app.config';
+import { NestjsMailerService } from '../mailer';
 
 @Global()
 @Module({
@@ -43,18 +43,17 @@ import { AppConfig } from '@/app.config';
     AppConfig,
     {
       provide: LOGGER_SERVICE,
-      useClass: WinstonLoggerService
+      useClass: WinstonLoggerService,
     },
     {
       provide: STORAGE_SERVICE,
-      useClass: CloudinaryStorageService
+      useClass: CloudinaryStorageService,
     },
     {
       provide: MAILER_SERVICE,
-      useClass: NestjsMailerService
-    }
+      useClass: NestjsMailerService,
+    },
   ],
   exports: [AppConfig, LOGGER_SERVICE, STORAGE_SERVICE, MAILER_SERVICE],
 })
 export class InfrastructureModule {}
-

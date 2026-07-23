@@ -1,17 +1,17 @@
-import { useEffect, useState, type ReactNode } from "react";
-import { ChevronDown } from "lucide-react";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import type { WorkspaceStudioConfig } from "@/features/ai-chat/types/workspace-types";
-import { cn } from "@/lib/utils";
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import type { WorkspaceStudioConfig } from '@/features/ai-chat/types/workspace-types';
+import { cn } from '@/lib/utils';
+import { ChevronDown } from 'lucide-react';
+import { type ReactNode, useEffect, useState } from 'react';
 
 export type StudioConfigChangeHandler = <K extends keyof WorkspaceStudioConfig>(
   key: K,
-  value: WorkspaceStudioConfig[K]
+  value: WorkspaceStudioConfig[K],
 ) => void;
 
 const FIELD_CLASS_NAME =
-  "mt-2 w-full rounded-xl border border-primary-soft bg-card px-3 py-2.5 text-sm text-foreground outline-none transition-colors placeholder:text-muted focus:border-primary focus:ring-2 focus:ring-primary/20 disabled:cursor-not-allowed disabled:opacity-60";
+  'mt-2 w-full rounded-xl border border-primary-soft bg-card px-3 py-2.5 text-sm text-foreground outline-none transition-colors placeholder:text-muted focus:border-primary focus:ring-2 focus:ring-primary/20 disabled:cursor-not-allowed disabled:opacity-60';
 
 type StudioFieldShellProps = {
   id: string;
@@ -27,16 +27,18 @@ function StudioFieldShell({
   children,
 }: StudioFieldShellProps) {
   return (
-    <div className="min-w-0">
-      <Label htmlFor={id} className="text-xs font-bold text-foreground">
+    <div className='min-w-0'>
+      <Label htmlFor={id} className='text-xs font-bold text-foreground'>
         {label}
       </Label>
       {children}
-      {hint ? (
-        <p id={`${id}-hint`} className="mt-1.5 text-[11px] leading-5 text-foreground-muted">
-          {hint}
-        </p>
-      ) : null}
+      {hint
+        ? (
+          <p id={`${id}-hint`} className='mt-1.5 text-[11px] leading-5 text-foreground-muted'>
+            {hint}
+          </p>
+        )
+        : null}
     </div>
   );
 }
@@ -48,7 +50,7 @@ type StudioTextFieldProps = {
   onChange: (value: string) => void;
   hint?: string;
   placeholder?: string;
-  type?: "text" | "email" | "url";
+  type?: 'text' | 'email' | 'url';
   required?: boolean;
   autoComplete?: string;
   disabled?: boolean;
@@ -61,7 +63,7 @@ export function StudioTextField({
   onChange,
   hint,
   placeholder,
-  type = "text",
+  type = 'text',
   required,
   autoComplete,
   disabled,
@@ -78,7 +80,7 @@ export function StudioTextField({
         autoComplete={autoComplete}
         disabled={disabled}
         aria-describedby={hint ? `${id}-hint` : undefined}
-        className="mt-2 bg-card"
+        className='mt-2 bg-card'
       />
     </StudioFieldShell>
   );
@@ -109,7 +111,7 @@ export function StudioNumberField({
     <StudioFieldShell id={id} label={label} hint={hint}>
       <Input
         id={id}
-        type="number"
+        type='number'
         value={value}
         onChange={(event) => {
           const nextValue = event.target.valueAsNumber;
@@ -119,7 +121,7 @@ export function StudioNumberField({
         max={max}
         step={step}
         aria-describedby={hint ? `${id}-hint` : undefined}
-        className="mt-2 bg-card"
+        className='mt-2 bg-card'
       />
     </StudioFieldShell>
   );
@@ -159,7 +161,7 @@ export function StudioTextAreaField({
         required={required}
         disabled={disabled}
         aria-describedby={hint ? `${id}-hint` : undefined}
-        className={cn(FIELD_CLASS_NAME, "resize-y leading-6")}
+        className={cn(FIELD_CLASS_NAME, 'resize-y leading-6')}
       />
     </StudioFieldShell>
   );
@@ -188,17 +190,17 @@ export function StudioListField({
   label,
   values,
   onChange,
-  hint = "Mỗi dòng là một mục.",
+  hint = 'Mỗi dòng là một mục.',
   placeholder,
   rows = 4,
   disabled,
 }: StudioListFieldProps) {
-  const serializedValues = values.join("\n");
+  const serializedValues = values.join('\n');
   const [draftValue, setDraftValue] = useState(serializedValues);
 
   useEffect(() => {
     setDraftValue((currentValue) =>
-      parseList(currentValue).join("\n") === serializedValues
+      parseList(currentValue).join('\n') === serializedValues
         ? currentValue
         : serializedValues
     );
@@ -286,32 +288,32 @@ export function StudioToggle({
     <label
       htmlFor={id}
       className={cn(
-        "flex min-h-16 cursor-pointer items-center justify-between gap-4 rounded-xl border border-primary-soft bg-card px-3.5 py-3 transition-colors hover:bg-primary-soft",
-        disabled && "cursor-not-allowed opacity-60"
+        'flex min-h-16 cursor-pointer items-center justify-between gap-4 rounded-xl border border-primary-soft bg-card px-3.5 py-3 transition-colors hover:bg-primary-soft',
+        disabled && 'cursor-not-allowed opacity-60',
       )}
     >
-      <span className="min-w-0">
-        <span className="block text-sm font-bold text-foreground">{label}</span>
-        <span className="mt-0.5 block text-xs leading-5 text-foreground-muted">
+      <span className='min-w-0'>
+        <span className='block text-sm font-bold text-foreground'>{label}</span>
+        <span className='mt-0.5 block text-xs leading-5 text-foreground-muted'>
           {description}
         </span>
       </span>
-      <span className="relative block h-6 w-11 shrink-0">
+      <span className='relative block h-6 w-11 shrink-0'>
         <input
           id={id}
-          type="checkbox"
+          type='checkbox'
           checked={checked}
           onChange={(event) => onChange(event.target.checked)}
           disabled={disabled}
-          className="peer sr-only"
+          className='peer sr-only'
         />
         <span
           aria-hidden
-          className="absolute inset-0 rounded-full bg-muted-foreground/50 transition-colors peer-checked:bg-emerald-500 peer-focus-visible:outline-none peer-focus-visible:ring-2 peer-focus-visible:ring-primary/50 peer-focus-visible:ring-offset-2"
+          className='absolute inset-0 rounded-full bg-muted-foreground/50 transition-colors peer-checked:bg-emerald-500 peer-focus-visible:outline-none peer-focus-visible:ring-2 peer-focus-visible:ring-primary/50 peer-focus-visible:ring-offset-2'
         />
         <span
           aria-hidden
-          className="pointer-events-none absolute left-1 top-1 size-4 rounded-full bg-white shadow-sm transition-transform peer-checked:translate-x-5"
+          className='pointer-events-none absolute left-1 top-1 size-4 rounded-full bg-white shadow-sm transition-transform peer-checked:translate-x-5'
         />
       </span>
     </label>
@@ -338,27 +340,29 @@ export function StudioPanelCard({
   return (
     <section
       className={cn(
-        "rounded-2xl border border-primary-soft bg-card shadow-[0_10px_35px_rgba(15,23,42,0.04)]",
-        className
+        'rounded-2xl border border-primary-soft bg-card shadow-[0_10px_35px_rgba(15,23,42,0.04)]',
+        className,
       )}
     >
-      <div className="flex flex-col gap-3 border-b border-primary-soft px-4 py-4 sm:flex-row sm:items-start sm:justify-between sm:px-5">
-        <div className="flex min-w-0 items-start gap-3">
-          {icon ? (
-            <span className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-primary-soft text-amber-700">
-              {icon}
-            </span>
-          ) : null}
-          <div className="min-w-0">
-            <h3 className="text-sm font-extrabold text-foreground">{title}</h3>
-            <p className="mt-1 max-w-3xl text-xs leading-5 text-foreground-muted">
+      <div className='flex flex-col gap-3 border-b border-primary-soft px-4 py-4 sm:flex-row sm:items-start sm:justify-between sm:px-5'>
+        <div className='flex min-w-0 items-start gap-3'>
+          {icon
+            ? (
+              <span className='flex size-9 shrink-0 items-center justify-center rounded-xl bg-primary-soft text-amber-700'>
+                {icon}
+              </span>
+            )
+            : null}
+          <div className='min-w-0'>
+            <h3 className='text-sm font-extrabold text-foreground'>{title}</h3>
+            <p className='mt-1 max-w-3xl text-xs leading-5 text-foreground-muted'>
               {description}
             </p>
           </div>
         </div>
-        {action ? <div className="shrink-0">{action}</div> : null}
+        {action ? <div className='shrink-0'>{action}</div> : null}
       </div>
-      <div className="p-4 sm:p-5">{children}</div>
+      <div className='p-4 sm:p-5'>{children}</div>
     </section>
   );
 }
@@ -384,57 +388,59 @@ export function StudioDisclosure({
     <details
       open={isOpen}
       onToggle={(event) => setIsOpen(event.currentTarget.open)}
-      className="group rounded-xl border border-primary-soft bg-card"
+      className='group rounded-xl border border-primary-soft bg-card'
     >
-      <summary className="flex min-h-16 cursor-pointer list-none items-center justify-between gap-3 rounded-xl px-3.5 py-3 outline-none transition-colors hover:bg-primary-soft focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary/40 [&::-webkit-details-marker]:hidden">
-        <span className="min-w-0">
-          <span className="block text-sm font-bold text-foreground">{title}</span>
-          {description ? (
-            <span className="mt-0.5 block text-xs leading-5 text-foreground-muted">
-              {description}
-            </span>
-          ) : null}
+      <summary className='flex min-h-16 cursor-pointer list-none items-center justify-between gap-3 rounded-xl px-3.5 py-3 outline-none transition-colors hover:bg-primary-soft focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary/40 [&::-webkit-details-marker]:hidden'>
+        <span className='min-w-0'>
+          <span className='block text-sm font-bold text-foreground'>{title}</span>
+          {description
+            ? (
+              <span className='mt-0.5 block text-xs leading-5 text-foreground-muted'>
+                {description}
+              </span>
+            )
+            : null}
         </span>
-        <span className="flex shrink-0 items-center gap-2">
+        <span className='flex shrink-0 items-center gap-2'>
           {meta}
           <ChevronDown
-            className="size-4 text-foreground-muted transition-transform group-open:rotate-180"
+            className='size-4 text-foreground-muted transition-transform group-open:rotate-180'
             aria-hidden
           />
         </span>
       </summary>
-      <div className="border-t border-primary-soft p-3.5 sm:p-4">{children}</div>
+      <div className='border-t border-primary-soft p-3.5 sm:p-4'>{children}</div>
     </details>
   );
 }
 
-export function StudioEmptyState({ children }: { children: ReactNode }) {
+export function StudioEmptyState({ children }: { children: ReactNode; }) {
   return (
-    <p className="rounded-xl border border-dashed border-primary-soft bg-muted/45 px-4 py-6 text-center text-sm leading-6 text-foreground-muted">
+    <p className='rounded-xl border border-dashed border-primary-soft bg-muted/45 px-4 py-6 text-center text-sm leading-6 text-foreground-muted'>
       {children}
     </p>
   );
 }
 
 type StudioStatusPillProps = {
-  tone?: "success" | "warning" | "neutral";
+  tone?: 'success' | 'warning' | 'neutral';
   children: ReactNode;
 };
 
 export function StudioStatusPill({
-  tone = "neutral",
+  tone = 'neutral',
   children,
 }: StudioStatusPillProps) {
   return (
     <span
       className={cn(
-        "inline-flex items-center rounded-full border px-2.5 py-1 text-[11px] font-bold",
-        tone === "success" &&
-          "border-emerald-500/20 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300",
-        tone === "warning" &&
-          "border-amber-500/20 bg-amber-500/10 text-amber-700 dark:text-amber-300",
-        tone === "neutral" &&
-          "border-primary-soft bg-muted text-foreground-muted"
+        'inline-flex items-center rounded-full border px-2.5 py-1 text-[11px] font-bold',
+        tone === 'success'
+          && 'border-emerald-500/20 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300',
+        tone === 'warning'
+          && 'border-amber-500/20 bg-amber-500/10 text-amber-700 dark:text-amber-300',
+        tone === 'neutral'
+          && 'border-primary-soft bg-muted text-foreground-muted',
       )}
     >
       {children}

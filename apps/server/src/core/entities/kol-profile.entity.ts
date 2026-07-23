@@ -1,6 +1,6 @@
+import { Nullable } from '@/core/types';
 import { BaseEntity } from '../common/base.entity';
 import { KolPlatformInfoVO } from '../value-objects/kol-platform-info.value-object';
-import { Nullable } from '@/core/types';
 
 export interface KolProfileProps {
   userId: Nullable<string>;
@@ -104,7 +104,7 @@ export class KolProfileEntity extends BaseEntity<KolProfileProps> {
       this.props.platforms = [];
     }
     const exists = this.props.platforms.some(
-      (p) => p.platformId === platform.platformId && p.externalId === platform.externalId
+      (p) => p.platformId === platform.platformId && p.externalId === platform.externalId,
     );
     if (!exists) {
       this.props.platforms.push(platform);

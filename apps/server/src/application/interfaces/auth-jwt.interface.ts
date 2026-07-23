@@ -25,7 +25,7 @@ export interface IAuthJwtService {
   sign(payload: IJwtPayload, options?: IJwtSignOptions): string;
   verify(token: string, options?: IJwtVerifyOptions): IJwtPayload;
   decode(token: string): IJwtPayload;
-  
+
   extractTokenFromHeader(authHeader?: string): string | null;
   extractTokenFromCookie(req: any, cookieName?: string): string | null;
   verifyAuthHeader(authHeader?: string): IJwtPayload;

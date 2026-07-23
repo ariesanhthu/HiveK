@@ -1,23 +1,34 @@
-import { Controller, Get, Post, Patch, Param, Body, HttpCode, HttpStatus, UseGuards, Delete } from '@nestjs/common';
-import { CommandBus, QueryBus } from '@nestjs/cqrs';
-import { EnterpriseGetByIdQuery } from '@/application/queries';
 import {
-  EnterpriseCreateCommand,
-  EnterpriseUpdateCommand,
-  EnterpriseCreateInputDto,
-  EnterpriseUpdateInputDto,
   EnterpriseAddUserCommand,
-  EnterpriseRevokeUserCommand,
   EnterpriseAddUserInputDto,
+  EnterpriseCreateCommand,
+  EnterpriseCreateInputDto,
+  EnterpriseRevokeUserCommand,
   EnterpriseRevokeUserInputDto,
+  EnterpriseUpdateCommand,
+  EnterpriseUpdateInputDto,
 } from '@/application/commands';
-import { EnterpriseDto, EnterpriseDetailDto } from '@/application/dtos';
-import { ApiTags, ApiOperation, ApiBearerAuth, ApiSecurity } from '@nestjs/swagger';
-import { buildVersionedRoute } from '@presentation/utils';
-import { JwtAuthGuard, RolesGuard } from '@/presentation/middleware/guards';
+import { EnterpriseDetailDto, EnterpriseDto } from '@/application/dtos';
+import { EnterpriseGetByIdQuery } from '@/application/queries';
+import { ERoleType } from '@/core/enums/role-type.enum';
 import { CurrentUser } from '@/presentation/decorators/current-user.decorator';
 import { Roles } from '@/presentation/decorators/roles.decorator';
-import { ERoleType } from '@/core/enums/role-type.enum';
+import { JwtAuthGuard, RolesGuard } from '@/presentation/middleware/guards';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Param,
+  Patch,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
+import { CommandBus, QueryBus } from '@nestjs/cqrs';
+import { ApiBearerAuth, ApiOperation, ApiSecurity, ApiTags } from '@nestjs/swagger';
+import { buildVersionedRoute } from '@presentation/utils';
 
 @ApiTags('CLIENT-enterprises')
 @ApiBearerAuth()
@@ -29,7 +40,7 @@ export class EnterpriseClientController {
   constructor(
     private readonly commandBus: CommandBus,
     private readonly queryBus: QueryBus,
-  ) { }
+  ) {}
 
   @Post()
   @ApiOperation({ summary: 'Create new enterprise profile' })

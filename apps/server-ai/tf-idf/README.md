@@ -31,6 +31,7 @@ pip install -r requirements.txt
 ### 1. Chuẩn bị input
 
 File `data/comments.json` — list comment với timestamp:
+
 ```json
 [
   { "timestamp": "2024-01-15T10:00:01Z", "comment": "giá bao nhiêu vậy shop?" },
@@ -64,6 +65,7 @@ python main.py --model gpt-4o
 ### 4. Output
 
 File `data/output.json`:
+
 ```json
 {
   "pipeline_run": {
@@ -110,22 +112,27 @@ comments.json
 ## Tùy chỉnh
 
 ### Thêm intent mới (`src/filter.py`)
+
 ```python
 INTENT_PATTERNS[Intent.WARRANTY] = [r"bảo hành", r"đổi trả"]
 INTENT_PRIORITY[Intent.WARRANTY] = 0.8
 ```
 
 ### Thay đổi tone (`src/generator.py`)
+
 Chỉnh `SYSTEM_PROMPT` để thay đổi phong cách trả lời.
 
 ### Tích hợp real-time
+
 Thay vì đọc file JSON, gọi `run_pipeline()` từ code của bạn:
+
 ```python
 from main import run_pipeline
 scripts = run_pipeline(input_path, kb_path, output_path)
 ```
 
 Hoặc gọi từng bước riêng lẻ để stream real-time:
+
 ```python
 from src.filter    import filter_comments
 from src.retriever import KnowledgeRetriever

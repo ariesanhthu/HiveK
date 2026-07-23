@@ -4,26 +4,26 @@
 /*  to the full certificate-product page.                              */
 /* ------------------------------------------------------------------ */
 
-import { NextResponse, type NextRequest } from "next/server";
-import { SHORTLINKS } from "@/data/shortlinks";
+import { SHORTLINKS } from '@/data/shortlinks';
+import { type NextRequest, NextResponse } from 'next/server';
 
 /**
  * Known route prefixes that should NOT be treated as short links.
  * Anything matching these passes through untouched.
  */
 const KNOWN_PREFIXES = [
-  "/api",
-  "/auth",
-  "/ambassador",
-  "/campaigns",
-  "/certificate-product",
-  "/dashboard",
-  "/kol-matching",
-  "/kol-ranking",
-  "/kol-verification",
-  "/kol",
-  "/_next",
-  "/favicon",
+  '/api',
+  '/auth',
+  '/ambassador',
+  '/campaigns',
+  '/certificate-product',
+  '/dashboard',
+  '/kol-matching',
+  '/kol-ranking',
+  '/kol-verification',
+  '/kol',
+  '/_next',
+  '/favicon',
 ];
 
 export function middleware(request: NextRequest) {
@@ -31,9 +31,9 @@ export function middleware(request: NextRequest) {
 
   // Skip known routes and static assets
   if (
-    pathname === "/" ||
-    KNOWN_PREFIXES.some((prefix) => pathname.startsWith(prefix)) ||
-    pathname.includes(".")
+    pathname === '/'
+    || KNOWN_PREFIXES.some((prefix) => pathname.startsWith(prefix))
+    || pathname.includes('.')
   ) {
     return NextResponse.next();
   }
@@ -58,5 +58,5 @@ export const config = {
    * Match all root-level paths that could be short codes.
    * Excludes paths with nested segments or file extensions.
    */
-  matcher: ["/((?!_next/static|_next/image|favicon.ico).*)"],
+  matcher: ['/((?!_next/static|_next/image|favicon.ico).*)'],
 };

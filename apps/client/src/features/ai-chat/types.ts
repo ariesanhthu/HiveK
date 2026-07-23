@@ -1,36 +1,36 @@
 export type AiChatIntent =
-  | "quick-start"
-  | "plan-posts"
-  | "campaign-ideas"
-  | "find-creators"
-  | "analyze-content";
+  | 'quick-start'
+  | 'plan-posts'
+  | 'campaign-ideas'
+  | 'find-creators'
+  | 'analyze-content';
 
-export type AiChatMessageRole = "user" | "assistant";
+export type AiChatMessageRole = 'user' | 'assistant';
 
-export type SetupStepId = "social" | "brand" | "drive";
+export type SetupStepId = 'social' | 'brand' | 'drive';
 
 export type SocialPlatformId =
-  | "facebook"
-  | "instagram"
-  | "tiktok"
-  | "youtube"
-  | "threads";
+  | 'facebook'
+  | 'instagram'
+  | 'tiktok'
+  | 'youtube'
+  | 'threads';
 
 export type BrandToneId =
-  | "professional"
-  | "friendly"
-  | "inspiring"
-  | "playful";
+  | 'professional'
+  | 'friendly'
+  | 'inspiring'
+  | 'playful';
 
-export type AiChatActionVariant = "primary" | "secondary";
+export type AiChatActionVariant = 'primary' | 'secondary';
 
 /** Review verdicts the agent accepts for a generated draft. */
 export type AiChatDecision =
-  | "approve"
-  | "reject"
-  | "edit"
-  | "regenerate"
-  | "pin_as_good";
+  | 'approve'
+  | 'reject'
+  | 'edit'
+  | 'regenerate'
+  | 'pin_as_good';
 
 type AiChatActionBase = {
   id: string;
@@ -39,18 +39,18 @@ type AiChatActionBase = {
 };
 
 export type AiChatIntentAction = AiChatActionBase & {
-  kind: "intent";
+  kind: 'intent';
   intent: AiChatIntent;
 };
 
 export type AiChatHrefAction = AiChatActionBase & {
-  kind: "href";
+  kind: 'href';
   href: string;
   external?: boolean;
 };
 
 export type AiChatDecisionAction = AiChatActionBase & {
-  kind: "decision";
+  kind: 'decision';
   decision: AiChatDecision;
   assetId: string;
 };
@@ -61,11 +61,11 @@ export type AiChatAction =
   | AiChatDecisionAction;
 
 export type AiChatWidget =
-  | { type: "setup-overview" }
-  | { type: "social-connect" }
-  | { type: "brand-form" }
-  | { type: "drive-form" }
-  | { type: "setup-complete" };
+  | { type: 'setup-overview'; }
+  | { type: 'social-connect'; }
+  | { type: 'brand-form'; }
+  | { type: 'drive-form'; }
+  | { type: 'setup-complete'; };
 
 export type AiChatMessage = {
   id: string;
@@ -76,14 +76,14 @@ export type AiChatMessage = {
 };
 
 /** A service response before the client assigns a stable local id. */
-export type AiChatMessageDraft = Omit<AiChatMessage, "id">;
+export type AiChatMessageDraft = Omit<AiChatMessage, 'id'>;
 
 export type StarterPromptIcon =
-  | "rocket"
-  | "calendar"
-  | "megaphone"
-  | "users"
-  | "chart";
+  | 'rocket'
+  | 'calendar'
+  | 'megaphone'
+  | 'users'
+  | 'chart';
 
 export type StarterPrompt = {
   id: AiChatIntent;

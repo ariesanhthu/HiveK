@@ -1,7 +1,7 @@
-import { Injectable, Logger } from '@nestjs/common';
-import { RmqHandler } from '@/infrastructure/rabbitmq/rmq-consumer.registry';
-import { CommandBus } from '@nestjs/cqrs';
 import { KpiLogCreateCommand, KpiLogTerminateCommand } from '@/application/commands';
+import { RmqHandler } from '@/infrastructure/rabbitmq/rmq-consumer.registry';
+import { Injectable, Logger } from '@nestjs/common';
+import { CommandBus } from '@nestjs/cqrs';
 
 @Injectable()
 export class KpiLogRmqController {

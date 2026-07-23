@@ -1,9 +1,9 @@
-import type { Metadata } from "next";
-import { SignUpForm } from "@/features/auth";
+import { SignUpForm } from '@/features/auth';
+import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: "Đăng ký | Hive-K",
-  description: "Tạo tài khoản thương hiệu hoặc creator trên Hive-K.",
+  title: 'Đăng ký | Hive-K',
+  description: 'Tạo tài khoản thương hiệu hoặc creator trên Hive-K.',
 };
 
 export default function SignUpPage() {

@@ -1,5 +1,5 @@
-import { PlatformRestoreCommandHandler } from '@/application/commands/platform-restore/platform-restore.handler';
 import { PlatformRestoreCommand } from '@/application/commands/platform-restore/platform-restore.command';
+import { PlatformRestoreCommandHandler } from '@/application/commands/platform-restore/platform-restore.handler';
 import { PlatformNotFoundException } from '@/core/exceptions';
 
 describe('PlatformRestoreCommandHandler', () => {

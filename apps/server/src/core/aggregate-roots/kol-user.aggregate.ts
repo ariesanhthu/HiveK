@@ -1,6 +1,6 @@
-import { UserProps, UserRoot, UserCreateProps } from './user.aggregate';
 import { ERoleType } from '../enums';
 import { UserSignedUpEvent } from '../events/user-signed-up.domain-event';
+import { UserCreateProps, UserProps, UserRoot } from './user.aggregate';
 
 export interface KOLUserProps extends UserProps {
 }
@@ -15,15 +15,17 @@ export class KOLUserRoot extends UserRoot<KOLUserProps> {
 
   public override setId(id: string): void {
     super.setId(id);
-    this.addDomainEvent(new UserSignedUpEvent(
-      this.id,
-      {
-        email: this.props.email,
-        fullName: this.props.fullName,
-        phone: this.props.phone?.value,
-        type: this.props.type,
-      },
-    ));
+    this.addDomainEvent(
+      new UserSignedUpEvent(
+        this.id,
+        {
+          email: this.props.email,
+          fullName: this.props.fullName,
+          phone: this.props.phone?.value,
+          type: this.props.type,
+        },
+      ),
+    );
   }
 
   public static create(props: KOLUserCreateProps): KOLUserRoot {

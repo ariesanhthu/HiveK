@@ -7,7 +7,9 @@ export interface NotifyEnterpriseInvitationPayload {
   enterpriseId: string;
 }
 
-export class NotifyEnterpriseInvitationEvent extends IntegrationEvent<NotifyEnterpriseInvitationPayload> {
+export class NotifyEnterpriseInvitationEvent
+  extends IntegrationEvent<NotifyEnterpriseInvitationPayload>
+{
   public readonly eventType = 'NotifyEnterpriseInvitationEmail';
 
   constructor(

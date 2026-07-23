@@ -1,8 +1,8 @@
-import { CampaignParticipantRestoreCommandHandler } from '@/application/commands/campaign-participant-restore/campaign-participant-restore.handler';
 import { CampaignParticipantRestoreCommand } from '@/application/commands/campaign-participant-restore/campaign-participant-restore.command';
+import { CampaignParticipantRestoreCommandHandler } from '@/application/commands/campaign-participant-restore/campaign-participant-restore.handler';
 import { CampaignParticipantRoot } from '@/core/aggregate-roots';
-import { CampaignParticipantNotFoundException } from '@/core/exceptions';
 import { EParticipantStatus } from '@/core/enums';
+import { CampaignParticipantNotFoundException } from '@/core/exceptions';
 
 describe('CampaignParticipantRestoreCommandHandler', () => {
   let handler: CampaignParticipantRestoreCommandHandler;

@@ -1,8 +1,8 @@
-import { z } from 'zod';
-import { createZodDto } from 'nestjs-zod';
 import { ECampaignStatus } from '@/core/enums/campaign-status.enum';
-import { UserDto } from './user.dto';
+import { createZodDto } from 'nestjs-zod';
+import { z } from 'zod';
 import { EnterpriseDto } from './enterprise.dto';
+import { UserDto } from './user.dto';
 
 export const PlatformTargetItemDtoSchema = z.object({
   platformId: z.string(),

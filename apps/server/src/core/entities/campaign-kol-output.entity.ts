@@ -1,6 +1,6 @@
-import { BaseEntity } from '../common/base.entity';
-import { EOutputType, EOutputStatus } from '../enums';
 import { Nullable } from '@/core/types';
+import { BaseEntity } from '../common/base.entity';
+import { EOutputStatus, EOutputType } from '../enums';
 
 export interface CampaignKOLOutputProps {
   campaignParticipantId: string;
@@ -24,7 +24,10 @@ export class CampaignKOLOutputEntity extends BaseEntity<CampaignKOLOutputProps> 
     super(props, id);
   }
 
-  public static create(props: Omit<CampaignKOLOutputProps, 'createdAt' | 'updatedAt'>, id?: string): CampaignKOLOutputEntity {
+  public static create(
+    props: Omit<CampaignKOLOutputProps, 'createdAt' | 'updatedAt'>,
+    id?: string,
+  ): CampaignKOLOutputEntity {
     const now = new Date();
     return new CampaignKOLOutputEntity({
       ...props,
@@ -37,20 +40,48 @@ export class CampaignKOLOutputEntity extends BaseEntity<CampaignKOLOutputProps> 
     return new CampaignKOLOutputEntity(props, id);
   }
 
-  get campaignParticipantId(): string { return this.props.campaignParticipantId; }
-  get platformId(): string { return this.props.platformId; }
-  get uniqueId(): string | undefined { return this.props.uniqueId ?? undefined; }
-  get outputType(): EOutputType { return this.props.outputType; }
-  get title(): string { return this.props.title; }
-  get isScheduleForPost(): boolean { return this.props.isScheduleForPost; }
-  get scheduledAt(): Nullable<Date> { return this.props.scheduledAt; }
-  get fileId(): Nullable<string> { return this.props.fileId; }
-  get status(): EOutputStatus { return this.props.status; }
-  get url(): Nullable<string> { return this.props.url; }
-  get postedAt(): Nullable<Date> { return this.props.postedAt; }
-  get isTrackingActive(): boolean { return this.props.isTrackingActive; }
-  get createdAt(): Date { return this.props.createdAt; }
-  get updatedAt(): Date { return this.props.updatedAt; }
+  get campaignParticipantId(): string {
+    return this.props.campaignParticipantId;
+  }
+  get platformId(): string {
+    return this.props.platformId;
+  }
+  get uniqueId(): string | undefined {
+    return this.props.uniqueId ?? undefined;
+  }
+  get outputType(): EOutputType {
+    return this.props.outputType;
+  }
+  get title(): string {
+    return this.props.title;
+  }
+  get isScheduleForPost(): boolean {
+    return this.props.isScheduleForPost;
+  }
+  get scheduledAt(): Nullable<Date> {
+    return this.props.scheduledAt;
+  }
+  get fileId(): Nullable<string> {
+    return this.props.fileId;
+  }
+  get status(): EOutputStatus {
+    return this.props.status;
+  }
+  get url(): Nullable<string> {
+    return this.props.url;
+  }
+  get postedAt(): Nullable<Date> {
+    return this.props.postedAt;
+  }
+  get isTrackingActive(): boolean {
+    return this.props.isTrackingActive;
+  }
+  get createdAt(): Date {
+    return this.props.createdAt;
+  }
+  get updatedAt(): Date {
+    return this.props.updatedAt;
+  }
 
   public setFileId(fileId: Nullable<string>): void {
     this.props.fileId = fileId;

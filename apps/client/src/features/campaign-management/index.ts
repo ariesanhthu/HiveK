@@ -1,2 +1,1 @@
-export { CampaignManagementPage } from "@/features/campaign-management/components/campaign-management-page";
-
+export { CampaignManagementPage } from '@/features/campaign-management/components/campaign-management-page';

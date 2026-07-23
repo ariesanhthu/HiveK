@@ -1,31 +1,30 @@
-"use client";
+'use client';
 
-import { useCallback, useEffect, useRef, type RefObject } from "react";
+import { type RefObject, useCallback, useEffect, useRef } from 'react';
 
 const FOCUSABLE_SELECTOR = [
-  "a[href]:not([tabindex='-1'])",
-  "button:not([disabled]):not([tabindex='-1'])",
-  "input:not([disabled]):not([type='hidden']):not([tabindex='-1'])",
-  "select:not([disabled]):not([tabindex='-1'])",
-  "textarea:not([disabled]):not([tabindex='-1'])",
-  "[contenteditable='true']:not([tabindex='-1'])",
-  "[tabindex]:not([tabindex='-1'])",
-].join(",");
+  'a[href]:not([tabindex=\'-1\'])',
+  'button:not([disabled]):not([tabindex=\'-1\'])',
+  'input:not([disabled]):not([type=\'hidden\']):not([tabindex=\'-1\'])',
+  'select:not([disabled]):not([tabindex=\'-1\'])',
+  'textarea:not([disabled]):not([tabindex=\'-1\'])',
+  '[contenteditable=\'true\']:not([tabindex=\'-1\'])',
+  '[tabindex]:not([tabindex=\'-1\'])',
+].join(',');
 
-const DEFAULT_DISCARD_MESSAGE =
-  "Bạn có thay đổi chưa lưu. Đóng và bỏ các thay đổi này?";
+const DEFAULT_DISCARD_MESSAGE = 'Bạn có thay đổi chưa lưu. Đóng và bỏ các thay đổi này?';
 
 function getFocusableElements(container: HTMLElement): HTMLElement[] {
   return Array.from(container.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR)).filter(
     (element) =>
-      element.getAttribute("aria-hidden") !== "true" &&
-      element.getClientRects().length > 0
+      element.getAttribute('aria-hidden') !== 'true'
+      && element.getClientRects().length > 0,
   );
 }
 
 function focusInitialElement(dialog: HTMLElement): void {
   const initialFocus = dialog.querySelector<HTMLElement>(
-    "[data-drawer-initial-focus]"
+    '[data-drawer-initial-focus]',
   );
   const firstFocusable = getFocusableElements(dialog)[0];
   (initialFocus ?? firstFocusable ?? dialog).focus({ preventScroll: true });
@@ -60,8 +59,8 @@ export function useDrawerDialog({
 
   const requestClose = useCallback(() => {
     if (
-      dirtyRef.current &&
-      !window.confirm(discardMessageRef.current)
+      dirtyRef.current
+      && !window.confirm(discardMessageRef.current)
     ) {
       const dialog = dialogRef.current;
       if (dialog && !dialog.contains(document.activeElement)) {
@@ -76,25 +75,24 @@ export function useDrawerDialog({
   useEffect(() => {
     if (!isOpen) return;
 
-    const previouslyFocused =
-      document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    const previouslyFocused = document.activeElement instanceof HTMLElement
+      ? document.activeElement
+      : null;
     const dialog = dialogRef.current;
     if (!dialog) return;
     const activeDialog: HTMLElement = dialog;
 
-    const focusFrame = window.requestAnimationFrame(() =>
-      focusInitialElement(activeDialog)
-    );
+    const focusFrame = window.requestAnimationFrame(() => focusInitialElement(activeDialog));
 
     function handleKeyDown(event: KeyboardEvent): void {
-      if (event.key === "Escape") {
+      if (event.key === 'Escape') {
         event.preventDefault();
         event.stopPropagation();
         requestClose();
         return;
       }
 
-      if (event.key !== "Tab") return;
+      if (event.key !== 'Tab') return;
 
       const focusableElements = getFocusableElements(activeDialog);
       if (focusableElements.length === 0) {
@@ -108,25 +106,25 @@ export function useDrawerDialog({
       const activeElement = document.activeElement;
 
       if (
-        event.shiftKey &&
-        (activeElement === firstFocusable || !activeDialog.contains(activeElement))
+        event.shiftKey
+        && (activeElement === firstFocusable || !activeDialog.contains(activeElement))
       ) {
         event.preventDefault();
         lastFocusable.focus({ preventScroll: true });
       } else if (
-        !event.shiftKey &&
-        (activeElement === lastFocusable || !activeDialog.contains(activeElement))
+        !event.shiftKey
+        && (activeElement === lastFocusable || !activeDialog.contains(activeElement))
       ) {
         event.preventDefault();
         firstFocusable.focus({ preventScroll: true });
       }
     }
 
-    document.addEventListener("keydown", handleKeyDown);
+    document.addEventListener('keydown', handleKeyDown);
 
     return () => {
       window.cancelAnimationFrame(focusFrame);
-      document.removeEventListener("keydown", handleKeyDown);
+      document.removeEventListener('keydown', handleKeyDown);
       if (previouslyFocused?.isConnected) {
         previouslyFocused.focus({ preventScroll: true });
       }

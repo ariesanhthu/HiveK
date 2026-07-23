@@ -29,19 +29,18 @@ export * from './http/client/uploaded-file.controller';
 export * from './http/client/user.controller';
 
 // RMQ Controllers
+export * from './rmq/auth-user.rmq.controller';
+export * from './rmq/enterprise-user.rmq.controller';
 export * from './rmq/kpi-log.rmq.controller';
+export * from './rmq/notification.rmq.controller';
 export * from './rmq/test-rmq.controller';
-export * from './rmq/enterprise-user.rmq.controller'
-export * from './rmq/notification.rmq.controller'
-export * from './rmq/auth-user.rmq.controller'
-
 
 // OAuth Controllers
 export * from './http/oauth.controller';
 
 // Resolvers Controllers
-export * from './resolvers/campaign.resolver';
 export * from './resolvers/campaign-participant.resolver';
+export * from './resolvers/campaign.resolver';
 export * from './resolvers/kol-profile.resolver';
 export * from './resolvers/proposal.resolver';
 export * from './resolvers/review.resolver';

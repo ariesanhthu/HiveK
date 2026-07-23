@@ -1,47 +1,47 @@
-"use client";
+'use client';
 
-import { useMemo } from "react";
-import { usePathname } from "next/navigation";
-import { type DashboardNavItem } from "@/features/business-dashboard/types";
+import { type DashboardNavItem } from '@/features/business-dashboard/types';
+import { usePathname } from 'next/navigation';
+import { useMemo } from 'react';
 
-const BUSINESS_NAV_BASE: Omit<DashboardNavItem, "isActive">[] = [
-  { id: "ai-chat", label: "HiveK AI", icon: "auto_awesome", href: "/ai-chat" },
-  { id: "dashboard", label: "Bảng điều khiển", icon: "dashboard", href: "/dashboard" },
+const BUSINESS_NAV_BASE: Omit<DashboardNavItem, 'isActive'>[] = [
+  { id: 'ai-chat', label: 'HiveK AI', icon: 'auto_awesome', href: '/ai-chat' },
+  { id: 'dashboard', label: 'Bảng điều khiển', icon: 'dashboard', href: '/dashboard' },
   {
-    id: "inbox",
-    label: "Hộp thư",
-    icon: "support_agent",
-    href: "/inbox",
+    id: 'inbox',
+    label: 'Hộp thư',
+    icon: 'support_agent',
+    href: '/inbox',
     badgeCount: 4,
-    badgeLabel: "4 cuộc hội thoại cần xử lý",
+    badgeLabel: '4 cuộc hội thoại cần xử lý',
   },
-  { id: "campaigns", label: "Chiến dịch", icon: "campaign", href: "/campaign-management" },
+  { id: 'campaigns', label: 'Chiến dịch', icon: 'campaign', href: '/campaign-management' },
   {
-    id: "auto-posting",
-    label: "Kế hoạch đăng bài",
-    icon: "auto_awesome",
-    href: "/campaign-planning",
+    id: 'auto-posting',
+    label: 'Kế hoạch đăng bài',
+    icon: 'auto_awesome',
+    href: '/campaign-planning',
   },
-  { id: "discovery", label: "Khám phá KOL", icon: "travel_explore", href: "/kol-matching" },
-  { id: "analytics", label: "Phân tích", icon: "bar_chart", href: "/kol-analysis" },
+  { id: 'discovery', label: 'Khám phá KOL', icon: 'travel_explore', href: '/kol-matching' },
+  { id: 'analytics', label: 'Phân tích', icon: 'bar_chart', href: '/kol-analysis' },
   {
-    id: "settings",
-    label: "Studio",
-    icon: "settings",
-    href: "/ai-chat?view=studio",
+    id: 'settings',
+    label: 'Studio',
+    icon: 'settings',
+    href: '/ai-chat?view=studio',
   },
 ];
 
 function isNavItemActive(pathname: string, href: string): boolean {
-  if (href === "#") return false;
-  if (href.includes("?")) return false;
-  const hrefPath = href.split("?", 1)[0];
+  if (href === '#') return false;
+  if (href.includes('?')) return false;
+  const hrefPath = href.split('?', 1)[0];
   if (pathname === hrefPath) return true;
   return pathname.startsWith(`${hrefPath}/`);
 }
 
 export function useBusinessNavItems(): DashboardNavItem[] {
-  const pathname = usePathname() ?? "";
+  const pathname = usePathname() ?? '';
 
   return useMemo(
     () =>
@@ -49,6 +49,6 @@ export function useBusinessNavItems(): DashboardNavItem[] {
         ...item,
         isActive: isNavItemActive(pathname, item.href),
       })),
-    [pathname]
+    [pathname],
   );
 }

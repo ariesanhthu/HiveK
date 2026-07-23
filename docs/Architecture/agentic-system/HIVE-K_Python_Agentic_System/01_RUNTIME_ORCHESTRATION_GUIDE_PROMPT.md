@@ -15,14 +15,14 @@ Xây dựng lớp điều phối trung tâm cho HIVE-K bằng Python. Lớp này
 
 ## 2. Phân loại nút: deterministic trước, agent sau
 
-| Loại nút | Ví dụ | Cách triển khai |
-|---|---|---|
-| Xác định | kiểm tra field thiếu, rate limit, hash, deduplicate, quyền | Python thuần |
-| Truy xuất | tìm facts, bài cũ, graph neighborhood | SQL/Cypher/vector search |
-| Mô hình nhỏ | intent, phân loại rủi ro, ngôn ngữ, chủ đề | model local/API rẻ |
-| Mô hình ngôn ngữ | tổng hợp brief, lập kế hoạch, viết, giải thích | LLM có structured output |
-| Duyệt người dùng | xác nhận claim, sửa dữ kiện, approve bài | LangGraph interrupt |
-| Tác dụng phụ | đồng bộ, đăng bài, gửi thông báo | Temporal Activity |
+| Loại nút         | Ví dụ                                                      | Cách triển khai          |
+| ---------------- | ---------------------------------------------------------- | ------------------------ |
+| Xác định         | kiểm tra field thiếu, rate limit, hash, deduplicate, quyền | Python thuần             |
+| Truy xuất        | tìm facts, bài cũ, graph neighborhood                      | SQL/Cypher/vector search |
+| Mô hình nhỏ      | intent, phân loại rủi ro, ngôn ngữ, chủ đề                 | model local/API rẻ       |
+| Mô hình ngôn ngữ | tổng hợp brief, lập kế hoạch, viết, giải thích             | LLM có structured output |
+| Duyệt người dùng | xác nhận claim, sửa dữ kiện, approve bài                   | LangGraph interrupt      |
+| Tác dụng phụ     | đồng bộ, đăng bài, gửi thông báo                           | Temporal Activity        |
 
 Quy tắc: chỉ gọi agent nếu một hàm xác định hoặc mô hình phân loại chuyên biệt không giải quyết được.
 
@@ -322,15 +322,15 @@ class ModelRoute(BaseModel):
 
 Ví dụ:
 
-| Tác vụ | Model tier |
-|---|---|
-| intent, tag, language | local/fast |
-| trích fact có schema | fast |
-| hợp nhất mâu thuẫn | reasoning |
-| tạo kế hoạch | reasoning |
-| viết biến thể | creative |
-| validator fact/rule | deterministic + fast |
-| tóm tắt hiệu suất | fast/reasoning tùy dữ liệu |
+| Tác vụ                | Model tier                 |
+| --------------------- | -------------------------- |
+| intent, tag, language | local/fast                 |
+| trích fact có schema  | fast                       |
+| hợp nhất mâu thuẫn    | reasoning                  |
+| tạo kế hoạch          | reasoning                  |
+| viết biến thể         | creative                   |
+| validator fact/rule   | deterministic + fast       |
+| tóm tắt hiệu suất     | fast/reasoning tùy dữ liệu |
 
 ---
 

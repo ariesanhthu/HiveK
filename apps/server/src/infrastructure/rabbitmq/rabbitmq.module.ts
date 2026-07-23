@@ -1,11 +1,22 @@
-import { Global, Module, Logger, OnModuleDestroy, Inject, OnApplicationBootstrap } from '@nestjs/common';
-import { RabbitMQService, RABBITMQ_PRODUCER_CLIENT, RABBITMQ_CONFIG } from './rabbitmq.service';
 import { LOGGER_SERVICE, MESSAGE_QUEUE_SERVICE } from '@application/interfaces';
-import { RawRabbitMQProducerClient } from './raw-rabbitmq-producer';
-import { RawRabbitMQConsumerClient } from './raw-rabbitmq-consumer';
-import { ModulesContainer, MetadataScanner, Reflector } from '@nestjs/core';
-import { RMQ_HANDLER_METADATA, RmqHandlerOptions, RmqHandlerRegistry } from './rmq-consumer.registry';
+import {
+  Global,
+  Inject,
+  Logger,
+  Module,
+  OnApplicationBootstrap,
+  OnModuleDestroy,
+} from '@nestjs/common';
+import { MetadataScanner, ModulesContainer, Reflector } from '@nestjs/core';
+import { RABBITMQ_CONFIG, RABBITMQ_PRODUCER_CLIENT, RabbitMQService } from './rabbitmq.service';
 import { RabbitMQFactoryService } from './rabiitmq-factory.service';
+import { RawRabbitMQConsumerClient } from './raw-rabbitmq-consumer';
+import { RawRabbitMQProducerClient } from './raw-rabbitmq-producer';
+import {
+  RMQ_HANDLER_METADATA,
+  RmqHandlerOptions,
+  RmqHandlerRegistry,
+} from './rmq-consumer.registry';
 
 export const RABBITMQ_CONSUMER_CONFIG = Symbol('RABBITMQ_CONSUMER_CONFIG');
 export const RABBITMQ_CONSUMER_CLIENT = Symbol('RABBITMQ_CONSUMER_CLIENT');
@@ -80,7 +91,7 @@ export class RabbitMQModule implements OnModuleDestroy, OnApplicationBootstrap {
 
   private discoverHandlers() {
     const modules = [...this.modulesContainer.values()];
-    
+
     modules.forEach((module) => {
       module.providers.forEach((wrapper) => {
         const { instance } = wrapper;
@@ -88,24 +99,26 @@ export class RabbitMQModule implements OnModuleDestroy, OnApplicationBootstrap {
           return;
         }
 
-        this.metadataScanner.getAllMethodNames(Object.getPrototypeOf(instance)).forEach((methodName) => {
-          const handlerOptions = this.reflector.get<RmqHandlerOptions>(
-            RMQ_HANDLER_METADATA,
-            instance[methodName],
-          );
-
-          if (handlerOptions) {
-            RmqHandlerRegistry.register({
-              ...handlerOptions,
-              target: instance,
-              methodName,
-              callback: instance[methodName],
-            });
-            this.logger.log(
-              `Registered RMQ handler: ${instance.constructor.name}.${methodName} for queue "${handlerOptions.queue}"`,
+        this.metadataScanner.getAllMethodNames(Object.getPrototypeOf(instance)).forEach(
+          (methodName) => {
+            const handlerOptions = this.reflector.get<RmqHandlerOptions>(
+              RMQ_HANDLER_METADATA,
+              instance[methodName],
             );
-          }
-        });
+
+            if (handlerOptions) {
+              RmqHandlerRegistry.register({
+                ...handlerOptions,
+                target: instance,
+                methodName,
+                callback: instance[methodName],
+              });
+              this.logger.log(
+                `Registered RMQ handler: ${instance.constructor.name}.${methodName} for queue "${handlerOptions.queue}"`,
+              );
+            }
+          },
+        );
       });
     });
   }

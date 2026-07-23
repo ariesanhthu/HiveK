@@ -1,33 +1,33 @@
-import { Module } from '@nestjs/common';
-import { MongoModule } from '@/infrastructure/mongo/mongo.module';
-import { EnterpriseModule } from '@/infrastructure/modules/enterprise.module';
-import { UserModule } from '@/infrastructure/modules/user.module';
-import { RoleModule } from '@/infrastructure/modules/role.module';
 import { AuthModule } from '@/infrastructure/modules/auth.module';
+import { EnterpriseModule } from '@/infrastructure/modules/enterprise.module';
+import { RoleModule } from '@/infrastructure/modules/role.module';
+import { UserModule } from '@/infrastructure/modules/user.module';
+import { MongoModule } from '@/infrastructure/mongo/mongo.module';
 import { RabbitMQModule } from '@/infrastructure/rabbitmq/rabbitmq.module';
 import { WebSocketModule } from '@/infrastructure/websocket/websocket.module';
-import { APP_PIPE, APP_GUARD, APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
-import { ZodValidationPipe } from 'nestjs-zod';
-import { ThrottlerModule } from '@nestjs/throttler';
-import { GqlThrottlerGuard, ApiKeyGuard } from '../../presentation/middleware/guards';
-import { InfrastructureModule } from './infrastructure.module';
-import { PlatformModule } from './platform.module';
-import { KolProfileModule } from './kol-profile.module';
-import { AnalyticsModule } from './analytics.module';
-import { CampaignModule } from './campaign.module';
-import { UploadedFileModule } from './uploaded-file.module';
-import { NotificationModule } from './notification.module';
-import { CampaignParticipantModule } from './campaign-participant.module';
-import { CampaignProposalModule } from './campaign-proposal.module';
-import { PublicReviewModule } from './public-review.module';
-import { TestRmqHandler } from '../../presentation/controllers/rmq/test-rmq.controller';
-import { GraphqlModule } from '../graphql';
 import { HttpExceptionFilter } from '@/presentation/middleware/filters';
 import { LoggingInterceptor, TransformInterceptor } from '@/presentation/middleware/interceptors';
+import { Module } from '@nestjs/common';
+import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core';
+import { EventEmitterModule } from '@nestjs/event-emitter';
 import { ScheduleModule } from '@nestjs/schedule';
+import { ThrottlerModule } from '@nestjs/throttler';
+import { ZodValidationPipe } from 'nestjs-zod';
+import { TestRmqHandler } from '../../presentation/controllers/rmq/test-rmq.controller';
+import { ApiKeyGuard, GqlThrottlerGuard } from '../../presentation/middleware/guards';
 import { RedisCacheModule } from '../cache/redis/redis-cache.module';
 import { EventsModule } from '../events/events.module';
-import { EventEmitterModule } from '@nestjs/event-emitter';
+import { GraphqlModule } from '../graphql';
+import { AnalyticsModule } from './analytics.module';
+import { CampaignParticipantModule } from './campaign-participant.module';
+import { CampaignProposalModule } from './campaign-proposal.module';
+import { CampaignModule } from './campaign.module';
+import { InfrastructureModule } from './infrastructure.module';
+import { KolProfileModule } from './kol-profile.module';
+import { NotificationModule } from './notification.module';
+import { PlatformModule } from './platform.module';
+import { PublicReviewModule } from './public-review.module';
+import { UploadedFileModule } from './uploaded-file.module';
 
 @Module({
   imports: [
@@ -65,19 +65,19 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
   providers: [
     {
       provide: APP_PIPE,
-      useClass: ZodValidationPipe
+      useClass: ZodValidationPipe,
     },
     {
       provide: APP_FILTER,
-      useClass: HttpExceptionFilter
+      useClass: HttpExceptionFilter,
     },
     {
       provide: APP_INTERCEPTOR,
-      useClass: LoggingInterceptor
+      useClass: LoggingInterceptor,
     },
     {
       provide: APP_INTERCEPTOR,
-      useClass: TransformInterceptor
+      useClass: TransformInterceptor,
     },
     {
       provide: APP_GUARD,
@@ -87,7 +87,7 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
     //   provide: APP_GUARD,
     //   useClass: GqlThrottlerGuard,
     // },
-    TestRmqHandler
+    TestRmqHandler,
   ],
 })
 export class AppModule {}

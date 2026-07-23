@@ -1,6 +1,6 @@
-import { z } from 'zod';
-import { createZodDto } from 'nestjs-zod';
 import { ERoleType } from '@/core/enums';
+import { createZodDto } from 'nestjs-zod';
+import { z } from 'zod';
 
 export const UserCreateInputSchema = z.object({
   email: z.email(),

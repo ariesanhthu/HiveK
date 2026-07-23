@@ -1,4 +1,8 @@
-import { DomainException, BadRequestDomainException, ConflictDomainException } from '../common/exceptions/domain.exception';
+import {
+  BadRequestDomainException,
+  ConflictDomainException,
+  DomainException,
+} from '../common/exceptions/domain.exception';
 
 export class GeneralDomainException extends DomainException {
   constructor(message: string) {
@@ -25,5 +29,3 @@ export class CampaignParticipantNotFoundException extends NotFoundDomainExceptio
     super(`Campaign participant with ID '${id}' not found`);
   }
 }
-
-

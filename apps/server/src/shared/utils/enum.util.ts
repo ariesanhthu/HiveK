@@ -23,7 +23,7 @@ export function enumToArray<T extends Record<string, string>>(e: T): string[] {
 export function enumToOptions<T extends Record<string, string>>(
   e: T,
   formatLabel?: (value: string) => string,
-): { value: string; label: string }[] {
+): { value: string; label: string; }[] {
   return enumToArray(e).map((value) => ({
     value,
     label: formatLabel ? formatLabel(value) : value.charAt(0).toUpperCase() + value.slice(1),

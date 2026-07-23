@@ -1,6 +1,6 @@
+import { EOtpType } from '@/core/enums/otp-type.enum';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Schema as MongooseSchema } from 'mongoose';
-import { EOtpType } from '@/core/enums/otp-type.enum';
 
 @Schema({
   collection: 'otps',

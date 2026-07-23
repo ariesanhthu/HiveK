@@ -1,24 +1,32 @@
-import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { Inject } from '@nestjs/common';
-import { CAMPAIGN_REPOSITORY, type ICampaignRepository } from '@/core/interfaces/repositories/campaign.repository';
-import { KOL_PROFILE_REPOSITORY, type IKolProfileRepository } from '@/core/interfaces/repositories/kol-profile.repository';
-import { InvalidOperationException, CampaignNotFoundException, UserNotFoundException } from '@/core/exceptions';
-import { CampaignParticipantCreateCommand } from './campaign-participant-create.command';
-import { ECampaignStatus } from '@/core/enums/campaign-status.enum';
-import { type IUnitOfWork, UNIT_OF_WORK, EVENT_SERVICE } from '@/application/interfaces';
+import { EVENT_SERVICE, type IUnitOfWork, UNIT_OF_WORK } from '@/application/interfaces';
 import type { IEventService } from '@/application/interfaces';
+import { ECampaignStatus } from '@/core/enums/campaign-status.enum';
+import {
+  CampaignNotFoundException,
+  InvalidOperationException,
+  UserNotFoundException,
+} from '@/core/exceptions';
+import {
+  CAMPAIGN_REPOSITORY,
+  type ICampaignRepository,
+} from '@/core/interfaces/repositories/campaign.repository';
+import {
+  type IKolProfileRepository,
+  KOL_PROFILE_REPOSITORY,
+} from '@/core/interfaces/repositories/kol-profile.repository';
+import { Inject } from '@nestjs/common';
+import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
+import { CampaignParticipantCreateCommand } from './campaign-participant-create.command';
 
 @CommandHandler(CampaignParticipantCreateCommand)
-export class CampaignParticipantCreateCommandHandler implements ICommandHandler<CampaignParticipantCreateCommand, string> {
+export class CampaignParticipantCreateCommandHandler
+  implements ICommandHandler<CampaignParticipantCreateCommand, string>
+{
   constructor(
-    @Inject(CAMPAIGN_REPOSITORY)
-    private readonly campaignRepository: ICampaignRepository,
-    @Inject(KOL_PROFILE_REPOSITORY)
-    private readonly kolProfileRepository: IKolProfileRepository,
-    @Inject(EVENT_SERVICE)
-    private readonly eventService: IEventService,
-    @Inject(UNIT_OF_WORK)
-    private readonly uow: IUnitOfWork,
+    @Inject(CAMPAIGN_REPOSITORY) private readonly campaignRepository: ICampaignRepository,
+    @Inject(KOL_PROFILE_REPOSITORY) private readonly kolProfileRepository: IKolProfileRepository,
+    @Inject(EVENT_SERVICE) private readonly eventService: IEventService,
+    @Inject(UNIT_OF_WORK) private readonly uow: IUnitOfWork,
   ) {}
 
   async execute(command: CampaignParticipantCreateCommand): Promise<string> {
@@ -32,8 +40,13 @@ export class CampaignParticipantCreateCommandHandler implements ICommandHandler<
         throw new CampaignNotFoundException(input.campaignId);
       }
 
-      if (campaign.status !== ECampaignStatus.FINDING_KOL && campaign.status !== ECampaignStatus.IN_PROGRESS) {
-        throw new InvalidOperationException('KOLs can only join campaigns that are in FINDING_KOL or IN_PROGRESS status');
+      if (
+        campaign.status !== ECampaignStatus.FINDING_KOL
+        && campaign.status !== ECampaignStatus.IN_PROGRESS
+      ) {
+        throw new InvalidOperationException(
+          'KOLs can only join campaigns that are in FINDING_KOL or IN_PROGRESS status',
+        );
       }
 
       const kolProfile = await this.kolProfileRepository.findById(input.kolProfileId);

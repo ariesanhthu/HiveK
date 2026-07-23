@@ -18,11 +18,11 @@ Trang giới thiệu platform.
 
 ### Nội dung
 
-* Hero section
-* Giải thích platform
-* Call to action
-* Top KOL ranking preview
-* Featured campaigns
+- Hero section
+- Giải thích platform
+- Call to action
+- Top KOL ranking preview
+- Featured campaigns
 
 ### Task Frontend
 
@@ -75,9 +75,9 @@ Table
 
 Filter
 
-* Niche
-* Platform
-* Follower range
+- Niche
+- Platform
+- Follower range
 
 ### Task
 

@@ -13,7 +13,12 @@ describe('UploadedFileGetListHandler', () => {
   });
 
   it('should return paginated file list', async () => {
-    const paginatedResult = { data: [{ id: 'file-1', url: 'test.jpg' }], total: 1, page: 1, limit: 20 };
+    const paginatedResult = {
+      data: [{ id: 'file-1', url: 'test.jpg' }],
+      total: 1,
+      page: 1,
+      limit: 20,
+    };
     mockReadService.findAll.mockResolvedValue(paginatedResult);
 
     const filters = { targetId: 'user-123', page: 1, limit: 20 } as any;

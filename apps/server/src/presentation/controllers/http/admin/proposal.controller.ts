@@ -1,24 +1,39 @@
-import { Controller, Get, Post, Patch, Param, Query, Body, HttpCode, HttpStatus, UseGuards } from '@nestjs/common';
-import { CommandBus, QueryBus } from '@nestjs/cqrs';
-import { ApiTags, ApiOperation, ApiBearerAuth, ApiSecurity } from '@nestjs/swagger';
-import { buildVersionedRoute } from '@presentation/utils';
 import {
   ProposalCreateCommand,
   ProposalCreateInputDto,
+  ProposalRestoreCommand,
+  ProposalSoftDeleteCommand,
   ProposalUpdateCommand,
   ProposalUpdateInputDto,
   ProposalUpdateStatusCommand,
   ProposalUpdateStatusInputDto,
-  ProposalSoftDeleteCommand,
-  ProposalRestoreCommand,
 } from '@/application/commands';
-import { ProposalGetByIdQuery, ProposalGetListQuery, ProposalFilterDto } from '@/application/queries';
 import { ProposalDto, ProposalFilterDto as ProposalFilterInputDto } from '@/application/dtos';
 import { PaginatedResponseDto } from '@/application/dtos/pagination.dto';
-import { JwtAuthGuard, RolesGuard } from '@/presentation/middleware/guards';
+import {
+  ProposalFilterDto,
+  ProposalGetByIdQuery,
+  ProposalGetListQuery,
+} from '@/application/queries';
+import { ERoleType } from '@/core/enums';
 import { CurrentUser } from '@/presentation/decorators/current-user.decorator';
 import { Roles } from '@/presentation/decorators/roles.decorator';
-import { ERoleType } from '@/core/enums';
+import { JwtAuthGuard, RolesGuard } from '@/presentation/middleware/guards';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Param,
+  Patch,
+  Post,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
+import { CommandBus, QueryBus } from '@nestjs/cqrs';
+import { ApiBearerAuth, ApiOperation, ApiSecurity, ApiTags } from '@nestjs/swagger';
+import { buildVersionedRoute } from '@presentation/utils';
 
 @ApiTags('ADMIN-proposals')
 @ApiBearerAuth()
@@ -34,7 +49,9 @@ export class CampaignProposalAdminController {
 
   @Get()
   @ApiOperation({ summary: 'Get all campaign proposals' })
-  async findAll(@Query() filters: ProposalFilterInputDto): Promise<PaginatedResponseDto<ProposalDto>> {
+  async findAll(
+    @Query() filters: ProposalFilterInputDto,
+  ): Promise<PaginatedResponseDto<ProposalDto>> {
     return this.queryBus.execute(new ProposalGetListQuery(filters));
   }
 

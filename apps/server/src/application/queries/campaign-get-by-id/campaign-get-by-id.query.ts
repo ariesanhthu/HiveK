@@ -1,6 +1,6 @@
-import { Query } from '@nestjs/cqrs';
 import { CampaignDto } from '@/application/dtos';
 import { ProjectionDto } from '@/application/dtos/projection.dto';
+import { Query } from '@nestjs/cqrs';
 
 export class CampaignGetByIdQuery extends Query<CampaignDto> {
   constructor(

@@ -1,7 +1,7 @@
+import { EOutputStatus, EOutputType, EParticipantStatus, ESchedulePostStatus } from '@/core/enums';
+import { ECampaignStatus } from '@/core/enums/campaign-status.enum';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Schema as MongooseSchema, Types } from 'mongoose';
-import { ECampaignStatus } from '@/core/enums/campaign-status.enum';
-import { EParticipantStatus, EOutputStatus, EOutputType, ESchedulePostStatus } from '@/core/enums';
 import { softDeletePlugin } from '../utils';
 
 @Schema({ _id: false })
@@ -50,7 +50,9 @@ export class CampaignParticipantSubModel {
   @Prop({ type: String, default: null })
   delete_by: string | null;
 }
-export const CampaignParticipantSubSchema = SchemaFactory.createForClass(CampaignParticipantSubModel);
+export const CampaignParticipantSubSchema = SchemaFactory.createForClass(
+  CampaignParticipantSubModel,
+);
 
 @Schema({ timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } })
 export class CampaignKOLOutputSubModel {
@@ -131,7 +133,9 @@ export class CampaignEnterpriseOutputSubModel {
   @Prop({ type: Boolean, default: false })
   is_tracking_active: boolean;
 }
-export const CampaignEnterpriseOutputSubSchema = SchemaFactory.createForClass(CampaignEnterpriseOutputSubModel);
+export const CampaignEnterpriseOutputSubSchema = SchemaFactory.createForClass(
+  CampaignEnterpriseOutputSubModel,
+);
 
 @Schema({ timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } })
 export class SchedulePostModel {
@@ -195,7 +199,12 @@ export class CampaignModel {
   @Prop({ type: [PlatformTargetItemModel], default: [] })
   platform_target: PlatformTargetItemModel[];
 
-  @Prop({ type: String, required: true, enum: Object.values(ECampaignStatus), default: ECampaignStatus.DRAFT })
+  @Prop({
+    type: String,
+    required: true,
+    enum: Object.values(ECampaignStatus),
+    default: ECampaignStatus.DRAFT,
+  })
   status: ECampaignStatus;
 
   @Prop({ type: [String], default: [] })

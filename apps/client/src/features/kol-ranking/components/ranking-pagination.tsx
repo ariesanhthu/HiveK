@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import React from "react";
-import { cn } from "@/lib/utils";
+import { cn } from '@/lib/utils';
+import React from 'react';
 
 type RankingPaginationProps = {
   page: number;
@@ -18,7 +18,7 @@ function getPaginationWindow(page: number, totalPages: number): number[] {
 
   return Array.from(
     { length: end - shiftedStart + 1 },
-    (_, index) => shiftedStart + index
+    (_, index) => shiftedStart + index,
   );
 }
 
@@ -31,17 +31,16 @@ export function RankingPagination({
   const isDisabled = totalPages <= 1;
 
   return (
-    <div className="flex items-center justify-between gap-4 rounded-2xl border border-primary-soft bg-card px-4 py-3">
-      <p className="text-sm text-foreground-muted">
-        Trang <span className="font-semibold text-foreground">{page}</span> /{" "}
-        {totalPages}
+    <div className='flex items-center justify-between gap-4 rounded-2xl border border-primary-soft bg-card px-4 py-3'>
+      <p className='text-sm text-foreground-muted'>
+        Trang <span className='font-semibold text-foreground'>{page}</span> / {totalPages}
       </p>
 
-      <div className="flex items-center gap-2">
+      <div className='flex items-center gap-2'>
         <button
           onClick={() => onPageChange(Math.max(1, page - 1))}
           disabled={isDisabled || page === 1}
-          className="rounded-xl border border-primary-soft px-3 py-1.5 text-sm font-semibold text-foreground transition hover:bg-primary-soft disabled:cursor-not-allowed disabled:opacity-50"
+          className='rounded-xl border border-primary-soft px-3 py-1.5 text-sm font-semibold text-foreground transition hover:bg-primary-soft disabled:cursor-not-allowed disabled:opacity-50'
         >
           Trước
         </button>
@@ -51,10 +50,10 @@ export function RankingPagination({
             key={pageNumber}
             onClick={() => onPageChange(pageNumber)}
             className={cn(
-              "min-w-9 rounded-xl border px-3 py-1.5 text-sm font-semibold transition",
+              'min-w-9 rounded-xl border px-3 py-1.5 text-sm font-semibold transition',
               pageNumber === page
-                ? "border-primary bg-primary text-background-dark"
-                : "border-primary-soft text-foreground hover:bg-primary-soft"
+                ? 'border-primary bg-primary text-background-dark'
+                : 'border-primary-soft text-foreground hover:bg-primary-soft',
             )}
           >
             {pageNumber}
@@ -64,7 +63,7 @@ export function RankingPagination({
         <button
           onClick={() => onPageChange(Math.min(totalPages, page + 1))}
           disabled={isDisabled || page === totalPages}
-          className="rounded-xl border border-primary-soft px-3 py-1.5 text-sm font-semibold text-foreground transition hover:bg-primary-soft disabled:cursor-not-allowed disabled:opacity-50"
+          className='rounded-xl border border-primary-soft px-3 py-1.5 text-sm font-semibold text-foreground transition hover:bg-primary-soft disabled:cursor-not-allowed disabled:opacity-50'
         >
           Sau
         </button>

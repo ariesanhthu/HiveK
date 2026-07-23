@@ -4,15 +4,15 @@
 
 Mọi tiến trình AI hoặc đồng bộ dùng cùng một mô hình trạng thái:
 
-| Trạng thái | Ý nghĩa trên UI | Hành động chính |
-|---|---|---|
-| `running` | Hệ thống đang xử lý | Xem tiến độ |
-| `partial` | Đã có kết quả một phần | Xem kết quả và phần còn thiếu |
-| `needs_user_input` | Cần người dùng bổ sung dữ liệu | Bổ sung thông tin |
-| `needs_approval` | Cần quyết định của người có quyền | Duyệt |
-| `completed` | Hoàn tất | Xem kết quả |
-| `failed` | Không thể hoàn tất | Thử lại hoặc xem lỗi |
-| `cancelled` | Đã dừng theo yêu cầu | Chạy lại |
+| Trạng thái         | Ý nghĩa trên UI                   | Hành động chính               |
+| ------------------ | --------------------------------- | ----------------------------- |
+| `running`          | Hệ thống đang xử lý               | Xem tiến độ                   |
+| `partial`          | Đã có kết quả một phần            | Xem kết quả và phần còn thiếu |
+| `needs_user_input` | Cần người dùng bổ sung dữ liệu    | Bổ sung thông tin             |
+| `needs_approval`   | Cần quyết định của người có quyền | Duyệt                         |
+| `completed`        | Hoàn tất                          | Xem kết quả                   |
+| `failed`           | Không thể hoàn tất                | Thử lại hoặc xem lỗi          |
+| `cancelled`        | Đã dừng theo yêu cầu              | Chạy lại                      |
 
 Không dùng một spinner kéo dài cho toàn bộ quá trình.
 
@@ -72,12 +72,12 @@ Mỗi lượt hỏi:
 
 ## 6. Mức nghiêm trọng
 
-| Mức | Cách xử lý |
-|---|---|
-| Chặn | Không thể tạo hoặc đăng nội dung cho đến khi xử lý |
-| Cảnh báo | Có thể tiếp tục nhưng bắt buộc duyệt |
-| Gợi ý | Không ảnh hưởng luồng chính |
-| Thông tin | Chỉ cung cấp ngữ cảnh |
+| Mức       | Cách xử lý                                         |
+| --------- | -------------------------------------------------- |
+| Chặn      | Không thể tạo hoặc đăng nội dung cho đến khi xử lý |
+| Cảnh báo  | Có thể tiếp tục nhưng bắt buộc duyệt               |
+| Gợi ý     | Không ảnh hưởng luồng chính                        |
+| Thông tin | Chỉ cung cấp ngữ cảnh                              |
 
 Không chỉ phân biệt bằng màu. Luôn có nhãn và icon.
 

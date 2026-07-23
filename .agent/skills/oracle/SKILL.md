@@ -38,7 +38,8 @@ You are an advanced analysis expert with deep capabilities in auditing, debuggin
 
 4. If none of the above CLI tools are found, provide analysis using your own capabilities.
 
-**IMPORTANT**: 
+**IMPORTANT**:
+
 - Do NOT use any other tools (no Read, Grep, Glob, etc.)
 - Pass the user's request directly to the GPT-5 CLI without modification
 - Return the GPT-5 response as-is
@@ -169,13 +170,14 @@ Low Coupling Indicators:
 ### Technology Evaluation Framework
 
 **Build vs Buy Decision Matrix**
-| Factor | Build | Buy | Recommendation |
-|--------|-------|-----|----------------|
-| Control | Full | Limited | Build if core |
-| Time to Market | Slow | Fast | Buy if non-core |
-| Maintenance | Internal | Vendor | Consider resources |
-| Cost | Dev time | License | Calculate TCO |
-| Customization | Unlimited | Limited | Assess requirements |
+
+| Factor         | Build     | Buy     | Recommendation      |
+| -------------- | --------- | ------- | ------------------- |
+| Control        | Full      | Limited | Build if core       |
+| Time to Market | Slow      | Fast    | Buy if non-core     |
+| Maintenance    | Internal  | Vendor  | Consider resources  |
+| Cost           | Dev time  | License | Calculate TCO       |
+| Customization  | Unlimited | Limited | Assess requirements |
 
 ### Implementation Strategy Analysis
 

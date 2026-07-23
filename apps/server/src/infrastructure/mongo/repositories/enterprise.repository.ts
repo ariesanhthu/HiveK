@@ -1,26 +1,23 @@
-import { Injectable, Inject } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model, Types, ClientSession } from 'mongoose';
-import { IEnterpriseRepository } from '@/core/interfaces/repositories';
+import { CACHE_SERVICE, type IUnitOfWork, UNIT_OF_WORK } from '@/application/interfaces';
+import type { ICacheService } from '@/application/interfaces';
 import { EnterpriseRoot } from '@/core/aggregate-roots';
-import { EnterpriseModel, EnterpriseDocument } from '../schemas';
+import { IEnterpriseRepository } from '@/core/interfaces/repositories';
 import { Nullable } from '@/core/types';
 import { PhoneNumberVO } from '@/core/value-objects/phone-number.value-object';
-import { type IUnitOfWork, UNIT_OF_WORK, CACHE_SERVICE } from '@/application/interfaces';
-import type { ICacheService } from '@/application/interfaces';
-import { MongoUnitOfWork } from '../mongo-uow';
 import { CacheKeyUtil } from '@/shared/utils/cache-key.util';
+import { Inject, Injectable } from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
+import { ClientSession, Model, Types } from 'mongoose';
+import { MongoUnitOfWork } from '../mongo-uow';
+import { EnterpriseDocument, EnterpriseModel } from '../schemas';
 
 @Injectable()
 export class MongoEnterpriseRepository implements IEnterpriseRepository {
   constructor(
-    @InjectModel(EnterpriseModel.name)
-    private readonly enterpriseModel: Model<EnterpriseDocument>,
-    @Inject(UNIT_OF_WORK)
-    private readonly uow: IUnitOfWork,
-    @Inject(CACHE_SERVICE)
-    private readonly cacheService: ICacheService,
-  ) { }
+    @InjectModel(EnterpriseModel.name) private readonly enterpriseModel: Model<EnterpriseDocument>,
+    @Inject(UNIT_OF_WORK) private readonly uow: IUnitOfWork,
+    @Inject(CACHE_SERVICE) private readonly cacheService: ICacheService,
+  ) {}
 
   private get session(): ClientSession | undefined {
     return (this.uow as MongoUnitOfWork).getSession() || undefined;
@@ -32,7 +29,8 @@ export class MongoEnterpriseRepository implements IEnterpriseRepository {
   }
 
   async findByUserId(userId: string): Promise<Nullable<EnterpriseRoot>> {
-    const doc = await this.enterpriseModel.findOne({ user_id: new Types.ObjectId(userId) as any }).session(this.session).exec();
+    const doc = await this.enterpriseModel.findOne({ user_id: new Types.ObjectId(userId) as any })
+      .session(this.session).exec();
     return doc ? this.mapToDomain(doc) : null;
   }
 
@@ -44,7 +42,9 @@ export class MongoEnterpriseRepository implements IEnterpriseRepository {
       const saved = await created.save({ session: this.session });
       enterprise.setId(saved._id.toString());
     } else {
-      await this.enterpriseModel.findByIdAndUpdate(enterprise.id, data, { upsert: true }).session(this.session).exec();
+      await this.enterpriseModel.findByIdAndUpdate(enterprise.id, data, { upsert: true }).session(
+        this.session,
+      ).exec();
     }
 
     await this.invalidateCache(enterprise.id!, enterprise.userId);
@@ -83,7 +83,9 @@ export class MongoEnterpriseRepository implements IEnterpriseRepository {
       companyName: doc.company_name,
       description: doc.description || undefined,
       contactEmail: doc.contact_email,
-      contactPhone: doc.contact_phone ? PhoneNumberVO.create({ value: doc.contact_phone }) : undefined,
+      contactPhone: doc.contact_phone
+        ? PhoneNumberVO.create({ value: doc.contact_phone })
+        : undefined,
       website: doc.website || undefined,
       taxId: doc.tax_id || undefined,
       logoUrlId: doc.logo_url_id ? doc.logo_url_id.toString() : undefined,
@@ -95,7 +97,9 @@ export class MongoEnterpriseRepository implements IEnterpriseRepository {
     });
   }
 
-  private mapToPersistence(enterprise: EnterpriseRoot): Omit<EnterpriseModel, 'created_at' | 'updated_at'> {
+  private mapToPersistence(
+    enterprise: EnterpriseRoot,
+  ): Omit<EnterpriseModel, 'created_at' | 'updated_at'> {
     return {
       user_id: new Types.ObjectId(enterprise.userId) as any,
       company_name: enterprise.companyName,

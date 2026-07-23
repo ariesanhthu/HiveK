@@ -10,10 +10,17 @@
     "install:ai": "cd apps/server-ai && pip install -r requirements.txt",
     "install:agentic": "cd apps/agentic-system && uv venv --python 3.12 && uv pip install -e \".[dev]\"",
     "test:agentic": "cd apps/agentic-system && uv run pytest -q",
-    "d2": "d2 --watch docs/d2/*.d2 docs/d2/*.png"
+    "d2": "d2 --watch docs/d2/*.d2 docs/d2/*.png",
+    "format": "dprint fmt",
+    "format:check": "dprint check",
+    "prepare": "husky"
   },
   "devDependencies": {
     "concurrently": "^9.0.0",
+    "dprint": "^0.55.2",
+    "husky": "^9.1.7",
+    "lint-staged": "^17.2.0",
+    "prettier": "^3.9.6",
     "turbo": "^2.9.14"
   }
 }

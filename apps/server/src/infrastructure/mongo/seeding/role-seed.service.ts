@@ -1,27 +1,24 @@
-import { Inject, Injectable, Logger, OnModuleInit } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
-import { RoleModel } from '../schemas/role.schema';
-import { ERoleType } from '@/core/enums';
-import { UserModel } from '../schemas';
-import { type IUserRepository, USER_REPOSITORY } from '@/core/interfaces/repositories';
-import * as bcrypt from 'bcrypt';
 import { AdminRoot } from '@/core/aggregate-roots';
+import { ERoleType } from '@/core/enums';
+import { type IUserRepository, USER_REPOSITORY } from '@/core/interfaces/repositories';
 import { PhoneNumberVO } from '@/core/value-objects/phone-number.value-object';
 import { env } from '@/shared/utils';
+import { Inject, Injectable, Logger, OnModuleInit } from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
+import * as bcrypt from 'bcrypt';
+import { Model } from 'mongoose';
+import { UserModel } from '../schemas';
+import { RoleModel } from '../schemas/role.schema';
 
 @Injectable()
 export class RoleSeedService implements OnModuleInit {
   private readonly logger = new Logger(RoleSeedService.name);
 
   constructor(
-    @InjectModel(RoleModel.name)
-    private readonly roleModel: Model<RoleModel>,
-    @InjectModel(UserModel.name)
-    private readonly userModel: Model<UserModel>,
-    @Inject(USER_REPOSITORY)
-    private readonly userRepository: IUserRepository,
-  ) { }
+    @InjectModel(RoleModel.name) private readonly roleModel: Model<RoleModel>,
+    @InjectModel(UserModel.name) private readonly userModel: Model<UserModel>,
+    @Inject(USER_REPOSITORY) private readonly userRepository: IUserRepository,
+  ) {}
 
   async onModuleInit() {
     if (env('SEEDING', '1') === '0') {

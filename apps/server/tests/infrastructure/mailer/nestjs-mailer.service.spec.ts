@@ -1,7 +1,7 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { MailerService as NestMailService } from '@nestjs-modules/mailer';
-import { NestjsMailerService } from '@/infrastructure/mailer/nestjs-mailer.service';
 import { LOGGER_SERVICE } from '@/application/interfaces/logger.interface';
+import { NestjsMailerService } from '@/infrastructure/mailer/nestjs-mailer.service';
+import { MailerService as NestMailService } from '@nestjs-modules/mailer';
+import { Test, TestingModule } from '@nestjs/testing';
 
 describe('NestjsMailerService', () => {
   let service: NestjsMailerService;

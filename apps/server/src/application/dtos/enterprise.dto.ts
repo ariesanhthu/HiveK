@@ -1,7 +1,7 @@
-import { z } from 'zod';
 import { createZodDto } from 'nestjs-zod';
-import { UserDto } from './user.dto';
+import { z } from 'zod';
 import { UploadedFileDto } from './uploaded-file.dto';
+import { UserDto } from './user.dto';
 
 export const EnterpriseDtoSchema = z.object({
   id: z.string(),

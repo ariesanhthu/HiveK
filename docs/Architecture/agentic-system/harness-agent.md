@@ -101,8 +101,8 @@ Các workflow hiện vẫn là mock/heuristic. Harness Agent cần biến chúng
 type CampaignBrief = {
   id: string;
   name: string;
-  status: "draft" | "generating" | "reviewing" | "scheduled" | "published" | "archived";
-  objective: "awareness" | "engagement" | "traffic" | "leads" | "sales" | "creator_recruitment";
+  status: 'draft' | 'generating' | 'reviewing' | 'scheduled' | 'published' | 'archived';
+  objective: 'awareness' | 'engagement' | 'traffic' | 'leads' | 'sales' | 'creator_recruitment';
   platforms: PlatformId[];
   accountIds: string[];
   productIds: string[];
@@ -133,7 +133,7 @@ type CampaignBrief = {
 Hiện business flow mới dùng:
 
 ```ts
-type PlatformId = "facebook" | "threads" | "instagram";
+type PlatformId = 'facebook' | 'threads' | 'instagram';
 ```
 
 Lưu ý: `campaign-planning` cũ vẫn còn `"tiktok"` trong type/mock. Cần migrate sang `"instagram"` để đồng bộ với campaign-management.
@@ -166,10 +166,10 @@ Yêu cầu harness:
 ```ts
 type CampaignMedia = {
   id: string;
-  type: "image" | "video" | "document" | "logo";
+  type: 'image' | 'video' | 'document' | 'logo';
   url: string;
   name: string;
-  role: "brand" | "product" | "lifestyle" | "reference" | "generated";
+  role: 'brand' | 'product' | 'lifestyle' | 'reference' | 'generated';
   alt?: string;
 };
 ```
@@ -193,7 +193,7 @@ type CampaignCommentReplyExample = {
   id: string;
   question: string;
   answer: string;
-  intent: "pricing" | "size" | "shipping" | "material" | "styling" | "general";
+  intent: 'pricing' | 'size' | 'shipping' | 'material' | 'styling' | 'general';
 };
 ```
 
@@ -221,8 +221,8 @@ type CampaignPostNode = {
   id: string;
   title: string;
   platform: PlatformId;
-  contentType: "caption" | "carousel" | "reels" | "thread" | "album" | "story";
-  status: "draft" | "needs-review" | "approved" | "scheduled";
+  contentType: 'caption' | 'carousel' | 'reels' | 'thread' | 'album' | 'story';
+  status: 'draft' | 'needs-review' | 'approved' | 'scheduled';
   time: string;
   owner: string;
   angle: string;
@@ -295,15 +295,15 @@ Input:
 type HarnessRunRequest = {
   campaignId: string;
   runMode:
-    | "generate_plan"
-    | "generate_posts"
-    | "validate_posts"
-    | "match_images"
-    | "reply_comments"
-    | "match_creators"
-    | "contact_creators"
-    | "schedule_posts"
-    | "generate_insights";
+    | 'generate_plan'
+    | 'generate_posts'
+    | 'validate_posts'
+    | 'match_images'
+    | 'reply_comments'
+    | 'match_creators'
+    | 'contact_creators'
+    | 'schedule_posts'
+    | 'generate_insights';
   dryRun?: boolean;
   humanReviewRequired?: boolean;
   selectedPostIds?: string[];
@@ -317,11 +317,11 @@ Output:
 type HarnessRunResponse = {
   runId: string;
   campaignId: string;
-  status: "success" | "partial_success" | "failed" | "needs_human_review";
+  status: 'success' | 'partial_success' | 'failed' | 'needs_human_review';
   changedEntities: Array<{
-    entityType: "campaign" | "post" | "media" | "comment" | "creator" | "participant";
+    entityType: 'campaign' | 'post' | 'media' | 'comment' | 'creator' | 'participant';
     entityId: string;
-    changeType: "created" | "updated" | "queued" | "sent" | "failed";
+    changeType: 'created' | 'updated' | 'queued' | 'sent' | 'failed';
   }>;
   warnings: string[];
   nextActions: string[];
@@ -642,7 +642,7 @@ Channel-specific fields:
 type CreatorOutreachDraft = {
   campaignId: string;
   creatorId: string;
-  channel: "email" | "zalo" | "facebook" | "instagram";
+  channel: 'email' | 'zalo' | 'facebook' | 'instagram';
   recipient: string;
   subject?: string;
   body: string;
@@ -689,23 +689,23 @@ type AgentAuditEvent = {
   id: string;
   runId: string;
   campaignId: string;
-  actor: "agent" | "user" | "system";
+  actor: 'agent' | 'user' | 'system';
   action:
-    | "generate_plan"
-    | "generate_post"
-    | "validate_content"
-    | "match_image"
-    | "reply_comment"
-    | "match_creator"
-    | "draft_outreach"
-    | "send_outreach"
-    | "schedule_post"
-    | "publish_post";
-  entityType: "campaign" | "post" | "media" | "comment" | "creator" | "participant";
+    | 'generate_plan'
+    | 'generate_post'
+    | 'validate_content'
+    | 'match_image'
+    | 'reply_comment'
+    | 'match_creator'
+    | 'draft_outreach'
+    | 'send_outreach'
+    | 'schedule_post'
+    | 'publish_post';
+  entityType: 'campaign' | 'post' | 'media' | 'comment' | 'creator' | 'participant';
   entityId: string;
   before?: unknown;
   after?: unknown;
-  status: "success" | "failed" | "needs_review";
+  status: 'success' | 'failed' | 'needs_review';
   error?: string;
   createdAt: string;
 };

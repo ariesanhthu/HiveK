@@ -1,6 +1,6 @@
-import { CampaignRoot, CampaignProps } from '@core/aggregate-roots/campaign.aggregate';
 import { ECampaignStatus } from '@/core/enums/campaign-status.enum';
 import { InvalidOperationException } from '@/core/exceptions';
+import { CampaignProps, CampaignRoot } from '@core/aggregate-roots/campaign.aggregate';
 
 describe('CampaignRoot Aggregate Root', () => {
   const props: CampaignProps = {
@@ -100,7 +100,9 @@ describe('CampaignRoot Aggregate Root', () => {
     expect(root.collaboratorIds).not.toContain('user-2');
 
     expect(() => root.revokeCollaborator('owner-1', 'owner-1')).toThrow(InvalidOperationException);
-    expect(() => root.revokeCollaborator('non-existent', 'owner-1')).toThrow(InvalidOperationException);
+    expect(() => root.revokeCollaborator('non-existent', 'owner-1')).toThrow(
+      InvalidOperationException,
+    );
   });
 
   it('should soft delete and restore correctly', () => {

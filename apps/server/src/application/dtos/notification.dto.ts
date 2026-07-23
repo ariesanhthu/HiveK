@@ -1,6 +1,6 @@
-import { z } from 'zod';
-import { createZodDto } from 'nestjs-zod';
 import { NotificationType, TargetType } from '@/core/enums';
+import { createZodDto } from 'nestjs-zod';
+import { z } from 'zod';
 
 import { CursorPaginationRequestSchema } from '@/application/dtos/pagination.dto';
 
@@ -23,7 +23,7 @@ export const NotificationFilterDtoSchema = CursorPaginationRequestSchema.extend(
   recipientId: z.string().optional(),
   isRead: z.preprocess(
     (val) => (val === 'true' ? true : val === 'false' ? false : val),
-    z.boolean().optional()
+    z.boolean().optional(),
   ),
 });
 

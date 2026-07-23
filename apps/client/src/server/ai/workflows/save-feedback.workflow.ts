@@ -1,11 +1,8 @@
-import { setCacheJson } from "@/server/cache/agentic-cache";
-import type {
-  SaveFeedbackRequest,
-  SaveFeedbackResponse,
-} from "@/server/ai/types/agent.types";
+import type { SaveFeedbackRequest, SaveFeedbackResponse } from '@/server/ai/types/agent.types';
+import { setCacheJson } from '@/server/cache/agentic-cache';
 
 export async function saveFeedbackWorkflow(
-  request: SaveFeedbackRequest
+  request: SaveFeedbackRequest,
 ): Promise<SaveFeedbackResponse> {
   const feedbackId = `feedback_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
 
@@ -16,7 +13,7 @@ export async function saveFeedbackWorkflow(
       feedbackId,
       createdAt: new Date().toISOString(),
     },
-    60 * 60 * 24
+    60 * 60 * 24,
   );
 
   return {

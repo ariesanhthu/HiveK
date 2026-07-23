@@ -1,5 +1,5 @@
-import { Query } from '@nestjs/cqrs';
 import { ProposalDto } from '@/application/dtos';
+import { Query } from '@nestjs/cqrs';
 
 export class ProposalGetByIdQuery extends Query<ProposalDto> {
   constructor(

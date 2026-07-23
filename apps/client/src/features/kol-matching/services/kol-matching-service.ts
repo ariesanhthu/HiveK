@@ -3,17 +3,17 @@ import {
   type FindKolEntryInput,
   type KolCandidate,
   type SocialPlatform,
-} from "@/features/kol-matching/types";
+} from '@/features/kol-matching/types';
 
 const STEP_DELAY_MS = 550;
 
 const CANDIDATES: KolCandidate[] = [
   {
-    id: "kol-01",
-    name: "Linh Truong",
-    type: "KOL",
-    niche: "Làm đẹp",
-    platform: "tiktok",
+    id: 'kol-01',
+    name: 'Linh Truong',
+    type: 'KOL',
+    niche: 'Làm đẹp',
+    platform: 'tiktok',
     followers: 920_000,
     engagementRate: 6.3,
     fitScore: 92,
@@ -22,11 +22,11 @@ const CANDIDATES: KolCandidate[] = [
     estimatedCostPerPostUsd: 1250,
   },
   {
-    id: "kol-02",
-    name: "Quang Vlog",
-    type: "KOC",
-    niche: "Game",
-    platform: "youtube",
+    id: 'kol-02',
+    name: 'Quang Vlog',
+    type: 'KOC',
+    niche: 'Game',
+    platform: 'youtube',
     followers: 245_000,
     engagementRate: 8.1,
     fitScore: 84,
@@ -35,11 +35,11 @@ const CANDIDATES: KolCandidate[] = [
     estimatedCostPerPostUsd: 640,
   },
   {
-    id: "kol-03",
-    name: "Nhi Pham",
-    type: "KOC",
-    niche: "Thời trang",
-    platform: "instagram",
+    id: 'kol-03',
+    name: 'Nhi Pham',
+    type: 'KOC',
+    niche: 'Thời trang',
+    platform: 'instagram',
     followers: 188_000,
     engagementRate: 7.8,
     fitScore: 87,
@@ -48,11 +48,11 @@ const CANDIDATES: KolCandidate[] = [
     estimatedCostPerPostUsd: 520,
   },
   {
-    id: "kol-04",
-    name: "Hai Nguyen",
-    type: "KOL",
-    niche: "Công nghệ",
-    platform: "tiktok",
+    id: 'kol-04',
+    name: 'Hai Nguyen',
+    type: 'KOL',
+    niche: 'Công nghệ',
+    platform: 'tiktok',
     followers: 670_000,
     engagementRate: 5.6,
     fitScore: 81,
@@ -61,11 +61,11 @@ const CANDIDATES: KolCandidate[] = [
     estimatedCostPerPostUsd: 980,
   },
   {
-    id: "kol-05",
-    name: "Mia Tran",
-    type: "KOL",
-    niche: "Làm đẹp",
-    platform: "instagram",
+    id: 'kol-05',
+    name: 'Mia Tran',
+    type: 'KOL',
+    niche: 'Làm đẹp',
+    platform: 'instagram',
     followers: 540_000,
     engagementRate: 6.9,
     fitScore: 89,
@@ -85,22 +85,28 @@ function normalize(value: string): string {
   return value.trim().toLowerCase();
 }
 
-function typeMatches(type: FindKolEntryInput["creatorType"], candidateType: KolCandidate["type"]): boolean {
-  if (type === "both") return true;
-  if (type === "kol") return candidateType === "KOL";
-  return candidateType === "KOC";
+function typeMatches(
+  type: FindKolEntryInput['creatorType'],
+  candidateType: KolCandidate['type'],
+): boolean {
+  if (type === 'both') return true;
+  if (type === 'kol') return candidateType === 'KOL';
+  return candidateType === 'KOC';
 }
 
-function objectiveBoost(objective: FindKolEntryInput["objective"], platform: SocialPlatform): number {
-  if (objective === "awareness" && platform === "tiktok") return 3;
-  if (objective === "conversion" && platform === "instagram") return 4;
-  if (objective === "engagement" && platform === "youtube") return 2;
+function objectiveBoost(
+  objective: FindKolEntryInput['objective'],
+  platform: SocialPlatform,
+): number {
+  if (objective === 'awareness' && platform === 'tiktok') return 3;
+  if (objective === 'conversion' && platform === 'instagram') return 4;
+  if (objective === 'engagement' && platform === 'youtube') return 2;
   return 0;
 }
 
-function budgetScore(tier: FindKolEntryInput["budgetTier"], cost: number): number {
-  if (tier === "starter") return cost <= 600 ? 4 : -3;
-  if (tier === "growth") return cost <= 1000 ? 3 : -2;
+function budgetScore(tier: FindKolEntryInput['budgetTier'], cost: number): number {
+  if (tier === 'starter') return cost <= 600 ? 4 : -3;
+  if (tier === 'growth') return cost <= 1000 ? 3 : -2;
   return 2;
 }
 
@@ -116,31 +122,31 @@ function computeFitScore(entry: FindKolEntryInput, candidate: KolCandidate): num
 export function getAgentStages(entry: FindKolEntryInput): AgentStage[] {
   return [
     {
-      id: "collecting-context",
-      label: "Thu thập thông tin chiến dịch",
-      detail: `Đọc yêu cầu cho ${entry.campaignName || "chưa rõ tên"} tại ${entry.targetRegion}`,
+      id: 'collecting-context',
+      label: 'Thu thập thông tin chiến dịch',
+      detail: `Đọc yêu cầu cho ${entry.campaignName || 'chưa rõ tên'} tại ${entry.targetRegion}`,
     },
     {
-      id: "searching-pool",
-      label: "Tìm kiếm tệp KOL/KOC",
-      detail: `Lọc theo nền tảng ${entry.targetPlatforms.join(", ")} + ${entry.niche}`,
+      id: 'searching-pool',
+      label: 'Tìm kiếm tệp KOL/KOC',
+      detail: `Lọc theo nền tảng ${entry.targetPlatforms.join(', ')} + ${entry.niche}`,
     },
     {
-      id: "scoring-candidates",
-      label: "Chấm điểm ứng viên",
-      detail: "Tính toán điểm phù hợp theo mục tiêu, chi phí và tương tác",
+      id: 'scoring-candidates',
+      label: 'Chấm điểm ứng viên',
+      detail: 'Tính toán điểm phù hợp theo mục tiêu, chi phí và tương tác',
     },
     {
-      id: "finalizing",
-      label: "Chuẩn bị danh sách chọn lọc",
-      detail: "Tạo danh sách nổi bật và thông tin so sánh",
+      id: 'finalizing',
+      label: 'Chuẩn bị danh sách chọn lọc',
+      detail: 'Tạo danh sách nổi bật và thông tin so sánh',
     },
   ];
 }
 
 export async function processAgentStages(
   stages: AgentStage[],
-  onProgress: (stageIndex: number) => void
+  onProgress: (stageIndex: number) => void,
 ): Promise<void> {
   for (let stageIndex = 0; stageIndex < stages.length; stageIndex += 1) {
     onProgress(stageIndex);
@@ -153,8 +159,8 @@ export async function searchKolCandidates(entry: FindKolEntryInput): Promise<Kol
 
   const scored = CANDIDATES.filter(
     (candidate) =>
-      entry.targetPlatforms.includes(candidate.platform) &&
-      typeMatches(entry.creatorType, candidate.type)
+      entry.targetPlatforms.includes(candidate.platform)
+      && typeMatches(entry.creatorType, candidate.type),
   )
     .map((candidate) => ({
       ...candidate,

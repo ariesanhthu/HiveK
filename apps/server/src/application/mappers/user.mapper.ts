@@ -1,6 +1,6 @@
 import { UserDto } from '@/application/dtos';
+import { EnterpriseUserRoot, UserRoot } from '@/core/aggregate-roots';
 import { ERoleType } from '@/core/enums';
-import { UserRoot, EnterpriseUserRoot } from '@/core/aggregate-roots';
 
 import { InvalidUserTypeException } from '@/core/exceptions';
 
@@ -31,7 +31,7 @@ export class UserMapper {
         return {
           ...baseFields,
           type: ERoleType.ADMIN,
-          };
+        };
       case ERoleType.KOL:
         return {
           ...baseFields,

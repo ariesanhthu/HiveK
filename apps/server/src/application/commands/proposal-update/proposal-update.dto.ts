@@ -1,6 +1,6 @@
-import { z } from 'zod';
-import { createZodDto } from 'nestjs-zod';
 import { EMediaSlideType, EProductPlatform } from '@/core/enums';
+import { createZodDto } from 'nestjs-zod';
+import { z } from 'zod';
 
 export const ProposalUpdateProductInputSchema = z.object({
   productId: z.string().min(1),

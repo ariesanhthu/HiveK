@@ -1,10 +1,10 @@
-import { Controller, Get, UseGuards, Res, Req } from '@nestjs/common';
-import type { Response } from 'express';
-import { ApiTags, ApiOperation, ApiBearerAuth, ApiSecurity } from '@nestjs/swagger';
 import { Public } from '@/presentation/decorators/public.decorator';
 import { GoogleAuthGuard } from '@/presentation/middleware/guards';
 import { buildVersionedRoute } from '@/presentation/utils/versioned-route.util';
 import { env } from '@/shared/utils';
+import { Controller, Get, Req, Res, UseGuards } from '@nestjs/common';
+import { ApiBearerAuth, ApiOperation, ApiSecurity, ApiTags } from '@nestjs/swagger';
+import type { Response } from 'express';
 
 @ApiTags('OAuth')
 @ApiBearerAuth()

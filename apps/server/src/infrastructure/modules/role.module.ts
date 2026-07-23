@@ -3,10 +3,10 @@ import { CqrsModule } from '@nestjs/cqrs';
 
 import {
   RoleCreateCommandHandler,
-  RoleUpdateCommandHandler,
-  RoleSoftDeleteCommandHandler,
   RoleHardDeleteCommandHandler,
   RoleRestoreCommandHandler,
+  RoleSoftDeleteCommandHandler,
+  RoleUpdateCommandHandler,
 } from '@/application/commands';
 
 import { RoleGetByIdQueryHandler, RoleGetListQueryHandler } from '@/application/queries';

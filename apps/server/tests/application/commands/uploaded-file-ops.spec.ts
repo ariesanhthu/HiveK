@@ -1,9 +1,9 @@
-import { UploadedFileSoftDeleteCommandHandler } from '@/application/commands/uploaded-file-soft-delete/uploaded-file-soft-delete.handler';
-import { UploadedFileSoftDeleteCommand } from '@/application/commands/uploaded-file-soft-delete/uploaded-file-soft-delete.command';
-import { UploadedFileDeleteCommandHandler } from '@/application/commands/uploaded-file-delete/uploaded-file-delete.handler';
 import { UploadedFileDeleteCommand } from '@/application/commands/uploaded-file-delete/uploaded-file-delete.command';
-import { UploadedFileRestoreCommandHandler } from '@/application/commands/uploaded-file-restore/uploaded-file-restore.handler';
+import { UploadedFileDeleteCommandHandler } from '@/application/commands/uploaded-file-delete/uploaded-file-delete.handler';
 import { UploadedFileRestoreCommand } from '@/application/commands/uploaded-file-restore/uploaded-file-restore.command';
+import { UploadedFileRestoreCommandHandler } from '@/application/commands/uploaded-file-restore/uploaded-file-restore.handler';
+import { UploadedFileSoftDeleteCommand } from '@/application/commands/uploaded-file-soft-delete/uploaded-file-soft-delete.command';
+import { UploadedFileSoftDeleteCommandHandler } from '@/application/commands/uploaded-file-soft-delete/uploaded-file-soft-delete.handler';
 import { UploadedFileGetByIdHandler } from '@/application/queries/uploaded-file-get-by-id/uploaded-file-get-by-id.handler';
 import { UploadedFileGetByIdQuery } from '@/application/queries/uploaded-file-get-by-id/uploaded-file-get-by-id.query';
 import { UploadedFileGetListHandler } from '@/application/queries/uploaded-file-get-list/uploaded-file-get-list.handler';
@@ -61,7 +61,11 @@ describe('Uploaded File Operations', () => {
 
   describe('UploadedFileDeleteCommandHandler', () => {
     it('should hard delete files and invoke storage delete', async () => {
-      const handler = new UploadedFileDeleteCommandHandler(mockRepository, mockStorageService, uploadService);
+      const handler = new UploadedFileDeleteCommandHandler(
+        mockRepository,
+        mockStorageService,
+        uploadService,
+      );
       await handler.execute(new UploadedFileDeleteCommand('file-123'));
       expect(mockStorageService.delete).toHaveBeenCalledWith('file-123', { resourceType: 'raw' });
       expect(mockRepository.delete).toHaveBeenCalledWith('file-123');

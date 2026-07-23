@@ -1,11 +1,11 @@
-import { UploadedFileCreateCommandHandler } from '@/application/commands/uploaded-file-create/uploaded-file-create.handler';
 import { UploadedFileCreateCommand } from '@/application/commands/uploaded-file-create/uploaded-file-create.command';
-import { TargetType } from '@/core/enums/target-type.enum';
+import { UploadedFileCreateCommandHandler } from '@/application/commands/uploaded-file-create/uploaded-file-create.handler';
 import { UploadedFileCreatedEvent } from '@/application/events';
-import { UploadedFileRoot } from '@/core/aggregate-roots';
-import { createMockUploadedFileRepository } from '../../../__mocks__/mock-repositories';
-import { createMockStorageService, createMockEventBus } from '../../../__mocks__/mock-services';
 import { UploadService } from '@/application/services';
+import { UploadedFileRoot } from '@/core/aggregate-roots';
+import { TargetType } from '@/core/enums/target-type.enum';
+import { createMockUploadedFileRepository } from '../../../__mocks__/mock-repositories';
+import { createMockEventBus, createMockStorageService } from '../../../__mocks__/mock-services';
 
 jest.mock('sharp', () => {
   const sharpMock = jest.fn(() => ({
@@ -67,12 +67,12 @@ describe('UploadedFileCreateCommandHandler', () => {
       expect(result).toBeDefined();
       expect(result.url).toBe('http://cloudinary.com/mock-file');
       expect(result.targetField).toBe('contractFile'); // normalized to camelCase
-      
+
       expect(mockStorageService.upload).toHaveBeenCalledWith(
         file.buffer,
         expect.objectContaining({
           folder: 'campaign',
-        })
+        }),
       );
       expect(mockRepository.save).toHaveBeenCalledWith(expect.any(UploadedFileRoot));
       expect(mockEventBus.publish).toHaveBeenCalledWith(expect.any(UploadedFileCreatedEvent));
@@ -97,7 +97,7 @@ describe('UploadedFileCreateCommandHandler', () => {
       // Verify that upload was called with the mock-compressed-data from sharp mock
       expect(mockStorageService.upload).toHaveBeenCalledWith(
         Buffer.from('mock-compressed-data'),
-        expect.any(Object)
+        expect.any(Object),
       );
       expect(mockRepository.save).toHaveBeenCalled();
     });

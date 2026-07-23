@@ -1,34 +1,52 @@
-import { Controller, Post, Body, HttpCode, HttpStatus, Get, UseGuards, Res, Req, BadRequestException, Patch } from '@nestjs/common';
-import { CommandBus, QueryBus } from '@nestjs/cqrs';
-import type { Response, Request } from 'express';
-import { ApiTags, ApiOperation, ApiBearerAuth, ApiSecurity, ApiTooManyRequestsResponse } from '@nestjs/swagger';
-import { buildVersionedRoute } from '@presentation/utils';
 import {
-  AuthSignInCommand,
-  AuthSignOutCommand,
-  AuthResetPasswordCommand,
-  AuthRefreshTokenCommand,
-  AuthSendOtpCommand,
   AuthChangePasswordCommand,
-  AuthVerifyOtpCommand,
-  AuthSignInInputDto,
-  AuthResetPasswordInputDto,
-  AuthRefreshTokenInputDto,
-  AuthSendOtpInputDto,
   AuthChangePasswordInputDto,
+  AuthRefreshTokenCommand,
+  AuthRefreshTokenInputDto,
+  AuthResetPasswordCommand,
+  AuthResetPasswordInputDto,
+  AuthSendOtpCommand,
+  AuthSendOtpInputDto,
+  AuthSignInCommand,
+  AuthSignInInputDto,
+  AuthSignOutCommand,
+  AuthVerifyOtpCommand,
   AuthVerifyOtpInputDto,
-  UserUpdateCommand
+  UserUpdateCommand,
 } from '@/application/commands';
+import { UserUpdateInputDto } from '@/application/commands/user-update/user-update.dto';
 import { AuthGetProfileQuery } from '@/application/queries';
 import { ERoleType } from '@/core/enums';
-import { JwtAuthGuard } from '@/presentation/middleware/guards/jwt-auth.guard';
 import { CurrentUser } from '@/presentation/decorators/current-user.decorator';
 import { Public } from '@/presentation/decorators/public.decorator';
-import { Throttle } from '@nestjs/throttler';
-import { UserUpdateInputDto } from '@/application/commands/user-update/user-update.dto';
-import { RolesGuard } from '@/presentation/middleware/guards';
 import { Roles } from '@/presentation/decorators/roles.decorator';
+import { RolesGuard } from '@/presentation/middleware/guards';
+import { JwtAuthGuard } from '@/presentation/middleware/guards/jwt-auth.guard';
 import { env } from '@/shared/utils';
+import {
+  BadRequestException,
+  Body,
+  Controller,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Patch,
+  Post,
+  Req,
+  Res,
+  UseGuards,
+} from '@nestjs/common';
+import { CommandBus, QueryBus } from '@nestjs/cqrs';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiSecurity,
+  ApiTags,
+  ApiTooManyRequestsResponse,
+} from '@nestjs/swagger';
+import { Throttle } from '@nestjs/throttler';
+import { buildVersionedRoute } from '@presentation/utils';
+import type { Request, Response } from 'express';
 
 @ApiTags('ADMIN-auth')
 @ApiBearerAuth()
@@ -40,7 +58,7 @@ export class AuthAdminController {
   constructor(
     private readonly commandBus: CommandBus,
     private readonly queryBus: QueryBus,
-  ) { }
+  ) {}
   @Public()
   @Post('sign-in')
   @Throttle({ default: { limit: 5, ttl: 60000 } })
@@ -93,7 +111,9 @@ export class AuthAdminController {
       throw new BadRequestException('Refresh token is required');
     }
 
-    const result = await this.commandBus.execute(new AuthRefreshTokenCommand({ refreshToken: token }));
+    const result = await this.commandBus.execute(
+      new AuthRefreshTokenCommand({ refreshToken: token }),
+    );
     if (result && result.accessToken) {
       response.cookie('access_token', result.accessToken, {
         httpOnly: true,

@@ -1,15 +1,14 @@
-import { EventsHandler, IEventHandler } from '@nestjs/cqrs';
-import { Inject } from '@nestjs/common';
-import { PLATFORM_REPOSITORY, type IPlatformRepository } from '@/core/interfaces/repositories';
 import { TargetType } from '@/core/enums/target-type.enum';
+import { type IPlatformRepository, PLATFORM_REPOSITORY } from '@/core/interfaces/repositories';
+import { Inject } from '@nestjs/common';
+import { EventsHandler, IEventHandler } from '@nestjs/cqrs';
 import { UploadedFileCreatedEvent } from './uploaded-file-created.event';
 
 @EventsHandler(UploadedFileCreatedEvent)
 export class LinkPlatformIconHandler implements IEventHandler<UploadedFileCreatedEvent> {
   constructor(
-    @Inject(PLATFORM_REPOSITORY)
-    private readonly platformRepository: IPlatformRepository,
-  ) { }
+    @Inject(PLATFORM_REPOSITORY) private readonly platformRepository: IPlatformRepository,
+  ) {}
 
   async handle(event: UploadedFileCreatedEvent): Promise<void> {
     if (event.targetType !== TargetType.PLATFORM) {

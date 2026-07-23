@@ -27,10 +27,12 @@ node -e "const p=require('./package.json');const d={...p.dependencies,...p.devDe
 ### Async & Promises
 
 **Common errors:**
+
 - "UnhandledPromiseRejectionWarning"
 - "Promise.all fails fast"
 
 **Solutions:**
+
 ```javascript
 // Always handle rejections
 try {
@@ -49,6 +51,7 @@ results.forEach((result, index) => {
 ```
 
 **Diagnostics:**
+
 ```bash
 node --unhandled-rejections=strict app.js
 node --trace-warnings app.js
@@ -57,10 +60,12 @@ node --trace-warnings app.js
 ### Module System
 
 **Common errors:**
+
 - "Cannot use import statement outside a module"
 - "require() of ES modules not supported"
 
 **Solutions:**
+
 ```javascript
 // package.json for ESM
 {
@@ -77,11 +82,13 @@ const esmModule = await import('esm-only-package');
 ### Performance & Memory
 
 **Symptoms:**
+
 - "JavaScript heap out of memory"
 - Event loop blocking
 - Memory leaks
 
 **Solutions:**
+
 ```javascript
 // Async file operations
 const data = await fs.promises.readFile('large-file.txt');
@@ -94,6 +101,7 @@ function monitorMemory() {
 ```
 
 **Diagnostics:**
+
 ```bash
 node --prof app.js
 node --inspect app.js
@@ -103,6 +111,7 @@ node --max-old-space-size=4096 app.js
 ### Filesystem & Streams
 
 **Error handling:**
+
 ```javascript
 async function safeReadFile(filePath) {
   try {
@@ -117,18 +126,20 @@ async function safeReadFile(filePath) {
 ```
 
 **Stream backpressure:**
+
 ```javascript
 const { pipeline } = require('stream/promises');
 await pipeline(
   fs.createReadStream('input.txt'),
   transformStream,
-  fs.createWriteStream('output.txt')
+  fs.createWriteStream('output.txt'),
 );
 ```
 
 ### Process Management
 
 **Graceful shutdown:**
+
 ```javascript
 ['SIGTERM', 'SIGINT'].forEach(signal => {
   process.on(signal, async () => {
@@ -142,6 +153,7 @@ await pipeline(
 ### HTTP Server
 
 **Production configuration:**
+
 ```javascript
 const server = http.createServer(handler);
 server.timeout = 30000;
@@ -155,38 +167,43 @@ server.on('clientError', (err, socket) => {
 
 ## Common Problems Quick Reference
 
-| Problem | Cause | Fix |
-|---------|-------|-----|
-| Unhandled Promise | Missing catch | Add try/catch or .catch() |
-| Event loop blocking | Sync operations | Use async versions |
-| Module resolution | ESM/CJS conflict | Dynamic imports |
-| Memory leak | Missing cleanup | Remove listeners, clear timers |
-| EMFILE error | Too many open files | Use streaming, increase ulimit |
+| Problem             | Cause               | Fix                            |
+| ------------------- | ------------------- | ------------------------------ |
+| Unhandled Promise   | Missing catch       | Add try/catch or .catch()      |
+| Event loop blocking | Sync operations     | Use async versions             |
+| Module resolution   | ESM/CJS conflict    | Dynamic imports                |
+| Memory leak         | Missing cleanup     | Remove listeners, clear timers |
+| EMFILE error        | Too many open files | Use streaming, increase ulimit |
 
 ## Code Review Checklist
 
 ### Async Patterns
+
 - [ ] All promises have error handlers
 - [ ] No synchronous file I/O in async code
 - [ ] Proper use of async/await
 - [ ] Promise.allSettled for batch operations
 
 ### Module System
+
 - [ ] Explicit file extensions in ESM
 - [ ] No circular dependencies
 - [ ] Package.json exports configured
 
 ### Performance
+
 - [ ] No blocking operations in event loop
 - [ ] Streams for large data
 - [ ] Memory monitored in production
 
 ### Process Management
+
 - [ ] Graceful shutdown implemented
 - [ ] Environment variables validated
 - [ ] Signal handlers registered
 
 ### HTTP
+
 - [ ] Server timeouts configured
 - [ ] Connection limits set
 - [ ] Error middleware in place

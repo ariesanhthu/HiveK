@@ -1,5 +1,5 @@
-import { serverEnv } from "@/server/config/env";
-import type { AgentRunSummary, AgentRunStatus } from "@/server/ai/types/agent.types";
+import type { AgentRunStatus, AgentRunSummary } from '@/server/ai/types/agent.types';
+import { serverEnv } from '@/server/config/env';
 
 type AgentRunParams = {
   workflowName: string;
@@ -17,7 +17,7 @@ export function createAgentRunSummary({
   inputSummary,
   outputSummary,
   startedAt,
-  status = "success",
+  status = 'success',
   error,
 }: AgentRunParams): AgentRunSummary {
   return {
@@ -26,8 +26,8 @@ export function createAgentRunSummary({
     agentName,
     inputSummary,
     outputSummary,
-    model: serverEnv.aiAgentProvider === "gemini" ? "gemini-env-configured" : "mock-agent",
-    promptVersion: "mock-v1",
+    model: serverEnv.aiAgentProvider === 'gemini' ? 'gemini-env-configured' : 'mock-agent',
+    promptVersion: 'mock-v1',
     latencyMs: Date.now() - startedAt,
     status,
     error,

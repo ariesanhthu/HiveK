@@ -1,15 +1,18 @@
-import { AuthVerifyOtpCommandHandler } from '@/application/commands/auth-verify-otp/auth-verify-otp.handler';
 import { AuthVerifyOtpCommand } from '@/application/commands/auth-verify-otp/auth-verify-otp.command';
-import { EOtpType, ERoleType } from '@/core/enums';
+import { AuthVerifyOtpCommandHandler } from '@/application/commands/auth-verify-otp/auth-verify-otp.handler';
 import { KOLUserRoot, OtpRoot } from '@/core/aggregate-roots';
-import { UserNotFoundException, InvalidOperationException } from '@/core/exceptions';
-import { createMockUserRepository, createMockOtpRepository } from '../../../__mocks__/mock-repositories';
+import { EOtpType, ERoleType } from '@/core/enums';
+import { InvalidOperationException, UserNotFoundException } from '@/core/exceptions';
+import { PhoneNumberVO } from '@/core/value-objects/phone-number.value-object';
+import {
+  createMockOtpRepository,
+  createMockUserRepository,
+} from '../../../__mocks__/mock-repositories';
 import {
   createMockAuthService,
   createMockOutboxService,
   createMockUnitOfWork,
 } from '../../../__mocks__/mock-services';
-import { PhoneNumberVO } from '@/core/value-objects/phone-number.value-object';
 
 describe('AuthVerifyOtpCommandHandler', () => {
   let handler: AuthVerifyOtpCommandHandler;
@@ -40,31 +43,33 @@ describe('AuthVerifyOtpCommandHandler', () => {
     otpCode: '123456',
   };
 
-  const createExistingUser = () => KOLUserRoot.instantiate('user-1', {
-    email: 'verify@example.com',
-    phone: PhoneNumberVO.create({ value: '+84123456789' }),
-    passwordHash: 'hash',
-    fullName: 'Test User',
-    type: ERoleType.KOL,
-    roleId: 'role-kol',
-    isEmailVerified: false,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-    deleteAt: null,
-    deleteBy: null,
-    refreshToken: null,
-    googleId: null,
-    avatar: null,
-  });
+  const createExistingUser = () =>
+    KOLUserRoot.instantiate('user-1', {
+      email: 'verify@example.com',
+      phone: PhoneNumberVO.create({ value: '+84123456789' }),
+      passwordHash: 'hash',
+      fullName: 'Test User',
+      type: ERoleType.KOL,
+      roleId: 'role-kol',
+      isEmailVerified: false,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      deleteAt: null,
+      deleteBy: null,
+      refreshToken: null,
+      googleId: null,
+      avatar: null,
+    });
 
-  const createValidOtp = () => OtpRoot.instantiate('otp-1', {
-    email: 'verify@example.com',
-    code: '123456',
-    type: EOtpType.CREATE_ACCOUNT,
-    expiresAt: new Date(Date.now() + 600000),
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  });
+  const createValidOtp = () =>
+    OtpRoot.instantiate('otp-1', {
+      email: 'verify@example.com',
+      code: '123456',
+      type: EOtpType.CREATE_ACCOUNT,
+      expiresAt: new Date(Date.now() + 600000),
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
 
   describe('execute', () => {
     it('should successfully verify email when OTP is valid', async () => {
@@ -84,7 +89,10 @@ describe('AuthVerifyOtpCommandHandler', () => {
       expect(result).toEqual({ success: true });
       expect(user.isEmailVerified).toBe(true);
       expect(mockUserRepository.save).toHaveBeenCalledWith(user);
-      expect(mockOtpRepository.deleteByEmailAndType).toHaveBeenCalledWith('verify@example.com', EOtpType.CREATE_ACCOUNT);
+      expect(mockOtpRepository.deleteByEmailAndType).toHaveBeenCalledWith(
+        'verify@example.com',
+        EOtpType.CREATE_ACCOUNT,
+      );
       expect(mockUow.execute).toHaveBeenCalled();
     });
 
@@ -116,27 +124,27 @@ describe('AuthVerifyOtpCommandHandler', () => {
     });
 
     it('should not enqueue to outbox if no domain events are present', async () => {
-        // Arrange
-        const user = createExistingUser();
-        // Clear events that might have been added during instantiation (though instantiate usually doesn't add events, setId does)
-        user.clearDomainEvents(); 
-        
-        const otp = createValidOtp();
-        mockAuthService.normalizeEmail.mockReturnValue('verify@example.com');
-        mockUserRepository.findByEmail.mockResolvedValue(user);
-        mockOtpRepository.findValidOtp.mockResolvedValue(otp);
+      // Arrange
+      const user = createExistingUser();
+      // Clear events that might have been added during instantiation (though instantiate usually doesn't add events, setId does)
+      user.clearDomainEvents();
 
-        // We need to ensure that verifyEmail() doesn't add events that map to integration events if we want to test this branch
-        // Actually, verifyEmail might add events. Let's check.
-        
-        const command = new AuthVerifyOtpCommand(verifyInput);
+      const otp = createValidOtp();
+      mockAuthService.normalizeEmail.mockReturnValue('verify@example.com');
+      mockUserRepository.findByEmail.mockResolvedValue(user);
+      mockOtpRepository.findValidOtp.mockResolvedValue(otp);
 
-        // Act
-        await handler.execute(command);
+      // We need to ensure that verifyEmail() doesn't add events that map to integration events if we want to test this branch
+      // Actually, verifyEmail might add events. Let's check.
 
-        // Assert
-        // If verifyEmail adds events, this might still call enqueueMany.
-        // But the handler check is if (events.length > 0)
+      const command = new AuthVerifyOtpCommand(verifyInput);
+
+      // Act
+      await handler.execute(command);
+
+      // Assert
+      // If verifyEmail adds events, this might still call enqueueMany.
+      // But the handler check is if (events.length > 0)
     });
   });
 });

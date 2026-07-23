@@ -1,14 +1,17 @@
+import { AppConfig } from '@/app.config';
+import { HttpExceptionFilter } from '@/presentation/middleware/filters';
+import { LoggingInterceptor, TransformInterceptor } from '@/presentation/middleware/interceptors';
+import { errorMessage } from '@/shared/utils';
+import fastifyHelmet from '@fastify/helmet';
+import { RabbitMQFactoryService } from '@infrastructure/rabbitmq';
 import { INestApplication, Logger } from '@nestjs/common';
 import { NestFastifyApplication } from '@nestjs/platform-fastify';
-import fastifyHelmet from '@fastify/helmet';
 import { ZodValidationPipe } from 'nestjs-zod';
-import { LoggingInterceptor, TransformInterceptor } from '@/presentation/middleware/interceptors';
-import { HttpExceptionFilter } from '@/presentation/middleware/filters';
-import { RabbitMQFactoryService } from '@infrastructure/rabbitmq';
-import { errorMessage } from '@/shared/utils';
-import { AppConfig } from '@/app.config';
 
-export async function setupApplication(app: NestFastifyApplication, appConfig: AppConfig): Promise<void> {
+export async function setupApplication(
+  app: NestFastifyApplication,
+  appConfig: AppConfig,
+): Promise<void> {
   // Apply Security Headers with Fastify Helmet (custom CSP for GraphQL Playground/Sandbox)
   await app.register(fastifyHelmet, {
     contentSecurityPolicy: {
@@ -16,7 +19,12 @@ export async function setupApplication(app: NestFastifyApplication, appConfig: A
         defaultSrc: [`'self'`],
         styleSrc: [`'self'`, `'unsafe-inline'`, 'cdn.jsdelivr.net', 'fonts.googleapis.com'],
         fontSrc: [`'self'`, 'fonts.gstatic.com'],
-        imgSrc: [`'self'`, 'data:', 'cdn.jsdelivr.net', 'apollo-server-landing-page.cdn.apollographql.com'],
+        imgSrc: [
+          `'self'`,
+          'data:',
+          'cdn.jsdelivr.net',
+          'apollo-server-landing-page.cdn.apollographql.com',
+        ],
         scriptSrc: [`'self'`, `'unsafe-inline'`, 'cdn.jsdelivr.net'],
       },
     },
@@ -45,7 +53,6 @@ export async function setupApplication(app: NestFastifyApplication, appConfig: A
   // app.useGlobalFilters(new HttpExceptionFilter());
 }
 
-
 /**
  * Sleep utility for retry delays
  */
@@ -70,7 +77,7 @@ export async function setupRabbitMQMicroservice(
   maxRetries: number = -1,
   initialDelayMs: number = 1000,
   maxDelayMs: number = 30000,
-  factor: number = 2
+  factor: number = 2,
 ): Promise<void> {
   const logger = new Logger('RabbitMQSetup');
   let retries = 0;
@@ -82,7 +89,7 @@ export async function setupRabbitMQMicroservice(
 
       // Load consumer config from file
       const consumerConfig = rabbitmqFactory.readRMQConsumerConfig(
-        configPath
+        configPath,
       );
 
       // Convert consumer config to NestJS microservice options
@@ -91,17 +98,17 @@ export async function setupRabbitMQMicroservice(
       app.connectMicroservice(microserviceOptions);
       await app.startAllMicroservices();
       logger.log(
-        `✅ RabbitMQ microservice connected and ready to consume messages\n` +
-        `   Queue: ${consumerConfig.queues[0]?.name}\n` +
-        `   Exchange: ${consumerConfig.queues[0]?.bindings[0]?.exchange}`
+        `✅ RabbitMQ microservice connected and ready to consume messages\n`
+          + `   Queue: ${consumerConfig.queues[0]?.name}\n`
+          + `   Exchange: ${consumerConfig.queues[0]?.bindings[0]?.exchange}`,
       );
       return; // Success, exit retry loop
     } catch (error) {
       retries++;
       const errMsg = errorMessage(error);
       logger.warn(
-        `⚠️ Failed to connect RabbitMQ microservice (attempt ${retries}): ${errMsg}\n` +
-        `   Retrying in ${delayMs}ms...`
+        `⚠️ Failed to connect RabbitMQ microservice (attempt ${retries}): ${errMsg}\n`
+          + `   Retrying in ${delayMs}ms...`,
       );
 
       await sleep(delayMs);
@@ -110,7 +117,7 @@ export async function setupRabbitMQMicroservice(
   }
 
   logger.error(
-    `❌ Failed to connect RabbitMQ microservice after ${retries} attempts.\n` +
-    `   HTTP server is running, but message consumers are permanently unavailable.`
+    `❌ Failed to connect RabbitMQ microservice after ${retries} attempts.\n`
+      + `   HTTP server is running, but message consumers are permanently unavailable.`,
   );
 }

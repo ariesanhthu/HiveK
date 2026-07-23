@@ -1,5 +1,5 @@
-import { IBaseRepository } from '../../common/base.repository.interface';
 import { CampaignRoot } from '../../aggregate-roots/campaign.aggregate';
+import { IBaseRepository } from '../../common/base.repository.interface';
 
 export const CAMPAIGN_REPOSITORY = Symbol('CAMPAIGN_REPOSITORY');
 

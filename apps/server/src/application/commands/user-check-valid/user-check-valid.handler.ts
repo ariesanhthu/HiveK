@@ -1,12 +1,14 @@
-import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { Inject } from '@nestjs/common';
-import { USER_REPOSITORY, type IUserRepository } from '@/core/interfaces/repositories';
-import { UserNotFoundException } from '@/core/exceptions';
-import { UserCheckValidCommand } from './user-check-valid.command';
 import { UserDto, UserMapper } from '@/application';
+import { UserNotFoundException } from '@/core/exceptions';
+import { type IUserRepository, USER_REPOSITORY } from '@/core/interfaces/repositories';
+import { Inject } from '@nestjs/common';
+import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
+import { UserCheckValidCommand } from './user-check-valid.command';
 
 @CommandHandler(UserCheckValidCommand)
-export class UserCheckValidCommandHandler implements ICommandHandler<UserCheckValidCommand, UserDto> {
+export class UserCheckValidCommandHandler
+  implements ICommandHandler<UserCheckValidCommand, UserDto>
+{
   constructor(@Inject(USER_REPOSITORY) private readonly userRepository: IUserRepository) {}
 
   async execute(command: UserCheckValidCommand): Promise<UserDto> {

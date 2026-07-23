@@ -40,20 +40,21 @@ export const IWebSocketService = Symbol('IWebSocketService');
 Create `apps/server/src/infrastructure/websocket/websocket.gateway.ts` and `apps/server/src/infrastructure/websocket/websocket.service.ts`.
 
 ### 2.1 WebSocket Gateway
+
 Handles connections, disconnections, and incoming socket events.
 
 ```typescript
+import { Logger, UseGuards } from '@nestjs/common';
 import {
-  WebSocketGateway as NestWebSocketGateway,
-  WebSocketServer,
+  ConnectedSocket,
+  MessageBody,
   OnGatewayConnection,
   OnGatewayDisconnect,
   SubscribeMessage,
-  MessageBody,
-  ConnectedSocket,
+  WebSocketGateway as NestWebSocketGateway,
+  WebSocketServer,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
-import { Logger, UseGuards } from '@nestjs/common';
 import { WsJwtGuard } from '../auth/guards/ws-jwt.guard'; // Custom Guard
 
 @NestWebSocketGateway({
@@ -61,7 +62,8 @@ import { WsJwtGuard } from '../auth/guards/ws-jwt.guard'; // Custom Guard
   namespace: 'hivek',
 })
 export class WebSocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
-  @WebSocketServer() server: Server;
+  @WebSocketServer()
+  server: Server;
   private readonly logger = new Logger(WebSocketGateway.name);
 
   async handleConnection(client: Socket) {
@@ -82,12 +84,13 @@ export class WebSocketGateway implements OnGatewayConnection, OnGatewayDisconnec
 ```
 
 ### 2.2 WebSocket Service
+
 Implements the `IWebSocketService` interface by interacting with the `WebSocketGateway`.
 
 ```typescript
 import { Injectable } from '@nestjs/common';
-import { WebSocketGateway } from './websocket.gateway';
 import { IWebSocketService } from '../../application/interfaces/web-socket.interface';
+import { WebSocketGateway } from './websocket.gateway';
 
 @Injectable()
 export class WebSocketService implements IWebSocketService {
@@ -124,11 +127,11 @@ A custom `WsJwtGuard` will be implemented to extract the JWT from the WebSocket 
 
 ## 5. Next Steps
 
-1.  **Install Dependencies:**
-    ```bash
-    yarn workspace server add @nestjs/websockets @nestjs/platform-socket.io socket.io
-    ```
-2.  **Define Interface:** Create `apps/server/src/application/interfaces/web-socket.interface.ts`.
-3.  **Implement Infrastructure:** Create files in `apps/server/src/infrastructure/websocket/`.
-4.  **Register Module:** Create `WebSocketModule` and add to `AppModule`.
-5.  **Create Test Client:** Provide a simple HTML/JS snippet to test the connection.
+1. **Install Dependencies:**
+   ```bash
+   yarn workspace server add @nestjs/websockets @nestjs/platform-socket.io socket.io
+   ```
+2. **Define Interface:** Create `apps/server/src/application/interfaces/web-socket.interface.ts`.
+3. **Implement Infrastructure:** Create files in `apps/server/src/infrastructure/websocket/`.
+4. **Register Module:** Create `WebSocketModule` and add to `AppModule`.
+5. **Create Test Client:** Provide a simple HTML/JS snippet to test the connection.

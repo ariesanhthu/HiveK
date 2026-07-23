@@ -1,5 +1,5 @@
-import { UploadedFileDto } from '../dtos';
 import { UploadedFileRoot } from '@/core/aggregate-roots';
+import { UploadedFileDto } from '../dtos';
 
 export class UploadedFileMapper {
   static toDto(root: UploadedFileRoot): UploadedFileDto {

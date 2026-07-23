@@ -17,14 +17,14 @@ export interface ProjectionConfig {
 export function parseMongoProjection(
   projection: ProjectionDto,
   config: ProjectionConfig,
-): { select?: string; populate?: any[] } {
+): { select?: string; populate?: any[]; } {
   // If fields is an array, we normalize it to a key-value record
   const fieldsInput = projection.fields;
   const fieldsMap: Record<string, any> = Array.isArray(fieldsInput)
     ? (fieldsInput as any[]).reduce((acc, current) => {
-        acc[current] = {};
-        return acc;
-      }, {} as Record<string, any>)
+      acc[current] = {};
+      return acc;
+    }, {} as Record<string, any>)
     : fieldsInput || {};
 
   return parseMongoProjectionMap(fieldsMap, config);
@@ -33,7 +33,7 @@ export function parseMongoProjection(
 function parseMongoProjectionMap(
   fieldsMap: Record<string, any>,
   config: ProjectionConfig,
-): { select?: string; populate?: any[] } {
+): { select?: string; populate?: any[]; } {
   const selectFields: string[] = [];
   const populateOptions: any[] = [];
 

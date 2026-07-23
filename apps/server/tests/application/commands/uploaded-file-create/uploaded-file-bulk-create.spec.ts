@@ -1,11 +1,11 @@
-import { UploadedFileBulkCreateCommandHandler } from '@/application/commands/uploaded-file-create/uploaded-file-bulk-create.handler';
 import { UploadedFileBulkCreateCommand } from '@/application/commands/uploaded-file-create/uploaded-file-bulk-create.command';
-import { TargetType } from '@/core/enums/target-type.enum';
+import { UploadedFileBulkCreateCommandHandler } from '@/application/commands/uploaded-file-create/uploaded-file-bulk-create.handler';
 import { UploadedFileCreatedEvent } from '@/application/events';
-import { UploadedFileRoot } from '@/core/aggregate-roots';
-import { createMockUploadedFileRepository } from '../../../__mocks__/mock-repositories';
-import { createMockStorageService, createMockEventBus } from '../../../__mocks__/mock-services';
 import { UploadService } from '@/application/services';
+import { UploadedFileRoot } from '@/core/aggregate-roots';
+import { TargetType } from '@/core/enums/target-type.enum';
+import { createMockUploadedFileRepository } from '../../../__mocks__/mock-repositories';
+import { createMockEventBus, createMockStorageService } from '../../../__mocks__/mock-services';
 
 jest.mock('sharp', () => {
   const sharpMock = jest.fn(() => ({

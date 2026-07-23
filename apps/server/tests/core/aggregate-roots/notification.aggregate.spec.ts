@@ -1,4 +1,7 @@
-import { NotificationRoot, NotificationCreateProps } from '@core/aggregate-roots/notification.aggregate';
+import {
+  NotificationCreateProps,
+  NotificationRoot,
+} from '@core/aggregate-roots/notification.aggregate';
 import { NotificationType, TargetType } from '@core/enums';
 
 describe('NotificationRoot Aggregate Root', () => {
@@ -65,15 +68,31 @@ describe('NotificationRoot Aggregate Root', () => {
   describe('equals', () => {
     it('should return true for same id', () => {
       const now = new Date();
-      const n1 = NotificationRoot.instantiate('id-1', { ...defaultCreateProps, createdAt: now, updatedAt: now });
-      const n2 = NotificationRoot.instantiate('id-1', { ...defaultCreateProps, createdAt: now, updatedAt: now });
+      const n1 = NotificationRoot.instantiate('id-1', {
+        ...defaultCreateProps,
+        createdAt: now,
+        updatedAt: now,
+      });
+      const n2 = NotificationRoot.instantiate('id-1', {
+        ...defaultCreateProps,
+        createdAt: now,
+        updatedAt: now,
+      });
       expect(n1.equals(n2)).toBe(true);
     });
 
     it('should return false for different ids', () => {
       const now = new Date();
-      const n1 = NotificationRoot.instantiate('id-1', { ...defaultCreateProps, createdAt: now, updatedAt: now });
-      const n2 = NotificationRoot.instantiate('id-2', { ...defaultCreateProps, createdAt: now, updatedAt: now });
+      const n1 = NotificationRoot.instantiate('id-1', {
+        ...defaultCreateProps,
+        createdAt: now,
+        updatedAt: now,
+      });
+      const n2 = NotificationRoot.instantiate('id-2', {
+        ...defaultCreateProps,
+        createdAt: now,
+        updatedAt: now,
+      });
       expect(n1.equals(n2)).toBe(false);
     });
 

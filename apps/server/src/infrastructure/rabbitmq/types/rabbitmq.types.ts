@@ -5,7 +5,7 @@
  */
 export interface RabbitMQProducerConfig {
   version: string;
-  role: "producer";
+  role: 'producer';
   service: string;
   connection: {
     uri: string;
@@ -22,7 +22,7 @@ export interface RabbitMQProducerConfig {
   };
   exchange_contract: {
     name: string;
-    type: "direct" | "topic" | "fanout" | "headers";
+    type: 'direct' | 'topic' | 'fanout' | 'headers';
     options: {
       durable: boolean;
       internal: boolean;
@@ -58,7 +58,7 @@ export interface RabbitMQProducerConfig {
  */
 export interface RabbitMQConsumerConfig {
   version: string;
-  role: "consumer";
+  role: 'consumer';
   service: string;
   uses_producer_contract: string;
   connection: {
@@ -82,7 +82,7 @@ export interface RabbitMQConsumerConfig {
   };
   queues: Array<{
     name: string;
-    type: "quorum" | "classic";
+    type: 'quorum' | 'classic';
     options: {
       durable: boolean;
       exclusive: boolean;

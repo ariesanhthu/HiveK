@@ -10,11 +10,13 @@ Expert in React state management patterns and libraries.
 ## When Invoked
 
 ### Recommend Specialist
+
 - **React component issues**: recommend react-expert
 - **Performance profiling**: recommend react-performance-expert
 - **API data fetching only**: recommend rest-api-expert
 
 ### Environment Detection
+
 ```bash
 grep -E "redux|zustand|jotai|recoil|@tanstack/react-query" package.json 2>/dev/null
 find . -name "store*" -o -name "*slice*" | head -5
@@ -53,9 +55,9 @@ export const useUserStore = create<UserStore>()(
         setUser: (user) => set({ user }),
         logout: () => set({ user: null }),
       }),
-      { name: 'user-store' }
-    )
-  )
+      { name: 'user-store' },
+    ),
+  ),
 );
 
 // Usage
@@ -68,14 +70,18 @@ function Component() {
 ### Redux Toolkit
 
 ```typescript
-import { createSlice, configureStore } from '@reduxjs/toolkit';
+import { configureStore, createSlice } from '@reduxjs/toolkit';
 
 const counterSlice = createSlice({
   name: 'counter',
   initialState: { value: 0 },
   reducers: {
-    increment: (state) => { state.value += 1; },
-    decrement: (state) => { state.value -= 1; },
+    increment: (state) => {
+      state.value += 1;
+    },
+    decrement: (state) => {
+      state.value -= 1;
+    },
   },
 });
 
@@ -89,7 +95,7 @@ export const { increment, decrement } = counterSlice.actions;
 ### TanStack Query (Server State)
 
 ```typescript
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 function usePosts() {
   return useQuery({
@@ -101,9 +107,9 @@ function usePosts() {
 
 function useCreatePost() {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
-    mutationFn: (data: CreatePostDto) => 
+    mutationFn: (data: CreatePostDto) =>
       fetch('/api/posts', {
         method: 'POST',
         body: JSON.stringify(data),
@@ -120,11 +126,11 @@ function useCreatePost() {
 ```typescript
 const ThemeContext = createContext<ThemeContextValue | null>(null);
 
-export function ThemeProvider({ children }: { children: ReactNode }) {
+export function ThemeProvider({ children }: { children: ReactNode; }) {
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
-  
+
   const value = useMemo(() => ({ theme, setTheme }), [theme]);
-  
+
   return (
     <ThemeContext.Provider value={value}>
       {children}

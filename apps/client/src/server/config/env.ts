@@ -1,16 +1,16 @@
-import { z } from "zod";
+import { z } from 'zod';
 
 const serverEnvSchema = z.object({
-  appEnv: z.string().default("development"),
-  appUrl: z.string().default("http://localhost:3000"),
+  appEnv: z.string().default('development'),
+  appUrl: z.string().default('http://localhost:3000'),
   hivekBackendBaseUrl: z
     .string()
     .url()
-    .default("https://hivek-main-backend-54ef5f252bc1.herokuapp.com"),
+    .default('https://hivek-main-backend-54ef5f252bc1.herokuapp.com'),
   hivekBackendApiKey: z.string().optional(),
   redisUrl: z.string().optional(),
   aiCacheTtlSeconds: z.coerce.number().int().positive().default(300),
-  aiAgentProvider: z.string().default("mock"),
+  aiAgentProvider: z.string().default('mock'),
   aiLogAgentTrace: z.coerce.boolean().default(false),
 });
 

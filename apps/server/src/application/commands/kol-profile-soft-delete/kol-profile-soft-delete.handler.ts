@@ -1,15 +1,16 @@
-import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { Inject } from '@nestjs/common';
 import { UserNotFoundException } from '@/core/exceptions';
-import { KOL_PROFILE_REPOSITORY, type IKolProfileRepository } from '@/core/interfaces/repositories';
+import { type IKolProfileRepository, KOL_PROFILE_REPOSITORY } from '@/core/interfaces/repositories';
+import { Inject } from '@nestjs/common';
+import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { KolProfileSoftDeleteCommand } from './kol-profile-soft-delete.command';
 
 @CommandHandler(KolProfileSoftDeleteCommand)
-export class KolProfileSoftDeleteCommandHandler implements ICommandHandler<KolProfileSoftDeleteCommand, void> {
+export class KolProfileSoftDeleteCommandHandler
+  implements ICommandHandler<KolProfileSoftDeleteCommand, void>
+{
   constructor(
-    @Inject(KOL_PROFILE_REPOSITORY)
-    private readonly kolProfileRepository: IKolProfileRepository,
-  ) { }
+    @Inject(KOL_PROFILE_REPOSITORY) private readonly kolProfileRepository: IKolProfileRepository,
+  ) {}
 
   async execute(command: KolProfileSoftDeleteCommand): Promise<void> {
     const { id, deletedBy } = command;

@@ -1,12 +1,19 @@
-import { Resolver, Query, Args, Info } from '@nestjs/graphql';
+import { ProjectionDto } from '@/application/dtos/projection.dto';
+import {
+  KolProfileFilterDto,
+  KolProfileGetByIdQuery,
+  KolProfileGetListQuery,
+} from '@/application/queries';
+import { KolProfileType } from '@/infrastructure/graphql/types/kol-profile.type';
+import {
+  KolProfileFilterInput,
+  KolProfileResponse,
+} from '@/infrastructure/graphql/types/pagination.type';
 import { QueryBus } from '@nestjs/cqrs';
+import { Args, Info, Query, Resolver } from '@nestjs/graphql';
+import { Public } from '@presentation/decorators/public.decorator';
 import type { GraphQLResolveInfo } from 'graphql';
 import graphqlFields from 'graphql-fields';
-import { KolProfileType } from '@/infrastructure/graphql/types/kol-profile.type';
-import { KolProfileFilterInput, KolProfileResponse } from '@/infrastructure/graphql/types/pagination.type';
-import { KolProfileGetByIdQuery, KolProfileGetListQuery, KolProfileFilterDto } from '@/application/queries';
-import { ProjectionDto } from '@/application/dtos/projection.dto';
-import { Public } from '@presentation/decorators/public.decorator';
 
 @Resolver(() => KolProfileType)
 export class KolProfileResolver {
@@ -29,7 +36,8 @@ export class KolProfileResolver {
   @Public()
   @Query(() => KolProfileResponse, { name: 'kolProfiles' })
   async getKolProfiles(
-    @Args('filters', { type: () => KolProfileFilterInput, nullable: true }) filters: KolProfileFilterInput,
+    @Args('filters', { type: () => KolProfileFilterInput, nullable: true }) filters:
+      KolProfileFilterInput,
     @Info() info: GraphQLResolveInfo,
   ) {
     const fieldsMap = graphqlFields(info);

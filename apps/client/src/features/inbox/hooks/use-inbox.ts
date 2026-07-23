@@ -1,30 +1,30 @@
-"use client";
+'use client';
 
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { mockInboxAdapter } from "@/features/inbox/services/mock-inbox-adapter";
+import { mockInboxAdapter } from '@/features/inbox/services/mock-inbox-adapter';
 import type {
   ComposerMode,
   ConversationStatus,
   InboxConversation,
   InboxView,
-} from "@/features/inbox/types";
+} from '@/features/inbox/types';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 type DraftStore = Record<string, Partial<Record<ComposerMode, string>>>;
 
-const DRAFT_STORAGE_KEY = "hivek.inbox-drafts.v1";
+const DRAFT_STORAGE_KEY = 'hivek.inbox-drafts.v1';
 
 const VIEW_FILTERS: Record<InboxView, (item: InboxConversation) => boolean> = {
-  needs_human: (item) => item.status === "needs_human",
-  mine: (item) => item.assignee === "Anh Thư",
-  unassigned: (item) => item.assignee === "Chưa phân công",
-  ai_active: (item) => item.aiState === "active",
-  waiting: (item) => item.status === "waiting_for_customer",
+  needs_human: (item) => item.status === 'needs_human',
+  mine: (item) => item.assignee === 'Anh Thư',
+  unassigned: (item) => item.assignee === 'Chưa phân công',
+  ai_active: (item) => item.aiState === 'active',
+  waiting: (item) => item.status === 'waiting_for_customer',
   all: () => true,
-  resolved: (item) => item.status === "resolved",
+  resolved: (item) => item.status === 'resolved',
 };
 
 function loadDrafts(): DraftStore {
-  if (typeof window === "undefined") return {};
+  if (typeof window === 'undefined') return {};
   try {
     const saved = window.localStorage.getItem(DRAFT_STORAGE_KEY);
     return saved ? (JSON.parse(saved) as DraftStore) : {};
@@ -34,7 +34,7 @@ function loadDrafts(): DraftStore {
 }
 
 function makeClientMessageId() {
-  if (typeof crypto !== "undefined" && "randomUUID" in crypto) {
+  if (typeof crypto !== 'undefined' && 'randomUUID' in crypto) {
     return crypto.randomUUID();
   }
   return `client-${Date.now()}`;
@@ -42,28 +42,28 @@ function makeClientMessageId() {
 
 export function useInbox(initialConversationId?: string) {
   const [conversations, setConversations] = useState<InboxConversation[]>([]);
-  const [selectedId, setSelectedId] = useState(initialConversationId ?? "");
-  const [view, setView] = useState<InboxView>("needs_human");
-  const [search, setSearch] = useState("");
-  const [composerMode, setComposerMode] = useState<ComposerMode>("reply");
+  const [selectedId, setSelectedId] = useState(initialConversationId ?? '');
+  const [view, setView] = useState<InboxView>('needs_human');
+  const [search, setSearch] = useState('');
+  const [composerMode, setComposerMode] = useState<ComposerMode>('reply');
   const [drafts, setDrafts] = useState<DraftStore>(loadDrafts);
-  const [suggestion, setSuggestion] = useState("");
+  const [suggestion, setSuggestion] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [isSending, setIsSending] = useState(false);
-  const [error, setError] = useState("");
+  const [error, setError] = useState('');
 
   const load = useCallback(async () => {
     setIsLoading(true);
-    setError("");
+    setError('');
     try {
       const data = await mockInboxAdapter.listConversations();
       setConversations(data);
       setSelectedId((current) => {
         if (current && data.some((item) => item.id === current)) return current;
-        return data.find(VIEW_FILTERS.needs_human)?.id ?? data[0]?.id ?? "";
+        return data.find(VIEW_FILTERS.needs_human)?.id ?? data[0]?.id ?? '';
       });
     } catch {
-      setError("Không thể tải hộp thư. Dữ liệu gần nhất vẫn được giữ lại nếu có.");
+      setError('Không thể tải hộp thư. Dữ liệu gần nhất vẫn được giữ lại nếu có.');
     } finally {
       setIsLoading(false);
     }
@@ -75,8 +75,8 @@ export function useInbox(initialConversationId?: string) {
 
   useEffect(() => {
     if (
-      initialConversationId &&
-      conversations.some((item) => item.id === initialConversationId)
+      initialConversationId
+      && conversations.some((item) => item.id === initialConversationId)
     ) {
       setSelectedId(initialConversationId);
     }
@@ -87,7 +87,7 @@ export function useInbox(initialConversationId?: string) {
   }, [drafts]);
 
   const filteredConversations = useMemo(() => {
-    const normalized = search.trim().toLocaleLowerCase("vi");
+    const normalized = search.trim().toLocaleLowerCase('vi');
     return conversations.filter((item) => {
       if (!VIEW_FILTERS[view](item)) return false;
       if (!normalized) return true;
@@ -99,15 +99,15 @@ export function useInbox(initialConversationId?: string) {
         item.sourceContext,
         ...item.tags,
       ]
-        .join(" ")
-        .toLocaleLowerCase("vi");
+        .join(' ')
+        .toLocaleLowerCase('vi');
       return searchable.includes(normalized);
     });
   }, [conversations, search, view]);
 
   const selectedConversation = useMemo(
     () => conversations.find((item) => item.id === selectedId),
-    [conversations, selectedId]
+    [conversations, selectedId],
   );
 
   const counts = useMemo(
@@ -115,7 +115,7 @@ export function useInbox(initialConversationId?: string) {
       needsHuman: conversations.filter(VIEW_FILTERS.needs_human).length,
       unread: conversations.filter((item) => item.unreadCount > 0).length,
     }),
-    [conversations]
+    [conversations],
   );
 
   const updateConversation = useCallback(
@@ -124,19 +124,19 @@ export function useInbox(initialConversationId?: string) {
         current.map((item) => (item.id === conversationId ? update(item) : item))
       );
     },
-    []
+    [],
   );
 
   const selectConversation = useCallback(
     (conversationId: string) => {
       setSelectedId(conversationId);
-      setSuggestion("");
+      setSuggestion('');
       updateConversation(conversationId, (item) => ({ ...item, unreadCount: 0 }));
     },
-    [updateConversation]
+    [updateConversation],
   );
 
-  const draft = selectedId ? drafts[selectedId]?.[composerMode] ?? "" : "";
+  const draft = selectedId ? drafts[selectedId]?.[composerMode] ?? '' : '';
   const setDraft = useCallback(
     (value: string) => {
       if (!selectedId) return;
@@ -145,7 +145,7 @@ export function useInbox(initialConversationId?: string) {
         [selectedId]: { ...current[selectedId], [composerMode]: value },
       }));
     },
-    [composerMode, selectedId]
+    [composerMode, selectedId],
   );
 
   const appendSystemMessage = useCallback(
@@ -155,15 +155,15 @@ export function useInbox(initialConversationId?: string) {
         ...conversation.messages,
         {
           id: `system-${Date.now()}`,
-          authorType: "system",
-          authorName: "Hệ thống",
+          authorType: 'system',
+          authorName: 'Hệ thống',
           content,
           createdAt: new Date().toISOString(),
-          deliveryStatus: "sent",
+          deliveryStatus: 'sent',
         },
       ],
     }),
-    []
+    [],
   );
 
   const takeOver = useCallback(() => {
@@ -172,31 +172,29 @@ export function useInbox(initialConversationId?: string) {
       appendSystemMessage(
         {
           ...item,
-          assignee: "Anh Thư",
-          handlingMode: "human",
-          aiState: "paused_by_user",
-          status: "open",
+          assignee: 'Anh Thư',
+          handlingMode: 'human',
+          aiState: 'paused_by_user',
+          status: 'open',
         },
-        "Anh Thư đã tiếp quản. AI sẽ không tự gửi cho đến khi được bật lại."
-      )
-    );
+        'Anh Thư đã tiếp quản. AI sẽ không tự gửi cho đến khi được bật lại.',
+      ));
   }, [appendSystemMessage, selectedId, updateConversation]);
 
   const returnToAi = useCallback(() => {
     if (!selectedId) return;
     updateConversation(selectedId, (item) =>
       appendSystemMessage(
-        { ...item, handlingMode: "suggestion_only", aiState: "suggestion_only" },
-        "Hội thoại đã chuyển sang chế độ AI đề xuất để duyệt."
-      )
-    );
+        { ...item, handlingMode: 'suggestion_only', aiState: 'suggestion_only' },
+        'Hội thoại đã chuyển sang chế độ AI đề xuất để duyệt.',
+      ));
   }, [appendSystemMessage, selectedId, updateConversation]);
 
   const toggleResolved = useCallback(() => {
     if (!selectedId) return;
     updateConversation(selectedId, (item) => ({
       ...item,
-      status: item.status === "resolved" ? "open" : "resolved",
+      status: item.status === 'resolved' ? 'open' : 'resolved',
     }));
   }, [selectedId, updateConversation]);
 
@@ -204,7 +202,7 @@ export function useInbox(initialConversationId?: string) {
     if (!selectedId) return;
     updateConversation(selectedId, (item) => ({
       ...item,
-      priority: item.priority === "urgent" ? "normal" : "urgent",
+      priority: item.priority === 'urgent' ? 'normal' : 'urgent',
     }));
   }, [selectedId, updateConversation]);
 
@@ -213,7 +211,7 @@ export function useInbox(initialConversationId?: string) {
       if (!selectedId) return;
       updateConversation(selectedId, (item) => ({ ...item, assignee }));
     },
-    [selectedId, updateConversation]
+    [selectedId, updateConversation],
   );
 
   const setStatus = useCallback(
@@ -221,21 +219,21 @@ export function useInbox(initialConversationId?: string) {
       if (!selectedId) return;
       updateConversation(selectedId, (item) => ({ ...item, status }));
     },
-    [selectedId, updateConversation]
+    [selectedId, updateConversation],
   );
 
   const suggestReply = useCallback(() => {
     if (!selectedConversation) return;
     setSuggestion(
       selectedConversation.handoffReason
-        ? "Chào bạn, mình đã tiếp nhận yêu cầu và đang kiểm tra thông tin chính xác. Mình sẽ phản hồi bạn trong ít phút nữa nhé."
-        : "Chào bạn, cảm ơn bạn đã quan tâm. Mình sẵn sàng hỗ trợ thêm thông tin để bạn chọn phương án phù hợp nhất nhé."
+        ? 'Chào bạn, mình đã tiếp nhận yêu cầu và đang kiểm tra thông tin chính xác. Mình sẽ phản hồi bạn trong ít phút nữa nhé.'
+        : 'Chào bạn, cảm ơn bạn đã quan tâm. Mình sẵn sàng hỗ trợ thêm thông tin để bạn chọn phương án phù hợp nhất nhé.',
     );
   }, [selectedConversation]);
 
   const sendMessage = useCallback(async () => {
     if (!selectedConversation || !draft.trim() || isSending) return;
-    if (composerMode === "reply" && !selectedConversation.capabilities.canSendText) return;
+    if (composerMode === 'reply' && !selectedConversation.capabilities.canSendText) return;
 
     const content = draft.trim();
     const clientMessageId = makeClientMessageId();
@@ -244,21 +242,21 @@ export function useInbox(initialConversationId?: string) {
     updateConversation(selectedConversation.id, (item) => ({
       ...item,
       preview: content,
-      status: composerMode === "reply" ? "waiting_for_customer" : item.status,
+      status: composerMode === 'reply' ? 'waiting_for_customer' : item.status,
       messages: [
         ...item.messages,
         {
           id: optimisticId,
           clientMessageId,
-          authorType: composerMode === "note" ? "internal_note" : "current_user",
-          authorName: "Anh Thư",
+          authorType: composerMode === 'note' ? 'internal_note' : 'current_user',
+          authorName: 'Anh Thư',
           content,
           createdAt: new Date().toISOString(),
-          deliveryStatus: "sending",
+          deliveryStatus: 'sending',
         },
       ],
     }));
-    setDraft("");
+    setDraft('');
 
     try {
       const sent = await mockInboxAdapter.sendMessage({
@@ -269,15 +267,13 @@ export function useInbox(initialConversationId?: string) {
       });
       updateConversation(selectedConversation.id, (item) => ({
         ...item,
-        messages: item.messages.map((entry) =>
-          entry.id === optimisticId ? sent : entry
-        ),
+        messages: item.messages.map((entry) => entry.id === optimisticId ? sent : entry),
       }));
     } catch {
       updateConversation(selectedConversation.id, (item) => ({
         ...item,
         messages: item.messages.map((entry) =>
-          entry.id === optimisticId ? { ...entry, deliveryStatus: "failed" } : entry
+          entry.id === optimisticId ? { ...entry, deliveryStatus: 'failed' } : entry
         ),
       }));
       setDraft(content);

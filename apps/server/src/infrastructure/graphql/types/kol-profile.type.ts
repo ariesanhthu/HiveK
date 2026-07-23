@@ -1,7 +1,7 @@
-import { Field, ObjectType, ID, Float, Int } from '@nestjs/graphql';
+import { Field, Float, ID, Int, ObjectType } from '@nestjs/graphql';
 import { GraphQLJSONObject } from 'graphql-type-json';
-import { UserType } from './user.type';
 import { PlatformType } from './platform.type';
+import { UserType } from './user.type';
 
 @ObjectType()
 export class KolPlatformInfoType {

@@ -1,20 +1,20 @@
-import { Injectable, Inject } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model, ClientSession } from 'mongoose';
-import { INotificationRepository } from '@/core/interfaces/repositories';
-import { NotificationRoot } from '@/core/aggregate-roots';
-import { NotificationModel, NotificationDocument } from '../schemas';
-import { Nullable } from '@/core/types';
 import { type IUnitOfWork, UNIT_OF_WORK } from '@/application/interfaces';
+import { NotificationRoot } from '@/core/aggregate-roots';
+import { INotificationRepository } from '@/core/interfaces/repositories';
+import { Nullable } from '@/core/types';
+import { Inject, Injectable } from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
+import { ClientSession, Model } from 'mongoose';
 import { MongoUnitOfWork } from '../mongo-uow';
+import { NotificationDocument, NotificationModel } from '../schemas';
 
 @Injectable()
 export class MongoNotificationRepository implements INotificationRepository {
   constructor(
-    @InjectModel(NotificationModel.name)
-    private readonly notificationModel: Model<NotificationDocument>,
-    @Inject(UNIT_OF_WORK)
-    private readonly uow: IUnitOfWork,
+    @InjectModel(NotificationModel.name) private readonly notificationModel: Model<
+      NotificationDocument
+    >,
+    @Inject(UNIT_OF_WORK) private readonly uow: IUnitOfWork,
   ) {}
 
   private get session(): ClientSession | undefined {
@@ -34,7 +34,8 @@ export class MongoNotificationRepository implements INotificationRepository {
       const saved = await created.save({ session: this.session });
       notification.setId(saved._id.toString());
     } else {
-      await this.notificationModel.findByIdAndUpdate(notification.id, data, { upsert: true }).session(this.session).exec();
+      await this.notificationModel.findByIdAndUpdate(notification.id, data, { upsert: true })
+        .session(this.session).exec();
     }
   }
 
@@ -61,7 +62,9 @@ export class MongoNotificationRepository implements INotificationRepository {
     });
   }
 
-  private mapToPersistence(notification: NotificationRoot): Omit<NotificationModel, 'created_at' | 'updated_at'> {
+  private mapToPersistence(
+    notification: NotificationRoot,
+  ): Omit<NotificationModel, 'created_at' | 'updated_at'> {
     return {
       type: notification.type,
       title: notification.title,

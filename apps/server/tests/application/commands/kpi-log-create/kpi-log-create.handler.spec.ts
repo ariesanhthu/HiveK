@@ -1,7 +1,7 @@
-import { KpiLogCreateCommandHandler } from '@/application/commands/kpi-log-create/kpi-log-create.handler';
 import { KpiLogCreateCommand } from '@/application/commands/kpi-log-create/kpi-log-create.command';
-import { KpiLogEntity } from '@/core/entities/kpi-log.entity';
+import { KpiLogCreateCommandHandler } from '@/application/commands/kpi-log-create/kpi-log-create.handler';
 import { KpiMetricsUpdatedEvent } from '@/application/events';
+import { KpiLogEntity } from '@/core/entities/kpi-log.entity';
 
 describe('KpiLogCreateCommandHandler', () => {
   let handler: KpiLogCreateCommandHandler;

@@ -1,23 +1,21 @@
+import { type IUnitOfWork, UNIT_OF_WORK } from '@/application/interfaces';
+import { AuthService } from '@/application/services/auth.service';
+import { AdminRoot, EnterpriseUserRoot, KOLUserRoot } from '@/core/aggregate-roots';
+import { ERoleType } from '@/core/enums';
+import { InvalidUserTypeException, UserConflictException } from '@/core/exceptions';
+import { type IUserRepository, USER_REPOSITORY } from '@/core/interfaces/repositories';
+import { PhoneNumberVO } from '@/core/value-objects/phone-number.value-object';
+import { Inject } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { UserCreateCommand } from './user-create.command';
-import { Inject } from '@nestjs/common';
-import { UserConflictException, InvalidUserTypeException } from '@/core/exceptions';
-import { USER_REPOSITORY, type IUserRepository } from '@/core/interfaces/repositories';
-import { KOLUserRoot, EnterpriseUserRoot, AdminRoot } from '@/core/aggregate-roots';
-import { ERoleType } from '@/core/enums';
-import { AuthService } from '@/application/services/auth.service';
-import { type IUnitOfWork, UNIT_OF_WORK } from '@/application/interfaces';
-import { PhoneNumberVO } from '@/core/value-objects/phone-number.value-object';
 
 @CommandHandler(UserCreateCommand)
 export class UserCreateCommandHandler implements ICommandHandler<UserCreateCommand, string> {
   constructor(
-    @Inject(USER_REPOSITORY)
-    private readonly userRepository: IUserRepository,
+    @Inject(USER_REPOSITORY) private readonly userRepository: IUserRepository,
     private readonly authService: AuthService,
-    @Inject(UNIT_OF_WORK)
-    private readonly uow: IUnitOfWork,
-  ) { }
+    @Inject(UNIT_OF_WORK) private readonly uow: IUnitOfWork,
+  ) {}
 
   async execute(command: UserCreateCommand): Promise<string> {
     return this.uow.execute(async () => {

@@ -1,6 +1,6 @@
-import { z } from 'zod';
-import { createZodDto } from 'nestjs-zod';
 import { EOtpType } from '@/core/enums/otp-type.enum';
+import { createZodDto } from 'nestjs-zod';
+import { z } from 'zod';
 
 export const AuthSendOtpInputSchema = z.object({
   email: z.email(),

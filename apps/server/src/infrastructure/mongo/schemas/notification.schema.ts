@@ -1,6 +1,6 @@
+import { NotificationType, TargetType } from '@/core/enums';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Schema as MongooseSchema } from 'mongoose';
-import { NotificationType, TargetType } from '@/core/enums';
 
 @Schema({
   collection: 'notifications',

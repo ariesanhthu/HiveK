@@ -1,11 +1,18 @@
-import { AuthGoogleSignInCommandHandler } from '@/application/commands/auth-google-sign-in/auth-google-sign-in.handler';
 import { AuthGoogleSignInCommand } from '@/application/commands/auth-google-sign-in/auth-google-sign-in.command';
+import { AuthGoogleSignInCommandHandler } from '@/application/commands/auth-google-sign-in/auth-google-sign-in.handler';
+import { EnterpriseUserRoot, KOLUserRoot } from '@/core/aggregate-roots';
 import { ERoleType } from '@/core/enums';
-import { KOLUserRoot, EnterpriseUserRoot } from '@/core/aggregate-roots';
+import { RoleNotFoundException, UserDeletedException } from '@/core/exceptions';
 import { PhoneNumberVO } from '@/core/value-objects/phone-number.value-object';
-import { UserDeletedException, RoleNotFoundException } from '@/core/exceptions';
-import { createMockUserRepository, createMockRoleRepository } from '../../../__mocks__/mock-repositories';
-import { createMockAuthService, createMockOutboxService, createMockUnitOfWork } from '../../../__mocks__/mock-services';
+import {
+  createMockRoleRepository,
+  createMockUserRepository,
+} from '../../../__mocks__/mock-repositories';
+import {
+  createMockAuthService,
+  createMockOutboxService,
+  createMockUnitOfWork,
+} from '../../../__mocks__/mock-services';
 
 describe('AuthGoogleSignInCommandHandler', () => {
   let handler: AuthGoogleSignInCommandHandler;
@@ -57,7 +64,7 @@ describe('AuthGoogleSignInCommandHandler', () => {
       });
 
       expect(mockUserRepository.save).toHaveBeenCalled();
-      
+
       // Verification email is not enqueued for Google sign-in in current implementation
       expect(mockOutboxService.enqueueMany).not.toHaveBeenCalled();
     });
@@ -65,7 +72,9 @@ describe('AuthGoogleSignInCommandHandler', () => {
     it('should create a new Enterprise user when type is Enterprise', async () => {
       mockAuthService.normalizeEmail.mockReturnValue('enterprise@example.com');
       mockUserRepository.findByEmail.mockResolvedValue(null);
-      mockRoleRepository.findByTitle.mockResolvedValue({ id: 'role-ent', title: 'ENTERPRISE' } as any);
+      mockRoleRepository.findByTitle.mockResolvedValue(
+        { id: 'role-ent', title: 'ENTERPRISE' } as any,
+      );
       mockAuthService.generateTokens.mockResolvedValue({
         accessToken: 'at',
         refreshToken: 'rt',

@@ -1,21 +1,23 @@
-import { Injectable, Logger, Inject } from '@nestjs/common';
+import { type IWebSocketService, WEBSOCKET_SERVICE } from '@/application/interfaces';
+import {
+  CAMPAIGN_REPOSITORY,
+  type ICampaignRepository,
+  type IKpiLogRepository,
+  KPI_LOG_REPOSITORY,
+} from '@/core/interfaces/repositories';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import { EventsHandler, IEventHandler } from '@nestjs/cqrs';
 import { KpiMetricsUpdatedEvent } from './kpi-metrics-updated.event';
 import { KpiTrackingTerminatedEvent } from './kpi-tracking-terminated.event';
-import { WEBSOCKET_SERVICE, type IWebSocketService } from '@/application/interfaces';
-import { KPI_LOG_REPOSITORY, type IKpiLogRepository, CAMPAIGN_REPOSITORY, type ICampaignRepository } from '@/core/interfaces/repositories';
 
 @EventsHandler(KpiMetricsUpdatedEvent)
 export class KpiMetricsUpdatedWsHandler implements IEventHandler<KpiMetricsUpdatedEvent> {
   private readonly logger = new Logger(KpiMetricsUpdatedWsHandler.name);
 
   constructor(
-    @Inject(WEBSOCKET_SERVICE)
-    private readonly websocketService: IWebSocketService,
-    @Inject(KPI_LOG_REPOSITORY)
-    private readonly kpiLogRepository: IKpiLogRepository,
-    @Inject(CAMPAIGN_REPOSITORY)
-    private readonly campaignRepository: ICampaignRepository,
+    @Inject(WEBSOCKET_SERVICE) private readonly websocketService: IWebSocketService,
+    @Inject(KPI_LOG_REPOSITORY) private readonly kpiLogRepository: IKpiLogRepository,
+    @Inject(CAMPAIGN_REPOSITORY) private readonly campaignRepository: ICampaignRepository,
   ) {}
 
   async handle(event: KpiMetricsUpdatedEvent) {
@@ -50,10 +52,8 @@ export class KpiTrackingTerminatedWsHandler implements IEventHandler<KpiTracking
   private readonly logger = new Logger(KpiTrackingTerminatedWsHandler.name);
 
   constructor(
-    @Inject(WEBSOCKET_SERVICE)
-    private readonly websocketService: IWebSocketService,
-    @Inject(CAMPAIGN_REPOSITORY)
-    private readonly campaignRepository: ICampaignRepository,
+    @Inject(WEBSOCKET_SERVICE) private readonly websocketService: IWebSocketService,
+    @Inject(CAMPAIGN_REPOSITORY) private readonly campaignRepository: ICampaignRepository,
   ) {}
 
   async handle(event: KpiTrackingTerminatedEvent) {
@@ -72,6 +72,8 @@ export class KpiTrackingTerminatedWsHandler implements IEventHandler<KpiTracking
       outputId,
     });
 
-    this.logger.log(`Pushed kpi_tracking_terminated socket event to user_${participant.kolProfileId}`);
+    this.logger.log(
+      `Pushed kpi_tracking_terminated socket event to user_${participant.kolProfileId}`,
+    );
   }
 }

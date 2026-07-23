@@ -1,11 +1,14 @@
-import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { Inject } from '@nestjs/common';
-import { CAMPAIGN_PROPOSAL_REPOSITORY, type ICampaignProposalRepository } from '@/core/interfaces/repositories';
-import { ProposalNotFoundException } from '@/core/exceptions';
-import { MediaSlideVO, ProductItemVO, VoucherItemVO } from '@/core/value-objects';
-import { ProposalUpdateCommand } from './proposal-update.command';
 import { ProposalDto } from '@/application/dtos';
 import { ProposalMapper } from '@/application/mappers';
+import { ProposalNotFoundException } from '@/core/exceptions';
+import {
+  CAMPAIGN_PROPOSAL_REPOSITORY,
+  type ICampaignProposalRepository,
+} from '@/core/interfaces/repositories';
+import { MediaSlideVO, ProductItemVO, VoucherItemVO } from '@/core/value-objects';
+import { Inject } from '@nestjs/common';
+import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
+import { ProposalUpdateCommand } from './proposal-update.command';
 
 interface UpdateFields {
   title?: string;
@@ -16,10 +19,12 @@ interface UpdateFields {
 }
 
 @CommandHandler(ProposalUpdateCommand)
-export class ProposalUpdateCommandHandler implements ICommandHandler<ProposalUpdateCommand, ProposalDto> {
+export class ProposalUpdateCommandHandler
+  implements ICommandHandler<ProposalUpdateCommand, ProposalDto>
+{
   constructor(
-    @Inject(CAMPAIGN_PROPOSAL_REPOSITORY)
-    private readonly proposalRepository: ICampaignProposalRepository,
+    @Inject(CAMPAIGN_PROPOSAL_REPOSITORY) private readonly proposalRepository:
+      ICampaignProposalRepository,
   ) {}
 
   async execute(command: ProposalUpdateCommand): Promise<ProposalDto> {
@@ -40,7 +45,7 @@ export class ProposalUpdateCommandHandler implements ICommandHandler<ProposalUpd
           type: slide.type,
           fileId: slide.fileId,
           displayOrder: slide.displayOrder,
-        }),
+        })
       );
     }
     if (input.products !== undefined) {
@@ -52,7 +57,7 @@ export class ProposalUpdateCommandHandler implements ICommandHandler<ProposalUpd
           currency: product.currency,
           imageId: product.imageId,
           affiliateUrls: product.affiliateUrls || {},
-        }),
+        })
       );
     }
     if (input.vouchers !== undefined) {
@@ -62,8 +67,10 @@ export class ProposalUpdateCommandHandler implements ICommandHandler<ProposalUpd
           platform: voucher.platform,
           discountValue: voucher.discountValue,
           description: voucher.description,
-          expirationDate: voucher.expirationDate instanceof Date ? voucher.expirationDate : new Date(voucher.expirationDate),
-        }),
+          expirationDate: voucher.expirationDate instanceof Date
+            ? voucher.expirationDate
+            : new Date(voucher.expirationDate),
+        })
       );
     }
 

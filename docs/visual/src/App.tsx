@@ -1,22 +1,22 @@
-import React, { useEffect, useMemo, useState } from "react";
-import { GraphCanvas } from "./components/GraphCanvas";
-import { Sidebar } from "./components/Sidebar";
-import { NodeInspector } from "./components/NodeInspector";
-import { MarkdownEditor } from "./components/MarkdownEditor";
-import { Toolbar } from "./components/Toolbar";
-import { GraphData, GraphNode, GraphEdge, NodeFilterState } from "./lib/schema";
-import { loadGraphWithFallback, saveGraphToDownload } from "./lib/graph";
-import { loadMarkdown } from "./lib/markdown";
+import React, { useEffect, useMemo, useState } from 'react';
+import { GraphCanvas } from './components/GraphCanvas';
+import { MarkdownEditor } from './components/MarkdownEditor';
+import { NodeInspector } from './components/NodeInspector';
+import { Sidebar } from './components/Sidebar';
+import { Toolbar } from './components/Toolbar';
+import { loadGraphWithFallback, saveGraphToDownload } from './lib/graph';
+import { loadMarkdown } from './lib/markdown';
+import { GraphData, GraphEdge, GraphNode, NodeFilterState } from './lib/schema';
 
 export const App: React.FC = () => {
   const [graph, setGraph] = useState<GraphData | null>(null);
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
-  const [markdownContent, setMarkdownContent] = useState<string>("");
+  const [markdownContent, setMarkdownContent] = useState<string>('');
   const [markdownPath, setMarkdownPath] = useState<string | null>(null);
   const [filters, setFilters] = useState<NodeFilterState>({
-    feature: "",
-    workflow: "",
-    type: "all"
+    feature: '',
+    workflow: '',
+    type: 'all',
   });
 
   useEffect(() => {
@@ -29,8 +29,8 @@ export const App: React.FC = () => {
   }, [graph, selectedNodeId]);
 
   useEffect(() => {
-    if (!selectedNode || !selectedNode.path || !selectedNode.path.endsWith(".md")) {
-      setMarkdownContent("");
+    if (!selectedNode || !selectedNode.path || !selectedNode.path.endsWith('.md')) {
+      setMarkdownContent('');
       setMarkdownPath(null);
       return;
     }
@@ -41,7 +41,9 @@ export const App: React.FC = () => {
     loadMarkdown(path)
       .then(setMarkdownContent)
       .catch(() => {
-        setMarkdownContent(`# ${selectedNode.label}\n\n_No markdown file found yet at \`${path}\`._`);
+        setMarkdownContent(
+          `# ${selectedNode.label}\n\n_No markdown file found yet at \`${path}\`._`,
+        );
       });
   }, [selectedNode]);
 
@@ -51,7 +53,7 @@ export const App: React.FC = () => {
       ...graph,
       nodes: nextNodes,
       edges: nextEdges,
-      lastUpdatedAt: new Date().toISOString()
+      lastUpdatedAt: new Date().toISOString(),
     };
     setGraph(nextGraph);
   };
@@ -61,10 +63,10 @@ export const App: React.FC = () => {
     const nextNodes = graph.nodes.map((node) =>
       node.id === nodeId
         ? {
-            ...node,
-            ...updated,
-            lastSyncedAt: new Date().toISOString()
-          }
+          ...node,
+          ...updated,
+          lastSyncedAt: new Date().toISOString(),
+        }
         : node
     );
     handleGraphChange(nextNodes, graph.edges);
@@ -77,11 +79,11 @@ export const App: React.FC = () => {
 
   if (!graph) {
     return (
-      <div className="app-root">
-        <div className="app-shell">
-          <header className="app-header">HIVEK Docs Visual Workspace</header>
-          <main className="app-main">
-            <div className="loading">Đang tải graph từ `graph.json`...</div>
+      <div className='app-root'>
+        <div className='app-shell'>
+          <header className='app-header'>HIVEK Docs Visual Workspace</header>
+          <main className='app-main'>
+            <div className='loading'>Đang tải graph từ `graph.json`...</div>
           </main>
         </div>
       </div>
@@ -89,10 +91,10 @@ export const App: React.FC = () => {
   }
 
   return (
-    <div className="app-root">
-      <div className="app-shell">
-        <header className="app-header">
-          <div className="app-header-title">HIVEK Docs Visual Workspace</div>
+    <div className='app-root'>
+      <div className='app-shell'>
+        <header className='app-header'>
+          <div className='app-header-title'>HIVEK Docs Visual Workspace</div>
           <Toolbar
             graph={graph}
             filters={filters}
@@ -100,9 +102,9 @@ export const App: React.FC = () => {
             onSaveGraph={handleSaveGraph}
           />
         </header>
-        <main className="app-main">
+        <main className='app-main'>
           <Sidebar graph={graph} filters={filters} onSelectNode={setSelectedNodeId} />
-          <section className="app-main-center">
+          <section className='app-main-center'>
             <GraphCanvas
               graph={graph}
               filters={filters}
@@ -111,7 +113,7 @@ export const App: React.FC = () => {
               onGraphChange={handleGraphChange}
             />
           </section>
-          <section className="app-main-right">
+          <section className='app-main-right'>
             <NodeInspector node={selectedNode} onChange={handleNodeMetadataChange} />
             <MarkdownEditor
               node={selectedNode}
@@ -125,4 +127,3 @@ export const App: React.FC = () => {
     </div>
   );
 };
-

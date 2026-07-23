@@ -1,5 +1,5 @@
-import { useState } from 'react';
 import { SearchResultsList } from 'client';
+import { useState } from 'react';
 
 const candidates = [
   {
@@ -51,8 +51,7 @@ export function Default() {
         candidates={candidates}
         selectedCandidateIds={selected}
         onToggleCandidate={(id) =>
-          setSelected((s) => (s.includes(id) ? s.filter((x) => x !== id) : [...s, id]))
-        }
+          setSelected((s) => (s.includes(id) ? s.filter((x) => x !== id) : [...s, id]))}
         onInviteSelected={() => {}}
       />
     </div>

@@ -1,6 +1,6 @@
+import { EMediaSlideType, EProductPlatform, EProposalStatus } from '@/core/enums';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Schema as MongooseSchema } from 'mongoose';
-import { EProposalStatus, EMediaSlideType, EProductPlatform } from '@/core/enums';
 import { softDeletePlugin } from '../utils';
 
 @Schema({ _id: false })
@@ -83,7 +83,12 @@ export class CampaignProposalModel {
   @Prop({ type: [VoucherItemSubSchema], default: [] })
   vouchers: VoucherItemSubModel[];
 
-  @Prop({ required: true, type: String, enum: Object.values(EProposalStatus), default: EProposalStatus.ACTIVE })
+  @Prop({
+    required: true,
+    type: String,
+    enum: Object.values(EProposalStatus),
+    default: EProposalStatus.ACTIVE,
+  })
   status: EProposalStatus;
 
   @Prop({ type: MongooseSchema.Types.Map, of: Number, default: { totalViews: 0, totalClicks: 0 } })

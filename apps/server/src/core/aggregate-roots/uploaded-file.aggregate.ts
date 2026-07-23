@@ -1,6 +1,6 @@
 import { BaseAggregateRoot } from '@/core/common/base.aggregate-root';
-import { TargetType } from '../enums/target-type.enum';
 import { Nullable } from '@/core/types';
+import { TargetType } from '../enums/target-type.enum';
 
 export interface UploadedFileProps {
   url: string;

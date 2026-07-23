@@ -58,4 +58,3 @@ If you create, rename, or delete files/folders here:
 
 - update `structure.md`
 - update `docs/visual/graph.json` node paths accordingly
-

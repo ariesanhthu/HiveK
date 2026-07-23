@@ -1,14 +1,19 @@
-import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { Inject } from '@nestjs/common';
-import { CAMPAIGN_PROPOSAL_REPOSITORY, type ICampaignProposalRepository } from '@/core/interfaces/repositories';
 import { ProposalNotFoundException } from '@/core/exceptions';
+import {
+  CAMPAIGN_PROPOSAL_REPOSITORY,
+  type ICampaignProposalRepository,
+} from '@/core/interfaces/repositories';
+import { Inject } from '@nestjs/common';
+import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { ProposalUpdateMetricsCommand } from './proposal-update-metrics.command';
 
 @CommandHandler(ProposalUpdateMetricsCommand)
-export class ProposalUpdateMetricsCommandHandler implements ICommandHandler<ProposalUpdateMetricsCommand, void> {
+export class ProposalUpdateMetricsCommandHandler
+  implements ICommandHandler<ProposalUpdateMetricsCommand, void>
+{
   constructor(
-    @Inject(CAMPAIGN_PROPOSAL_REPOSITORY)
-    private readonly proposalRepository: ICampaignProposalRepository,
+    @Inject(CAMPAIGN_PROPOSAL_REPOSITORY) private readonly proposalRepository:
+      ICampaignProposalRepository,
   ) {}
 
   async execute(command: ProposalUpdateMetricsCommand): Promise<void> {

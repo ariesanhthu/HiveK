@@ -1,5 +1,5 @@
-import { Injectable, Logger } from '@nestjs/common';
 import { RmqHandler } from '@/infrastructure/rabbitmq/rmq-consumer.registry';
+import { Injectable, Logger } from '@nestjs/common';
 
 @Injectable()
 export class TestRmqHandler {

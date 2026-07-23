@@ -1,10 +1,21 @@
-import { AuthChangePasswordCommandHandler } from '@/application/commands/auth-change-password/auth-change-password.handler';
 import { AuthChangePasswordCommand } from '@/application/commands/auth-change-password/auth-change-password.command';
-import { EOtpType, ERoleType } from '@/core/enums';
+import { AuthChangePasswordCommandHandler } from '@/application/commands/auth-change-password/auth-change-password.handler';
 import { KOLUserRoot } from '@/core/aggregate-roots';
-import { UserNotFoundException, InvalidOperationException, InvalidPasswordException } from '@/core/exceptions';
-import { createMockUserRepository, createMockOtpRepository } from '../../../__mocks__/mock-repositories';
-import { createMockAuthService, createMockOutboxService, createMockUnitOfWork } from '../../../__mocks__/mock-services';
+import { EOtpType, ERoleType } from '@/core/enums';
+import {
+  InvalidOperationException,
+  InvalidPasswordException,
+  UserNotFoundException,
+} from '@/core/exceptions';
+import {
+  createMockOtpRepository,
+  createMockUserRepository,
+} from '../../../__mocks__/mock-repositories';
+import {
+  createMockAuthService,
+  createMockOutboxService,
+  createMockUnitOfWork,
+} from '../../../__mocks__/mock-services';
 
 describe('AuthChangePasswordCommandHandler', () => {
   let handler: AuthChangePasswordCommandHandler;
@@ -37,21 +48,22 @@ describe('AuthChangePasswordCommandHandler', () => {
     otpCode: '123456',
   };
 
-  const createTestUser = () => KOLUserRoot.instantiate(userId, {
-    email: 'change@example.com',
-    phone: { value: '+84123' } as any,
-    passwordHash: 'old-hash',
-    fullName: 'Test User',
-    type: ERoleType.KOL,
-    roleId: 'role-kol',
-    isEmailVerified: true,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-    deleteAt: null,
-    deleteBy: null,
-    refreshToken: null,
-    googleId: null,
-  });
+  const createTestUser = () =>
+    KOLUserRoot.instantiate(userId, {
+      email: 'change@example.com',
+      phone: { value: '+84123' } as any,
+      passwordHash: 'old-hash',
+      fullName: 'Test User',
+      type: ERoleType.KOL,
+      roleId: 'role-kol',
+      isEmailVerified: true,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      deleteAt: null,
+      deleteBy: null,
+      refreshToken: null,
+      googleId: null,
+    });
 
   describe('Happy Path', () => {
     it('should successfully change password and clear OTP', async () => {
@@ -67,7 +79,10 @@ describe('AuthChangePasswordCommandHandler', () => {
       expect(result).toEqual({ success: true });
       expect(existingUser.passwordHash).toBe('new-hash');
       expect(mockUserRepository.save).toHaveBeenCalledWith(existingUser);
-      expect(mockOtpRepository.deleteByEmailAndType).toHaveBeenCalledWith('change@example.com', EOtpType.CHANGE_PASSWORD);
+      expect(mockOtpRepository.deleteByEmailAndType).toHaveBeenCalledWith(
+        'change@example.com',
+        EOtpType.CHANGE_PASSWORD,
+      );
       expect(mockUow.execute).toHaveBeenCalled();
     });
   });

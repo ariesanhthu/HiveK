@@ -1,6 +1,6 @@
-export type CampaignDetailStatus = "active" | "draft" | "closed";
+export type CampaignDetailStatus = 'active' | 'draft' | 'closed';
 
-export type CampaignStatMetaVariant = "success" | "warning" | "secondary";
+export type CampaignStatMetaVariant = 'success' | 'warning' | 'secondary';
 
 export type CampaignStatCard = {
   id: string;
@@ -8,7 +8,7 @@ export type CampaignStatCard = {
   value: string;
   metaLabel: string;
   metaVariant: CampaignStatMetaVariant;
-  icon: "payments" | "calendar_month" | "groups" | "shopping_cart";
+  icon: 'payments' | 'calendar_month' | 'groups' | 'shopping_cart';
 };
 
 export type CampaignKpiDonut = {
@@ -20,7 +20,7 @@ export type CampaignKpiDonut = {
   strokeClass: string;
 };
 
-export type CreatorRowStatus = "live" | "pending_post";
+export type CreatorRowStatus = 'live' | 'pending_post';
 
 export type CampaignCreatorRow = {
   id: string;
@@ -31,7 +31,7 @@ export type CampaignCreatorRow = {
   status: CreatorRowStatus;
 };
 
-export type ContentItemState = "pending_review" | "approved";
+export type ContentItemState = 'pending_review' | 'approved';
 
 export type CampaignContentItem = {
   id: string;
@@ -42,7 +42,7 @@ export type CampaignContentItem = {
   state: ContentItemState;
 };
 
-export type CampaignPlatformKey = "instagram" | "youtube" | "tiktok";
+export type CampaignPlatformKey = 'instagram' | 'youtube' | 'tiktok';
 
 export type CampaignDetail = {
   id: string;

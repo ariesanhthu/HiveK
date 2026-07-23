@@ -1,8 +1,8 @@
-import { Model, Types } from 'mongoose';
-import { MongoCampaignRepository } from '@/infrastructure/mongo/repositories/campaign.repository';
+import { UNIT_OF_WORK } from '@/application/interfaces';
 import { CampaignRoot } from '@/core/aggregate-roots';
 import { ECampaignStatus } from '@/core/enums/campaign-status.enum';
-import { UNIT_OF_WORK } from '@/application/interfaces';
+import { MongoCampaignRepository } from '@/infrastructure/mongo/repositories/campaign.repository';
+import { Model, Types } from 'mongoose';
 
 jest.mock('mongoose', () => {
   const actual = jest.requireActual('mongoose');
@@ -60,7 +60,7 @@ describe('MongoCampaignRepository', () => {
     mockModel.exec = jest.fn();
 
     mockUow = {
-        getSession: jest.fn().mockReturnValue(null),
+      getSession: jest.fn().mockReturnValue(null),
     };
 
     repo = new MongoCampaignRepository(mockModel as any, mockUow);
@@ -100,7 +100,9 @@ describe('MongoCampaignRepository', () => {
         rawContents: [],
       });
 
-      const saveMock = jest.fn().mockResolvedValue({ _id: new Types.ObjectId('generated-camp-id') });
+      const saveMock = jest.fn().mockResolvedValue({
+        _id: new Types.ObjectId('generated-camp-id'),
+      });
       mockModel.mockImplementation(() => ({ save: saveMock }));
 
       await repo.save(campaign);
@@ -135,7 +137,7 @@ describe('MongoCampaignRepository', () => {
         expect.objectContaining({
           description: 'Summer sale campaign Updated',
         }),
-        { upsert: true }
+        { upsert: true },
       );
     });
   });

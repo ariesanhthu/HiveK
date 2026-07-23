@@ -1,8 +1,8 @@
 import { BaseAggregateRoot } from '../common/base.aggregate-root';
 import { EProposalStatus } from '../enums';
-import { MediaSlideVO, ProductItemVO, VoucherItemVO } from '../value-objects';
-import { Nullable } from '../types';
 import { ProposalInvalidStatusTransitionException } from '../exceptions/proposal.exception';
+import { Nullable } from '../types';
+import { MediaSlideVO, ProductItemVO, VoucherItemVO } from '../value-objects';
 
 export interface CampaignProposalProps {
   campaignId: string;
@@ -103,7 +103,9 @@ export class CampaignProposalRoot extends BaseAggregateRoot<CampaignProposalProp
    * Update the proposal's metadata, media slides, products, or vouchers.
    */
   public update(
-    props: Partial<Pick<CampaignProposalProps, 'title' | 'description' | 'mediaSlides' | 'products' | 'vouchers'>>,
+    props: Partial<
+      Pick<CampaignProposalProps, 'title' | 'description' | 'mediaSlides' | 'products' | 'vouchers'>
+    >,
   ): void {
     Object.assign(this.props, props);
     this.props.updatedAt = new Date();

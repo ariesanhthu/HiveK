@@ -1,17 +1,22 @@
+import { PaginatedResponseDto, SortOrder } from '@/application/dtos/pagination.dto';
+import {
+  KolProfileDocument,
+  KolProfileModel,
+  PlatformDocument,
+  PlatformModel,
+} from '@/infrastructure/mongo/schemas';
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { KolProfileModel, KolProfileDocument, PlatformModel, PlatformDocument } from '@/infrastructure/mongo/schemas';
 import { KolProfileGetHandlesDevQuery } from './kol-profile-get-handles-dev.query';
-import { PaginatedResponseDto, SortOrder } from '@/application/dtos/pagination.dto';
 
 @QueryHandler(KolProfileGetHandlesDevQuery)
-export class KolProfileGetHandlesDevHandler implements IQueryHandler<KolProfileGetHandlesDevQuery, PaginatedResponseDto<any>> {
+export class KolProfileGetHandlesDevHandler
+  implements IQueryHandler<KolProfileGetHandlesDevQuery, PaginatedResponseDto<any>>
+{
   constructor(
-    @InjectModel(KolProfileModel.name)
-    private readonly kolProfileModel: Model<KolProfileDocument>,
-    @InjectModel(PlatformModel.name)
-    private readonly platformModel: Model<PlatformDocument>,
+    @InjectModel(KolProfileModel.name) private readonly kolProfileModel: Model<KolProfileDocument>,
+    @InjectModel(PlatformModel.name) private readonly platformModel: Model<PlatformDocument>,
   ) {}
 
   async execute(query: KolProfileGetHandlesDevQuery): Promise<PaginatedResponseDto<any>> {

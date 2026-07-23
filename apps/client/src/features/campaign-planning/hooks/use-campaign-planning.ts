@@ -1,7 +1,5 @@
-"use client";
+'use client';
 
-import { useCallback, useMemo } from "react";
-import { useQueryClient } from "@tanstack/react-query";
 import {
   agenticQueryKeys,
   useAgenticCampaignPlanningSnapshot,
@@ -9,14 +7,16 @@ import {
   useGenerateSinglePostMutation,
   useSaveFeedbackMutation,
   useValidateContentMutation,
-} from "@/features/agentic-client";
-import { useAgenticUiStore } from "@/features/agentic-client/store/use-agentic-ui-store";
+} from '@/features/agentic-client';
+import { useAgenticUiStore } from '@/features/agentic-client/store/use-agentic-ui-store';
 import {
   type Campaign,
   type CampaignPost,
   type PlatformId,
-} from "@/features/campaign-planning/types/campaign-planning";
-import type { CampaignPlanningSnapshot } from "@/server/ai/types/agent.types";
+} from '@/features/campaign-planning/types/campaign-planning';
+import type { CampaignPlanningSnapshot } from '@/server/ai/types/agent.types';
+import { useQueryClient } from '@tanstack/react-query';
+import { useCallback, useMemo } from 'react';
 
 function groupPostsByDay(posts: CampaignPost[]) {
   const days = new Map<number, CampaignPost[]>();
@@ -31,26 +31,26 @@ function groupPostsByDay(posts: CampaignPost[]) {
     .sort(([dayA], [dayB]) => dayA - dayB)
     .map(([day, dayPosts]) => ({
       day,
-      dateLabel: dayPosts[0]?.dateLabel ?? "",
+      dateLabel: dayPosts[0]?.dateLabel ?? '',
       posts: dayPosts.toSorted((a, b) => a.time.localeCompare(b.time)),
     }));
 }
 
 function getFirstAccountForPlatform(
-  accounts: CampaignPlanningSnapshot["accounts"],
-  platform: PlatformId
+  accounts: CampaignPlanningSnapshot['accounts'],
+  platform: PlatformId,
 ) {
-  return accounts.find((account) => account.platform === platform)?.id ?? "";
+  return accounts.find((account) => account.platform === platform)?.id ?? '';
 }
 
 function updateSnapshotData(
   queryClient: ReturnType<typeof useQueryClient>,
   campaignId: string,
-  updater: (snapshot: CampaignPlanningSnapshot) => CampaignPlanningSnapshot
+  updater: (snapshot: CampaignPlanningSnapshot) => CampaignPlanningSnapshot,
 ) {
   queryClient.setQueryData<CampaignPlanningSnapshot>(
     agenticQueryKeys.campaignPlanning(campaignId),
-    (snapshot) => (snapshot ? updater(snapshot) : snapshot)
+    (snapshot) => (snapshot ? updater(snapshot) : snapshot),
   );
 }
 
@@ -79,20 +79,20 @@ export function useCampaignPlanning() {
 
   const selectedCampaign = useMemo(
     () => campaigns.find((campaign) => campaign.id === selectedCampaignId) ?? campaigns[0],
-    [campaigns, selectedCampaignId]
+    [campaigns, selectedCampaignId],
   );
 
   const selectedPost = useMemo(
     () => posts.find((post) => post.id === selectedPostId) ?? posts[0],
-    [posts, selectedPostId]
+    [posts, selectedPostId],
   );
 
   const publishingDays = useMemo(() => groupPostsByDay(posts), [posts]);
 
   const summary = useMemo(() => {
-    const approved = posts.filter((post) => post.status === "approved").length;
-    const scheduled = posts.filter((post) => post.status === "scheduled").length;
-    const needsReview = posts.filter((post) => post.status === "needs-review").length;
+    const approved = posts.filter((post) => post.status === 'approved').length;
+    const scheduled = posts.filter((post) => post.status === 'scheduled').length;
+    const needsReview = posts.filter((post) => post.status === 'needs-review').length;
 
     return {
       total: posts.length,
@@ -106,7 +106,7 @@ export function useCampaignPlanning() {
     (updater: (snapshot: CampaignPlanningSnapshot) => CampaignPlanningSnapshot) => {
       updateSnapshotData(queryClient, selectedCampaignId, updater);
     },
-    [queryClient, selectedCampaignId]
+    [queryClient, selectedCampaignId],
   );
 
   const updateSelectedPost = useCallback(
@@ -118,7 +118,7 @@ export function useCampaignPlanning() {
         ),
       }));
     },
-    [selectedPostId, updateCurrentSnapshot]
+    [selectedPostId, updateCurrentSnapshot],
   );
 
   const updateCampaign = useCallback(
@@ -128,13 +128,12 @@ export function useCampaignPlanning() {
         campaigns: snapshot.campaigns.map((campaign) =>
           campaign.id === campaignId ? { ...campaign, ...patch } : campaign
         ),
-        selectedCampaign:
-          snapshot.selectedCampaign?.id === campaignId
-            ? { ...snapshot.selectedCampaign, ...patch }
-            : snapshot.selectedCampaign,
+        selectedCampaign: snapshot.selectedCampaign?.id === campaignId
+          ? { ...snapshot.selectedCampaign, ...patch }
+          : snapshot.selectedCampaign,
       }));
     },
-    [updateCurrentSnapshot]
+    [updateCurrentSnapshot],
   );
 
   const addCampaign = useCallback(() => {
@@ -142,9 +141,8 @@ export function useCampaignPlanning() {
     const newCampaign: Campaign = {
       id: `campaign-${Date.now()}`,
       name: `Kế hoạch nội dung mới ${nextNumber}`,
-      status: "draft",
-      description:
-        "Bản nháp mới sử dụng hồ sơ thương hiệu và quy tắc nội dung của The TutorX.",
+      status: 'draft',
+      description: 'Bản nháp mới sử dụng hồ sơ thương hiệu và quy tắc nội dung của The TutorX.',
     };
     const nextSnapshot: CampaignPlanningSnapshot = {
       ...data,
@@ -154,7 +152,7 @@ export function useCampaignPlanning() {
 
     queryClient.setQueryData(
       agenticQueryKeys.campaignPlanning(newCampaign.id),
-      nextSnapshot
+      nextSnapshot,
     );
     updateCurrentSnapshot((snapshot) => ({
       ...snapshot,
@@ -168,12 +166,12 @@ export function useCampaignPlanning() {
 
     await generatePlanMutation.mutateAsync({
       days: 7,
-      platforms: ["facebook", "threads", "tiktok"],
-      mode: "human_review",
+      platforms: ['facebook', 'threads', 'tiktok'],
+      mode: 'human_review',
       forceRefresh: true,
     });
 
-    updateCampaign(selectedCampaign.id, { status: "ready" });
+    updateCampaign(selectedCampaign.id, { status: 'ready' });
     updateCurrentSnapshot((snapshot) => ({ ...snapshot, agentProgress: 100 }));
   }, [generatePlanMutation, selectedCampaign, updateCampaign, updateCurrentSnapshot]);
 
@@ -185,20 +183,19 @@ export function useCampaignPlanning() {
       platform: selectedPost.platform,
       content: selectedPost.content,
     });
-    const approved = validation.finalDecision === "approve";
+    const approved = validation.finalDecision === 'approve';
 
     updateSelectedPost({
-      status: approved ? "approved" : "needs-review",
-      reviewNote:
-        validation.issues.length > 0
-          ? validation.issues.join(" ")
-          : "Nội dung đã vượt qua kiểm tra và được duyệt.",
+      status: approved ? 'approved' : 'needs-review',
+      reviewNote: validation.issues.length > 0
+        ? validation.issues.join(' ')
+        : 'Nội dung đã vượt qua kiểm tra và được duyệt.',
     });
 
     await saveFeedbackMutation.mutateAsync({
       campaignId: selectedCampaign.id,
       stepId: selectedPost.id,
-      eventType: approved ? "approve" : "mark_too_ai",
+      eventType: approved ? 'approve' : 'mark_too_ai',
       reason: validation.suggestedRevision,
       metadata: {
         riskLevel: validation.riskLevel,
@@ -217,7 +214,7 @@ export function useCampaignPlanning() {
     updateCurrentSnapshot((snapshot) => ({
       ...snapshot,
       posts: snapshot.posts.map((post) =>
-        post.status === "scheduled" ? post : { ...post, status: "approved" }
+        post.status === 'scheduled' ? post : { ...post, status: 'approved' }
       ),
     }));
   }, [updateCurrentSnapshot]);
@@ -229,17 +226,17 @@ export function useCampaignPlanning() {
       ...snapshot,
       campaigns: snapshot.campaigns.map((campaign) =>
         campaign.id === selectedCampaign.id
-          ? { ...campaign, status: "scheduled" }
+          ? { ...campaign, status: 'scheduled' }
           : campaign
       ),
-      selectedCampaign: { ...selectedCampaign, status: "scheduled" },
-      posts: snapshot.posts.map((post) => ({ ...post, status: "scheduled" })),
+      selectedCampaign: { ...selectedCampaign, status: 'scheduled' },
+      posts: snapshot.posts.map((post) => ({ ...post, status: 'scheduled' })),
     }));
 
     await saveFeedbackMutation.mutateAsync({
       campaignId: selectedCampaign.id,
-      eventType: "publish",
-      reason: "Người dùng đã xác nhận lịch đăng từ trình lập kế hoạch.",
+      eventType: 'publish',
+      reason: 'Người dùng đã xác nhận lịch đăng từ trình lập kế hoạch.',
     });
   }, [saveFeedbackMutation, selectedCampaign, updateCurrentSnapshot]);
 
@@ -250,7 +247,7 @@ export function useCampaignPlanning() {
         accountId: getFirstAccountForPlatform(data.accounts, platform),
       });
     },
-    [data.accounts, updateSelectedPost]
+    [data.accounts, updateSelectedPost],
   );
 
   const optimizeSelectedContent = useCallback(async () => {
@@ -261,24 +258,24 @@ export function useCampaignPlanning() {
       platform: selectedPost.platform,
       angle: selectedPost.title,
       userInstruction:
-        "Viết tự nhiên, hữu ích, đúng giọng The TutorX và tránh tạo cảm giác quảng cáo quá mức.",
+        'Viết tự nhiên, hữu ích, đúng giọng The TutorX và tránh tạo cảm giác quảng cáo quá mức.',
     });
 
     updateSelectedPost({
       content: generatedPost.content,
       firstComment: generatedPost.firstComment,
       suggestedReplies: generatedPost.replySuggestions,
-      status: "needs-review",
+      status: 'needs-review',
       reviewNote: generatedPost.validation.suggestedRevision,
     });
 
     await saveFeedbackMutation.mutateAsync({
       campaignId: selectedCampaign.id,
       stepId: selectedPost.id,
-      eventType: "regenerate",
+      eventType: 'regenerate',
       beforeText: selectedPost.content,
       afterText: generatedPost.content,
-      reason: "Người dùng yêu cầu Agent tối ưu nội dung từ tab biên tập.",
+      reason: 'Người dùng yêu cầu Agent tối ưu nội dung từ tab biên tập.',
     });
   }, [
     generatePostMutation,
@@ -293,7 +290,7 @@ export function useCampaignPlanning() {
 
     updateSelectedPost({
       mediaAsset: `AI visual: ${selectedPost.mediaPrompt}`,
-      status: "needs-review",
+      status: 'needs-review',
     });
   }, [selectedPost, updateSelectedPost]);
 
@@ -310,7 +307,7 @@ export function useCampaignPlanning() {
         ),
       }));
     },
-    [selectedPostId, updateCurrentSnapshot]
+    [selectedPostId, updateCurrentSnapshot],
   );
 
   return {
@@ -341,10 +338,9 @@ export function useCampaignPlanning() {
     approveAllPosts,
     scheduleCampaign,
     addSuggestedReply,
-    isLoading:
-      planningQuery.isFetching ||
-      generatePlanMutation.isPending ||
-      generatePostMutation.isPending ||
-      validateContentMutation.isPending,
+    isLoading: planningQuery.isFetching
+      || generatePlanMutation.isPending
+      || generatePostMutation.isPending
+      || validateContentMutation.isPending,
   };
 }

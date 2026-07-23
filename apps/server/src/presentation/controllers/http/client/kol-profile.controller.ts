@@ -1,14 +1,42 @@
-import { Controller, Get, Param, Query, Body, Patch, Delete, HttpCode, HttpStatus, UseGuards, Req } from '@nestjs/common';
-import { QueryBus, CommandBus } from '@nestjs/cqrs';
-import { ApiTags, ApiOperation, ApiBearerAuth, ApiSecurity } from '@nestjs/swagger';
-import { buildVersionedRoute } from '@presentation/utils';
-import { KolProfileGetListQuery, KolProfileGetByIdQuery, KolProfileGetHandlesDevQuery, KolProfileFilterDto } from '@/application/queries';
-import { KolProfileUpdateCommand, KolProfileHardDeleteCommand, UpdateKolProfileDto } from '@/application/commands';
+import {
+  KolProfileHardDeleteCommand,
+  KolProfileUpdateCommand,
+  UpdateKolProfileDto,
+} from '@/application/commands';
 import { KolProfileDto } from '@/application/dtos';
-import { PaginatedResponseDto, CursorPaginationRequestDto } from '@/application/dtos/pagination.dto';
-import { JwtAuthGuard, YoutubeAuthGuard, FacebookAuthGuard } from '@/presentation/middleware/guards';
+import {
+  CursorPaginationRequestDto,
+  PaginatedResponseDto,
+} from '@/application/dtos/pagination.dto';
+import {
+  KolProfileFilterDto,
+  KolProfileGetByIdQuery,
+  KolProfileGetHandlesDevQuery,
+  KolProfileGetListQuery,
+} from '@/application/queries';
 import { Public } from '@/presentation/decorators/public.decorator';
+import {
+  FacebookAuthGuard,
+  JwtAuthGuard,
+  YoutubeAuthGuard,
+} from '@/presentation/middleware/guards';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Param,
+  Patch,
+  Query,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
+import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { AuthGuard } from '@nestjs/passport';
+import { ApiBearerAuth, ApiOperation, ApiSecurity, ApiTags } from '@nestjs/swagger';
+import { buildVersionedRoute } from '@presentation/utils';
 
 @ApiTags('CLIENT-kol-profiles')
 @ApiBearerAuth()
@@ -18,7 +46,7 @@ export class KolProfileClientController {
   constructor(
     private readonly queryBus: QueryBus,
     private readonly commandBus: CommandBus,
-  ) { }
+  ) {}
 
   @Get('verify/youtube')
   @UseGuards(JwtAuthGuard, YoutubeAuthGuard)
@@ -74,14 +102,18 @@ export class KolProfileClientController {
   @Public()
   @Get()
   @ApiOperation({ summary: 'Search/List KOL profiles' })
-  async findAll(@Query() filters: KolProfileFilterDto): Promise<PaginatedResponseDto<KolProfileDto>> {
+  async findAll(
+    @Query() filters: KolProfileFilterDto,
+  ): Promise<PaginatedResponseDto<KolProfileDto>> {
     return this.queryBus.execute(new KolProfileGetListQuery(filters));
   }
 
   @Public()
   @Get('platforms')
   @ApiOperation({ summary: 'Get KOL profile handles mapping (for dev)' })
-  async findHandlesDev(@Query() pagination: CursorPaginationRequestDto): Promise<PaginatedResponseDto<any>> {
+  async findHandlesDev(
+    @Query() pagination: CursorPaginationRequestDto,
+  ): Promise<PaginatedResponseDto<any>> {
     return this.queryBus.execute(new KolProfileGetHandlesDevQuery(pagination));
   }
 
@@ -95,7 +127,10 @@ export class KolProfileClientController {
   @Public()
   @Patch(':id')
   @ApiOperation({ summary: 'Update anything of an influencer (PATCH)' })
-  async update(@Param('id') id: string, @Body() input: UpdateKolProfileDto): Promise<KolProfileDto> {
+  async update(
+    @Param('id') id: string,
+    @Body() input: UpdateKolProfileDto,
+  ): Promise<KolProfileDto> {
     return this.commandBus.execute(new KolProfileUpdateCommand(id, input));
   }
 

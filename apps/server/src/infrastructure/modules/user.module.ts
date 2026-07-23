@@ -2,17 +2,17 @@ import { Module } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
 
 import {
+  UserCheckValidCommandHandler,
   UserCreateCommandHandler,
-  UserUpdateCommandHandler,
-  UserUpdateProfileCommandHandler,
-  UserSoftDeleteCommandHandler,
   UserHardDeleteCommandHandler,
   UserRestoreCommandHandler,
-  UserCheckValidCommandHandler,
+  UserSoftDeleteCommandHandler,
+  UserUpdateCommandHandler,
+  UserUpdateProfileCommandHandler,
 } from '@/application/commands';
 
-import { UserGetByIdHandler, UserGetListHandler } from '@/application/queries';
 import { LinkUserAvatarHandler } from '@/application/events';
+import { UserGetByIdHandler, UserGetListHandler } from '@/application/queries';
 import { UserAdminController, UserClientController } from '@/presentation/controllers';
 
 const COMMAND_HANDLERS = [
@@ -22,7 +22,7 @@ const COMMAND_HANDLERS = [
   UserSoftDeleteCommandHandler,
   UserHardDeleteCommandHandler,
   UserRestoreCommandHandler,
-  UserCheckValidCommandHandler
+  UserCheckValidCommandHandler,
 ];
 
 const QUERY_HANDLERS = [

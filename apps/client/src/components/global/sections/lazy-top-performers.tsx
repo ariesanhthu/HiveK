@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import React, { useEffect, useState } from "react";
-import { useInView } from "@/hooks/use-in-view";
+import { useInView } from '@/hooks/use-in-view';
+import React, { useEffect, useState } from 'react';
 
 type Props = {
   fallback: React.ReactNode;
@@ -10,7 +10,7 @@ type Props = {
 
 export function LazyTopPerformers({
   fallback,
-  minHeight = "420px",
+  minHeight = '420px',
 }: Props) {
   const [ref, isInView] = useInView();
   const [Component, setComponent] = useState<React.ComponentType | null>(null);
@@ -18,7 +18,7 @@ export function LazyTopPerformers({
   useEffect(() => {
     if (!isInView) return;
     let cancelled = false;
-    import("./top-performers-section").then((m) => {
+    import('./top-performers-section').then((m) => {
       if (!cancelled) setComponent(() => m.TopPerformersSection);
     });
     return () => {
@@ -28,7 +28,7 @@ export function LazyTopPerformers({
 
   if (Component) return <Component />;
   return (
-    <div id="#influencers" ref={ref} style={{ minHeight }} aria-busy={!Component}>
+    <div id='#influencers' ref={ref} style={{ minHeight }} aria-busy={!Component}>
       {fallback}
     </div>
   );

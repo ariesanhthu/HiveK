@@ -3,26 +3,21 @@ import { CqrsModule } from '@nestjs/cqrs';
 import { EnterpriseModule } from './enterprise.module';
 
 import {
-  NotificationSendCommandHandler,
-  NotificationUpdateReadStatusCommandHandler,
-  NotificationSoftDeleteCommandHandler,
-  NotificationRestoreCommandHandler,
   NotificationHardDeleteCommandHandler,
+  NotificationRestoreCommandHandler,
+  NotificationSendCommandHandler,
+  NotificationSoftDeleteCommandHandler,
+  NotificationUpdateReadStatusCommandHandler,
 } from '@/application/commands';
 
-import {
-  NotificationGetListQueryHandler
-} from '@/application/queries';
+import { NotificationGetListQueryHandler } from '@/application/queries';
 
-import {
-  InAppNotificationHandler,
-  EmailNotificationHandler
-} from '@/application/events';
+import { EmailNotificationHandler, InAppNotificationHandler } from '@/application/events';
 
 import {
   NotificationAdminController,
-  NotificationClientController
-} from '@/presentation/controllers'
+  NotificationClientController,
+} from '@/presentation/controllers';
 
 import { NotificationRmqController } from '@/presentation/controllers';
 
@@ -44,4 +39,4 @@ const EVENT_HANDLERS = [InAppNotificationHandler, EmailNotificationHandler];
   providers: [...COMMAND_HANDLERS, ...QUERY_HANDLERS, ...EVENT_HANDLERS, NotificationRmqController],
   exports: [],
 })
-export class NotificationModule { }
+export class NotificationModule {}

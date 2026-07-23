@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import React, { useState } from "react";
-import type { CertificateComment } from "@/features/certificate-product/types";
-import { CommentItem } from "./comment-item";
+import type { CertificateComment } from '@/features/certificate-product/types';
+import React, { useState } from 'react';
+import { CommentItem } from './comment-item';
 
 type CommentSectionProps = {
   comments: CertificateComment[];
@@ -15,18 +15,18 @@ export const CommentSection: React.FC<CommentSectionProps> = ({ comments }) => {
   const hasMore = visibleCount < comments.length;
 
   return (
-    <section className="mt-8">
+    <section className='mt-8'>
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <h2 className="text-lg font-bold text-foreground">
+      <div className='flex items-center justify-between'>
+        <h2 className='text-lg font-bold text-foreground'>
           Cộng đồng đánh giá
         </h2>
 
         <button
-          type="button"
-          className="flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-semibold text-primary transition-colors hover:bg-primary/10"
+          type='button'
+          className='flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-semibold text-primary transition-colors hover:bg-primary/10'
         >
-          <span className="material-symbols-outlined text-base">
+          <span className='material-symbols-outlined text-base'>
             rate_review
           </span>
           Thêm bình luận
@@ -34,7 +34,7 @@ export const CommentSection: React.FC<CommentSectionProps> = ({ comments }) => {
       </div>
 
       {/* Comment list */}
-      <div className="mt-4 space-y-3">
+      <div className='mt-4 space-y-3'>
         {comments.slice(0, visibleCount).map((comment) => (
           <CommentItem key={comment.id} comment={comment} />
         ))}
@@ -43,9 +43,9 @@ export const CommentSection: React.FC<CommentSectionProps> = ({ comments }) => {
       {/* Load more */}
       {hasMore && (
         <button
-          type="button"
+          type='button'
           onClick={() => setVisibleCount((prev) => prev + 3)}
-          className="mt-4 w-full rounded-xl border border-primary-soft py-3 text-sm font-semibold text-foreground transition-colors hover:bg-muted"
+          className='mt-4 w-full rounded-xl border border-primary-soft py-3 text-sm font-semibold text-foreground transition-colors hover:bg-muted'
         >
           Xem thêm bình luận
         </button>

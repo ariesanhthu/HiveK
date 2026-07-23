@@ -2,12 +2,12 @@ import {
   type KolCandidate,
   type SearchResultsFilterState,
   type SocialPlatform,
-} from "@/features/kol-matching/types";
+} from '@/features/kol-matching/types';
 
-export const SEARCH_PLATFORM_OPTIONS: { id: SocialPlatform; label: string }[] = [
-  { id: "instagram", label: "Instagram" },
-  { id: "tiktok", label: "TikTok" },
-  { id: "youtube", label: "YouTube" },
+export const SEARCH_PLATFORM_OPTIONS: { id: SocialPlatform; label: string; }[] = [
+  { id: 'instagram', label: 'Instagram' },
+  { id: 'tiktok', label: 'TikTok' },
+  { id: 'youtube', label: 'YouTube' },
 ];
 
 export type SearchNicheFilterOption = {
@@ -18,32 +18,32 @@ export type SearchNicheFilterOption = {
 
 export const SEARCH_NICHE_FILTER_OPTIONS: SearchNicheFilterOption[] = [
   {
-    id: "beauty-lifestyle",
-    label: "Làm đẹp & Đời sống",
-    matchers: ["làm đẹp", "đời sống", "thời trang", "beauty", "lifestyle", "fashion"],
+    id: 'beauty-lifestyle',
+    label: 'Làm đẹp & Đời sống',
+    matchers: ['làm đẹp', 'đời sống', 'thời trang', 'beauty', 'lifestyle', 'fashion'],
   },
   {
-    id: "tech-gaming",
-    label: "Công nghệ & Game",
-    matchers: ["công nghệ", "game", "tech", "gaming"],
+    id: 'tech-gaming',
+    label: 'Công nghệ & Game',
+    matchers: ['công nghệ', 'game', 'tech', 'gaming'],
   },
   {
-    id: "health-wellness",
-    label: "Thể hình & Sức khỏe",
-    matchers: ["thể hình", "sức khỏe", "health", "wellness", "fitness"],
+    id: 'health-wellness',
+    label: 'Thể hình & Sức khỏe',
+    matchers: ['thể hình', 'sức khỏe', 'health', 'wellness', 'fitness'],
   },
   {
-    id: "food-cooking",
-    label: "Ẩm thực & Nấu ăn",
-    matchers: ["ẩm thực", "nấu ăn", "food", "cooking", "du lịch"],
+    id: 'food-cooking',
+    label: 'Ẩm thực & Nấu ăn',
+    matchers: ['ẩm thực', 'nấu ăn', 'food', 'cooking', 'du lịch'],
   },
 ];
 
-export const ENGAGEMENT_THRESHOLD_OPTIONS: { value: number; label: string }[] = [
-  { value: 0, label: "Bất kỳ" },
-  { value: 3, label: "Trên 3%" },
-  { value: 5, label: "Trên 5%" },
-  { value: 7, label: "Trên 7%" },
+export const ENGAGEMENT_THRESHOLD_OPTIONS: { value: number; label: string; }[] = [
+  { value: 0, label: 'Bất kỳ' },
+  { value: 3, label: 'Trên 3%' },
+  { value: 5, label: 'Trên 5%' },
+  { value: 7, label: 'Trên 7%' },
 ];
 
 export const FOLLOWER_MIN_K_MAX = 900;
@@ -92,13 +92,13 @@ function matchesEngagementMin(candidate: KolCandidate, engagementMinPercent: num
  */
 export function filterKolCandidatesBySearchFilters(
   candidates: KolCandidate[],
-  filters: SearchResultsFilterState
+  filters: SearchResultsFilterState,
 ): KolCandidate[] {
   return candidates.filter(
     (candidate) =>
-      matchesPlatformFilters(candidate, filters.platforms) &&
-      matchesNicheFilters(candidate, filters.nicheIds) &&
-      matchesFollowerMin(candidate, filters.followerMinK) &&
-      matchesEngagementMin(candidate, filters.engagementMinPercent)
+      matchesPlatformFilters(candidate, filters.platforms)
+      && matchesNicheFilters(candidate, filters.nicheIds)
+      && matchesFollowerMin(candidate, filters.followerMinK)
+      && matchesEngagementMin(candidate, filters.engagementMinPercent),
   );
 }

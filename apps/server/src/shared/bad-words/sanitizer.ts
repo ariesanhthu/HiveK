@@ -1,6 +1,6 @@
-import { SanitizeOptions, SanitizeResult } from './types';
+import { EMAIL_REGEX, PHONE_REGEX, URL_REGEX } from './constants';
 import { detectProfanityIndices } from './profanity';
-import { URL_REGEX, EMAIL_REGEX, PHONE_REGEX } from './constants';
+import { SanitizeOptions, SanitizeResult } from './types';
 
 /**
  * Sanitizes the input text by:
@@ -70,8 +70,7 @@ export function sanitize(input: string, options?: SanitizeOptions): SanitizeResu
 
   // ── Step 3: Calculate stats ──────────────────────────────────
   const flaggedCharCount = flagged.size;
-  const flaggedPercent =
-    totalLen > 0 ? Math.round((flaggedCharCount / totalLen) * 100) : 0;
+  const flaggedPercent = totalLen > 0 ? Math.round((flaggedCharCount / totalLen) * 100) : 0;
 
   return {
     sanitizedText,

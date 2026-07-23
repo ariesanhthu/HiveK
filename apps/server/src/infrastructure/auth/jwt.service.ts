@@ -1,6 +1,11 @@
+import {
+  IAuthJwtService,
+  IJwtPayload,
+  IJwtSignOptions,
+  IJwtVerifyOptions,
+} from '@/application/interfaces/auth-jwt.interface';
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { IAuthJwtService, IJwtPayload, IJwtSignOptions, IJwtVerifyOptions } from '@/application/interfaces/auth-jwt.interface';
 
 @Injectable()
 export class JwtAuthService implements IAuthJwtService {

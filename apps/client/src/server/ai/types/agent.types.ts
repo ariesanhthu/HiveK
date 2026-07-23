@@ -3,24 +3,24 @@ import type {
   CampaignPlanningData,
   CampaignPost,
   PlatformId,
-} from "@/features/campaign-planning/types/campaign-planning";
+} from '@/features/campaign-planning/types/campaign-planning';
 import type {
   FindKolEntryInput,
   KolCandidate,
   SocialPlatform,
-} from "@/features/kol-matching/types";
+} from '@/features/kol-matching/types';
 
-export type CampaignWorkflowMode = "human_review" | "auto_publish";
-export type FunnelStage = "awareness" | "consideration" | "conversion" | "retention";
-export type RiskLevel = "green" | "amber" | "red";
-export type ValidationDecision = "approve" | "revise" | "human_review";
-export type AgentRunStatus = "success" | "failed";
+export type CampaignWorkflowMode = 'human_review' | 'auto_publish';
+export type FunnelStage = 'awareness' | 'consideration' | 'conversion' | 'retention';
+export type RiskLevel = 'green' | 'amber' | 'red';
+export type ValidationDecision = 'approve' | 'revise' | 'human_review';
+export type AgentRunStatus = 'success' | 'failed';
 export type CampaignStepStatus =
-  | "draft"
-  | "approved"
-  | "scheduled"
-  | "published"
-  | "rejected";
+  | 'draft'
+  | 'approved'
+  | 'scheduled'
+  | 'published'
+  | 'rejected';
 
 export type AgentRunSummary = {
   runId: string;
@@ -124,7 +124,7 @@ export type KolKocRecommendation = {
   reason: string;
   evidence: string[];
   concerns: string[];
-  suggestedCampaignRole: FunnelStage | "review" | "livestream" | "affiliate";
+  suggestedCampaignRole: FunnelStage | 'review' | 'livestream' | 'affiliate';
 };
 
 export type KolKocMatchingResponse = {
@@ -133,14 +133,14 @@ export type KolKocMatchingResponse = {
 };
 
 export type FeedbackEventType =
-  | "approve"
-  | "reject"
-  | "edit"
-  | "regenerate"
-  | "publish"
-  | "pin_as_good"
-  | "mark_too_ai"
-  | "mark_wrong_fact";
+  | 'approve'
+  | 'reject'
+  | 'edit'
+  | 'regenerate'
+  | 'publish'
+  | 'pin_as_good'
+  | 'mark_too_ai'
+  | 'mark_wrong_fact';
 
 export type SaveFeedbackRequest = {
   campaignId: string;

@@ -1,8 +1,8 @@
-import { NotificationSendCommandHandler } from '@/application/commands/notification-send/notification-send.handler';
 import { NotificationSendCommand } from '@/application/commands/notification-send/notification-send.command';
-import { NotificationType, NotificationChannel, ERoleType } from '@/core/enums';
-import { EnterpriseNotFoundException, InvalidOperationException } from '@/core/exceptions';
+import { NotificationSendCommandHandler } from '@/application/commands/notification-send/notification-send.handler';
 import { NotificationDispatchedEvent } from '@/application/events';
+import { ERoleType, NotificationChannel, NotificationType } from '@/core/enums';
+import { EnterpriseNotFoundException, InvalidOperationException } from '@/core/exceptions';
 
 describe('NotificationSendCommandHandler', () => {
   let handler: NotificationSendCommandHandler;

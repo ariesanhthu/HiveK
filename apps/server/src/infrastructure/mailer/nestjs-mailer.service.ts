@@ -1,15 +1,14 @@
-import { Injectable, Inject } from '@nestjs/common';
-import { MailerService as NestMailService } from '@nestjs-modules/mailer';
-import type { IMailerService, ISendMailOptions, ILoggerService } from '@/application/interfaces';
+import type { ILoggerService, IMailerService, ISendMailOptions } from '@/application/interfaces';
 import { LOGGER_SERVICE } from '@/application/interfaces';
 import { errorMessage, toError } from '@/shared/utils';
+import { MailerService as NestMailService } from '@nestjs-modules/mailer';
+import { Inject, Injectable } from '@nestjs/common';
 
 @Injectable()
 export class NestjsMailerService implements IMailerService {
   constructor(
     private readonly mailerService: NestMailService,
-    @Inject(LOGGER_SERVICE)
-    private readonly logger: ILoggerService,
+    @Inject(LOGGER_SERVICE) private readonly logger: ILoggerService,
   ) {
     this.logger.setContext(NestjsMailerService.name);
   }
@@ -17,7 +16,7 @@ export class NestjsMailerService implements IMailerService {
   async sendMail(options: ISendMailOptions): Promise<void> {
     try {
       this.logger.log(`Sending email to ${options.to} with subject "${options.subject}"...`);
-      
+
       const mailOptions: ISendMailOptions = {
         to: options.to,
         subject: options.subject,

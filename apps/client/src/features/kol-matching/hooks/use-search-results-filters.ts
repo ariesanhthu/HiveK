@@ -1,15 +1,15 @@
-"use client";
+'use client';
 
-import { useCallback, useMemo, useState } from "react";
 import {
   filterKolCandidatesBySearchFilters,
   getDefaultSearchResultsFilterState,
-} from "@/features/kol-matching/services/search-results-filter-service";
+} from '@/features/kol-matching/services/search-results-filter-service';
 import {
   type KolCandidate,
   type SearchResultsFilterState,
   type SocialPlatform,
-} from "@/features/kol-matching/types";
+} from '@/features/kol-matching/types';
+import { useCallback, useMemo, useState } from 'react';
 
 export function useSearchResultsFilters(sourceCandidates: KolCandidate[]) {
   const [filters, setFilters] = useState<SearchResultsFilterState>(() =>
@@ -18,7 +18,7 @@ export function useSearchResultsFilters(sourceCandidates: KolCandidate[]) {
 
   const filteredCandidates = useMemo(
     () => filterKolCandidatesBySearchFilters(sourceCandidates, filters),
-    [sourceCandidates, filters]
+    [sourceCandidates, filters],
   );
 
   const clearFilters = useCallback(() => {

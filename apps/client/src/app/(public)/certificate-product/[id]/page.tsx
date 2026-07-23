@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 /* ------------------------------------------------------------------ */
 /*  Certificate Product Page – Client Component                        */
@@ -6,21 +6,21 @@
 /*  URL param [id] = "{productSlug}-{kolCode}"                         */
 /* ------------------------------------------------------------------ */
 
-import React from "react";
-import { useParams } from "next/navigation";
-import { useCertificateProduct } from "@/features/certificate-product/hooks/use-certificate-product";
 import {
-  VideoPlayer,
-  ProductCard,
+  CertificatePageSkeleton,
+  CommentSection,
   KolInfoCard,
   KolReviewQuote,
-  CommentSection,
-  CertificatePageSkeleton,
-} from "@/features/certificate-product/components";
+  ProductCard,
+  VideoPlayer,
+} from '@/features/certificate-product/components';
+import { useCertificateProduct } from '@/features/certificate-product/hooks/use-certificate-product';
+import { useParams } from 'next/navigation';
+import React from 'react';
 
 export default function CertificateProductPage() {
-  const params = useParams<{ id: string }>();
-  const slug = params.id ?? "";
+  const params = useParams<{ id: string; }>();
+  const slug = params.id ?? '';
   const { data, isLoading, error } = useCertificateProduct(slug);
 
   /* ── Loading state ── */
@@ -31,19 +31,20 @@ export default function CertificateProductPage() {
   /* ── Error / 404 state ── */
   if (error || !data) {
     return (
-      <div className="mx-auto flex max-w-md flex-col items-center gap-4 px-4 py-24 text-center">
-        <span className="material-symbols-outlined text-5xl text-primary/40">
+      <div className='mx-auto flex max-w-md flex-col items-center gap-4 px-4 py-24 text-center'>
+        <span className='material-symbols-outlined text-5xl text-primary/40'>
           error_outline
         </span>
-        <h1 className="text-xl font-bold text-foreground">
+        <h1 className='text-xl font-bold text-foreground'>
           Không tìm thấy sản phẩm
         </h1>
-        <p className="text-sm text-foreground-muted">
-          {error ?? "Link không hợp lệ hoặc sản phẩm không tồn tại. Vui lòng kiểm tra lại link bạn nhận được."}
+        <p className='text-sm text-foreground-muted'>
+          {error
+            ?? 'Link không hợp lệ hoặc sản phẩm không tồn tại. Vui lòng kiểm tra lại link bạn nhận được.'}
         </p>
         <a
-          href="/"
-          className="mt-2 rounded-xl bg-primary px-6 py-2.5 text-sm font-bold text-background-dark shadow-primary transition-all hover:bg-primary/90"
+          href='/'
+          className='mt-2 rounded-xl bg-primary px-6 py-2.5 text-sm font-bold text-background-dark shadow-primary transition-all hover:bg-primary/90'
         >
           Về trang chủ
         </a>
@@ -55,18 +56,18 @@ export default function CertificateProductPage() {
 
   /* ── Main layout ── */
   return (
-    <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6">
+    <div className='mx-auto max-w-5xl px-4 py-8 sm:px-6'>
       {/* Two-column grid: video+KOL left, product card right */}
-      <div className="grid gap-6 lg:grid-cols-[1fr_320px]">
+      <div className='grid gap-6 lg:grid-cols-[1fr_320px]'>
         {/* ─── Left Column ─── */}
-        <div className="space-y-5">
+        <div className='space-y-5'>
           <VideoPlayer kol={kol} />
           <KolInfoCard kol={kol} />
           <KolReviewQuote quote={kol.reviewQuote} />
         </div>
 
         {/* ─── Right Column ─── */}
-        <div className="lg:sticky lg:top-24 lg:self-start">
+        <div className='lg:sticky lg:top-24 lg:self-start'>
           <ProductCard product={product} perks={perks} />
         </div>
       </div>

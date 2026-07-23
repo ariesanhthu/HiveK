@@ -1,5 +1,5 @@
-import { KolProfileHardDeleteCommandHandler } from '@/application/commands/kol-profile-hard-delete/kol-profile-hard-delete.handler';
 import { KolProfileHardDeleteCommand } from '@/application/commands/kol-profile-hard-delete/kol-profile-hard-delete.command';
+import { KolProfileHardDeleteCommandHandler } from '@/application/commands/kol-profile-hard-delete/kol-profile-hard-delete.handler';
 import { UserNotFoundException } from '@/core/exceptions';
 
 describe('KolProfileHardDeleteCommandHandler', () => {

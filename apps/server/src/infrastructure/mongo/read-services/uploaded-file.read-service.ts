@@ -1,22 +1,24 @@
+import { UploadedFileDto } from '@/application/dtos';
+import { PaginatedResponseDto, SortOrder } from '@/application/dtos/pagination.dto';
+import { IUploadedFileReadService } from '@/application/interfaces';
+import { UploadedFileFilterDto } from '@/application/queries/uploaded-file-get-list/uploaded-file-get-list.dto';
+import { Nullable } from '@/core/types';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, QueryFilter } from 'mongoose';
 import { UploadedFileDocument, UploadedFileModel } from '../schemas';
-import { IUploadedFileReadService } from '@/application/interfaces';
-import { Nullable } from '@/core/types';
-import { UploadedFileDto } from '@/application/dtos';
-import { UploadedFileFilterDto } from '@/application/queries/uploaded-file-get-list/uploaded-file-get-list.dto';
-import { PaginatedResponseDto, SortOrder } from '@/application/dtos/pagination.dto';
 
 @Injectable()
 export class MongoUploadedFileReadService implements IUploadedFileReadService {
   constructor(
-    @InjectModel(UploadedFileModel.name)
-    private readonly model: Model<UploadedFileDocument>,
+    @InjectModel(UploadedFileModel.name) private readonly model: Model<UploadedFileDocument>,
   ) {}
 
-  async findAll(filters: UploadedFileFilterDto = {} as any): Promise<PaginatedResponseDto<UploadedFileDto>> {
-    const { cursor, limit = 10, sort = SortOrder.DESC, targetId, format, size, minSize, maxSize } = filters;
+  async findAll(
+    filters: UploadedFileFilterDto = {} as any,
+  ): Promise<PaginatedResponseDto<UploadedFileDto>> {
+    const { cursor, limit = 10, sort = SortOrder.DESC, targetId, format, size, minSize, maxSize } =
+      filters;
     const query: QueryFilter<UploadedFileDocument> = { delete_at: null };
 
     if (targetId) {

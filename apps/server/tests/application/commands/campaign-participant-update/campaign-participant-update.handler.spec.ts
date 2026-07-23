@@ -1,8 +1,8 @@
-import { CampaignParticipantUpdateCommandHandler } from '@/application/commands/campaign-participant-update/campaign-participant-update.handler';
 import { CampaignParticipantUpdateCommand } from '@/application/commands/campaign-participant-update/campaign-participant-update.command';
+import { CampaignParticipantUpdateCommandHandler } from '@/application/commands/campaign-participant-update/campaign-participant-update.handler';
 import { CampaignParticipantRoot } from '@/core/aggregate-roots';
+import { EOutputStatus, EOutputType, EParticipantStatus } from '@/core/enums';
 import { CampaignParticipantNotFoundException } from '@/core/exceptions';
-import { EParticipantStatus, EOutputStatus, EOutputType } from '@/core/enums';
 
 describe('CampaignParticipantUpdateCommandHandler', () => {
   let handler: CampaignParticipantUpdateCommandHandler;
@@ -19,7 +19,9 @@ describe('CampaignParticipantUpdateCommandHandler', () => {
   it('should throw CampaignParticipantNotFoundException if participant not found', async () => {
     mockParticipantRepository.findById.mockResolvedValue(null);
 
-    const command = new CampaignParticipantUpdateCommand('non-existent', { status: EParticipantStatus.JOINED });
+    const command = new CampaignParticipantUpdateCommand('non-existent', {
+      status: EParticipantStatus.JOINED,
+    });
     await expect(handler.execute(command)).rejects.toThrow(CampaignParticipantNotFoundException);
   });
 
@@ -38,7 +40,9 @@ describe('CampaignParticipantUpdateCommandHandler', () => {
 
     mockParticipantRepository.findById.mockResolvedValue(participant);
 
-    const command = new CampaignParticipantUpdateCommand('participant-123', { status: EParticipantStatus.JOINED });
+    const command = new CampaignParticipantUpdateCommand('participant-123', {
+      status: EParticipantStatus.JOINED,
+    });
     await handler.execute(command);
 
     expect(participant.status).toBe(EParticipantStatus.JOINED);

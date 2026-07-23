@@ -1,15 +1,14 @@
+import { RoleRoot } from '@/core/aggregate-roots';
+import { RoleConflictException } from '@/core/exceptions';
+import { type IRoleRepository, ROLE_REPOSITORY } from '@/core/interfaces/repositories';
+import { Inject } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { RoleCreateCommand } from './role-create.command';
-import { Inject } from '@nestjs/common';
-import { RoleConflictException } from '@/core/exceptions';
-import { ROLE_REPOSITORY, type IRoleRepository } from '@/core/interfaces/repositories';
-import { RoleRoot } from '@/core/aggregate-roots';
 
 @CommandHandler(RoleCreateCommand)
 export class RoleCreateCommandHandler implements ICommandHandler<RoleCreateCommand, string> {
   constructor(
-    @Inject(ROLE_REPOSITORY)
-    private readonly roleRepository: IRoleRepository,
+    @Inject(ROLE_REPOSITORY) private readonly roleRepository: IRoleRepository,
   ) {}
 
   async execute(command: RoleCreateCommand): Promise<string> {

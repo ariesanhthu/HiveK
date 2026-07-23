@@ -1,2 +1,2 @@
-export * from './types'
-export * from './graphql.module'
+export * from './graphql.module';
+export * from './types';

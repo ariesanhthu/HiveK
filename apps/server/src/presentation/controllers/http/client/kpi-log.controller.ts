@@ -1,11 +1,11 @@
-import { Controller, Get, Query, UseGuards } from '@nestjs/common';
-import { QueryBus } from '@nestjs/cqrs';
-import { ApiTags, ApiOperation, ApiBearerAuth, ApiSecurity } from '@nestjs/swagger';
-import { buildVersionedRoute } from '@presentation/utils';
 import { KpiLogDto } from '@/application/dtos';
 import { PaginatedResponseDto } from '@/application/dtos/pagination.dto';
-import { KpiLogGetListQuery, KpiLogFilterDto } from '@/application/queries';
+import { KpiLogFilterDto, KpiLogGetListQuery } from '@/application/queries';
 import { JwtAuthGuard } from '@/presentation/middleware/guards';
+import { Controller, Get, Query, UseGuards } from '@nestjs/common';
+import { QueryBus } from '@nestjs/cqrs';
+import { ApiBearerAuth, ApiOperation, ApiSecurity, ApiTags } from '@nestjs/swagger';
+import { buildVersionedRoute } from '@presentation/utils';
 
 @ApiTags('CLIENT-analytics')
 @ApiBearerAuth()

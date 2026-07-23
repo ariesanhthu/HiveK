@@ -22,27 +22,27 @@ Trend không chỉ là meme hoặc câu hot. Trong HIVE-K, trend là một tín 
 type TrendSignal = {
   id: string;
   sourceType:
-    | "user_pasted_post"
-    | "competitor_example"
-    | "creator_example"
-    | "brand_history"
-    | "performance_data"
-    | "manual_note"
-    | "platform_observation";
-  platform: "facebook" | "instagram" | "threads" | "tiktok";
+    | 'user_pasted_post'
+    | 'competitor_example'
+    | 'creator_example'
+    | 'brand_history'
+    | 'performance_data'
+    | 'manual_note'
+    | 'platform_observation';
+  platform: 'facebook' | 'instagram' | 'threads' | 'tiktok';
   rawText?: string;
   sourceUrl?: string;
   screenshotNote?: string;
   observedAt: string;
   trendType:
-    | "hook_pattern"
-    | "content_structure"
-    | "visual_format"
-    | "cta_pattern"
-    | "comment_pattern"
-    | "storytelling_angle"
-    | "meme_reference"
-    | "ugc_style";
+    | 'hook_pattern'
+    | 'content_structure'
+    | 'visual_format'
+    | 'cta_pattern'
+    | 'comment_pattern'
+    | 'storytelling_angle'
+    | 'meme_reference'
+    | 'ugc_style';
   summary: string;
   extractedPattern: string;
   exampleWithoutCopying: string;
@@ -118,13 +118,13 @@ Agent phải chấm điểm trend trước khi dùng.
 
 ```ts
 type TrendScore = {
-  freshness: number;        // mới/còn hợp thời không
-  brandFit: number;         // có hợp brand không
-  audienceFit: number;      // khách hàng mục tiêu có hiểu không
-  platformFit: number;      // hợp Facebook/Instagram/Threads không
-  executionEase: number;    // brand có đủ media/context để làm không
-  riskScore: number;        // càng cao càng rủi ro
-  saturationScore: number;  // đã bị dùng quá nhiều chưa
+  freshness: number; // mới/còn hợp thời không
+  brandFit: number; // có hợp brand không
+  audienceFit: number; // khách hàng mục tiêu có hiểu không
+  platformFit: number; // hợp Facebook/Instagram/Threads không
+  executionEase: number; // brand có đủ media/context để làm không
+  riskScore: number; // càng cao càng rủi ro
+  saturationScore: number; // đã bị dùng quá nhiều chưa
   finalScore: number;
 };
 ```
@@ -156,11 +156,11 @@ Quy tắc:
 ```ts
 type TrendPlaybook = {
   campaignId: string;
-  platform: "facebook" | "instagram" | "threads";
-  trendMode: "safe" | "balanced" | "aggressive";
+  platform: 'facebook' | 'instagram' | 'threads';
+  trendMode: 'safe' | 'balanced' | 'aggressive';
   recommendedPatterns: Array<{
     patternName: string;
-    patternType: TrendSignal["trendType"];
+    patternType: TrendSignal['trendType'];
     description: string;
     whenToUse: string;
     whenNotToUse: string;
@@ -265,7 +265,7 @@ Output Instagram:
 type InstagramPostDraft = {
   hook: string;
   caption: string;
-  carouselSlides?: Array<{ title: string; body: string }>;
+  carouselSlides?: Array<{ title: string; body: string; }>;
   reelsSceneIdea?: string;
   cta: string;
   hashtags: string[];
@@ -318,14 +318,14 @@ type ThreadsPostDraft = {
 
 Agent không chọn angle ngẫu nhiên. Angle phải map với objective và audience blocker.
 
-| Objective | Angle nên ưu tiên | Ví dụ |
-|---|---|---|
-| Awareness | Quan sát thị trường, pain point, myth-busting | “Nhiều shop không thiếu sản phẩm, họ thiếu cách làm khách tin.” |
-| Engagement | Câu hỏi, tranh luận nhẹ, trải nghiệm thật | “Bạn tin review KOC hơn hay quảng cáo brand hơn?” |
-| Traffic | Checklist, hướng dẫn, tài nguyên | “3 bước chọn KOC trước khi chạy campaign.” |
-| Leads | Problem-solution, case mini, audit offer | “Gửi campaign brief, HIVE-K gợi ý KOC phù hợp.” |
-| Sales | Offer, proof, urgency thật | “Gói Standard cho local brand muốn lên bài đều hơn.” |
-| Creator recruitment | Lợi ích creator, minh bạch, quyền lợi | “KOC không cần tự đi tìm brand thủ công nữa.” |
+| Objective           | Angle nên ưu tiên                             | Ví dụ                                                           |
+| ------------------- | --------------------------------------------- | --------------------------------------------------------------- |
+| Awareness           | Quan sát thị trường, pain point, myth-busting | “Nhiều shop không thiếu sản phẩm, họ thiếu cách làm khách tin.” |
+| Engagement          | Câu hỏi, tranh luận nhẹ, trải nghiệm thật     | “Bạn tin review KOC hơn hay quảng cáo brand hơn?”               |
+| Traffic             | Checklist, hướng dẫn, tài nguyên              | “3 bước chọn KOC trước khi chạy campaign.”                      |
+| Leads               | Problem-solution, case mini, audit offer      | “Gửi campaign brief, HIVE-K gợi ý KOC phù hợp.”                 |
+| Sales               | Offer, proof, urgency thật                    | “Gói Standard cho local brand muốn lên bài đều hơn.”            |
+| Creator recruitment | Lợi ích creator, minh bạch, quyền lợi         | “KOC không cần tự đi tìm brand thủ công nữa.”                   |
 
 ---
 
@@ -448,10 +448,10 @@ type ContentValidationResult = {
   platformFitScore: number;
   trendFitScore: number;
   salesPressureScore: number;
-  riskLevel: "green" | "amber" | "red";
+  riskLevel: 'green' | 'amber' | 'red';
   issues: string[];
   suggestedRevision?: string;
-  finalDecision: "approve" | "revise" | "human_review";
+  finalDecision: 'approve' | 'revise' | 'human_review';
 };
 ```
 
@@ -480,7 +480,7 @@ Lưu:
 - Trend pattern đã dùng.
 
 ```ts
-memory.type = "approved_structure";
+memory.type = 'approved_structure';
 memory.confidence += 0.1;
 ```
 
@@ -494,7 +494,7 @@ Lưu:
 - Lý do reject.
 
 ```ts
-memory.type = "rejected_phrase";
+memory.type = 'rejected_phrase';
 memory.confidence += 0.1;
 ```
 
@@ -535,7 +535,7 @@ type TrendMemory = {
   brandId: string;
   campaignId?: string;
   platform: string;
-  patternType: TrendSignal["trendType"];
+  patternType: TrendSignal['trendType'];
   patternSummary: string;
   exampleAdaptation: string;
   score: TrendScore;
@@ -546,7 +546,7 @@ type TrendMemory = {
     clickRate?: number;
     leadRate?: number;
   };
-  status: "active" | "watch" | "deprecated" | "rejected";
+  status: 'active' | 'watch' | 'deprecated' | 'rejected';
   createdAt: string;
   updatedAt: string;
 };

@@ -10,12 +10,12 @@ When receiving a user request, follow this process:
 
 Identify which of the 4 categories the request belongs to:
 
-| Icon | Type        | Keywords to Detect |
-|:----:|:------------|:-------------------|
-| 🔍 | **CONSULT** | "should", "recommend", "compare", "suggest", "advice" |
-| 🏗️ | **BUILD**   | "create", "make", "build", "add", "implement", "write" |
-| 🔧 | **DEBUG**   | "error", "bug", "not working", "wrong", "fix" |
-| ⚡ | **OPTIMIZE** | "slow", "refactor", "clean", "improve", "optimize" |
+| Icon | Type         | Keywords to Detect                                     |
+| :--: | :----------- | :----------------------------------------------------- |
+|  🔍  | **CONSULT**  | "should", "recommend", "compare", "suggest", "advice"  |
+|  🏗️   | **BUILD**    | "create", "make", "build", "add", "implement", "write" |
+|  🔧  | **DEBUG**    | "error", "bug", "not working", "wrong", "fix"          |
+|  ⚡  | **OPTIMIZE** | "slow", "refactor", "clean", "improve", "optimize"     |
 
 > **Note:** If unclear → Ask the user before proceeding.
 
@@ -56,17 +56,20 @@ Identify which of the 4 categories the request belongs to:
 ## Step 3: Pre-Delivery Checklist
 
 **Code Quality:**
+
 - [ ] No `any` types
 - [ ] No hardcoded magic numbers/strings
 - [ ] Proper error handling
 - [ ] Clear variable/function naming
 
 **Structure:**
+
 - [ ] Correct folder structure
 - [ ] Consistent naming convention
 - [ ] Split files appropriately (< 200 lines/file)
 
 **UI/UX (if applicable):**
+
 - [ ] Follows Design System
 - [ ] Responsive, mobile-first
 - [ ] Loading/Error/Empty states

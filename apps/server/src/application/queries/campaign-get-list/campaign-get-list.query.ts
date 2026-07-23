@@ -1,7 +1,7 @@
-import { Query } from '@nestjs/cqrs';
-import { CampaignFilterDto } from './campaign-get-list.dto';
 import { CampaignDto } from '@/application/dtos';
 import { PaginatedResponseDto } from '@/application/dtos/pagination.dto';
+import { Query } from '@nestjs/cqrs';
+import { CampaignFilterDto } from './campaign-get-list.dto';
 
 import { ProjectionDto } from '@/application/dtos/projection.dto';
 

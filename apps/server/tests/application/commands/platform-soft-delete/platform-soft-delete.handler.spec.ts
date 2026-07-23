@@ -1,6 +1,6 @@
-import { PlatformSoftDeleteCommandHandler } from '@/application/commands/platform-soft-delete/platform-soft-delete.handler';
 import { PlatformSoftDeleteCommand } from '@/application/commands/platform-soft-delete/platform-soft-delete.command';
-import { PlatformNotFoundException, InvalidOperationException } from '@/core/exceptions';
+import { PlatformSoftDeleteCommandHandler } from '@/application/commands/platform-soft-delete/platform-soft-delete.handler';
+import { InvalidOperationException, PlatformNotFoundException } from '@/core/exceptions';
 
 describe('PlatformSoftDeleteCommandHandler', () => {
   let handler: PlatformSoftDeleteCommandHandler;
@@ -14,15 +14,15 @@ describe('PlatformSoftDeleteCommandHandler', () => {
       save: jest.fn(),
     };
     mockKolProfileRepository = {
-        existsByPlatformId: jest.fn(),
+      existsByPlatformId: jest.fn(),
     };
     mockUow = {
-        execute: jest.fn((fn: any) => fn()),
+      execute: jest.fn((fn: any) => fn()),
     };
     handler = new PlatformSoftDeleteCommandHandler(
-        mockPlatformRepository, 
-        mockKolProfileRepository, 
-        mockUow
+      mockPlatformRepository,
+      mockKolProfileRepository,
+      mockUow,
     );
   });
 

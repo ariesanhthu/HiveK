@@ -1,20 +1,23 @@
+import { NotificationDto, NotificationFilterDto } from '@/application/dtos';
+import { PaginatedResponseDto } from '@/application/dtos/pagination.dto';
+import { INotificationReadService } from '@/application/interfaces';
+import { Nullable } from '@/core/types';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, QueryFilter, Schema, Types } from 'mongoose';
-import { INotificationReadService } from '@/application/interfaces';
-import { UserNotificationModel, UserNotificationDocument } from '../schemas';
-import { NotificationDto, NotificationFilterDto } from '@/application/dtos';
-import { PaginatedResponseDto } from '@/application/dtos/pagination.dto';
-import { Nullable } from '@/core/types';
+import { UserNotificationDocument, UserNotificationModel } from '../schemas';
 
 @Injectable()
 export class MongoNotificationReadService implements INotificationReadService {
   constructor(
-    @InjectModel(UserNotificationModel.name)
-    private readonly userNotificationModel: Model<UserNotificationDocument>,
+    @InjectModel(UserNotificationModel.name) private readonly userNotificationModel: Model<
+      UserNotificationDocument
+    >,
   ) {}
 
-  async findAll(filters: NotificationFilterDto = {} as any): Promise<PaginatedResponseDto<NotificationDto>> {
+  async findAll(
+    filters: NotificationFilterDto = {} as any,
+  ): Promise<PaginatedResponseDto<NotificationDto>> {
     const { cursor, limit = 10, recipientId, isRead } = filters;
     const matchStage: QueryFilter<UserNotificationDocument> = { delete_at: null };
 

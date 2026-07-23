@@ -1,8 +1,8 @@
-import { CampaignParticipantHardDeleteCommandHandler } from '@/application/commands/campaign-participant-hard-delete/campaign-participant-hard-delete.handler';
 import { CampaignParticipantHardDeleteCommand } from '@/application/commands/campaign-participant-hard-delete/campaign-participant-hard-delete.command';
+import { CampaignParticipantHardDeleteCommandHandler } from '@/application/commands/campaign-participant-hard-delete/campaign-participant-hard-delete.handler';
 import { CampaignParticipantRoot } from '@/core/aggregate-roots';
+import { EOutputStatus, EOutputType, EParticipantStatus } from '@/core/enums';
 import { CampaignParticipantNotFoundException, InvalidOperationException } from '@/core/exceptions';
-import { EOutputStatus, EParticipantStatus, EOutputType } from '@/core/enums';
 
 describe('CampaignParticipantHardDeleteCommandHandler', () => {
   let handler: CampaignParticipantHardDeleteCommandHandler;

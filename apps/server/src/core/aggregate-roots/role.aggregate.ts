@@ -72,7 +72,7 @@ export class RoleRoot extends BaseAggregateRoot<RoleProps> {
     this.props.deleteBy = null;
   }
 
-  public update(props: { title?: string; permissions?: string[]; type?: ERoleType }): void {
+  public update(props: { title?: string; permissions?: string[]; type?: ERoleType; }): void {
     if (props.title !== undefined) this.props.title = props.title;
     if (props.permissions !== undefined) this.props.permissions = props.permissions;
     if (props.type !== undefined) this.props.type = props.type;

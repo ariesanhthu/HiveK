@@ -1,27 +1,34 @@
-import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { Inject } from '@nestjs/common';
-import { AuthSendOtpCommand } from './auth-send-otp.command';
-import { AuthSendOtpOutputDto } from './auth-send-otp.dto';
-import { OTP_REPOSITORY, USER_REPOSITORY, type IOtpRepository, type IUserRepository } from '@/core/interfaces/repositories';
+import { EVENT_SERVICE, type IUnitOfWork, UNIT_OF_WORK } from '@/application/interfaces';
+import type { IEventService } from '@/application/interfaces';
 import { AuthService } from '@/application/services/auth.service';
 import { OtpRoot } from '@/core/aggregate-roots/otp.aggregate';
-import { OtpRateLimitException, ForbiddenDomainException, UserNotFoundException } from '@/core/exceptions';
-import { type IUnitOfWork, UNIT_OF_WORK, EVENT_SERVICE } from '@/application/interfaces';
-import type { IEventService } from '@/application/interfaces';
 import { EOtpType } from '@/core/enums';
+import {
+  ForbiddenDomainException,
+  OtpRateLimitException,
+  UserNotFoundException,
+} from '@/core/exceptions';
+import {
+  type IOtpRepository,
+  type IUserRepository,
+  OTP_REPOSITORY,
+  USER_REPOSITORY,
+} from '@/core/interfaces/repositories';
+import { Inject } from '@nestjs/common';
+import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
+import { AuthSendOtpCommand } from './auth-send-otp.command';
+import { AuthSendOtpOutputDto } from './auth-send-otp.dto';
 
 @CommandHandler(AuthSendOtpCommand)
-export class AuthSendOtpCommandHandler implements ICommandHandler<AuthSendOtpCommand, AuthSendOtpOutputDto> {
+export class AuthSendOtpCommandHandler
+  implements ICommandHandler<AuthSendOtpCommand, AuthSendOtpOutputDto>
+{
   constructor(
-    @Inject(OTP_REPOSITORY)
-    private readonly otpRepository: IOtpRepository,
-    @Inject(USER_REPOSITORY)
-    private readonly userRepository: IUserRepository,
-    @Inject(EVENT_SERVICE)
-    private readonly eventService: IEventService,
+    @Inject(OTP_REPOSITORY) private readonly otpRepository: IOtpRepository,
+    @Inject(USER_REPOSITORY) private readonly userRepository: IUserRepository,
+    @Inject(EVENT_SERVICE) private readonly eventService: IEventService,
     private readonly authService: AuthService,
-    @Inject(UNIT_OF_WORK)
-    private readonly uow: IUnitOfWork,
+    @Inject(UNIT_OF_WORK) private readonly uow: IUnitOfWork,
   ) {}
 
   async execute(command: AuthSendOtpCommand): Promise<AuthSendOtpOutputDto> {

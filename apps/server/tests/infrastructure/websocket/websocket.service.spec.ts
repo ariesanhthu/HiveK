@@ -35,7 +35,9 @@ describe('WebSocketService', () => {
     it('should broadcast to all connected clients', () => {
       service.broadcastAll('system_announcement', { message: 'Maintenance' });
 
-      expect(mockServer.emit).toHaveBeenCalledWith('system_announcement', { message: 'Maintenance' });
+      expect(mockServer.emit).toHaveBeenCalledWith('system_announcement', {
+        message: 'Maintenance',
+      });
     });
   });
 

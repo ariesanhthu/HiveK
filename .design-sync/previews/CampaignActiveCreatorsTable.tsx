@@ -1,7 +1,8 @@
 import { CampaignActiveCreatorsTable } from 'client';
 
 function avatar(bg: string, initials: string) {
-  const svg = `<svg xmlns='http://www.w3.org/2000/svg' width='80' height='80'><rect width='80' height='80' fill='${bg}'/><text x='50%' y='54%' font-family='Arial' font-size='30' fill='white' text-anchor='middle' dominant-baseline='middle'>${initials}</text></svg>`;
+  const svg =
+    `<svg xmlns='http://www.w3.org/2000/svg' width='80' height='80'><rect width='80' height='80' fill='${bg}'/><text x='50%' y='54%' font-family='Arial' font-size='30' fill='white' text-anchor='middle' dominant-baseline='middle'>${initials}</text></svg>`;
   return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
 }
 

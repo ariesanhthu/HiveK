@@ -1,9 +1,9 @@
-import { Strategy } from 'passport-twitter';
-import { PassportStrategy } from '@nestjs/passport';
+import { KolProfileVerifyPlatformAccountCommand } from '@/application/commands';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { CommandBus } from '@nestjs/cqrs';
-import { KolProfileVerifyPlatformAccountCommand } from '@/application/commands';
+import { PassportStrategy } from '@nestjs/passport';
+import { Strategy } from 'passport-twitter';
 
 @Injectable()
 export class TwitterStrategy extends PassportStrategy(Strategy, 'twitter') {
@@ -14,7 +14,8 @@ export class TwitterStrategy extends PassportStrategy(Strategy, 'twitter') {
     super({
       consumerKey: configService.get<string>('TWITTER_CONSUMER_KEY') || 'dummy-key',
       consumerSecret: configService.get<string>('TWITTER_CONSUMER_SECRET') || 'dummy-secret',
-      callbackURL: configService.get<string>('TWITTER_CALLBACK_URL') || 'http://localhost/dummy-callback',
+      callbackURL: configService.get<string>('TWITTER_CALLBACK_URL')
+        || 'http://localhost/dummy-callback',
       includeEmail: true,
       passReqToCallback: true,
     });

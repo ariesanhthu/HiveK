@@ -7,8 +7,7 @@ const defaultForm: any = {
   productName: 'Áo khoác gió ON TOP',
   cta: 'Comment size để được tư vấn',
   landingUrl: 'https://ontop.brand',
-  description:
-    'Chiến dịch ra mắt áo khoác gió ON TOP cho người trẻ cần một item gọn, dễ phối.',
+  description: 'Chiến dịch ra mắt áo khoác gió ON TOP cho người trẻ cần một item gọn, dễ phối.',
   keyMessage: 'Nhẹ nhưng chỉn chu: cản gió, chống thấm nhẹ, phối được nhiều outfit.',
   targetAudience: 'Nam nữ 18-28 tuổi thành phố, thích streetwear tối giản.',
   customerInsight: 'Khách muốn áo nhìn gọn, lên ảnh đẹp nhưng vẫn hữu dụng.',
@@ -35,7 +34,7 @@ export function Open() {
     <div style={{ position: 'relative', width: 1000, height: 760, overflow: 'hidden' }}>
       <CampaignCreateDrawer
         isOpen
-        mode="create"
+        mode='create'
         defaultForm={defaultForm}
         onClose={() => {}}
         onCreateCampaign={() => {}}

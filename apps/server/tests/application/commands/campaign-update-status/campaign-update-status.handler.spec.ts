@@ -1,8 +1,8 @@
-import { CampaignUpdateStatusCommandHandler } from '@/application/commands/campaign-update-status/campaign-update-status.handler';
 import { CampaignUpdateStatusCommand } from '@/application/commands/campaign-update-status/campaign-update-status.command';
+import { CampaignUpdateStatusCommandHandler } from '@/application/commands/campaign-update-status/campaign-update-status.handler';
 import { CampaignRoot } from '@/core/aggregate-roots/campaign.aggregate';
-import { CampaignNotFoundException, CampaignForbiddenException } from '@/core/exceptions';
 import { ECampaignStatus } from '@/core/enums/campaign-status.enum';
+import { CampaignForbiddenException, CampaignNotFoundException } from '@/core/exceptions';
 
 describe('CampaignUpdateStatusCommandHandler', () => {
   let handler: CampaignUpdateStatusCommandHandler;
@@ -59,7 +59,11 @@ describe('CampaignUpdateStatusCommandHandler', () => {
     const campaign = createMockCampaign();
     mockCampaignRepository.findById.mockResolvedValue(campaign);
 
-    const command = new CampaignUpdateStatusCommand(campaignId, 'wrong-owner', ECampaignStatus.ACTIVE);
+    const command = new CampaignUpdateStatusCommand(
+      campaignId,
+      'wrong-owner',
+      ECampaignStatus.ACTIVE,
+    );
 
     await expect(handler.execute(command)).rejects.toThrow(CampaignForbiddenException);
   });

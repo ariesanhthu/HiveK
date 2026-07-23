@@ -1,5 +1,5 @@
-import { ExecutionContext } from '@nestjs/common';
 import { GoogleAuthGuard } from '@/presentation/middleware/guards/google-auth.guard';
+import { ExecutionContext } from '@nestjs/common';
 
 describe('GoogleAuthGuard', () => {
   let guard: GoogleAuthGuard;

@@ -9,7 +9,9 @@ export interface CampaignParticipantCreatedPayload {
   campaignName?: string;
 }
 
-export class CampaignParticipantCreatedEvent extends DomainEvent<CampaignParticipantCreatedPayload> {
+export class CampaignParticipantCreatedEvent
+  extends DomainEvent<CampaignParticipantCreatedPayload>
+{
   public readonly eventType = 'CampaignParticipantCreated';
   public readonly aggregateType = EAggregateType.CAMPAIGN_PARTICIPANT;
 

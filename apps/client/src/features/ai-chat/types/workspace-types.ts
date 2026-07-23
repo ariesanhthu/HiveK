@@ -1,29 +1,29 @@
 export type WorkspaceViewId =
-  | "overview"
-  | "brand"
-  | "channels"
-  | "satellites"
-  | "strategy"
-  | "analytics"
-  | "studio";
+  | 'overview'
+  | 'brand'
+  | 'channels'
+  | 'satellites'
+  | 'strategy'
+  | 'analytics'
+  | 'studio';
 
-export type WorkspaceLoadStatus = "idle" | "loading" | "success" | "error";
+export type WorkspaceLoadStatus = 'idle' | 'loading' | 'success' | 'error';
 
-export type DataQuality = "verified" | "user_provided" | "estimated";
+export type DataQuality = 'verified' | 'user_provided' | 'estimated';
 
-export type ReviewStatus = "confirmed" | "needs_review";
+export type ReviewStatus = 'confirmed' | 'needs_review';
 
 export type SocialPlatform =
-  | "website"
-  | "facebook"
-  | "tiktok"
-  | "youtube"
-  | "linkedin"
-  | "x";
+  | 'website'
+  | 'facebook'
+  | 'tiktok'
+  | 'youtube'
+  | 'linkedin'
+  | 'x';
 
 export interface Provenance {
   id: string;
-  sourceType: "website" | "social" | "user" | "analysis";
+  sourceType: 'website' | 'social' | 'user' | 'analysis';
   label: string;
   url: string | null;
   observedAt: string;
@@ -31,13 +31,13 @@ export interface Provenance {
 }
 
 export type BrandFactCategory =
-  | "identity"
-  | "contact"
-  | "positioning"
-  | "service"
-  | "audience"
-  | "proof"
-  | "voice";
+  | 'identity'
+  | 'contact'
+  | 'positioning'
+  | 'service'
+  | 'audience'
+  | 'proof'
+  | 'voice';
 
 export interface BrandFact {
   id: string;
@@ -54,14 +54,14 @@ export interface BrandFact {
 }
 
 export type BrandFactPatch = Partial<
-  Pick<BrandFact, "category" | "label" | "value" | "isRequired">
+  Pick<BrandFact, 'category' | 'label' | 'value' | 'isRequired'>
 >;
 
 export interface BrandReadiness {
   score: number;
-  requiredFacts: { confirmed: number; total: number };
-  allFacts: { confirmed: number; total: number };
-  connectedChannels: { confirmed: number; total: number };
+  requiredFacts: { confirmed: number; total: number; };
+  allFacts: { confirmed: number; total: number; };
+  connectedChannels: { confirmed: number; total: number; };
   unresolvedItems: number;
   summary: string;
 }
@@ -82,17 +82,17 @@ export interface ChannelMetric {
   label: string;
   value: number;
   formattedValue: string;
-  unit: "count" | "percent" | "minutes";
+  unit: 'count' | 'percent' | 'minutes';
   period: string;
   deltaPercent: number | null;
   dataQuality: DataQuality;
 }
 
 export type ChannelConnectionStatus =
-  | "public_only"
-  | "connected"
-  | "needs_reconnect"
-  | "planned";
+  | 'public_only'
+  | 'connected'
+  | 'needs_reconnect'
+  | 'planned';
 
 export interface ChannelProfile {
   id: string;
@@ -120,26 +120,26 @@ export interface ChannelProfile {
 export type ChannelProfilePatch = Partial<
   Pick<
     ChannelProfile,
-    | "displayName"
-    | "handle"
-    | "url"
-    | "role"
-    | "audience"
-    | "contentPillars"
-    | "formats"
-    | "tone"
-    | "cadence"
-    | "connectionStatus"
-    | "canRead"
-    | "canPublish"
+    | 'displayName'
+    | 'handle'
+    | 'url'
+    | 'role'
+    | 'audience'
+    | 'contentPillars'
+    | 'formats'
+    | 'tone'
+    | 'cadence'
+    | 'connectionStatus'
+    | 'canRead'
+    | 'canPublish'
   >
 >;
 
 export type SatelliteStatus =
-  | "suggested"
-  | "accepted"
-  | "dismissed"
-  | "active";
+  | 'suggested'
+  | 'accepted'
+  | 'dismissed'
+  | 'active';
 
 export interface SatelliteProfile {
   displayName: string;
@@ -158,11 +158,11 @@ export interface SatelliteProfile {
 export interface SatelliteRecommendation {
   id: string;
   platform: SocialPlatform;
-  priority: "high" | "medium" | "low";
+  priority: 'high' | 'medium' | 'low';
   status: SatelliteStatus;
   rationale: string[];
   projectedImpact: string;
-  effort: "low" | "medium" | "high";
+  effort: 'low' | 'medium' | 'high';
   confidence: number;
   dataQuality: DataQuality;
   profile: SatelliteProfile;
@@ -170,12 +170,14 @@ export interface SatelliteRecommendation {
   confirmedAt: string | null;
 }
 
-export type SatelliteRecommendationPatch = Partial<
-  Pick<
-    SatelliteRecommendation,
-    "platform" | "priority" | "status" | "rationale" | "projectedImpact" | "effort"
+export type SatelliteRecommendationPatch =
+  & Partial<
+    Pick<
+      SatelliteRecommendation,
+      'platform' | 'priority' | 'status' | 'rationale' | 'projectedImpact' | 'effort'
+    >
   >
-> & { profile?: Partial<SatelliteProfile> };
+  & { profile?: Partial<SatelliteProfile>; };
 
 export interface StrategyKpi {
   id: string;
@@ -209,12 +211,12 @@ export interface StrategyContentPillar {
   description: string;
   sharePercent: number;
   formats: string[];
-  funnelStage: "awareness" | "consideration" | "conversion" | "retention";
+  funnelStage: 'awareness' | 'consideration' | 'conversion' | 'retention';
 }
 
 export interface StrategyFunnelStage {
   id: string;
-  stage: "awareness" | "consideration" | "conversion" | "retention";
+  stage: 'awareness' | 'consideration' | 'conversion' | 'retention';
   objective: string;
   content: string[];
   cta: string;
@@ -236,7 +238,7 @@ export interface StrategyPriority {
   reason: string;
   owner: string;
   dueDay: number;
-  status: "not_started" | "in_progress" | "completed" | "blocked";
+  status: 'not_started' | 'in_progress' | 'completed' | 'blocked';
 }
 
 export interface NinetyDayStrategy {
@@ -260,13 +262,13 @@ export interface NinetyDayStrategy {
 export type NinetyDayStrategyPatch = Partial<
   Pick<
     NinetyDayStrategy,
-    | "title"
-    | "startDate"
-    | "endDate"
-    | "timezone"
-    | "northStar"
-    | "objectives"
-    | "priorities"
+    | 'title'
+    | 'startDate'
+    | 'endDate'
+    | 'timezone'
+    | 'northStar'
+    | 'objectives'
+    | 'priorities'
   >
 >;
 
@@ -275,7 +277,7 @@ export interface AnalyticsKpi {
   label: string;
   value: number;
   formattedValue: string;
-  unit: "count" | "percent" | "minutes";
+  unit: 'count' | 'percent' | 'minutes';
   deltaPercent: number | null;
   goal: string;
   dataQuality: DataQuality;
@@ -283,7 +285,7 @@ export interface AnalyticsKpi {
 
 export interface AnalyticsPriority {
   id: string;
-  severity: "high" | "medium" | "low";
+  severity: 'high' | 'medium' | 'low';
   title: string;
   detail: string;
   recommendedAction: string;
@@ -321,7 +323,7 @@ export interface ContentPillarPerformance {
 }
 
 export interface AnalyticsFunnelStage {
-  stage: "reach" | "engagement" | "inquiry" | "consultation" | "enrollment";
+  stage: 'reach' | 'engagement' | 'inquiry' | 'consultation' | 'enrollment';
   value: number;
   conversionFromPreviousPercent: number | null;
   dataQuality: DataQuality;
@@ -331,7 +333,7 @@ export interface AnalyticsInsight {
   id: string;
   finding: string;
   evidence: string;
-  confidence: "low" | "medium" | "high";
+  confidence: 'low' | 'medium' | 'high';
   sampleSize: number;
   scope: string;
   recommendedAction: string;
@@ -340,7 +342,7 @@ export interface AnalyticsInsight {
 }
 
 export interface WorkspaceAnalytics {
-  dateRange: { from: string; to: string; comparisonLabel: string };
+  dateRange: { from: string; to: string; comparisonLabel: string; };
   dataQuality: DataQuality;
   dataCompletenessPercent: number;
   dataQualityNote: string;
@@ -354,13 +356,13 @@ export interface WorkspaceAnalytics {
 }
 
 export type WorkspaceRole =
-  | "owner"
-  | "admin"
-  | "content_manager"
-  | "creator"
-  | "reviewer"
-  | "analyst"
-  | "viewer";
+  | 'owner'
+  | 'admin'
+  | 'content_manager'
+  | 'creator'
+  | 'reviewer'
+  | 'analyst'
+  | 'viewer';
 
 export interface StudioConfigSection {
   id: string;
@@ -379,7 +381,7 @@ export interface TeamMember {
   email: string;
   role: WorkspaceRole;
   channelIds: string[];
-  status: "active" | "invited" | "suspended";
+  status: 'active' | 'invited' | 'suspended';
   lastActiveAt: string | null;
 }
 
@@ -388,7 +390,7 @@ export interface ApprovalWorkflow {
   name: string;
   contentTypes: string[];
   channelIds: string[];
-  steps: { order: number; role: WorkspaceRole; assigneeId: string | null }[];
+  steps: { order: number; role: WorkspaceRole; assigneeId: string | null; }[];
   slaHours: number;
   fallbackMemberId: string | null;
   enabled: boolean;
@@ -397,9 +399,9 @@ export interface ApprovalWorkflow {
 export interface NotificationRule {
   id: string;
   event: string;
-  channels: ("in_app" | "email")[];
+  channels: ('in_app' | 'email')[];
   recipientRoles: WorkspaceRole[];
-  digest: "instant" | "daily" | "weekly";
+  digest: 'instant' | 'daily' | 'weekly';
   enabled: boolean;
 }
 
@@ -417,12 +419,12 @@ export interface WorkspaceTask {
   id: string;
   title: string;
   description: string;
-  priority: "high" | "medium" | "low";
-  status: "todo" | "in_progress" | "needs_approval" | "done";
+  priority: 'high' | 'medium' | 'low';
+  status: 'todo' | 'in_progress' | 'needs_approval' | 'done';
   view: WorkspaceViewId;
   assigneeId: string | null;
   dueAt: string | null;
-  source: "agent" | "user" | "system";
+  source: 'agent' | 'user' | 'system';
 }
 
 export interface WorkspaceProfileConfig {
@@ -430,7 +432,7 @@ export interface WorkspaceProfileConfig {
   industry: string;
   defaultLocale: string;
   timezone: string;
-  weekStartsOn: "monday" | "sunday";
+  weekStartsOn: 'monday' | 'sunday';
   dataRetentionDays: number;
 }
 
@@ -441,7 +443,7 @@ export interface BrandVoiceConfig {
   blockedTerms: string[];
   sample: string;
   profileName?: string;
-  emojiPolicy?: "none" | "light" | "moderate";
+  emojiPolicy?: 'none' | 'light' | 'moderate';
   ctaStyle?: string;
   platformOverrides?: {
     platform: SocialPlatform;
@@ -455,7 +457,7 @@ export interface ContentRule {
   name: string;
   instruction: string;
   appliesTo: string[];
-  level: "required" | "warning";
+  level: 'required' | 'warning';
   enabled: boolean;
 }
 
@@ -474,7 +476,7 @@ export interface AgentLearningRule {
   id: string;
   label: string;
   evidence: string;
-  status: "candidate" | "stable" | "rejected";
+  status: 'candidate' | 'stable' | 'rejected';
   enabled: boolean;
 }
 
@@ -483,24 +485,24 @@ export interface ContentRulesConfig {
   requireHumanReviewForClaims: boolean;
   prohibitedClaims: string[];
   requiredDisclosures: string[];
-  defaultHashtagRange: { min: number; max: number };
-  linkPolicy: "allowed" | "approved_domains_only" | "disabled";
+  defaultHashtagRange: { min: number; max: number; };
+  linkPolicy: 'allowed' | 'approved_domains_only' | 'disabled';
   approvedDomains: string[];
 }
 
 export interface WorkspaceSource {
   id: string;
   name: string;
-  type: "website" | "social" | "drive" | "file";
+  type: 'website' | 'social' | 'drive' | 'file';
   url: string | null;
   scope: string;
-  status: "connected" | "public_only" | "needs_reconnect";
+  status: 'connected' | 'public_only' | 'needs_reconnect';
   canRead: boolean;
   canWrite: boolean;
   lastSyncedAt: string | null;
   channelId?: string | null;
-  permission?: "read_only" | "read_publish";
-  syncFrequency?: "manual" | "daily" | "weekly";
+  permission?: 'read_only' | 'read_publish';
+  syncFrequency?: 'manual' | 'daily' | 'weekly';
   includeInAgentKnowledge?: boolean;
 }
 
@@ -520,10 +522,10 @@ export interface StudioConfig {
   industry: string;
   primaryMarket: string;
   autoSave: boolean;
-  language: "vi" | "en";
+  language: 'vi' | 'en';
   timezone: string;
-  agentMode: "guided" | "copilot";
-  publishingMode: "approval_required" | "manual_only";
+  agentMode: 'guided' | 'copilot';
+  publishingMode: 'approval_required' | 'manual_only';
   brandSafetyEnabled: boolean;
   piiProtectionEnabled: boolean;
   workspaceProfile: WorkspaceProfileConfig;
@@ -552,7 +554,7 @@ export interface WorkspaceSummary {
   locale: string;
   timezone: string;
   websiteUrl: string;
-  status: "ready" | "needs_review";
+  status: 'ready' | 'needs_review';
   lastAnalyzedAt: string;
 }
 
@@ -585,7 +587,7 @@ export interface UseAgentWorkspaceResult {
   confirmChannel: (channelId: string) => void;
   updateSatellite: (
     satelliteId: string,
-    patch: SatelliteRecommendationPatch
+    patch: SatelliteRecommendationPatch,
   ) => void;
   confirmSatellite: (satelliteId: string) => void;
   updateStrategy: (patch: NinetyDayStrategyPatch) => void;

@@ -1,6 +1,6 @@
-import { z } from 'zod';
+import { EOutputStatus, EOutputType, EParticipantStatus } from '@/core/enums';
 import { createZodDto } from 'nestjs-zod';
-import { EParticipantStatus, EOutputStatus, EOutputType } from '@/core/enums';
+import { z } from 'zod';
 
 export const CampaignOutputDtoSchema = z.object({
   id: z.string(),

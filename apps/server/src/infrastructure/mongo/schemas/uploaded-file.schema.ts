@@ -1,6 +1,6 @@
+import { TargetType } from '@/core/enums/target-type.enum';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Schema as MongooseSchema } from 'mongoose';
-import { TargetType } from '@/core/enums/target-type.enum';
 import { softDeletePlugin } from '../utils';
 
 @Schema({

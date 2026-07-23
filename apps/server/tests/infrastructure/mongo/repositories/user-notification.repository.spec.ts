@@ -1,6 +1,6 @@
-import { Types } from 'mongoose';
-import { MongoUserNotificationRepository } from '@/infrastructure/mongo/repositories/user-notification.repository';
 import { UserNotificationRoot } from '@/core/aggregate-roots';
+import { MongoUserNotificationRepository } from '@/infrastructure/mongo/repositories/user-notification.repository';
+import { Types } from 'mongoose';
 
 jest.mock('mongoose', () => {
   const actual = jest.requireActual('mongoose');
@@ -101,7 +101,7 @@ describe('MongoUserNotificationRepository', () => {
       await repo.markAll('user-123', true);
       expect(mockModel.updateMany).toHaveBeenCalledWith(
         expect.objectContaining({ recipient_id: expect.anything(), is_read: false }),
-        expect.objectContaining({ $set: expect.objectContaining({ is_read: true }) })
+        expect.objectContaining({ $set: expect.objectContaining({ is_read: true }) }),
       );
     });
   });
@@ -120,7 +120,7 @@ describe('MongoUserNotificationRepository', () => {
       await repo.softDeleteMany(['id1'], 'user-123', 'admin-1');
       expect(mockModel.updateMany).toHaveBeenCalledWith(
         expect.anything(),
-        expect.objectContaining({ $set: expect.objectContaining({ delete_by: 'admin-1' }) })
+        expect.objectContaining({ $set: expect.objectContaining({ delete_by: 'admin-1' }) }),
       );
     });
   });

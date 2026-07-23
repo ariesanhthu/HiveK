@@ -1,21 +1,19 @@
-import { CommandHandler, ICommandHandler, EventBus } from '@nestjs/cqrs';
-import { Inject, Logger } from '@nestjs/common';
-import { KPI_LOG_REPOSITORY, type IKpiLogRepository } from '@/core/interfaces/repositories';
-import { KpiLogEntity } from '@/core/entities/kpi-log.entity';
-import { KpiLogCreateCommand } from './kpi-log-create.command';
-import { type IUnitOfWork, UNIT_OF_WORK } from '@/application/interfaces';
 import { KpiMetricsUpdatedEvent } from '@/application/events';
+import { type IUnitOfWork, UNIT_OF_WORK } from '@/application/interfaces';
+import { KpiLogEntity } from '@/core/entities/kpi-log.entity';
+import { type IKpiLogRepository, KPI_LOG_REPOSITORY } from '@/core/interfaces/repositories';
+import { Inject, Logger } from '@nestjs/common';
+import { CommandHandler, EventBus, ICommandHandler } from '@nestjs/cqrs';
+import { KpiLogCreateCommand } from './kpi-log-create.command';
 
 @CommandHandler(KpiLogCreateCommand)
 export class KpiLogCreateCommandHandler implements ICommandHandler<KpiLogCreateCommand, void> {
   private readonly logger = new Logger(KpiLogCreateCommandHandler.name);
 
   constructor(
-    @Inject(KPI_LOG_REPOSITORY)
-    private readonly kpiLogRepository: IKpiLogRepository,
+    @Inject(KPI_LOG_REPOSITORY) private readonly kpiLogRepository: IKpiLogRepository,
     private readonly eventBus: EventBus,
-    @Inject(UNIT_OF_WORK)
-    private readonly uow: IUnitOfWork,
+    @Inject(UNIT_OF_WORK) private readonly uow: IUnitOfWork,
   ) {}
 
   async execute(command: KpiLogCreateCommand): Promise<void> {
@@ -29,7 +27,10 @@ export class KpiLogCreateCommandHandler implements ICommandHandler<KpiLogCreateC
       const shares = Number(payload.metrics?.shares) || 0;
 
       if (!payload.participantId) {
-        this.logger.error('Received KPI success event without participantId', JSON.stringify(payload));
+        this.logger.error(
+          'Received KPI success event without participantId',
+          JSON.stringify(payload),
+        );
         return;
       }
 
@@ -45,9 +46,9 @@ export class KpiLogCreateCommandHandler implements ICommandHandler<KpiLogCreateC
       });
 
       await this.kpiLogRepository.save(kpiLog);
-      
+
       this.logger.log(`Saved KPI Log for participant ${payload.participantId}`);
-      
+
       this.eventBus.publish(new KpiMetricsUpdatedEvent(payload.participantId, kpiLog.id!));
     });
   }

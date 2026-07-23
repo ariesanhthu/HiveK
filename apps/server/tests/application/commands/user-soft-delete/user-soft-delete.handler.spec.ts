@@ -1,5 +1,5 @@
-import { UserSoftDeleteCommandHandler } from '@/application/commands/user-soft-delete/user-soft-delete.handler';
 import { UserSoftDeleteCommand } from '@/application/commands/user-soft-delete/user-soft-delete.command';
+import { UserSoftDeleteCommandHandler } from '@/application/commands/user-soft-delete/user-soft-delete.handler';
 import { UserNotFoundException } from '@/core/exceptions';
 
 describe('UserSoftDeleteCommandHandler', () => {

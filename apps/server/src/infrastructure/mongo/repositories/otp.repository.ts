@@ -1,21 +1,19 @@
-import { Injectable, Inject } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model, ClientSession } from 'mongoose';
-import { IOtpRepository } from '@/core/interfaces/repositories/otp.repository';
-import { OtpModel, OtpDocument } from '../schemas/otp.schema';
-import { EOtpType } from '@/core/enums/otp-type.enum';
 import { type IUnitOfWork, UNIT_OF_WORK } from '@/application/interfaces';
-import { MongoUnitOfWork } from '../mongo-uow';
 import { OtpRoot } from '@/core/aggregate-roots/otp.aggregate';
+import { EOtpType } from '@/core/enums/otp-type.enum';
+import { IOtpRepository } from '@/core/interfaces/repositories/otp.repository';
+import { Inject, Injectable } from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
+import { ClientSession, Model } from 'mongoose';
 import { Schema } from 'mongoose';
+import { MongoUnitOfWork } from '../mongo-uow';
+import { OtpDocument, OtpModel } from '../schemas/otp.schema';
 
 @Injectable()
 export class MongoOtpRepository implements IOtpRepository {
   constructor(
-    @InjectModel(OtpModel.name)
-    private readonly otpModel: Model<OtpDocument>,
-    @Inject(UNIT_OF_WORK)
-    private readonly uow: IUnitOfWork,
+    @InjectModel(OtpModel.name) private readonly otpModel: Model<OtpDocument>,
+    @Inject(UNIT_OF_WORK) private readonly uow: IUnitOfWork,
   ) {}
 
   private get session(): ClientSession | undefined {
@@ -54,7 +52,7 @@ export class MongoOtpRepository implements IOtpRepository {
     await this.otpModel.findOneAndUpdate(
       filter,
       { $set: update },
-      { upsert: true, session: this.session }
+      { upsert: true, session: this.session },
     ).exec();
   }
 
@@ -68,10 +66,10 @@ export class MongoOtpRepository implements IOtpRepository {
             code: otp.code,
             type: otp.type,
             expired_at: otp.expiresAt,
-          }
+          },
         },
         upsert: true,
-      }
+      },
     }));
     if (bulkOps.length > 0) {
       await this.otpModel.bulkWrite(bulkOps, { session: this.session });
@@ -95,7 +93,11 @@ export class MongoOtpRepository implements IOtpRepository {
     }).session(this.session).exec();
   }
 
-  async findRecentOtp(email: string, type: EOtpType, withinSeconds: number): Promise<OtpRoot | null> {
+  async findRecentOtp(
+    email: string,
+    type: EOtpType,
+    withinSeconds: number,
+  ): Promise<OtpRoot | null> {
     const cutoffDate = new Date(Date.now() - withinSeconds * 1000);
     const doc = await this.otpModel.findOne({
       email: email.toLowerCase().trim(),

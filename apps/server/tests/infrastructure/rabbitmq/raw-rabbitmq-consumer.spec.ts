@@ -1,6 +1,6 @@
-import * as amqp from 'amqplib';
 import { RawRabbitMQConsumerClient } from '@/infrastructure/rabbitmq/raw-rabbitmq-consumer';
 import { RmqHandlerRegistry } from '@/infrastructure/rabbitmq/rmq-consumer.registry';
+import * as amqp from 'amqplib';
 import { createMockLoggerService } from '../../__mocks__/mock-services';
 
 jest.mock('amqplib');
@@ -49,7 +49,7 @@ describe('RawRabbitMQConsumerClient', () => {
     (amqp.connect as jest.Mock).mockResolvedValue(mockConnection);
 
     (RmqHandlerRegistry.getHandlersForQueue as jest.Mock).mockReturnValue([
-        { pattern: 'rk', callback: jest.fn(), target: {}, methodName: 'handle' }
+      { pattern: 'rk', callback: jest.fn(), target: {}, methodName: 'handle' },
     ]);
 
     client = new RawRabbitMQConsumerClient(mockConfig, mockLogger);
@@ -71,7 +71,7 @@ describe('RawRabbitMQConsumerClient', () => {
     it('should route message to handler and ack', async () => {
       await client.connect();
       const consumeCallback = mockChannel.consume.mock.calls[0][1];
-      
+
       const mockMsg = {
         content: Buffer.from(JSON.stringify({ data: 'hello' })),
         fields: { routingKey: 'rk' },
@@ -85,17 +85,17 @@ describe('RawRabbitMQConsumerClient', () => {
     });
 
     it('should nack on error', async () => {
-        await client.connect();
-        const consumeCallback = mockChannel.consume.mock.calls[0][1];
-        
-        const mockMsg = {
-          content: Buffer.from('invalid json'),
-          fields: { routingKey: 'rk' },
-        };
-  
-        await consumeCallback(mockMsg);
-        expect(mockChannel.nack).toHaveBeenCalled();
-      });
+      await client.connect();
+      const consumeCallback = mockChannel.consume.mock.calls[0][1];
+
+      const mockMsg = {
+        content: Buffer.from('invalid json'),
+        fields: { routingKey: 'rk' },
+      };
+
+      await consumeCallback(mockMsg);
+      expect(mockChannel.nack).toHaveBeenCalled();
+    });
   });
 
   describe('disconnect', () => {

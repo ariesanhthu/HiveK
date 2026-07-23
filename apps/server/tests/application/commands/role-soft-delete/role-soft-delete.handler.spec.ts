@@ -1,6 +1,6 @@
-import { RoleSoftDeleteCommandHandler } from '@/application/commands/role-soft-delete/role-soft-delete.handler';
 import { RoleSoftDeleteCommand } from '@/application/commands/role-soft-delete/role-soft-delete.command';
-import { RoleNotFoundException, InvalidOperationException } from '@/core/exceptions';
+import { RoleSoftDeleteCommandHandler } from '@/application/commands/role-soft-delete/role-soft-delete.handler';
+import { InvalidOperationException, RoleNotFoundException } from '@/core/exceptions';
 
 describe('RoleSoftDeleteCommandHandler', () => {
   let handler: RoleSoftDeleteCommandHandler;
@@ -14,15 +14,15 @@ describe('RoleSoftDeleteCommandHandler', () => {
       save: jest.fn(),
     };
     mockUserRepository = {
-        existsByRoleId: jest.fn(),
+      existsByRoleId: jest.fn(),
     };
     mockUow = {
-        execute: jest.fn((fn: any) => fn()),
+      execute: jest.fn((fn: any) => fn()),
     };
     handler = new RoleSoftDeleteCommandHandler(
-        mockRoleRepository, 
-        mockUserRepository, 
-        mockUow
+      mockRoleRepository,
+      mockUserRepository,
+      mockUow,
     );
   });
 

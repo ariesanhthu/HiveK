@@ -1,6 +1,6 @@
+import { KolProfileDto } from '@/application/dtos';
 import { Command } from '@nestjs/cqrs';
 import { UpdateKolProfileDto } from './kol-profile-update.dto';
-import { KolProfileDto } from '@/application/dtos';
 
 export class KolProfileUpdateCommand extends Command<KolProfileDto> {
   constructor(

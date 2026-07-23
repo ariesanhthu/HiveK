@@ -1,5 +1,5 @@
-import { CampaignCreateCommandHandler } from '@/application/commands/campaign-create/campaign-create.handler';
 import { CampaignCreateCommand } from '@/application/commands/campaign-create/campaign-create.command';
+import { CampaignCreateCommandHandler } from '@/application/commands/campaign-create/campaign-create.handler';
 
 describe('CampaignCreateCommandHandler', () => {
   let handler: CampaignCreateCommandHandler;

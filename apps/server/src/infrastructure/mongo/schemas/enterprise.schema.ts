@@ -10,25 +10,31 @@ export class EnterpriseModel {
   @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'UserModel', required: true, unique: true })
   user_id: MongooseSchema.Types.ObjectId;
 
-  @Prop({ type: MongooseSchema.Types.String, required: true, trim: true, minlength: 1, maxlength: 200 })
+  @Prop({
+    type: MongooseSchema.Types.String,
+    required: true,
+    trim: true,
+    minlength: 1,
+    maxlength: 200,
+  })
   company_name: string;
 
   @Prop({ type: MongooseSchema.Types.String, required: true, trim: true, maxlength: 2000 })
   description: string;
 
-  @Prop({ 
+  @Prop({
     type: MongooseSchema.Types.String,
-    required: true, 
+    required: true,
     trim: true,
     lowercase: true,
-    match: [/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/, 'Please fill a valid email address']
+    match: [/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/, 'Please fill a valid email address'],
   })
   contact_email: string;
 
-  @Prop({ 
+  @Prop({
     type: MongooseSchema.Types.String,
     required: true,
-    match: [/^\+?[1-9]\d{1,14}$/, 'Please fill a valid phone number']
+    match: [/^\+?[1-9]\d{1,14}$/, 'Please fill a valid phone number'],
   })
   contact_phone: string;
 

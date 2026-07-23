@@ -1,5 +1,5 @@
-import { MongoClient } from 'mongodb';
 import * as fs from 'fs';
+import { MongoClient } from 'mongodb';
 import * as path from 'path';
 
 // Load .env file manually to support standalone execution
@@ -22,7 +22,8 @@ const loadEnv = () => {
 
 loadEnv();
 
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://root:root%40123@localhost:27017/hivek?authSource=admin';
+const MONGODB_URI = process.env.MONGODB_URI
+  || 'mongodb://root:root%40123@localhost:27017/hivek?authSource=admin';
 
 async function migrateHandlesToUniqueId() {
   console.log('⚡ Starting Handles to UniqueId Migration Script...');
@@ -60,7 +61,7 @@ async function migrateHandlesToUniqueId() {
       if (changed) {
         await influencersCol.updateOne(
           { _id: doc._id },
-          { $set: { platforms: updatedPlatforms } }
+          { $set: { platforms: updatedPlatforms } },
         );
         updatedCount++;
       }
@@ -68,7 +69,6 @@ async function migrateHandlesToUniqueId() {
 
     console.log(`\n🎉 SUCCESS! Migration completed.`);
     console.log(`Processed and updated ${updatedCount} influencers in the collection.`);
-
   } catch (error) {
     console.error('❌ Error during migration:', error);
   } finally {

@@ -1,6 +1,6 @@
-import { z } from 'zod';
-import { createZodDto } from 'nestjs-zod';
 import { ERoleType } from '@/core/enums/role-type.enum';
+import { createZodDto } from 'nestjs-zod';
+import { z } from 'zod';
 
 export const AuthGoogleSignInInputSchema = z.object({
   googleId: z.string(),

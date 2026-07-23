@@ -12,15 +12,17 @@ const payload = [
 ];
 
 const fmt = (v: number | string) =>
-  new Intl.NumberFormat('vi-VN', { notation: 'compact', maximumFractionDigits: 1 }).format(Number(v));
+  new Intl.NumberFormat('vi-VN', { notation: 'compact', maximumFractionDigits: 1 }).format(
+    Number(v),
+  );
 
 // ChartTooltipContent calls useChart(), so it must live inside a ChartContainer
 // (which supplies the ChartContext). The hidden chart just provides that context.
-function Frame({ children }: { children: React.ReactNode }) {
+function Frame({ children }: { children: React.ReactNode; }) {
   return (
-    <ChartContainer config={config} className="!block h-auto w-full">
+    <ChartContainer config={config} className='!block h-auto w-full'>
       <BarChart width={1} height={1} data={[{ reach: 1 }]}>
-        <Bar dataKey="reach" />
+        <Bar dataKey='reach' />
       </BarChart>
       {children as never}
     </ChartContainer>
@@ -34,8 +36,8 @@ export function Dot() {
         <div style={{ display: 'inline-block' }}>
           <ChartTooltipContent
             active
-            label="TikTok"
-            indicator="dot"
+            label='TikTok'
+            indicator='dot'
             payload={payload}
             valueFormatter={fmt}
           />
@@ -52,8 +54,8 @@ export function Line() {
         <div style={{ display: 'inline-block' }}>
           <ChartTooltipContent
             active
-            label="Chiến dịch Tết 2025"
-            indicator="line"
+            label='Chiến dịch Tết 2025'
+            indicator='line'
             payload={payload}
             valueFormatter={fmt}
           />

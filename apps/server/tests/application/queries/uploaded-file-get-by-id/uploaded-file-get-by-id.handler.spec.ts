@@ -26,6 +26,8 @@ describe('UploadedFileGetByIdHandler', () => {
   it('should throw UploadedFileNotFoundException when not found', async () => {
     mockReadService.findById.mockResolvedValue(null);
 
-    await expect(handler.execute(new UploadedFileGetByIdQuery('nonexistent'))).rejects.toThrow(UploadedFileNotFoundException);
+    await expect(handler.execute(new UploadedFileGetByIdQuery('nonexistent'))).rejects.toThrow(
+      UploadedFileNotFoundException,
+    );
   });
 });

@@ -1,9 +1,9 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { ConfigService } from '@nestjs/config';
-import { CommandBus } from '@nestjs/cqrs';
-import { GoogleStrategy } from '@/infrastructure/auth/strategies/google.strategy';
 import { AuthGoogleSignInCommand } from '@/application/commands';
 import { ERoleType } from '@/core/enums';
+import { GoogleStrategy } from '@/infrastructure/auth/strategies/google.strategy';
+import { ConfigService } from '@nestjs/config';
+import { CommandBus } from '@nestjs/cqrs';
+import { Test, TestingModule } from '@nestjs/testing';
 
 describe('GoogleStrategy', () => {
   let strategy: GoogleStrategy;

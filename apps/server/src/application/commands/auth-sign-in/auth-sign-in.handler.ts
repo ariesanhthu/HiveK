@@ -1,19 +1,20 @@
+import { AuthService } from '@/application/services/auth.service';
+import { ERoleType } from '@/core/enums';
+import { InvalidCredentialsException } from '@/core/exceptions';
+import { type IUserRepository, USER_REPOSITORY } from '@/core/interfaces/repositories';
+import { Inject } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { AuthSignInCommand } from './auth-sign-in.command';
 import { AuthSignInOutputDto } from './auth-sign-in.dto';
-import { Inject } from '@nestjs/common';
-import { USER_REPOSITORY, type IUserRepository } from '@/core/interfaces/repositories';
-import { AuthService } from '@/application/services/auth.service';
-import { InvalidCredentialsException } from '@/core/exceptions';
-import { ERoleType } from '@/core/enums';
 
 @CommandHandler(AuthSignInCommand)
-export class AuthSignInCommandHandler implements ICommandHandler<AuthSignInCommand, AuthSignInOutputDto> {
+export class AuthSignInCommandHandler
+  implements ICommandHandler<AuthSignInCommand, AuthSignInOutputDto>
+{
   constructor(
-    @Inject(USER_REPOSITORY)
-    private readonly userRepository: IUserRepository,
+    @Inject(USER_REPOSITORY) private readonly userRepository: IUserRepository,
     private readonly authService: AuthService,
-  ) { }
+  ) {}
 
   async execute(command: AuthSignInCommand): Promise<AuthSignInOutputDto> {
     const { input, isAdmin } = command;
@@ -28,7 +29,10 @@ export class AuthSignInCommandHandler implements ICommandHandler<AuthSignInComma
       throw new InvalidCredentialsException();
     }
 
-    const isPasswordValid = await this.authService.comparePassword(input.password, user.passwordHash);
+    const isPasswordValid = await this.authService.comparePassword(
+      input.password,
+      user.passwordHash,
+    );
     if (!isPasswordValid) {
       throw new InvalidCredentialsException();
     }

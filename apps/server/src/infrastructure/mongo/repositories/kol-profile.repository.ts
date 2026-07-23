@@ -1,22 +1,20 @@
-import { Injectable, Inject } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model, Types, ClientSession } from 'mongoose';
-import { IKolProfileRepository } from '@/core/interfaces/repositories';
-import { KolProfileEntity } from '@/core/entities/kol-profile.entity';
-import { KolPlatformInfoVO } from '@/core/value-objects/kol-platform-info.value-object';
-import { KolProfileModel, KolProfileDocument } from '../schemas';
-import { Nullable } from '@/core/types';
 import { type IUnitOfWork, UNIT_OF_WORK } from '@/application/interfaces';
+import { KolProfileEntity } from '@/core/entities/kol-profile.entity';
+import { IKolProfileRepository } from '@/core/interfaces/repositories';
+import { Nullable } from '@/core/types';
+import { KolPlatformInfoVO } from '@/core/value-objects/kol-platform-info.value-object';
+import { Inject, Injectable } from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
+import { ClientSession, Model, Types } from 'mongoose';
 import { MongoUnitOfWork } from '../mongo-uow';
+import { KolProfileDocument, KolProfileModel } from '../schemas';
 
 @Injectable()
 export class MongoKolProfileRepository implements IKolProfileRepository {
   constructor(
-    @InjectModel(KolProfileModel.name)
-    private readonly kolProfileModel: Model<KolProfileDocument>,
-    @Inject(UNIT_OF_WORK)
-    private readonly uow: IUnitOfWork,
-  ) { }
+    @InjectModel(KolProfileModel.name) private readonly kolProfileModel: Model<KolProfileDocument>,
+    @Inject(UNIT_OF_WORK) private readonly uow: IUnitOfWork,
+  ) {}
 
   private get session(): ClientSession | undefined {
     return (this.uow as MongoUnitOfWork).getSession() || undefined;
@@ -27,7 +25,10 @@ export class MongoKolProfileRepository implements IKolProfileRepository {
     return doc ? this.mapToDomain(doc) : null;
   }
 
-  async findByPlatformInfo(platformId: string, externalId: string): Promise<Nullable<KolProfileEntity>> {
+  async findByPlatformInfo(
+    platformId: string,
+    externalId: string,
+  ): Promise<Nullable<KolProfileEntity>> {
     const doc = await this.kolProfileModel.findOne({
       'platforms.platform_id': platformId,
       'platforms.external_id': externalId,
@@ -36,7 +37,8 @@ export class MongoKolProfileRepository implements IKolProfileRepository {
   }
 
   async findByUserId(userId: string): Promise<Nullable<KolProfileEntity>> {
-    const doc = await this.kolProfileModel.findOne({ user_id: new Types.ObjectId(userId) as any }).session(this.session).exec();
+    const doc = await this.kolProfileModel.findOne({ user_id: new Types.ObjectId(userId) as any })
+      .session(this.session).exec();
     return doc ? this.mapToDomain(doc) : null;
   }
 
@@ -46,7 +48,7 @@ export class MongoKolProfileRepository implements IKolProfileRepository {
         'platforms.platform_id': platformId,
         delete_at: null,
       },
-      { _id: 1 }
+      { _id: 1 },
     ).session(this.session).lean().exec();
     return !!doc;
   }
@@ -59,7 +61,9 @@ export class MongoKolProfileRepository implements IKolProfileRepository {
       const saved = await created.save({ session: this.session });
       entity.setId(saved._id.toString());
     } else {
-      await this.kolProfileModel.findByIdAndUpdate(entity.id, data, { upsert: true }).session(this.session).exec();
+      await this.kolProfileModel.findByIdAndUpdate(entity.id, data, { upsert: true }).session(
+        this.session,
+      ).exec();
     }
   }
 
@@ -104,7 +108,9 @@ export class MongoKolProfileRepository implements IKolProfileRepository {
     });
   }
 
-  private mapToPersistence(entity: KolProfileEntity): Omit<KolProfileModel, 'created_at' | 'updated_at'> {
+  private mapToPersistence(
+    entity: KolProfileEntity,
+  ): Omit<KolProfileModel, 'created_at' | 'updated_at'> {
     const platforms = (entity.platforms || []).map((p) => ({
       platform_id: p.platformId,
       uniqueId: p.uniqueId,

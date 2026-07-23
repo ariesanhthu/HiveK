@@ -1,5 +1,12 @@
+import {
+  BadRequestDomainException,
+  ConflictDomainException,
+  DomainException,
+  ForbiddenDomainException,
+  NotFoundDomainException,
+  UnauthorizedDomainException,
+} from '@/core/common/exceptions/domain.exception';
 import { DomainExceptionFilter } from '@/presentation/middleware/filters/domain-exception.filter';
-import { DomainException, NotFoundDomainException, ConflictDomainException, ForbiddenDomainException, UnauthorizedDomainException, BadRequestDomainException } from '@/core/common/exceptions/domain.exception';
 
 describe('DomainExceptionFilter', () => {
   let filter: DomainExceptionFilter;
@@ -26,8 +33,8 @@ describe('DomainExceptionFilter', () => {
       success: false,
       error: expect.objectContaining({
         code: 'NOT_FOUND',
-        message: 'User not found'
-      })
+        message: 'User not found',
+      }),
     }));
   });
 
@@ -38,7 +45,7 @@ describe('DomainExceptionFilter', () => {
       success: false,
       error: expect.objectContaining({
         code: 'CONFLICT',
-      })
+      }),
     }));
   });
 
@@ -49,7 +56,7 @@ describe('DomainExceptionFilter', () => {
       success: false,
       error: expect.objectContaining({
         code: 'FORBIDDEN',
-      })
+      }),
     }));
   });
 
@@ -60,7 +67,7 @@ describe('DomainExceptionFilter', () => {
       success: false,
       error: expect.objectContaining({
         code: 'UNAUTHORIZED',
-      })
+      }),
     }));
   });
 
@@ -71,7 +78,7 @@ describe('DomainExceptionFilter', () => {
       success: false,
       error: expect.objectContaining({
         code: 'BAD_REQUEST',
-      })
+      }),
     }));
   });
 });
