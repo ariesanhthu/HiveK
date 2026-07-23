@@ -1,5 +1,6 @@
 import { BaseConfigService } from '@hivek/nest-core';
 import { Injectable } from '@nestjs/common';
+import { registerAs } from '@nestjs/config';
 import { IsInt, IsNotEmpty, IsString } from 'class-validator';
 
 /**
@@ -68,3 +69,8 @@ export class AppConfig extends BaseConfigService<AppConfigDto> {
     return AppConfig.SWAGGER_VERSION;
   }
 }
+
+/**
+ * NestJS Native Config Namespace registration leveraging @nestjs/config registerAs
+ */
+export const appConfig = registerAs('app', () => new AppConfig());

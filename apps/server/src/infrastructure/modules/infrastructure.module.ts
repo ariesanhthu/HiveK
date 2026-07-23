@@ -1,5 +1,5 @@
 import { LOGGER_SERVICE, MAILER_SERVICE } from '@/application/interfaces';
-import { AppConfig } from '@/configs/app.config';
+import { AppConfig, appConfig } from '@/configs/app.config';
 import { STORAGE_SERVICE } from '@/core/interfaces/storage';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/adapters/handlebars.adapter';
@@ -13,7 +13,7 @@ import { NestjsMailerService } from '../mailer';
 @Global()
 @Module({
   imports: [
-    ConfigModule.forRoot({ isGlobal: true }),
+    ConfigModule.forRoot({ isGlobal: true, load: [appConfig] }),
     MailerModule.forRootAsync({
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({
