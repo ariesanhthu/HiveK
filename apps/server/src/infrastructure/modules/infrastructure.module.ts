@@ -1,5 +1,5 @@
-import { AppConfig } from '@/app.config';
 import { LOGGER_SERVICE, MAILER_SERVICE } from '@/application/interfaces';
+import { AppConfig } from '@/configs/app.config';
 import { STORAGE_SERVICE } from '@/core/interfaces/storage';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/adapters/handlebars.adapter';

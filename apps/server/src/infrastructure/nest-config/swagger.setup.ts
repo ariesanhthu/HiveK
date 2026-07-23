@@ -1,4 +1,4 @@
-import { AppConfig } from '@/app.config';
+import { AppConfig } from '@/configs/app.config';
 import { INestApplication } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 

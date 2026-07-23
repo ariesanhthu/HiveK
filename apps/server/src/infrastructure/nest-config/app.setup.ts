@@ -1,4 +1,4 @@
-import { AppConfig } from '@/app.config';
+import { AppConfig } from '@/configs/app.config';
 import { HttpExceptionFilter } from '@/presentation/middleware/filters';
 import { LoggingInterceptor, TransformInterceptor } from '@/presentation/middleware/interceptors';
 import { errorMessage } from '@/shared/utils';
