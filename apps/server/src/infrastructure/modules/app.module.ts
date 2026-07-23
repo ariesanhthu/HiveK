@@ -11,10 +11,9 @@ import { Module } from '@nestjs/common';
 import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { ScheduleModule } from '@nestjs/schedule';
-import { ThrottlerModule } from '@nestjs/throttler';
 import { ZodValidationPipe } from 'nestjs-zod';
 import { TestRmqHandler } from '../../presentation/controllers/rmq/test-rmq.controller';
-import { ApiKeyGuard, GqlThrottlerGuard } from '../../presentation/middleware/guards';
+import { ApiKeyGuard } from '../../presentation/middleware/guards';
 import { RedisCacheModule } from '../cache/redis/redis-cache.module';
 import { EventsModule } from '../events/events.module';
 import { GraphqlModule } from '../graphql';
@@ -29,9 +28,15 @@ import { PlatformModule } from './platform.module';
 import { PublicReviewModule } from './public-review.module';
 import { UploadedFileModule } from './uploaded-file.module';
 
+import { globalConfigs } from '@/configs';
+import { ConfigModule } from '@nestjs/config';
+
 @Module({
   imports: [
-    // ConfigModule.forRoot({ isGlobal: true }),
+    ConfigModule.forRoot({
+      isGlobal: true,
+      load: globalConfigs,
+    }),
     InfrastructureModule,
     ScheduleModule.forRoot(),
     EventEmitterModule.forRoot(),
