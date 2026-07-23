@@ -22,7 +22,13 @@ export class AuthConfigDto {
 
   @Type(() => Number)
   @IsInt()
-  jwtRefreshExpirationDays: number;
+  @IsOptional()
+  jwtRefreshExpirationDays?: number;
+
+  @Type(() => Number)
+  @IsInt()
+  @IsOptional()
+  jwtRefreshExpirationMinutes?: number;
 
   @IsString()
   @IsOptional()
@@ -87,6 +93,7 @@ export class AuthConfig extends BaseConfigService<AuthConfigDto> {
       jwtSecret: process.env.JWT_SECRET,
       jwtAccessExpirationMinutes: process.env.JWT_ACCESS_EXPIRATION_MINUTES,
       jwtRefreshExpirationDays: process.env.JWT_REFRESH_EXPIRATION_DAYS,
+      jwtRefreshExpirationMinutes: process.env.JWT_REFRESH_EXPIRATION_MINUTES,
       facebookAppId: process.env.FACEBOOK_APP_ID,
       facebookAppSecret: process.env.FACEBOOK_APP_SECRET,
       facebookCallbackUrl: process.env.FACEBOOK_CALLBACK_URL,
@@ -125,7 +132,13 @@ export class AuthConfig extends BaseConfigService<AuthConfigDto> {
    * @returns Expiration time in days
    */
   getJwtRefreshExpirationDays(): number {
-    return this.config.jwtRefreshExpirationDays;
+    if (this.config.jwtRefreshExpirationDays !== undefined) {
+      return this.config.jwtRefreshExpirationDays;
+    }
+    if (this.config.jwtRefreshExpirationMinutes !== undefined) {
+      return Math.floor(this.config.jwtRefreshExpirationMinutes / (24 * 60));
+    }
+    return 7;
   }
 
   /* ------------------------- Facebook OAuth Config ------------------------ */
