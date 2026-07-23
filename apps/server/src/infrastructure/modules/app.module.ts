@@ -6,7 +6,7 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
 import { ScheduleModule } from '@nestjs/schedule';
 import { ZodValidationPipe } from 'nestjs-zod';
 
-/* ------------------------ Infrastructure Modules ------------------------ */
+/* -------------------------- Infrastructure Modules -------------------------- */
 import { RedisCacheModule } from '../cache/redis/redis-cache.module';
 import { EventsModule } from '../events/events.module';
 import { GraphqlModule } from '../graphql';
@@ -15,7 +15,7 @@ import { RabbitMQModule } from '../rabbitmq/rabbitmq.module';
 import { WebSocketModule } from '../websocket/websocket.module';
 import { InfrastructureModule } from './infrastructure.module';
 
-/* ----------------------- Domain & Feature Modules ----------------------- */
+/* --------------------------- Domain & Feature Modules --------------------------- */
 import { AnalyticsModule } from './analytics.module';
 import { AuthModule } from './auth.module';
 import { CampaignParticipantModule } from './campaign-participant.module';
@@ -30,7 +30,7 @@ import { RoleModule } from './role.module';
 import { UploadedFileModule } from './uploaded-file.module';
 import { UserModule } from './user.module';
 
-/* ----------------------- Presentation & Handlers ------------------------ */
+/* -------------------------- Presentation & Handlers --------------------------- */
 import { TestRmqHandler } from '@/presentation/controllers/rmq/test-rmq.controller';
 import { HttpExceptionFilter } from '@/presentation/middleware/filters';
 import { ApiKeyGuard } from '@/presentation/middleware/guards';
@@ -39,7 +39,7 @@ import { LoggingInterceptor, TransformInterceptor } from '@/presentation/middlew
 @Module({
   imports: [
     /* -------------------------------------------------------------------------- */
-    /*                  1. CORE & FRAMEWORK CONFIGURATION MODULES                 */
+    /*                 1. CORE & FRAMEWORK CONFIGURATION MODULES                  */
     /* -------------------------------------------------------------------------- */
     ConfigModule.forRoot({
       isGlobal: true,
@@ -49,7 +49,7 @@ import { LoggingInterceptor, TransformInterceptor } from '@/presentation/middlew
     EventEmitterModule.forRoot(),
 
     /* -------------------------------------------------------------------------- */
-    /*         2. SHARED INFRASTRUCTURE MODULES (DB, CACHE, RMQ, ETC.)          */
+    /*          2. SHARED INFRASTRUCTURE MODULES (DB, CACHE, RMQ, ETC.)          */
     /* -------------------------------------------------------------------------- */
     InfrastructureModule,
     MongoModule,
@@ -60,7 +60,7 @@ import { LoggingInterceptor, TransformInterceptor } from '@/presentation/middlew
     EventsModule,
 
     /* -------------------------------------------------------------------------- */
-    /*                   3. DOMAIN & BUSINESS FEATURE MODULES                   */
+    /*                    3. DOMAIN & BUSINESS FEATURE MODULES                    */
     /* -------------------------------------------------------------------------- */
     UserModule,
     EnterpriseModule,
@@ -79,7 +79,7 @@ import { LoggingInterceptor, TransformInterceptor } from '@/presentation/middlew
   controllers: [],
   providers: [
     /* -------------------------------------------------------------------------- */
-    /*               GLOBAL PIPES, FILTERS, INTERCEPTORS & GUARDS               */
+    /*                GLOBAL PIPES, FILTERS, INTERCEPTORS & GUARDS                */
     /* -------------------------------------------------------------------------- */
     {
       provide: APP_PIPE,
@@ -103,7 +103,7 @@ import { LoggingInterceptor, TransformInterceptor } from '@/presentation/middlew
     },
 
     /* -------------------------------------------------------------------------- */
-    /*                        HANDLERS & EVENT LISTENERS                        */
+    /*                         HANDLERS & EVENT LISTENERS                         */
     /* -------------------------------------------------------------------------- */
     TestRmqHandler,
   ],

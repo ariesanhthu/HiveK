@@ -13,9 +13,7 @@ import { tap } from 'rxjs/operators';
 
 @Injectable()
 export class LoggingInterceptor implements NestInterceptor {
-  constructor(
-    @Inject(LOGGER_SERVICE) private readonly logger: ILoggerService,
-  ) {
+  constructor(@Inject(LOGGER_SERVICE) private readonly logger: ILoggerService) {
     this.logger.setContext(LoggingInterceptor.name);
   }
 
