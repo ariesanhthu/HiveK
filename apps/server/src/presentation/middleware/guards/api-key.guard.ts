@@ -1,7 +1,12 @@
 import { SecurityConfig } from '@/configs';
 import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
 import { GqlExecutionContext } from '@nestjs/graphql';
+import { FastifyRequest } from 'fastify';
 import { Observable } from 'rxjs';
+
+interface GraphQLContext {
+  req?: FastifyRequest;
+}
 
 @Injectable()
 export class ApiKeyGuard implements CanActivate {
@@ -11,13 +16,13 @@ export class ApiKeyGuard implements CanActivate {
     context: ExecutionContext,
   ): boolean | Promise<boolean> | Observable<boolean> {
     const type = context.getType() as string;
-    let request: any;
+    let request: FastifyRequest | undefined;
 
     if (type === 'graphql') {
       const gqlCtx = GqlExecutionContext.create(context);
-      request = gqlCtx.getContext().req;
+      request = gqlCtx.getContext<GraphQLContext>().req;
     } else {
-      request = context.switchToHttp().getRequest();
+      request = context.switchToHttp().getRequest<FastifyRequest>();
     }
 
     // Bypass API key check for GraphQL playground GET requests or Swagger docs
