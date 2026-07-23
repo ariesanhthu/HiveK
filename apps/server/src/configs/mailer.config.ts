@@ -1,6 +1,7 @@
 import { BaseConfigService } from '@hivek/nest-core';
 import { Injectable } from '@nestjs/common';
 import { registerAs } from '@nestjs/config';
+import { Type } from 'class-transformer';
 import { IsInt, IsOptional, IsString } from 'class-validator';
 
 /* -------------------------------------------------------------------------- */
@@ -15,6 +16,7 @@ export class MailerConfigDto {
   @IsOptional()
   host?: string;
 
+  @Type(() => Number)
   @IsInt()
   @IsOptional()
   port?: number;
@@ -44,7 +46,7 @@ export class MailerConfig extends BaseConfigService<MailerConfigDto> {
   constructor() {
     super(MailerConfigDto, {
       host: process.env.SMTP_HOST,
-      port: process.env.SMTP_PORT ? parseInt(process.env.SMTP_PORT, 10) : undefined,
+      port: process.env.SMTP_PORT,
       user: process.env.SMTP_USER,
       pass: process.env.SMTP_PASS,
       from: process.env.SMTP_FROM,

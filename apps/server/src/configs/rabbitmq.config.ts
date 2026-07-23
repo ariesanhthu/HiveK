@@ -1,6 +1,7 @@
 import { BaseConfigService } from '@hivek/nest-core';
 import { Injectable } from '@nestjs/common';
 import { registerAs } from '@nestjs/config';
+import { Type } from 'class-transformer';
 import { IsInt, IsOptional, IsString } from 'class-validator';
 
 /* -------------------------------------------------------------------------- */
@@ -23,6 +24,7 @@ export class RabbitMQConfigDto {
   @IsOptional()
   host?: string;
 
+  @Type(() => Number)
   @IsInt()
   @IsOptional()
   port?: number;
@@ -46,7 +48,7 @@ export class RabbitMQConfig extends BaseConfigService<RabbitMQConfigDto> {
       user: process.env.RMQ_USER,
       password: process.env.RMQ_PASSWORD,
       host: process.env.RMQ_HOST,
-      port: process.env.RMQ_PORT ? parseInt(process.env.RMQ_PORT, 10) : undefined,
+      port: process.env.RMQ_PORT,
       vhost: process.env.RMQ_VHOST,
     });
   }

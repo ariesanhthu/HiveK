@@ -1,6 +1,7 @@
 import { BaseConfigService } from '@hivek/nest-core';
 import { Injectable } from '@nestjs/common';
 import { registerAs } from '@nestjs/config';
+import { Type } from 'class-transformer';
 import { IsInt, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 /* -------------------------------------------------------------------------- */
@@ -15,6 +16,7 @@ export class RedisConfigDto {
   @IsNotEmpty()
   host: string;
 
+  @Type(() => Number)
   @IsInt()
   port: number;
 
@@ -34,11 +36,9 @@ export class RedisConfigDto {
 export class RedisConfig extends BaseConfigService<RedisConfigDto> {
   constructor() {
     super(RedisConfigDto, {
-      host: process.env.REDIS_HOST as string,
-      port: process.env.REDIS_PORT
-        ? parseInt(process.env.REDIS_PORT, 10)
-        : (undefined as unknown as number),
-      password: process.env.REDIS_PASSWORD || undefined,
+      host: process.env.REDIS_HOST,
+      port: process.env.REDIS_PORT,
+      password: process.env.REDIS_PASSWORD,
     });
   }
 

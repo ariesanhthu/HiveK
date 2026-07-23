@@ -1,6 +1,7 @@
 import { BaseConfigService } from '@hivek/nest-core';
 import { Injectable } from '@nestjs/common';
 import { registerAs } from '@nestjs/config';
+import { Type } from 'class-transformer';
 import { IsInt, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 /* -------------------------------------------------------------------------- */
@@ -15,9 +16,11 @@ export class AuthConfigDto {
   @IsNotEmpty()
   jwtSecret: string;
 
+  @Type(() => Number)
   @IsInt()
   jwtAccessExpirationMinutes: number;
 
+  @Type(() => Number)
   @IsInt()
   jwtRefreshExpirationDays: number;
 
@@ -81,13 +84,9 @@ export class AuthConfigDto {
 export class AuthConfig extends BaseConfigService<AuthConfigDto> {
   constructor() {
     super(AuthConfigDto, {
-      jwtSecret: process.env.JWT_SECRET as string,
-      jwtAccessExpirationMinutes: process.env.JWT_ACCESS_EXPIRATION_MINUTES
-        ? parseInt(process.env.JWT_ACCESS_EXPIRATION_MINUTES, 10)
-        : (undefined as unknown as number),
-      jwtRefreshExpirationDays: process.env.JWT_REFRESH_EXPIRATION_DAYS
-        ? parseInt(process.env.JWT_REFRESH_EXPIRATION_DAYS, 10)
-        : (undefined as unknown as number),
+      jwtSecret: process.env.JWT_SECRET,
+      jwtAccessExpirationMinutes: process.env.JWT_ACCESS_EXPIRATION_MINUTES,
+      jwtRefreshExpirationDays: process.env.JWT_REFRESH_EXPIRATION_DAYS,
       facebookAppId: process.env.FACEBOOK_APP_ID,
       facebookAppSecret: process.env.FACEBOOK_APP_SECRET,
       facebookCallbackUrl: process.env.FACEBOOK_CALLBACK_URL,

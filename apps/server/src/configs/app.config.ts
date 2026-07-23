@@ -1,6 +1,7 @@
 import { BaseConfigService } from '@hivek/nest-core';
 import { Injectable } from '@nestjs/common';
 import { registerAs } from '@nestjs/config';
+import { Type } from 'class-transformer';
 import { IsInt, IsNotEmpty, IsString } from 'class-validator';
 
 /* -------------------------------------------------------------------------- */
@@ -15,6 +16,7 @@ export class AppConfigDto {
   @IsNotEmpty()
   host: string;
 
+  @Type(() => Number)
   @IsInt()
   port: number;
 
@@ -41,9 +43,9 @@ export class AppConfig extends BaseConfigService<AppConfigDto> {
 
   constructor() {
     super(AppConfigDto, {
-      host: process.env.HOST as string,
-      port: process.env.PORT ? parseInt(process.env.PORT, 10) : (undefined as unknown as number),
-      env: process.env.NODE_ENV as string,
+      host: process.env.HOST,
+      port: process.env.PORT,
+      env: process.env.NODE_ENV,
     });
   }
 
