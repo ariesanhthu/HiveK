@@ -38,9 +38,9 @@ import { LoggingInterceptor, TransformInterceptor } from '@/presentation/middlew
 
 @Module({
   imports: [
-    // ----------------------------------------------------
-    // 1. Core & Framework Configuration Modules
-    // ----------------------------------------------------
+    // ============================================================================
+    // 1. CORE & FRAMEWORK CONFIGURATION MODULES
+    // ============================================================================
     ConfigModule.forRoot({
       isGlobal: true,
       load: globalConfigs,
@@ -48,9 +48,9 @@ import { LoggingInterceptor, TransformInterceptor } from '@/presentation/middlew
     ScheduleModule.forRoot(),
     EventEmitterModule.forRoot(),
 
-    // ----------------------------------------------------
-    // 2. Shared Infrastructure Modules (DB, Cache, RMQ, etc.)
-    // ----------------------------------------------------
+    // ============================================================================
+    // 2. SHARED INFRASTRUCTURE MODULES (DB, CACHE, RMQ, ETC.)
+    // ============================================================================
     InfrastructureModule,
     MongoModule,
     RedisCacheModule,
@@ -59,9 +59,9 @@ import { LoggingInterceptor, TransformInterceptor } from '@/presentation/middlew
     GraphqlModule,
     EventsModule,
 
-    // ----------------------------------------------------
-    // 3. Domain & Business Feature Modules
-    // ----------------------------------------------------
+    // ============================================================================
+    // 3. DOMAIN & BUSINESS FEATURE MODULES
+    // ============================================================================
     UserModule,
     EnterpriseModule,
     RoleModule,
@@ -78,9 +78,9 @@ import { LoggingInterceptor, TransformInterceptor } from '@/presentation/middlew
   ],
   controllers: [],
   providers: [
-    // ----------------------------------------------------
-    // Global Pipes, Filters, Interceptors & Guards
-    // ----------------------------------------------------
+    // ============================================================================
+    // GLOBAL PIPES, FILTERS, INTERCEPTORS & GUARDS
+    // ============================================================================
     {
       provide: APP_PIPE,
       useClass: ZodValidationPipe,
@@ -102,9 +102,9 @@ import { LoggingInterceptor, TransformInterceptor } from '@/presentation/middlew
       useClass: ApiKeyGuard,
     },
 
-    // ----------------------------------------------------
-    // Handlers & Event Listeners
-    // ----------------------------------------------------
+    // ============================================================================
+    // HANDLERS & EVENT LISTENERS
+    // ============================================================================
     TestRmqHandler,
   ],
 })
