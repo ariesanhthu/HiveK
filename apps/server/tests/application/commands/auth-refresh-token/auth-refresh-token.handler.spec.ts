@@ -1,11 +1,11 @@
-import { AuthRefreshTokenCommandHandler } from '@/application/commands/auth-refresh-token/auth-refresh-token.handler';
 import { AuthRefreshTokenCommand } from '@/application/commands/auth-refresh-token/auth-refresh-token.command';
+import { AuthRefreshTokenCommandHandler } from '@/application/commands/auth-refresh-token/auth-refresh-token.handler';
+import { KOLUserRoot } from '@/core/aggregate-roots/kol-user.aggregate';
 import { ERoleType } from '@/core/enums';
 import { InvalidRefreshTokenException, UserNotFoundException } from '@/core/exceptions';
+import { PhoneNumberVO } from '@/core/value-objects/phone-number.value-object';
 import { createMockUserRepository } from '../../../__mocks__/mock-repositories';
 import { createMockAuthService, createMockJwtService } from '../../../__mocks__/mock-services';
-import { KOLUserRoot } from '@/core/aggregate-roots/kol-user.aggregate';
-import { PhoneNumberVO } from '@/core/value-objects/phone-number.value-object';
 
 describe('AuthRefreshTokenCommandHandler', () => {
   let handler: AuthRefreshTokenCommandHandler;
@@ -25,7 +25,7 @@ describe('AuthRefreshTokenCommandHandler', () => {
     );
   });
 
-  const createMockUser = (overrides: { id?: string; refreshToken?: string } = {}) => {
+  const createMockUser = (overrides: { id?: string; refreshToken?: string; } = {}) => {
     return KOLUserRoot.instantiate(overrides.id || 'user-123', {
       email: 'test@example.com',
       phone: PhoneNumberVO.create({ value: '+1234567890' }),
@@ -49,7 +49,12 @@ describe('AuthRefreshTokenCommandHandler', () => {
       const command = new AuthRefreshTokenCommand(input);
       const mockUser = createMockUser();
 
-      mockJwtService.verify.mockReturnValue({ sub: 'user-123', email: 'test@example.com', role: 'role-123', type: ERoleType.KOL });
+      mockJwtService.verify.mockReturnValue({
+        sub: 'user-123',
+        email: 'test@example.com',
+        role: 'role-123',
+        type: ERoleType.KOL,
+      });
       mockUserRepository.findById.mockResolvedValue(mockUser);
       mockAuthService.generateTokens.mockResolvedValue({
         accessToken: 'new-at',
@@ -80,7 +85,9 @@ describe('AuthRefreshTokenCommandHandler', () => {
       const input = { refreshToken: 'invalid' };
       const command = new AuthRefreshTokenCommand(input);
 
-      mockJwtService.verify.mockImplementation(() => { throw new Error('expired'); });
+      mockJwtService.verify.mockImplementation(() => {
+        throw new Error('expired');
+      });
 
       await expect(handler.execute(command)).rejects.toThrow(InvalidRefreshTokenException);
       expect(mockUserRepository.findById).not.toHaveBeenCalled();
@@ -90,7 +97,12 @@ describe('AuthRefreshTokenCommandHandler', () => {
       const input = { refreshToken: 'valid-token' };
       const command = new AuthRefreshTokenCommand(input);
 
-      mockJwtService.verify.mockReturnValue({ sub: 'nonexistent', email: '', role: '', type: ERoleType.KOL });
+      mockJwtService.verify.mockReturnValue({
+        sub: 'nonexistent',
+        email: '',
+        role: '',
+        type: ERoleType.KOL,
+      });
       mockUserRepository.findById.mockResolvedValue(null);
 
       await expect(handler.execute(command)).rejects.toThrow(UserNotFoundException);
@@ -101,7 +113,12 @@ describe('AuthRefreshTokenCommandHandler', () => {
       const command = new AuthRefreshTokenCommand(input);
       const mockUser = createMockUser({ refreshToken: 'current-token' });
 
-      mockJwtService.verify.mockReturnValue({ sub: 'user-123', email: 'test@example.com', role: 'role-123', type: ERoleType.KOL });
+      mockJwtService.verify.mockReturnValue({
+        sub: 'user-123',
+        email: 'test@example.com',
+        role: 'role-123',
+        type: ERoleType.KOL,
+      });
       mockUserRepository.findById.mockResolvedValue(mockUser);
 
       await expect(handler.execute(command)).rejects.toThrow(InvalidRefreshTokenException);

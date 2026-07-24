@@ -1,6 +1,6 @@
-import { z } from 'zod';
-import { createZodDto } from 'nestjs-zod';
 import { CursorPaginationRequestSchema } from '@/application/dtos/pagination.dto';
+import { createZodDto } from 'nestjs-zod';
+import { z } from 'zod';
 
 export const UploadedFileFilterSchema = CursorPaginationRequestSchema.extend({
   targetId: z.string().optional(),
@@ -10,4 +10,6 @@ export const UploadedFileFilterSchema = CursorPaginationRequestSchema.extend({
   maxSize: z.coerce.number().optional(),
 });
 
-export class UploadedFileFilterDto extends createZodDto(UploadedFileFilterSchema) {}
+export class UploadedFileFilterDto extends createZodDto(
+  UploadedFileFilterSchema,
+) {}

@@ -1,4 +1,8 @@
-import { EventMetadata, IntegrationEvent, TransportMetadata } from '@/core/common/base.integration-event';
+import {
+  EventMetadata,
+  IntegrationEvent,
+  TransportMetadata,
+} from '@/core/common/base.integration-event';
 import { EOtpType } from '@/core/enums';
 
 export interface SendVerificationEmailRequestedPayload {
@@ -8,7 +12,9 @@ export interface SendVerificationEmailRequestedPayload {
   expireAt: Date;
 }
 
-export class SendVerificationEmailRequestedEvent extends IntegrationEvent<SendVerificationEmailRequestedPayload> {
+export class SendVerificationEmailRequestedEvent
+  extends IntegrationEvent<SendVerificationEmailRequestedPayload>
+{
   public readonly eventType = 'SendVerificationEmailRequested';
 
   constructor(

@@ -55,7 +55,7 @@ describe('UploadService', () => {
     it('should throw BadRequestException if non-image file exceeds 2MB limit', async () => {
       const largeBuffer = Buffer.alloc(2.1 * 1024 * 1024); // 2.1 MB
       await expect(
-        service.processAndValidateFile(largeBuffer, 'application/pdf', 'test.pdf')
+        service.processAndValidateFile(largeBuffer, 'application/pdf', 'test.pdf'),
       ).rejects.toThrow(new BadRequestException('File size exceeds the 2MB limit'));
     });
 
@@ -106,8 +106,10 @@ describe('UploadService', () => {
         .mockResolvedValueOnce(attempt2Buffer);
 
       await expect(
-        service.processAndValidateFile(largeBuffer, 'image/webp', 'test.webp')
-      ).rejects.toThrow(new BadRequestException('Image could not be compressed under the 2MB limit'));
+        service.processAndValidateFile(largeBuffer, 'image/webp', 'test.webp'),
+      ).rejects.toThrow(
+        new BadRequestException('Image could not be compressed under the 2MB limit'),
+      );
     });
 
     it('should throw BadRequestException on compression error', async () => {
@@ -115,8 +117,10 @@ describe('UploadService', () => {
       mockSharpInstance.metadata.mockRejectedValue(new Error('Sharp processing failed'));
 
       await expect(
-        service.processAndValidateFile(largeBuffer, 'image/jpeg', 'test.jpg')
-      ).rejects.toThrow(new BadRequestException('Failed to compress image: Sharp processing failed'));
+        service.processAndValidateFile(largeBuffer, 'image/jpeg', 'test.jpg'),
+      ).rejects.toThrow(
+        new BadRequestException('Failed to compress image: Sharp processing failed'),
+      );
     });
   });
 });

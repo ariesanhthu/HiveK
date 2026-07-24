@@ -17,7 +17,11 @@ export class KpiLogModel {
   @Prop({ required: true, type: MongooseSchema.Types.Date })
   timestamp: Date;
 
-  @Prop({ required: true, type: MongooseSchema.Types.ObjectId, ref: 'CampaignParticipantModel' })
+  @Prop({
+    required: true,
+    type: MongooseSchema.Types.ObjectId,
+    ref: 'CampaignParticipantModel',
+  })
   participantId: Types.ObjectId;
 
   @Prop({ type: MongooseSchema.Types.ObjectId, default: null })

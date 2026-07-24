@@ -1,5 +1,5 @@
-import { MongoClient, ObjectId } from 'mongodb';
 import * as fs from 'fs';
+import { MongoClient, ObjectId } from 'mongodb';
 import * as path from 'path';
 
 // Load .env file manually to support standalone execution
@@ -22,7 +22,8 @@ const loadEnv = () => {
 
 loadEnv();
 
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://root:root%40123@localhost:27017/hivek?authSource=admin';
+const MONGODB_URI = process.env.MONGODB_URI
+  || 'mongodb://root:root%40123@localhost:27017/hivek?authSource=admin';
 
 async function mapUsersByHandle() {
   console.log('🔗 Connecting to MongoDB...');
@@ -36,7 +37,9 @@ async function mapUsersByHandle() {
     const tiktokUsers = await db.collection('tiktok_users').find({}).toArray();
     const youtubeUsers = await db.collection('youtube_users').find({}).toArray();
 
-    console.log(`📊 Found ${tiktokUsers.length} TikTok users and ${youtubeUsers.length} YouTube users.`);
+    console.log(
+      `📊 Found ${tiktokUsers.length} TikTok users and ${youtubeUsers.length} YouTube users.`,
+    );
 
     // Map YouTube handles (lowercased) to their respective _ids for fast lookup
     const youtubeMap = new Map<string, ObjectId>();
@@ -69,19 +72,19 @@ async function mapUsersByHandle() {
         const existing = await userCol.findOne({
           $or: [
             { tiktok_id: tk._id },
-            { youtube_id: ytId }
-          ]
+            { youtube_id: ytId },
+          ],
         });
 
         if (existing) {
           await userCol.updateOne(
             { _id: existing._id },
-            { $set: { tiktok_id: tk._id, youtube_id: ytId } }
+            { $set: { tiktok_id: tk._id, youtube_id: ytId } },
           );
         } else {
           await userCol.insertOne({
             tiktok_id: tk._id,
-            youtube_id: ytId
+            youtube_id: ytId,
           });
         }
         matchedCount++;
@@ -96,9 +99,9 @@ async function mapUsersByHandle() {
         { tiktok_id: tk._id },
         {
           $set: { tiktok_id: tk._id },
-          $setOnInsert: { youtube_id: null }
+          $setOnInsert: { youtube_id: null },
         },
-        { upsert: true }
+        { upsert: true },
       );
       tiktokOnlyCount++;
     }
@@ -111,9 +114,9 @@ async function mapUsersByHandle() {
         { youtube_id: yt._id },
         {
           $set: { youtube_id: yt._id },
-          $setOnInsert: { tiktok_id: null }
+          $setOnInsert: { tiktok_id: null },
         },
-        { upsert: true }
+        { upsert: true },
       );
       youtubeOnlyCount++;
     }
@@ -122,7 +125,6 @@ async function mapUsersByHandle() {
     console.log(`- Matched profiles (TikTok & YouTube): ${matchedCount}`);
     console.log(`- TikTok-only profiles: ${tiktokOnlyCount}`);
     console.log(`- YouTube-only profiles: ${youtubeOnlyCount}`);
-
   } catch (error) {
     console.error('❌ Error executing mapping script:', error);
   } finally {

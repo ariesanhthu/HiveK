@@ -1,5 +1,5 @@
-import { JwtService } from '@nestjs/jwt';
 import { JwtAuthService } from '@/infrastructure/auth/jwt.service';
+import { JwtService } from '@nestjs/jwt';
 
 describe('JwtAuthService', () => {
   let jwtAuthService: JwtAuthService;
@@ -30,7 +30,13 @@ describe('JwtAuthService', () => {
 
     it('should pass through optional JWT options', () => {
       const payload = { sub: 'user-1', email: 'test@test.com', role: 'role-1', type: 'kol' };
-      jwtAuthService.sign(payload, { secret: 'custom-secret', audience: 'myapp', issuer: 'hivek', jwtid: 'id-1', subject: 'auth' });
+      jwtAuthService.sign(payload, {
+        secret: 'custom-secret',
+        audience: 'myapp',
+        issuer: 'hivek',
+        jwtid: 'id-1',
+        subject: 'auth',
+      });
       expect(nestJwtService.sign).toHaveBeenCalledWith(payload, {
         expiresIn: undefined,
         secret: 'custom-secret',
@@ -101,7 +107,9 @@ describe('JwtAuthService', () => {
     });
 
     it('should throw when header is missing', () => {
-      expect(() => jwtAuthService.verifyAuthHeader(undefined)).toThrow('No authorization token provided');
+      expect(() => jwtAuthService.verifyAuthHeader(undefined)).toThrow(
+        'No authorization token provided',
+      );
     });
   });
 
@@ -126,14 +134,19 @@ describe('JwtAuthService', () => {
     });
 
     it('should throw when no token provided', () => {
-      expect(() => jwtAuthService.verifyHandshake(undefined, undefined)).toThrow('No authorization token provided');
+      expect(() => jwtAuthService.verifyHandshake(undefined, undefined)).toThrow(
+        'No authorization token provided',
+      );
     });
   });
 
   describe('verifyRequest', () => {
     it('should use auth header first', () => {
       nestJwtService.verify.mockReturnValue({ sub: 'user-1' } as any);
-      const req = { headers: { authorization: 'Bearer header-token' }, cookies: { access_token: 'cookie-token' } };
+      const req = {
+        headers: { authorization: 'Bearer header-token' },
+        cookies: { access_token: 'cookie-token' },
+      };
       const result = jwtAuthService.verifyRequest(req);
       expect(result).toEqual({ sub: 'user-1' });
       expect(nestJwtService.verify).toHaveBeenCalledWith('header-token', undefined);

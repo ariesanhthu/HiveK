@@ -1,5 +1,5 @@
-import { PlatformCreateCommandHandler } from '@/application/commands/platform-create/platform-create.handler';
 import { PlatformCreateCommand } from '@/application/commands/platform-create/platform-create.command';
+import { PlatformCreateCommandHandler } from '@/application/commands/platform-create/platform-create.handler';
 import { PlatformConflictException } from '@/core/exceptions';
 
 describe('PlatformCreateCommandHandler', () => {

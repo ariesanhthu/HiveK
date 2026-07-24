@@ -1,10 +1,10 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { getModelToken } from '@nestjs/mongoose';
+import { UNIT_OF_WORK } from '@/application/interfaces';
+import { EnterpriseRoot } from '@/core/aggregate-roots';
 import { MongoEnterpriseRepository } from '@/infrastructure/mongo/repositories/enterprise.repository';
 import { EnterpriseModel } from '@/infrastructure/mongo/schemas/enterprise.schema';
-import { EnterpriseRoot } from '@/core/aggregate-roots';
+import { getModelToken } from '@nestjs/mongoose';
+import { Test, TestingModule } from '@nestjs/testing';
 import { Types } from 'mongoose';
-import { UNIT_OF_WORK } from '@/application/interfaces';
 
 describe('MongoEnterpriseRepository', () => {
   let repository: MongoEnterpriseRepository;
@@ -31,10 +31,10 @@ describe('MongoEnterpriseRepository', () => {
   beforeEach(async () => {
     // Model should be a constructor and have static methods
     mockEnterpriseModel = jest.fn().mockImplementation((data) => ({
-        ...data,
-        save: jest.fn().mockResolvedValue({ _id: new Types.ObjectId() }),
+      ...data,
+      save: jest.fn().mockResolvedValue({ _id: new Types.ObjectId() }),
     }));
-    
+
     mockEnterpriseModel.findById = jest.fn().mockReturnThis();
     mockEnterpriseModel.findOne = jest.fn().mockReturnThis();
     mockEnterpriseModel.findByIdAndUpdate = jest.fn().mockReturnThis();
@@ -43,7 +43,7 @@ describe('MongoEnterpriseRepository', () => {
     mockEnterpriseModel.exec = jest.fn();
 
     mockUow = {
-        getSession: jest.fn().mockReturnValue(null),
+      getSession: jest.fn().mockReturnValue(null),
     };
 
     const module: TestingModule = await Test.createTestingModule({

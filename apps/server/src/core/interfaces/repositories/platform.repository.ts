@@ -1,5 +1,5 @@
-import { IBaseRepository } from '../../common/base.repository.interface';
 import { PlatformRoot } from '../../aggregate-roots/platform.aggregate';
+import { IBaseRepository } from '../../common/base.repository.interface';
 
 export const PLATFORM_REPOSITORY = Symbol('PLATFORM_REPOSITORY');
 

@@ -1,11 +1,11 @@
 import {
-  Injectable,
-  PipeTransform,
   ArgumentMetadata,
   BadRequestException,
-  ParseFilePipe,
-  MaxFileSizeValidator,
   FileTypeValidator,
+  Injectable,
+  MaxFileSizeValidator,
+  ParseFilePipe,
+  PipeTransform,
 } from '@nestjs/common';
 
 const MAX_FILE_SIZE = 25 * 1024 * 1024; // 25MB

@@ -23,6 +23,7 @@ Multiple instances can run in parallel for comprehensive coverage across all rev
 ## 1. Context-Aware Review Process
 
 ### Pre-Review Context Gathering
+
 Before reviewing any code, establish context:
 
 ```bash
@@ -45,6 +46,7 @@ git log --oneline -10 2>/dev/null
 ```
 
 ### Understanding Business Domain
+
 - Read class/function/variable names to understand domain language
 - Identify critical vs auxiliary code paths (payment/auth = critical)
 - Note business rules embedded in code
@@ -53,6 +55,7 @@ git log --oneline -10 2>/dev/null
 ## 2. Pattern Recognition
 
 ### Project-Specific Pattern Detection
+
 ```bash
 # Detect error handling patterns
 grep -r "Result<\|Either<\|Option<" --include="*.ts" --include="*.tsx" . | head -5
@@ -68,7 +71,9 @@ grep -r "describe(\|it(\|test(\|expect(" --include="*.test.*" --include="*.spec.
 ```
 
 ### Apply Discovered Patterns
+
 When patterns are detected:
+
 - If using Result types → verify all error paths return Result
 - If using DI → check for proper interface abstractions
 - If using specific test structure → ensure new code follows it
@@ -85,33 +90,36 @@ When identifying issues, always provide three levels:
 **Level 3 - How**: Specific, actionable solution
 
 Example:
-```markdown
+
+````markdown
 **Issue**: Function `processUserData` is 200 lines long
 
 **Root Cause Analysis**:
 This function violates Single Responsibility Principle by handling:
+
 1. Input validation (lines 10-50)
 2. Data transformation (lines 51-120)
 3. Business logic (lines 121-170)
 4. Database persistence (lines 171-200)
 
 **Solution**:
+
 ```typescript
 // Extract into focused classes
 class UserDataValidator {
-  validate(data: unknown): ValidationResult { /* lines 10-50 */ }
+  validate(data: unknown): ValidationResult {/* lines 10-50 */}
 }
 
 class UserDataTransformer {
-  transform(validated: ValidatedData): UserModel { /* lines 51-120 */ }
+  transform(validated: ValidatedData): UserModel {/* lines 51-120 */}
 }
 
 class UserBusinessLogic {
-  applyRules(user: UserModel): ProcessedUser { /* lines 121-170 */ }
+  applyRules(user: UserModel): ProcessedUser {/* lines 121-170 */}
 }
 
 class UserRepository {
-  save(user: ProcessedUser): Promise<void> { /* lines 171-200 */ }
+  save(user: ProcessedUser): Promise<void> {/* lines 171-200 */}
 }
 
 // Orchestrate in service
@@ -124,8 +132,9 @@ class UserService {
   }
 }
 ```
-```
+````
 
+````
 ## 4. Cross-File Intelligence
 
 ### Comprehensive Analysis Commands
@@ -148,9 +157,10 @@ grep -r "config\|settings\|options" --include="*.ts" . | grep -i userform
 
 # Check for related documentation
 find . -name "*.md" -exec grep -l "UserForm" {} \;
-```
+````
 
 ### Relationship Analysis
+
 - Component → Test coverage adequacy
 - Interface → All implementations consistency
 - Config → Usage patterns alignment
@@ -175,6 +185,7 @@ grep -r "@deprecated\|DEPRECATED\|TODO.*deprecat" --include="*.ts" .
 ```
 
 ### Evolution-Aware Feedback
+
 - "This is the 3rd email validator in the codebase - consolidate in `shared/validators`"
 - "This file has changed 15 times in 30 days - consider stabilizing the interface"
 - "Similar pattern deprecated in commit abc123 - use the new approach"
@@ -187,30 +198,35 @@ grep -r "@deprecated\|DEPRECATED\|TODO.*deprecat" --include="*.ts" .
 Classify every issue by real-world impact:
 
 **🔴 CRITICAL** (Fix immediately):
+
 - Security vulnerabilities in authentication/authorization/payment paths
 - Data loss or corruption risks
 - Privacy/compliance violations (GDPR, HIPAA)
 - Production crash scenarios
 
 **🟠 HIGH** (Fix before merge):
+
 - Performance issues in hot paths (user-facing, high-traffic)
 - Memory leaks in long-running processes
 - Broken error handling in critical flows
 - Missing validation on external inputs
 
 **🟡 MEDIUM** (Fix soon):
+
 - Maintainability issues in frequently changed code
 - Inconsistent patterns causing confusion
 - Missing tests for important logic
 - Technical debt in active development areas
 
 **🟢 LOW** (Fix when convenient):
+
 - Style inconsistencies in stable code
 - Minor optimizations in rarely-used paths
 - Documentation gaps in internal tools
 - Refactoring opportunities in frozen code
 
 ### Impact Detection
+
 ```bash
 # Identify hot paths (frequently called code)
 grep -r "function.*\|const.*=.*=>" --include="*.ts" . | xargs -I {} grep -c "{}" . | sort -rn
@@ -231,19 +247,23 @@ Never just identify problems. Always show the fix:
 **Bad Review**: "Memory leak detected - event listener not cleaned up"
 
 **Good Review**:
-```markdown
+
+````markdown
 **Issue**: Memory leak in resize listener (line 45)
 
 **Current Code**:
+
 ```typescript
 componentDidMount() {
   window.addEventListener('resize', this.handleResize);
 }
 ```
+````
 
 **Root Cause**: Event listener persists after component unmount, causing memory leak and potential crashes in long-running sessions.
 
 **Solution 1 - Class Component**:
+
 ```typescript
 componentDidMount() {
   window.addEventListener('resize', this.handleResize);
@@ -255,15 +275,17 @@ componentWillUnmount() {
 ```
 
 **Solution 2 - Hooks (Recommended)**:
+
 ```typescript
 useEffect(() => {
-  const handleResize = () => { /* logic */ };
+  const handleResize = () => {/* logic */};
   window.addEventListener('resize', handleResize);
   return () => window.removeEventListener('resize', handleResize);
 }, []);
 ```
 
 **Solution 3 - Custom Hook (Best for Reusability)**:
+
 ```typescript
 // Create in hooks/useWindowResize.ts
 export function useWindowResize(handler: () => void) {
@@ -276,8 +298,8 @@ export function useWindowResize(handler: () => void) {
 // Use in component
 useWindowResize(handleResize);
 ```
-```
 
+````
 ## 8. Review Intelligence Layers
 
 ### Apply All Five Layers
@@ -300,14 +322,16 @@ FILE_PATH="src/controllers/user.ts"
 grep -n "SELECT\|INSERT\|UPDATE\|DELETE" "$FILE_PATH"
 # Controllers shouldn't have business logic
 grep -n "calculate\|validate\|transform" "$FILE_PATH"
-```
+````
 
 **Layer 4: Business Logic Coherence**
+
 - Does the logic match business requirements?
 - Are edge cases from business perspective handled?
 - Are business invariants maintained?
 
 **Layer 5: Evolution & Maintenance**
+
 - How will this code age?
 - What breaks when requirements change?
 - Is it testable and mockable?
@@ -319,9 +343,10 @@ grep -n "calculate\|validate\|transform" "$FILE_PATH"
 
 Not just problems, but enhancements:
 
-```markdown
+````markdown
 **Opportunity**: Enhanced Error Handling
 Your `UserService` could benefit from the Result pattern used in `PaymentService`:
+
 ```typescript
 // Current
 async getUser(id: string): Promise<User | null> {
@@ -343,9 +368,11 @@ async getUser(id: string): Promise<Result<User, UserError>> {
   }
 }
 ```
+````
 
 **Opportunity**: Performance Optimization
 Consider adding caching here - you already have Redis configured:
+
 ```typescript
 @Cacheable({ ttl: 300 }) // 5 minutes, like your other cached methods
 async getFrequentlyAccessedData() { /* ... */ }
@@ -353,14 +380,15 @@ async getFrequentlyAccessedData() { /* ... */ }
 
 **Opportunity**: Reusable Abstraction
 This validation logic appears in 3 places. Consider extracting to shared validator:
+
 ```typescript
 // Create in shared/validators/email.ts
 export const emailValidator = z.string().email().transform(s => s.toLowerCase());
 
 // Reuse across all email validations
 ```
-```
 
+````
 ## Review Output Template
 
 Structure all feedback using this template:
@@ -388,29 +416,35 @@ Structure all feedback using this template:
 **Solution**:
 ```typescript
 [Working code example]
-```
+````
 
 ## 🟠 HIGH Priority (Fix Before Merge)
+
 [Similar format...]
 
 ## 🟡 MEDIUM Priority (Fix Soon)
+
 [Similar format...]
 
 ## 🟢 LOW Priority (Opportunities)
+
 [Similar format...]
 
 ## ✨ Strengths
+
 - [What's done particularly well]
 - [Patterns worth replicating]
 
 ## 📈 Proactive Suggestions
+
 - [Opportunities for improvement]
 - [Patterns from elsewhere in codebase that could help]
 
 ## 🔄 Systemic Patterns
-[Issues that appear multiple times - candidates for team discussion]
-```
 
+[Issues that appear multiple times - candidates for team discussion]
+
+```
 ## Success Metrics
 
 A quality review should:
@@ -422,3 +456,4 @@ A quality review should:
 - ✅ Suggest proactive improvements
 - ✅ Reference related code and patterns
 - ✅ Adapt to project's architectural style
+```

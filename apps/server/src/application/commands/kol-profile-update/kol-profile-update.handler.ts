@@ -1,19 +1,23 @@
-import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { Inject } from '@nestjs/common';
-import { UserNotFoundException } from '@/core/exceptions';
-import { KOL_PROFILE_REPOSITORY, type IKolProfileRepository } from '@/core/interfaces/repositories';
-import { KolProfileUpdateCommand } from './kol-profile-update.command';
 import { KolProfileDto } from '@/application/dtos';
 import { KolProfileMapper } from '@/application/mappers/kol-profile.mapper';
-import { KolPlatformInfoVO } from '@/core/value-objects/kol-platform-info.value-object';
 import { KolProfileEntity } from '@/core/entities/kol-profile.entity';
+import { UserNotFoundException } from '@/core/exceptions';
+import { type IKolProfileRepository, KOL_PROFILE_REPOSITORY } from '@/core/interfaces/repositories';
+import { KolPlatformInfoVO } from '@/core/value-objects/kol-platform-info.value-object';
+import { Inject } from '@nestjs/common';
+import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
+import { KolProfileUpdateCommand } from './kol-profile-update.command';
 
 @CommandHandler(KolProfileUpdateCommand)
-export class KolProfileUpdateCommandHandler implements ICommandHandler<KolProfileUpdateCommand, KolProfileDto> {
+export class KolProfileUpdateCommandHandler implements
+  ICommandHandler<
+    KolProfileUpdateCommand,
+    KolProfileDto
+  >
+{
   constructor(
-    @Inject(KOL_PROFILE_REPOSITORY)
-    private readonly kolProfileRepository: IKolProfileRepository,
-  ) { }
+    @Inject(KOL_PROFILE_REPOSITORY) private readonly kolProfileRepository: IKolProfileRepository,
+  ) {}
 
   async execute(command: KolProfileUpdateCommand): Promise<KolProfileDto> {
     const { id, input } = command;

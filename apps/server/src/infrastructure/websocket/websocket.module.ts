@@ -1,8 +1,8 @@
-import { Global, Module } from '@nestjs/common';
-import { WebSocketGateway } from '@/presentation/controllers';
-import { WebSocketService } from './websocket.service';
 import { WEBSOCKET_SERVICE } from '@/application/interfaces';
+import { WebSocketGateway } from '@/presentation/controllers';
+import { Global, Module } from '@nestjs/common';
 import { AuthModule } from '../modules/auth.module';
+import { WebSocketService } from './websocket.service';
 
 @Global()
 @Module({

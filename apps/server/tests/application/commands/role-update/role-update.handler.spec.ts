@@ -1,6 +1,6 @@
-import { RoleUpdateCommandHandler } from '@/application/commands/role-update/role-update.handler';
 import { RoleUpdateCommand } from '@/application/commands/role-update/role-update.command';
-import { RoleNotFoundException, RoleConflictException } from '@/core/exceptions';
+import { RoleUpdateCommandHandler } from '@/application/commands/role-update/role-update.handler';
+import { RoleConflictException, RoleNotFoundException } from '@/core/exceptions';
 
 describe('RoleUpdateCommandHandler', () => {
   let handler: RoleUpdateCommandHandler;

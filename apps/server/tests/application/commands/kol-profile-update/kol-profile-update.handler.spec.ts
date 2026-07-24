@@ -1,5 +1,5 @@
-import { KolProfileUpdateCommandHandler } from '@/application/commands/kol-profile-update/kol-profile-update.handler';
 import { KolProfileUpdateCommand } from '@/application/commands/kol-profile-update/kol-profile-update.command';
+import { KolProfileUpdateCommandHandler } from '@/application/commands/kol-profile-update/kol-profile-update.handler';
 import { UserNotFoundException } from '@/core/exceptions';
 
 describe('KolProfileUpdateCommandHandler', () => {

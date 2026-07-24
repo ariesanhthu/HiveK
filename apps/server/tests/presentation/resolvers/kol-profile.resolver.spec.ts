@@ -1,9 +1,9 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { QueryBus } from '@nestjs/cqrs';
-import type { GraphQLResolveInfo } from 'graphql';
-import { KolProfileResolver } from '@/presentation/controllers/resolvers/kol-profile.resolver';
-import { KolProfileGetByIdQuery } from '@/application/queries';
 import { ProjectionDto } from '@/application/dtos/projection.dto';
+import { KolProfileGetByIdQuery } from '@/application/queries';
+import { KolProfileResolver } from '@/presentation/controllers/resolvers/kol-profile.resolver';
+import { QueryBus } from '@nestjs/cqrs';
+import { Test, TestingModule } from '@nestjs/testing';
+import type { GraphQLResolveInfo } from 'graphql';
 import graphqlFields from 'graphql-fields';
 
 jest.mock('graphql-fields');

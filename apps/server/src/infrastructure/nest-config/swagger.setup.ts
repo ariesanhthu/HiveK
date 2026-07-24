@@ -1,11 +1,15 @@
+import { AppConfig } from '@/configs';
 import { INestApplication } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
-export function setupSwagger(app: INestApplication): void {
+export function setupSwagger(
+  app: INestApplication,
+  appConfig: AppConfig,
+): void {
   const config = new DocumentBuilder()
-    .setTitle('HiveK API')
-    .setDescription('The API documentation for the HiveK Platform.\n\nNOTE: Sensitive endpoints (Sign-In, Sign-Up, OTP) are rate-limited to 5 requests per minute.')
-    .setVersion('1.0')
+    .setTitle(appConfig.getSwaggerTitle())
+    .setDescription(appConfig.getSwaggerDescription())
+    .setVersion(appConfig.getSwaggerVersion())
     .addBearerAuth({
       type: 'http',
       scheme: 'bearer',
@@ -29,26 +33,28 @@ export function setupSwagger(app: INestApplication): void {
 
   const fullDocument = SwaggerModule.createDocument(app, config);
 
-  fullDocument.tags = fullDocument.tags?.filter(tag => tag.name !== '');
+  fullDocument.tags = fullDocument.tags?.filter((tag) => tag.name !== '');
   for (const path in fullDocument.paths) {
     for (const method in fullDocument.paths[path]) {
-      (fullDocument as any).paths[path][method].tags =
-        (fullDocument as any).paths[path][method].tags?.filter((tag: string) => tag !== '');
+      (fullDocument as any).paths[path][method].tags = (
+        fullDocument as any
+      ).paths[path][method].tags?.filter((tag: string) => tag !== '');
     }
   }
-
 
   // ---- Separate paths ----
   const isAdminPath = (path: string) => path.includes(`/admin`);
   const isClientPath = (path: string) => path.includes(`/client`);
-  const isSharedPath = (path: string) => !isAdminPath(path) && !isClientPath(path)
+  const isSharedPath = (path: string) => !isAdminPath(path) && !isClientPath(path);
   const adminPaths = Object.fromEntries(
-    Object.entries(fullDocument.paths).filter(([path]) => isAdminPath(path) || isSharedPath(path)),
+    Object.entries(fullDocument.paths).filter(
+      ([path]) => isAdminPath(path) || isSharedPath(path),
+    ),
   );
 
   const clientPaths = Object.fromEntries(
-    Object.entries(fullDocument.paths).filter(([path]) =>
-      isClientPath(path) || (isSharedPath(path))
+    Object.entries(fullDocument.paths).filter(
+      ([path]) => isClientPath(path) || isSharedPath(path),
     ),
   );
 
@@ -56,6 +62,13 @@ export function setupSwagger(app: INestApplication): void {
   const clientDocument = { ...fullDocument, paths: clientPaths };
 
   // ---- Setup Swagger UI ----
-  SwaggerModule.setup('hivek/admin/docs', app, adminDocument, { ...swaggerCustomOptions, jsonDocumentUrl: 'hivek/admin/docs/openapi-json' });
-  SwaggerModule.setup('hivek/client/docs', app, clientDocument, { ...swaggerCustomOptions, jsonDocumentUrl: 'hivek/client/docs/openapi-json' });
+  const globalPrefix = appConfig.getGlobalPrefix();
+  SwaggerModule.setup(`${globalPrefix}/admin/docs`, app, adminDocument, {
+    ...swaggerCustomOptions,
+    jsonDocumentUrl: `${globalPrefix}/admin/docs/openapi-json`,
+  });
+  SwaggerModule.setup(`${globalPrefix}/client/docs`, app, clientDocument, {
+    ...swaggerCustomOptions,
+    jsonDocumentUrl: `${globalPrefix}/client/docs/openapi-json`,
+  });
 }

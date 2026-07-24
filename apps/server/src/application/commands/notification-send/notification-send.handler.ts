@@ -1,23 +1,26 @@
-import { CommandHandler, ICommandHandler, EventBus } from '@nestjs/cqrs';
+import { NotificationDispatchedEvent } from '@/application/events';
+import { ERoleType } from '@/core/enums';
+import { EnterpriseNotFoundException, InvalidOperationException } from '@/core/exceptions';
+import { ENTERPRISE_REPOSITORY, type IEnterpriseRepository } from '@/core/interfaces/repositories';
+import { UserDocument, UserModel } from '@/infrastructure/mongo/schemas/user.schema';
+import { isEmpty } from '@/shared/utils';
 import { Inject } from '@nestjs/common';
+import { CommandHandler, EventBus, ICommandHandler } from '@nestjs/cqrs';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { ERoleType } from '@/core/enums';
-import { UserModel, UserDocument } from '@/infrastructure/mongo/schemas/user.schema';
-import { ENTERPRISE_REPOSITORY, type IEnterpriseRepository } from '@/core/interfaces/repositories';
 import { NotificationSendCommand } from './notification-send.command';
-import { NotificationDispatchedEvent } from '@/application/events';
-import { EnterpriseNotFoundException, InvalidOperationException } from '@/core/exceptions';
-import { isEmpty } from '@/shared/utils';
 
 @CommandHandler(NotificationSendCommand)
-export class NotificationSendCommandHandler implements ICommandHandler<NotificationSendCommand, void> {
+export class NotificationSendCommandHandler implements
+  ICommandHandler<
+    NotificationSendCommand,
+    void
+  >
+{
   constructor(
     private readonly eventBus: EventBus,
-    @InjectModel(UserModel.name)
-    private readonly userModel: Model<UserDocument>,
-    @Inject(ENTERPRISE_REPOSITORY)
-    private readonly enterpriseRepository: IEnterpriseRepository,
+    @InjectModel(UserModel.name) private readonly userModel: Model<UserDocument>,
+    @Inject(ENTERPRISE_REPOSITORY) private readonly enterpriseRepository: IEnterpriseRepository,
   ) {}
 
   async execute(command: NotificationSendCommand): Promise<void> {
@@ -27,7 +30,9 @@ export class NotificationSendCommandHandler implements ICommandHandler<Notificat
     switch (props.audience.broadcastType) {
       case 'direct': {
         if (isEmpty(props.audience.userIds)) {
-          throw new InvalidOperationException('Recipient user IDs are required for direct broadcast');
+          throw new InvalidOperationException(
+            'Recipient user IDs are required for direct broadcast',
+          );
         }
         recipientIds.push(...props.audience.userIds);
         break;
@@ -44,7 +49,9 @@ export class NotificationSendCommandHandler implements ICommandHandler<Notificat
       case 'enterprise': {
         const { enterpriseId } = props.audience;
         if (!enterpriseId) {
-          throw new InvalidOperationException('Enterprise ID is required for enterprise broadcast');
+          throw new InvalidOperationException(
+            'Enterprise ID is required for enterprise broadcast',
+          );
         }
 
         const enterprise = await this.enterpriseRepository.findById(enterpriseId);
@@ -54,7 +61,11 @@ export class NotificationSendCommandHandler implements ICommandHandler<Notificat
 
         // Fetch enterprise members
         const members = await this.userModel
-          .find({ type: ERoleType.ENTERPRISE, enterprise_id: enterpriseId, delete_at: null })
+          .find({
+            type: ERoleType.ENTERPRISE,
+            enterprise_id: enterpriseId,
+            delete_at: null,
+          })
           .select('_id')
           .lean()
           .exec();
@@ -80,7 +91,9 @@ export class NotificationSendCommandHandler implements ICommandHandler<Notificat
         break;
       }
       default:
-        throw new InvalidOperationException(`Unknown broadcast type: ${(props.audience as any).broadcastType}`);
+        throw new InvalidOperationException(
+          `Unknown broadcast type: ${(props.audience as any).broadcastType}`,
+        );
     }
 
     if (recipientIds.length === 0) {
@@ -99,7 +112,7 @@ export class NotificationSendCommandHandler implements ICommandHandler<Notificat
         },
         recipientIds,
         props.channels,
-      )
+      ),
     );
   }
 }

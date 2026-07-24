@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
 import {
-  AgentSidecar,
   type AgentContextAction,
+  AgentSidecar,
   type AgentWorkspaceView,
-} from "@/features/ai-chat/components/workspace/agent-sidecar";
-import { useAiChat } from "@/features/ai-chat/hooks/use-ai-chat";
+} from '@/features/ai-chat/components/workspace/agent-sidecar';
+import { useAiChat } from '@/features/ai-chat/hooks/use-ai-chat';
 
 type AgentSidecarContainerProps = {
   currentView: AgentWorkspaceView;

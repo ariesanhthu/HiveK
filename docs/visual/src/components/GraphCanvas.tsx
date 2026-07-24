@@ -1,18 +1,18 @@
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback, useMemo } from 'react';
 import ReactFlow, {
-  Background,
-  Controls,
-  MiniMap,
   addEdge,
+  Background,
   Connection,
+  Controls,
   Edge as FlowEdge,
+  MiniMap,
   Node as FlowNode,
   Panel,
   useEdgesState,
-  useNodesState
-} from "reactflow";
-import "reactflow/dist/style.css";
-import { GraphData, GraphNode, GraphEdge, NodeFilterState, NodeType } from "../lib/schema";
+  useNodesState,
+} from 'reactflow';
+import 'reactflow/dist/style.css';
+import { GraphData, GraphEdge, GraphNode, NodeFilterState, NodeType } from '../lib/schema';
 
 type Props = {
   graph: GraphData;
@@ -23,11 +23,11 @@ type Props = {
 };
 
 const nodeTypeColors: Record<NodeType, string> = {
-  feature: "#2563eb",
-  workflow: "#0d9488",
-  file: "#4b5563",
-  folder: "#7c3aed",
-  note: "#f97316"
+  feature: '#2563eb',
+  workflow: '#0d9488',
+  file: '#4b5563',
+  folder: '#7c3aed',
+  note: '#f97316',
 };
 
 export const GraphCanvas: React.FC<Props> = ({
@@ -35,11 +35,11 @@ export const GraphCanvas: React.FC<Props> = ({
   filters,
   selectedNodeId,
   onSelectNode,
-  onGraphChange
+  onGraphChange,
 }) => {
   const filteredNodes = useMemo(() => {
     return graph.nodes.filter((node) => {
-      if (filters.type !== "all" && node.type !== filters.type) return false;
+      if (filters.type !== 'all' && node.type !== filters.type) return false;
       if (filters.feature && node.feature !== filters.feature) return false;
       if (filters.workflow && node.workflow !== filters.workflow) return false;
       return true;
@@ -51,9 +51,9 @@ export const GraphCanvas: React.FC<Props> = ({
   const filteredEdges = useMemo(
     () =>
       graph.edges.filter(
-        (edge) => nodeIdSet.has(edge.source) && nodeIdSet.has(edge.target)
+        (edge) => nodeIdSet.has(edge.source) && nodeIdSet.has(edge.target),
       ),
-    [graph.edges, nodeIdSet]
+    [graph.edges, nodeIdSet],
   );
 
   const initialFlowNodes: FlowNode[] = filteredNodes.map((node) => ({
@@ -64,9 +64,9 @@ export const GraphCanvas: React.FC<Props> = ({
       borderRadius: 8,
       padding: 8,
       border: `1px solid ${nodeTypeColors[node.type]}`,
-      background: "#ffffff",
-      fontSize: 12
-    }
+      background: '#ffffff',
+      fontSize: 12,
+    },
   }));
 
   const initialFlowEdges: FlowEdge[] = filteredEdges.map((edge) => ({
@@ -74,8 +74,8 @@ export const GraphCanvas: React.FC<Props> = ({
     source: edge.source,
     target: edge.target,
     label: edge.label ?? edge.relation,
-    type: "default",
-    animated: edge.relation === "flows_to"
+    type: 'default',
+    animated: edge.relation === 'flows_to',
   }));
 
   const [nodes, setNodes, onNodesChange] = useNodesState(initialFlowNodes);
@@ -93,17 +93,17 @@ export const GraphCanvas: React.FC<Props> = ({
         if (!existing) {
           return {
             id: flowNode.id,
-            type: "note",
+            type: 'note',
             label: String(flowNode.data?.label ?? flowNode.id),
-            path: "",
+            path: '',
             parentId: null,
-            feature: "",
-            workflow: "",
-            description: "",
+            feature: '',
+            workflow: '',
+            description: '',
             tags: [],
-            status: "draft",
+            status: 'draft',
             position: flowNode.position,
-            lastSyncedAt: new Date().toISOString()
+            lastSyncedAt: new Date().toISOString(),
           };
         }
 
@@ -111,7 +111,7 @@ export const GraphCanvas: React.FC<Props> = ({
           ...existing,
           position: flowNode.position,
           label: String(flowNode.data?.label ?? existing.label),
-          lastSyncedAt: new Date().toISOString()
+          lastSyncedAt: new Date().toISOString(),
         };
       });
 
@@ -122,8 +122,8 @@ export const GraphCanvas: React.FC<Props> = ({
             id: flowEdge.id,
             source: flowEdge.source,
             target: flowEdge.target,
-            relation: "uses",
-            label: typeof flowEdge.label === "string" ? flowEdge.label : ""
+            relation: 'uses',
+            label: typeof flowEdge.label === 'string' ? flowEdge.label : '',
           };
         }
 
@@ -131,13 +131,13 @@ export const GraphCanvas: React.FC<Props> = ({
           ...existing,
           source: flowEdge.source,
           target: flowEdge.target,
-          label: typeof flowEdge.label === "string" ? flowEdge.label : existing.label
+          label: typeof flowEdge.label === 'string' ? flowEdge.label : existing.label,
         };
       });
 
       onGraphChange(updatedNodes, updatedEdges);
     },
-    [graph.nodes, graph.edges, onGraphChange]
+    [graph.nodes, graph.edges, onGraphChange],
   );
 
   const handleNodesChange: typeof onNodesChange = useCallback(
@@ -148,7 +148,7 @@ export const GraphCanvas: React.FC<Props> = ({
         return next;
       });
     },
-    [edges, onNodesChange, setNodes, syncBackToGraph]
+    [edges, onNodesChange, setNodes, syncBackToGraph],
   );
 
   const handleEdgesChange: typeof onEdgesChange = useCallback(
@@ -159,7 +159,7 @@ export const GraphCanvas: React.FC<Props> = ({
         return next;
       });
     },
-    [nodes, onEdgesChange, setEdges, syncBackToGraph]
+    [nodes, onEdgesChange, setEdges, syncBackToGraph],
   );
 
   const handleConnect = useCallback(
@@ -170,21 +170,21 @@ export const GraphCanvas: React.FC<Props> = ({
         return next;
       });
     },
-    [nodes, setEdges, syncBackToGraph]
+    [nodes, setEdges, syncBackToGraph],
   );
 
   const handleNodeClick = useCallback(
     (_: React.MouseEvent, node: FlowNode) => {
       onSelectNode(node.id);
     },
-    [onSelectNode]
+    [onSelectNode],
   );
 
   const handleDeleteSelection = useCallback(() => {
     if (!selectedNodeId) return;
     const nextNodes = nodes.filter((node) => node.id !== selectedNodeId);
     const nextEdges = edges.filter(
-      (edge) => edge.source !== selectedNodeId && edge.target !== selectedNodeId
+      (edge) => edge.source !== selectedNodeId && edge.target !== selectedNodeId,
     );
     setNodes(nextNodes);
     setEdges(nextEdges);
@@ -193,7 +193,7 @@ export const GraphCanvas: React.FC<Props> = ({
   }, [edges, nodes, onSelectNode, selectedNodeId, setEdges, setNodes, syncBackToGraph]);
 
   return (
-    <div className="graph-canvas">
+    <div className='graph-canvas'>
       <ReactFlow
         nodes={nodes}
         edges={edges}
@@ -206,8 +206,12 @@ export const GraphCanvas: React.FC<Props> = ({
         <Background gap={16} size={1} />
         <MiniMap />
         <Controls />
-        <Panel position="top-left">
-          <button className="ghost-button" onClick={handleDeleteSelection} disabled={!selectedNodeId}>
+        <Panel position='top-left'>
+          <button
+            className='ghost-button'
+            onClick={handleDeleteSelection}
+            disabled={!selectedNodeId}
+          >
             Xóa node đang chọn
           </button>
         </Panel>
@@ -215,4 +219,3 @@ export const GraphCanvas: React.FC<Props> = ({
     </div>
   );
 };
-

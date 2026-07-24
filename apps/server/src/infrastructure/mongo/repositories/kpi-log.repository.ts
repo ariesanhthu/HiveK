@@ -1,20 +1,18 @@
-import { Injectable, Inject } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model, Types, ClientSession } from 'mongoose';
-import { IKpiLogRepository } from '@/core/interfaces/repositories/kpi-log.repository';
-import { KpiLogEntity } from '@/core/entities/kpi-log.entity';
-import { KpiLogModel, KpiLogDocument } from '../schemas/kpi-log.schema';
-import { Nullable } from '@/core/types';
 import { type IUnitOfWork, UNIT_OF_WORK } from '@/application/interfaces';
+import { KpiLogEntity } from '@/core/entities/kpi-log.entity';
+import { IKpiLogRepository } from '@/core/interfaces/repositories/kpi-log.repository';
+import { Nullable } from '@/core/types';
+import { Inject, Injectable } from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
+import { ClientSession, Model, Types } from 'mongoose';
 import { MongoUnitOfWork } from '../mongo-uow';
+import { KpiLogDocument, KpiLogModel } from '../schemas/kpi-log.schema';
 
 @Injectable()
 export class MongoKpiLogRepository implements IKpiLogRepository {
   constructor(
-    @InjectModel(KpiLogModel.name)
-    private readonly kpiLogModel: Model<KpiLogDocument>,
-    @Inject(UNIT_OF_WORK)
-    private readonly uow: IUnitOfWork,
+    @InjectModel(KpiLogModel.name) private readonly kpiLogModel: Model<KpiLogDocument>,
+    @Inject(UNIT_OF_WORK) private readonly uow: IUnitOfWork,
   ) {}
 
   private get session(): ClientSession | undefined {
@@ -22,7 +20,10 @@ export class MongoKpiLogRepository implements IKpiLogRepository {
   }
 
   async findById(id: string): Promise<Nullable<KpiLogEntity>> {
-    const doc = await this.kpiLogModel.findById(id).session(this.session).exec();
+    const doc = await this.kpiLogModel
+      .findById(id)
+      .session(this.session)
+      .exec();
     return doc ? this.mapToDomain(doc) : null;
   }
 
@@ -34,12 +35,15 @@ export class MongoKpiLogRepository implements IKpiLogRepository {
       const saved = await created.save({ session: this.session });
       entity.setId(saved._id.toString());
     } else {
-      await this.kpiLogModel.findByIdAndUpdate(entity.id, data, { upsert: true }).session(this.session).exec();
+      await this.kpiLogModel
+        .findByIdAndUpdate(entity.id, data, { upsert: true })
+        .session(this.session)
+        .exec();
     }
   }
 
   async saveMany(entities: KpiLogEntity[]): Promise<void> {
-    await Promise.all(entities.map(e => this.save(e)));
+    await Promise.all(entities.map((e) => this.save(e)));
   }
 
   async delete(id: string): Promise<void> {

@@ -1,22 +1,23 @@
-import { Injectable, Inject } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model, Types, ClientSession } from 'mongoose';
-import { PUBLIC_REVIEW_REPOSITORY, type IPublicReviewRepository } from '@/core/interfaces/repositories';
-import { PublicReviewRoot } from '@/core/aggregate-roots';
-import { ReviewSecurityMetadataVO } from '@/core/value-objects';
-import { PublicReviewModel, PublicReviewDocument } from '../schemas';
-import { Nullable } from '@/core/types';
 import { type IUnitOfWork, UNIT_OF_WORK } from '@/application/interfaces';
-import { MongoUnitOfWork } from '../mongo-uow';
+import { PublicReviewRoot } from '@/core/aggregate-roots';
 import { EReviewStatus } from '@/core/enums';
+import {
+  type IPublicReviewRepository,
+  PUBLIC_REVIEW_REPOSITORY,
+} from '@/core/interfaces/repositories';
+import { Nullable } from '@/core/types';
+import { ReviewSecurityMetadataVO } from '@/core/value-objects';
+import { Inject, Injectable } from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
+import { ClientSession, Model, Types } from 'mongoose';
+import { MongoUnitOfWork } from '../mongo-uow';
+import { PublicReviewDocument, PublicReviewModel } from '../schemas';
 
 @Injectable()
 export class MongoPublicReviewRepository implements IPublicReviewRepository {
   constructor(
-    @InjectModel(PublicReviewModel.name)
-    private readonly reviewModel: Model<PublicReviewDocument>,
-    @Inject(UNIT_OF_WORK)
-    private readonly uow: IUnitOfWork,
+    @InjectModel(PublicReviewModel.name) private readonly reviewModel: Model<PublicReviewDocument>,
+    @Inject(UNIT_OF_WORK) private readonly uow: IUnitOfWork,
   ) {}
 
   private get session(): ClientSession | undefined {
@@ -24,22 +25,34 @@ export class MongoPublicReviewRepository implements IPublicReviewRepository {
   }
 
   async findById(id: string): Promise<Nullable<PublicReviewRoot>> {
-    const doc = await this.reviewModel.findById(id).session(this.session).exec();
+    const doc = await this.reviewModel
+      .findById(id)
+      .session(this.session)
+      .exec();
     return doc ? this.mapToDomain(doc) : null;
   }
 
   async findByProposalId(proposalId: string): Promise<PublicReviewRoot[]> {
-    const docs = await this.reviewModel.find({
-      proposal_id: new Types.ObjectId(proposalId) as any,
-    }).session(this.session).exec();
+    const docs = await this.reviewModel
+      .find({
+        proposal_id: new Types.ObjectId(proposalId) as any,
+      })
+      .session(this.session)
+      .exec();
     return docs.map((doc) => this.mapToDomain(doc));
   }
 
-  async findByProposalIdAndStatus(proposalId: string, status: string): Promise<PublicReviewRoot[]> {
-    const docs = await this.reviewModel.find({
-      proposal_id: new Types.ObjectId(proposalId) as any,
-      status: status as EReviewStatus,
-    }).session(this.session).exec();
+  async findByProposalIdAndStatus(
+    proposalId: string,
+    status: string,
+  ): Promise<PublicReviewRoot[]> {
+    const docs = await this.reviewModel
+      .find({
+        proposal_id: new Types.ObjectId(proposalId) as any,
+        status: status as EReviewStatus,
+      })
+      .session(this.session)
+      .exec();
     return docs.map((doc) => this.mapToDomain(doc));
   }
 
@@ -51,7 +64,10 @@ export class MongoPublicReviewRepository implements IPublicReviewRepository {
       const saved = await created.save({ session: this.session });
       review.setId(saved._id.toString());
     } else {
-      await this.reviewModel.findByIdAndUpdate(review.id, data, { upsert: true }).session(this.session).exec();
+      await this.reviewModel
+        .findByIdAndUpdate(review.id, data, { upsert: true })
+        .session(this.session)
+        .exec();
     }
   }
 
@@ -85,7 +101,9 @@ export class MongoPublicReviewRepository implements IPublicReviewRepository {
     });
   }
 
-  private mapToPersistence(review: PublicReviewRoot): Omit<PublicReviewModel, 'created_at' | 'updated_at'> {
+  private mapToPersistence(
+    review: PublicReviewRoot,
+  ): Omit<PublicReviewModel, 'created_at' | 'updated_at'> {
     return {
       proposal_id: new Types.ObjectId(review.proposalId) as any,
       author_name: review.authorName,

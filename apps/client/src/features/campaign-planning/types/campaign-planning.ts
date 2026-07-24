@@ -1,9 +1,9 @@
-import type { LucideIcon } from "lucide-react";
+import type { LucideIcon } from 'lucide-react';
 
-export type CampaignStatus = "draft" | "ready" | "scheduled";
-export type PostStatus = "draft" | "needs-review" | "approved" | "scheduled";
-export type PlatformId = "facebook" | "threads" | "tiktok";
-export type CampaignDetailTab = "content" | "review" | "schedule";
+export type CampaignStatus = 'draft' | 'ready' | 'scheduled';
+export type PostStatus = 'draft' | 'needs-review' | 'approved' | 'scheduled';
+export type PlatformId = 'facebook' | 'threads' | 'tiktok';
+export type CampaignDetailTab = 'content' | 'review' | 'schedule';
 
 export type Campaign = {
   id: string;
@@ -45,7 +45,7 @@ export type PublishingDay = {
   posts: CampaignPost[];
 };
 
-export type AgentStepStatus = "done" | "active" | "queued";
+export type AgentStepStatus = 'done' | 'active' | 'queued';
 
 export type AgentStep = {
   id: string;

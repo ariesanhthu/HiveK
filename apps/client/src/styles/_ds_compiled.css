@@ -3674,8 +3674,8 @@
       display: none;
     }
   }
-  .\[\&_\.recharts-dot\[stroke\=\'\#fff\'\]\]\:stroke-transparent {
-    & .recharts-dot[stroke='#fff'] {
+  .\[\&_\.recharts-dot\[stroke\=\#fff\]\]\:stroke-transparent {
+    & .recharts-dot[stroke="#fff"] {
       stroke: transparent;
     }
   }

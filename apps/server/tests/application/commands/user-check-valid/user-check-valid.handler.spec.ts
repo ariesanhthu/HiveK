@@ -1,5 +1,5 @@
-import { UserCheckValidCommandHandler } from '@/application/commands/user-check-valid/user-check-valid.handler';
 import { UserCheckValidCommand } from '@/application/commands/user-check-valid/user-check-valid.command';
+import { UserCheckValidCommandHandler } from '@/application/commands/user-check-valid/user-check-valid.handler';
 import { KOLUserRoot } from '@/core/aggregate-roots';
 import { ERoleType } from '@/core/enums';
 import { UserNotFoundException } from '@/core/exceptions';

@@ -1,4 +1,4 @@
-import { STARTER_PROMPTS } from "@/features/ai-chat/data/ai-chat-data";
+import { STARTER_PROMPTS } from '@/features/ai-chat/data/ai-chat-data';
 import type {
   AiChatIntent,
   AiChatMessageDraft,
@@ -6,62 +6,62 @@ import type {
   AiChatSetupProgress,
   SetupStepId,
   StarterPrompt,
-} from "@/features/ai-chat/types";
+} from '@/features/ai-chat/types';
 
-const SETUP_STEPS: readonly SetupStepId[] = ["social", "brand", "drive"];
+const SETUP_STEPS: readonly SetupStepId[] = ['social', 'brand', 'drive'];
 
 const INTENT_ACTIONS = {
   quickSetup: {
-    id: "start-quick-setup",
-    label: "Thiết lập ngữ cảnh trước",
-    kind: "intent",
-    intent: "quick-start",
-    variant: "secondary",
+    id: 'start-quick-setup',
+    label: 'Thiết lập ngữ cảnh trước',
+    kind: 'intent',
+    intent: 'quick-start',
+    variant: 'secondary',
   },
   planPosts: {
-    id: "open-campaign-planning",
-    label: "Bắt đầu lên kế hoạch đăng bài",
-    kind: "href",
-    href: "/campaign-planning",
-    variant: "primary",
+    id: 'open-campaign-planning',
+    label: 'Bắt đầu lên kế hoạch đăng bài',
+    kind: 'href',
+    href: '/campaign-planning',
+    variant: 'primary',
   },
   campaignIdeas: {
-    id: "open-campaign-management",
-    label: "Tạo chiến dịch",
-    kind: "href",
-    href: "/campaign-management",
-    variant: "primary",
+    id: 'open-campaign-management',
+    label: 'Tạo chiến dịch',
+    kind: 'href',
+    href: '/campaign-management',
+    variant: 'primary',
   },
   findCreators: {
-    id: "open-kol-matching",
-    label: "Tìm KOL/KOC",
-    kind: "href",
-    href: "/kol-matching",
-    variant: "primary",
+    id: 'open-kol-matching',
+    label: 'Tìm KOL/KOC',
+    kind: 'href',
+    href: '/kol-matching',
+    variant: 'primary',
   },
   analyzeContent: {
-    id: "open-kol-analysis",
-    label: "Mở phân tích",
-    kind: "href",
-    href: "/kol-analysis",
-    variant: "primary",
+    id: 'open-kol-analysis',
+    label: 'Mở phân tích',
+    kind: 'href',
+    href: '/kol-analysis',
+    variant: 'primary',
   },
 } as const;
 
 const READY_ACTIONS = [
   {
-    id: "complete-plan-posts",
-    label: "Bắt đầu lên kế hoạch đăng bài",
-    kind: "href",
-    href: "/campaign-planning",
-    variant: "primary",
+    id: 'complete-plan-posts',
+    label: 'Bắt đầu lên kế hoạch đăng bài',
+    kind: 'href',
+    href: '/campaign-planning',
+    variant: 'primary',
   },
   {
-    id: "complete-campaign-ideas",
-    label: "Khám phá ý tưởng",
-    kind: "intent",
-    intent: "campaign-ideas",
-    variant: "secondary",
+    id: 'complete-campaign-ideas',
+    label: 'Khám phá ý tưởng',
+    kind: 'intent',
+    intent: 'campaign-ideas',
+    variant: 'secondary',
   },
 ] as const;
 
@@ -78,17 +78,17 @@ function isDriveComplete(setup: AiChatSetup): boolean {
 }
 
 function isStepComplete(step: SetupStepId, setup: AiChatSetup): boolean {
-  if (step === "social") return isSocialComplete(setup);
-  if (step === "brand") return isBrandComplete(setup);
+  if (step === 'social') return isSocialComplete(setup);
+  if (step === 'brand') return isBrandComplete(setup);
   return isDriveComplete(setup);
 }
 
 function normalizeInput(input: string): string {
   return input
     .toLowerCase()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .replace(/đ/g, "d")
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/đ/g, 'd')
     .trim();
 }
 
@@ -131,62 +131,62 @@ export function resolveIntent(input: string): AiChatIntent | null {
 
   if (
     includesAny(normalizedInput, [
-      "bat dau nhanh",
-      "quick start",
-      "thiet lap",
-      "setup",
-      "ket noi tai khoan",
+      'bat dau nhanh',
+      'quick start',
+      'thiet lap',
+      'setup',
+      'ket noi tai khoan',
     ])
   ) {
-    return "quick-start";
+    return 'quick-start';
   }
 
   if (
     includesAny(normalizedInput, [
-      "len ke hoach",
-      "ke hoach dang bai",
-      "lich dang",
-      "lich noi dung",
-      "content plan",
+      'len ke hoach',
+      'ke hoach dang bai',
+      'lich dang',
+      'lich noi dung',
+      'content plan',
     ])
   ) {
-    return "plan-posts";
+    return 'plan-posts';
   }
 
   if (
     includesAny(normalizedInput, [
-      "y tuong",
-      "chien dich",
-      "campaign",
-      "concept",
-      "thong diep",
+      'y tuong',
+      'chien dich',
+      'campaign',
+      'concept',
+      'thong diep',
     ])
   ) {
-    return "campaign-ideas";
+    return 'campaign-ideas';
   }
 
   if (
     includesAny(normalizedInput, [
-      "kol",
-      "koc",
-      "creator",
-      "influencer",
-      "nguoi sang tao",
+      'kol',
+      'koc',
+      'creator',
+      'influencer',
+      'nguoi sang tao',
     ])
   ) {
-    return "find-creators";
+    return 'find-creators';
   }
 
   if (
     includesAny(normalizedInput, [
-      "phan tich",
-      "danh gia noi dung",
-      "hieu qua noi dung",
-      "content audit",
-      "performance",
+      'phan tich',
+      'danh gia noi dung',
+      'hieu qua noi dung',
+      'content audit',
+      'performance',
     ])
   ) {
-    return "analyze-content";
+    return 'analyze-content';
   }
 
   return null;
@@ -200,7 +200,7 @@ export function createInitialAgentTurns(): AiChatMessageDraft[] {
 
 export function createUserTurn(content: string): AiChatMessageDraft {
   return {
-    role: "user",
+    role: 'user',
     content: content.trim(),
   };
 }
@@ -208,30 +208,30 @@ export function createUserTurn(content: string): AiChatMessageDraft {
 function createNextSetupTurn(setup: AiChatSetup): AiChatMessageDraft | null {
   const nextStep = getNextIncompleteSetupStep(setup);
 
-  if (nextStep === "social") {
+  if (nextStep === 'social') {
     return {
-      role: "assistant",
+      role: 'assistant',
       content:
-        "Bước 1/3 · Chọn các kênh mạng xã hội thương hiệu đang sử dụng. Đây chỉ là bước ghi nhận thủ công, HiveK chưa kết nối hay đăng nội dung thay bạn.",
-      widget: { type: "social-connect" },
+        'Bước 1/3 · Chọn các kênh mạng xã hội thương hiệu đang sử dụng. Đây chỉ là bước ghi nhận thủ công, HiveK chưa kết nối hay đăng nội dung thay bạn.',
+      widget: { type: 'social-connect' },
     };
   }
 
-  if (nextStep === "brand") {
+  if (nextStep === 'brand') {
     return {
-      role: "assistant",
+      role: 'assistant',
       content:
-        "Bước 2/3 · Cho mình biết tên thương hiệu và giọng điệu bạn muốn giữ nhất quán trong nội dung.",
-      widget: { type: "brand-form" },
+        'Bước 2/3 · Cho mình biết tên thương hiệu và giọng điệu bạn muốn giữ nhất quán trong nội dung.',
+      widget: { type: 'brand-form' },
     };
   }
 
-  if (nextStep === "drive") {
+  if (nextStep === 'drive') {
     return {
-      role: "assistant",
+      role: 'assistant',
       content:
-        "Bước 3/3 · Thêm đường dẫn thư mục Drive chứa guideline, logo hoặc hình ảnh sản phẩm. Bạn có thể thay đổi phạm vi truy cập trong Studio bất cứ lúc nào.",
-      widget: { type: "drive-form" },
+        'Bước 3/3 · Thêm đường dẫn thư mục Drive chứa guideline, logo hoặc hình ảnh sản phẩm. Bạn có thể thay đổi phạm vi truy cập trong Studio bất cứ lúc nào.',
+      widget: { type: 'drive-form' },
     };
   }
 
@@ -240,7 +240,7 @@ function createNextSetupTurn(setup: AiChatSetup): AiChatMessageDraft | null {
 
 function appendNextIncompleteSetupTurn(
   turns: AiChatMessageDraft[],
-  setup: AiChatSetup
+  setup: AiChatSetup,
 ): AiChatMessageDraft[] {
   const nextTurn = createNextSetupTurn(setup);
   return nextTurn ? [...turns, nextTurn] : turns;
@@ -248,16 +248,16 @@ function appendNextIncompleteSetupTurn(
 
 export function createIntentAgentTurns(
   intent: AiChatIntent,
-  setup: AiChatSetup
+  setup: AiChatSetup,
 ): AiChatMessageDraft[] {
-  if (intent === "quick-start") {
+  if (intent === 'quick-start') {
     if (!getNextIncompleteSetupStep(setup)) {
       return [
         {
-          role: "assistant",
+          role: 'assistant',
           content:
-            "Workspace của bạn đã có đủ thông tin nền tảng. Mình sẵn sàng tiếp tục với kế hoạch nội dung hoặc ý tưởng chiến dịch mới.",
-          widget: { type: "setup-complete" },
+            'Workspace của bạn đã có đủ thông tin nền tảng. Mình sẵn sàng tiếp tục với kế hoạch nội dung hoặc ý tưởng chiến dịch mới.',
+          widget: { type: 'setup-complete' },
           actions: [...READY_ACTIONS],
         },
       ];
@@ -266,22 +266,22 @@ export function createIntentAgentTurns(
     return appendNextIncompleteSetupTurn(
       [
         {
-          role: "assistant",
+          role: 'assistant',
           content:
-            "Tuyệt, mình sẽ hướng dẫn bạn hoàn thiện 3 phần: kênh xã hội, nhận diện thương hiệu và kho tài nguyên. Bạn có thể cập nhật từng phần ngay trong cuộc trò chuyện này.",
-          widget: { type: "setup-overview" },
+            'Tuyệt, mình sẽ hướng dẫn bạn hoàn thiện 3 phần: kênh xã hội, nhận diện thương hiệu và kho tài nguyên. Bạn có thể cập nhật từng phần ngay trong cuộc trò chuyện này.',
+          widget: { type: 'setup-overview' },
         },
       ],
-      setup
+      setup,
     );
   }
 
-  if (intent === "plan-posts") {
+  if (intent === 'plan-posts') {
     return [
       {
-        role: "assistant",
+        role: 'assistant',
         content:
-          "Mình có thể giúp bạn chuyển mục tiêu chiến dịch thành lịch đăng theo kênh, chủ đề và nhịp nội dung. Bạn có thể mở trình lập kế hoạch ngay, hoặc thiết lập ngữ cảnh thương hiệu trước để nhận gợi ý sát hơn.",
+          'Mình có thể giúp bạn chuyển mục tiêu chiến dịch thành lịch đăng theo kênh, chủ đề và nhịp nội dung. Bạn có thể mở trình lập kế hoạch ngay, hoặc thiết lập ngữ cảnh thương hiệu trước để nhận gợi ý sát hơn.',
         actions: getNextIncompleteSetupStep(setup)
           ? [INTENT_ACTIONS.planPosts, INTENT_ACTIONS.quickSetup]
           : [INTENT_ACTIONS.planPosts],
@@ -289,12 +289,12 @@ export function createIntentAgentTurns(
     ];
   }
 
-  if (intent === "campaign-ideas") {
+  if (intent === 'campaign-ideas') {
     return [
       {
-        role: "assistant",
+        role: 'assistant',
         content:
-          "Mình có thể gợi ý concept, thông điệp chủ đạo và chuỗi nội dung cho chiến dịch. Bắt đầu từ campaign workspace hoặc thêm ngữ cảnh thương hiệu để các đề xuất bám sát giọng điệu hơn.",
+          'Mình có thể gợi ý concept, thông điệp chủ đạo và chuỗi nội dung cho chiến dịch. Bắt đầu từ campaign workspace hoặc thêm ngữ cảnh thương hiệu để các đề xuất bám sát giọng điệu hơn.',
         actions: getNextIncompleteSetupStep(setup)
           ? [INTENT_ACTIONS.campaignIdeas, INTENT_ACTIONS.quickSetup]
           : [INTENT_ACTIONS.campaignIdeas],
@@ -302,12 +302,12 @@ export function createIntentAgentTurns(
     ];
   }
 
-  if (intent === "find-creators") {
+  if (intent === 'find-creators') {
     return [
       {
-        role: "assistant",
+        role: 'assistant',
         content:
-          "Mình sẽ giúp bạn thu hẹp danh sách KOL/KOC theo nền tảng, lĩnh vực, mục tiêu và ngân sách chiến dịch.",
+          'Mình sẽ giúp bạn thu hẹp danh sách KOL/KOC theo nền tảng, lĩnh vực, mục tiêu và ngân sách chiến dịch.',
         actions: [INTENT_ACTIONS.findCreators],
       },
     ];
@@ -315,9 +315,9 @@ export function createIntentAgentTurns(
 
   return [
     {
-      role: "assistant",
+      role: 'assistant',
       content:
-        "Mình có thể hỗ trợ đọc các chỉ số chính, nhận diện điểm mạnh và đề xuất hướng cải thiện cho nội dung hiện tại.",
+        'Mình có thể hỗ trợ đọc các chỉ số chính, nhận diện điểm mạnh và đề xuất hướng cải thiện cho nội dung hiện tại.',
       actions: [INTENT_ACTIONS.analyzeContent],
     },
   ];
@@ -325,7 +325,7 @@ export function createIntentAgentTurns(
 
 export function createInputAgentTurns(
   input: string,
-  setup: AiChatSetup
+  setup: AiChatSetup,
 ): AiChatMessageDraft[] {
   const intent = resolveIntent(input);
 
@@ -333,23 +333,23 @@ export function createInputAgentTurns(
 
   return [
     {
-      role: "assistant",
+      role: 'assistant',
       content:
-        "Mình đã ghi nhận yêu cầu. Chọn một tác vụ có cấu trúc bên dưới để mình mở đúng không gian làm việc cho bạn.",
+        'Mình đã ghi nhận yêu cầu. Chọn một tác vụ có cấu trúc bên dưới để mình mở đúng không gian làm việc cho bạn.',
       actions: [
         {
-          id: "suggest-plan-posts",
-          label: "Lên kế hoạch đăng bài",
-          kind: "intent",
-          intent: "plan-posts",
-          variant: "primary",
+          id: 'suggest-plan-posts',
+          label: 'Lên kế hoạch đăng bài',
+          kind: 'intent',
+          intent: 'plan-posts',
+          variant: 'primary',
         },
         {
-          id: "suggest-campaign-ideas",
-          label: "Gợi ý chiến dịch",
-          kind: "intent",
-          intent: "campaign-ideas",
-          variant: "secondary",
+          id: 'suggest-campaign-ideas',
+          label: 'Gợi ý chiến dịch',
+          kind: 'intent',
+          intent: 'campaign-ideas',
+          variant: 'secondary',
         },
       ],
     },
@@ -358,18 +358,19 @@ export function createInputAgentTurns(
 
 export function createSetupCompletionTurns(
   completedStep: SetupStepId,
-  setup: AiChatSetup
+  setup: AiChatSetup,
 ): AiChatMessageDraft[] {
   const acknowledgement: Record<SetupStepId, string> = {
     social: `Đã ghi nhận ${setup.socialPlatforms.length} kênh xã hội cho workspace này.`,
-    brand: `Đã lưu định hướng cho ${setup.branding.name}. Mình sẽ dùng giọng điệu này làm ngữ cảnh cho các gợi ý tiếp theo.`,
+    brand:
+      `Đã lưu định hướng cho ${setup.branding.name}. Mình sẽ dùng giọng điệu này làm ngữ cảnh cho các gợi ý tiếp theo.`,
     drive:
-      "Đã ghi nhận đường dẫn tài nguyên. Bạn có thể kiểm tra phạm vi và quyền đồng bộ trong Studio.",
+      'Đã ghi nhận đường dẫn tài nguyên. Bạn có thể kiểm tra phạm vi và quyền đồng bộ trong Studio.',
   };
 
   const turns: AiChatMessageDraft[] = [
     {
-      role: "assistant",
+      role: 'assistant',
       content: acknowledgement[completedStep],
     },
   ];
@@ -380,10 +381,10 @@ export function createSetupCompletionTurns(
   return [
     ...turns,
     {
-      role: "assistant",
+      role: 'assistant',
       content:
-        "Workspace The TutorX đã hoàn tất. HiveK đã có hồ sơ thương hiệu, hệ thống kênh và chiến lược 90 ngày để bắt đầu xây dựng kế hoạch nội dung.",
-      widget: { type: "setup-complete" },
+        'Workspace The TutorX đã hoàn tất. HiveK đã có hồ sơ thương hiệu, hệ thống kênh và chiến lược 90 ngày để bắt đầu xây dựng kế hoạch nội dung.',
+      widget: { type: 'setup-complete' },
       actions: [...READY_ACTIONS],
     },
   ];

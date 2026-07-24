@@ -2,8 +2,8 @@ import { KolInfoCard } from 'client';
 
 function avatar(bg: string, fg: string, initials: string): string {
   return (
-    'data:image/svg+xml;utf8,' +
-    encodeURIComponent(
+    'data:image/svg+xml;utf8,'
+    + encodeURIComponent(
       `<svg xmlns="http://www.w3.org/2000/svg" width="120" height="120"><rect width="120" height="120" fill="${bg}"/><text x="60" y="78" font-family="Arial" font-size="48" font-weight="bold" fill="${fg}" text-anchor="middle">${initials}</text></svg>`,
     )
   );

@@ -1,5 +1,5 @@
-import { CampaignRestoreCommandHandler } from '@/application/commands/campaign-restore/campaign-restore.handler';
 import { CampaignRestoreCommand } from '@/application/commands/campaign-restore/campaign-restore.command';
+import { CampaignRestoreCommandHandler } from '@/application/commands/campaign-restore/campaign-restore.handler';
 import { CampaignNotFoundException } from '@/core/exceptions';
 
 describe('CampaignRestoreCommandHandler', () => {

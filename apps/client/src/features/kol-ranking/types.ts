@@ -1,26 +1,26 @@
 export const KOL_NICHES = [
-  "Làm đẹp",
-  "Game",
-  "Đời sống",
-  "Công nghệ",
-  "Thể hình",
+  'Làm đẹp',
+  'Game',
+  'Đời sống',
+  'Công nghệ',
+  'Thể hình',
 ] as const;
 
-export const KOL_PLATFORMS = ["TikTok", "Instagram", "YouTube"] as const;
+export const KOL_PLATFORMS = ['TikTok', 'Instagram', 'YouTube'] as const;
 
 export const FOLLOWER_RANGE_OPTIONS = [
-  "all",
-  "0-100k",
-  "100k-500k",
-  "500k-1m",
-  "1m+",
+  'all',
+  '0-100k',
+  '100k-500k',
+  '500k-1m',
+  '1m+',
 ] as const;
 
 export const BADGE_TYPES = [
-  "Triển vọng",
-  "Ổn định",
-  "Top 10",
-  "Ưu tú",
+  'Triển vọng',
+  'Ổn định',
+  'Top 10',
+  'Ưu tú',
 ] as const;
 
 export type KolNiche = (typeof KOL_NICHES)[number];
@@ -46,8 +46,8 @@ export type KolRankingItem = {
 };
 
 export type KolRankingFilters = {
-  niche: KolNiche | "all";
-  platform: KolPlatform | "all";
+  niche: KolNiche | 'all';
+  platform: KolPlatform | 'all';
   followerRange: FollowerRange;
   search: string;
   page: number;

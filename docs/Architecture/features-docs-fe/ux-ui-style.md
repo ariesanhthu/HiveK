@@ -10,15 +10,15 @@
 
 Ý nghĩa:
 
-* năng lượng
-* creator economy
-* không quá "bee yellow"
+- năng lượng
+- creator economy
+- không quá "bee yellow"
 
 Use cho:
 
-* primary button
-* highlight
-* chart accent
+- primary button
+- highlight
+- chart accent
 
 ---
 
@@ -32,9 +32,9 @@ Use cho:
 
 Use cho:
 
-* CTA
-* campaign highlight
-* hover states
+- CTA
+- campaign highlight
+- hover states
 
 ---
 
@@ -46,9 +46,9 @@ Use cho:
 
 Use cho:
 
-* charts
-* analytics
-* links
+- charts
+- analytics
+- links
 
 Blue giúp UI **tech hơn và cân bằng màu nóng**.
 
@@ -62,9 +62,9 @@ Blue giúp UI **tech hơn và cân bằng màu nóng**.
 
 Use cho:
 
-* creator stats
-* badges
-* ranking highlights
+- creator stats
+- badges
+- ranking highlights
 
 ---
 
@@ -145,10 +145,10 @@ friendly
 
 Gần vibe của:
 
-* Stripe dashboard
-* Linear
-* Vercel
-* Notion analytics
+- Stripe dashboard
+- Linear
+- Vercel
+- Notion analytics
 
 ---
 

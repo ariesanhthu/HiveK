@@ -1,6 +1,6 @@
+import { EMediaSlideType, EProductPlatform, EProposalStatus } from '@/core/enums';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Schema as MongooseSchema } from 'mongoose';
-import { EProposalStatus, EMediaSlideType, EProductPlatform } from '@/core/enums';
 import { softDeletePlugin } from '../utils';
 
 @Schema({ _id: false })
@@ -62,7 +62,11 @@ export const VoucherItemSubSchema = SchemaFactory.createForClass(VoucherItemSubM
   timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' },
 })
 export class CampaignProposalModel {
-  @Prop({ required: true, type: MongooseSchema.Types.ObjectId, ref: 'CampaignModel' })
+  @Prop({
+    required: true,
+    type: MongooseSchema.Types.ObjectId,
+    ref: 'CampaignModel',
+  })
   campaign_id: MongooseSchema.Types.ObjectId;
 
   @Prop({ required: true, unique: true, trim: true })
@@ -83,10 +87,19 @@ export class CampaignProposalModel {
   @Prop({ type: [VoucherItemSubSchema], default: [] })
   vouchers: VoucherItemSubModel[];
 
-  @Prop({ required: true, type: String, enum: Object.values(EProposalStatus), default: EProposalStatus.ACTIVE })
+  @Prop({
+    required: true,
+    type: String,
+    enum: Object.values(EProposalStatus),
+    default: EProposalStatus.ACTIVE,
+  })
   status: EProposalStatus;
 
-  @Prop({ type: MongooseSchema.Types.Map, of: Number, default: { totalViews: 0, totalClicks: 0 } })
+  @Prop({
+    type: MongooseSchema.Types.Map,
+    of: Number,
+    default: { totalViews: 0, totalClicks: 0 },
+  })
   metrics: Record<string, number>;
 
   @Prop({ type: Date, default: null })
@@ -100,5 +113,7 @@ export class CampaignProposalModel {
 }
 
 export type CampaignProposalDocument = HydratedDocument<CampaignProposalModel>;
-export const CampaignProposalSchema = SchemaFactory.createForClass(CampaignProposalModel);
+export const CampaignProposalSchema = SchemaFactory.createForClass(
+  CampaignProposalModel,
+);
 CampaignProposalSchema.plugin(softDeletePlugin);

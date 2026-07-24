@@ -1,12 +1,12 @@
-import { Controller, Get, Param, Query } from '@nestjs/common';
-import { CommandBus, QueryBus } from '@nestjs/cqrs';
-import { UserGetByIdQuery, UserGetListQuery } from '@/application/queries';
 import { UserDto, UserFilterDto } from '@/application/dtos';
-import { ApiTags, ApiOperation, ApiBearerAuth, ApiSecurity } from '@nestjs/swagger';
-import { buildVersionedRoute } from '@presentation/utils';
-import { JwtAuthGuard } from '@/presentation/middleware/guards';
-import { UseGuards } from '@nestjs/common';
 import { PaginatedResponseDto } from '@/application/dtos/pagination.dto';
+import { UserGetByIdQuery, UserGetListQuery } from '@/application/queries';
+import { JwtAuthGuard } from '@/presentation/middleware/guards';
+import { Controller, Get, Param, Query } from '@nestjs/common';
+import { UseGuards } from '@nestjs/common';
+import { CommandBus, QueryBus } from '@nestjs/cqrs';
+import { ApiBearerAuth, ApiOperation, ApiSecurity, ApiTags } from '@nestjs/swagger';
+import { buildVersionedRoute } from '@presentation/utils';
 
 @ApiTags('CLIENT-users')
 @ApiBearerAuth()
@@ -14,15 +14,16 @@ import { PaginatedResponseDto } from '@/application/dtos/pagination.dto';
 @UseGuards(JwtAuthGuard)
 @Controller(buildVersionedRoute('client', 'users', 1))
 export class UserClientController {
-  constructor(
-    private readonly queryBus: QueryBus,
-  ) { }
+  constructor(private readonly queryBus: QueryBus) {}
   @Get()
   @ApiOperation({ summary: 'Get paginated list of users' })
-  async findAll(@Query() filters: UserFilterDto): Promise<PaginatedResponseDto<UserDto>> {
-    return this.queryBus.execute<UserGetListQuery, PaginatedResponseDto<UserDto>>(
-      new UserGetListQuery(filters),
-    );
+  async findAll(
+    @Query() filters: UserFilterDto,
+  ): Promise<PaginatedResponseDto<UserDto>> {
+    return this.queryBus.execute<
+      UserGetListQuery,
+      PaginatedResponseDto<UserDto>
+    >(new UserGetListQuery(filters));
   }
 
   @Get(':id')

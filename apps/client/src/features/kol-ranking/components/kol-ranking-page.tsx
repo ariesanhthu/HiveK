@@ -1,15 +1,12 @@
-"use client";
+'use client';
 
-import React from "react";
-import { Badge } from "@/components/ui/badge";
-import { RankingFilters } from "@/features/kol-ranking/components/ranking-filters";
-import { RankingPagination } from "@/features/kol-ranking/components/ranking-pagination";
-import { KolRankingTable } from "@/features/kol-ranking/components/kol-ranking-table";
-import { useKolRankingRealtime } from "@/features/kol-ranking/hooks/use-kol-ranking-realtime";
-import {
-  type KolRankingFilters,
-  type KolRankingResponse,
-} from "@/features/kol-ranking/types";
+import { Badge } from '@/components/ui/badge';
+import { KolRankingTable } from '@/features/kol-ranking/components/kol-ranking-table';
+import { RankingFilters } from '@/features/kol-ranking/components/ranking-filters';
+import { RankingPagination } from '@/features/kol-ranking/components/ranking-pagination';
+import { useKolRankingRealtime } from '@/features/kol-ranking/hooks/use-kol-ranking-realtime';
+import { type KolRankingFilters, type KolRankingResponse } from '@/features/kol-ranking/types';
+import React from 'react';
 
 type KolRankingPageProps = {
   initialData: KolRankingResponse;
@@ -17,10 +14,10 @@ type KolRankingPageProps = {
 };
 
 function formatTimestamp(value: string): string {
-  return new Intl.DateTimeFormat("vi-VN", {
-    hour: "2-digit",
-    minute: "2-digit",
-    second: "2-digit",
+  return new Intl.DateTimeFormat('vi-VN', {
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
   }).format(new Date(value));
 }
 
@@ -34,21 +31,25 @@ export function KolRankingPage({
   });
 
   return (
-    <div className="mx-auto flex w-full max-w-7xl flex-col gap-5 px-6 pb-14 pt-8 md:px-10">
-      <header className="space-y-2">
-        <div className="flex flex-wrap items-center gap-2">
-          <h1 className="text-2xl font-extrabold tracking-tight text-foreground md:text-3xl">
+    <div className='mx-auto flex w-full max-w-7xl flex-col gap-5 px-6 pb-14 pt-8 md:px-10'>
+      <header className='space-y-2'>
+        <div className='flex flex-wrap items-center gap-2'>
+          <h1 className='text-2xl font-extrabold tracking-tight text-foreground md:text-3xl'>
             Bảng xếp hạng KOL
           </h1>
-          <Badge variant={status === "live" ? "success" : "secondary"}>
-            {status === "live" ? "Trực tiếp" : status === "error" ? "Đang kết nối lại" : "Đang đồng bộ"}
+          <Badge variant={status === 'live' ? 'success' : 'secondary'}>
+            {status === 'live'
+              ? 'Trực tiếp'
+              : status === 'error'
+              ? 'Đang kết nối lại'
+              : 'Đang đồng bộ'}
           </Badge>
         </div>
-        <p className="text-sm text-foreground-muted md:text-base">
-          Bảng xếp hạng theo thời gian thực cho creators. Dữ liệu tự động cập nhật mỗi vài giây
-          và có thể mở rộng sang luồng Kafka/Redis khi backend hoạt động thực tế.
+        <p className='text-sm text-foreground-muted md:text-base'>
+          Bảng xếp hạng theo thời gian thực cho creators. Dữ liệu tự động cập nhật mỗi vài giây và
+          có thể mở rộng sang luồng Kafka/Redis khi backend hoạt động thực tế.
         </p>
-        <p className="text-xs text-foreground-muted">
+        <p className='text-xs text-foreground-muted'>
           Cập nhật lần cuối: {formatTimestamp(data.generatedAt)} • Tổng cộng: {data.totalItems}
         </p>
       </header>

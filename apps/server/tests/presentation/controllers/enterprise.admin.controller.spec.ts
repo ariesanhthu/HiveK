@@ -1,15 +1,15 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { CommandBus, QueryBus } from '@nestjs/cqrs';
-import { EnterpriseAdminController } from '@/presentation/controllers/http/admin/enterprise.controller';
 import {
-  EnterpriseCreateCommand,
-  EnterpriseUpdateCommand,
-  EnterpriseSoftDeleteCommand,
-  EnterpriseRestoreCommand,
   EnterpriseAddUserCommand,
+  EnterpriseCreateCommand,
+  EnterpriseRestoreCommand,
   EnterpriseRevokeUserCommand,
+  EnterpriseSoftDeleteCommand,
+  EnterpriseUpdateCommand,
 } from '@/application/commands';
 import { EnterpriseGetByIdQuery, EnterpriseGetListQuery } from '@/application/queries';
+import { EnterpriseAdminController } from '@/presentation/controllers/http/admin/enterprise.controller';
+import { CommandBus, QueryBus } from '@nestjs/cqrs';
+import { Test, TestingModule } from '@nestjs/testing';
 
 describe('EnterpriseAdminController', () => {
   let controller: EnterpriseAdminController;
@@ -41,13 +41,20 @@ describe('EnterpriseAdminController', () => {
 
   describe('create', () => {
     it('should execute EnterpriseCreateCommand', async () => {
-      const input = { companyName: 'New Ent', contactEmail: 'test@ent.com', contactPhone: '+841', description: '' };
+      const input = {
+        companyName: 'New Ent',
+        contactEmail: 'test@ent.com',
+        contactPhone: '+841',
+        description: '',
+      };
       const userId = 'admin-123';
       mockCommandBus.execute.mockResolvedValue({ id: 'ent-1' });
 
       const result = await controller.create(userId, input as any);
 
-      expect(mockCommandBus.execute).toHaveBeenCalledWith(new EnterpriseCreateCommand(userId, input as any));
+      expect(mockCommandBus.execute).toHaveBeenCalledWith(
+        new EnterpriseCreateCommand(userId, input as any),
+      );
       expect(result).toEqual({ id: 'ent-1' });
     });
   });

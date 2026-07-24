@@ -1,5 +1,5 @@
-import { PlatformUpdateCommandHandler } from '@/application/commands/platform-update/platform-update.handler';
 import { PlatformUpdateCommand } from '@/application/commands/platform-update/platform-update.command';
+import { PlatformUpdateCommandHandler } from '@/application/commands/platform-update/platform-update.handler';
 import { PlatformNotFoundException, UploadedFileNotFoundException } from '@/core/exceptions';
 
 describe('PlatformUpdateCommandHandler', () => {

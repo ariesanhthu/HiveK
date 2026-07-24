@@ -1,6 +1,6 @@
 import { CampaignParticipantMapper } from '@application/mappers/campaign-participant.mapper';
 import { CampaignParticipantRoot } from '@core/aggregate-roots';
-import { EParticipantStatus, EOutputType, EOutputStatus } from '@core/enums';
+import { EOutputStatus, EOutputType, EParticipantStatus } from '@core/enums';
 
 describe('CampaignParticipantMapper', () => {
   const mockRoot = CampaignParticipantRoot.instantiate('participant-1', {

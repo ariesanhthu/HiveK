@@ -1,12 +1,10 @@
-import { Injectable, Inject, OnModuleDestroy } from '@nestjs/common';
-import Redis from 'ioredis';
 import { ICacheService, REDIS_CLIENT } from '@/application/interfaces/cache.interface';
+import { Inject, Injectable, OnModuleDestroy } from '@nestjs/common';
+import Redis from 'ioredis';
 
 @Injectable()
 export class RedisCacheService implements ICacheService, OnModuleDestroy {
-  constructor(
-    @Inject(REDIS_CLIENT) private readonly redisClient: Redis,
-  ) {}
+  constructor(@Inject(REDIS_CLIENT) private readonly redisClient: Redis) {}
 
   async get<T>(key: string): Promise<T | null> {
     const data = await this.redisClient.get(key);

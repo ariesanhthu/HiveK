@@ -1,22 +1,34 @@
-import { Controller, Get, Post, Patch, Delete, Param, Query, Body, HttpCode, HttpStatus, UseGuards } from '@nestjs/common';
-import { CommandBus, QueryBus } from '@nestjs/cqrs';
-import { ApiTags, ApiOperation, ApiBearerAuth, ApiSecurity } from '@nestjs/swagger';
-import { buildVersionedRoute } from '@presentation/utils';
-import { RoleGetByIdQuery, RoleGetListQuery } from '@/application/queries';
 import {
   RoleCreateCommand,
-  RoleUpdateCommand,
-  RoleSoftDeleteCommand,
   RoleHardDeleteCommand,
   RoleRestoreCommand,
+  RoleSoftDeleteCommand,
+  RoleUpdateCommand,
 } from '@/application/commands';
-import { RoleDto, RoleFilterDto, SoftDeleteInputDto } from '@/application/dtos';
-import { JwtAuthGuard, RolesGuard } from '@/presentation/middleware/guards';
-import { Roles } from '@/presentation/decorators/roles.decorator';
-import { ERoleType } from '@/core/enums';
-import { PaginatedResponseDto } from '@/application/dtos/pagination.dto';
 import { RoleCreateInputDto } from '@/application/commands/role-create/role-create.dto';
 import { RoleUpdateInputDto } from '@/application/commands/role-update/role-update.dto';
+import { RoleDto, RoleFilterDto, SoftDeleteInputDto } from '@/application/dtos';
+import { PaginatedResponseDto } from '@/application/dtos/pagination.dto';
+import { RoleGetByIdQuery, RoleGetListQuery } from '@/application/queries';
+import { ERoleType } from '@/core/enums';
+import { Roles } from '@/presentation/decorators/roles.decorator';
+import { JwtAuthGuard, RolesGuard } from '@/presentation/middleware/guards';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Param,
+  Patch,
+  Post,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
+import { CommandBus, QueryBus } from '@nestjs/cqrs';
+import { ApiBearerAuth, ApiOperation, ApiSecurity, ApiTags } from '@nestjs/swagger';
+import { buildVersionedRoute } from '@presentation/utils';
 
 @ApiTags('ADMIN-roles')
 @ApiBearerAuth()
@@ -32,7 +44,7 @@ export class RoleAdminController {
 
   @Post()
   @ApiOperation({ summary: 'Create a new role' })
-  async create(@Body() input: RoleCreateInputDto): Promise<{ id: string }> {
+  async create(@Body() input: RoleCreateInputDto): Promise<{ id: string; }> {
     const id = await this.commandBus.execute<RoleCreateCommand, string>(
       new RoleCreateCommand(input),
     );
@@ -50,10 +62,13 @@ export class RoleAdminController {
 
   @Get()
   @ApiOperation({ summary: 'Get paginated list of roles' })
-  async findAll(@Query() filters: RoleFilterDto): Promise<PaginatedResponseDto<RoleDto>> {
-    return this.queryBus.execute<RoleGetListQuery, PaginatedResponseDto<RoleDto>>(
-      new RoleGetListQuery(filters),
-    );
+  async findAll(
+    @Query() filters: RoleFilterDto,
+  ): Promise<PaginatedResponseDto<RoleDto>> {
+    return this.queryBus.execute<
+      RoleGetListQuery,
+      PaginatedResponseDto<RoleDto>
+    >(new RoleGetListQuery(filters));
   }
 
   @Get(':id')

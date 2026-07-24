@@ -1,105 +1,124 @@
+import {
+  CAMPAIGN_PROPOSAL_READ_SERVICE,
+  PUBLIC_REVIEW_READ_SERVICE,
+  UNIT_OF_WORK,
+} from '@/application/interfaces';
+import { MongoConfig } from '@/configs';
 import { Global, Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { ConfigService } from '@nestjs/config';
 import { MongoUnitOfWork } from './mongo-uow';
-import { CAMPAIGN_PROPOSAL_READ_SERVICE, PUBLIC_REVIEW_READ_SERVICE, UNIT_OF_WORK } from '@/application/interfaces';
 import {
-  UserModel, UserSchema,
-  AdminModel, AdminSchema,
-  EnterpriseUserModel, EnterpriseUserSchema,
-  KOLUserModel, KOLUserSchema,
-  RoleModel, RoleSchema,
-  EnterpriseModel, EnterpriseSchema,
-  PlatformModel, PlatformSchema,
-  KolProfileModel, KolProfileSchema,
-  CampaignModel, CampaignSchema,
-  NotificationModel, NotificationSchema,
-  UserNotificationModel, UserNotificationSchema,
-  UploadedFileModel, UploadedFileSchema,
-  OtpModel, OtpSchema,
-  KpiLogModel, KpiLogSchema,
-  OutboxModel, OutboxSchema,
-  PublicReviewSchema,
-  PublicReviewModel,
-  CampaignProposalSchema,
+  AdminModel,
+  AdminSchema,
+  CampaignModel,
   CampaignProposalModel,
+  CampaignProposalSchema,
+  CampaignSchema,
+  EnterpriseModel,
+  EnterpriseSchema,
+  EnterpriseUserModel,
+  EnterpriseUserSchema,
+  KolProfileModel,
+  KolProfileSchema,
+  KOLUserModel,
+  KOLUserSchema,
+  KpiLogModel,
+  KpiLogSchema,
+  NotificationModel,
+  NotificationSchema,
+  OtpModel,
+  OtpSchema,
+  OutboxModel,
+  OutboxSchema,
+  PlatformModel,
+  PlatformSchema,
+  PublicReviewModel,
+  PublicReviewSchema,
+  RoleModel,
+  RoleSchema,
+  UploadedFileModel,
+  UploadedFileSchema,
+  UserModel,
+  UserNotificationModel,
+  UserNotificationSchema,
+  UserSchema,
 } from './schemas';
 
 // Repository imports
 import {
-  MongoUserRepository,
-  MongoRoleRepository,
-  MongoEnterpriseRepository,
-  MongoPlatformRepository,
-  MongoKolProfileRepository,
   MongoCampaignRepository,
-  MongoNotificationRepository,
-  MongoUserNotificationRepository,
-  MongoUploadedFileRepository,
-  MongoOtpRepository,
+  MongoEnterpriseRepository,
+  MongoKolProfileRepository,
   MongoKpiLogRepository,
+  MongoNotificationRepository,
+  MongoOtpRepository,
+  MongoPlatformRepository,
+  MongoRoleRepository,
+  MongoUploadedFileRepository,
+  MongoUserNotificationRepository,
+  MongoUserRepository,
 } from './repositories';
 
 // Read Service imports
 import {
-  MongoUserReadService,
-  MongoRoleReadService,
-  MongoEnterpriseReadService,
-  MongoPlatformReadService,
-  MongoKolProfileReadService,
-  MongoCampaignReadService,
   MongoCampaignParticipantReadService,
-  MongoNotificationReadService,
-  MongoUploadedFileReadService,
+  MongoCampaignReadService,
+  MongoEnterpriseReadService,
+  MongoKolProfileReadService,
   MongoKpiLogReadService,
+  MongoNotificationReadService,
+  MongoPlatformReadService,
+  MongoRoleReadService,
+  MongoUploadedFileReadService,
+  MongoUserReadService,
 } from './read-services';
 
 // Repository symbols
 import {
-  USER_REPOSITORY,
-  ROLE_REPOSITORY,
-  ENTERPRISE_REPOSITORY,
-  PLATFORM_REPOSITORY,
-  KOL_PROFILE_REPOSITORY,
-  CAMPAIGN_REPOSITORY,
-  NOTIFICATION_REPOSITORY,
-  USER_NOTIFICATION_REPOSITORY,
-  UPLOADED_FILE_REPOSITORY,
-  OTP_REPOSITORY,
-  KPI_LOG_REPOSITORY,
-  PUBLIC_REVIEW_REPOSITORY,
   CAMPAIGN_PROPOSAL_REPOSITORY,
+  CAMPAIGN_REPOSITORY,
+  ENTERPRISE_REPOSITORY,
+  KOL_PROFILE_REPOSITORY,
+  KPI_LOG_REPOSITORY,
+  NOTIFICATION_REPOSITORY,
+  OTP_REPOSITORY,
+  PLATFORM_REPOSITORY,
+  PUBLIC_REVIEW_REPOSITORY,
+  ROLE_REPOSITORY,
+  UPLOADED_FILE_REPOSITORY,
+  USER_NOTIFICATION_REPOSITORY,
+  USER_REPOSITORY,
 } from '@/core/interfaces/repositories';
 
 // Read Service symbols
 import {
-  USER_READ_SERVICE,
-  ROLE_READ_SERVICE,
-  ENTERPRISE_READ_SERVICE,
-  PLATFORM_READ_SERVICE,
-  KOL_PROFILE_READ_SERVICE,
-  CAMPAIGN_READ_SERVICE,
   CAMPAIGN_PARTICIPANT_READ_SERVICE,
-  NOTIFICATION_READ_SERVICE,
-  UPLOADED_FILE_READ_SERVICE,
+  CAMPAIGN_READ_SERVICE,
+  ENTERPRISE_READ_SERVICE,
+  KOL_PROFILE_READ_SERVICE,
   KPI_LOG_READ_SERVICE,
+  NOTIFICATION_READ_SERVICE,
+  PLATFORM_READ_SERVICE,
+  ROLE_READ_SERVICE,
+  UPLOADED_FILE_READ_SERVICE,
+  USER_READ_SERVICE,
 } from '@/application/interfaces';
 
-import { RoleSeedService } from './seeding/role-seed.service';
 import { ERoleType } from '@/core/enums';
-import { MongoPublicReviewReadService } from './read-services/public-review.read-service';
-import { MongoPublicReviewRepository } from './repositories/public-review.repository';
-import { MongoCampaignProposalRepository } from './repositories/campaign-proposal.repository';
 import { MongoCampaignProposalReadService } from './read-services/campaign-proposal.read-service';
+import { MongoPublicReviewReadService } from './read-services/public-review.read-service';
+import { MongoCampaignProposalRepository } from './repositories/campaign-proposal.repository';
+import { MongoPublicReviewRepository } from './repositories/public-review.repository';
+import { RoleSeedService } from './seeding/role-seed.service';
 
 @Global()
 @Module({
   imports: [
     // Root MongoDB connection
     MongooseModule.forRootAsync({
-      inject: [ConfigService],
-      useFactory: (configService: ConfigService) => ({
-        uri: configService.get<string>('MONGODB_URI'),
+      inject: [MongoConfig],
+      useFactory: (mongoConfig: MongoConfig) => ({
+        uri: mongoConfig.getUri(),
       }),
     }),
     // Register ALL schemas here
@@ -177,7 +196,7 @@ import { MongoCampaignProposalReadService } from './read-services/campaign-propo
     },
     {
       provide: KPI_LOG_REPOSITORY,
-      useClass: MongoKpiLogRepository
+      useClass: MongoKpiLogRepository,
     },
     {
       provide: PUBLIC_REVIEW_REPOSITORY,

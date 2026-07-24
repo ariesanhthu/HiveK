@@ -1,5 +1,5 @@
-import { MongoClient, ObjectId } from 'mongodb';
 import * as fs from 'fs';
+import { MongoClient, ObjectId } from 'mongodb';
 import * as path from 'path';
 
 // Load .env file manually to support standalone execution
@@ -22,7 +22,8 @@ const loadEnv = () => {
 
 loadEnv();
 
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://root:root%40123@localhost:27017/hivek?authSource=admin';
+const MONGODB_URI = process.env.MONGODB_URI
+  || 'mongodb://root:root%40123@localhost:27017/hivek?authSource=admin';
 
 // Helpers to extract Email & Phone from bios
 const extractEmail = (text: string): string | null => {
@@ -39,7 +40,9 @@ const extractPhone = (text: string): string | null => {
 };
 
 // Seed platforms in 'hivek' if they don't exist (required for ID reference)
-async function ensurePlatformsExist(client: MongoClient): Promise<{ tiktokId: string; youtubeId: string }> {
+async function ensurePlatformsExist(
+  client: MongoClient,
+): Promise<{ tiktokId: string; youtubeId: string; }> {
   const db = client.db('hivek');
   const platformsCol = db.collection('platforms');
 
@@ -78,13 +81,16 @@ async function ensurePlatformsExist(client: MongoClient): Promise<{ tiktokId: st
 }
 
 // Sync Crawler DB data to HiveK using 'user' as the main entry collection
-async function syncCrawlerData(client: MongoClient, platformIds: { tiktokId: string; youtubeId: string }) {
+async function syncCrawlerData(
+  client: MongoClient,
+  platformIds: { tiktokId: string; youtubeId: string; },
+) {
   const crawlerDb = client.db('tiktok_crawler');
   const serverDb = client.db('hivek');
 
   console.log('🔄 Fetching user mappings from crawler database (collection: user)...');
   const userMappings = await crawlerDb.collection('user').find({}).toArray();
-  
+
   if (userMappings.length === 0) {
     console.log('ℹ️ No user mappings found in user collection. Sync complete (0 records).');
     return;
@@ -108,16 +114,18 @@ async function syncCrawlerData(client: MongoClient, platformIds: { tiktokId: str
 
   for (const mapping of userMappings) {
     // Look up detailed user records based on the main entry mapping IDs
-    const tiktokUser = mapping.tiktok_id 
-      ? await crawlerDb.collection('tiktok_users').findOne({ _id: toQueryId(mapping.tiktok_id) }) 
+    const tiktokUser = mapping.tiktok_id
+      ? await crawlerDb.collection('tiktok_users').findOne({ _id: toQueryId(mapping.tiktok_id) })
       : null;
-      
-    const youtubeUser = mapping.youtube_id 
-      ? await crawlerDb.collection('youtube_users').findOne({ _id: toQueryId(mapping.youtube_id) }) 
+
+    const youtubeUser = mapping.youtube_id
+      ? await crawlerDb.collection('youtube_users').findOne({ _id: toQueryId(mapping.youtube_id) })
       : null;
 
     if (!tiktokUser && !youtubeUser) {
-      console.warn(`⚠️ Warning: No matching crawler detailed records found in tiktok_users or youtube_users for mapping ID: ${mapping._id}`);
+      console.warn(
+        `⚠️ Warning: No matching crawler detailed records found in tiktok_users or youtube_users for mapping ID: ${mapping._id}`,
+      );
       continue;
     }
 
@@ -149,7 +157,9 @@ async function syncCrawlerData(client: MongoClient, platformIds: { tiktokId: str
       // Calculate engagement
       const followerCount = tiktokUser.followerCount || 0;
       const heartCount = tiktokUser.heartCount || 0;
-      const avgEngagement = followerCount > 0 ? parseFloat((heartCount / followerCount).toFixed(2)) : 0;
+      const avgEngagement = followerCount > 0
+        ? parseFloat((heartCount / followerCount).toFixed(2))
+        : 0;
 
       // Extract categories
       const categories = tiktokUser.categories ? Object.keys(tiktokUser.categories) : [];
@@ -202,23 +212,23 @@ async function syncCrawlerData(client: MongoClient, platformIds: { tiktokId: str
     const filterQuery: any = {};
     const platformConditions: any[] = [];
     if (tiktokUser) {
-      platformConditions.push({ 
-        platforms: { 
-          $elemMatch: { 
-            platform_id: platformIds.tiktokId, 
-            external_id: tiktokUser._id.toString() 
-          } 
-        } 
+      platformConditions.push({
+        platforms: {
+          $elemMatch: {
+            platform_id: platformIds.tiktokId,
+            external_id: tiktokUser._id.toString(),
+          },
+        },
       });
     }
     if (youtubeUser) {
-      platformConditions.push({ 
-        platforms: { 
-          $elemMatch: { 
-            platform_id: platformIds.youtubeId, 
-            external_id: youtubeUser._id.toString() 
-          } 
-        } 
+      platformConditions.push({
+        platforms: {
+          $elemMatch: {
+            platform_id: platformIds.youtubeId,
+            external_id: youtubeUser._id.toString(),
+          },
+        },
       });
     }
 
@@ -227,30 +237,34 @@ async function syncCrawlerData(client: MongoClient, platformIds: { tiktokId: str
     } else if (platformConditions.length === 1) {
       Object.assign(filterQuery, platformConditions[0]);
     } else {
-      continue; 
+      continue;
     }
 
     await serverDb.collection('influencers').updateOne(
       filterQuery,
-      { 
+      {
         $set: influencerDoc,
-        $setOnInsert: { 
+        $setOnInsert: {
           created_at: new Date(),
-          scores: {}
-        }
+          scores: {},
+        },
       },
-      { upsert: true }
+      { upsert: true },
     );
 
     console.log(`✅ Synced: "${name}" (${email})`);
     syncedCount++;
   }
 
-  console.log(`🎉 Sync successful! Synchronized ${syncedCount} profiles into the server database based on user mapping entry.`);
+  console.log(
+    `🎉 Sync successful! Synchronized ${syncedCount} profiles into the server database based on user mapping entry.`,
+  );
 }
 
 async function run() {
-  console.log(`🚀 Starting Crawler to Server Database Sync Script (Main Entry: user collection)...`);
+  console.log(
+    `🚀 Starting Crawler to Server Database Sync Script (Main Entry: user collection)...`,
+  );
   console.log(`🔗 Connection URI: ${MONGODB_URI.split('@').pop()}`);
 
   const client = new MongoClient(MONGODB_URI);
@@ -263,7 +277,6 @@ async function run() {
 
     // Step 2: Synchronize crawler data to server using 'user' mappings
     await syncCrawlerData(client, platformIds);
-
   } catch (error) {
     console.error('❌ Error executing sync script:', error);
   } finally {

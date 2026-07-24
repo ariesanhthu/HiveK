@@ -1,20 +1,30 @@
-import { Controller, Get, Patch, Param, Query, Body, HttpCode, HttpStatus, UseGuards } from '@nestjs/common';
-import { CommandBus, QueryBus } from '@nestjs/cqrs';
-import { ApiTags, ApiOperation, ApiBearerAuth, ApiSecurity } from '@nestjs/swagger';
-import { buildVersionedRoute } from '@presentation/utils';
 import {
   ReviewModerateCommand,
   ReviewModerateInputDto,
-  ReviewSoftDeleteCommand,
   ReviewRestoreCommand,
+  ReviewSoftDeleteCommand,
 } from '@/application/commands';
-import { ReviewGetListQuery, ReviewGetByIdQuery, ReviewFilterDto } from '@/application/queries';
 import { ReviewDto, ReviewFilterDto as ReviewFilterInputDto } from '@/application/dtos';
 import { PaginatedResponseDto } from '@/application/dtos/pagination.dto';
-import { JwtAuthGuard, RolesGuard } from '@/presentation/middleware/guards';
+import { ReviewFilterDto, ReviewGetByIdQuery, ReviewGetListQuery } from '@/application/queries';
+import { ERoleType } from '@/core/enums';
 import { CurrentUser } from '@/presentation/decorators/current-user.decorator';
 import { Roles } from '@/presentation/decorators/roles.decorator';
-import { ERoleType } from '@/core/enums';
+import { JwtAuthGuard, RolesGuard } from '@/presentation/middleware/guards';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Param,
+  Patch,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
+import { CommandBus, QueryBus } from '@nestjs/cqrs';
+import { ApiBearerAuth, ApiOperation, ApiSecurity, ApiTags } from '@nestjs/swagger';
+import { buildVersionedRoute } from '@presentation/utils';
 
 @ApiTags('ADMIN-reviews')
 @ApiBearerAuth()
@@ -30,7 +40,9 @@ export class PublicReviewAdminController {
 
   @Get()
   @ApiOperation({ summary: 'Get all reviews' })
-  async findAll(@Query() filters: ReviewFilterInputDto): Promise<PaginatedResponseDto<ReviewDto>> {
+  async findAll(
+    @Query() filters: ReviewFilterInputDto,
+  ): Promise<PaginatedResponseDto<ReviewDto>> {
     return this.queryBus.execute(new ReviewGetListQuery(filters));
   }
 
@@ -48,7 +60,9 @@ export class PublicReviewAdminController {
     @Param('id') id: string,
     @Body() input: ReviewModerateInputDto,
   ): Promise<void> {
-    return this.commandBus.execute(new ReviewModerateCommand(id, input.action, userId));
+    return this.commandBus.execute(
+      new ReviewModerateCommand(id, input.action, userId),
+    );
   }
 
   @Patch(':id/soft-delete')

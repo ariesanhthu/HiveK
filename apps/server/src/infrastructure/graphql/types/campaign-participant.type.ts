@@ -1,4 +1,4 @@
-import { Field, ObjectType, ID } from '@nestjs/graphql';
+import { Field, ID, ObjectType } from '@nestjs/graphql';
 import { CampaignType } from './campaign.type';
 import { KolProfileType } from './kol-profile.type';
 import { PlatformType } from './platform.type';

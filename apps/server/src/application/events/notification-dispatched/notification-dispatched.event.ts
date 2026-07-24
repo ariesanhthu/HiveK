@@ -1,4 +1,4 @@
-import { NotificationType, TargetType, NotificationChannel } from '@/core/enums';
+import { NotificationChannel, NotificationType, TargetType } from '@/core/enums';
 
 export class NotificationDispatchedEvent {
   constructor(

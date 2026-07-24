@@ -1,8 +1,8 @@
-import { CampaignHardDeleteCommandHandler } from '@/application/commands/campaign-hard-delete/campaign-hard-delete.handler';
 import { CampaignHardDeleteCommand } from '@/application/commands/campaign-hard-delete/campaign-hard-delete.command';
-import { CampaignNotFoundException } from '@/core/exceptions';
+import { CampaignHardDeleteCommandHandler } from '@/application/commands/campaign-hard-delete/campaign-hard-delete.handler';
 import { CampaignRoot } from '@/core/aggregate-roots';
 import { ECampaignStatus } from '@/core/enums/campaign-status.enum';
+import { CampaignNotFoundException } from '@/core/exceptions';
 
 describe('CampaignHardDeleteCommandHandler', () => {
   let handler: CampaignHardDeleteCommandHandler;

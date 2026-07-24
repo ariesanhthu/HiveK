@@ -1,23 +1,22 @@
+import { CloudinaryConfig } from '@/configs';
+import { IStorageService, StorageResourceType, UploadResult } from '@/core/interfaces/storage';
+import { errorMessage, isEmpty, toError } from '@/shared/utils';
 import { Injectable, Logger } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import { v2 as cloudinary, UploadApiResponse } from 'cloudinary';
-import {
-  IStorageService,
-  UploadResult,
-  StorageResourceType,
-} from '@/core/interfaces/storage';
-import { errorMessage, toError, isEmpty } from '@/shared/utils';
+import { UploadApiResponse, v2 as cloudinary } from 'cloudinary';
+
 @Injectable()
 export class CloudinaryStorageService implements IStorageService {
   private readonly logger = new Logger(CloudinaryStorageService.name);
-  private readonly DEFAULT_FOLDER;
-  constructor(private readonly configService: ConfigService) {
-    const cloudName = this.configService.get<string>('CLOUDINARY_CLOUD_NAME');
-    const apiKey = this.configService.get<string>('CLOUDINARY_API_KEY');
-    const apiSecret = this.configService.get<string>('CLOUDINARY_API_SECRET');
+  private readonly DEFAULT_FOLDER: string;
+  constructor(private readonly cloudinaryConfig: CloudinaryConfig) {
+    const cloudName = this.cloudinaryConfig.getCloudName();
+    const apiKey = this.cloudinaryConfig.getApiKey();
+    const apiSecret = this.cloudinaryConfig.getApiSecret();
 
     if (!cloudName || !apiKey || !apiSecret) {
-      this.logger.warn('Cloudinary credentials (CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET) are not fully configured. Uploads will fail.');
+      this.logger.warn(
+        'Cloudinary credentials (CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET) are not fully configured. Uploads will fail.',
+      );
     }
 
     // Configure Cloudinary
@@ -27,7 +26,7 @@ export class CloudinaryStorageService implements IStorageService {
       api_secret: apiSecret,
     });
 
-    this.DEFAULT_FOLDER = this.configService.get<string>('CLOUDINARY_UPLOAD_PRESET');
+    this.DEFAULT_FOLDER = this.cloudinaryConfig.getUploadPreset();
   }
 
   /**
@@ -35,7 +34,7 @@ export class CloudinaryStorageService implements IStorageService {
    */
   async upload(
     file: Buffer,
-    options?: { folder?: string; filename?: string },
+    options?: { folder?: string; filename?: string; },
   ): Promise<UploadResult> {
     const startTime = Date.now();
 
@@ -77,7 +76,7 @@ export class CloudinaryStorageService implements IStorageService {
    */
   async delete(
     publicId: string,
-    options?: { resourceType?: StorageResourceType },
+    options?: { resourceType?: StorageResourceType; },
   ): Promise<boolean> {
     try {
       const startTime = Date.now();
@@ -87,9 +86,7 @@ export class CloudinaryStorageService implements IStorageService {
       const duration = Date.now() - startTime;
 
       if (result.result === 'ok' || result.result === 'not found') {
-        this.logger.log(
-          `Deleted from Cloudinary (${duration}ms): ${publicId}`,
-        );
+        this.logger.log(`Deleted from Cloudinary (${duration}ms): ${publicId}`);
         return true;
       }
 
@@ -110,15 +107,15 @@ export class CloudinaryStorageService implements IStorageService {
    */
   async bulkDelete(
     publicIds: string[],
-    options?: { resourceType?: StorageResourceType },
+    options?: { resourceType?: StorageResourceType; },
   ): Promise<{
     success: string[];
-    failed: Array<{ publicId: string; error: string }>;
+    failed: Array<{ publicId: string; error: string; }>;
   }> {
     const startTime = Date.now();
     const results = {
       success: [] as string[],
-      failed: [] as Array<{ publicId: string; error: string }>,
+      failed: [] as Array<{ publicId: string; error: string; }>,
     };
 
     if (isEmpty(publicIds)) {
@@ -126,7 +123,9 @@ export class CloudinaryStorageService implements IStorageService {
     }
 
     try {
-      this.logger.log(`Starting bulk delete of ${publicIds.length} files from Cloudinary`);
+      this.logger.log(
+        `Starting bulk delete of ${publicIds.length} files from Cloudinary`,
+      );
 
       const apiResponse = await cloudinary.api.delete_resources(publicIds, {
         resource_type: options?.resourceType || 'image',
@@ -152,12 +151,22 @@ export class CloudinaryStorageService implements IStorageService {
 
       return results;
     } catch (error) {
-      this.logger.warn(`Cloudinary bulk delete API failed (${errorMessage(error)}). Falling back to individual deletes.`);
-      
+      this.logger.warn(
+        `Cloudinary bulk delete API failed (${
+          errorMessage(
+            error,
+          )
+        }). Falling back to individual deletes.`,
+      );
+
       const deletePromises = publicIds.map((publicId) =>
         this.delete(publicId, options)
-          .then((success) => ({ success, publicId, error: success ? undefined : 'Delete failed' }))
-          .catch((err) => ({ success: false, publicId, error: err.message })),
+          .then((success) => ({
+            success,
+            publicId,
+            error: success ? undefined : 'Delete failed',
+          }))
+          .catch((err) => ({ success: false, publicId, error: err.message }))
       );
 
       const deleteResults = await Promise.all(deletePromises);

@@ -1,6 +1,6 @@
-import { CampaignSoftDeleteCommandHandler } from '@/application/commands/campaign-soft-delete/campaign-soft-delete.handler';
 import { CampaignSoftDeleteCommand } from '@/application/commands/campaign-soft-delete/campaign-soft-delete.command';
-import { CampaignNotFoundException, CampaignForbiddenException } from '@/core/exceptions';
+import { CampaignSoftDeleteCommandHandler } from '@/application/commands/campaign-soft-delete/campaign-soft-delete.handler';
+import { CampaignForbiddenException, CampaignNotFoundException } from '@/core/exceptions';
 
 describe('CampaignSoftDeleteCommandHandler', () => {
   let handler: CampaignSoftDeleteCommandHandler;
@@ -28,14 +28,17 @@ describe('CampaignSoftDeleteCommandHandler', () => {
     const campaign = { id: 'campaign-1', ownerId: 'owner-id', softDelete: jest.fn() };
     mockCampaignRepository.findById.mockResolvedValue(campaign);
 
-    await expect(handler.execute(new CampaignSoftDeleteCommand('campaign-1', 'not-owner', 'not-owner')))
-        .rejects.toThrow(CampaignForbiddenException);
+    await expect(
+      handler.execute(new CampaignSoftDeleteCommand('campaign-1', 'not-owner', 'not-owner')),
+    )
+      .rejects.toThrow(CampaignForbiddenException);
   });
 
   it('should throw CampaignNotFoundException when campaign not found', async () => {
     mockCampaignRepository.findById.mockResolvedValue(null);
 
-    await expect(handler.execute(new CampaignSoftDeleteCommand('nonexistent', 'any', 'any'))).rejects.toThrow(CampaignNotFoundException);
+    await expect(handler.execute(new CampaignSoftDeleteCommand('nonexistent', 'any', 'any')))
+      .rejects.toThrow(CampaignNotFoundException);
     expect(mockCampaignRepository.save).not.toHaveBeenCalled();
   });
 });

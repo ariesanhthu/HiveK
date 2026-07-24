@@ -1,8 +1,11 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { QueryBus } from '@nestjs/cqrs';
-import { CampaignParticipantResolver } from '@/presentation/controllers/resolvers/campaign-participant.resolver';
-import { CampaignParticipantGetByIdQuery, CampaignParticipantGetListQuery } from '@/application/queries';
 import { ProjectionDto } from '@/application/dtos/projection.dto';
+import {
+  CampaignParticipantGetByIdQuery,
+  CampaignParticipantGetListQuery,
+} from '@/application/queries';
+import { CampaignParticipantResolver } from '@/presentation/controllers/resolvers/campaign-participant.resolver';
+import { QueryBus } from '@nestjs/cqrs';
+import { Test, TestingModule } from '@nestjs/testing';
 
 describe('CampaignParticipantResolver', () => {
   let resolver: CampaignParticipantResolver;

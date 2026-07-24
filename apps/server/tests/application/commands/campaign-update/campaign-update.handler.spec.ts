@@ -1,8 +1,8 @@
-import { CampaignUpdateCommandHandler } from '@/application/commands/campaign-update/campaign-update.handler';
 import { CampaignUpdateCommand } from '@/application/commands/campaign-update/campaign-update.command';
-import { CampaignNotFoundException, CampaignForbiddenException } from '@/core/exceptions';
+import { CampaignUpdateCommandHandler } from '@/application/commands/campaign-update/campaign-update.handler';
 import { CampaignRoot } from '@/core/aggregate-roots';
 import { ECampaignStatus } from '@/core/enums/campaign-status.enum';
+import { CampaignForbiddenException, CampaignNotFoundException } from '@/core/exceptions';
 
 describe('CampaignUpdateCommandHandler', () => {
   let handler: CampaignUpdateCommandHandler;

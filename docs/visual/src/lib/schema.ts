@@ -1,15 +1,15 @@
-export type NodeType = "feature" | "workflow" | "file" | "folder" | "note";
+export type NodeType = 'feature' | 'workflow' | 'file' | 'folder' | 'note';
 
 export type RelationType =
-  | "contains"
-  | "uses"
-  | "depends_on"
-  | "documents"
-  | "implements"
-  | "references"
-  | "flows_to";
+  | 'contains'
+  | 'uses'
+  | 'depends_on'
+  | 'documents'
+  | 'implements'
+  | 'references'
+  | 'flows_to';
 
-export type NodeStatus = "draft" | "active" | "deprecated";
+export type NodeStatus = 'draft' | 'active' | 'deprecated';
 
 export type Tag = string;
 
@@ -24,7 +24,7 @@ export interface GraphNode {
   description: string;
   tags: Tag[];
   status: NodeStatus;
-  position: { x: number; y: number };
+  position: { x: number; y: number; };
   lastSyncedAt: string;
 }
 
@@ -46,6 +46,5 @@ export interface GraphData {
 export interface NodeFilterState {
   feature: string;
   workflow: string;
-  type: NodeType | "all";
+  type: NodeType | 'all';
 }
-

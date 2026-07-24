@@ -46,19 +46,19 @@ Tuy nhiên, thiết kế cũ chưa đáp ứng yêu cầu mới vì:
 
 ### 3.1. Ngăn xếp đề xuất
 
-| Lớp | Công nghệ đề xuất | Vai trò |
-|---|---|---|
-| API | FastAPI + Pydantic v2 | API typed, hợp đồng dữ liệu, streaming sự kiện |
-| Đồ thị suy luận | LangGraph | Trạng thái, nhánh điều kiện, checkpoint, dừng để duyệt |
-| Tiến trình bền vững | Temporal Python SDK | Đồng bộ dài, retry, lịch chạy, webhook, publish, vòng học |
-| Dữ liệu nghiệp vụ | PostgreSQL | Nguồn dữ liệu chuẩn, giao dịch, phiên bản, audit |
-| Tìm kiếm ngữ nghĩa | pgvector + full-text search | Truy xuất lai từ khóa + ngữ nghĩa |
-| Đồ thị tri thức | Neo4j | Thực thể, quan hệ, truy vấn theo ngữ cảnh và GraphRAG |
-| Bộ nhớ đệm | Redis | Cache, rate limit, khóa phân tán, hàng đợi nhẹ |
-| Tệp | S3/MinIO | Tài liệu, ảnh, video, snapshot nguồn |
-| Quan sát AI | Langfuse + OpenTelemetry | Trace, token, độ trễ, prompt version, đánh giá |
-| Kết nối công cụ | Adapter nội bộ, tương thích MCP | Chuẩn hóa tài nguyên, công cụ và quyền |
-| Học máy | scikit-learn, sentence-transformers, LightGBM, BERTopic, River | Phân loại, clustering, xếp hạng, chủ đề, học trực tuyến |
+| Lớp                 | Công nghệ đề xuất                                              | Vai trò                                                   |
+| ------------------- | -------------------------------------------------------------- | --------------------------------------------------------- |
+| API                 | FastAPI + Pydantic v2                                          | API typed, hợp đồng dữ liệu, streaming sự kiện            |
+| Đồ thị suy luận     | LangGraph                                                      | Trạng thái, nhánh điều kiện, checkpoint, dừng để duyệt    |
+| Tiến trình bền vững | Temporal Python SDK                                            | Đồng bộ dài, retry, lịch chạy, webhook, publish, vòng học |
+| Dữ liệu nghiệp vụ   | PostgreSQL                                                     | Nguồn dữ liệu chuẩn, giao dịch, phiên bản, audit          |
+| Tìm kiếm ngữ nghĩa  | pgvector + full-text search                                    | Truy xuất lai từ khóa + ngữ nghĩa                         |
+| Đồ thị tri thức     | Neo4j                                                          | Thực thể, quan hệ, truy vấn theo ngữ cảnh và GraphRAG     |
+| Bộ nhớ đệm          | Redis                                                          | Cache, rate limit, khóa phân tán, hàng đợi nhẹ            |
+| Tệp                 | S3/MinIO                                                       | Tài liệu, ảnh, video, snapshot nguồn                      |
+| Quan sát AI         | Langfuse + OpenTelemetry                                       | Trace, token, độ trễ, prompt version, đánh giá            |
+| Kết nối công cụ     | Adapter nội bộ, tương thích MCP                                | Chuẩn hóa tài nguyên, công cụ và quyền                    |
+| Học máy             | scikit-learn, sentence-transformers, LightGBM, BERTopic, River | Phân loại, clustering, xếp hạng, chủ đề, học trực tuyến   |
 
 ### 3.2. Vì sao không dùng một framework duy nhất
 
@@ -186,14 +186,14 @@ Cấu trúc mã nguồn, schema, API, backlog triển khai, đánh giá, bảo m
 
 ## 9. Lộ trình thực hiện đề xuất
 
-| Giai đoạn | Kết quả kiểm chứng được |
-|---|---|
-| 1. Nền tảng | API, PostgreSQL, trace, LangGraph state, một connector tệp |
-| 2. Thiết lập tự động | Bản chụp thương hiệu, gap detector, xác nhận dữ kiện |
-| 3. Tri thức | Neo4j ontology, vector/full-text retrieval, provenance |
-| 4. Tạo nội dung | Kế hoạch, bài theo kênh, validator, human review |
-| 5. Vòng học | diff, style profile, feedback event, performance event |
-| 6. Tối ưu | model routing, cache, ranker, trend detection, A/B test |
+| Giai đoạn            | Kết quả kiểm chứng được                                    |
+| -------------------- | ---------------------------------------------------------- |
+| 1. Nền tảng          | API, PostgreSQL, trace, LangGraph state, một connector tệp |
+| 2. Thiết lập tự động | Bản chụp thương hiệu, gap detector, xác nhận dữ kiện       |
+| 3. Tri thức          | Neo4j ontology, vector/full-text retrieval, provenance     |
+| 4. Tạo nội dung      | Kế hoạch, bài theo kênh, validator, human review           |
+| 5. Vòng học          | diff, style profile, feedback event, performance event     |
+| 6. Tối ưu            | model routing, cache, ranker, trend detection, A/B test    |
 
 ---
 

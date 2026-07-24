@@ -1,14 +1,14 @@
-import type { Metadata } from "next";
-import { KolRankingPage } from "@/features/kol-ranking/components/kol-ranking-page";
+import { KolRankingPage } from '@/features/kol-ranking/components/kol-ranking-page';
 import {
   DEFAULT_RANKING_FILTERS,
   getKolRankings,
-} from "@/features/kol-ranking/server/get-kol-rankings";
+} from '@/features/kol-ranking/server/get-kol-rankings';
+import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: "Bảng xếp hạng KOL | Hive-K",
+  title: 'Bảng xếp hạng KOL | Hive-K',
   description:
-    "Bảng xếp hạng KOL trực tuyến với bộ lọc, phân trang và cập nhật điểm số theo thời gian thực.",
+    'Bảng xếp hạng KOL trực tuyến với bộ lọc, phân trang và cập nhật điểm số theo thời gian thực.',
 };
 
 export default async function Page() {

@@ -1,14 +1,18 @@
+import { RoleConflictException, RoleNotFoundException } from '@/core/exceptions';
+import { type IRoleRepository, ROLE_REPOSITORY } from '@/core/interfaces/repositories';
+import { Inject } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { RoleUpdateCommand } from './role-update.command';
-import { Inject } from '@nestjs/common';
-import { RoleNotFoundException, RoleConflictException } from '@/core/exceptions';
-import { ROLE_REPOSITORY, type IRoleRepository } from '@/core/interfaces/repositories';
 
 @CommandHandler(RoleUpdateCommand)
-export class RoleUpdateCommandHandler implements ICommandHandler<RoleUpdateCommand, void> {
+export class RoleUpdateCommandHandler implements
+  ICommandHandler<
+    RoleUpdateCommand,
+    void
+  >
+{
   constructor(
-    @Inject(ROLE_REPOSITORY)
-    private readonly roleRepository: IRoleRepository,
+    @Inject(ROLE_REPOSITORY) private readonly roleRepository: IRoleRepository,
   ) {}
 
   async execute(command: RoleUpdateCommand): Promise<void> {
@@ -22,7 +26,9 @@ export class RoleUpdateCommandHandler implements ICommandHandler<RoleUpdateComma
     if (input.title && input.title !== role.title) {
       const existingRole = await this.roleRepository.findByTitle(input.title);
       if (existingRole) {
-        throw new RoleConflictException(`Role with title '${input.title}' already exists`);
+        throw new RoleConflictException(
+          `Role with title '${input.title}' already exists`,
+        );
       }
     }
 

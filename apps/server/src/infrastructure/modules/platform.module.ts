@@ -3,15 +3,15 @@ import { CqrsModule } from '@nestjs/cqrs';
 
 import {
   PlatformCreateCommandHandler,
-  PlatformUpdateCommandHandler,
-  PlatformSoftDeleteCommandHandler,
   PlatformHardDeleteCommandHandler,
   PlatformRestoreCommandHandler,
+  PlatformSoftDeleteCommandHandler,
+  PlatformUpdateCommandHandler,
 } from '@/application/commands';
 
-import { PlatformGetListHandler, PlatformGetByIdHandler } from '@/application/queries';
 import { LinkPlatformIconHandler } from '@/application/events';
-import { PlatformAdminController, PlatformClientController } from '@/presentation/controllers'
+import { PlatformGetByIdHandler, PlatformGetListHandler } from '@/application/queries';
+import { PlatformAdminController, PlatformClientController } from '@/presentation/controllers';
 import { UploadedFileModule } from './uploaded-file.module';
 
 const COMMAND_HANDLERS = [
@@ -22,14 +22,9 @@ const COMMAND_HANDLERS = [
   PlatformRestoreCommandHandler,
 ];
 
-const QUERY_HANDLERS = [
-  PlatformGetListHandler,
-  PlatformGetByIdHandler,
-];
+const QUERY_HANDLERS = [PlatformGetListHandler, PlatformGetByIdHandler];
 
-const EVENT_HANDLERS = [
-  LinkPlatformIconHandler,
-];
+const EVENT_HANDLERS = [LinkPlatformIconHandler];
 
 @Module({
   imports: [CqrsModule, UploadedFileModule],

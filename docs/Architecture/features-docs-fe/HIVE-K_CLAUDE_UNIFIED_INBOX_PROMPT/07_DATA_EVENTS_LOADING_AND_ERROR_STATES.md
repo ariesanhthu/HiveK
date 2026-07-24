@@ -12,14 +12,14 @@ type Conversation = {
   accountId: string;
   participantIds: string[];
   status: string;
-  priority: "low" | "normal" | "high" | "urgent";
+  priority: 'low' | 'normal' | 'high' | 'urgent';
   unreadCount: number;
   lastMessageAt: string;
   assignee?: Assignment;
   handlingMode: string;
   aiState: string;
   tags: string[];
-  draftState?: "none" | "reply" | "note";
+  draftState?: 'none' | 'reply' | 'note';
   replyCapability: ReplyCapability;
   sourceContext?: SourceContext;
   version: number;
@@ -30,31 +30,31 @@ type Message = {
   conversationId: string;
   clientMessageId?: string;
   authorType:
-    | "customer"
-    | "ai_agent"
-    | "current_user"
-    | "workspace_member"
-    | "internal_note"
-    | "system";
+    | 'customer'
+    | 'ai_agent'
+    | 'current_user'
+    | 'workspace_member'
+    | 'internal_note'
+    | 'system';
   authorId?: string;
   content: string;
   attachments: Attachment[];
   createdAt: string;
   deliveryStatus:
-    | "draft"
-    | "queued"
-    | "sending"
-    | "sent"
-    | "delivered"
-    | "failed"
-    | "unknown";
+    | 'draft'
+    | 'queued'
+    | 'sending'
+    | 'sent'
+    | 'delivered'
+    | 'failed'
+    | 'unknown';
   isAutomated?: boolean;
   evidenceRefs?: EvidenceRef[];
-  confidence?: "high" | "medium" | "low";
+  confidence?: 'high' | 'medium' | 'low';
 };
 
 type Assignment = {
-  type: "unassigned" | "ai" | "team" | "member";
+  type: 'unassigned' | 'ai' | 'team' | 'member';
   id?: string;
   displayName?: string;
 };

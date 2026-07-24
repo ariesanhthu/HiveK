@@ -2,7 +2,7 @@ services:
   rabbitmq:
     image: rabbitmq:4-management
     ports:
-      - "5672:5672"   # RabbitMQ port
+      - "5672:5672" # RabbitMQ port
       - "15672:15672" # Management UI
     environment:
       RABBITMQ_DEFAULT_USER: guest
@@ -24,17 +24,22 @@ services:
       timeout: 5s
       retries: 5
 
-  # mongodb:
-  #   image: mongo:latest
-  #   ports:
-  #     - "27017:27017"
-  #   volumes:
-  #     - mongodb_data:/data/db
-  #   environment:
-  #     MONGO_INITDB_DATABASE: hivek
+  mongodb:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    environment:
+      MONGO_INITDB_DATABASE: hivek
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
-# volumes:
-#   mongodb_data:
+volumes:
+  mongodb_data:
 
 networks:
   default:

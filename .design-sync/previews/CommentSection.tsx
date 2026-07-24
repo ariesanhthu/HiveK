@@ -2,8 +2,8 @@ import { CommentSection } from 'client';
 
 function avatar(bg: string, fg: string, initials: string): string {
   return (
-    'data:image/svg+xml;utf8,' +
-    encodeURIComponent(
+    'data:image/svg+xml;utf8,'
+    + encodeURIComponent(
       `<svg xmlns="http://www.w3.org/2000/svg" width="80" height="80"><rect width="80" height="80" fill="${bg}"/><text x="40" y="52" font-family="Arial" font-size="34" font-weight="bold" fill="${fg}" text-anchor="middle">${initials}</text></svg>`,
     )
   );

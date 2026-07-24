@@ -41,19 +41,28 @@ describe('EnterpriseUserRoot', () => {
   });
 
   it('should add an enterprise if it does not exist', () => {
-    const user = EnterpriseUserRoot.instantiate('user-id-456', { ...validProps, enterpriseIds: [] });
+    const user = EnterpriseUserRoot.instantiate('user-id-456', {
+      ...validProps,
+      enterpriseIds: [],
+    });
     user.addEnterprise('new-ent');
     expect(user.enterpriseIds).toContain('new-ent');
   });
 
   it('should not add a duplicate enterprise', () => {
-    const user = EnterpriseUserRoot.instantiate('user-id-456', { ...validProps, enterpriseIds: ['ent-1'] });
+    const user = EnterpriseUserRoot.instantiate('user-id-456', {
+      ...validProps,
+      enterpriseIds: ['ent-1'],
+    });
     user.addEnterprise('ent-1');
     expect(user.enterpriseIds).toHaveLength(1);
   });
 
   it('should revoke an enterprise', () => {
-    const user = EnterpriseUserRoot.instantiate('user-id-456', { ...validProps, enterpriseIds: ['ent-1', 'ent-2'] });
+    const user = EnterpriseUserRoot.instantiate('user-id-456', {
+      ...validProps,
+      enterpriseIds: ['ent-1', 'ent-2'],
+    });
     user.revokeEnterprise('ent-1');
     expect(user.enterpriseIds).not.toContain('ent-1');
     expect(user.enterpriseIds).toContain('ent-2');

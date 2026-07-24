@@ -1,20 +1,21 @@
-import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { Inject } from '@nestjs/common';
-import {
-  PUBLIC_REVIEW_REPOSITORY,
-  type IPublicReviewRepository,
-} from '@/core/interfaces/repositories';
 import { ReviewNotFoundException } from '@/core/exceptions';
+import {
+  type IPublicReviewRepository,
+  PUBLIC_REVIEW_REPOSITORY,
+} from '@/core/interfaces/repositories';
+import { Inject } from '@nestjs/common';
+import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { ReviewSoftDeleteCommand } from './review-soft-delete.command';
 
 @CommandHandler(ReviewSoftDeleteCommand)
-export class ReviewSoftDeleteCommandHandler implements ICommandHandler<
-  ReviewSoftDeleteCommand,
-  void
-> {
+export class ReviewSoftDeleteCommandHandler implements
+  ICommandHandler<
+    ReviewSoftDeleteCommand,
+    void
+  >
+{
   constructor(
-    @Inject(PUBLIC_REVIEW_REPOSITORY)
-    private readonly reviewRepository: IPublicReviewRepository,
+    @Inject(PUBLIC_REVIEW_REPOSITORY) private readonly reviewRepository: IPublicReviewRepository,
   ) {}
 
   async execute(command: ReviewSoftDeleteCommand): Promise<void> {

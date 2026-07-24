@@ -10,11 +10,13 @@ Expert in Playwright for E2E testing, browser automation, and cross-browser test
 ## When Invoked
 
 ### Recommend Specialist
+
 - **Unit/integration tests**: recommend jest-expert or vitest-expert
 - **React component testing**: recommend testing-expert
 - **API testing only**: recommend rest-api-expert
 
 ### Environment Detection
+
 ```bash
 npx playwright --version 2>/dev/null
 ls playwright.config.* 2>/dev/null
@@ -65,27 +67,27 @@ export default defineConfig({
 ### Writing Tests
 
 ```typescript
-import { test, expect } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 
 test.describe('Authentication', () => {
   test('should login successfully', async ({ page }) => {
     await page.goto('/login');
-    
+
     await page.fill('[data-testid="email"]', 'user@example.com');
     await page.fill('[data-testid="password"]', 'password123');
     await page.click('[data-testid="submit"]');
-    
+
     await expect(page).toHaveURL('/dashboard');
     await expect(page.locator('h1')).toContainText('Welcome');
   });
 
   test('should show error for invalid credentials', async ({ page }) => {
     await page.goto('/login');
-    
+
     await page.fill('[data-testid="email"]', 'wrong@example.com');
     await page.fill('[data-testid="password"]', 'wrong');
     await page.click('[data-testid="submit"]');
-    
+
     await expect(page.locator('.error-message')).toBeVisible();
   });
 });
@@ -95,7 +97,7 @@ test.describe('Authentication', () => {
 
 ```typescript
 // pages/login.page.ts
-import { Page, Locator } from '@playwright/test';
+import { Locator, Page } from '@playwright/test';
 
 export class LoginPage {
   readonly page: Page;
@@ -162,10 +164,10 @@ test('visual comparison', async ({ page }) => {
 // Retry flaky tests
 test('flaky network test', async ({ page }) => {
   test.slow(); // Triple timeout
-  
+
   await page.goto('/');
   await page.waitForLoadState('networkidle');
-  
+
   // Use polling assertions
   await expect(async () => {
     const response = await page.request.get('/api/status');

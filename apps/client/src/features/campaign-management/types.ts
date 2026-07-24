@@ -1,83 +1,83 @@
-export type PlatformId = "facebook" | "threads" | "instagram";
+export type PlatformId = 'facebook' | 'threads' | 'instagram';
 
 export type CampaignStatus =
-  | "draft"
-  | "generating"
-  | "reviewing"
-  | "scheduled"
-  | "published"
-  | "archived";
+  | 'draft'
+  | 'generating'
+  | 'reviewing'
+  | 'scheduled'
+  | 'published'
+  | 'archived';
 
 export type CampaignObjective =
-  | "awareness"
-  | "engagement"
-  | "traffic"
-  | "leads"
-  | "sales"
-  | "creator_recruitment";
+  | 'awareness'
+  | 'engagement'
+  | 'traffic'
+  | 'leads'
+  | 'sales'
+  | 'creator_recruitment';
 
 export type TonePreset =
-  | "friendly"
-  | "youthful"
-  | "expert"
-  | "luxury"
-  | "funny"
-  | "inspiring"
-  | "custom";
+  | 'friendly'
+  | 'youthful'
+  | 'expert'
+  | 'luxury'
+  | 'funny'
+  | 'inspiring'
+  | 'custom';
 
 export type CampaignPermission =
-  | "view_brief"
-  | "upload_media"
-  | "submit_draft"
-  | "view_schedule"
-  | "view_performance"
-  | "manage_posts"
-  | "manage_participants";
+  | 'view_brief'
+  | 'upload_media'
+  | 'submit_draft'
+  | 'view_schedule'
+  | 'view_performance'
+  | 'manage_posts'
+  | 'manage_participants';
 
-export type CreatorType = "kol" | "koc" | "creator";
+export type CreatorType = 'kol' | 'koc' | 'creator';
 
 export type CreatorContactStatus =
-  | "not_contacted"
-  | "invited"
-  | "discussing"
-  | "joined"
-  | "rejected";
+  | 'not_contacted'
+  | 'invited'
+  | 'discussing'
+  | 'joined'
+  | 'rejected';
 
 export type CampaignParticipantRole =
-  | "owner"
-  | "editor"
-  | "reviewer"
-  | "kol"
-  | "koc"
-  | "creator"
-  | "affiliate"
-  | "guest";
+  | 'owner'
+  | 'editor'
+  | 'reviewer'
+  | 'kol'
+  | 'koc'
+  | 'creator'
+  | 'affiliate'
+  | 'guest';
 
 export type CampaignParticipantStatus =
-  | "invited"
-  | "joined"
-  | "discussing"
-  | "pending_review"
-  | "rejected"
-  | "removed";
+  | 'invited'
+  | 'joined'
+  | 'discussing'
+  | 'pending_review'
+  | 'rejected'
+  | 'removed';
 
 export type CampaignDetailTab =
-  | "config"
-  | "content"
-  | "tracking"
-  | "roadmap"
-  | "review"
-  | "schedule"
-  | "creators"
-  | "participants";
+  | 'config'
+  | 'content'
+  | 'tracking'
+  | 'roadmap'
+  | 'review'
+  | 'schedule'
+  | 'creators'
+  | 'participants';
 
-export type CampaignPostStatus = "draft" | "needs-review" | "approved" | "scheduled";
+export type CampaignPostStatus = 'draft' | 'needs-review' | 'approved' | 'scheduled';
 
 export type CampaignPostNode = {
   id: string;
   title: string;
   platform: PlatformId;
-  contentType: "caption" | "carousel" | "reels" | "thread" | "album" | "story";
+  contentType: 'caption' | 'carousel' | 'reels' | 'thread' | 'album' | 'story';
   status: CampaignPostStatus;
   time: string;
   owner: string;
@@ -106,9 +106,9 @@ export type CampaignToneConfig = {
   preset: TonePreset;
   customDescription?: string;
   formality: 1 | 2 | 3 | 4 | 5;
-  emojiLevel: "none" | "low" | "medium" | "high";
-  language: "vi" | "en" | "vi-en";
-  perspective: "brand" | "founder" | "creator";
+  emojiLevel: 'none' | 'low' | 'medium' | 'high';
+  language: 'vi' | 'en' | 'vi-en';
+  perspective: 'brand' | 'founder' | 'creator';
   requiredKeywords: string[];
   bannedKeywords: string[];
   suggestedHashtags: string[];
@@ -116,10 +116,10 @@ export type CampaignToneConfig = {
 
 export type CampaignMedia = {
   id: string;
-  type: "image" | "video" | "document" | "logo";
+  type: 'image' | 'video' | 'document' | 'logo';
   url: string;
   name: string;
-  role: "brand" | "product" | "lifestyle" | "reference" | "generated";
+  role: 'brand' | 'product' | 'lifestyle' | 'reference' | 'generated';
   alt?: string;
 };
 
@@ -137,7 +137,7 @@ export type CampaignCommentReplyExample = {
   id: string;
   question: string;
   answer: string;
-  intent: "pricing" | "size" | "shipping" | "material" | "styling" | "general";
+  intent: 'pricing' | 'size' | 'shipping' | 'material' | 'styling' | 'general';
 };
 
 export type CampaignAiConfig = {
@@ -145,14 +145,14 @@ export type CampaignAiConfig = {
   variantsPerPost: number;
   creativity: 1 | 2 | 3 | 4 | 5;
   contentStrategies: Array<
-    | "awareness"
-    | "education"
-    | "storytelling"
-    | "testimonial"
-    | "comparison"
-    | "sales"
-    | "ugc"
-    | "reminder"
+    | 'awareness'
+    | 'education'
+    | 'storytelling'
+    | 'testimonial'
+    | 'comparison'
+    | 'sales'
+    | 'ugc'
+    | 'reminder'
   >;
   generateCaption: boolean;
   generateHashtags: boolean;
@@ -160,7 +160,7 @@ export type CampaignAiConfig = {
   generateMediaPrompt: boolean;
   generateSchedule: boolean;
   suggestCreators: boolean;
-  approvalMode: "per_post" | "approve_all" | "auto_schedule_after_approval";
+  approvalMode: 'per_post' | 'approve_all' | 'auto_schedule_after_approval';
 };
 
 export type CampaignInviteConfig = {
@@ -230,7 +230,7 @@ export type CampaignParticipant = {
   avatarUrl?: string;
   role: CampaignParticipantRole;
   status: CampaignParticipantStatus;
-  contactChannel?: "email" | "zalo" | "facebook" | "instagram" | "phone";
+  contactChannel?: 'email' | 'zalo' | 'facebook' | 'instagram' | 'phone';
   contactValue?: string;
   inviteCode: string;
   inviteLink: string;
@@ -257,16 +257,16 @@ export type CampaignFormInput = {
   offer: string;
   tonePreset: TonePreset;
   formality: 1 | 2 | 3 | 4 | 5;
-  emojiLevel: CampaignToneConfig["emojiLevel"];
-  language: CampaignToneConfig["language"];
-  perspective: CampaignToneConfig["perspective"];
+  emojiLevel: CampaignToneConfig['emojiLevel'];
+  language: CampaignToneConfig['language'];
+  perspective: CampaignToneConfig['perspective'];
   requiredKeywords: string;
   bannedKeywords: string;
   suggestedHashtags: string;
   numberOfPosts: number;
   variantsPerPost: number;
   creativity: 1 | 2 | 3 | 4 | 5;
-  approvalMode: CampaignAiConfig["approvalMode"];
+  approvalMode: CampaignAiConfig['approvalMode'];
   inviteEnabled: boolean;
   inviteCode: string;
 };

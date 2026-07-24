@@ -16,19 +16,19 @@ A good intake should feel closer to a **smart creative brief wizard** than a doc
 
 The minimum intake I would ship for an MVP is this synthesized structure:
 
-| Input type | What the user gives | Why it matters |
-|---|---|---|
-| Required | Campaign objective | Tells the system whether to optimize for awareness, consideration, lead generation, or direct response |
-| Required | Product or offer description | Gives the model the economic substance of the campaign |
-| Required | Target audience and geography | Prevents generic copy and anchors language, examples, and objections |
-| Required | One CTA destination | Link, DM target, WhatsApp, booking page, lead form, or store visit |
-| Required | Brand guardrails | Mandatory facts, words to avoid, claims that cannot be made, required disclaimers |
-| Required | Brand voice preference | Either choose from options or provide a few examples of “sounds like us / does not sound like us” |
-| Optional | Product images | Supports visual references and image-caption alignment |
-| Optional | Founder / spokesperson image | Only needed if the campaign will be face-led |
-| Optional | Previous winning posts | Best signal for authentic voice adaptation |
-| Optional | Competitor or inspiration links | Useful for contrast but not required |
-| Optional | Budget and campaign dates | Needed for calendar, media pressure, and volume planning |
+| Input type | What the user gives             | Why it matters                                                                                         |
+| ---------- | ------------------------------- | ------------------------------------------------------------------------------------------------------ |
+| Required   | Campaign objective              | Tells the system whether to optimize for awareness, consideration, lead generation, or direct response |
+| Required   | Product or offer description    | Gives the model the economic substance of the campaign                                                 |
+| Required   | Target audience and geography   | Prevents generic copy and anchors language, examples, and objections                                   |
+| Required   | One CTA destination             | Link, DM target, WhatsApp, booking page, lead form, or store visit                                     |
+| Required   | Brand guardrails                | Mandatory facts, words to avoid, claims that cannot be made, required disclaimers                      |
+| Required   | Brand voice preference          | Either choose from options or provide a few examples of “sounds like us / does not sound like us”      |
+| Optional   | Product images                  | Supports visual references and image-caption alignment                                                 |
+| Optional   | Founder / spokesperson image    | Only needed if the campaign will be face-led                                                           |
+| Optional   | Previous winning posts          | Best signal for authentic voice adaptation                                                             |
+| Optional   | Competitor or inspiration links | Useful for contrast but not required                                                                   |
+| Optional   | Budget and campaign dates       | Needed for calendar, media pressure, and volume planning                                               |
 
 This is intentionally lean. The system should then automatically infer: probable funnel stage, content pillars, likely objections, platform suitability, candidate tones, and a first-pass publishing rhythm. That aligns with user-control research in co-creative systems, which repeatedly finds that people value systems that help them clarify the problem early, preserve ownership, and avoid forcing them into a giant one-shot prompt. citeturn7academia9turn44academia1turn44academia2
 
@@ -40,35 +40,35 @@ The frontend should use **progressive disclosure**. The first screen must feel a
 
 The interaction flow I would recommend is:
 
-**Campaign setup.**  
+**Campaign setup.**\
 The user enters the lean brief, uploads optional product assets, and chooses the initial platform focus. If the product supports multiple platforms later, the MVP should still ask for a **primary channel** so the system does not generate mush. For your use case, I would make Threads the default “conversation lead” channel and treat Facebook, Instagram, TikTok, or X as optional inspiration or later extensions. That matches Threads’ role as a voice-building surface rather than a generic copy target. citeturn11view1turn11view3turn39news4
 
-**Strategy board.**  
+**Strategy board.**\
 Instead of jumping straight to copy, the system should present a compact strategic synthesis: audience angle, funnel stage, content pillars, recommended tone directions, message hierarchy, proposed cadence, and “what not to do.” This is where the product operationalizes your uploaded behavior-first psychology skill: each strategic direction should explicitly state the target behavior, likely blocker, and top psychological levers with ethical guardrails. fileciteturn0file0
 
-**Voice studio.**  
+**Voice studio.**\
 The system should show three to five **voice cards**, not one giant text answer. For example: “observational and witty,” “emotionally reflective,” “practical and insider,” “premium but conversational.” Each card should come with a couple of micro examples. The user selects one, modifies it, or blends two. Research on authenticity in AI co-writing suggests that writers care a lot about preserving their own voice and want personalization to support their growth rather than erase authorship. citeturn44academia2
 
-**First post lab.**  
+**First post lab.**\
 This is the most important screen in the MVP. The system should first generate only **openings and hooks**, not full posts. Let the user choose one. Then the product expands that opening into a full post with optional first-comment and reply suggestions. This is a better fit than generating complete campaigns all at once because human-AI prewriting works best when ideation, illumination, and implementation happen iteratively rather than in one giant burst. citeturn44academia3
 
-**Reply and comment pack.**  
+**Reply and comment pack.**\
 For Threads, the product should treat replies as a first-class deliverable. Advertising Vietnam emphasizes that post-publication participation is a major part of good Threads operation, and external reporting on social commerce behavior shows that younger audiences increasingly use comment sections as a shopping and research touchpoint. Vogue reported that 55% of Gen Z users look at comments when researching a product or brand on social media, and Advertising Vietnam makes a parallel point for Threads by stressing that the “after-post” interaction can matter as much as the original post. citeturn11view2turn40news2turn47news0
 
-**Generate the rest only on demand.**  
+**Generate the rest only on demand.**\
 After the first post is approved, the user should see a campaign canvas with placeholders such as “Awareness opener,” “Proof post,” “Objection handler,” “Offer post,” and “Community reply set.” Nothing else should be generated until the user clicks into a slot. This keeps cost lower, improves trust, and prevents the classic “AI spam wall” experience. It also aligns with research showing that systems with higher user control tend to improve trust, satisfaction, and ownership. citeturn44academia1
 
 ## Agent structure and data sources
 
 The core system should be **multi-agent, but not theatrically multi-agent**. Most SaaS products overcomplicate the label. For your MVP, the right architecture is a small number of specialized agents with clearly separated responsibilities:
 
-- **Intake agent** to clean the brief, detect missing essentials, and normalize campaign metadata.  
-- **Audience and funnel agent** to infer whether the immediate objective is awareness, consideration, or conversion.  
-- **Signal agent** to gather trend and platform-fit references from legally accessible sources.  
-- **Strategy agent** to produce message pillars, tone options, and posting hypotheses.  
-- **Style retrieval agent** to fetch the nearest brand examples, platform-native exemplars, and vertical-specific patterns.  
-- **Draft agent** to write the selected post or reply.  
-- **Validator agent** to score brand fit, factual consistency, tone drift, and risk.  
+- **Intake agent** to clean the brief, detect missing essentials, and normalize campaign metadata.
+- **Audience and funnel agent** to infer whether the immediate objective is awareness, consideration, or conversion.
+- **Signal agent** to gather trend and platform-fit references from legally accessible sources.
+- **Strategy agent** to produce message pillars, tone options, and posting hypotheses.
+- **Style retrieval agent** to fetch the nearest brand examples, platform-native exemplars, and vertical-specific patterns.
+- **Draft agent** to write the selected post or reply.
+- **Validator agent** to score brand fit, factual consistency, tone drift, and risk.
 - **Learning agent** to log edits, approvals, rejections, and outcomes for future adaptation.
 
 The **signal layer** is where product realism matters. A commercial SaaS should **not** promise unrestricted machine learning over Threads, Facebook, Instagram, TikTok, and X content, because the data environment is materially constrained. Meta shut down CrowdTangle and moved to the Meta Content Library, which reporting said was limited to academic and nonprofit researchers rather than normal commercial teams. TikTok’s Creative Center remains useful for trends and top ads, but AP reported that it removed specific hashtag search and narrowed some functionality; separate academic work has also documented missing or incomplete data in TikTok research access. X is even more restrictive for your use case: a 2025 policy update reportedly barred developers from using X posts to train or fine-tune AI foundation models, and researchers have described X’s post-2023 API environment as cost-prohibitive. citeturn27news0turn23news1turn20view0turn22news3turn22academia0turn19academia3turn26news0turn26academia11

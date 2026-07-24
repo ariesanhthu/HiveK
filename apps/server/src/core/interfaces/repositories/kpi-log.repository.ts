@@ -1,5 +1,5 @@
-import { Nullable } from '@/core/types';
 import { KpiLogEntity } from '@/core/entities/kpi-log.entity';
+import { Nullable } from '@/core/types';
 
 export interface IKpiLogRepository {
   findById(id: string): Promise<Nullable<KpiLogEntity>>;

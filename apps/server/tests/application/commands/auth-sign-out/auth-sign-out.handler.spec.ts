@@ -1,12 +1,12 @@
-import { jest } from '@jest/globals';
-import { AuthSignOutCommandHandler } from '@/application/commands/auth-sign-out/auth-sign-out.handler';
 import { AuthSignOutCommand } from '@/application/commands/auth-sign-out/auth-sign-out.command';
-import { UserNotFoundException } from '@/core/exceptions';
-import { createMockUserRepository } from '../../../__mocks__/mock-repositories';
-import { createMockWebSocketService } from '../../../__mocks__/mock-services';
+import { AuthSignOutCommandHandler } from '@/application/commands/auth-sign-out/auth-sign-out.handler';
 import { KOLUserRoot } from '@/core/aggregate-roots/kol-user.aggregate';
 import { ERoleType } from '@/core/enums';
+import { UserNotFoundException } from '@/core/exceptions';
 import { PhoneNumberVO } from '@/core/value-objects/phone-number.value-object';
+import { jest } from '@jest/globals';
+import { createMockUserRepository } from '../../../__mocks__/mock-repositories';
+import { createMockWebSocketService } from '../../../__mocks__/mock-services';
 
 describe('AuthSignOutCommandHandler', () => {
   let handler: AuthSignOutCommandHandler;

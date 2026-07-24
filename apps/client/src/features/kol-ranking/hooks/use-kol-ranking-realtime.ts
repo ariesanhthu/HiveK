@@ -1,14 +1,11 @@
-"use client";
+'use client';
 
-import { useEffect, useMemo, useState } from "react";
-import {
-  type KolRankingFilters,
-  type KolRankingResponse,
-} from "@/features/kol-ranking/types";
+import { type KolRankingFilters, type KolRankingResponse } from '@/features/kol-ranking/types';
+import { useEffect, useMemo, useState } from 'react';
 
 const RECONNECT_DELAY_MS = 2_000;
 
-type RealtimeStatus = "connecting" | "live" | "error";
+type RealtimeStatus = 'connecting' | 'live' | 'error';
 
 type UseKolRankingRealtimeParams = {
   initialData: KolRankingResponse;
@@ -25,12 +22,12 @@ type UseKolRankingRealtimeReturn = {
 
 function toQueryString(filters: KolRankingFilters): string {
   const params = new URLSearchParams();
-  params.set("niche", filters.niche);
-  params.set("platform", filters.platform);
-  params.set("followerRange", filters.followerRange);
-  params.set("search", filters.search);
-  params.set("page", String(filters.page));
-  params.set("pageSize", String(filters.pageSize));
+  params.set('niche', filters.niche);
+  params.set('platform', filters.platform);
+  params.set('followerRange', filters.followerRange);
+  params.set('search', filters.search);
+  params.set('page', String(filters.page));
+  params.set('pageSize', String(filters.pageSize));
   return params.toString();
 }
 
@@ -39,7 +36,7 @@ export function useKolRankingRealtime({
   initialFilters,
 }: UseKolRankingRealtimeParams): UseKolRankingRealtimeReturn {
   const [data, setData] = useState<KolRankingResponse>(initialData);
-  const [status, setStatus] = useState<RealtimeStatus>("connecting");
+  const [status, setStatus] = useState<RealtimeStatus>('connecting');
   const [filters, setFiltersState] = useState<KolRankingFilters>(initialFilters);
 
   const queryString = useMemo(() => toQueryString(filters), [filters]);
@@ -49,21 +46,21 @@ export function useKolRankingRealtime({
     let reconnectTimeout: ReturnType<typeof setTimeout> | null = null;
 
     const connect = () => {
-      setStatus("connecting");
+      setStatus('connecting');
       eventSource = new EventSource(`/api/ranking/kols/live?${queryString}`);
 
       eventSource.onmessage = (event) => {
         try {
           const payload = JSON.parse(event.data) as KolRankingResponse;
           setData(payload);
-          setStatus("live");
+          setStatus('live');
         } catch {
-          setStatus("error");
+          setStatus('error');
         }
       };
 
       eventSource.onerror = () => {
-        setStatus("error");
+        setStatus('error');
         eventSource?.close();
         reconnectTimeout = setTimeout(connect, RECONNECT_DELAY_MS);
       };

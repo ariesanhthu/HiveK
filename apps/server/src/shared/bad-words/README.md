@@ -5,9 +5,9 @@ Content sanitization pipeline — detects profanity, links, and optionally conta
 ## Usage
 
 ```ts
-import { sanitize } from '@/shared/utils'
+import { sanitize } from '@/shared/utils';
 
-sanitize('Buy now https://spam.com or f\u002a\u002ack')
+sanitize('Buy now https://spam.com or f\u002a\u002ack');
 // => { sanitizedText: 'Buy now *** or ***', flaggedPercent: 22, flaggedCharCount: 8, breakdown: { profanity: 4, links: 16, contactInfo: 0 } }
 ```
 
@@ -15,12 +15,12 @@ sanitize('Buy now https://spam.com or f\u002a\u002ack')
 
 ### `sanitize(text, options?)`
 
-| Option | Default | Description |
-|---|---|---|
-| `removeBadWords` | `true` | Detect profanity via @vnphu/vn-badwords + glin-profanity |
-| `removeLinks` | `true` | Strip URLs (http, https, www) |
-| `removeContactInfo` | `false` | Strip emails & phone numbers |
-| `replaceChar` | `'*'` | Replacement character for masked content |
+| Option              | Default | Description                                              |
+| ------------------- | ------- | -------------------------------------------------------- |
+| `removeBadWords`    | `true`  | Detect profanity via @vnphu/vn-badwords + glin-profanity |
+| `removeLinks`       | `true`  | Strip URLs (http, https, www)                            |
+| `removeContactInfo` | `false` | Strip emails & phone numbers                             |
+| `replaceChar`       | `'*'`   | Replacement character for masked content                 |
 
 Returns `{ sanitizedText, flaggedPercent, flaggedCharCount, breakdown }`.
 

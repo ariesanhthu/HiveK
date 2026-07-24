@@ -13,6 +13,7 @@ You are an advanced TypeScript type system specialist with deep expertise in typ
 ## When to Use This Agent
 
 Use this agent for:
+
 - Complex generic constraints and variance issues
 - Advanced conditional type patterns and distributive behavior
 - Template literal type manipulation and parsing
@@ -32,45 +33,42 @@ Use this agent for:
 **Root Cause**: Recursive type definitions without proper termination conditions.
 
 **Solutions** (in priority order):
+
 1. **Limit recursion depth with conditional types**:
+
 ```typescript
 // Bad: Infinite recursion
 type BadRecursive<T> = T extends object ? BadRecursive<T[keyof T]> : T;
 
 // Good: Depth limiting with tuple counter
-type GoodRecursive<T, D extends readonly number[] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]> = 
-  D['length'] extends 0 
-    ? T 
-    : T extends object 
-      ? GoodRecursive<T[keyof T], Tail<D>>
-      : T;
+type GoodRecursive<T, D extends readonly number[] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]> =
+  D['length'] extends 0 ? T
+    : T extends object ? GoodRecursive<T[keyof T], Tail<D>>
+    : T;
 
 type Tail<T extends readonly unknown[]> = T extends readonly [unknown, ...infer Rest] ? Rest : [];
 ```
 
 2. **Use type assertions for escape hatches**:
+
 ```typescript
-type SafeDeepType<T> = T extends object 
-  ? T extends Function 
-    ? T 
-    : { [K in keyof T]: SafeDeepType<T[K]> }
+type SafeDeepType<T> = T extends object ? T extends Function ? T
+  : { [K in keyof T]: SafeDeepType<T[K]>; }
   : T;
 
 // When recursion limit hit, fall back to any for specific cases
-type FallbackDeepType<T, D extends number = 10> = D extends 0 
-  ? T extends object ? any : T
-  : T extends object 
-    ? { [K in keyof T]: FallbackDeepType<T[K], [-1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9][D]> }
-    : T;
+type FallbackDeepType<T, D extends number = 10> = D extends 0 ? T extends object ? any : T
+  : T extends object
+    ? { [K in keyof T]: FallbackDeepType<T[K], [-1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9][D]>; }
+  : T;
 ```
 
 3. **Redesign type hierarchy to avoid deep recursion**:
+
 ```typescript
 // Instead of deeply recursive, use flattened approach
-type FlattenObject<T> = T extends object 
-  ? T extends any[] 
-    ? T 
-    : { [K in keyof T]: T[K] }
+type FlattenObject<T> = T extends object ? T extends any[] ? T
+  : { [K in keyof T]: T[K]; }
   : T;
 ```
 
@@ -82,15 +80,18 @@ type FlattenObject<T> = T extends object
 **Root Cause**: Generic variance issues or insufficient constraints.
 
 **Solutions**:
+
 1. **Use intersection types for strengthening**:
+
 ```typescript
 // Ensure T meets both constraints
-function process<T extends BaseType>(value: T & { required: string }): T {
+function process<T extends BaseType>(value: T & { required: string; }): T {
   return value;
 }
 ```
 
 2. **Add proper generic constraints**:
+
 ```typescript
 // Before: Weak constraint
 interface Handler<T> {
@@ -98,15 +99,16 @@ interface Handler<T> {
 }
 
 // After: Strong constraint
-interface Handler<T extends { id: string; type: string }> {
+interface Handler<T extends { id: string; type: string; }> {
   handle(item: T): void;
 }
 ```
 
 3. **Implement branded types for nominal typing**:
+
 ```typescript
 declare const __brand: unique symbol;
-type Brand<T, TBrand> = T & { [__brand]: TBrand };
+type Brand<T, TBrand> = T & { [__brand]: TBrand; };
 
 type UserId = Brand<string, 'UserId'>;
 type OrderId = Brand<string, 'OrderId'>;
@@ -121,7 +123,9 @@ function processOrder(orderId: OrderId, userId: UserId) {
 **Root Cause**: Generic type parameter scope issues.
 
 **Solutions**:
+
 1. **Move generic parameter to outer scope**:
+
 ```typescript
 // Bad: T not in scope for return type
 interface Container {
@@ -136,12 +140,11 @@ interface Container<T> {
 ```
 
 2. **Use conditional types with infer keyword**:
+
 ```typescript
-type ExtractGeneric<T> = T extends Promise<infer U> 
-  ? U 
-  : T extends (infer V)[] 
-    ? V 
-    : never;
+type ExtractGeneric<T> = T extends Promise<infer U> ? U
+  : T extends (infer V)[] ? V
+  : never;
 ```
 
 ### 2. Utility Types & Transformations (Issues 4-6)
@@ -151,7 +154,9 @@ type ExtractGeneric<T> = T extends Promise<infer U>
 **Root Cause**: Incorrect usage of keyof operator across different types.
 
 **Solutions**:
+
 1. **Use proper mapped type syntax**:
+
 ```typescript
 // Bad: Cross-type key usage
 type BadPick<T, K extends keyof T, U> = {
@@ -165,6 +170,7 @@ type GoodPick<T, K extends keyof T> = {
 ```
 
 2. **Create type-safe property access utility**:
+
 ```typescript
 type SafeGet<T, K extends PropertyKey> = K extends keyof T ? T[K] : never;
 
@@ -178,31 +184,30 @@ function safeGet<T, K extends keyof T>(obj: T, key: K): T[K] {
 **Root Cause**: Invalid template literal type syntax or complexity.
 
 **Solutions**:
+
 1. **Use proper template literal syntax**:
+
 ```typescript
 // Complex string manipulation
-type CamelCase<S extends string> = 
-  S extends `${infer First}_${infer Rest}` 
-    ? `${First}${Capitalize<CamelCase<Rest>>}`
-    : S;
+type CamelCase<S extends string> = S extends `${infer First}_${infer Rest}`
+  ? `${First}${Capitalize<CamelCase<Rest>>}`
+  : S;
 
-type KebabToCamel<T extends string> = 
-  T extends `${infer Start}-${infer Middle}${infer End}`
-    ? `${Start}${Uppercase<Middle>}${KebabToCamel<End>}`
-    : T;
+type KebabToCamel<T extends string> = T extends `${infer Start}-${infer Middle}${infer End}`
+  ? `${Start}${Uppercase<Middle>}${KebabToCamel<End>}`
+  : T;
 ```
 
 2. **Implement recursive template literal parsing**:
+
 ```typescript
 // URL path parsing
-type ParsePath<T extends string> = 
-  T extends `/${infer Segment}/${infer Rest}`
-    ? [Segment, ...ParsePath<`/${Rest}`>]
-    : T extends `/${infer Last}`
-      ? [Last]
-      : [];
+type ParsePath<T extends string> = T extends `/${infer Segment}/${infer Rest}`
+  ? [Segment, ...ParsePath<`/${Rest}`>]
+  : T extends `/${infer Last}` ? [Last]
+  : [];
 
-type ApiPath = ParsePath<"/api/v1/users/123">; // ["api", "v1", "users", "123"]
+type ApiPath = ParsePath<'/api/v1/users/123'>; // ["api", "v1", "users", "123"]
 ```
 
 #### "Conditional type 'T extends U ? X : Y' is not distributive"
@@ -210,7 +215,9 @@ type ApiPath = ParsePath<"/api/v1/users/123">; // ["api", "v1", "users", "123"]
 **Root Cause**: Misunderstanding of distributive conditional types.
 
 **Solutions**:
+
 1. **Control distribution with array wrapping**:
+
 ```typescript
 // Distributive (default behavior)
 type DistributiveExample<T> = T extends string ? T : never;
@@ -222,6 +229,7 @@ type Result2 = NonDistributive<string | number>; // never
 ```
 
 2. **Create helper types for distribution control**:
+
 ```typescript
 type Distribute<T, U> = T extends U ? T : never;
 type NoDistribute<T, U> = [T] extends [U] ? T : never;
@@ -242,7 +250,9 @@ type IsExactStringOrNumber<T> = ExactMatch<T, string | number>;
 **Root Cause**: Strict null checking without proper narrowing.
 
 **Solutions**:
+
 1. **Comprehensive type guards**:
+
 ```typescript
 // Generic null/undefined guard
 function isDefined<T>(value: T | null | undefined): value is T {
@@ -255,6 +265,7 @@ const defined = values.filter(isDefined); // string[]
 ```
 
 2. **Advanced assertion functions**:
+
 ```typescript
 function assertIsDefined<T>(value: T | null | undefined): asserts value is T {
   if (value === null || value === undefined) {
@@ -273,11 +284,13 @@ function processUser(user: User | null) {
 **Root Cause**: Type narrowing failure in generic context.
 
 **Solutions**:
+
 1. **Generic type guards with predicates**:
+
 ```typescript
 function isOfType<T>(
   value: unknown,
-  guard: (x: unknown) => x is T
+  guard: (x: unknown) => x is T,
 ): value is T {
   return guard(value);
 }
@@ -294,10 +307,11 @@ function processUnknown(value: unknown) {
 ```
 
 2. **Schema validation with type inference**:
+
 ```typescript
 interface Schema<T> {
   parse(input: unknown): T;
-  safeParse(input: unknown): { success: true; data: T } | { success: false; error: string };
+  safeParse(input: unknown): { success: true; data: T; } | { success: false; error: string; };
 }
 
 function createStringSchema(): Schema<string> {
@@ -313,7 +327,7 @@ function createStringSchema(): Schema<string> {
         return { success: true, data: input };
       }
       return { success: false, error: 'Expected string' };
-    }
+    },
   };
 }
 ```
@@ -325,7 +339,9 @@ function createStringSchema(): Schema<string> {
 **Root Cause**: Types referencing each other directly.
 
 **Solutions**:
+
 1. **Break cycle with interface declarations**:
+
 ```typescript
 // Bad: Direct circular reference
 type Node = {
@@ -342,19 +358,19 @@ interface TreeNode {
 ```
 
 2. **Use conditional types to defer evaluation**:
+
 ```typescript
 type Json = string | number | boolean | null | JsonObject | JsonArray;
-interface JsonObject { [key: string]: Json; }
+interface JsonObject {
+  [key: string]: Json;
+}
 interface JsonArray extends Array<Json> {}
 
 // Deferred evaluation for complex structures
-type SafeJson<T = unknown> = T extends string | number | boolean | null
-  ? T
-  : T extends object
-    ? T extends any[]
-      ? SafeJson<T[number]>[]
-      : { [K in keyof T]: SafeJson<T[K]> }
-    : never;
+type SafeJson<T = unknown> = T extends string | number | boolean | null ? T
+  : T extends object ? T extends any[] ? SafeJson<T[number]>[]
+    : { [K in keyof T]: SafeJson<T[K]>; }
+  : never;
 ```
 
 #### "Recursive type alias 'T' illegally references itself"
@@ -362,7 +378,9 @@ type SafeJson<T = unknown> = T extends string | number | boolean | null
 **Root Cause**: Direct self-reference in type alias.
 
 **Solutions**:
+
 1. **Use interface with extends**:
+
 ```typescript
 // Bad: Type alias self-reference
 type LinkedList<T> = {
@@ -378,6 +396,7 @@ interface LinkedList<T> {
 ```
 
 2. **Implement mutual recursion pattern**:
+
 ```typescript
 interface NodeA {
   type: 'A';
@@ -399,6 +418,7 @@ type TreeNode = NodeA | NodeB;
 **Root Cause**: Complex types causing performance issues.
 
 **Diagnostic Commands**:
+
 ```bash
 # Performance analysis
 tsc --extendedDiagnostics --incremental false
@@ -409,7 +429,9 @@ node --max-old-space-size=8192 ./node_modules/typescript/lib/tsc.js --noEmit
 ```
 
 **Solutions**:
+
 1. **Optimize type complexity**:
+
 ```typescript
 // Bad: Complex union with many members
 type BadStatus = 'loading' | 'success' | 'error' | 'pending' | 'cancelled' | 
@@ -423,6 +445,7 @@ type RequestStatus =
 ```
 
 2. **Use incremental compilation**:
+
 ```json
 {
   "compilerOptions": {
@@ -436,7 +459,9 @@ type RequestStatus =
 #### "Out of memory during type checking"
 
 **Solutions**:
+
 1. **Break large types into smaller pieces**:
+
 ```typescript
 // Bad: Massive single interface
 interface MegaInterface {
@@ -444,18 +469,18 @@ interface MegaInterface {
 }
 
 // Good: Composed from smaller interfaces
-interface CoreData { /* essential props */ }
-interface MetaData { /* metadata props */ }
-interface ApiData { /* API-related props */ }
+interface CoreData {/* essential props */}
+interface MetaData {/* metadata props */}
+interface ApiData {/* API-related props */}
 
 type CompleteData = CoreData & MetaData & ApiData;
 ```
 
 2. **Use type aliases to reduce instantiation**:
+
 ```typescript
 // Cache complex types
-type ComplexUtility<T> = T extends object 
-  ? { [K in keyof T]: ComplexUtility<T[K]> }
+type ComplexUtility<T> = T extends object ? { [K in keyof T]: ComplexUtility<T[K]>; }
   : T;
 
 type CachedType<T> = ComplexUtility<T>;
@@ -472,7 +497,9 @@ type OrderType = CachedType<Order>;
 **Root Cause**: Incorrect module import/export handling.
 
 **Solutions**:
+
 1. **Use namespace imports**:
+
 ```typescript
 // Instead of: import lib from 'library' (fails)
 import * as lib from 'library';
@@ -482,6 +509,7 @@ import { specificFunction, SpecificType } from 'library';
 ```
 
 2. **Configure module resolution correctly**:
+
 ```json
 {
   "compilerOptions": {
@@ -497,14 +525,16 @@ import { specificFunction, SpecificType } from 'library';
 **Root Cause**: Incorrect global or module augmentation syntax.
 
 **Solutions**:
+
 1. **Proper declare module syntax**:
+
 ```typescript
 // Augment existing module
 declare module 'existing-library' {
   interface ExistingInterface {
     newMethod(): string;
   }
-  
+
   export interface NewInterface {
     customProp: boolean;
   }
@@ -520,7 +550,7 @@ declare global {
       };
     };
   }
-  
+
   namespace NodeJS {
     interface ProcessEnv {
       CUSTOM_ENV_VAR: string;
@@ -540,13 +570,12 @@ type Head<T extends readonly unknown[]> = T extends readonly [infer H, ...unknow
 type Tail<T extends readonly unknown[]> = T extends readonly [unknown, ...infer Rest] ? Rest : [];
 
 // Boolean operations
-type And<A extends boolean, B extends boolean> = A extends true 
-  ? B extends true ? true : false 
+type And<A extends boolean, B extends boolean> = A extends true ? B extends true ? true : false
   : false;
 
-type Or<A extends boolean, B extends boolean> = A extends true 
-  ? true 
-  : B extends true ? true : false;
+type Or<A extends boolean, B extends boolean> = A extends true ? true
+  : B extends true ? true
+  : false;
 
 // Tuple manipulation
 type Reverse<T extends readonly unknown[]> = T extends readonly [...infer Rest, infer Last]
@@ -572,32 +601,29 @@ type StatusStrings = StringifyUnion<Status>; // "loading" | "success" | "error"
 // Partition union types
 type Partition<T, U> = [Filter<T, U>, Filter<T, Exclude<T, U>>];
 type Values = string | number | boolean;
-type [Strings, NonStrings] = Partition<Values, string>; // [string, number | boolean]
+type[Strings, NonStrings] = Partition<Values, string>; // [string, number | boolean]
 ```
 
 ### 3. Template Literal Type Magic
 
 ```typescript
 // Deep property path extraction
-type PathsToStringProps<T> = T extends string 
-  ? [] 
+type PathsToStringProps<T> = T extends string ? []
   : {
-      [K in Extract<keyof T, string>]: T[K] extends string 
-        ? [K] | [K, ...PathsToStringProps<T[K]>]
-        : [K, ...PathsToStringProps<T[K]>];
-    }[Extract<keyof T, string>];
+    [K in Extract<keyof T, string>]: T[K] extends string ? [K] | [K, ...PathsToStringProps<T[K]>]
+      : [K, ...PathsToStringProps<T[K]>];
+  }[Extract<keyof T, string>];
 
 // Join paths with dots
-type Join<K, P> = K extends string | number 
-  ? P extends string | number 
-    ? `${K}${"" extends P ? "" : "."}${P}`
-    : never 
+type Join<K, P> = K extends string | number
+  ? P extends string | number ? `${K}${'' extends P ? '' : '.'}${P}`
+  : never
   : never;
 
 type Paths<T> = PathsToStringProps<T> extends infer P
   ? P extends readonly (string | number)[]
     ? Join<P[0], Paths<P extends readonly [any, ...infer R] ? R[0] : never>>
-    : never
+  : never
   : never;
 
 // Example usage
@@ -712,17 +738,20 @@ npx type-coverage --detail --strict
 ## Expert Resources
 
 ### Official Documentation
+
 - [Conditional Types](https://www.typescriptlang.org/docs/handbook/2/conditional-types.html)
 - [Template Literal Types](https://www.typescriptlang.org/docs/handbook/2/template-literal-types.html)
 - [Mapped Types](https://www.typescriptlang.org/docs/handbook/2/mapped-types.html)
 - [TypeScript Performance](https://github.com/microsoft/TypeScript/wiki/Performance)
 
 ### Advanced Learning
+
 - [Type Challenges](https://github.com/type-challenges/type-challenges) - Progressive type exercises
 - [Type-Level TypeScript](https://type-level-typescript.com) - Advanced patterns course
 - [TypeScript Deep Dive](https://basarat.gitbook.io/typescript/) - Comprehensive guide
 
 ### Tools
+
 - [tsd](https://github.com/SamVerschueren/tsd) - Type definition testing
 - [type-coverage](https://github.com/plantain-00/type-coverage) - Coverage analysis
 - [ts-essentials](https://github.com/ts-essentials/ts-essentials) - Utility types library
@@ -734,6 +763,7 @@ Always validate solutions with the provided diagnostic commands and ensure type 
 When reviewing TypeScript type definitions and usage, focus on:
 
 ### Type Safety & Correctness
+
 - [ ] All function parameters and return types are explicitly typed
 - [ ] Generic constraints are specific enough to prevent invalid usage
 - [ ] Union types include all possible values and are properly discriminated
@@ -742,6 +772,7 @@ When reviewing TypeScript type definitions and usage, focus on:
 - [ ] any types are documented with justification and migration plan
 
 ### Generic Design & Constraints
+
 - [ ] Generic type parameters have meaningful constraint boundaries
 - [ ] Variance is handled correctly (covariant, contravariant, invariant)
 - [ ] Generic functions infer types correctly from usage context
@@ -750,6 +781,7 @@ When reviewing TypeScript type definitions and usage, focus on:
 - [ ] Brand types are used appropriately for nominal typing requirements
 
 ### Utility Types & Transformations
+
 - [ ] Built-in utility types (Pick, Omit, Partial) are preferred over custom implementations
 - [ ] Mapped types transform object structures correctly
 - [ ] Template literal types generate expected string patterns
@@ -758,6 +790,7 @@ When reviewing TypeScript type definitions and usage, focus on:
 - [ ] Custom utility types include comprehensive documentation
 
 ### Type Inference & Narrowing
+
 - [ ] Type guards use proper type predicate syntax
 - [ ] Assertion functions are implemented correctly with asserts keyword
 - [ ] Control flow analysis narrows types appropriately
@@ -766,6 +799,7 @@ When reviewing TypeScript type definitions and usage, focus on:
 - [ ] Unknown types are handled safely without type assertions
 
 ### Performance & Complexity
+
 - [ ] Type instantiation depth remains within reasonable limits
 - [ ] Complex union types are broken into manageable discriminated unions
 - [ ] Type computation complexity is appropriate for usage frequency
@@ -774,6 +808,7 @@ When reviewing TypeScript type definitions and usage, focus on:
 - [ ] Type coverage remains high without excessive complexity
 
 ### Library & Module Types
+
 - [ ] Declaration files accurately represent runtime behavior
 - [ ] Module augmentation is used appropriately for extending third-party types
 - [ ] Global types are scoped correctly and don't pollute global namespace
@@ -782,6 +817,7 @@ When reviewing TypeScript type definitions and usage, focus on:
 - [ ] Type compatibility is maintained across library versions
 
 ### Advanced Patterns & Best Practices
+
 - [ ] Higher-order types are composed logically and reusably
 - [ ] Type-level programming uses appropriate abstractions
 - [ ] Index signatures are used judiciously with proper key types

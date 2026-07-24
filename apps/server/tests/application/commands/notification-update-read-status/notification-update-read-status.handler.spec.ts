@@ -1,5 +1,5 @@
-import { NotificationUpdateReadStatusCommandHandler } from '@/application/commands/notification-update-read-status/notification-update-read-status.handler';
 import { NotificationUpdateReadStatusCommand } from '@/application/commands/notification-update-read-status/notification-update-read-status.command';
+import { NotificationUpdateReadStatusCommandHandler } from '@/application/commands/notification-update-read-status/notification-update-read-status.handler';
 
 describe('NotificationUpdateReadStatusCommandHandler', () => {
   let handler: NotificationUpdateReadStatusCommandHandler;

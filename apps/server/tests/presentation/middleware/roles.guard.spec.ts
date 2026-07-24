@@ -1,8 +1,8 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { Reflector } from '@nestjs/core';
-import { RolesGuard } from '@/presentation/middleware/guards/roles.guard';
 import { ERoleType } from '@/core/enums';
+import { RolesGuard } from '@/presentation/middleware/guards/roles.guard';
 import { ExecutionContext } from '@nestjs/common';
+import { Reflector } from '@nestjs/core';
+import { Test, TestingModule } from '@nestjs/testing';
 
 describe('RolesGuard', () => {
   let guard: RolesGuard;

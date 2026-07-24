@@ -1,8 +1,8 @@
-import { UserUpdateCommandHandler } from '@/application/commands/user-update/user-update.handler';
 import { UserUpdateCommand } from '@/application/commands/user-update/user-update.command';
-import { UserNotFoundException } from '@/core/exceptions';
+import { UserUpdateCommandHandler } from '@/application/commands/user-update/user-update.handler';
 import { KOLUserRoot } from '@/core/aggregate-roots';
 import { ERoleType } from '@/core/enums';
+import { UserNotFoundException } from '@/core/exceptions';
 import { PhoneNumberVO } from '@/core/value-objects/phone-number.value-object';
 
 describe('UserUpdateCommandHandler', () => {

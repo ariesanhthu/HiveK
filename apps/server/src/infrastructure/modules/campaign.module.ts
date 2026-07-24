@@ -4,23 +4,27 @@ import { CqrsModule } from '@nestjs/cqrs';
 // Commands
 import {
   CampaignCreateCommandHandler,
-  CampaignUpdateCommandHandler,
   CampaignHardDeleteCommandHandler,
-  CampaignSoftDeleteCommandHandler,
-  CampaignRestoreCommandHandler,
-  CampaignUpdateStatusCommandHandler,
   CampaignInviteCollaboratorCommandHandler,
+  CampaignRestoreCommandHandler,
   CampaignRevokeCollaboratorCommandHandler,
+  CampaignSoftDeleteCommandHandler,
+  CampaignUpdateCommandHandler,
+  CampaignUpdateStatusCommandHandler,
 } from '@/application/commands';
 
 // Queries
-import { CampaignGetListHandler, CampaignGetByIdHandler } from '@/application/queries';
+import { CampaignGetByIdHandler, CampaignGetListHandler } from '@/application/queries';
 
 // Events
 import { LinkCampaignRawHandler } from '@/application/events';
 
 // Presentation
-import { CampaignAdminController, CampaignClientController, CampaignResolver } from '@/presentation/controllers'
+import {
+  CampaignAdminController,
+  CampaignClientController,
+  CampaignResolver,
+} from '@/presentation/controllers';
 
 // Modules
 import { UserModule } from './user.module';
@@ -36,14 +40,9 @@ const COMMAND_HANDLERS = [
   CampaignRevokeCollaboratorCommandHandler,
 ];
 
-const QUERY_HANDLERS = [
-  CampaignGetListHandler,
-  CampaignGetByIdHandler,
-];
+const QUERY_HANDLERS = [CampaignGetListHandler, CampaignGetByIdHandler];
 
-const EVENT_HANDLERS = [
-  LinkCampaignRawHandler,
-];
+const EVENT_HANDLERS = [LinkCampaignRawHandler];
 
 @Module({
   imports: [CqrsModule, UserModule],

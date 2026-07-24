@@ -26,6 +26,9 @@ describe('CampaignGetListHandler', () => {
     const result = await handler.execute(query);
 
     expect(result).toEqual(mockResponse);
-    expect(mockCampaignReadService.findAll).toHaveBeenCalledWith({ limit: 10, sort: 'desc' }, undefined);
+    expect(mockCampaignReadService.findAll).toHaveBeenCalledWith(
+      { limit: 10, sort: 'desc' },
+      undefined,
+    );
   });
 });

@@ -1,32 +1,40 @@
-import { Global, Module } from '@nestjs/common';
+import { LOGGER_SERVICE, MAILER_SERVICE } from '@/application/interfaces';
+import {
+  AppConfig,
+  AuthConfig,
+  CloudinaryConfig,
+  MailerConfig,
+  MongoConfig,
+  RabbitMQConfig,
+  RedisConfig,
+  SecurityConfig,
+} from '@/configs';
+import { STORAGE_SERVICE } from '@/core/interfaces/storage';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/adapters/handlebars.adapter';
-import { ConfigModule, ConfigService } from '@nestjs/config';
+import { Global, Module } from '@nestjs/common';
 import * as path from 'path';
-import { LOGGER_SERVICE, MAILER_SERVICE } from '@/application/interfaces';
-import { STORAGE_SERVICE } from '@/core/interfaces/storage';
 import { CloudinaryStorageService } from '../cloudinary';
-import { NestjsMailerService } from '../mailer';
 import { WinstonLoggerService } from '../logger';
+import { NestjsMailerService } from '../mailer';
 
 @Global()
 @Module({
   imports: [
-    ConfigModule.forRoot({ isGlobal: true }),
     MailerModule.forRootAsync({
-      inject: [ConfigService],
-      useFactory: (configService: ConfigService) => ({
+      inject: [MailerConfig],
+      useFactory: (mailerConfig: MailerConfig) => ({
         transport: {
-          host: configService.get<string>('SMTP_HOST'),
-          port: configService.get<number>('SMTP_PORT', 587),
+          host: mailerConfig.getHost(),
+          port: mailerConfig.getPort(),
           auth: {
-            user: configService.get<string>('SMTP_USER'),
-            pass: configService.get<string>('SMTP_PASS'),
+            user: mailerConfig.getUser(),
+            pass: mailerConfig.getPass(),
           },
-          secure: configService.get<number>('SMTP_PORT') === 465,
+          secure: mailerConfig.isSecure(),
         },
         defaults: {
-          from: configService.get<string>('SMTP_FROM', '"HiveK" <noreply@hivek.com>'),
+          from: mailerConfig.getFrom(),
         },
         template: {
           dir: path.join(__dirname, '..', 'mailer', 'templates'),
@@ -39,19 +47,39 @@ import { WinstonLoggerService } from '../logger';
     }),
   ],
   providers: [
+    AppConfig,
+    AuthConfig,
+    CloudinaryConfig,
+    MailerConfig,
+    MongoConfig,
+    RabbitMQConfig,
+    RedisConfig,
+    SecurityConfig,
     {
       provide: LOGGER_SERVICE,
-      useClass: WinstonLoggerService
+      useClass: WinstonLoggerService,
     },
     {
       provide: STORAGE_SERVICE,
-      useClass: CloudinaryStorageService
+      useClass: CloudinaryStorageService,
     },
     {
       provide: MAILER_SERVICE,
-      useClass: NestjsMailerService
-    }
+      useClass: NestjsMailerService,
+    },
   ],
-  exports: [LOGGER_SERVICE, STORAGE_SERVICE, MAILER_SERVICE],
+  exports: [
+    AppConfig,
+    AuthConfig,
+    CloudinaryConfig,
+    MailerConfig,
+    MongoConfig,
+    RabbitMQConfig,
+    RedisConfig,
+    SecurityConfig,
+    LOGGER_SERVICE,
+    STORAGE_SERVICE,
+    MAILER_SERVICE,
+  ],
 })
 export class InfrastructureModule {}

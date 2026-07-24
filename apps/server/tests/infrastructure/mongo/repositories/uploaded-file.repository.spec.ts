@@ -1,7 +1,7 @@
-import { Types } from 'mongoose';
-import { MongoUploadedFileRepository } from '@/infrastructure/mongo/repositories/uploaded-file.repository';
 import { UploadedFileRoot } from '@/core/aggregate-roots';
 import { TargetType } from '@/core/enums';
+import { MongoUploadedFileRepository } from '@/infrastructure/mongo/repositories/uploaded-file.repository';
+import { Types } from 'mongoose';
 
 jest.mock('mongoose', () => {
   const actual = jest.requireActual('mongoose');
@@ -127,7 +127,7 @@ describe('MongoUploadedFileRepository', () => {
         expect.objectContaining({
           url: 'http://updated.com/img.jpg',
         }),
-        { upsert: true }
+        { upsert: true },
       );
     });
   });

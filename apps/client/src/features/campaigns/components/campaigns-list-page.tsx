@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import React, { useMemo, useState } from "react";
-import { CampaignCategoryChips } from "@/features/campaigns/components/campaign-category-chips";
-import { CampaignsGrid } from "@/features/campaigns/components/campaigns-grid";
-import { CampaignsPageHeader } from "@/features/campaigns/components/campaigns-page-header";
-import { CAMPAIGN_FILTER_ALL } from "@/data/mock-data";
-import type { CampaignListItem } from "@/features/campaigns/types";
+import { CAMPAIGN_FILTER_ALL } from '@/data/mock-data';
+import { CampaignCategoryChips } from '@/features/campaigns/components/campaign-category-chips';
+import { CampaignsGrid } from '@/features/campaigns/components/campaigns-grid';
+import { CampaignsPageHeader } from '@/features/campaigns/components/campaigns-page-header';
+import type { CampaignListItem } from '@/features/campaigns/types';
+import React, { useMemo, useState } from 'react';
 
 type FilterKey = typeof CAMPAIGN_FILTER_ALL | string;
 
@@ -14,7 +14,7 @@ function collectCategories(items: CampaignListItem[]): string[] {
   for (const item of items) {
     set.add(item.category);
   }
-  return [...set].sort((a, b) => a.localeCompare(b, "vi"));
+  return [...set].sort((a, b) => a.localeCompare(b, 'vi'));
 }
 
 export type CampaignsListPageProps = {
@@ -33,7 +33,7 @@ export function CampaignsListPage({ campaigns }: CampaignsListPageProps) {
   }, [campaigns, selected]);
 
   return (
-    <div className="mx-auto flex w-full max-w-7xl flex-col gap-8 px-6 pb-16 pt-8 md:px-10">
+    <div className='mx-auto flex w-full max-w-7xl flex-col gap-8 px-6 pb-16 pt-8 md:px-10'>
       <CampaignsPageHeader />
 
       <CampaignCategoryChips
@@ -47,7 +47,7 @@ export function CampaignsListPage({ campaigns }: CampaignsListPageProps) {
         getItemHref={(item) => `/campaigns/${item.id}`}
       />
 
-      <p className="text-center text-xs text-muted">
+      <p className='text-center text-xs text-muted'>
         Hiển thị {filtered.length} / {campaigns.length} chiến dịch
       </p>
     </div>

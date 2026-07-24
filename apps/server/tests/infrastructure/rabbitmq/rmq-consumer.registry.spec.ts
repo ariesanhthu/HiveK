@@ -1,4 +1,7 @@
-import { RmqHandlerRegistry, RmqHandlerMetadata } from '@/infrastructure/rabbitmq/rmq-consumer.registry';
+import {
+  RmqHandlerMetadata,
+  RmqHandlerRegistry,
+} from '@/infrastructure/rabbitmq/rmq-consumer.registry';
 
 describe('RmqHandlerRegistry', () => {
   beforeEach(() => {
@@ -23,9 +26,27 @@ describe('RmqHandlerRegistry', () => {
     });
 
     it('should register multiple handlers', () => {
-      RmqHandlerRegistry.register({ queue: 'q1', pattern: 'p1', target: {}, methodName: 'h1', callback: jest.fn() });
-      RmqHandlerRegistry.register({ queue: 'q2', pattern: 'p2', target: {}, methodName: 'h2', callback: jest.fn() });
-      RmqHandlerRegistry.register({ queue: 'q1', pattern: 'p3', target: {}, methodName: 'h3', callback: jest.fn() });
+      RmqHandlerRegistry.register({
+        queue: 'q1',
+        pattern: 'p1',
+        target: {},
+        methodName: 'h1',
+        callback: jest.fn(),
+      });
+      RmqHandlerRegistry.register({
+        queue: 'q2',
+        pattern: 'p2',
+        target: {},
+        methodName: 'h2',
+        callback: jest.fn(),
+      });
+      RmqHandlerRegistry.register({
+        queue: 'q1',
+        pattern: 'p3',
+        target: {},
+        methodName: 'h3',
+        callback: jest.fn(),
+      });
 
       expect(RmqHandlerRegistry.getAllHandlers()).toHaveLength(3);
     });
@@ -33,9 +54,27 @@ describe('RmqHandlerRegistry', () => {
 
   describe('getHandlersForQueue', () => {
     it('should return handlers matching queue name', () => {
-      RmqHandlerRegistry.register({ queue: 'campaign_queue', pattern: 'campaign.created', target: {}, methodName: 'h1', callback: jest.fn() });
-      RmqHandlerRegistry.register({ queue: 'campaign_queue', pattern: 'campaign.updated', target: {}, methodName: 'h2', callback: jest.fn() });
-      RmqHandlerRegistry.register({ queue: 'other_queue', pattern: 'other.event', target: {}, methodName: 'h3', callback: jest.fn() });
+      RmqHandlerRegistry.register({
+        queue: 'campaign_queue',
+        pattern: 'campaign.created',
+        target: {},
+        methodName: 'h1',
+        callback: jest.fn(),
+      });
+      RmqHandlerRegistry.register({
+        queue: 'campaign_queue',
+        pattern: 'campaign.updated',
+        target: {},
+        methodName: 'h2',
+        callback: jest.fn(),
+      });
+      RmqHandlerRegistry.register({
+        queue: 'other_queue',
+        pattern: 'other.event',
+        target: {},
+        methodName: 'h3',
+        callback: jest.fn(),
+      });
 
       const handlers = RmqHandlerRegistry.getHandlersForQueue('campaign_queue');
       expect(handlers).toHaveLength(2);
@@ -53,7 +92,13 @@ describe('RmqHandlerRegistry', () => {
     it('should return all registered handlers', () => {
       expect(RmqHandlerRegistry.getAllHandlers()).toHaveLength(0);
 
-      RmqHandlerRegistry.register({ queue: 'q1', pattern: 'p1', target: {}, methodName: 'h1', callback: jest.fn() });
+      RmqHandlerRegistry.register({
+        queue: 'q1',
+        pattern: 'p1',
+        target: {},
+        methodName: 'h1',
+        callback: jest.fn(),
+      });
       expect(RmqHandlerRegistry.getAllHandlers()).toHaveLength(1);
     });
   });

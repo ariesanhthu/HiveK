@@ -1,7 +1,7 @@
-import { EnterpriseRestoreCommandHandler } from '@/application/commands/enterprise-restore/enterprise-restore.handler';
 import { EnterpriseRestoreCommand } from '@/application/commands/enterprise-restore/enterprise-restore.command';
-import { EnterpriseNotFoundException } from '@/core/exceptions';
+import { EnterpriseRestoreCommandHandler } from '@/application/commands/enterprise-restore/enterprise-restore.handler';
 import { EnterpriseRoot } from '@/core/aggregate-roots';
+import { EnterpriseNotFoundException } from '@/core/exceptions';
 import { createMockEnterpriseRepository } from '../../../__mocks__/mock-repositories';
 
 describe('EnterpriseRestoreCommandHandler', () => {

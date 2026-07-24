@@ -1,5 +1,5 @@
-import { UserUpdateProfileCommandHandler } from '@/application/commands/user-update-profile/user-update-profile.handler';
 import { UserUpdateProfileCommand } from '@/application/commands/user-update-profile/user-update-profile.command';
+import { UserUpdateProfileCommandHandler } from '@/application/commands/user-update-profile/user-update-profile.handler';
 import { UserNotFoundException } from '@/core/exceptions';
 
 describe('UserUpdateProfileCommandHandler', () => {

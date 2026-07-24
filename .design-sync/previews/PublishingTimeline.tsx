@@ -1,9 +1,23 @@
 import { PublishingTimeline } from 'client';
 
 const mk = (id: string, time: string, title: string, status: string) => ({
-  id, day: 1, dateLabel: '', time, title, goal: '', platform: 'facebook', accountId: 'a1',
-  content: '', firstComment: '', suggestedReplies: [], mediaPrompt: '', status,
-  reviewer: '', reviewNote: '', scheduledAt: '', hashtags: [],
+  id,
+  day: 1,
+  dateLabel: '',
+  time,
+  title,
+  goal: '',
+  platform: 'facebook',
+  accountId: 'a1',
+  content: '',
+  firstComment: '',
+  suggestedReplies: [],
+  mediaPrompt: '',
+  status,
+  reviewer: '',
+  reviewNote: '',
+  scheduledAt: '',
+  hashtags: [],
 });
 
 const days: any[] = [
@@ -35,7 +49,7 @@ export function Expanded() {
     <div style={{ width: 340, height: 560 }}>
       <PublishingTimeline
         days={days}
-        selectedPostId="p3"
+        selectedPostId='p3'
         isCompact={false}
         onCompactChange={() => {}}
         onPostSelect={() => {}}
@@ -49,7 +63,7 @@ export function Compact() {
     <div style={{ width: 340, height: 400 }}>
       <PublishingTimeline
         days={days}
-        selectedPostId="p3"
+        selectedPostId='p3'
         isCompact
         onCompactChange={() => {}}
         onPostSelect={() => {}}

@@ -1,1 +1,1 @@
-export { KolMatchingPage } from "@/features/kol-matching/components/kol-matching-page";
+export { KolMatchingPage } from '@/features/kol-matching/components/kol-matching-page';

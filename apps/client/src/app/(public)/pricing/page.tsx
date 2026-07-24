@@ -1,10 +1,10 @@
-import type { Metadata } from "next";
-import { PricingPage } from "@/features/pricing/components/pricing-page";
+import { PricingPage } from '@/features/pricing/components/pricing-page';
+import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: "Bảng giá | Hive-K",
+  title: 'Bảng giá | Hive-K',
   description:
-    "Chọn gói Hive-K phù hợp: Starter miễn phí, Growth cho đội ngũ tăng trưởng, Enterprise cho doanh nghiệp. Creator tham gia miễn phí.",
+    'Chọn gói Hive-K phù hợp: Starter miễn phí, Growth cho đội ngũ tăng trưởng, Enterprise cho doanh nghiệp. Creator tham gia miễn phí.',
 };
 
 export default function Page() {

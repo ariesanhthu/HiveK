@@ -1,5 +1,5 @@
-import { RoleRestoreCommandHandler } from '@/application/commands/role-restore/role-restore.handler';
 import { RoleRestoreCommand } from '@/application/commands/role-restore/role-restore.command';
+import { RoleRestoreCommandHandler } from '@/application/commands/role-restore/role-restore.handler';
 import { RoleNotFoundException } from '@/core/exceptions';
 
 describe('RoleRestoreCommandHandler', () => {

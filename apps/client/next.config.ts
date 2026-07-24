@@ -1,13 +1,17 @@
-import type { NextConfig } from "next";
+import type { NextConfig } from 'next';
+import path from 'path';
 
 const nextConfig: NextConfig = {
   reactCompiler: false,
+  turbopack: {
+    root: path.resolve(__dirname, '../../'),
+  },
   images: {
     remotePatterns: [
-      { protocol: "https", hostname: "yt3.googleusercontent.com" },
-      { protocol: "https", hostname: "yt3.ggpht.com" },
-      { protocol: "https", hostname: "images.unsplash.com" },
-      { protocol: "https", hostname: "api.dicebear.com" },
+      { protocol: 'https', hostname: 'yt3.googleusercontent.com' },
+      { protocol: 'https', hostname: 'yt3.ggpht.com' },
+      { protocol: 'https', hostname: 'images.unsplash.com' },
+      { protocol: 'https', hostname: 'api.dicebear.com' },
     ],
   },
 };

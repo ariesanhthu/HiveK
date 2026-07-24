@@ -1,6 +1,6 @@
-import { RoleHardDeleteCommandHandler } from '@/application/commands/role-hard-delete/role-hard-delete.handler';
 import { RoleHardDeleteCommand } from '@/application/commands/role-hard-delete/role-hard-delete.command';
-import { RoleNotFoundException, InvalidOperationException } from '@/core/exceptions';
+import { RoleHardDeleteCommandHandler } from '@/application/commands/role-hard-delete/role-hard-delete.handler';
+import { InvalidOperationException, RoleNotFoundException } from '@/core/exceptions';
 
 describe('RoleHardDeleteCommandHandler', () => {
   let handler: RoleHardDeleteCommandHandler;
@@ -14,15 +14,15 @@ describe('RoleHardDeleteCommandHandler', () => {
       delete: jest.fn(),
     };
     mockUserRepository = {
-        existsByRoleId: jest.fn(),
+      existsByRoleId: jest.fn(),
     };
     mockUow = {
-        execute: jest.fn((fn: any) => fn()),
+      execute: jest.fn((fn: any) => fn()),
     };
     handler = new RoleHardDeleteCommandHandler(
-        mockRoleRepository, 
-        mockUserRepository, 
-        mockUow
+      mockRoleRepository,
+      mockUserRepository,
+      mockUow,
     );
   });
 

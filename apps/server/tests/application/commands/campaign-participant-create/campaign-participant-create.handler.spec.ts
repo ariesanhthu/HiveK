@@ -1,5 +1,5 @@
-import { CampaignParticipantCreateCommandHandler } from '@/application/commands/campaign-participant-create/campaign-participant-create.handler';
 import { CampaignParticipantCreateCommand } from '@/application/commands/campaign-participant-create/campaign-participant-create.command';
+import { CampaignParticipantCreateCommandHandler } from '@/application/commands/campaign-participant-create/campaign-participant-create.handler';
 import { CampaignParticipantRoot, CampaignRoot } from '@/core/aggregate-roots';
 import { ECampaignStatus } from '@/core/enums/campaign-status.enum';
 

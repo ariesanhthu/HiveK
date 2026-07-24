@@ -4,11 +4,11 @@ Nếu bạn hỏi **“tầm/sitemap sơn sao?” = “sitemap tổng quan cho c
 
 Hive-K có 3 lớp chính:
 
-* **Public site**: ai cũng xem được
-* **Workspace Business/Agency**: quản lý campaign, matching, KPI
-* **Workspace KOL/KOC**: hồ sơ, cơ hội hợp tác, chiến dịch đang chạy
+- **Public site**: ai cũng xem được
+- **Workspace Business/Agency**: quản lý campaign, matching, KPI
+- **Workspace KOL/KOC**: hồ sơ, cơ hội hợp tác, chiến dịch đang chạy
 
-Cách chia này bám đúng mô hình sản phẩm: Business tạo campaign, KOL/KOC tạo hồ sơ và apply, người dùng phổ thông xem ranking/xác minh/đánh giá.  
+Cách chia này bám đúng mô hình sản phẩm: Business tạo campaign, KOL/KOC tạo hồ sơ và apply, người dùng phổ thông xem ranking/xác minh/đánh giá.
 
 ---
 
@@ -64,108 +64,108 @@ flowchart TD
 
 1. **KOL Dashboard**
 
-   * tổng campaign đang tham gia
-   * lời mời mới
-   * KPI pending
-   * điểm uy tín / badge
-   * thu nhập hoặc reward tạm tính
+   - tổng campaign đang tham gia
+   - lời mời mới
+   - KPI pending
+   - điểm uy tín / badge
+   - thu nhập hoặc reward tạm tính
 
 2. **My Profile**
 
-   * avatar, bio
-   * niche
-   * follower count
-   * engagement rate
-   * nền tảng hoạt động
-   * khu vực
-   * giá hợp tác / booking range
-   * visibility public/private
+   - avatar, bio
+   - niche
+   - follower count
+   - engagement rate
+   - nền tảng hoạt động
+   - khu vực
+   - giá hợp tác / booking range
+   - visibility public/private
 
 3. **Portfolio & Social Accounts**
 
-   * link TikTok / Facebook / Instagram / YouTube
-   * bài nổi bật
-   * case study
-   * file media kit
+   - link TikTok / Facebook / Instagram / YouTube
+   - bài nổi bật
+   - case study
+   - file media kit
 
 4. **Discover Campaigns**
 
-   * danh sách campaign mở
-   * filter theo niche, platform, budget
-   * nút apply
+   - danh sách campaign mở
+   - filter theo niche, platform, budget
+   - nút apply
 
 5. **Applied Campaigns**
 
-   * campaign đã apply
-   * trạng thái chờ duyệt / bị từ chối / được nhận
+   - campaign đã apply
+   - trạng thái chờ duyệt / bị từ chối / được nhận
 
 6. **Invitations**
 
-   * lời mời trực tiếp từ brand
-   * accept / decline
+   - lời mời trực tiếp từ brand
+   - accept / decline
 
 7. **Active Campaigns**
 
-   * campaign đã nhận
-   * deadline
-   * brief
-   * KPI target
-   * trạng thái: accepted / posting / completed / failed
+   - campaign đã nhận
+   - deadline
+   - brief
+   - KPI target
+   - trạng thái: accepted / posting / completed / failed
 
 8. **Submit KPI / Proof**
 
-   * link bài đăng
-   * ngày đăng
-   * views / likes / comments / clicks / conversions
-   * upload screenshot / proof
+   - link bài đăng
+   - ngày đăng
+   - views / likes / comments / clicks / conversions
+   - upload screenshot / proof
 
 9. **Reputation / Score**
 
-   * completion rate
-   * KPI achievement
-   * rating từ brand
-   * badge: verified, top performer...
+   - completion rate
+   - KPI achievement
+   - rating từ brand
+   - badge: verified, top performer...
 
 10. **Reviews & Verification**
 
-* feedback từ brand
-* lịch sử hợp tác
-* trạng thái xác minh
+- feedback từ brand
+- lịch sử hợp tác
+- trạng thái xác minh
 
-Các phần này khớp trực tiếp với module đã mô tả: KOL profile, application system, KPI tracking, rating, public transparency.  
+Các phần này khớp trực tiếp với module đã mô tả: KOL profile, application system, KPI tracking, rating, public transparency.
 
 ---
 
 ## 4) Liên kết với page hiện có
 
-Trong structure hiện tại bạn đã có sẵn nhiều page public/business, nên phần KOL/KOC chỉ cần nối như sau: `kol-ranking`, `campaigns`, `campaigns/[id]`, `kol-verification/[id]`, `ambassador/dashboard`, `business/dashboard`, `kol-matching`. 
+Trong structure hiện tại bạn đã có sẵn nhiều page public/business, nên phần KOL/KOC chỉ cần nối như sau: `kol-ranking`, `campaigns`, `campaigns/[id]`, `kol-verification/[id]`, `ambassador/dashboard`, `business/dashboard`, `kol-matching`.
 
 ### Mapping hợp lý:
 
-* `/(public)/kol-ranking`
+- `/(public)/kol-ranking`
   -> click vào KOL
   -> `/(public)/kol/[slug]` hoặc dùng `kol-verification/[id]`
 
-* `/(public)/campaigns`
+- `/(public)/campaigns`
   -> click campaign
   -> `/(public)/campaigns/[id]`
   -> nếu user là KOL và đăng nhập, có nút **Apply**
 
-* `/(business)/kol-matching`
+- `/(business)/kol-matching`
   -> chọn KOL
   -> gửi invite
   -> xuất hiện ở `KOL Workspace / Invitations`
 
-* `ambassador/dashboard`
+- `ambassador/dashboard`
   -> nên mở rộng thành hub chính cho KOL/KOC
   -> từ đây đi tới:
 
-  * profile
-  * discover campaigns
-  * invitations
-  * active campaigns
-  * submit KPI
-  * reputation
+  - profile
+  - discover campaigns
+  - invitations
+  - active campaigns
+  - submit KPI
+  - reputation
 
 ---
 
@@ -217,7 +217,7 @@ flowchart LR
     R1 --> P1[Public Ranking / Verification]
 ```
 
-Luồng này bám sát business flow trong tài liệu: Business tạo campaign, system suggest KOL, KOL accept/apply, theo dõi KPI, hoàn thành rồi đánh giá hai chiều. 
+Luồng này bám sát business flow trong tài liệu: Business tạo campaign, system suggest KOL, KOL accept/apply, theo dõi KPI, hoàn thành rồi đánh giá hai chiều.
 
 ---
 
@@ -225,16 +225,16 @@ Luồng này bám sát business flow trong tài liệu: Business tạo campaign,
 
 Menu trái cho KOL/KOC:
 
-* Dashboard
-* My Profile
-* Discover Campaigns
-* Invitations
-* Applied
-* Active Campaigns
-* Reputation
-* Verification
+- Dashboard
+- My Profile
+- Discover Campaigns
+- Invitations
+- Applied
+- Active Campaigns
+- Reputation
+- Verification
 
-Menu này đủ gọn cho MVP, đúng với giai đoạn đầu: đăng ký role, tạo hồ sơ, apply campaign, manual KPI update, basic rating. 
+Menu này đủ gọn cho MVP, đúng với giai đoạn đầu: đăng ký role, tạo hồ sơ, apply campaign, manual KPI update, basic rating.
 
 ---
 
@@ -242,28 +242,28 @@ Menu này đủ gọn cho MVP, đúng với giai đoạn đầu: đăng ký role
 
 ### MVP
 
-* KOL Dashboard
-* My Profile
-* Discover Campaigns
-* Invitations / Applied
-* Active Campaign Detail
-* Submit KPI
-* Reputation basic
+- KOL Dashboard
+- My Profile
+- Discover Campaigns
+- Invitations / Applied
+- Active Campaign Detail
+- Submit KPI
+- Reputation basic
 
 ### P1
 
-* portfolio đẹp hơn
-* scoring chi tiết
-* badge logic
-* lịch sử campaign public profile
+- portfolio đẹp hơn
+- scoring chi tiết
+- badge logic
+- lịch sử campaign public profile
 
 ### P2
 
-* auto sync social metrics
-* fraud detection
-* AI recommendation
+- auto sync social metrics
+- fraud detection
+- AI recommendation
 
-Điều này cũng đúng với roadmap MVP → Phase 2 → Phase 3 trong tài liệu.  
+Điều này cũng đúng với roadmap MVP → Phase 2 → Phase 3 trong tài liệu.
 
 ---
 
@@ -271,21 +271,21 @@ Menu này đủ gọn cho MVP, đúng với giai đoạn đầu: đăng ký role
 
 **KOL/KOC nên là 1 workspace riêng**, nhưng phải nối chặt với:
 
-* public ranking
-* public verification
-* public campaign list
-* business matching
-* business campaign detail
+- public ranking
+- public verification
+- public campaign list
+- business matching
+- business campaign detail
 
 Tức là nhìn tổng thể sẽ là:
 
-* **Public** để minh bạch và SEO
-* **Business app** để vận hành
-* **KOL/KOC app** để tham gia và xây uy tín
+- **Public** để minh bạch và SEO
+- **Business app** để vận hành
+- **KOL/KOC app** để tham gia và xây uy tín
 
 Nếu muốn, mình sẽ làm tiếp ngay cho bạn một bản **markdown sitemap hoàn chỉnh dạng copy-paste**, có luôn:
 
-* tree page
-* route
-* mô tả từng page
-* liên kết giữa page hiện có và page mới KOL/KOC.
+- tree page
+- route
+- mô tả từng page
+- liên kết giữa page hiện có và page mới KOL/KOC.

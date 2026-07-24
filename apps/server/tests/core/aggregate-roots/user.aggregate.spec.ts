@@ -1,4 +1,4 @@
-import { UserRoot, UserProps } from '@core/aggregate-roots/user.aggregate';
+import { UserProps, UserRoot } from '@core/aggregate-roots/user.aggregate';
 import { ERoleType } from '@core/enums';
 
 /**

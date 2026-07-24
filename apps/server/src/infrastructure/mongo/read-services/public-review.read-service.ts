@@ -1,17 +1,16 @@
+import { ReviewDto, ReviewFilterDto } from '@/application/dtos';
+import { PaginatedResponseDto, SortOrder } from '@/application/dtos/pagination.dto';
+import { IPublicReviewReadService } from '@/application/interfaces/read-service/review.read-service.interface';
+import { Nullable } from '@/core/types';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, QueryFilter, Types } from 'mongoose';
-import { IPublicReviewReadService } from '@/application/interfaces/read-service/review.read-service.interface';
-import { ReviewDto, ReviewFilterDto } from '@/application/dtos';
-import { PublicReviewModel, PublicReviewDocument } from '../schemas/public-review.schema';
-import { PaginatedResponseDto, SortOrder } from '@/application/dtos/pagination.dto';
-import { Nullable } from '@/core/types';
+import { PublicReviewDocument, PublicReviewModel } from '../schemas/public-review.schema';
 
 @Injectable()
 export class MongoPublicReviewReadService implements IPublicReviewReadService {
   constructor(
-    @InjectModel(PublicReviewModel.name)
-    private readonly reviewModel: Model<PublicReviewDocument>,
+    @InjectModel(PublicReviewModel.name) private readonly reviewModel: Model<PublicReviewDocument>,
   ) {}
 
   async findById(id: string): Promise<Nullable<ReviewDto>> {
@@ -20,14 +19,25 @@ export class MongoPublicReviewReadService implements IPublicReviewReadService {
   }
 
   async findByProposalId(proposalId: string): Promise<ReviewDto[]> {
-    const docs = await this.reviewModel.find({
-      proposal_id: new Types.ObjectId(proposalId) as any,
-    }).lean().exec();
+    const docs = await this.reviewModel
+      .find({
+        proposal_id: new Types.ObjectId(proposalId) as any,
+      })
+      .lean()
+      .exec();
     return docs.map((doc) => this.mapToDto(doc));
   }
 
-  async findAll(filters: ReviewFilterDto = {} as any): Promise<PaginatedResponseDto<ReviewDto>> {
-    const { cursor, limit = 10, sort = SortOrder.DESC, proposalId, status } = filters;
+  async findAll(
+    filters: ReviewFilterDto = {} as any,
+  ): Promise<PaginatedResponseDto<ReviewDto>> {
+    const {
+      cursor,
+      limit = 10,
+      sort = SortOrder.DESC,
+      proposalId,
+      status,
+    } = filters;
     const query: QueryFilter<PublicReviewDocument> = {};
 
     if (proposalId) {
@@ -51,7 +61,9 @@ export class MongoPublicReviewReadService implements IPublicReviewReadService {
 
     const hasNextPage = docs.length > limit;
     const results = hasNextPage ? docs.slice(0, limit) : docs;
-    const nextCursor = hasNextPage ? results[results.length - 1]._id.toString() : null;
+    const nextCursor = hasNextPage
+      ? results[results.length - 1]._id.toString()
+      : null;
 
     return new PaginatedResponseDto(
       results.map((doc) => this.mapToDto(doc)),

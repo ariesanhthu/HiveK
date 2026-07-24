@@ -1,23 +1,17 @@
-import { Injectable, Logger, BadRequestException, Inject } from "@nestjs/common";
-import { RmqOptions, Transport } from "@nestjs/microservices";
-import * as fs from "fs";
-import * as path from "path";
-import { getRmqUri } from "../rabbitmq/rmq.env";
-import {
-  RabbitMQProducerConfig,
-  RabbitMQConsumerConfig,
-} from "./types/rabbitmq.types";
-import { type ILoggerService, LOGGER_SERVICE } from "@/application";
-import { ConfigService } from "@nestjs/config";
-import { errorMessage } from "@/shared/utils";
+import { type ILoggerService, LOGGER_SERVICE } from '@/application';
+import { RabbitMQConfig } from '@/configs';
+import { errorMessage } from '@/shared/utils';
+import { BadRequestException, Inject, Injectable, Logger } from '@nestjs/common';
+import { RmqOptions, Transport } from '@nestjs/microservices';
+import * as fs from 'fs';
+import * as path from 'path';
+import { RabbitMQConsumerConfig, RabbitMQProducerConfig } from './types/rabbitmq.types';
 
 @Injectable()
 export class RabbitMQFactoryService {
-
   constructor(
-    @Inject(LOGGER_SERVICE)
-    private loggerService: ILoggerService,
-    private configService: ConfigService
+    @Inject(LOGGER_SERVICE) private loggerService: ILoggerService,
+    private rabbitmqConfig: RabbitMQConfig,
   ) {
     this.loggerService.setContext(RabbitMQFactoryService.name);
   }
@@ -31,15 +25,19 @@ export class RabbitMQFactoryService {
   readRMQProducerConfig(filePath: string): RabbitMQProducerConfig {
     try {
       const resolvedPath = this.resolvePath(filePath);
-      this.loggerService.debug(`Reading RMQ producer config from: ${resolvedPath}`);
+      this.loggerService.debug(
+        `Reading RMQ producer config from: ${resolvedPath}`,
+      );
 
-      const fileContent = fs.readFileSync(resolvedPath, "utf-8");
+      const fileContent = fs.readFileSync(resolvedPath, 'utf-8');
       const rawConfig = JSON.parse(fileContent);
-      const config = this.replacePlaceholders(rawConfig) as RabbitMQProducerConfig;
+      const config = this.replacePlaceholders(
+        rawConfig,
+      ) as RabbitMQProducerConfig;
 
-      if (config.role !== "producer") {
+      if (config.role !== 'producer') {
         throw new BadRequestException(
-          `Invalid producer config: expected role "producer", got "${config.role}"`
+          `Invalid producer config: expected role "producer", got "${config.role}"`,
         );
       }
 
@@ -51,7 +49,9 @@ export class RabbitMQFactoryService {
       }
       const msg = errorMessage(error);
       this.loggerService.error(`Failed to read RMQ producer config: ${msg}`);
-      throw new BadRequestException(`Failed to read RMQ producer config: ${msg}`);
+      throw new BadRequestException(
+        `Failed to read RMQ producer config: ${msg}`,
+      );
     }
   }
 
@@ -64,15 +64,19 @@ export class RabbitMQFactoryService {
   readRMQConsumerConfig(filePath: string): RabbitMQConsumerConfig {
     try {
       const resolvedPath = this.resolvePath(filePath);
-      this.loggerService.debug(`Reading RMQ consumer config from: ${resolvedPath}`);
+      this.loggerService.debug(
+        `Reading RMQ consumer config from: ${resolvedPath}`,
+      );
 
-      const fileContent = fs.readFileSync(resolvedPath, "utf-8");
+      const fileContent = fs.readFileSync(resolvedPath, 'utf-8');
       const rawConfig = JSON.parse(fileContent);
-      const config = this.replacePlaceholders(rawConfig) as RabbitMQConsumerConfig;
+      const config = this.replacePlaceholders(
+        rawConfig,
+      ) as RabbitMQConsumerConfig;
 
-      if (config.role !== "consumer") {
+      if (config.role !== 'consumer') {
         throw new BadRequestException(
-          `Invalid consumer config: expected role "consumer", got "${config.role}"`
+          `Invalid consumer config: expected role "consumer", got "${config.role}"`,
         );
       }
 
@@ -84,7 +88,9 @@ export class RabbitMQFactoryService {
       }
       const msg = errorMessage(error);
       this.loggerService.error(`Failed to read RMQ consumer config: ${msg}`);
-      throw new BadRequestException(`Failed to read RMQ consumer config: ${msg}`);
+      throw new BadRequestException(
+        `Failed to read RMQ consumer config: ${msg}`,
+      );
     }
   }
 
@@ -98,17 +104,25 @@ export class RabbitMQFactoryService {
     if (path.isAbsolute(filePath)) {
       return filePath;
     }
-    const configDir = path.join(__dirname, "../..", "infrastructure", "rabbitmq", "config");
+    const configDir = path.join(
+      __dirname,
+      '../..',
+      'infrastructure',
+      'rabbitmq',
+      'config',
+    );
     return path.join(configDir, filePath);
   }
 
   /** Replace placeholder {{RABBITMQ_URI}} with actual URI from env */
   private replacePlaceholders<T>(obj: T): T {
     const json = JSON.stringify(obj);
-    const replaced = json.replace(/"\{\{RABBITMQ_URI\}\}"/g, `"${getRmqUri()}"`);
+    const replaced = json.replace(
+      /"\{\{RABBITMQ_URI\}\}"/g,
+      `"${this.getRmqUri()}"`,
+    );
     return JSON.parse(replaced) as T;
   }
-
 
   /**
    * Convert RabbitMQ Producer config to NestJS ClientProxy options (for clients/producers)
@@ -130,7 +144,7 @@ export class RabbitMQFactoryService {
         noAssert: false,
         maxConnectionAttempts: Math.max(
           config.connection.reconnect.max_retries,
-          1
+          1,
         ),
         socketOptions: {
           heartbeat: config.connection.heartbeat,
@@ -153,7 +167,9 @@ export class RabbitMQFactoryService {
     const primaryBinding = primaryQueue?.bindings[0];
 
     if (!primaryQueue) {
-      throw new BadRequestException("Consumer config must have at least one queue");
+      throw new BadRequestException(
+        'Consumer config must have at least one queue',
+      );
     }
 
     return {
@@ -162,7 +178,7 @@ export class RabbitMQFactoryService {
         urls: [config.connection.uri],
         queue: primaryQueue.name,
         exchange: primaryBinding?.exchange || primaryQueue.name,
-        exchangeType: "direct", // Always use "direct" for explicit bindings
+        exchangeType: 'direct', // Always use "direct" for explicit bindings
         // routingKey: routingKey, // NestJS uses this for the queue declaration
         prefetchCount: config.consume.prefetch_count,
         isGlobalPrefetchCount: false,
@@ -170,7 +186,7 @@ export class RabbitMQFactoryService {
         noAssert: false, // Important: false so RabbitMQ doesn't skip assertion
         maxConnectionAttempts: Math.max(
           config.connection.reconnect.max_retries,
-          1
+          1,
         ),
         socketOptions: {
           heartbeat: config.connection.heartbeat,
@@ -210,19 +226,18 @@ export class RabbitMQFactoryService {
   }
 
   getRmqUri(): string {
-    const RMQ_USER = this.configService.get<string>("RMQ_USER");
-    const RMQ_PASSWORD = this.configService.get<string>("RMQ_PASSWORD");
-    const RMQ_HOST = this.configService.get<string>("RMQ_HOST");
-    const RMQ_PORT = this.configService.get<number>("RMQ_PORT");
-    const RMQ_VHOST = this.configService.get<string>("RMQ_VHOST");
+    const user = this.rabbitmqConfig.getUser();
+    const password = this.rabbitmqConfig.getPassword();
+    const host = this.rabbitmqConfig.getHost();
+    const port = this.rabbitmqConfig.getPort();
+    const vhost = this.rabbitmqConfig.getVhost().replace(/^\//, '');
 
-    if (!RMQ_USER || !RMQ_PASSWORD || !RMQ_HOST) {
-      throw new Error('Missing required RabbitMQ env vars (RMQ_USER, RMQ_PASSWORD, RMQ_HOST)');
-    }
+    const vhostPart = vhost ? `/${encodeURIComponent(vhost)}` : '';
 
-    const portPart = RMQ_PORT ? `:${RMQ_PORT}` : '';
-    const vhostPart = RMQ_VHOST ? `/${encodeURIComponent(RMQ_VHOST)}` : '';
-
-    return `amqps://${encodeURIComponent(RMQ_USER)}:${encodeURIComponent(RMQ_PASSWORD)}@${RMQ_HOST}${portPart}${vhostPart}`;
-  };
+    return `amqp://${encodeURIComponent(user)}:${
+      encodeURIComponent(
+        password,
+      )
+    }@${host}:${port}${vhostPart}`;
+  }
 }

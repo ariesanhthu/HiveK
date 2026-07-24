@@ -1,14 +1,21 @@
-import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { Inject } from '@nestjs/common';
 import { UploadedFileNotFoundException } from '@/core/exceptions';
-import { UPLOADED_FILE_REPOSITORY, type IUploadedFileRepository } from '@/core/interfaces/repositories';
+import {
+  type IUploadedFileRepository,
+  UPLOADED_FILE_REPOSITORY,
+} from '@/core/interfaces/repositories';
+import { Inject } from '@nestjs/common';
+import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { UploadedFileSoftDeleteCommand } from './uploaded-file-soft-delete.command';
 
 @CommandHandler(UploadedFileSoftDeleteCommand)
-export class UploadedFileSoftDeleteCommandHandler implements ICommandHandler<UploadedFileSoftDeleteCommand, void> {
+export class UploadedFileSoftDeleteCommandHandler implements
+  ICommandHandler<
+    UploadedFileSoftDeleteCommand,
+    void
+  >
+{
   constructor(
-    @Inject(UPLOADED_FILE_REPOSITORY)
-    private readonly repository: IUploadedFileRepository,
+    @Inject(UPLOADED_FILE_REPOSITORY) private readonly repository: IUploadedFileRepository,
   ) {}
 
   async execute(command: UploadedFileSoftDeleteCommand): Promise<void> {

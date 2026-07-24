@@ -1,27 +1,36 @@
+import { KpiLogDto } from '@/application/dtos';
+import { PaginatedResponseDto, SortOrder } from '@/application/dtos/pagination.dto';
+import { IKpiLogReadService } from '@/application/interfaces';
+import { KpiLogFilterDto } from '@/application/queries';
+import { Nullable } from '@/core/types';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, QueryFilter, Schema, Types } from 'mongoose';
-import { IKpiLogReadService } from '@/application/interfaces';
-import { KpiLogDto } from '@/application/dtos';
-import { KpiLogFilterDto } from '@/application/queries';
-import { KpiLogModel, KpiLogDocument } from '../schemas/kpi-log.schema';
-import { PaginatedResponseDto, SortOrder } from '@/application/dtos/pagination.dto';
-import { Nullable } from '@/core/types';
+import { KpiLogDocument, KpiLogModel } from '../schemas/kpi-log.schema';
 
 @Injectable()
 export class MongoKpiLogReadService implements IKpiLogReadService {
   constructor(
-    @InjectModel(KpiLogModel.name)
-    private readonly kpiLogModel: Model<KpiLogDocument>,
-  ) { }
+    @InjectModel(KpiLogModel.name) private readonly kpiLogModel: Model<KpiLogDocument>,
+  ) {}
 
   async findById(id: string): Promise<Nullable<KpiLogDto>> {
     const doc = await this.kpiLogModel.findById(id).lean().exec();
     return doc ? this.mapToDto(doc) : null;
   }
 
-  async findAll(filters: KpiLogFilterDto = {} as any): Promise<PaginatedResponseDto<KpiLogDto>> {
-    const { cursor, limit = 10, sort = SortOrder.DESC, participantId, outputId, startTime, endTime } = filters;
+  async findAll(
+    filters: KpiLogFilterDto = {} as any,
+  ): Promise<PaginatedResponseDto<KpiLogDto>> {
+    const {
+      cursor,
+      limit = 10,
+      sort = SortOrder.DESC,
+      participantId,
+      outputId,
+      startTime,
+      endTime,
+    } = filters;
     const query: QueryFilter<KpiLogDocument> = {};
     if (participantId) {
       query.participantId = new Types.ObjectId(participantId);
@@ -50,7 +59,9 @@ export class MongoKpiLogReadService implements IKpiLogReadService {
 
     const hasNextPage = docs.length > limit;
     const results = hasNextPage ? docs.slice(0, limit) : docs;
-    const nextCursor = hasNextPage ? results[results.length - 1]._id.toString() : null;
+    const nextCursor = hasNextPage
+      ? results[results.length - 1]._id.toString()
+      : null;
 
     return new PaginatedResponseDto(
       results.map((doc) => this.mapToDto(doc)),

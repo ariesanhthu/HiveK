@@ -37,8 +37,8 @@ export function resolveDistEntry({ pkgDir, pkgJson, override, pkgName, soft = fa
   }
   if (soft) return null;
   console.error(
-    `[NO_DIST] ${pkgName} has no built entry (tried ${cand.join(', ')} under ${pkgDir}). ` +
-      `Run the DS's build script, or use 'npm install ${pkgName}@latest' in a scratch dir and pass --node-modules.`,
+    `[NO_DIST] ${pkgName} has no built entry (tried ${cand.join(', ')} under ${pkgDir}). `
+      + `Run the DS's build script, or use 'npm install ${pkgName}@latest' in a scratch dir and pass --node-modules.`,
   );
   process.exit(1);
 }
@@ -64,7 +64,10 @@ export const reactShim = {
     b.onResolve({ filter: /^react-is$/ }, () => ({ path: 'react-is-shim', namespace: 'shim' }));
     // scheduler must be the same instance window.React uses internally; a
     // second bundled copy breaks concurrent rendering.
-    b.onResolve({ filter: /^scheduler(\/|$)/ }, () => ({ path: 'scheduler-shim', namespace: 'shim' }));
+    b.onResolve(
+      { filter: /^scheduler(\/|$)/ },
+      () => ({ path: 'scheduler-shim', namespace: 'shim' }),
+    );
     b.onLoad({ filter: /^react-shim$/, namespace: 'shim' }, () => ({
       // Automatic-runtime jsx/jsxs → createElement. Two invariants matter:
       //  · key is the 3rd ARG, never in props — lift it into the createElement
@@ -89,8 +92,8 @@ module.exports.Fragment=R.Fragment;`,
     b.onLoad({ filter: /^react-dom-shim$/, namespace: 'shim' }, () => ({
       // preload/preinit/preconnect/prefetchDNS (React 18.3+/19 resource
       // hints) must exist — some DSes call them at Provider mount.
-      contents: 'var D=window.ReactDOM,n=function(){};' +
-        'module.exports=Object.assign({preload:n,preinit:n,preconnect:n,prefetchDNS:n,preloadModule:n,preinitModule:n},D);',
+      contents: 'var D=window.ReactDOM,n=function(){};'
+        + 'module.exports=Object.assign({preload:n,preinit:n,preconnect:n,prefetchDNS:n,preloadModule:n,preinitModule:n},D);',
       loader: 'js',
     }));
     b.onLoad({ filter: /^react-is-shim$/, namespace: 'shim' }, () => ({
@@ -114,7 +117,8 @@ exports.Fragment=R.Fragment;exports.Suspense=R.Suspense;exports.StrictMode=R.Str
     b.onLoad({ filter: /^scheduler-shim$/, namespace: 'shim' }, () => ({
       // A DS dist/ rarely imports scheduler directly — when it does, it
       // means react-dom leaked into the dist. Surface it.
-      contents: `throw new Error("[SCHEDULER_MISSING] this DS's dist/ imports 'scheduler' directly — usually react-dom leaked into the dist. Check the DS build's externals.");`,
+      contents:
+        `throw new Error("[SCHEDULER_MISSING] this DS's dist/ imports 'scheduler' directly — usually react-dom leaked into the dist. Check the DS build's externals.");`,
       loader: 'js',
     }));
   },
@@ -124,7 +128,8 @@ exports.Fragment=R.Fragment;exports.Suspense=R.Suspense;exports.StrictMode=R.Str
 // into a client feature component's transitive graph (via server/ data loaders
 // and app-router page files). A browser render never executes these paths, so
 // resolve them to empty no-op modules instead of failing the bundle.
-const SERVER_STUB = /^(server-only|client-only|fs|fs\/promises|path|os|crypto|stream|util|node:.*|next\/font\/.*|next\/headers|next\/cache|next\/server)$/;
+const SERVER_STUB =
+  /^(server-only|client-only|fs|fs\/promises|path|os|crypto|stream|util|node:.*|next\/font\/.*|next\/headers|next\/cache|next\/server)$/;
 // A component that side-effect-imports globals.css (or the tailwindcss engine)
 // pulls the raw `@import "tailwindcss"` into the browser bundle, which esbuild
 // can't resolve. The real styles ship via cfg.cssEntry (compiled Tailwind), so
@@ -147,21 +152,19 @@ export const serverStub = {
     // the real fonts ship via cfg.cssEntry. Declared as named ESM exports so
     // `import { Inter } from 'next/font/google'` binds to a callable.
     b.onLoad({ filter: /.*/, namespace: 'font-stub' }, () => ({
-      contents:
-        'var f=function(){return {className:"",variable:"",style:{fontFamily:""}}};' +
-        'export {f as Inter,f as Roboto,f as Open_Sans,f as Lato,f as Montserrat,f as Poppins,f as Geist,f as Geist_Mono,f as Nunito,f as Work_Sans,f as default};',
+      contents: 'var f=function(){return {className:"",variable:"",style:{fontFamily:""}}};'
+        + 'export {f as Inter,f as Roboto,f as Open_Sans,f as Lato,f as Montserrat,f as Poppins,f as Geist,f as Geist_Mono,f as Nunito,f as Work_Sans,f as default};',
       loader: 'js',
     }));
     // CJS + Proxy so ANY named import (readFileSync, join, …) resolves to a
     // harmless no-op function; a browser render never calls these.
     b.onLoad({ filter: /.*/, namespace: 'server-stub' }, () => ({
-      contents:
-        'var noop=function(){return stub};' +
-        'var stub=new Proxy(noop,{get:function(t,k){' +
-        "if(k==='__esModule')return true;" +
-        'if(k===Symbol.toPrimitive||k===Symbol.toStringTag)return undefined;' +
-        'return stub;}});' +
-        'module.exports=stub;',
+      contents: 'var noop=function(){return stub};'
+        + 'var stub=new Proxy(noop,{get:function(t,k){'
+        + 'if(k===\'__esModule\')return true;'
+        + 'if(k===Symbol.toPrimitive||k===Symbol.toStringTag)return undefined;'
+        + 'return stub;}});'
+        + 'module.exports=stub;',
       loader: 'js',
     }));
   },
@@ -178,7 +181,9 @@ export function tsconfigPathsPlugin(tsconfigPath) {
       .replace(/\/\*[\s\S]*?\*\//g, '')
       .replace(/(^|[^:])\/\/.*$/gm, '$1');
     ({ paths, baseUrl = '.' } = JSON.parse(raw).compilerOptions ?? {});
-  } catch { return null; }
+  } catch {
+    return null;
+  }
   if (!paths) return null;
   const base = resolve(dirname(tsconfigPath), baseUrl);
   const rules = Object.entries(paths).map(([k, v]) => ({
@@ -190,7 +195,18 @@ export function tsconfigPathsPlugin(tsconfigPath) {
   // not every node_modules import.
   const esc = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   const filter = new RegExp(`^(?:${rules.map((r) => esc(r.prefix)).join('|')})`);
-  const exts = ['', '.ts', '.tsx', '.js', '.jsx', '.mjs', '/index.ts', '/index.tsx', '/index.js', '/index.jsx'];
+  const exts = [
+    '',
+    '.ts',
+    '.tsx',
+    '.js',
+    '.jsx',
+    '.mjs',
+    '/index.ts',
+    '/index.tsx',
+    '/index.js',
+    '/index.jsx',
+  ];
   return {
     name: 'tsconfig-paths',
     setup(b) {
@@ -258,11 +274,17 @@ export async function bundleToIife({ entry, globalName, nodePaths, out, tsconfig
       // HiveK: Next.js internals + server config leak `process.env.*` reads into
       // the browser bundle. A client render never needs them; polyfill a bare
       // `process` so those reads return undefined instead of throwing.
-      banner: { js: `(typeof globalThis!=='undefined')&&(globalThis.process=globalThis.process||{env:{},platform:'browser',nextTick:function(f){Promise.resolve().then(f)},cwd:function(){return'/'}});` },
+      banner: {
+        js:
+          `(typeof globalThis!=='undefined')&&(globalThis.process=globalThis.process||{env:{},platform:'browser',nextTick:function(f){Promise.resolve().then(f)},cwd:function(){return'/'}});`,
+      },
       // __dsMainNs (set by package-build when extraEntries are present) is
       // the main package's runtime namespace — Object.assign it over the
       // merged IIFE exports so main-package names win over icon collisions.
-      footer: { js: `window.${globalName}=${globalName}.__dsMainNs?Object.assign({},${globalName},${globalName}.__dsMainNs,{__dsMainNs:undefined}):${globalName};` },
+      footer: {
+        js:
+          `window.${globalName}=${globalName}.__dsMainNs?Object.assign({},${globalName},${globalName}.__dsMainNs,{__dsMainNs:undefined}):${globalName};`,
+      },
       outfile: bundleJs,
       logLevel: 'warning',
       // iife can't evaluate import.meta.url natively — define it here only.
@@ -274,7 +296,13 @@ export async function bundleToIife({ entry, globalName, nodePaths, out, tsconfig
   } catch (e) {
     // Tag unbuilt workspace siblings — package exists in node_modules but its
     // entry points at a dist/ that hasn't been built.
-    const unresolved = [...new Set((e.errors ?? []).map((er) => er.text.match(/Could not resolve "([^"]+)"/)?.[1]).filter(Boolean))];
+    const unresolved = [
+      ...new Set(
+        (e.errors ?? []).map((er) => er.text.match(/Could not resolve "([^"]+)"/)?.[1]).filter(
+          Boolean,
+        ),
+      ),
+    ];
     const siblings = unresolved.filter((p) => {
       const pj = join(nodePaths, p, 'package.json');
       if (!existsSync(pj)) return false;
@@ -282,12 +310,16 @@ export async function bundleToIife({ entry, globalName, nodePaths, out, tsconfig
         const j = JSON.parse(readFileSync(pj, 'utf8'));
         const ent = j.module ?? j.main ?? 'index.js';
         return !existsSync(join(nodePaths, p, ent));
-      } catch { return false; }
+      } catch {
+        return false;
+      }
     });
     if (siblings.length) {
       console.error(
-        `[WORKSPACE_SIBLING] ${siblings.join(', ')} exist in node_modules but aren't built (no dist entry). ` +
-          `Run their build, or npm install the published versions.`,
+        `[WORKSPACE_SIBLING] ${
+          siblings.join(', ')
+        } exist in node_modules but aren't built (no dist entry). `
+          + `Run their build, or npm install the published versions.`,
       );
     } else if (unresolved.length) {
       console.error(`[UNRESOLVED_IMPORT] ${unresolved.join(', ')} — missing from node_modules.`);
@@ -361,7 +393,12 @@ export function stampHeader(bundleJs, { namespace, components, inlinedExternals 
       return ['.jsx', '.d.ts', '.prompt.md']
         .map((ext) => base + ext)
         .filter((rel) => existsSync(join(out, rel)))
-        .map((rel) => [rel, createHash('sha256').update(readFileSync(join(out, rel))).digest('hex').slice(0, 12)]);
+        .map((
+          rel,
+        ) => [
+          rel,
+          createHash('sha256').update(readFileSync(join(out, rel))).digest('hex').slice(0, 12),
+        ]);
     }),
   );
   const meta = {

@@ -1,5 +1,5 @@
-import { EnterpriseVerifyCommandHandler } from '@/application/commands/enterprise-verify/enterprise-verify.handler';
 import { EnterpriseVerifyCommand } from '@/application/commands/enterprise-verify/enterprise-verify.command';
+import { EnterpriseVerifyCommandHandler } from '@/application/commands/enterprise-verify/enterprise-verify.handler';
 import { EnterpriseRoot } from '@/core/aggregate-roots';
 import { EnterpriseNotFoundException } from '@/core/exceptions';
 import { createMockEnterpriseRepository } from '../../../__mocks__/mock-repositories';

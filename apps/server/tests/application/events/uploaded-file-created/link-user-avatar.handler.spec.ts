@@ -18,7 +18,9 @@ describe('LinkUserAvatarHandler', () => {
     const user = { id: 'user-1', props: { avatar: null, updatedAt: new Date('2026-01-01') } };
     mockUserRepository.findById.mockResolvedValue(user);
 
-    await handler.handle(new UploadedFileCreatedEvent('file-1', TargetType.USER, 'user-1', 'avatar'));
+    await handler.handle(
+      new UploadedFileCreatedEvent('file-1', TargetType.USER, 'user-1', 'avatar'),
+    );
 
     expect(mockUserRepository.findById).toHaveBeenCalledWith('user-1');
     expect(user.props.avatar).toBe('file-1');
@@ -29,13 +31,17 @@ describe('LinkUserAvatarHandler', () => {
     const user = { id: 'user-1', props: { avatar: null, updatedAt: new Date('2026-01-01') } };
     mockUserRepository.findById.mockResolvedValue(user);
 
-    await handler.handle(new UploadedFileCreatedEvent('file-2', TargetType.USER, 'user-1', 'avatarUrl'));
+    await handler.handle(
+      new UploadedFileCreatedEvent('file-2', TargetType.USER, 'user-1', 'avatarUrl'),
+    );
 
     expect(user.props.avatar).toBe('file-2');
   });
 
   it('should ignore non-USER target types', async () => {
-    await handler.handle(new UploadedFileCreatedEvent('file-1', TargetType.PLATFORM, 'plat-1', 'avatar'));
+    await handler.handle(
+      new UploadedFileCreatedEvent('file-1', TargetType.PLATFORM, 'plat-1', 'avatar'),
+    );
     expect(mockUserRepository.findById).not.toHaveBeenCalled();
   });
 
@@ -46,7 +52,9 @@ describe('LinkUserAvatarHandler', () => {
 
   it('should silently skip if user not found', async () => {
     mockUserRepository.findById.mockResolvedValue(null);
-    await handler.handle(new UploadedFileCreatedEvent('file-1', TargetType.USER, 'nonexistent', 'avatar'));
+    await handler.handle(
+      new UploadedFileCreatedEvent('file-1', TargetType.USER, 'nonexistent', 'avatar'),
+    );
     expect(mockUserRepository.save).not.toHaveBeenCalled();
   });
 });

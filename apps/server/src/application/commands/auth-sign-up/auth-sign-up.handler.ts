@@ -1,32 +1,37 @@
+import { AuthSendOtpCommand } from '@/application/commands';
+import { type IRoleReadService, ROLE_READ_SERVICE } from '@/application/interfaces';
+import { EVENT_SERVICE, type IUnitOfWork, UNIT_OF_WORK } from '@/application/interfaces';
+import type { IEventService } from '@/application/interfaces';
+import { AuthService } from '@/application/services/auth.service';
+import { AdminRoot, EnterpriseUserRoot, KOLUserRoot } from '@/core/aggregate-roots';
+import { EOtpType, ERoleType } from '@/core/enums';
+import {
+  InvalidUserTypeException,
+  RoleNotFoundException,
+  UserConflictException,
+} from '@/core/exceptions';
+import { type IUserRepository, USER_REPOSITORY } from '@/core/interfaces/repositories';
+import { PhoneNumberVO } from '@/core/value-objects/phone-number.value-object';
+import { Inject } from '@nestjs/common';
 import { CommandBus, CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { AuthSignUpCommand } from './auth-sign-up.command';
 import { AuthSignUpOutputDto } from './auth-sign-up.dto';
-import { Inject } from '@nestjs/common';
-import { ROLE_READ_SERVICE, type IRoleReadService } from '@/application/interfaces';
-import { USER_REPOSITORY, type IUserRepository } from '@/core/interfaces/repositories';
-import { KOLUserRoot, EnterpriseUserRoot, AdminRoot } from '@/core/aggregate-roots';
-import { EOtpType, ERoleType } from '@/core/enums';
-import { AuthService } from '@/application/services/auth.service';
-import { UserConflictException, RoleNotFoundException, InvalidUserTypeException } from '@/core/exceptions';
-import { type IUnitOfWork, UNIT_OF_WORK, EVENT_SERVICE } from '@/application/interfaces';
-import type { IEventService } from '@/application/interfaces';
-import { PhoneNumberVO } from '@/core/value-objects/phone-number.value-object';
-import { AuthSendOtpCommand } from '@/application/commands';
 
 @CommandHandler(AuthSignUpCommand)
-export class AuthSignUpCommandHandler implements ICommandHandler<AuthSignUpCommand, AuthSignUpOutputDto> {
+export class AuthSignUpCommandHandler implements
+  ICommandHandler<
+    AuthSignUpCommand,
+    AuthSignUpOutputDto
+  >
+{
   constructor(
-    @Inject(USER_REPOSITORY)
-    private readonly userRepository: IUserRepository,
-    @Inject(ROLE_READ_SERVICE)
-    private readonly roleReadService: IRoleReadService,
+    @Inject(USER_REPOSITORY) private readonly userRepository: IUserRepository,
+    @Inject(ROLE_READ_SERVICE) private readonly roleReadService: IRoleReadService,
     private readonly authService: AuthService,
-    @Inject(EVENT_SERVICE)
-    private readonly eventService: IEventService,
-    @Inject(UNIT_OF_WORK)
-    private readonly uow: IUnitOfWork,
+    @Inject(EVENT_SERVICE) private readonly eventService: IEventService,
+    @Inject(UNIT_OF_WORK) private readonly uow: IUnitOfWork,
     private readonly commandBus: CommandBus,
-  ) { }
+  ) {}
 
   async execute(command: AuthSignUpCommand): Promise<AuthSignUpOutputDto> {
     return this.uow.execute(async () => {
@@ -39,7 +44,8 @@ export class AuthSignUpCommandHandler implements ICommandHandler<AuthSignUpComma
       }
 
       const roles = await this.roleReadService.findAll();
-      const defaultRole = roles.data.find(r => r.title.toUpperCase() === type.toUpperCase()) || roles.data[0];
+      const defaultRole = roles.data.find((r) => r.title.toUpperCase() === type.toUpperCase())
+        || roles.data[0];
       if (!defaultRole) {
         throw new RoleNotFoundException(type);
       }
@@ -56,7 +62,7 @@ export class AuthSignUpCommandHandler implements ICommandHandler<AuthSignUpComma
         passwordHash,
         fullName: input.fullName || 'DEFAULT NAME',
         type,
-        roleId: defaultRole.id!,
+        roleId: defaultRole.id,
       };
 
       let user;
@@ -75,8 +81,13 @@ export class AuthSignUpCommandHandler implements ICommandHandler<AuthSignUpComma
       }
 
       await this.userRepository.save(user);
-      console.log("Created user")
-      await this.commandBus.execute(new AuthSendOtpCommand({ email: normalizedEmail, type: EOtpType.CREATE_ACCOUNT }));
+      console.log('Created user');
+      await this.commandBus.execute(
+        new AuthSendOtpCommand({
+          email: normalizedEmail,
+          type: EOtpType.CREATE_ACCOUNT,
+        }),
+      );
 
       await this.eventService.publishEvents(user);
 

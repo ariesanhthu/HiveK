@@ -1,9 +1,12 @@
-import { Test, TestingModule } from '@nestjs/testing';
 import { InAppNotificationHandler } from '@/application/events/notification-dispatched/in-app-notification.handler';
 import { NotificationDispatchedEvent } from '@/application/events/notification-dispatched/notification-dispatched.event';
-import { NOTIFICATION_REPOSITORY, USER_NOTIFICATION_REPOSITORY } from '@/core/interfaces/repositories';
-import { NotificationType, NotificationChannel } from '@/core/enums';
 import { UNIT_OF_WORK } from '@/application/interfaces';
+import { NotificationChannel, NotificationType } from '@/core/enums';
+import {
+  NOTIFICATION_REPOSITORY,
+  USER_NOTIFICATION_REPOSITORY,
+} from '@/core/interfaces/repositories';
+import { Test, TestingModule } from '@nestjs/testing';
 
 describe('InAppNotificationHandler', () => {
   let handler: InAppNotificationHandler;
@@ -19,7 +22,7 @@ describe('InAppNotificationHandler', () => {
       saveMany: jest.fn(),
     };
     mockUow = {
-        execute: jest.fn((fn: any) => fn()),
+      execute: jest.fn((fn: any) => fn()),
     };
 
     const module: TestingModule = await Test.createTestingModule({
@@ -51,7 +54,7 @@ describe('InAppNotificationHandler', () => {
     const event = new NotificationDispatchedEvent(
       { type: NotificationType.SYSTEM, title: 'T', content: 'C' },
       ['u1'],
-      [NotificationChannel.EMAIL]
+      [NotificationChannel.EMAIL],
     );
 
     await handler.handle(event);
@@ -63,7 +66,7 @@ describe('InAppNotificationHandler', () => {
     const event = new NotificationDispatchedEvent(
       { type: NotificationType.SYSTEM, title: 'T', content: 'C' },
       ['u1', 'u2'],
-      [NotificationChannel.IN_APP]
+      [NotificationChannel.IN_APP],
     );
 
     mockNotificationRepo.save.mockImplementation(async (noti: any) => {
@@ -75,9 +78,13 @@ describe('InAppNotificationHandler', () => {
     expect(mockNotificationRepo.save).toHaveBeenCalled();
     expect(mockUserNotificationRepo.saveMany).toHaveBeenCalledWith(
       expect.arrayContaining([
-        expect.objectContaining({ props: expect.objectContaining({ recipientId: 'u1', notificationId: 'noti-123' }) }),
-        expect.objectContaining({ props: expect.objectContaining({ recipientId: 'u2', notificationId: 'noti-123' }) }),
-      ])
+        expect.objectContaining({
+          props: expect.objectContaining({ recipientId: 'u1', notificationId: 'noti-123' }),
+        }),
+        expect.objectContaining({
+          props: expect.objectContaining({ recipientId: 'u2', notificationId: 'noti-123' }),
+        }),
+      ]),
     );
   });
 });

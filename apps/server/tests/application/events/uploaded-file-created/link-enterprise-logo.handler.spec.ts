@@ -18,7 +18,9 @@ describe('LinkEnterpriseLogoHandler', () => {
     const enterprise = { id: 'ent-1', update: jest.fn() };
     mockEnterpriseRepository.findById.mockResolvedValue(enterprise);
 
-    await handler.handle(new UploadedFileCreatedEvent('file-1', TargetType.ENTERPRISE, 'ent-1', 'logo'));
+    await handler.handle(
+      new UploadedFileCreatedEvent('file-1', TargetType.ENTERPRISE, 'ent-1', 'logo'),
+    );
 
     expect(enterprise.update).toHaveBeenCalledWith({ logoUrlId: 'file-1' });
     expect(mockEnterpriseRepository.save).toHaveBeenCalledWith(enterprise);
@@ -28,7 +30,9 @@ describe('LinkEnterpriseLogoHandler', () => {
     const enterprise = { id: 'ent-1', update: jest.fn() };
     mockEnterpriseRepository.findById.mockResolvedValue(enterprise);
 
-    await handler.handle(new UploadedFileCreatedEvent('file-2', TargetType.ENTERPRISE, 'ent-1', 'logoUrlId'));
+    await handler.handle(
+      new UploadedFileCreatedEvent('file-2', TargetType.ENTERPRISE, 'ent-1', 'logoUrlId'),
+    );
 
     expect(enterprise.update).toHaveBeenCalledWith({ logoUrlId: 'file-2' });
   });
@@ -39,13 +43,17 @@ describe('LinkEnterpriseLogoHandler', () => {
   });
 
   it('should ignore non-matching fields', async () => {
-    await handler.handle(new UploadedFileCreatedEvent('file-1', TargetType.ENTERPRISE, 'ent-1', 'avatar'));
+    await handler.handle(
+      new UploadedFileCreatedEvent('file-1', TargetType.ENTERPRISE, 'ent-1', 'avatar'),
+    );
     expect(mockEnterpriseRepository.findById).not.toHaveBeenCalled();
   });
 
   it('should silently skip if enterprise not found', async () => {
     mockEnterpriseRepository.findById.mockResolvedValue(null);
-    await handler.handle(new UploadedFileCreatedEvent('file-1', TargetType.ENTERPRISE, 'nonexistent', 'logo'));
+    await handler.handle(
+      new UploadedFileCreatedEvent('file-1', TargetType.ENTERPRISE, 'nonexistent', 'logo'),
+    );
     expect(mockEnterpriseRepository.save).not.toHaveBeenCalled();
   });
 });

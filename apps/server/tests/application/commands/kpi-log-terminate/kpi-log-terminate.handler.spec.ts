@@ -1,8 +1,8 @@
-import { KpiLogTerminateCommandHandler } from '@/application/commands/kpi-log-terminate/kpi-log-terminate.handler';
 import { KpiLogTerminateCommand } from '@/application/commands/kpi-log-terminate/kpi-log-terminate.command';
-import { CampaignParticipantRoot } from '@/core/aggregate-roots/campaign-participant.aggregate';
-import { EParticipantStatus, EOutputStatus, EOutputType } from '@/core/enums';
+import { KpiLogTerminateCommandHandler } from '@/application/commands/kpi-log-terminate/kpi-log-terminate.handler';
 import { KpiTrackingTerminatedEvent } from '@/application/events';
+import { CampaignParticipantRoot } from '@/core/aggregate-roots/campaign-participant.aggregate';
+import { EOutputStatus, EOutputType, EParticipantStatus } from '@/core/enums';
 
 describe('KpiLogTerminateCommandHandler', () => {
   let handler: KpiLogTerminateCommandHandler;

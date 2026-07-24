@@ -53,7 +53,16 @@
         "confidence": 0.98,
         "status": "needs_review",
         "isRequired": true,
-        "provenance": [{ "id": "prov-site-name", "sourceType": "website", "label": "Trang chủ The TutorX", "url": "https://thetutorx.vn/", "observedAt": "2026-07-15", "note": "Tên hiển thị công khai trên trang chủ." }],
+        "provenance": [
+          {
+            "id": "prov-site-name",
+            "sourceType": "website",
+            "label": "Trang chủ The TutorX",
+            "url": "https://thetutorx.vn/",
+            "observedAt": "2026-07-15",
+            "note": "Tên hiển thị công khai trên trang chủ."
+          }
+        ],
         "updatedAt": "2026-07-15T09:00:00+07:00",
         "confirmedAt": null
       },
@@ -66,7 +75,16 @@
         "confidence": 0.9,
         "status": "needs_review",
         "isRequired": true,
-        "provenance": [{ "id": "prov-linkedin-tagline", "sourceType": "social", "label": "LinkedIn The TutorX Việt Nam", "url": "https://linkedin.com/in/h%E1%BB%8Dc-vi%E1%BB%87n-gia-s%C6%B0-the-tutorx-vi%E1%BB%87t-nam", "observedAt": "2026-07-15", "note": "Thông điệp xuất hiện trong phần chữ ký bài đăng công khai." }],
+        "provenance": [
+          {
+            "id": "prov-linkedin-tagline",
+            "sourceType": "social",
+            "label": "LinkedIn The TutorX Việt Nam",
+            "url": "https://linkedin.com/in/h%E1%BB%8Dc-vi%E1%BB%87n-gia-s%C6%B0-the-tutorx-vi%E1%BB%87t-nam",
+            "observedAt": "2026-07-15",
+            "note": "Thông điệp xuất hiện trong phần chữ ký bài đăng công khai."
+          }
+        ],
         "updatedAt": "2026-07-15T09:00:00+07:00",
         "confirmedAt": null
       },
@@ -79,7 +97,16 @@
         "confidence": 0.95,
         "status": "needs_review",
         "isRequired": true,
-        "provenance": [{ "id": "prov-site-founded", "sourceType": "website", "label": "Giới thiệu The TutorX", "url": "https://thetutorx.vn/", "observedAt": "2026-07-15", "note": "Website công khai nêu đơn vị hoạt động từ năm 2012." }],
+        "provenance": [
+          {
+            "id": "prov-site-founded",
+            "sourceType": "website",
+            "label": "Giới thiệu The TutorX",
+            "url": "https://thetutorx.vn/",
+            "observedAt": "2026-07-15",
+            "note": "Website công khai nêu đơn vị hoạt động từ năm 2012."
+          }
+        ],
         "updatedAt": "2026-07-15T09:00:00+07:00",
         "confirmedAt": null
       },
@@ -92,7 +119,16 @@
         "confidence": 1,
         "status": "confirmed",
         "isRequired": true,
-        "provenance": [{ "id": "prov-user-website", "sourceType": "user", "label": "Thông tin người dùng cung cấp", "url": "https://thetutorx.vn/", "observedAt": "2026-07-15", "note": "URL được người dùng chỉ định làm nguồn khởi tạo workspace." }],
+        "provenance": [
+          {
+            "id": "prov-user-website",
+            "sourceType": "user",
+            "label": "Thông tin người dùng cung cấp",
+            "url": "https://thetutorx.vn/",
+            "observedAt": "2026-07-15",
+            "note": "URL được người dùng chỉ định làm nguồn khởi tạo workspace."
+          }
+        ],
         "updatedAt": "2026-07-15T09:00:00+07:00",
         "confirmedAt": "2026-07-15T09:00:00+07:00"
       },
@@ -105,7 +141,16 @@
         "confidence": 1,
         "status": "confirmed",
         "isRequired": true,
-        "provenance": [{ "id": "prov-user-phone", "sourceType": "user", "label": "Thông tin người dùng cung cấp", "url": null, "observedAt": "2026-07-15", "note": "Hotline trùng với thông tin công khai trên website." }],
+        "provenance": [
+          {
+            "id": "prov-user-phone",
+            "sourceType": "user",
+            "label": "Thông tin người dùng cung cấp",
+            "url": null,
+            "observedAt": "2026-07-15",
+            "note": "Hotline trùng với thông tin công khai trên website."
+          }
+        ],
         "updatedAt": "2026-07-15T09:00:00+07:00",
         "confirmedAt": "2026-07-15T09:00:00+07:00"
       },
@@ -118,7 +163,16 @@
         "confidence": 1,
         "status": "confirmed",
         "isRequired": true,
-        "provenance": [{ "id": "prov-user-email", "sourceType": "user", "label": "Thông tin người dùng cung cấp", "url": null, "observedAt": "2026-07-15", "note": "Email trùng với thông tin công khai trên website." }],
+        "provenance": [
+          {
+            "id": "prov-user-email",
+            "sourceType": "user",
+            "label": "Thông tin người dùng cung cấp",
+            "url": null,
+            "observedAt": "2026-07-15",
+            "note": "Email trùng với thông tin công khai trên website."
+          }
+        ],
         "updatedAt": "2026-07-15T09:00:00+07:00",
         "confirmedAt": "2026-07-15T09:00:00+07:00"
       },
@@ -131,7 +185,16 @@
         "confidence": 0.96,
         "status": "needs_review",
         "isRequired": false,
-        "provenance": [{ "id": "prov-site-address", "sourceType": "website", "label": "Chân trang The TutorX", "url": "https://thetutorx.vn/", "observedAt": "2026-07-15", "note": "Địa chỉ được hiển thị ở chân trang website." }],
+        "provenance": [
+          {
+            "id": "prov-site-address",
+            "sourceType": "website",
+            "label": "Chân trang The TutorX",
+            "url": "https://thetutorx.vn/",
+            "observedAt": "2026-07-15",
+            "note": "Địa chỉ được hiển thị ở chân trang website."
+          }
+        ],
         "updatedAt": "2026-07-15T09:00:00+07:00",
         "confirmedAt": null
       },
@@ -144,7 +207,16 @@
         "confidence": 0.94,
         "status": "needs_review",
         "isRequired": true,
-        "provenance": [{ "id": "prov-site-service", "sourceType": "website", "label": "Dịch vụ gia sư", "url": "https://thetutorx.vn/", "observedAt": "2026-07-15", "note": "Tổng hợp từ menu dịch vụ và phần giới thiệu công khai." }],
+        "provenance": [
+          {
+            "id": "prov-site-service",
+            "sourceType": "website",
+            "label": "Dịch vụ gia sư",
+            "url": "https://thetutorx.vn/",
+            "observedAt": "2026-07-15",
+            "note": "Tổng hợp từ menu dịch vụ và phần giới thiệu công khai."
+          }
+        ],
         "updatedAt": "2026-07-15T09:00:00+07:00",
         "confirmedAt": null
       },
@@ -157,7 +229,16 @@
         "confidence": 0.9,
         "status": "needs_review",
         "isRequired": false,
-        "provenance": [{ "id": "prov-site-exam", "sourceType": "website", "label": "Biểu mẫu tư vấn môn học", "url": "https://thetutorx.vn/", "observedAt": "2026-07-15", "note": "Các nhóm môn và chứng chỉ được liệt kê trên biểu mẫu tư vấn công khai." }],
+        "provenance": [
+          {
+            "id": "prov-site-exam",
+            "sourceType": "website",
+            "label": "Biểu mẫu tư vấn môn học",
+            "url": "https://thetutorx.vn/",
+            "observedAt": "2026-07-15",
+            "note": "Các nhóm môn và chứng chỉ được liệt kê trên biểu mẫu tư vấn công khai."
+          }
+        ],
         "updatedAt": "2026-07-15T09:00:00+07:00",
         "confirmedAt": null
       },
@@ -170,7 +251,16 @@
         "confidence": 0.91,
         "status": "needs_review",
         "isRequired": true,
-        "provenance": [{ "id": "prov-site-audience", "sourceType": "website", "label": "Khu vực dành cho phụ huynh và học sinh", "url": "https://thetutorx.vn/", "observedAt": "2026-07-15", "note": "Suy ra trực tiếp từ nhóm trang và CTA công khai." }],
+        "provenance": [
+          {
+            "id": "prov-site-audience",
+            "sourceType": "website",
+            "label": "Khu vực dành cho phụ huynh và học sinh",
+            "url": "https://thetutorx.vn/",
+            "observedAt": "2026-07-15",
+            "note": "Suy ra trực tiếp từ nhóm trang và CTA công khai."
+          }
+        ],
         "updatedAt": "2026-07-15T09:00:00+07:00",
         "confirmedAt": null
       },
@@ -183,7 +273,16 @@
         "confidence": 0.86,
         "status": "needs_review",
         "isRequired": false,
-        "provenance": [{ "id": "prov-site-tutor", "sourceType": "website", "label": "Khu vực dành cho gia sư", "url": "https://thetutorx.vn/", "observedAt": "2026-07-15", "note": "Suy ra từ luồng đăng ký và tuyển dụng gia sư trên website." }],
+        "provenance": [
+          {
+            "id": "prov-site-tutor",
+            "sourceType": "website",
+            "label": "Khu vực dành cho gia sư",
+            "url": "https://thetutorx.vn/",
+            "observedAt": "2026-07-15",
+            "note": "Suy ra từ luồng đăng ký và tuyển dụng gia sư trên website."
+          }
+        ],
         "updatedAt": "2026-07-15T09:00:00+07:00",
         "confirmedAt": null
       },
@@ -196,7 +295,16 @@
         "confidence": 0.95,
         "status": "needs_review",
         "isRequired": true,
-        "provenance": [{ "id": "prov-site-mission", "sourceType": "website", "label": "Mục Sứ mệnh", "url": "https://thetutorx.vn/", "observedAt": "2026-07-15", "note": "Tóm lược sát nghĩa từ phần Sứ mệnh công khai." }],
+        "provenance": [
+          {
+            "id": "prov-site-mission",
+            "sourceType": "website",
+            "label": "Mục Sứ mệnh",
+            "url": "https://thetutorx.vn/",
+            "observedAt": "2026-07-15",
+            "note": "Tóm lược sát nghĩa từ phần Sứ mệnh công khai."
+          }
+        ],
         "updatedAt": "2026-07-15T09:00:00+07:00",
         "confirmedAt": null
       },
@@ -209,7 +317,16 @@
         "confidence": 0.82,
         "status": "needs_review",
         "isRequired": false,
-        "provenance": [{ "id": "prov-site-proof-tutors", "sourceType": "website", "label": "Khối số liệu trang chủ", "url": "https://thetutorx.vn/", "observedAt": "2026-07-15", "note": "Số liệu marketing công khai; nên xác nhận thời điểm và định nghĩa trước khi dùng trong nội dung." }],
+        "provenance": [
+          {
+            "id": "prov-site-proof-tutors",
+            "sourceType": "website",
+            "label": "Khối số liệu trang chủ",
+            "url": "https://thetutorx.vn/",
+            "observedAt": "2026-07-15",
+            "note": "Số liệu marketing công khai; nên xác nhận thời điểm và định nghĩa trước khi dùng trong nội dung."
+          }
+        ],
         "updatedAt": "2026-07-15T09:00:00+07:00",
         "confirmedAt": null
       },
@@ -222,7 +339,16 @@
         "confidence": 0.8,
         "status": "needs_review",
         "isRequired": false,
-        "provenance": [{ "id": "prov-site-proof-sessions", "sourceType": "website", "label": "Khối số liệu trang chủ", "url": "https://thetutorx.vn/", "observedAt": "2026-07-15", "note": "Số liệu marketing công khai; cần xác nhận định nghĩa và kỳ đo." }],
+        "provenance": [
+          {
+            "id": "prov-site-proof-sessions",
+            "sourceType": "website",
+            "label": "Khối số liệu trang chủ",
+            "url": "https://thetutorx.vn/",
+            "observedAt": "2026-07-15",
+            "note": "Số liệu marketing công khai; cần xác nhận định nghĩa và kỳ đo."
+          }
+        ],
         "updatedAt": "2026-07-15T09:00:00+07:00",
         "confirmedAt": null
       },
@@ -235,7 +361,16 @@
         "confidence": 0.72,
         "status": "needs_review",
         "isRequired": true,
-        "provenance": [{ "id": "prov-analysis-voice", "sourceType": "analysis", "label": "Phân tích nội dung công khai", "url": "https://thetutorx.vn/", "observedAt": "2026-07-15", "note": "Kết luận phân tích ban đầu; cần người dùng duyệt trước khi tạo Brand Voice Profile v1." }],
+        "provenance": [
+          {
+            "id": "prov-analysis-voice",
+            "sourceType": "analysis",
+            "label": "Phân tích nội dung công khai",
+            "url": "https://thetutorx.vn/",
+            "observedAt": "2026-07-15",
+            "note": "Kết luận phân tích ban đầu; cần người dùng duyệt trước khi tạo Brand Voice Profile v1."
+          }
+        ],
         "updatedAt": "2026-07-15T09:00:00+07:00",
         "confirmedAt": null
       }
@@ -260,11 +395,47 @@
       "status": "confirmed",
       "dataQuality": "user_provided",
       "metrics": [
-        { "id": "web-visits", "label": "Lượt truy cập", "value": 18400, "formattedValue": "18,4K", "unit": "count", "period": "30 ngày gần nhất", "deltaPercent": 12.4, "dataQuality": "estimated" },
-        { "id": "web-form-rate", "label": "Tỷ lệ gửi form", "value": 2.8, "formattedValue": "2,8%", "unit": "percent", "period": "30 ngày gần nhất", "deltaPercent": 0.4, "dataQuality": "estimated" },
-        { "id": "web-leads", "label": "Lead tư vấn", "value": 515, "formattedValue": "515", "unit": "count", "period": "30 ngày gần nhất", "deltaPercent": 8.1, "dataQuality": "estimated" }
+        {
+          "id": "web-visits",
+          "label": "Lượt truy cập",
+          "value": 18400,
+          "formattedValue": "18,4K",
+          "unit": "count",
+          "period": "30 ngày gần nhất",
+          "deltaPercent": 12.4,
+          "dataQuality": "estimated"
+        },
+        {
+          "id": "web-form-rate",
+          "label": "Tỷ lệ gửi form",
+          "value": 2.8,
+          "formattedValue": "2,8%",
+          "unit": "percent",
+          "period": "30 ngày gần nhất",
+          "deltaPercent": 0.4,
+          "dataQuality": "estimated"
+        },
+        {
+          "id": "web-leads",
+          "label": "Lead tư vấn",
+          "value": 515,
+          "formattedValue": "515",
+          "unit": "count",
+          "period": "30 ngày gần nhất",
+          "deltaPercent": 8.1,
+          "dataQuality": "estimated"
+        }
       ],
-      "provenance": [{ "id": "prov-user-channel-web", "sourceType": "user", "label": "Website do người dùng cung cấp", "url": "https://thetutorx.vn/", "observedAt": "2026-07-15", "note": "Hồ sơ và URL đã được điền; chỉ số hiệu quả đang là ước tính vì chưa kết nối analytics." }],
+      "provenance": [
+        {
+          "id": "prov-user-channel-web",
+          "sourceType": "user",
+          "label": "Website do người dùng cung cấp",
+          "url": "https://thetutorx.vn/",
+          "observedAt": "2026-07-15",
+          "note": "Hồ sơ và URL đã được điền; chỉ số hiệu quả đang là ước tính vì chưa kết nối analytics."
+        }
+      ],
       "lastSyncedAt": "2026-07-15T08:45:00+07:00",
       "confirmedAt": "2026-07-15T09:00:00+07:00"
     },
@@ -286,11 +457,47 @@
       "status": "needs_review",
       "dataQuality": "verified",
       "metrics": [
-        { "id": "fb-followers", "label": "Người theo dõi", "value": 24800, "formattedValue": "24,8K", "unit": "count", "period": "Ước tính 15/07/2026", "deltaPercent": 3.2, "dataQuality": "estimated" },
-        { "id": "fb-reach", "label": "Tiếp cận", "value": 126000, "formattedValue": "126K", "unit": "count", "period": "30 ngày gần nhất", "deltaPercent": 18.7, "dataQuality": "estimated" },
-        { "id": "fb-engagement", "label": "Tỷ lệ tương tác", "value": 4.6, "formattedValue": "4,6%", "unit": "percent", "period": "30 ngày gần nhất", "deltaPercent": 0.8, "dataQuality": "estimated" }
+        {
+          "id": "fb-followers",
+          "label": "Người theo dõi",
+          "value": 24800,
+          "formattedValue": "24,8K",
+          "unit": "count",
+          "period": "Ước tính 15/07/2026",
+          "deltaPercent": 3.2,
+          "dataQuality": "estimated"
+        },
+        {
+          "id": "fb-reach",
+          "label": "Tiếp cận",
+          "value": 126000,
+          "formattedValue": "126K",
+          "unit": "count",
+          "period": "30 ngày gần nhất",
+          "deltaPercent": 18.7,
+          "dataQuality": "estimated"
+        },
+        {
+          "id": "fb-engagement",
+          "label": "Tỷ lệ tương tác",
+          "value": 4.6,
+          "formattedValue": "4,6%",
+          "unit": "percent",
+          "period": "30 ngày gần nhất",
+          "deltaPercent": 0.8,
+          "dataQuality": "estimated"
+        }
       ],
-      "provenance": [{ "id": "prov-site-facebook", "sourceType": "website", "label": "Liên kết Facebook trên website", "url": "https://www.facebook.com/thetutorX.vn", "observedAt": "2026-07-15", "note": "URL được website chính thức liên kết; chỉ số chưa kết nối API và đang là ước tính." }],
+      "provenance": [
+        {
+          "id": "prov-site-facebook",
+          "sourceType": "website",
+          "label": "Liên kết Facebook trên website",
+          "url": "https://www.facebook.com/thetutorX.vn",
+          "observedAt": "2026-07-15",
+          "note": "URL được website chính thức liên kết; chỉ số chưa kết nối API và đang là ước tính."
+        }
+      ],
       "lastSyncedAt": null,
       "confirmedAt": null
     },
@@ -312,11 +519,47 @@
       "status": "needs_review",
       "dataQuality": "user_provided",
       "metrics": [
-        { "id": "tt-followers", "label": "Người theo dõi", "value": 16300, "formattedValue": "16,3K", "unit": "count", "period": "Ước tính 15/07/2026", "deltaPercent": 6.4, "dataQuality": "estimated" },
-        { "id": "tt-views", "label": "Lượt xem video", "value": 284000, "formattedValue": "284K", "unit": "count", "period": "30 ngày gần nhất", "deltaPercent": 22.1, "dataQuality": "estimated" },
-        { "id": "tt-completion", "label": "Tỷ lệ xem hết", "value": 31.8, "formattedValue": "31,8%", "unit": "percent", "period": "30 ngày gần nhất", "deltaPercent": 2.6, "dataQuality": "estimated" }
+        {
+          "id": "tt-followers",
+          "label": "Người theo dõi",
+          "value": 16300,
+          "formattedValue": "16,3K",
+          "unit": "count",
+          "period": "Ước tính 15/07/2026",
+          "deltaPercent": 6.4,
+          "dataQuality": "estimated"
+        },
+        {
+          "id": "tt-views",
+          "label": "Lượt xem video",
+          "value": 284000,
+          "formattedValue": "284K",
+          "unit": "count",
+          "period": "30 ngày gần nhất",
+          "deltaPercent": 22.1,
+          "dataQuality": "estimated"
+        },
+        {
+          "id": "tt-completion",
+          "label": "Tỷ lệ xem hết",
+          "value": 31.8,
+          "formattedValue": "31,8%",
+          "unit": "percent",
+          "period": "30 ngày gần nhất",
+          "deltaPercent": 2.6,
+          "dataQuality": "estimated"
+        }
       ],
-      "provenance": [{ "id": "prov-user-tiktok", "sourceType": "user", "label": "TikTok do người dùng cung cấp", "url": "https://tiktok.com/@thetutorx", "observedAt": "2026-07-15", "note": "Đã chuẩn hóa URL được cung cấp; chỉ số đang là ước tính, chưa xác minh qua API." }],
+      "provenance": [
+        {
+          "id": "prov-user-tiktok",
+          "sourceType": "user",
+          "label": "TikTok do người dùng cung cấp",
+          "url": "https://tiktok.com/@thetutorx",
+          "observedAt": "2026-07-15",
+          "note": "Đã chuẩn hóa URL được cung cấp; chỉ số đang là ước tính, chưa xác minh qua API."
+        }
+      ],
       "lastSyncedAt": null,
       "confirmedAt": null
     },
@@ -338,11 +581,47 @@
       "status": "needs_review",
       "dataQuality": "user_provided",
       "metrics": [
-        { "id": "yt-subscribers", "label": "Người đăng ký", "value": 4280, "formattedValue": "4,28K", "unit": "count", "period": "Ước tính 15/07/2026", "deltaPercent": 4.1, "dataQuality": "estimated" },
-        { "id": "yt-views", "label": "Lượt xem", "value": 42700, "formattedValue": "42,7K", "unit": "count", "period": "30 ngày gần nhất", "deltaPercent": 15.2, "dataQuality": "estimated" },
-        { "id": "yt-watch", "label": "Thời lượng xem", "value": 1840, "formattedValue": "1.840 phút", "unit": "minutes", "period": "30 ngày gần nhất", "deltaPercent": 9.6, "dataQuality": "estimated" }
+        {
+          "id": "yt-subscribers",
+          "label": "Người đăng ký",
+          "value": 4280,
+          "formattedValue": "4,28K",
+          "unit": "count",
+          "period": "Ước tính 15/07/2026",
+          "deltaPercent": 4.1,
+          "dataQuality": "estimated"
+        },
+        {
+          "id": "yt-views",
+          "label": "Lượt xem",
+          "value": 42700,
+          "formattedValue": "42,7K",
+          "unit": "count",
+          "period": "30 ngày gần nhất",
+          "deltaPercent": 15.2,
+          "dataQuality": "estimated"
+        },
+        {
+          "id": "yt-watch",
+          "label": "Thời lượng xem",
+          "value": 1840,
+          "formattedValue": "1.840 phút",
+          "unit": "minutes",
+          "period": "30 ngày gần nhất",
+          "deltaPercent": 9.6,
+          "dataQuality": "estimated"
+        }
       ],
-      "provenance": [{ "id": "prov-user-youtube", "sourceType": "user", "label": "YouTube do người dùng cung cấp", "url": "https://youtube.com/@thetutorx.vietnam", "observedAt": "2026-07-15", "note": "Đã chuẩn hóa URL đích từ liên kết người dùng gửi; chỉ số đang là ước tính." }],
+      "provenance": [
+        {
+          "id": "prov-user-youtube",
+          "sourceType": "user",
+          "label": "YouTube do người dùng cung cấp",
+          "url": "https://youtube.com/@thetutorx.vietnam",
+          "observedAt": "2026-07-15",
+          "note": "Đã chuẩn hóa URL đích từ liên kết người dùng gửi; chỉ số đang là ước tính."
+        }
+      ],
       "lastSyncedAt": null,
       "confirmedAt": null
     },
@@ -364,11 +643,47 @@
       "status": "needs_review",
       "dataQuality": "user_provided",
       "metrics": [
-        { "id": "li-followers", "label": "Người theo dõi", "value": 267, "formattedValue": "267", "unit": "count", "period": "Ước tính 15/07/2026", "deltaPercent": 7.2, "dataQuality": "estimated" },
-        { "id": "li-impressions", "label": "Lượt hiển thị", "value": 12800, "formattedValue": "12,8K", "unit": "count", "period": "30 ngày gần nhất", "deltaPercent": 11.5, "dataQuality": "estimated" },
-        { "id": "li-engagement", "label": "Tỷ lệ tương tác", "value": 5.2, "formattedValue": "5,2%", "unit": "percent", "period": "30 ngày gần nhất", "deltaPercent": 1.1, "dataQuality": "estimated" }
+        {
+          "id": "li-followers",
+          "label": "Người theo dõi",
+          "value": 267,
+          "formattedValue": "267",
+          "unit": "count",
+          "period": "Ước tính 15/07/2026",
+          "deltaPercent": 7.2,
+          "dataQuality": "estimated"
+        },
+        {
+          "id": "li-impressions",
+          "label": "Lượt hiển thị",
+          "value": 12800,
+          "formattedValue": "12,8K",
+          "unit": "count",
+          "period": "30 ngày gần nhất",
+          "deltaPercent": 11.5,
+          "dataQuality": "estimated"
+        },
+        {
+          "id": "li-engagement",
+          "label": "Tỷ lệ tương tác",
+          "value": 5.2,
+          "formattedValue": "5,2%",
+          "unit": "percent",
+          "period": "30 ngày gần nhất",
+          "deltaPercent": 1.1,
+          "dataQuality": "estimated"
+        }
       ],
-      "provenance": [{ "id": "prov-user-linkedin", "sourceType": "user", "label": "LinkedIn do người dùng cung cấp", "url": "https://linkedin.com/in/h%E1%BB%8Dc-vi%E1%BB%87n-gia-s%C6%B0-the-tutorx-vi%E1%BB%87t-nam", "observedAt": "2026-07-15", "note": "Hồ sơ do người dùng chỉ định; metrics công khai chưa được kết nối nên đánh dấu ước tính." }],
+      "provenance": [
+        {
+          "id": "prov-user-linkedin",
+          "sourceType": "user",
+          "label": "LinkedIn do người dùng cung cấp",
+          "url": "https://linkedin.com/in/h%E1%BB%8Dc-vi%E1%BB%87n-gia-s%C6%B0-the-tutorx-vi%E1%BB%87t-nam",
+          "observedAt": "2026-07-15",
+          "note": "Hồ sơ do người dùng chỉ định; metrics công khai chưa được kết nối nên đánh dấu ước tính."
+        }
+      ],
       "lastSyncedAt": null,
       "confirmedAt": null
     },
@@ -390,11 +705,47 @@
       "status": "needs_review",
       "dataQuality": "user_provided",
       "metrics": [
-        { "id": "x-followers", "label": "Người theo dõi", "value": 920, "formattedValue": "920", "unit": "count", "period": "Ước tính 15/07/2026", "deltaPercent": 2.1, "dataQuality": "estimated" },
-        { "id": "x-impressions", "label": "Lượt hiển thị", "value": 18600, "formattedValue": "18,6K", "unit": "count", "period": "30 ngày gần nhất", "deltaPercent": 5.8, "dataQuality": "estimated" },
-        { "id": "x-engagement", "label": "Tỷ lệ tương tác", "value": 2.9, "formattedValue": "2,9%", "unit": "percent", "period": "30 ngày gần nhất", "deltaPercent": -0.3, "dataQuality": "estimated" }
+        {
+          "id": "x-followers",
+          "label": "Người theo dõi",
+          "value": 920,
+          "formattedValue": "920",
+          "unit": "count",
+          "period": "Ước tính 15/07/2026",
+          "deltaPercent": 2.1,
+          "dataQuality": "estimated"
+        },
+        {
+          "id": "x-impressions",
+          "label": "Lượt hiển thị",
+          "value": 18600,
+          "formattedValue": "18,6K",
+          "unit": "count",
+          "period": "30 ngày gần nhất",
+          "deltaPercent": 5.8,
+          "dataQuality": "estimated"
+        },
+        {
+          "id": "x-engagement",
+          "label": "Tỷ lệ tương tác",
+          "value": 2.9,
+          "formattedValue": "2,9%",
+          "unit": "percent",
+          "period": "30 ngày gần nhất",
+          "deltaPercent": -0.3,
+          "dataQuality": "estimated"
+        }
       ],
-      "provenance": [{ "id": "prov-user-x", "sourceType": "user", "label": "X do người dùng cung cấp", "url": "https://x.com/thetutorxvn", "observedAt": "2026-07-15", "note": "Đã chuẩn hóa URL đích từ liên kết người dùng gửi; chỉ số đang là ước tính." }],
+      "provenance": [
+        {
+          "id": "prov-user-x",
+          "sourceType": "user",
+          "label": "X do người dùng cung cấp",
+          "url": "https://x.com/thetutorxvn",
+          "observedAt": "2026-07-15",
+          "note": "Đã chuẩn hóa URL đích từ liên kết người dùng gửi; chỉ số đang là ước tính."
+        }
+      ],
       "lastSyncedAt": null,
       "confirmedAt": null
     }
@@ -405,7 +756,11 @@
       "platform": "facebook",
       "priority": "high",
       "status": "suggested",
-      "rationale": ["Tạo không gian hỏi đáp riêng cho phụ huynh thay vì dồn mọi nội dung lên fanpage chính", "Thu thập câu hỏi thật để tạo FAQ có chất lượng", "Nuôi dưỡng lead bằng giá trị trước khi tư vấn"],
+      "rationale": [
+        "Tạo không gian hỏi đáp riêng cho phụ huynh thay vì dồn mọi nội dung lên fanpage chính",
+        "Thu thập câu hỏi thật để tạo FAQ có chất lượng",
+        "Nuôi dưỡng lead bằng giá trị trước khi tư vấn"
+      ],
       "projectedImpact": "Tăng lượng hội thoại chất lượng và lead tư vấn từ cộng đồng trong 60–90 ngày.",
       "effort": "medium",
       "confidence": 0.78,
@@ -416,14 +771,28 @@
         "bio": "Cộng đồng phụ huynh cùng chuyên gia The TutorX gỡ rối việc học và xây lộ trình phù hợp cho con.",
         "role": "Cộng đồng tư vấn và nuôi dưỡng phụ huynh",
         "audience": ["Phụ huynh có con từ lớp 5 đến lớp 12", "Phụ huynh trường song ngữ và quốc tế"],
-        "contentPillars": ["Hỏi đáp cùng chuyên gia", "Dấu hiệu cần hỗ trợ", "Lộ trình theo độ tuổi", "Câu chuyện phụ huynh"],
+        "contentPillars": [
+          "Hỏi đáp cùng chuyên gia",
+          "Dấu hiệu cần hỗ trợ",
+          "Lộ trình theo độ tuổi",
+          "Câu chuyện phụ huynh"
+        ],
         "formats": ["Bài hỏi đáp", "Livestream kín", "Checklist", "Poll"],
         "tone": "Đồng cảm, bảo mật, không phán xét",
         "cadence": "4 bài + 1 phiên hỏi đáp/tuần",
         "cta": "Đặt câu hỏi hoặc đăng ký đánh giá năng lực",
-        "guardrails": ["Không công khai dữ liệu cá nhân của học sinh", "Không chẩn đoán tâm lý", "Mọi tuyên bố kết quả cần nguồn hoặc ghi rõ là ví dụ"]
+        "guardrails": [
+          "Không công khai dữ liệu cá nhân của học sinh",
+          "Không chẩn đoán tâm lý",
+          "Mọi tuyên bố kết quả cần nguồn hoặc ghi rõ là ví dụ"
+        ]
       },
-      "nextSteps": ["Xác nhận tên và phạm vi cộng đồng", "Chỉ định moderator", "Chuẩn bị 12 bài mồi", "Mời nhóm phụ huynh đầu tiên"],
+      "nextSteps": [
+        "Xác nhận tên và phạm vi cộng đồng",
+        "Chỉ định moderator",
+        "Chuẩn bị 12 bài mồi",
+        "Mời nhóm phụ huynh đầu tiên"
+      ],
       "confirmedAt": null
     },
     {
@@ -431,7 +800,11 @@
       "platform": "tiktok",
       "priority": "medium",
       "status": "suggested",
-      "rationale": ["Tách thông điệp tuyển dụng và phát triển gia sư khỏi kênh hướng đến phụ huynh", "Xây hình ảnh hệ thống đào tạo gia sư", "Tạo nguồn ứng viên tự nhiên bằng nội dung nghề nghiệp"],
+      "rationale": [
+        "Tách thông điệp tuyển dụng và phát triển gia sư khỏi kênh hướng đến phụ huynh",
+        "Xây hình ảnh hệ thống đào tạo gia sư",
+        "Tạo nguồn ứng viên tự nhiên bằng nội dung nghề nghiệp"
+      ],
       "projectedImpact": "Tăng ứng viên gia sư phù hợp và giảm nhiễu định vị trên TikTok chính.",
       "effort": "medium",
       "confidence": 0.74,
@@ -447,9 +820,18 @@
         "tone": "Thực tế, trẻ, tôn trọng nghề giáo",
         "cadence": "4 video/tuần",
         "cta": "Ứng tuyển hoặc đăng ký buổi định hướng gia sư",
-        "guardrails": ["Không tiết lộ thông tin học viên", "Không hứa chắc thu nhập", "Thông tin lớp phải qua kiểm duyệt"]
+        "guardrails": [
+          "Không tiết lộ thông tin học viên",
+          "Không hứa chắc thu nhập",
+          "Thông tin lớp phải qua kiểm duyệt"
+        ]
       },
-      "nextSteps": ["Xác nhận chủ kênh", "Quay batch 8 video đầu", "Tạo form ứng tuyển có tracking", "Đánh giá sau 30 ngày"],
+      "nextSteps": [
+        "Xác nhận chủ kênh",
+        "Quay batch 8 video đầu",
+        "Tạo form ứng tuyển có tracking",
+        "Đánh giá sau 30 ngày"
+      ],
       "confirmedAt": null
     },
     {
@@ -457,7 +839,11 @@
       "platform": "youtube",
       "priority": "medium",
       "status": "suggested",
-      "rationale": ["Tạo thư viện học tập có tuổi thọ dài và dễ tìm kiếm", "Cho học sinh trải nghiệm chuyên môn trước khi đăng ký", "Tái sử dụng thành Shorts cho nhiều kênh"],
+      "rationale": [
+        "Tạo thư viện học tập có tuổi thọ dài và dễ tìm kiếm",
+        "Cho học sinh trải nghiệm chuyên môn trước khi đăng ký",
+        "Tái sử dụng thành Shorts cho nhiều kênh"
+      ],
       "projectedImpact": "Tăng tìm kiếm thương hiệu và thời gian tiếp xúc với nội dung chuyên môn.",
       "effort": "high",
       "confidence": 0.7,
@@ -473,9 +859,18 @@
         "tone": "Điềm tĩnh, rõ ràng, có cấu trúc",
         "cadence": "1 video dài + 2 Shorts/tuần",
         "cta": "Tải worksheet hoặc đăng ký đánh giá năng lực",
-        "guardrails": ["Kiểm tra đáp án và nguồn trước đăng", "Nêu rõ chương trình áp dụng", "Không sao chép đề thi có bản quyền"]
+        "guardrails": [
+          "Kiểm tra đáp án và nguồn trước đăng",
+          "Nêu rõ chương trình áp dụng",
+          "Không sao chép đề thi có bản quyền"
+        ]
       },
-      "nextSteps": ["Chọn 3 môn ưu tiên", "Thiết kế format video thống nhất", "Sản xuất pilot 3 tập", "Đo retention và lead worksheet"],
+      "nextSteps": [
+        "Chọn 3 môn ưu tiên",
+        "Thiết kế format video thống nhất",
+        "Sản xuất pilot 3 tập",
+        "Đo retention và lead worksheet"
+      ],
       "confirmedAt": null
     }
   ],
@@ -498,34 +893,178 @@
       }
     ],
     "northStar": "Tăng số cuộc tư vấn đủ điều kiện đến từ nội dung hữu ích, đồng thời xây niềm tin với phụ huynh và học sinh.",
-    "objectives": ["Chuẩn hóa hồ sơ thương hiệu và vai trò từng kênh", "Tạo guồng nội dung đa kênh có thể tái sử dụng", "Ra mắt ít nhất một kênh vệ tinh", "Thiết lập đo lường từ tiếp cận đến tư vấn"],
+    "objectives": [
+      "Chuẩn hóa hồ sơ thương hiệu và vai trò từng kênh",
+      "Tạo guồng nội dung đa kênh có thể tái sử dụng",
+      "Ra mắt ít nhất một kênh vệ tinh",
+      "Thiết lập đo lường từ tiếp cận đến tư vấn"
+    ],
     "priorities": [
-      { "id": "priority-confirm", "rank": 1, "title": "Xác nhận dữ kiện và claim", "reason": "Tránh dùng số liệu chưa được người có thẩm quyền duyệt.", "owner": "Workspace Owner", "dueDay": 7, "status": "in_progress" },
-      { "id": "priority-connect", "rank": 2, "title": "Kết nối quyền đọc 4 kênh chính", "reason": "Thay metrics ước tính bằng dữ liệu thật và đo baseline.", "owner": "Admin", "dueDay": 10, "status": "not_started" },
-      { "id": "priority-pillar", "rank": 3, "title": "Duyệt 5 trụ cột nội dung", "reason": "Giữ nội dung nhất quán giữa người viết và agent.", "owner": "Content Manager", "dueDay": 12, "status": "not_started" },
-      { "id": "priority-satellite", "rank": 4, "title": "Chọn kênh vệ tinh pilot", "reason": "Tập trung nguồn lực vào một giả thuyết có thể đo được.", "owner": "Workspace Owner", "dueDay": 20, "status": "not_started" },
-      { "id": "priority-tracking", "rank": 5, "title": "Chuẩn hóa tracking lead", "reason": "Liên kết CTA, form và nguồn nội dung đến kết quả tư vấn.", "owner": "Analyst", "dueDay": 21, "status": "not_started" }
+      {
+        "id": "priority-confirm",
+        "rank": 1,
+        "title": "Xác nhận dữ kiện và claim",
+        "reason": "Tránh dùng số liệu chưa được người có thẩm quyền duyệt.",
+        "owner": "Workspace Owner",
+        "dueDay": 7,
+        "status": "in_progress"
+      },
+      {
+        "id": "priority-connect",
+        "rank": 2,
+        "title": "Kết nối quyền đọc 4 kênh chính",
+        "reason": "Thay metrics ước tính bằng dữ liệu thật và đo baseline.",
+        "owner": "Admin",
+        "dueDay": 10,
+        "status": "not_started"
+      },
+      {
+        "id": "priority-pillar",
+        "rank": 3,
+        "title": "Duyệt 5 trụ cột nội dung",
+        "reason": "Giữ nội dung nhất quán giữa người viết và agent.",
+        "owner": "Content Manager",
+        "dueDay": 12,
+        "status": "not_started"
+      },
+      {
+        "id": "priority-satellite",
+        "rank": 4,
+        "title": "Chọn kênh vệ tinh pilot",
+        "reason": "Tập trung nguồn lực vào một giả thuyết có thể đo được.",
+        "owner": "Workspace Owner",
+        "dueDay": 20,
+        "status": "not_started"
+      },
+      {
+        "id": "priority-tracking",
+        "rank": 5,
+        "title": "Chuẩn hóa tracking lead",
+        "reason": "Liên kết CTA, form và nguồn nội dung đến kết quả tư vấn.",
+        "owner": "Analyst",
+        "dueDay": 21,
+        "status": "not_started"
+      }
     ],
     "contentPillars": [
-      { "id": "pillar-learning", "name": "Hiểu đúng để học tốt", "description": "Giải thích khái niệm, lỗi sai và phương pháp học có thể áp dụng ngay.", "sharePercent": 30, "formats": ["FAQ", "Video ngắn", "Carousel", "Bài chuyên sâu"], "funnelStage": "awareness" },
-      { "id": "pillar-parent", "name": "Đồng hành cùng phụ huynh", "description": "Giúp phụ huynh nhận diện vấn đề và lựa chọn cách hỗ trợ phù hợp.", "sharePercent": 25, "formats": ["Checklist", "Case study", "Livestream", "Q&A"], "funnelStage": "consideration" },
-      { "id": "pillar-progress", "name": "Tiến bộ có lộ trình", "description": "Minh họa quy trình đánh giá, lập lộ trình và theo dõi tiến bộ.", "sharePercent": 20, "formats": ["Case study", "Before/after", "Timeline", "Testimonial"], "funnelStage": "conversion" },
-      { "id": "pillar-tutor", "name": "Người gia sư chất lượng", "description": "Thể hiện tiêu chuẩn tuyển chọn, đào tạo và kỹ năng gia sư.", "sharePercent": 15, "formats": ["Hồ sơ gia sư", "Behind the scenes", "Phỏng vấn", "Tips nghề"], "funnelStage": "consideration" },
-      { "id": "pillar-community", "name": "Better Every Hour", "description": "Khích lệ nỗ lực và kết nối cộng đồng học tập tích cực.", "sharePercent": 10, "formats": ["Quote có ngữ cảnh", "Challenge", "Milestone", "UGC"], "funnelStage": "retention" }
+      {
+        "id": "pillar-learning",
+        "name": "Hiểu đúng để học tốt",
+        "description": "Giải thích khái niệm, lỗi sai và phương pháp học có thể áp dụng ngay.",
+        "sharePercent": 30,
+        "formats": ["FAQ", "Video ngắn", "Carousel", "Bài chuyên sâu"],
+        "funnelStage": "awareness"
+      },
+      {
+        "id": "pillar-parent",
+        "name": "Đồng hành cùng phụ huynh",
+        "description": "Giúp phụ huynh nhận diện vấn đề và lựa chọn cách hỗ trợ phù hợp.",
+        "sharePercent": 25,
+        "formats": ["Checklist", "Case study", "Livestream", "Q&A"],
+        "funnelStage": "consideration"
+      },
+      {
+        "id": "pillar-progress",
+        "name": "Tiến bộ có lộ trình",
+        "description": "Minh họa quy trình đánh giá, lập lộ trình và theo dõi tiến bộ.",
+        "sharePercent": 20,
+        "formats": ["Case study", "Before/after", "Timeline", "Testimonial"],
+        "funnelStage": "conversion"
+      },
+      {
+        "id": "pillar-tutor",
+        "name": "Người gia sư chất lượng",
+        "description": "Thể hiện tiêu chuẩn tuyển chọn, đào tạo và kỹ năng gia sư.",
+        "sharePercent": 15,
+        "formats": ["Hồ sơ gia sư", "Behind the scenes", "Phỏng vấn", "Tips nghề"],
+        "funnelStage": "consideration"
+      },
+      {
+        "id": "pillar-community",
+        "name": "Better Every Hour",
+        "description": "Khích lệ nỗ lực và kết nối cộng đồng học tập tích cực.",
+        "sharePercent": 10,
+        "formats": ["Quote có ngữ cảnh", "Challenge", "Milestone", "UGC"],
+        "funnelStage": "retention"
+      }
     ],
     "funnel": [
-      { "id": "funnel-awareness", "stage": "awareness", "objective": "Được tìm thấy bởi đúng phụ huynh và học sinh", "content": ["Mẹo học", "Giải thích lỗi phổ biến", "Short video"], "cta": "Lưu hoặc theo dõi để xem phần tiếp theo", "successMetric": "Qualified reach và lượt xem hoàn tất" },
-      { "id": "funnel-consideration", "stage": "consideration", "objective": "Chứng minh phương pháp và độ phù hợp", "content": ["Case study", "Checklist", "Workshop", "FAQ phụ huynh"], "cta": "Tải tài liệu hoặc làm bài đánh giá", "successMetric": "Click, tải tài liệu và câu hỏi chất lượng" },
-      { "id": "funnel-conversion", "stage": "conversion", "objective": "Chuyển nhu cầu thành cuộc tư vấn đủ điều kiện", "content": ["Quy trình", "Gói dịch vụ", "Câu chuyện tiến bộ", "Giới thiệu gia sư"], "cta": "Đăng ký tư vấn lộ trình", "successMetric": "Lead đủ điều kiện và lịch tư vấn" },
-      { "id": "funnel-retention", "stage": "retention", "objective": "Giữ kết nối và tạo giới thiệu", "content": ["Milestone", "Tài liệu sau buổi học", "Cộng đồng phụ huynh"], "cta": "Chia sẻ tiến bộ hoặc giới thiệu người cần hỗ trợ", "successMetric": "Tương tác quay lại và referral" }
+      {
+        "id": "funnel-awareness",
+        "stage": "awareness",
+        "objective": "Được tìm thấy bởi đúng phụ huynh và học sinh",
+        "content": ["Mẹo học", "Giải thích lỗi phổ biến", "Short video"],
+        "cta": "Lưu hoặc theo dõi để xem phần tiếp theo",
+        "successMetric": "Qualified reach và lượt xem hoàn tất"
+      },
+      {
+        "id": "funnel-consideration",
+        "stage": "consideration",
+        "objective": "Chứng minh phương pháp và độ phù hợp",
+        "content": ["Case study", "Checklist", "Workshop", "FAQ phụ huynh"],
+        "cta": "Tải tài liệu hoặc làm bài đánh giá",
+        "successMetric": "Click, tải tài liệu và câu hỏi chất lượng"
+      },
+      {
+        "id": "funnel-conversion",
+        "stage": "conversion",
+        "objective": "Chuyển nhu cầu thành cuộc tư vấn đủ điều kiện",
+        "content": ["Quy trình", "Gói dịch vụ", "Câu chuyện tiến bộ", "Giới thiệu gia sư"],
+        "cta": "Đăng ký tư vấn lộ trình",
+        "successMetric": "Lead đủ điều kiện và lịch tư vấn"
+      },
+      {
+        "id": "funnel-retention",
+        "stage": "retention",
+        "objective": "Giữ kết nối và tạo giới thiệu",
+        "content": ["Milestone", "Tài liệu sau buổi học", "Cộng đồng phụ huynh"],
+        "cta": "Chia sẻ tiến bộ hoặc giới thiệu người cần hỗ trợ",
+        "successMetric": "Tương tác quay lại và referral"
+      }
     ],
     "channelPlan": [
-      { "platform": "website", "role": "Nguồn chuyển đổi và nội dung evergreen", "weeklyCadence": "2 bài/chỉnh sửa lớn", "priorityFormats": ["Landing page", "Bài chuyên sâu", "Form đánh giá"], "primaryKpi": "Lead đủ điều kiện" },
-      { "platform": "facebook", "role": "Đối thoại với phụ huynh", "weeklyCadence": "5 bài", "priorityFormats": ["FAQ", "Case study", "Video", "Livestream"], "primaryKpi": "Hội thoại chất lượng" },
-      { "platform": "tiktok", "role": "Khám phá từ học sinh", "weeklyCadence": "5 video", "priorityFormats": ["Series ngắn", "Reply comment", "Hook vấn đề"], "primaryKpi": "Tỷ lệ xem hết" },
-      { "platform": "youtube", "role": "Chuyên môn dài hạn", "weeklyCadence": "1 video dài + 3 Shorts", "priorityFormats": ["Tutorial", "Playlist", "Shorts"], "primaryKpi": "Thời lượng xem" },
-      { "platform": "linkedin", "role": "Uy tín và tuyển dụng", "weeklyCadence": "3 bài", "priorityFormats": ["Thought leadership", "Carousel", "Case study"], "primaryKpi": "Tương tác chất lượng" },
-      { "platform": "x", "role": "Cập nhật và thử nghiệm thông điệp", "weeklyCadence": "7–10 post", "priorityFormats": ["Post ngắn", "Thread", "Poll"], "primaryKpi": "Engagement rate" }
+      {
+        "platform": "website",
+        "role": "Nguồn chuyển đổi và nội dung evergreen",
+        "weeklyCadence": "2 bài/chỉnh sửa lớn",
+        "priorityFormats": ["Landing page", "Bài chuyên sâu", "Form đánh giá"],
+        "primaryKpi": "Lead đủ điều kiện"
+      },
+      {
+        "platform": "facebook",
+        "role": "Đối thoại với phụ huynh",
+        "weeklyCadence": "5 bài",
+        "priorityFormats": ["FAQ", "Case study", "Video", "Livestream"],
+        "primaryKpi": "Hội thoại chất lượng"
+      },
+      {
+        "platform": "tiktok",
+        "role": "Khám phá từ học sinh",
+        "weeklyCadence": "5 video",
+        "priorityFormats": ["Series ngắn", "Reply comment", "Hook vấn đề"],
+        "primaryKpi": "Tỷ lệ xem hết"
+      },
+      {
+        "platform": "youtube",
+        "role": "Chuyên môn dài hạn",
+        "weeklyCadence": "1 video dài + 3 Shorts",
+        "priorityFormats": ["Tutorial", "Playlist", "Shorts"],
+        "primaryKpi": "Thời lượng xem"
+      },
+      {
+        "platform": "linkedin",
+        "role": "Uy tín và tuyển dụng",
+        "weeklyCadence": "3 bài",
+        "priorityFormats": ["Thought leadership", "Carousel", "Case study"],
+        "primaryKpi": "Tương tác chất lượng"
+      },
+      {
+        "platform": "x",
+        "role": "Cập nhật và thử nghiệm thông điệp",
+        "weeklyCadence": "7–10 post",
+        "priorityFormats": ["Post ngắn", "Thread", "Poll"],
+        "primaryKpi": "Engagement rate"
+      }
     ],
     "phases": [
       {
@@ -535,8 +1074,37 @@
         "objective": "Khóa dữ kiện, kết nối đo lường và tạo guồng sản xuất đầu tiên.",
         "focus": ["Xác nhận brand facts", "Kết nối quyền đọc", "Duyệt content pillars", "Chuẩn hóa CTA và UTM"],
         "deliverables": ["Brand Voice Profile v1", "Channel role matrix", "Lịch nội dung 4 tuần", "Dashboard baseline"],
-        "channelMix": [{ "platform": "facebook", "sharePercent": 35, "purpose": "Phụ huynh và lead" }, { "platform": "tiktok", "sharePercent": 25, "purpose": "Khám phá" }, { "platform": "youtube", "sharePercent": 15, "purpose": "Chuyên môn" }, { "platform": "website", "sharePercent": 15, "purpose": "Chuyển đổi" }, { "platform": "linkedin", "sharePercent": 7, "purpose": "Uy tín" }, { "platform": "x", "sharePercent": 3, "purpose": "Thử nghiệm" }],
-        "kpis": [{ "id": "p1-confirm", "label": "Dữ kiện bắt buộc được xác nhận", "target": "10/10", "rationale": "Đủ điều kiện tạo nội dung có claim.", "dataQuality": "estimated" }, { "id": "p1-connected", "label": "Kênh có dữ liệu thật", "target": "4/6", "rationale": "Thiết lập baseline đáng tin cậy.", "dataQuality": "estimated" }, { "id": "p1-content", "label": "Nội dung xuất bản", "target": "40 bài/video", "rationale": "Có đủ mẫu để đánh giá tín hiệu ban đầu.", "dataQuality": "estimated" }],
+        "channelMix": [
+          { "platform": "facebook", "sharePercent": 35, "purpose": "Phụ huynh và lead" },
+          { "platform": "tiktok", "sharePercent": 25, "purpose": "Khám phá" },
+          { "platform": "youtube", "sharePercent": 15, "purpose": "Chuyên môn" },
+          { "platform": "website", "sharePercent": 15, "purpose": "Chuyển đổi" },
+          { "platform": "linkedin", "sharePercent": 7, "purpose": "Uy tín" },
+          { "platform": "x", "sharePercent": 3, "purpose": "Thử nghiệm" }
+        ],
+        "kpis": [
+          {
+            "id": "p1-confirm",
+            "label": "Dữ kiện bắt buộc được xác nhận",
+            "target": "10/10",
+            "rationale": "Đủ điều kiện tạo nội dung có claim.",
+            "dataQuality": "estimated"
+          },
+          {
+            "id": "p1-connected",
+            "label": "Kênh có dữ liệu thật",
+            "target": "4/6",
+            "rationale": "Thiết lập baseline đáng tin cậy.",
+            "dataQuality": "estimated"
+          },
+          {
+            "id": "p1-content",
+            "label": "Nội dung xuất bản",
+            "target": "40 bài/video",
+            "rationale": "Có đủ mẫu để đánh giá tín hiệu ban đầu.",
+            "dataQuality": "estimated"
+          }
+        ],
         "satelliteActions": ["Chọn một đề xuất vệ tinh", "Xác nhận owner và guardrails", "Chuẩn bị nội dung pilot"]
       },
       {
@@ -546,8 +1114,37 @@
         "objective": "Kiểm tra format, hook và kênh vệ tinh bằng các giả thuyết đo được.",
         "focus": ["A/B hook", "Series nội dung", "Pilot vệ tinh", "Tối ưu form tư vấn"],
         "deliverables": ["3 series đa kênh", "Kênh vệ tinh pilot", "Báo cáo insight giữa kỳ", "Thư viện template"],
-        "channelMix": [{ "platform": "facebook", "sharePercent": 30, "purpose": "Nuôi dưỡng" }, { "platform": "tiktok", "sharePercent": 30, "purpose": "Test format" }, { "platform": "youtube", "sharePercent": 17, "purpose": "Evergreen" }, { "platform": "website", "sharePercent": 13, "purpose": "Conversion" }, { "platform": "linkedin", "sharePercent": 7, "purpose": "Uy tín" }, { "platform": "x", "sharePercent": 3, "purpose": "Test hook" }],
-        "kpis": [{ "id": "p2-completion", "label": "Tỷ lệ xem hết video ngắn", "target": ">= 35%", "rationale": "Đo chất lượng hook và cấu trúc.", "dataQuality": "estimated" }, { "id": "p2-lead", "label": "Lead đủ điều kiện từ nội dung", "target": "+20% so với baseline", "rationale": "Gắn nội dung với mục tiêu kinh doanh.", "dataQuality": "estimated" }, { "id": "p2-pilot", "label": "Nội dung vệ tinh", "target": "12 nội dung", "rationale": "Đủ mẫu để quyết định tiếp tục.", "dataQuality": "estimated" }],
+        "channelMix": [
+          { "platform": "facebook", "sharePercent": 30, "purpose": "Nuôi dưỡng" },
+          { "platform": "tiktok", "sharePercent": 30, "purpose": "Test format" },
+          { "platform": "youtube", "sharePercent": 17, "purpose": "Evergreen" },
+          { "platform": "website", "sharePercent": 13, "purpose": "Conversion" },
+          { "platform": "linkedin", "sharePercent": 7, "purpose": "Uy tín" },
+          { "platform": "x", "sharePercent": 3, "purpose": "Test hook" }
+        ],
+        "kpis": [
+          {
+            "id": "p2-completion",
+            "label": "Tỷ lệ xem hết video ngắn",
+            "target": ">= 35%",
+            "rationale": "Đo chất lượng hook và cấu trúc.",
+            "dataQuality": "estimated"
+          },
+          {
+            "id": "p2-lead",
+            "label": "Lead đủ điều kiện từ nội dung",
+            "target": "+20% so với baseline",
+            "rationale": "Gắn nội dung với mục tiêu kinh doanh.",
+            "dataQuality": "estimated"
+          },
+          {
+            "id": "p2-pilot",
+            "label": "Nội dung vệ tinh",
+            "target": "12 nội dung",
+            "rationale": "Đủ mẫu để quyết định tiếp tục.",
+            "dataQuality": "estimated"
+          }
+        ],
         "satelliteActions": ["Ra mắt pilot", "Moderate hằng ngày", "Ghi nhận câu hỏi và lead theo nguồn"]
       },
       {
@@ -557,8 +1154,37 @@
         "objective": "Tăng sản lượng ở format thắng, dừng thử nghiệm yếu và chuẩn hóa vận hành.",
         "focus": ["Nhân rộng top format", "Tối ưu conversion", "Ổn định SLA duyệt", "Chốt kế hoạch quý sau"],
         "deliverables": ["Playbook nội dung v1", "Báo cáo 90 ngày", "Voice rules đã duyệt", "Backlog quý tiếp theo"],
-        "channelMix": [{ "platform": "facebook", "sharePercent": 32, "purpose": "Lead" }, { "platform": "tiktok", "sharePercent": 28, "purpose": "Reach" }, { "platform": "youtube", "sharePercent": 18, "purpose": "Authority" }, { "platform": "website", "sharePercent": 14, "purpose": "Conversion" }, { "platform": "linkedin", "sharePercent": 6, "purpose": "Recruitment" }, { "platform": "x", "sharePercent": 2, "purpose": "Conversation" }],
-        "kpis": [{ "id": "p3-qualified", "label": "Cuộc tư vấn đủ điều kiện", "target": "+30% so với baseline", "rationale": "North-star outcome của kế hoạch.", "dataQuality": "estimated" }, { "id": "p3-approval", "label": "Bài duyệt đúng SLA", "target": ">= 90%", "rationale": "Bảo đảm scale không làm nghẽn vận hành.", "dataQuality": "estimated" }, { "id": "p3-reuse", "label": "Tỷ lệ nội dung tái sử dụng", "target": ">= 45%", "rationale": "Giảm chi phí sản xuất đa kênh.", "dataQuality": "estimated" }],
+        "channelMix": [
+          { "platform": "facebook", "sharePercent": 32, "purpose": "Lead" },
+          { "platform": "tiktok", "sharePercent": 28, "purpose": "Reach" },
+          { "platform": "youtube", "sharePercent": 18, "purpose": "Authority" },
+          { "platform": "website", "sharePercent": 14, "purpose": "Conversion" },
+          { "platform": "linkedin", "sharePercent": 6, "purpose": "Recruitment" },
+          { "platform": "x", "sharePercent": 2, "purpose": "Conversation" }
+        ],
+        "kpis": [
+          {
+            "id": "p3-qualified",
+            "label": "Cuộc tư vấn đủ điều kiện",
+            "target": "+30% so với baseline",
+            "rationale": "North-star outcome của kế hoạch.",
+            "dataQuality": "estimated"
+          },
+          {
+            "id": "p3-approval",
+            "label": "Bài duyệt đúng SLA",
+            "target": ">= 90%",
+            "rationale": "Bảo đảm scale không làm nghẽn vận hành.",
+            "dataQuality": "estimated"
+          },
+          {
+            "id": "p3-reuse",
+            "label": "Tỷ lệ nội dung tái sử dụng",
+            "target": ">= 45%",
+            "rationale": "Giảm chi phí sản xuất đa kênh.",
+            "dataQuality": "estimated"
+          }
+        ],
         "satelliteActions": ["Đánh giá go/iterate/stop", "Chuẩn hóa format thắng", "Lập ngân sách quý tiếp theo"]
       }
     ]
@@ -569,26 +1195,168 @@
     "dataCompletenessPercent": 38,
     "dataQualityNote": "Toàn bộ chỉ số mạng xã hội đang là ước tính vì chưa có connector/API. Cần kết nối dữ liệu thật trước khi dùng cho quyết định vận hành.",
     "priorities": [
-      { "id": "analytics-connect", "severity": "high", "title": "Kết nối dữ liệu kênh", "detail": "5/6 kênh mới có hồ sơ public, chưa có insight nội bộ.", "recommendedAction": "Kết nối quyền đọc trước khi xác nhận baseline.", "relatedView": "channels" },
-      { "id": "analytics-lead", "severity": "high", "title": "Chuẩn hóa nguồn lead", "detail": "Form, hotline và inbox chưa có taxonomy nguồn thống nhất.", "recommendedAction": "Gắn UTM và trường source/campaign vào luồng tư vấn.", "relatedView": "studio" },
-      { "id": "analytics-video", "severity": "medium", "title": "Ưu tiên retention video", "detail": "Tín hiệu ước tính cho thấy video ngắn tạo reach nhưng completion còn thấp.", "recommendedAction": "Test 3 hook mở đầu trong phase 2.", "relatedView": "strategy" },
-      { "id": "analytics-satellite", "severity": "low", "title": "Chọn một pilot vệ tinh", "detail": "Ba đề xuất cùng lúc sẽ vượt năng lực sản xuất hiện tại.", "recommendedAction": "Duyệt một kênh ưu tiên cao và đặt tiêu chí dừng.", "relatedView": "satellites" }
+      {
+        "id": "analytics-connect",
+        "severity": "high",
+        "title": "Kết nối dữ liệu kênh",
+        "detail": "5/6 kênh mới có hồ sơ public, chưa có insight nội bộ.",
+        "recommendedAction": "Kết nối quyền đọc trước khi xác nhận baseline.",
+        "relatedView": "channels"
+      },
+      {
+        "id": "analytics-lead",
+        "severity": "high",
+        "title": "Chuẩn hóa nguồn lead",
+        "detail": "Form, hotline và inbox chưa có taxonomy nguồn thống nhất.",
+        "recommendedAction": "Gắn UTM và trường source/campaign vào luồng tư vấn.",
+        "relatedView": "studio"
+      },
+      {
+        "id": "analytics-video",
+        "severity": "medium",
+        "title": "Ưu tiên retention video",
+        "detail": "Tín hiệu ước tính cho thấy video ngắn tạo reach nhưng completion còn thấp.",
+        "recommendedAction": "Test 3 hook mở đầu trong phase 2.",
+        "relatedView": "strategy"
+      },
+      {
+        "id": "analytics-satellite",
+        "severity": "low",
+        "title": "Chọn một pilot vệ tinh",
+        "detail": "Ba đề xuất cùng lúc sẽ vượt năng lực sản xuất hiện tại.",
+        "recommendedAction": "Duyệt một kênh ưu tiên cao và đặt tiêu chí dừng.",
+        "relatedView": "satellites"
+      }
     ],
     "kpis": [
-      { "id": "kpi-reach", "label": "Tổng tiếp cận", "value": 486000, "formattedValue": "486K", "unit": "count", "deltaPercent": 16.8, "goal": "Nhận biết", "dataQuality": "estimated" },
-      { "id": "kpi-engagement", "label": "Tương tác chất lượng", "value": 18240, "formattedValue": "18,2K", "unit": "count", "deltaPercent": 9.4, "goal": "Quan tâm", "dataQuality": "estimated" },
-      { "id": "kpi-leads", "label": "Lead tư vấn", "value": 684, "formattedValue": "684", "unit": "count", "deltaPercent": 8.1, "goal": "Chuyển đổi", "dataQuality": "estimated" },
-      { "id": "kpi-qualified", "label": "Lead đủ điều kiện", "value": 246, "formattedValue": "246", "unit": "count", "deltaPercent": 5.7, "goal": "Chuyển đổi", "dataQuality": "estimated" },
-      { "id": "kpi-response", "label": "Phản hồi trung bình", "value": 38, "formattedValue": "38 phút", "unit": "minutes", "deltaPercent": -12.2, "goal": "Trải nghiệm", "dataQuality": "estimated" },
-      { "id": "kpi-approval", "label": "Duyệt đúng SLA", "value": 82, "formattedValue": "82%", "unit": "percent", "deltaPercent": 3.5, "goal": "Vận hành", "dataQuality": "estimated" }
+      {
+        "id": "kpi-reach",
+        "label": "Tổng tiếp cận",
+        "value": 486000,
+        "formattedValue": "486K",
+        "unit": "count",
+        "deltaPercent": 16.8,
+        "goal": "Nhận biết",
+        "dataQuality": "estimated"
+      },
+      {
+        "id": "kpi-engagement",
+        "label": "Tương tác chất lượng",
+        "value": 18240,
+        "formattedValue": "18,2K",
+        "unit": "count",
+        "deltaPercent": 9.4,
+        "goal": "Quan tâm",
+        "dataQuality": "estimated"
+      },
+      {
+        "id": "kpi-leads",
+        "label": "Lead tư vấn",
+        "value": 684,
+        "formattedValue": "684",
+        "unit": "count",
+        "deltaPercent": 8.1,
+        "goal": "Chuyển đổi",
+        "dataQuality": "estimated"
+      },
+      {
+        "id": "kpi-qualified",
+        "label": "Lead đủ điều kiện",
+        "value": 246,
+        "formattedValue": "246",
+        "unit": "count",
+        "deltaPercent": 5.7,
+        "goal": "Chuyển đổi",
+        "dataQuality": "estimated"
+      },
+      {
+        "id": "kpi-response",
+        "label": "Phản hồi trung bình",
+        "value": 38,
+        "formattedValue": "38 phút",
+        "unit": "minutes",
+        "deltaPercent": -12.2,
+        "goal": "Trải nghiệm",
+        "dataQuality": "estimated"
+      },
+      {
+        "id": "kpi-approval",
+        "label": "Duyệt đúng SLA",
+        "value": 82,
+        "formattedValue": "82%",
+        "unit": "percent",
+        "deltaPercent": 3.5,
+        "goal": "Vận hành",
+        "dataQuality": "estimated"
+      }
     ],
     "channelPerformance": [
-      { "channelId": "channel-website", "platform": "website", "reach": 18400, "engagements": 2180, "engagementRate": 11.8, "leads": 515, "conversionRate": 2.8, "contentPublished": 8, "dataQuality": "estimated" },
-      { "channelId": "channel-facebook", "platform": "facebook", "reach": 126000, "engagements": 5796, "engagementRate": 4.6, "leads": 118, "conversionRate": 0.09, "contentPublished": 22, "dataQuality": "estimated" },
-      { "channelId": "channel-tiktok", "platform": "tiktok", "reach": 284000, "engagements": 8804, "engagementRate": 3.1, "leads": 28, "conversionRate": 0.01, "contentPublished": 20, "dataQuality": "estimated" },
-      { "channelId": "channel-youtube", "platform": "youtube", "reach": 42700, "engagements": 1196, "engagementRate": 2.8, "leads": 14, "conversionRate": 0.03, "contentPublished": 14, "dataQuality": "estimated" },
-      { "channelId": "channel-linkedin", "platform": "linkedin", "reach": 12800, "engagements": 666, "engagementRate": 5.2, "leads": 7, "conversionRate": 0.05, "contentPublished": 12, "dataQuality": "estimated" },
-      { "channelId": "channel-x", "platform": "x", "reach": 18600, "engagements": 539, "engagementRate": 2.9, "leads": 2, "conversionRate": 0.01, "contentPublished": 34, "dataQuality": "estimated" }
+      {
+        "channelId": "channel-website",
+        "platform": "website",
+        "reach": 18400,
+        "engagements": 2180,
+        "engagementRate": 11.8,
+        "leads": 515,
+        "conversionRate": 2.8,
+        "contentPublished": 8,
+        "dataQuality": "estimated"
+      },
+      {
+        "channelId": "channel-facebook",
+        "platform": "facebook",
+        "reach": 126000,
+        "engagements": 5796,
+        "engagementRate": 4.6,
+        "leads": 118,
+        "conversionRate": 0.09,
+        "contentPublished": 22,
+        "dataQuality": "estimated"
+      },
+      {
+        "channelId": "channel-tiktok",
+        "platform": "tiktok",
+        "reach": 284000,
+        "engagements": 8804,
+        "engagementRate": 3.1,
+        "leads": 28,
+        "conversionRate": 0.01,
+        "contentPublished": 20,
+        "dataQuality": "estimated"
+      },
+      {
+        "channelId": "channel-youtube",
+        "platform": "youtube",
+        "reach": 42700,
+        "engagements": 1196,
+        "engagementRate": 2.8,
+        "leads": 14,
+        "conversionRate": 0.03,
+        "contentPublished": 14,
+        "dataQuality": "estimated"
+      },
+      {
+        "channelId": "channel-linkedin",
+        "platform": "linkedin",
+        "reach": 12800,
+        "engagements": 666,
+        "engagementRate": 5.2,
+        "leads": 7,
+        "conversionRate": 0.05,
+        "contentPublished": 12,
+        "dataQuality": "estimated"
+      },
+      {
+        "channelId": "channel-x",
+        "platform": "x",
+        "reach": 18600,
+        "engagements": 539,
+        "engagementRate": 2.9,
+        "leads": 2,
+        "conversionRate": 0.01,
+        "contentPublished": 34,
+        "dataQuality": "estimated"
+      }
     ],
     "trend": [
       { "label": "09–15/06", "reach": 94000, "engagements": 3310, "leads": 118, "dataQuality": "estimated" },
@@ -599,11 +1367,51 @@
       { "label": "14/07", "reach": 24500, "engagements": 860, "leads": 31, "dataQuality": "estimated" }
     ],
     "contentPillars": [
-      { "pillarId": "pillar-learning", "label": "Hiểu đúng để học tốt", "posts": 31, "reach": 186000, "engagementRate": 5.4, "qualifiedInteractions": 820, "dataQuality": "estimated" },
-      { "pillarId": "pillar-parent", "label": "Đồng hành cùng phụ huynh", "posts": 21, "reach": 97000, "engagementRate": 6.8, "qualifiedInteractions": 1040, "dataQuality": "estimated" },
-      { "pillarId": "pillar-progress", "label": "Tiến bộ có lộ trình", "posts": 15, "reach": 76000, "engagementRate": 5.9, "qualifiedInteractions": 690, "dataQuality": "estimated" },
-      { "pillarId": "pillar-tutor", "label": "Người gia sư chất lượng", "posts": 18, "reach": 84000, "engagementRate": 4.7, "qualifiedInteractions": 410, "dataQuality": "estimated" },
-      { "pillarId": "pillar-community", "label": "Better Every Hour", "posts": 17, "reach": 43000, "engagementRate": 3.6, "qualifiedInteractions": 210, "dataQuality": "estimated" }
+      {
+        "pillarId": "pillar-learning",
+        "label": "Hiểu đúng để học tốt",
+        "posts": 31,
+        "reach": 186000,
+        "engagementRate": 5.4,
+        "qualifiedInteractions": 820,
+        "dataQuality": "estimated"
+      },
+      {
+        "pillarId": "pillar-parent",
+        "label": "Đồng hành cùng phụ huynh",
+        "posts": 21,
+        "reach": 97000,
+        "engagementRate": 6.8,
+        "qualifiedInteractions": 1040,
+        "dataQuality": "estimated"
+      },
+      {
+        "pillarId": "pillar-progress",
+        "label": "Tiến bộ có lộ trình",
+        "posts": 15,
+        "reach": 76000,
+        "engagementRate": 5.9,
+        "qualifiedInteractions": 690,
+        "dataQuality": "estimated"
+      },
+      {
+        "pillarId": "pillar-tutor",
+        "label": "Người gia sư chất lượng",
+        "posts": 18,
+        "reach": 84000,
+        "engagementRate": 4.7,
+        "qualifiedInteractions": 410,
+        "dataQuality": "estimated"
+      },
+      {
+        "pillarId": "pillar-community",
+        "label": "Better Every Hour",
+        "posts": 17,
+        "reach": 43000,
+        "engagementRate": 3.6,
+        "qualifiedInteractions": 210,
+        "dataQuality": "estimated"
+      }
     ],
     "funnel": [
       { "stage": "reach", "value": 486000, "conversionFromPreviousPercent": null, "dataQuality": "estimated" },
@@ -613,19 +1421,143 @@
       { "stage": "enrollment", "value": 74, "conversionFromPreviousPercent": 30.08, "dataQuality": "estimated" }
     ],
     "insights": [
-      { "id": "insight-faq", "finding": "FAQ dành cho phụ huynh có tín hiệu tạo hội thoại chất lượng tốt hơn nội dung truyền cảm hứng chung.", "evidence": "Ước tính từ 18 bài trong 8 tuần; tỷ lệ bình luận có câu hỏi cao hơn 24%.", "confidence": "medium", "sampleSize": 18, "scope": "Facebook và website", "recommendedAction": "Đưa 2 FAQ/tuần vào lịch phase 1.", "relatedChannelIds": ["channel-facebook", "channel-website"], "dataQuality": "estimated" },
-      { "id": "insight-tiktok-hook", "finding": "Video mở bằng một lỗi học tập cụ thể giữ người xem tốt hơn hook chung chung.", "evidence": "Ước tính từ 22 video; completion cao hơn 8,4 điểm phần trăm.", "confidence": "medium", "sampleSize": 22, "scope": "TikTok", "recommendedAction": "Tạo template hook “Nếu con đang…, hãy kiểm tra…” và test 6 video.", "relatedChannelIds": ["channel-tiktok"], "dataQuality": "estimated" },
-      { "id": "insight-linkedin", "finding": "Nội dung chuyên môn có tương tác tốt nhưng mẫu LinkedIn còn quá ít để thành quy tắc ổn định.", "evidence": "12 bài trong 30 ngày với engagement ước tính 5,2%.", "confidence": "low", "sampleSize": 12, "scope": "LinkedIn", "recommendedAction": "Theo dõi thêm 6 tuần; chưa tự động thay đổi voice rule.", "relatedChannelIds": ["channel-linkedin"], "dataQuality": "estimated" },
-      { "id": "insight-conversion", "finding": "Website có vai trò chuyển đổi lớn nhưng taxonomy nguồn lead chưa đủ để biết bài nào đóng góp.", "evidence": "515/684 lead ước tính đi qua form website nhưng source/campaign chưa được chuẩn hóa.", "confidence": "medium", "sampleSize": 684, "scope": "Toàn workspace", "recommendedAction": "Thêm UTM và source field bắt buộc trước khi chạy phase 2.", "relatedChannelIds": ["channel-website", "channel-facebook", "channel-tiktok"], "dataQuality": "estimated" }
+      {
+        "id": "insight-faq",
+        "finding": "FAQ dành cho phụ huynh có tín hiệu tạo hội thoại chất lượng tốt hơn nội dung truyền cảm hứng chung.",
+        "evidence": "Ước tính từ 18 bài trong 8 tuần; tỷ lệ bình luận có câu hỏi cao hơn 24%.",
+        "confidence": "medium",
+        "sampleSize": 18,
+        "scope": "Facebook và website",
+        "recommendedAction": "Đưa 2 FAQ/tuần vào lịch phase 1.",
+        "relatedChannelIds": ["channel-facebook", "channel-website"],
+        "dataQuality": "estimated"
+      },
+      {
+        "id": "insight-tiktok-hook",
+        "finding": "Video mở bằng một lỗi học tập cụ thể giữ người xem tốt hơn hook chung chung.",
+        "evidence": "Ước tính từ 22 video; completion cao hơn 8,4 điểm phần trăm.",
+        "confidence": "medium",
+        "sampleSize": 22,
+        "scope": "TikTok",
+        "recommendedAction": "Tạo template hook “Nếu con đang…, hãy kiểm tra…” và test 6 video.",
+        "relatedChannelIds": ["channel-tiktok"],
+        "dataQuality": "estimated"
+      },
+      {
+        "id": "insight-linkedin",
+        "finding": "Nội dung chuyên môn có tương tác tốt nhưng mẫu LinkedIn còn quá ít để thành quy tắc ổn định.",
+        "evidence": "12 bài trong 30 ngày với engagement ước tính 5,2%.",
+        "confidence": "low",
+        "sampleSize": 12,
+        "scope": "LinkedIn",
+        "recommendedAction": "Theo dõi thêm 6 tuần; chưa tự động thay đổi voice rule.",
+        "relatedChannelIds": ["channel-linkedin"],
+        "dataQuality": "estimated"
+      },
+      {
+        "id": "insight-conversion",
+        "finding": "Website có vai trò chuyển đổi lớn nhưng taxonomy nguồn lead chưa đủ để biết bài nào đóng góp.",
+        "evidence": "515/684 lead ước tính đi qua form website nhưng source/campaign chưa được chuẩn hóa.",
+        "confidence": "medium",
+        "sampleSize": 684,
+        "scope": "Toàn workspace",
+        "recommendedAction": "Thêm UTM và source field bắt buộc trước khi chạy phase 2.",
+        "relatedChannelIds": ["channel-website", "channel-facebook", "channel-tiktok"],
+        "dataQuality": "estimated"
+      }
     ]
   },
   "sources": [
-    { "id": "source-website", "name": "Website The TutorX", "type": "website", "url": "https://thetutorx.vn/", "scope": "Brand facts, dịch vụ, bài viết và CTA", "status": "public_only", "canRead": true, "canWrite": false, "lastSyncedAt": "2026-07-15T08:45:00+07:00", "channelId": "channel-website", "permission": "read_only", "syncFrequency": "daily", "includeInAgentKnowledge": true },
-    { "id": "source-facebook", "name": "Facebook The TutorX", "type": "social", "url": "https://www.facebook.com/thetutorX.vn", "scope": "Nội dung công khai; chưa có insights", "status": "public_only", "canRead": true, "canWrite": false, "lastSyncedAt": null, "channelId": "channel-facebook", "permission": "read_only", "syncFrequency": "manual", "includeInAgentKnowledge": true },
-    { "id": "source-tiktok", "name": "TikTok @thetutorx", "type": "social", "url": "https://tiktok.com/@thetutorx", "scope": "Hồ sơ và nội dung công khai", "status": "public_only", "canRead": true, "canWrite": false, "lastSyncedAt": null, "channelId": "channel-tiktok", "permission": "read_only", "syncFrequency": "manual", "includeInAgentKnowledge": true },
-    { "id": "source-youtube", "name": "YouTube @thetutorx.vietnam", "type": "social", "url": "https://youtube.com/@thetutorx.vietnam", "scope": "Hồ sơ và video công khai", "status": "public_only", "canRead": true, "canWrite": false, "lastSyncedAt": null, "channelId": "channel-youtube", "permission": "read_only", "syncFrequency": "manual", "includeInAgentKnowledge": true },
-    { "id": "source-linkedin", "name": "LinkedIn The TutorX Việt Nam", "type": "social", "url": "https://linkedin.com/in/h%E1%BB%8Dc-vi%E1%BB%87n-gia-s%C6%B0-the-tutorx-vi%E1%BB%87t-nam", "scope": "Hồ sơ, bài đăng và tuyển dụng công khai", "status": "public_only", "canRead": true, "canWrite": false, "lastSyncedAt": null, "channelId": "channel-linkedin", "permission": "read_only", "syncFrequency": "manual", "includeInAgentKnowledge": true },
-    { "id": "source-x", "name": "X @thetutorxvn", "type": "social", "url": "https://x.com/thetutorxvn", "scope": "Hồ sơ và post công khai", "status": "public_only", "canRead": true, "canWrite": false, "lastSyncedAt": null, "channelId": "channel-x", "permission": "read_only", "syncFrequency": "manual", "includeInAgentKnowledge": true }
+    {
+      "id": "source-website",
+      "name": "Website The TutorX",
+      "type": "website",
+      "url": "https://thetutorx.vn/",
+      "scope": "Brand facts, dịch vụ, bài viết và CTA",
+      "status": "public_only",
+      "canRead": true,
+      "canWrite": false,
+      "lastSyncedAt": "2026-07-15T08:45:00+07:00",
+      "channelId": "channel-website",
+      "permission": "read_only",
+      "syncFrequency": "daily",
+      "includeInAgentKnowledge": true
+    },
+    {
+      "id": "source-facebook",
+      "name": "Facebook The TutorX",
+      "type": "social",
+      "url": "https://www.facebook.com/thetutorX.vn",
+      "scope": "Nội dung công khai; chưa có insights",
+      "status": "public_only",
+      "canRead": true,
+      "canWrite": false,
+      "lastSyncedAt": null,
+      "channelId": "channel-facebook",
+      "permission": "read_only",
+      "syncFrequency": "manual",
+      "includeInAgentKnowledge": true
+    },
+    {
+      "id": "source-tiktok",
+      "name": "TikTok @thetutorx",
+      "type": "social",
+      "url": "https://tiktok.com/@thetutorx",
+      "scope": "Hồ sơ và nội dung công khai",
+      "status": "public_only",
+      "canRead": true,
+      "canWrite": false,
+      "lastSyncedAt": null,
+      "channelId": "channel-tiktok",
+      "permission": "read_only",
+      "syncFrequency": "manual",
+      "includeInAgentKnowledge": true
+    },
+    {
+      "id": "source-youtube",
+      "name": "YouTube @thetutorx.vietnam",
+      "type": "social",
+      "url": "https://youtube.com/@thetutorx.vietnam",
+      "scope": "Hồ sơ và video công khai",
+      "status": "public_only",
+      "canRead": true,
+      "canWrite": false,
+      "lastSyncedAt": null,
+      "channelId": "channel-youtube",
+      "permission": "read_only",
+      "syncFrequency": "manual",
+      "includeInAgentKnowledge": true
+    },
+    {
+      "id": "source-linkedin",
+      "name": "LinkedIn The TutorX Việt Nam",
+      "type": "social",
+      "url": "https://linkedin.com/in/h%E1%BB%8Dc-vi%E1%BB%87n-gia-s%C6%B0-the-tutorx-vi%E1%BB%87t-nam",
+      "scope": "Hồ sơ, bài đăng và tuyển dụng công khai",
+      "status": "public_only",
+      "canRead": true,
+      "canWrite": false,
+      "lastSyncedAt": null,
+      "channelId": "channel-linkedin",
+      "permission": "read_only",
+      "syncFrequency": "manual",
+      "includeInAgentKnowledge": true
+    },
+    {
+      "id": "source-x",
+      "name": "X @thetutorxvn",
+      "type": "social",
+      "url": "https://x.com/thetutorxvn",
+      "scope": "Hồ sơ và post công khai",
+      "status": "public_only",
+      "canRead": true,
+      "canWrite": false,
+      "lastSyncedAt": null,
+      "channelId": "channel-x",
+      "permission": "read_only",
+      "syncFrequency": "manual",
+      "includeInAgentKnowledge": true
+    }
   ],
   "studio": {
     "workspaceName": "Học viện Gia sư The TutorX Việt Nam",
@@ -638,7 +1570,14 @@
     "publishingMode": "approval_required",
     "brandSafetyEnabled": true,
     "piiProtectionEnabled": true,
-    "workspaceProfile": { "displayName": "The TutorX Việt Nam", "industry": "Giáo dục và gia sư", "defaultLocale": "vi-VN", "timezone": "Asia/Ho_Chi_Minh", "weekStartsOn": "monday", "dataRetentionDays": 365 },
+    "workspaceProfile": {
+      "displayName": "The TutorX Việt Nam",
+      "industry": "Giáo dục và gia sư",
+      "defaultLocale": "vi-VN",
+      "timezone": "Asia/Ho_Chi_Minh",
+      "weekStartsOn": "monday",
+      "dataRetentionDays": 365
+    },
     "brandVoice": {
       "summary": "Chuyên môn nhưng gần gũi; giúp phụ huynh và học sinh hiểu vấn đề, nhìn thấy lộ trình và chủ động bước tiếp theo.",
       "traits": ["Chuyên môn", "Đồng hành", "Khích lệ", "Rõ ràng"],
@@ -648,83 +1587,585 @@
       "profileName": "Brand Voice Profile v0 — chờ duyệt",
       "emojiPolicy": "light",
       "ctaStyle": "Mời đánh giá năng lực hoặc trao đổi với cố vấn; không thúc ép mua ngay",
-      "platformOverrides": [{ "platform": "facebook", "tone": "Đồng cảm và giàu ngữ cảnh", "maxEmojis": 4 }, { "platform": "tiktok", "tone": "Nhanh, trực diện, trẻ", "maxEmojis": 3 }, { "platform": "linkedin", "tone": "Chuyên nghiệp và súc tích", "maxEmojis": 1 }, { "platform": "x", "tone": "Sắc gọn và đối thoại", "maxEmojis": 1 }]
+      "platformOverrides": [
+        { "platform": "facebook", "tone": "Đồng cảm và giàu ngữ cảnh", "maxEmojis": 4 },
+        { "platform": "tiktok", "tone": "Nhanh, trực diện, trẻ", "maxEmojis": 3 },
+        { "platform": "linkedin", "tone": "Chuyên nghiệp và súc tích", "maxEmojis": 1 },
+        { "platform": "x", "tone": "Sắc gọn và đối thoại", "maxEmojis": 1 }
+      ]
     },
     "contentRules": [
-      { "id": "rule-source-claims", "name": "Nguồn cho tuyên bố", "instruction": "Mọi số liệu về kết quả, quy mô hoặc hiệu quả phải trỏ về nguồn và thời điểm quan sát.", "appliesTo": ["all"], "level": "required", "enabled": true },
-      { "id": "rule-student-pii", "name": "Bảo vệ học sinh", "instruction": "Không dùng tên đầy đủ, trường, điểm số hoặc hình ảnh học sinh nếu chưa có chấp thuận phù hợp.", "appliesTo": ["all"], "level": "required", "enabled": true },
-      { "id": "rule-no-guarantee", "name": "Không bảo đảm kết quả", "instruction": "Không dùng claim bảo đảm đỗ, tăng điểm hoặc đạt chứng chỉ trong thời gian cố định.", "appliesTo": ["website", "facebook", "tiktok", "youtube", "linkedin", "x"], "level": "required", "enabled": true },
-      { "id": "rule-context", "name": "Nêu phạm vi áp dụng", "instruction": "Nội dung học thuật phải nêu môn, cấp học hoặc chương trình áp dụng khi có thể.", "appliesTo": ["website", "youtube", "facebook"], "level": "warning", "enabled": true },
-      { "id": "rule-cta", "name": "CTA tư vấn", "instruction": "Ưu tiên CTA đánh giá năng lực hoặc tư vấn lộ trình thay cho CTA mua ngay.", "appliesTo": ["website", "facebook", "linkedin"], "level": "warning", "enabled": true }
+      {
+        "id": "rule-source-claims",
+        "name": "Nguồn cho tuyên bố",
+        "instruction": "Mọi số liệu về kết quả, quy mô hoặc hiệu quả phải trỏ về nguồn và thời điểm quan sát.",
+        "appliesTo": ["all"],
+        "level": "required",
+        "enabled": true
+      },
+      {
+        "id": "rule-student-pii",
+        "name": "Bảo vệ học sinh",
+        "instruction": "Không dùng tên đầy đủ, trường, điểm số hoặc hình ảnh học sinh nếu chưa có chấp thuận phù hợp.",
+        "appliesTo": ["all"],
+        "level": "required",
+        "enabled": true
+      },
+      {
+        "id": "rule-no-guarantee",
+        "name": "Không bảo đảm kết quả",
+        "instruction": "Không dùng claim bảo đảm đỗ, tăng điểm hoặc đạt chứng chỉ trong thời gian cố định.",
+        "appliesTo": ["website", "facebook", "tiktok", "youtube", "linkedin", "x"],
+        "level": "required",
+        "enabled": true
+      },
+      {
+        "id": "rule-context",
+        "name": "Nêu phạm vi áp dụng",
+        "instruction": "Nội dung học thuật phải nêu môn, cấp học hoặc chương trình áp dụng khi có thể.",
+        "appliesTo": ["website", "youtube", "facebook"],
+        "level": "warning",
+        "enabled": true
+      },
+      {
+        "id": "rule-cta",
+        "name": "CTA tư vấn",
+        "instruction": "Ưu tiên CTA đánh giá năng lực hoặc tư vấn lộ trình thay cho CTA mua ngay.",
+        "appliesTo": ["website", "facebook", "linkedin"],
+        "level": "warning",
+        "enabled": true
+      }
     ],
-    "contentGovernance": { "requireFactSources": true, "requireHumanReviewForClaims": true, "prohibitedClaims": ["Cam kết đỗ 100%", "Tăng điểm chắc chắn", "Gia sư tốt nhất tuyệt đối"], "requiredDisclosures": ["Kết quả phụ thuộc năng lực đầu vào và quá trình học"], "defaultHashtagRange": { "min": 3, "max": 7 }, "linkPolicy": "approved_domains_only", "approvedDomains": ["thetutorx.vn", "class.thetutorx.vn"] },
+    "contentGovernance": {
+      "requireFactSources": true,
+      "requireHumanReviewForClaims": true,
+      "prohibitedClaims": ["Cam kết đỗ 100%", "Tăng điểm chắc chắn", "Gia sư tốt nhất tuyệt đối"],
+      "requiredDisclosures": ["Kết quả phụ thuộc năng lực đầu vào và quá trình học"],
+      "defaultHashtagRange": { "min": 3, "max": 7 },
+      "linkPolicy": "approved_domains_only",
+      "approvedDomains": ["thetutorx.vn", "class.thetutorx.vn"]
+    },
     "channelRules": [
-      { "id": "channel-rule-web", "channelId": "channel-website", "role": "Chuyển đổi và tri thức", "tone": "Tin cậy, đầy đủ", "cadence": "2 nội dung/tuần", "contentPillars": ["Dịch vụ", "Phương pháp", "FAQ"], "cta": "Đăng ký đánh giá năng lực", "enabled": true },
-      { "id": "channel-rule-fb", "channelId": "channel-facebook", "role": "Đồng hành phụ huynh", "tone": "Đồng cảm, rõ bước tiếp", "cadence": "5 bài/tuần", "contentPillars": ["FAQ phụ huynh", "Case study", "Lộ trình"], "cta": "Nhắn tin tư vấn", "enabled": true },
-      { "id": "channel-rule-tt", "channelId": "channel-tiktok", "role": "Khám phá", "tone": "Nhanh, trẻ, hữu ích", "cadence": "5 video/tuần", "contentPillars": ["Mẹo học", "Lỗi sai", "Thử thách"], "cta": "Theo dõi hoặc xem link hồ sơ", "enabled": true },
-      { "id": "channel-rule-yt", "channelId": "channel-youtube", "role": "Chuyên môn dài hạn", "tone": "Có cấu trúc, dễ hiểu", "cadence": "1 video dài + 3 Shorts/tuần", "contentPillars": ["Tutorial", "Phương pháp", "Workshop"], "cta": "Tải worksheet", "enabled": true },
-      { "id": "channel-rule-li", "channelId": "channel-linkedin", "role": "Uy tín và tuyển dụng", "tone": "Chuyên nghiệp, ít emoji", "cadence": "3 bài/tuần", "contentPillars": ["Chuyên môn", "Đội ngũ", "Tuyển dụng"], "cta": "Kết nối hoặc ứng tuyển", "enabled": true },
-      { "id": "channel-rule-x", "channelId": "channel-x", "role": "Đối thoại nhanh", "tone": "Sắc gọn", "cadence": "1–2 post/ngày", "contentPillars": ["Mẹo ngắn", "Góc nhìn", "Hỏi đáp"], "cta": "Trả lời hoặc theo dõi thread", "enabled": true }
+      {
+        "id": "channel-rule-web",
+        "channelId": "channel-website",
+        "role": "Chuyển đổi và tri thức",
+        "tone": "Tin cậy, đầy đủ",
+        "cadence": "2 nội dung/tuần",
+        "contentPillars": ["Dịch vụ", "Phương pháp", "FAQ"],
+        "cta": "Đăng ký đánh giá năng lực",
+        "enabled": true
+      },
+      {
+        "id": "channel-rule-fb",
+        "channelId": "channel-facebook",
+        "role": "Đồng hành phụ huynh",
+        "tone": "Đồng cảm, rõ bước tiếp",
+        "cadence": "5 bài/tuần",
+        "contentPillars": ["FAQ phụ huynh", "Case study", "Lộ trình"],
+        "cta": "Nhắn tin tư vấn",
+        "enabled": true
+      },
+      {
+        "id": "channel-rule-tt",
+        "channelId": "channel-tiktok",
+        "role": "Khám phá",
+        "tone": "Nhanh, trẻ, hữu ích",
+        "cadence": "5 video/tuần",
+        "contentPillars": ["Mẹo học", "Lỗi sai", "Thử thách"],
+        "cta": "Theo dõi hoặc xem link hồ sơ",
+        "enabled": true
+      },
+      {
+        "id": "channel-rule-yt",
+        "channelId": "channel-youtube",
+        "role": "Chuyên môn dài hạn",
+        "tone": "Có cấu trúc, dễ hiểu",
+        "cadence": "1 video dài + 3 Shorts/tuần",
+        "contentPillars": ["Tutorial", "Phương pháp", "Workshop"],
+        "cta": "Tải worksheet",
+        "enabled": true
+      },
+      {
+        "id": "channel-rule-li",
+        "channelId": "channel-linkedin",
+        "role": "Uy tín và tuyển dụng",
+        "tone": "Chuyên nghiệp, ít emoji",
+        "cadence": "3 bài/tuần",
+        "contentPillars": ["Chuyên môn", "Đội ngũ", "Tuyển dụng"],
+        "cta": "Kết nối hoặc ứng tuyển",
+        "enabled": true
+      },
+      {
+        "id": "channel-rule-x",
+        "channelId": "channel-x",
+        "role": "Đối thoại nhanh",
+        "tone": "Sắc gọn",
+        "cadence": "1–2 post/ngày",
+        "contentPillars": ["Mẹo ngắn", "Góc nhìn", "Hỏi đáp"],
+        "cta": "Trả lời hoặc theo dõi thread",
+        "enabled": true
+      }
     ],
     "agentInstructions": "Luôn ưu tiên facts đã xác nhận; hiển thị nguồn khi dùng claim; không xuất bản nếu chưa qua workflow; mỗi lần chỉ yêu cầu người dùng xử lý tối đa 3–5 mục ưu tiên.",
     "learningEnabled": true,
     "learningRules": [
-      { "id": "learning-short-hook", "label": "Mở đầu ngắn và đi thẳng vào vấn đề", "evidence": "Tín hiệu ước tính từ 22 video; cần thêm dữ liệu thật.", "status": "candidate", "enabled": true },
-      { "id": "learning-linkedin-emoji", "label": "LinkedIn dùng tối đa một emoji", "evidence": "Quy tắc thương hiệu do Studio cấu hình.", "status": "stable", "enabled": true },
-      { "id": "learning-hard-sell", "label": "CTA mua ngay", "evidence": "Không phù hợp định vị tư vấn giáo dục.", "status": "rejected", "enabled": false }
+      {
+        "id": "learning-short-hook",
+        "label": "Mở đầu ngắn và đi thẳng vào vấn đề",
+        "evidence": "Tín hiệu ước tính từ 22 video; cần thêm dữ liệu thật.",
+        "status": "candidate",
+        "enabled": true
+      },
+      {
+        "id": "learning-linkedin-emoji",
+        "label": "LinkedIn dùng tối đa một emoji",
+        "evidence": "Quy tắc thương hiệu do Studio cấu hình.",
+        "status": "stable",
+        "enabled": true
+      },
+      {
+        "id": "learning-hard-sell",
+        "label": "CTA mua ngay",
+        "evidence": "Không phù hợp định vị tư vấn giáo dục.",
+        "status": "rejected",
+        "enabled": false
+      }
     ],
     "sources": [
-      { "id": "source-website", "name": "Website The TutorX", "type": "website", "url": "https://thetutorx.vn/", "scope": "Brand facts, dịch vụ, bài viết và CTA", "status": "public_only", "canRead": true, "canWrite": false, "lastSyncedAt": "2026-07-15T08:45:00+07:00", "channelId": "channel-website", "permission": "read_only", "syncFrequency": "daily", "includeInAgentKnowledge": true },
-      { "id": "source-facebook", "name": "Facebook The TutorX", "type": "social", "url": "https://www.facebook.com/thetutorX.vn", "scope": "Nội dung công khai; chưa có insights", "status": "public_only", "canRead": true, "canWrite": false, "lastSyncedAt": null, "channelId": "channel-facebook", "permission": "read_only", "syncFrequency": "manual", "includeInAgentKnowledge": true },
-      { "id": "source-tiktok", "name": "TikTok @thetutorx", "type": "social", "url": "https://tiktok.com/@thetutorx", "scope": "Hồ sơ và nội dung công khai", "status": "public_only", "canRead": true, "canWrite": false, "lastSyncedAt": null, "channelId": "channel-tiktok", "permission": "read_only", "syncFrequency": "manual", "includeInAgentKnowledge": true },
-      { "id": "source-youtube", "name": "YouTube @thetutorx.vietnam", "type": "social", "url": "https://youtube.com/@thetutorx.vietnam", "scope": "Hồ sơ và video công khai", "status": "public_only", "canRead": true, "canWrite": false, "lastSyncedAt": null, "channelId": "channel-youtube", "permission": "read_only", "syncFrequency": "manual", "includeInAgentKnowledge": true },
-      { "id": "source-linkedin", "name": "LinkedIn The TutorX Việt Nam", "type": "social", "url": "https://linkedin.com/in/h%E1%BB%8Dc-vi%E1%BB%87n-gia-s%C6%B0-the-tutorx-vi%E1%BB%87t-nam", "scope": "Hồ sơ và bài đăng công khai", "status": "public_only", "canRead": true, "canWrite": false, "lastSyncedAt": null, "channelId": "channel-linkedin", "permission": "read_only", "syncFrequency": "manual", "includeInAgentKnowledge": true },
-      { "id": "source-x", "name": "X @thetutorxvn", "type": "social", "url": "https://x.com/thetutorxvn", "scope": "Hồ sơ và post công khai", "status": "public_only", "canRead": true, "canWrite": false, "lastSyncedAt": null, "channelId": "channel-x", "permission": "read_only", "syncFrequency": "manual", "includeInAgentKnowledge": true }
+      {
+        "id": "source-website",
+        "name": "Website The TutorX",
+        "type": "website",
+        "url": "https://thetutorx.vn/",
+        "scope": "Brand facts, dịch vụ, bài viết và CTA",
+        "status": "public_only",
+        "canRead": true,
+        "canWrite": false,
+        "lastSyncedAt": "2026-07-15T08:45:00+07:00",
+        "channelId": "channel-website",
+        "permission": "read_only",
+        "syncFrequency": "daily",
+        "includeInAgentKnowledge": true
+      },
+      {
+        "id": "source-facebook",
+        "name": "Facebook The TutorX",
+        "type": "social",
+        "url": "https://www.facebook.com/thetutorX.vn",
+        "scope": "Nội dung công khai; chưa có insights",
+        "status": "public_only",
+        "canRead": true,
+        "canWrite": false,
+        "lastSyncedAt": null,
+        "channelId": "channel-facebook",
+        "permission": "read_only",
+        "syncFrequency": "manual",
+        "includeInAgentKnowledge": true
+      },
+      {
+        "id": "source-tiktok",
+        "name": "TikTok @thetutorx",
+        "type": "social",
+        "url": "https://tiktok.com/@thetutorx",
+        "scope": "Hồ sơ và nội dung công khai",
+        "status": "public_only",
+        "canRead": true,
+        "canWrite": false,
+        "lastSyncedAt": null,
+        "channelId": "channel-tiktok",
+        "permission": "read_only",
+        "syncFrequency": "manual",
+        "includeInAgentKnowledge": true
+      },
+      {
+        "id": "source-youtube",
+        "name": "YouTube @thetutorx.vietnam",
+        "type": "social",
+        "url": "https://youtube.com/@thetutorx.vietnam",
+        "scope": "Hồ sơ và video công khai",
+        "status": "public_only",
+        "canRead": true,
+        "canWrite": false,
+        "lastSyncedAt": null,
+        "channelId": "channel-youtube",
+        "permission": "read_only",
+        "syncFrequency": "manual",
+        "includeInAgentKnowledge": true
+      },
+      {
+        "id": "source-linkedin",
+        "name": "LinkedIn The TutorX Việt Nam",
+        "type": "social",
+        "url": "https://linkedin.com/in/h%E1%BB%8Dc-vi%E1%BB%87n-gia-s%C6%B0-the-tutorx-vi%E1%BB%87t-nam",
+        "scope": "Hồ sơ và bài đăng công khai",
+        "status": "public_only",
+        "canRead": true,
+        "canWrite": false,
+        "lastSyncedAt": null,
+        "channelId": "channel-linkedin",
+        "permission": "read_only",
+        "syncFrequency": "manual",
+        "includeInAgentKnowledge": true
+      },
+      {
+        "id": "source-x",
+        "name": "X @thetutorxvn",
+        "type": "social",
+        "url": "https://x.com/thetutorxvn",
+        "scope": "Hồ sơ và post công khai",
+        "status": "public_only",
+        "canRead": true,
+        "canWrite": false,
+        "lastSyncedAt": null,
+        "channelId": "channel-x",
+        "permission": "read_only",
+        "syncFrequency": "manual",
+        "includeInAgentKnowledge": true
+      }
     ],
-    "agentLearning": { "enabled": true, "learnFromApprovedEdits": true, "learnFromPerformance": false, "minimumSamples": 12, "requireApprovalForStableRules": true, "preserveRejectedRules": true },
+    "agentLearning": {
+      "enabled": true,
+      "learnFromApprovedEdits": true,
+      "learnFromPerformance": false,
+      "minimumSamples": 12,
+      "requireApprovalForStableRules": true,
+      "preserveRejectedRules": true
+    },
     "sections": [
-      { "id": "workspace", "label": "Hồ sơ workspace", "description": "Tên, thị trường, ngôn ngữ, múi giờ và lưu trữ dữ liệu.", "icon": "building-2", "enabled": true, "completionPercent": 100, "issues": 0, "route": "/studio/workspace" },
-      { "id": "voice", "label": "Giọng thương hiệu", "description": "Traits, từ ưu tiên, từ chặn và override theo kênh.", "icon": "audio-lines", "enabled": true, "completionPercent": 75, "issues": 1, "route": "/studio/brand-voice" },
-      { "id": "content-rules", "label": "Quy tắc nội dung", "description": "Claim, nguồn, bảo vệ dữ liệu và CTA.", "icon": "shield-check", "enabled": true, "completionPercent": 90, "issues": 1, "route": "/studio/content-rules" },
-      { "id": "channels", "label": "Vai trò kênh", "description": "Tone, cadence, trụ cột và mục tiêu từng kênh.", "icon": "radio-tower", "enabled": true, "completionPercent": 72, "issues": 5, "route": "/studio/channels" },
-      { "id": "sources", "label": "Nguồn và quyền", "description": "Quyền đọc/ghi, đồng bộ và phạm vi học của agent.", "icon": "database", "enabled": true, "completionPercent": 38, "issues": 5, "route": "/studio/sources" },
-      { "id": "team", "label": "Thành viên và quyền", "description": "Vai trò workspace và phạm vi account.", "icon": "users", "enabled": true, "completionPercent": 30, "issues": 4, "route": "/studio/team" },
-      { "id": "approval", "label": "Quy trình duyệt", "description": "Reviewer, SLA và fallback trước publish.", "icon": "git-pull-request", "enabled": true, "completionPercent": 55, "issues": 3, "route": "/studio/approval" },
-      { "id": "notifications", "label": "Thông báo", "description": "Sự kiện, người nhận và nhịp gửi.", "icon": "bell", "enabled": true, "completionPercent": 60, "issues": 2, "route": "/studio/notifications" },
-      { "id": "learning", "label": "Agent learning", "description": "Kiểm soát rule học từ chỉnh sửa và hiệu suất.", "icon": "brain-circuit", "enabled": true, "completionPercent": 67, "issues": 1, "route": "/studio/learning" },
-      { "id": "audit", "label": "Nhật ký hoạt động", "description": "Theo dõi thay đổi tri thức, quyền, duyệt và publish.", "icon": "history", "enabled": true, "completionPercent": 100, "issues": 0, "route": "/studio/audit" }
+      {
+        "id": "workspace",
+        "label": "Hồ sơ workspace",
+        "description": "Tên, thị trường, ngôn ngữ, múi giờ và lưu trữ dữ liệu.",
+        "icon": "building-2",
+        "enabled": true,
+        "completionPercent": 100,
+        "issues": 0,
+        "route": "/studio/workspace"
+      },
+      {
+        "id": "voice",
+        "label": "Giọng thương hiệu",
+        "description": "Traits, từ ưu tiên, từ chặn và override theo kênh.",
+        "icon": "audio-lines",
+        "enabled": true,
+        "completionPercent": 75,
+        "issues": 1,
+        "route": "/studio/brand-voice"
+      },
+      {
+        "id": "content-rules",
+        "label": "Quy tắc nội dung",
+        "description": "Claim, nguồn, bảo vệ dữ liệu và CTA.",
+        "icon": "shield-check",
+        "enabled": true,
+        "completionPercent": 90,
+        "issues": 1,
+        "route": "/studio/content-rules"
+      },
+      {
+        "id": "channels",
+        "label": "Vai trò kênh",
+        "description": "Tone, cadence, trụ cột và mục tiêu từng kênh.",
+        "icon": "radio-tower",
+        "enabled": true,
+        "completionPercent": 72,
+        "issues": 5,
+        "route": "/studio/channels"
+      },
+      {
+        "id": "sources",
+        "label": "Nguồn và quyền",
+        "description": "Quyền đọc/ghi, đồng bộ và phạm vi học của agent.",
+        "icon": "database",
+        "enabled": true,
+        "completionPercent": 38,
+        "issues": 5,
+        "route": "/studio/sources"
+      },
+      {
+        "id": "team",
+        "label": "Thành viên và quyền",
+        "description": "Vai trò workspace và phạm vi account.",
+        "icon": "users",
+        "enabled": true,
+        "completionPercent": 30,
+        "issues": 4,
+        "route": "/studio/team"
+      },
+      {
+        "id": "approval",
+        "label": "Quy trình duyệt",
+        "description": "Reviewer, SLA và fallback trước publish.",
+        "icon": "git-pull-request",
+        "enabled": true,
+        "completionPercent": 55,
+        "issues": 3,
+        "route": "/studio/approval"
+      },
+      {
+        "id": "notifications",
+        "label": "Thông báo",
+        "description": "Sự kiện, người nhận và nhịp gửi.",
+        "icon": "bell",
+        "enabled": true,
+        "completionPercent": 60,
+        "issues": 2,
+        "route": "/studio/notifications"
+      },
+      {
+        "id": "learning",
+        "label": "Agent learning",
+        "description": "Kiểm soát rule học từ chỉnh sửa và hiệu suất.",
+        "icon": "brain-circuit",
+        "enabled": true,
+        "completionPercent": 67,
+        "issues": 1,
+        "route": "/studio/learning"
+      },
+      {
+        "id": "audit",
+        "label": "Nhật ký hoạt động",
+        "description": "Theo dõi thay đổi tri thức, quyền, duyệt và publish.",
+        "icon": "history",
+        "enabled": true,
+        "completionPercent": 100,
+        "issues": 0,
+        "route": "/studio/audit"
+      }
     ],
     "team": [
-      { "id": "member-owner", "name": "Chủ workspace", "email": "contact.thetutorx@gmail.com", "role": "owner", "channelIds": ["channel-website", "channel-facebook", "channel-tiktok", "channel-youtube", "channel-linkedin", "channel-x"], "status": "active", "lastActiveAt": "2026-07-15T08:55:00+07:00" }
+      {
+        "id": "member-owner",
+        "name": "Chủ workspace",
+        "email": "contact.thetutorx@gmail.com",
+        "role": "owner",
+        "channelIds": [
+          "channel-website",
+          "channel-facebook",
+          "channel-tiktok",
+          "channel-youtube",
+          "channel-linkedin",
+          "channel-x"
+        ],
+        "status": "active",
+        "lastActiveAt": "2026-07-15T08:55:00+07:00"
+      }
     ],
     "approvalWorkflows": [
-      { "id": "approval-standard", "name": "Duyệt nội dung tiêu chuẩn", "contentTypes": ["social_post", "short_video", "article"], "channelIds": ["channel-facebook", "channel-tiktok", "channel-youtube", "channel-linkedin", "channel-x"], "steps": [{ "order": 1, "role": "content_manager", "assigneeId": null }], "slaHours": 24, "fallbackMemberId": "member-owner", "enabled": true },
-      { "id": "approval-claims", "name": "Duyệt claim và case study", "contentTypes": ["case_study", "student_result", "service_claim"], "channelIds": ["channel-website", "channel-facebook", "channel-youtube"], "steps": [{ "order": 1, "role": "reviewer", "assigneeId": null }, { "order": 2, "role": "owner", "assigneeId": "member-owner" }], "slaHours": 36, "fallbackMemberId": "member-owner", "enabled": true },
-      { "id": "approval-satellite", "name": "Duyệt nội dung kênh vệ tinh", "contentTypes": ["satellite_post"], "channelIds": [], "steps": [{ "order": 1, "role": "content_manager", "assigneeId": null }], "slaHours": 24, "fallbackMemberId": "member-owner", "enabled": false }
+      {
+        "id": "approval-standard",
+        "name": "Duyệt nội dung tiêu chuẩn",
+        "contentTypes": ["social_post", "short_video", "article"],
+        "channelIds": ["channel-facebook", "channel-tiktok", "channel-youtube", "channel-linkedin", "channel-x"],
+        "steps": [{ "order": 1, "role": "content_manager", "assigneeId": null }],
+        "slaHours": 24,
+        "fallbackMemberId": "member-owner",
+        "enabled": true
+      },
+      {
+        "id": "approval-claims",
+        "name": "Duyệt claim và case study",
+        "contentTypes": ["case_study", "student_result", "service_claim"],
+        "channelIds": ["channel-website", "channel-facebook", "channel-youtube"],
+        "steps": [
+          { "order": 1, "role": "reviewer", "assigneeId": null },
+          { "order": 2, "role": "owner", "assigneeId": "member-owner" }
+        ],
+        "slaHours": 36,
+        "fallbackMemberId": "member-owner",
+        "enabled": true
+      },
+      {
+        "id": "approval-satellite",
+        "name": "Duyệt nội dung kênh vệ tinh",
+        "contentTypes": ["satellite_post"],
+        "channelIds": [],
+        "steps": [{ "order": 1, "role": "content_manager", "assigneeId": null }],
+        "slaHours": 24,
+        "fallbackMemberId": "member-owner",
+        "enabled": false
+      }
     ],
     "notifications": [
-      { "id": "notify-approval", "event": "approval.required", "channels": ["in_app", "email"], "recipientRoles": ["content_manager", "reviewer"], "digest": "instant", "enabled": true },
-      { "id": "notify-source", "event": "source.needs_reconnect", "channels": ["in_app", "email"], "recipientRoles": ["owner", "admin"], "digest": "instant", "enabled": true },
-      { "id": "notify-weekly", "event": "analytics.weekly_summary", "channels": ["email"], "recipientRoles": ["owner", "content_manager", "analyst"], "digest": "weekly", "enabled": true },
-      { "id": "notify-task", "event": "task.due_soon", "channels": ["in_app"], "recipientRoles": ["owner", "content_manager", "creator", "reviewer"], "digest": "daily", "enabled": true }
+      {
+        "id": "notify-approval",
+        "event": "approval.required",
+        "channels": ["in_app", "email"],
+        "recipientRoles": ["content_manager", "reviewer"],
+        "digest": "instant",
+        "enabled": true
+      },
+      {
+        "id": "notify-source",
+        "event": "source.needs_reconnect",
+        "channels": ["in_app", "email"],
+        "recipientRoles": ["owner", "admin"],
+        "digest": "instant",
+        "enabled": true
+      },
+      {
+        "id": "notify-weekly",
+        "event": "analytics.weekly_summary",
+        "channels": ["email"],
+        "recipientRoles": ["owner", "content_manager", "analyst"],
+        "digest": "weekly",
+        "enabled": true
+      },
+      {
+        "id": "notify-task",
+        "event": "task.due_soon",
+        "channels": ["in_app"],
+        "recipientRoles": ["owner", "content_manager", "creator", "reviewer"],
+        "digest": "daily",
+        "enabled": true
+      }
     ],
     "auditLog": [
-      { "id": "audit-001", "occurredAt": "2026-07-15T09:00:00+07:00", "actor": "HIVE-K Agent", "action": "Tải hồ sơ khởi tạo", "objectType": "workspace", "objectLabel": "The TutorX Việt Nam", "detail": "Đã tải và phân tích các nhóm dữ liệu; không có hành động xuất bản." },
-      { "id": "audit-002", "occurredAt": "2026-07-15T08:58:00+07:00", "actor": "HIVE-K Agent", "action": "Trích xuất dữ kiện thương hiệu", "objectType": "brand_profile", "objectLabel": "Brand Snapshot v0", "detail": "Trích xuất 15 dữ kiện; 12 mục chờ người dùng xác nhận." },
-      { "id": "audit-003", "occurredAt": "2026-07-15T08:56:00+07:00", "actor": "HIVE-K Agent", "action": "Tạo hồ sơ kênh", "objectType": "channel_set", "objectLabel": "6 kênh công khai", "detail": "Phân tích vai trò và nhịp nội dung; các chỉ số được đánh dấu ước tính." },
-      { "id": "audit-004", "occurredAt": "2026-07-15T08:54:00+07:00", "actor": "HIVE-K Agent", "action": "Đề xuất kênh vệ tinh", "objectType": "satellite_plan", "objectLabel": "3 đề xuất vệ tinh", "detail": "Chỉ tạo đề xuất; chưa tạo hoặc xuất bản lên kênh bên ngoài." },
-      { "id": "audit-005", "occurredAt": "2026-07-15T08:52:00+07:00", "actor": "HIVE-K Agent", "action": "Tạo bản nháp chiến lược", "objectType": "strategy", "objectLabel": "Kế hoạch 90 ngày", "detail": "Tạo bản nháp để người dùng chỉnh sửa và phê duyệt." },
-      { "id": "audit-006", "occurredAt": "2026-07-15T08:50:00+07:00", "actor": "HIVE-K Agent", "action": "Tạo phân tích tổng quan", "objectType": "analytics", "objectLabel": "Dashboard kênh", "detail": "Mọi chỉ số mạng xã hội đang là ước tính; chưa phải dữ liệu vận hành thật." }
+      {
+        "id": "audit-001",
+        "occurredAt": "2026-07-15T09:00:00+07:00",
+        "actor": "HIVE-K Agent",
+        "action": "Tải hồ sơ khởi tạo",
+        "objectType": "workspace",
+        "objectLabel": "The TutorX Việt Nam",
+        "detail": "Đã tải và phân tích các nhóm dữ liệu; không có hành động xuất bản."
+      },
+      {
+        "id": "audit-002",
+        "occurredAt": "2026-07-15T08:58:00+07:00",
+        "actor": "HIVE-K Agent",
+        "action": "Trích xuất dữ kiện thương hiệu",
+        "objectType": "brand_profile",
+        "objectLabel": "Brand Snapshot v0",
+        "detail": "Trích xuất 15 dữ kiện; 12 mục chờ người dùng xác nhận."
+      },
+      {
+        "id": "audit-003",
+        "occurredAt": "2026-07-15T08:56:00+07:00",
+        "actor": "HIVE-K Agent",
+        "action": "Tạo hồ sơ kênh",
+        "objectType": "channel_set",
+        "objectLabel": "6 kênh công khai",
+        "detail": "Phân tích vai trò và nhịp nội dung; các chỉ số được đánh dấu ước tính."
+      },
+      {
+        "id": "audit-004",
+        "occurredAt": "2026-07-15T08:54:00+07:00",
+        "actor": "HIVE-K Agent",
+        "action": "Đề xuất kênh vệ tinh",
+        "objectType": "satellite_plan",
+        "objectLabel": "3 đề xuất vệ tinh",
+        "detail": "Chỉ tạo đề xuất; chưa tạo hoặc xuất bản lên kênh bên ngoài."
+      },
+      {
+        "id": "audit-005",
+        "occurredAt": "2026-07-15T08:52:00+07:00",
+        "actor": "HIVE-K Agent",
+        "action": "Tạo bản nháp chiến lược",
+        "objectType": "strategy",
+        "objectLabel": "Kế hoạch 90 ngày",
+        "detail": "Tạo bản nháp để người dùng chỉnh sửa và phê duyệt."
+      },
+      {
+        "id": "audit-006",
+        "occurredAt": "2026-07-15T08:50:00+07:00",
+        "actor": "HIVE-K Agent",
+        "action": "Tạo phân tích tổng quan",
+        "objectType": "analytics",
+        "objectLabel": "Dashboard kênh",
+        "detail": "Mọi chỉ số mạng xã hội đang là ước tính; chưa phải dữ liệu vận hành thật."
+      }
     ],
     "tasks": [
-      { "id": "task-confirm-facts", "title": "Xác nhận 10 dữ kiện bắt buộc", "description": "Ưu tiên tên, định vị, dịch vụ, khách hàng và voice trước khi tạo nội dung.", "priority": "high", "status": "in_progress", "view": "brand", "assigneeId": "member-owner", "dueAt": "2026-07-22T17:00:00+07:00", "source": "agent" },
-      { "id": "task-connect-facebook", "title": "Kết nối Facebook Insights", "description": "Cấp quyền đọc để thay metrics ước tính bằng dữ liệu thật.", "priority": "high", "status": "todo", "view": "channels", "assigneeId": "member-owner", "dueAt": "2026-07-20T17:00:00+07:00", "source": "agent" },
-      { "id": "task-connect-tiktok", "title": "Kết nối TikTok Analytics", "description": "Cần dữ liệu retention và nguồn follower.", "priority": "high", "status": "todo", "view": "channels", "assigneeId": "member-owner", "dueAt": "2026-07-20T17:00:00+07:00", "source": "agent" },
-      { "id": "task-satellite", "title": "Chọn một kênh vệ tinh pilot", "description": "Duyệt, chỉnh hoặc bỏ các đề xuất trước ngày 20 của kế hoạch.", "priority": "medium", "status": "needs_approval", "view": "satellites", "assigneeId": "member-owner", "dueAt": "2026-08-03T17:00:00+07:00", "source": "agent" },
-      { "id": "task-calendar", "title": "Duyệt lịch nội dung 4 tuần", "description": "Chốt cadence và owner theo ma trận kênh.", "priority": "high", "status": "todo", "view": "strategy", "assigneeId": "member-content", "dueAt": "2026-07-27T17:00:00+07:00", "source": "agent" },
-      { "id": "task-utm", "title": "Chuẩn hóa UTM và nguồn lead", "description": "Thêm source/campaign vào form và link CTA.", "priority": "high", "status": "todo", "view": "analytics", "assigneeId": null, "dueAt": "2026-08-04T17:00:00+07:00", "source": "agent" },
-      { "id": "task-team", "title": "Xác nhận team và phạm vi quyền", "description": "Kiểm tra email, vai trò và phạm vi kênh của từng thành viên trước khi mời.", "priority": "medium", "status": "todo", "view": "studio", "assigneeId": "member-owner", "dueAt": "2026-07-25T17:00:00+07:00", "source": "system" },
-      { "id": "task-voice", "title": "Duyệt Brand Voice Profile v0", "description": "Kiểm tra traits, từ ưu tiên, từ chặn và sample.", "priority": "medium", "status": "needs_approval", "view": "studio", "assigneeId": "member-reviewer", "dueAt": "2026-07-24T17:00:00+07:00", "source": "agent" }
+      {
+        "id": "task-confirm-facts",
+        "title": "Xác nhận 10 dữ kiện bắt buộc",
+        "description": "Ưu tiên tên, định vị, dịch vụ, khách hàng và voice trước khi tạo nội dung.",
+        "priority": "high",
+        "status": "in_progress",
+        "view": "brand",
+        "assigneeId": "member-owner",
+        "dueAt": "2026-07-22T17:00:00+07:00",
+        "source": "agent"
+      },
+      {
+        "id": "task-connect-facebook",
+        "title": "Kết nối Facebook Insights",
+        "description": "Cấp quyền đọc để thay metrics ước tính bằng dữ liệu thật.",
+        "priority": "high",
+        "status": "todo",
+        "view": "channels",
+        "assigneeId": "member-owner",
+        "dueAt": "2026-07-20T17:00:00+07:00",
+        "source": "agent"
+      },
+      {
+        "id": "task-connect-tiktok",
+        "title": "Kết nối TikTok Analytics",
+        "description": "Cần dữ liệu retention và nguồn follower.",
+        "priority": "high",
+        "status": "todo",
+        "view": "channels",
+        "assigneeId": "member-owner",
+        "dueAt": "2026-07-20T17:00:00+07:00",
+        "source": "agent"
+      },
+      {
+        "id": "task-satellite",
+        "title": "Chọn một kênh vệ tinh pilot",
+        "description": "Duyệt, chỉnh hoặc bỏ các đề xuất trước ngày 20 của kế hoạch.",
+        "priority": "medium",
+        "status": "needs_approval",
+        "view": "satellites",
+        "assigneeId": "member-owner",
+        "dueAt": "2026-08-03T17:00:00+07:00",
+        "source": "agent"
+      },
+      {
+        "id": "task-calendar",
+        "title": "Duyệt lịch nội dung 4 tuần",
+        "description": "Chốt cadence và owner theo ma trận kênh.",
+        "priority": "high",
+        "status": "todo",
+        "view": "strategy",
+        "assigneeId": "member-content",
+        "dueAt": "2026-07-27T17:00:00+07:00",
+        "source": "agent"
+      },
+      {
+        "id": "task-utm",
+        "title": "Chuẩn hóa UTM và nguồn lead",
+        "description": "Thêm source/campaign vào form và link CTA.",
+        "priority": "high",
+        "status": "todo",
+        "view": "analytics",
+        "assigneeId": null,
+        "dueAt": "2026-08-04T17:00:00+07:00",
+        "source": "agent"
+      },
+      {
+        "id": "task-team",
+        "title": "Xác nhận team và phạm vi quyền",
+        "description": "Kiểm tra email, vai trò và phạm vi kênh của từng thành viên trước khi mời.",
+        "priority": "medium",
+        "status": "todo",
+        "view": "studio",
+        "assigneeId": "member-owner",
+        "dueAt": "2026-07-25T17:00:00+07:00",
+        "source": "system"
+      },
+      {
+        "id": "task-voice",
+        "title": "Duyệt Brand Voice Profile v0",
+        "description": "Kiểm tra traits, từ ưu tiên, từ chặn và sample.",
+        "priority": "medium",
+        "status": "needs_approval",
+        "view": "studio",
+        "assigneeId": "member-reviewer",
+        "dueAt": "2026-07-24T17:00:00+07:00",
+        "source": "agent"
+      }
     ]
   }
 }

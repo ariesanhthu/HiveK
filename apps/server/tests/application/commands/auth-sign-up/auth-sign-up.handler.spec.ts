@@ -1,18 +1,22 @@
-import { jest } from '@jest/globals';
-import { AuthSignUpCommandHandler } from '@/application/commands/auth-sign-up/auth-sign-up.handler';
+import { AuthSendOtpCommand } from '@/application/commands';
 import { AuthSignUpCommand } from '@/application/commands/auth-sign-up/auth-sign-up.command';
-import { ERoleType, EOtpType } from '@/core/enums';
-import { UserConflictException, RoleNotFoundException, InvalidUserTypeException } from '@/core/exceptions';
+import { AuthSignUpCommandHandler } from '@/application/commands/auth-sign-up/auth-sign-up.handler';
+import { AdminRoot, EnterpriseUserRoot, KOLUserRoot } from '@/core/aggregate-roots';
+import { EOtpType, ERoleType } from '@/core/enums';
+import {
+  InvalidUserTypeException,
+  RoleNotFoundException,
+  UserConflictException,
+} from '@/core/exceptions';
+import { jest } from '@jest/globals';
 import { createMockUserRepository } from '../../../__mocks__/mock-repositories';
 import {
   createMockAuthService,
-  createMockUnitOfWork,
+  createMockCommandBus,
   createMockOutboxService,
   createMockRoleReadService,
-  createMockCommandBus,
+  createMockUnitOfWork,
 } from '../../../__mocks__/mock-services';
-import { KOLUserRoot, EnterpriseUserRoot, AdminRoot } from '@/core/aggregate-roots';
-import { AuthSendOtpCommand } from '@/application/commands';
 
 describe('AuthSignUpCommandHandler', () => {
   let handler: AuthSignUpCommandHandler;
@@ -76,7 +80,8 @@ describe('AuthSignUpCommandHandler', () => {
       expect(result.userId).toBeDefined();
       expect(mockUserRepository.save).toHaveBeenCalledWith(expect.any(KOLUserRoot));
       expect(mockCommandBus.execute).toHaveBeenCalledWith(expect.any(AuthSendOtpCommand));
-      const otpCommand = (mockCommandBus.execute as jest.Mock).mock.calls[0][0] as AuthSendOtpCommand;
+      const otpCommand = (mockCommandBus.execute as jest.Mock).mock
+        .calls[0][0] as AuthSendOtpCommand;
       expect(otpCommand.input.email).toBe('test@example.com');
       expect(otpCommand.input.type).toBe(EOtpType.CREATE_ACCOUNT);
 
@@ -135,7 +140,9 @@ describe('AuthSignUpCommandHandler', () => {
       // Arrange
       const command = new AuthSignUpCommand(ERoleType.KOL, signUpInput);
       mockUserRepository.findByEmail.mockResolvedValue(null);
-      mockRoleReadService.findAll.mockResolvedValue({ data: [], total: 0, page: 1, limit: 10 } as any);
+      mockRoleReadService.findAll.mockResolvedValue(
+        { data: [], total: 0, page: 1, limit: 10 } as any,
+      );
 
       // Act & Assert
       await expect(handler.execute(command)).rejects.toThrow(RoleNotFoundException);

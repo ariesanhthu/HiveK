@@ -18,7 +18,9 @@ describe('LinkCampaignParticipantOutputFileHandler', () => {
     const participant = { setOutputFileId: jest.fn() };
     mockParticipantRepository.findByOutputId.mockResolvedValue(participant);
 
-    await handler.handle(new UploadedFileCreatedEvent('file-1', TargetType.CAMPAIGN_PARTICIPANT, 'cp-1', 'fileId'));
+    await handler.handle(
+      new UploadedFileCreatedEvent('file-1', TargetType.CAMPAIGN_PARTICIPANT, 'cp-1', 'fileId'),
+    );
 
     expect(mockParticipantRepository.findByOutputId).toHaveBeenCalledWith('cp-1');
     expect(participant.setOutputFileId).toHaveBeenCalledWith('cp-1', 'file-1');
@@ -29,24 +31,37 @@ describe('LinkCampaignParticipantOutputFileHandler', () => {
     const participant = { setOutputFileId: jest.fn() };
     mockParticipantRepository.findByOutputId.mockResolvedValue(participant);
 
-    await handler.handle(new UploadedFileCreatedEvent('file-2', TargetType.CAMPAIGN_PARTICIPANT, 'cp-2', 'file'));
+    await handler.handle(
+      new UploadedFileCreatedEvent('file-2', TargetType.CAMPAIGN_PARTICIPANT, 'cp-2', 'file'),
+    );
 
     expect(participant.setOutputFileId).toHaveBeenCalled();
   });
 
   it('should ignore non-matching target types', async () => {
-    await handler.handle(new UploadedFileCreatedEvent('file-1', TargetType.USER, 'user-1', 'fileId'));
+    await handler.handle(
+      new UploadedFileCreatedEvent('file-1', TargetType.USER, 'user-1', 'fileId'),
+    );
     expect(mockParticipantRepository.findByOutputId).not.toHaveBeenCalled();
   });
 
   it('should ignore non-matching fields', async () => {
-    await handler.handle(new UploadedFileCreatedEvent('file-1', TargetType.CAMPAIGN_PARTICIPANT, 'cp-1', 'avatar'));
+    await handler.handle(
+      new UploadedFileCreatedEvent('file-1', TargetType.CAMPAIGN_PARTICIPANT, 'cp-1', 'avatar'),
+    );
     expect(mockParticipantRepository.findByOutputId).not.toHaveBeenCalled();
   });
 
   it('should silently skip if participant not found', async () => {
     mockParticipantRepository.findByOutputId.mockResolvedValue(null);
-    await handler.handle(new UploadedFileCreatedEvent('file-1', TargetType.CAMPAIGN_PARTICIPANT, 'nonexistent', 'fileId'));
+    await handler.handle(
+      new UploadedFileCreatedEvent(
+        'file-1',
+        TargetType.CAMPAIGN_PARTICIPANT,
+        'nonexistent',
+        'fileId',
+      ),
+    );
     expect(mockParticipantRepository.save).not.toHaveBeenCalled();
   });
 });

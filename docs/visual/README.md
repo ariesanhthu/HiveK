@@ -103,7 +103,7 @@ Vite sẽ chạy dev server (mặc định `http://localhost:5173`) từ thư m�
       - **“Tải xuống .md”** → download file đã chỉnh (bạn copy đè vào file thật trong `docs/`)
       - **“Copy vào clipboard”** → copy text để dán vào editor khác
 
-> Giới hạn kỹ thuật: UI chạy thuần frontend nên **không thể ghi trực tiếp** lên file trong repo.  
+> Giới hạn kỹ thuật: UI chạy thuần frontend nên **không thể ghi trực tiếp** lên file trong repo.\
 > Thay vào đó, bạn export JSON/markdown rồi cập nhật file bằng tay (hoặc dùng script riêng).
 
 ## Hai chiều: docs ↔ graph
@@ -149,4 +149,3 @@ Vite sẽ chạy dev server (mặc định `http://localhost:5173`) từ thư m�
    - export `graph.json`
    - cập nhật markdown tương ứng
    - đảm bảo `structure.md` các folder liên quan đã update.
-

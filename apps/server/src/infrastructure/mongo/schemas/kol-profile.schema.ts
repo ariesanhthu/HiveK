@@ -4,7 +4,11 @@ import { softDeletePlugin } from '../utils';
 
 @Schema({ _id: false })
 export class NativePlatformInfo {
-  @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'PlatformModel', required: true })
+  @Prop({
+    type: MongooseSchema.Types.ObjectId,
+    ref: 'PlatformModel',
+    required: true,
+  })
   platform_id: string;
 
   @Prop({ type: MongooseSchema.Types.String, required: true, trim: true })
@@ -31,13 +35,23 @@ export class NativePlatformInfo {
   timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' },
 })
 export class KolProfileModel {
-  @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'UserModel', default: null })
+  @Prop({
+    type: MongooseSchema.Types.ObjectId,
+    ref: 'UserModel',
+    default: null,
+  })
   user_id: MongooseSchema.Types.ObjectId | null;
 
   @Prop({ type: MongooseSchema.Types.String, default: null })
   verification_type: string | null;
 
-  @Prop({ type: MongooseSchema.Types.String, required: true, trim: true, minlength: 1, maxlength: 200 })
+  @Prop({
+    type: MongooseSchema.Types.String,
+    required: true,
+    trim: true,
+    minlength: 1,
+    maxlength: 200,
+  })
   name: string;
 
   @Prop({ type: MongooseSchema.Types.String, trim: true })
@@ -49,22 +63,28 @@ export class KolProfileModel {
   @Prop({ type: MongooseSchema.Types.String, trim: true, maxlength: 2000 })
   bio: string;
 
-  @Prop({ 
+  @Prop({
     type: MongooseSchema.Types.String,
-    required: true, 
+    required: true,
     trim: true,
     lowercase: true,
-    match: [/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/, 'Please fill a valid email address']
+    match: [
+      /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/,
+      'Please fill a valid email address',
+    ],
   })
   email: string;
 
-  @Prop({ 
+  @Prop({
     type: MongooseSchema.Types.String,
-    match: [/^\+?[1-9]\d{1,14}$/, 'Please fill a valid phone number']
+    match: [/^\+?[1-9]\d{1,14}$/, 'Please fill a valid phone number'],
   })
   phone: string;
 
-  @Prop({ type: [SchemaFactory.createForClass(NativePlatformInfo)], default: [] })
+  @Prop({
+    type: [SchemaFactory.createForClass(NativePlatformInfo)],
+    default: [],
+  })
   platforms: NativePlatformInfo[];
 
   @Prop({ type: MongooseSchema.Types.Boolean, default: false })

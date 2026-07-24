@@ -1,13 +1,24 @@
-import { jest } from '@jest/globals';
-import { AuthSendOtpCommandHandler } from '@/application/commands/auth-send-otp/auth-send-otp.handler';
 import { AuthSendOtpCommand } from '@/application/commands/auth-send-otp/auth-send-otp.command';
-import { EOtpType, ERoleType } from '@/core/enums';
-import { OtpRateLimitException, ForbiddenDomainException, UserNotFoundException } from '@/core/exceptions';
-import { createMockOtpRepository, createMockUserRepository } from '../../../__mocks__/mock-repositories';
-import { createMockAuthService, createMockOutboxService, createMockUnitOfWork } from '../../../__mocks__/mock-services';
-import { OtpRoot } from '@/core/aggregate-roots/otp.aggregate';
+import { AuthSendOtpCommandHandler } from '@/application/commands/auth-send-otp/auth-send-otp.handler';
 import { KOLUserRoot } from '@/core/aggregate-roots/kol-user.aggregate';
+import { OtpRoot } from '@/core/aggregate-roots/otp.aggregate';
+import { EOtpType, ERoleType } from '@/core/enums';
+import {
+  ForbiddenDomainException,
+  OtpRateLimitException,
+  UserNotFoundException,
+} from '@/core/exceptions';
 import { PhoneNumberVO } from '@/core/value-objects/phone-number.value-object';
+import { jest } from '@jest/globals';
+import {
+  createMockOtpRepository,
+  createMockUserRepository,
+} from '../../../__mocks__/mock-repositories';
+import {
+  createMockAuthService,
+  createMockOutboxService,
+  createMockUnitOfWork,
+} from '../../../__mocks__/mock-services';
 
 describe('AuthSendOtpCommandHandler', () => {
   let handler: AuthSendOtpCommandHandler;
@@ -44,10 +55,17 @@ describe('AuthSendOtpCommandHandler', () => {
 
       expect(result).toEqual({ success: true });
       expect(mockAuthService.normalizeEmail).toHaveBeenCalledWith('user@example.com');
-      expect(mockOtpRepository.findRecentOtp).toHaveBeenCalledWith('user@example.com', EOtpType.RESET_PASSWORD, 60);
-      expect(mockOtpRepository.deleteByEmailAndType).toHaveBeenCalledWith('user@example.com', EOtpType.RESET_PASSWORD);
+      expect(mockOtpRepository.findRecentOtp).toHaveBeenCalledWith(
+        'user@example.com',
+        EOtpType.RESET_PASSWORD,
+        60,
+      );
+      expect(mockOtpRepository.deleteByEmailAndType).toHaveBeenCalledWith(
+        'user@example.com',
+        EOtpType.RESET_PASSWORD,
+      );
       expect(mockOtpRepository.save).toHaveBeenCalledWith(expect.any(OtpRoot));
-      
+
       expect(mockOutboxService.enqueueMany).toHaveBeenCalled();
       expect(mockUow.execute).toHaveBeenCalled();
     });

@@ -97,7 +97,7 @@ Props:
 type CampaignWizardShellProps = {
   campaignId?: string;
   initialStep?: CampaignWizardStepId;
-  mode: "create" | "edit";
+  mode: 'create' | 'edit';
 };
 ```
 
@@ -111,7 +111,7 @@ Hiển thị:
 - Missing count.
 
 ```ts
-type WizardStepStatus = "empty" | "in_progress" | "complete" | "warning" | "blocked";
+type WizardStepStatus = 'empty' | 'in_progress' | 'complete' | 'warning' | 'blocked';
 ```
 
 ### 3.3. `AIBriefPanel`
@@ -327,11 +327,11 @@ Layout:
 
 Platform defaults:
 
-| Platform | Default strategy | Không nên |
-|---|---|---|
-| Facebook | Caption đầy đủ, album, social proof, CTA rõ | Quá ngắn, thiếu thông tin mua hàng |
-| Instagram | Visual-first, carousel/reels, caption ngắn, hashtag tinh gọn | Caption dài như Facebook |
-| Threads | Hook hội thoại, quan điểm, câu hỏi, first comment | Viết brochure, quá sales |
+| Platform  | Default strategy                                             | Không nên                          |
+| --------- | ------------------------------------------------------------ | ---------------------------------- |
+| Facebook  | Caption đầy đủ, album, social proof, CTA rõ                  | Quá ngắn, thiếu thông tin mua hàng |
+| Instagram | Visual-first, carousel/reels, caption ngắn, hashtag tinh gọn | Caption dài như Facebook           |
+| Threads   | Hook hội thoại, quan điểm, câu hỏi, first comment            | Viết brochure, quá sales           |
 
 ---
 
@@ -411,9 +411,9 @@ Best for: Instagram carousel, sales post
 
 Q&A table:
 
-| Question | Answer | Intent | Auto reply? |
-|---|---|---|---|
-| Có size M không? | Có, bạn inbox chiều cao/cân nặng để tư vấn size. | size | Draft only |
+| Question         | Answer                                           | Intent | Auto reply? |
+| ---------------- | ------------------------------------------------ | ------ | ----------- |
+| Có size M không? | Có, bạn inbox chiều cao/cân nặng để tư vấn size. | size   | Draft only  |
 
 ---
 

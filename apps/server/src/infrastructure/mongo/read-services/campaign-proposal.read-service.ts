@@ -1,17 +1,21 @@
+import { ProposalDto, ProposalFilterDto } from '@/application/dtos';
+import { PaginatedResponseDto, SortOrder } from '@/application/dtos/pagination.dto';
+import { ICampaignProposalReadService } from '@/application/interfaces/read-service/proposal.read-service.interface';
+import { Nullable } from '@/core/types';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, QueryFilter, Types } from 'mongoose';
-import { ICampaignProposalReadService } from '@/application/interfaces/read-service/proposal.read-service.interface';
-import { ProposalDto, ProposalFilterDto } from '@/application/dtos';
-import { CampaignProposalModel, CampaignProposalDocument } from '../schemas/campaign-proposal.schema';
-import { PaginatedResponseDto, SortOrder } from '@/application/dtos/pagination.dto';
-import { Nullable } from '@/core/types';
+import {
+  CampaignProposalDocument,
+  CampaignProposalModel,
+} from '../schemas/campaign-proposal.schema';
 
 @Injectable()
 export class MongoCampaignProposalReadService implements ICampaignProposalReadService {
   constructor(
-    @InjectModel(CampaignProposalModel.name)
-    private readonly proposalModel: Model<CampaignProposalDocument>,
+    @InjectModel(CampaignProposalModel.name) private readonly proposalModel: Model<
+      CampaignProposalDocument
+    >,
   ) {}
 
   async findById(id: string): Promise<Nullable<ProposalDto>> {
@@ -24,8 +28,16 @@ export class MongoCampaignProposalReadService implements ICampaignProposalReadSe
     return doc ? this.mapToDto(doc) : null;
   }
 
-  async findAll(filters: ProposalFilterDto = {} as any): Promise<PaginatedResponseDto<ProposalDto>> {
-    const { cursor, limit = 10, sort = SortOrder.DESC, campaignId, status } = filters;
+  async findAll(
+    filters: ProposalFilterDto = {} as any,
+  ): Promise<PaginatedResponseDto<ProposalDto>> {
+    const {
+      cursor,
+      limit = 10,
+      sort = SortOrder.DESC,
+      campaignId,
+      status,
+    } = filters;
     const query: QueryFilter<CampaignProposalDocument> = {};
 
     if (campaignId) {
@@ -49,7 +61,9 @@ export class MongoCampaignProposalReadService implements ICampaignProposalReadSe
 
     const hasNextPage = docs.length > limit;
     const results = hasNextPage ? docs.slice(0, limit) : docs;
-    const nextCursor = hasNextPage ? results[results.length - 1]._id.toString() : null;
+    const nextCursor = hasNextPage
+      ? results[results.length - 1]._id.toString()
+      : null;
 
     return new PaginatedResponseDto(
       results.map((doc) => this.mapToDto(doc)),
@@ -79,7 +93,7 @@ export class MongoCampaignProposalReadService implements ICampaignProposalReadSe
         imageId: product.image_id,
         affiliateUrls: product.affiliate_urls instanceof Map
           ? Object.fromEntries(product.affiliate_urls)
-          : (product.affiliate_urls || {}),
+          : product.affiliate_urls || {},
       })),
       vouchers: (doc.vouchers || []).map((voucher: any) => ({
         code: voucher.code,
@@ -91,7 +105,7 @@ export class MongoCampaignProposalReadService implements ICampaignProposalReadSe
       status: doc.status,
       metrics: doc.metrics instanceof Map
         ? Object.fromEntries(doc.metrics)
-        : (doc.metrics || {}),
+        : doc.metrics || {},
       createdAt: doc.created_at || doc.createdAt,
       updatedAt: doc.updated_at || doc.updatedAt,
     };

@@ -1,7 +1,7 @@
 import {
-  UnauthorizedDomainException,
-  ForbiddenDomainException,
   BadRequestDomainException,
+  ForbiddenDomainException,
+  UnauthorizedDomainException,
 } from '../common/exceptions/domain.exception';
 
 export class InvalidCredentialsException extends UnauthorizedDomainException {

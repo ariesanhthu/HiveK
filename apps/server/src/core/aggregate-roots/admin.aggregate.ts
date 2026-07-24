@@ -1,11 +1,9 @@
-import { UserProps, UserRoot, UserCreateProps } from './user.aggregate';
 import { ERoleType } from '../enums';
+import { UserCreateProps, UserProps, UserRoot } from './user.aggregate';
 
-export interface AdminProps extends UserProps {
-}
+export type AdminProps = UserProps;
 
-export interface AdminCreateProps extends UserCreateProps {
-}
+export type AdminCreateProps = UserCreateProps;
 
 export class AdminRoot extends UserRoot<AdminProps> {
   private constructor(props: AdminProps, id?: string) {

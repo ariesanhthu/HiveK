@@ -1,13 +1,13 @@
 export type KolMatchingStep =
-  | "find-entry"
-  | "agent-processing"
-  | "search-results"
-  | "kol-comparison";
+  | 'find-entry'
+  | 'agent-processing'
+  | 'search-results'
+  | 'kol-comparison';
 
-export type CampaignObjective = "awareness" | "conversion" | "engagement";
-export type CreatorType = "kol" | "koc" | "both";
-export type SocialPlatform = "tiktok" | "instagram" | "youtube";
-export type BudgetTier = "starter" | "growth" | "scale";
+export type CampaignObjective = 'awareness' | 'conversion' | 'engagement';
+export type CreatorType = 'kol' | 'koc' | 'both';
+export type SocialPlatform = 'tiktok' | 'instagram' | 'youtube';
+export type BudgetTier = 'starter' | 'growth' | 'scale';
 
 export type FindKolEntryInput = {
   campaignOption: string;
@@ -36,7 +36,7 @@ export type AgentStage = {
 export type KolCandidate = {
   id: string;
   name: string;
-  type: "KOL" | "KOC";
+  type: 'KOL' | 'KOC';
   niche: string;
   platform: SocialPlatform;
   followers: number;

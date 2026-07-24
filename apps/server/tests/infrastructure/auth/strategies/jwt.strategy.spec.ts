@@ -1,9 +1,9 @@
-import { Test, TestingModule } from '@nestjs/testing';
+import { LOGGER_SERVICE } from '@/application';
+import { JwtStrategy } from '@/infrastructure/auth/strategies/jwt.strategy';
 import { ConfigService } from '@nestjs/config';
 import { CommandBus } from '@nestjs/cqrs';
-import { JwtStrategy } from '@/infrastructure/auth/strategies/jwt.strategy';
-import { LOGGER_SERVICE } from '@/application';
-import { createMockLoggerService, createMockCommandBus } from '../../../__mocks__/mock-services';
+import { Test, TestingModule } from '@nestjs/testing';
+import { createMockCommandBus, createMockLoggerService } from '../../../__mocks__/mock-services';
 
 describe('JwtStrategy', () => {
   let strategy: JwtStrategy;

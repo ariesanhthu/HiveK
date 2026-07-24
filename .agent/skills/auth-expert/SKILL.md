@@ -10,11 +10,13 @@ Expert in JWT, OAuth 2.0, sessions, RBAC, and security best practices.
 ## When Invoked
 
 ### Recommend Specialist and Stop
+
 - **API design patterns**: recommend rest-api-expert
-- **Database security**: recommend database-expert  
+- **Database security**: recommend database-expert
 - **Infrastructure security**: recommend devops-expert
 
 ### Environment Detection
+
 ```bash
 grep -E "passport|jsonwebtoken|next-auth|bcrypt" package.json 2>/dev/null
 find . -type f -name "*auth*" -not -path "./node_modules/*" | head -5
@@ -25,6 +27,7 @@ find . -type f -name "*auth*" -not -path "./node_modules/*" | head -5
 ### JWT Implementation
 
 **Secure JWT Pattern:**
+
 ```typescript
 import jwt from 'jsonwebtoken';
 
@@ -39,8 +42,8 @@ function generateTokens(payload: TokenPayload) {
 }
 
 function authenticateToken(req: Request, res: Response, next: NextFunction) {
-  const token = req.cookies.accessToken || 
-    req.headers.authorization?.replace('Bearer ', '');
+  const token = req.cookies.accessToken
+    || req.headers.authorization?.replace('Bearer ', '');
 
   if (!token) return res.status(401).json({ error: 'Auth required' });
 

@@ -18,7 +18,9 @@ describe('LinkPlatformIconHandler', () => {
     const platform = { id: 'plat-1', updateIcon: jest.fn() };
     mockPlatformRepository.findById.mockResolvedValue(platform);
 
-    await handler.handle(new UploadedFileCreatedEvent('file-1', TargetType.PLATFORM, 'plat-1', 'icon'));
+    await handler.handle(
+      new UploadedFileCreatedEvent('file-1', TargetType.PLATFORM, 'plat-1', 'icon'),
+    );
 
     expect(platform.updateIcon).toHaveBeenCalledWith('file-1');
     expect(mockPlatformRepository.save).toHaveBeenCalledWith(platform);
@@ -28,7 +30,9 @@ describe('LinkPlatformIconHandler', () => {
     const platform = { id: 'plat-1', updateIcon: jest.fn() };
     mockPlatformRepository.findById.mockResolvedValue(platform);
 
-    await handler.handle(new UploadedFileCreatedEvent('file-2', TargetType.PLATFORM, 'plat-1', 'iconUrl'));
+    await handler.handle(
+      new UploadedFileCreatedEvent('file-2', TargetType.PLATFORM, 'plat-1', 'iconUrl'),
+    );
 
     expect(platform.updateIcon).toHaveBeenCalledWith('file-2');
   });
@@ -39,13 +43,17 @@ describe('LinkPlatformIconHandler', () => {
   });
 
   it('should ignore non-matching fields', async () => {
-    await handler.handle(new UploadedFileCreatedEvent('file-1', TargetType.PLATFORM, 'plat-1', 'avatar'));
+    await handler.handle(
+      new UploadedFileCreatedEvent('file-1', TargetType.PLATFORM, 'plat-1', 'avatar'),
+    );
     expect(mockPlatformRepository.findById).not.toHaveBeenCalled();
   });
 
   it('should silently skip if platform not found', async () => {
     mockPlatformRepository.findById.mockResolvedValue(null);
-    await handler.handle(new UploadedFileCreatedEvent('file-1', TargetType.PLATFORM, 'nonexistent', 'icon'));
+    await handler.handle(
+      new UploadedFileCreatedEvent('file-1', TargetType.PLATFORM, 'nonexistent', 'icon'),
+    );
     expect(mockPlatformRepository.save).not.toHaveBeenCalled();
   });
 });

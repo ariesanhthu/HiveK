@@ -1,10 +1,10 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { getModelToken } from '@nestjs/mongoose';
 import { EmailNotificationHandler } from '@/application/events/notification-dispatched/email-notification.handler';
 import { NotificationDispatchedEvent } from '@/application/events/notification-dispatched/notification-dispatched.event';
-import { MAILER_SERVICE } from '@/application/interfaces/mailer.interface';
 import { LOGGER_SERVICE } from '@/application/interfaces/logger.interface';
+import { MAILER_SERVICE } from '@/application/interfaces/mailer.interface';
 import { NotificationChannel, NotificationType } from '@/core/enums';
+import { getModelToken } from '@nestjs/mongoose';
+import { Test, TestingModule } from '@nestjs/testing';
 
 describe('EmailNotificationHandler', () => {
   let handler: EmailNotificationHandler;
@@ -69,7 +69,7 @@ describe('EmailNotificationHandler', () => {
         content: 'Check email',
       },
       ['user-1'],
-      [NotificationChannel.IN_APP] // in_app only
+      [NotificationChannel.IN_APP], // in_app only
     );
 
     await handler.handle(event);
@@ -86,7 +86,7 @@ describe('EmailNotificationHandler', () => {
         content: 'Check the new details',
       },
       ['user-1', 'user-2'],
-      [NotificationChannel.EMAIL]
+      [NotificationChannel.EMAIL],
     );
 
     await handler.handle(event);
@@ -129,7 +129,7 @@ describe('EmailNotificationHandler', () => {
         content: 'Important change',
       },
       ['user-1', 'user-2'],
-      [NotificationChannel.EMAIL]
+      [NotificationChannel.EMAIL],
     );
 
     // Make the first email send fail
@@ -142,7 +142,7 @@ describe('EmailNotificationHandler', () => {
 
     expect(mockMailerService.sendMail).toHaveBeenCalledTimes(2);
     expect(mockLogger.error).toHaveBeenCalledWith(
-      `Failed to send notification email to alice@example.com: SMTP connection timed out`
+      `Failed to send notification email to alice@example.com: SMTP connection timed out`,
     );
   });
 });

@@ -68,6 +68,8 @@ export function isEmpty(val: unknown): boolean {
 /**
  * Type guard: checks if a value is a function.
  */
-export function isFunction(val: unknown): val is (...args: unknown[]) => unknown {
+export function isFunction(
+  val: unknown,
+): val is (...args: unknown[]) => unknown {
   return typeof val === 'function';
 }

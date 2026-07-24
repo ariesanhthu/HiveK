@@ -3,74 +3,82 @@
 ### Chuẩn chung cho API
 
 **Base URL & versioning**
-- REST: `/api/v1/...` (hoặc domain riêng `api.example.com/v1/...`: *không xác định*)  
-- Versioning theo path để dễ inventory và giảm rủi ro “deprecated API” (phù hợp tinh thần OWASP API inventory management).  
+
+- REST: `/api/v1/...` (hoặc domain riêng `api.example.com/v1/...`: _không xác định_)
+- Versioning theo path để dễ inventory và giảm rủi ro “deprecated API” (phù hợp tinh thần OWASP API inventory management).
 
 **Auth**
-- Header: `Authorization: Bearer <access_token>` theo RFC 6750.  
-- Token format: JWT theo RFC 7519.  
+
+- Header: `Authorization: Bearer <access_token>` theo RFC 6750.
+- Token format: JWT theo RFC 7519.
 
 **Error format**
-- Dùng `application/problem+json` theo RFC 9457.  
+
+- Dùng `application/problem+json` theo RFC 9457.
 
 **Rate limit**
-- Nếu implement header theo draft IETF: `RateLimit-Policy` và `RateLimit` (hoặc các biến thể draft) để client biết quota.  
-- Khi vượt giới hạn, trả HTTP 429 và có thể gửi `Retry-After` theo RFC 6585.  
+
+- Nếu implement header theo draft IETF: `RateLimit-Policy` và `RateLimit` (hoặc các biến thể draft) để client biết quota.
+- Khi vượt giới hạn, trả HTTP 429 và có thể gửi `Retry-After` theo RFC 6585.
 
 **Pagination**
-- Khuyến nghị cursor-based: `?limit=20&cursor=...` trả `nextCursor`.  
+
+- Khuyến nghị cursor-based: `?limit=20&cursor=...` trả `nextCursor`.
 - Sorting: `?sort=-createdAt` hoặc `?sort=score:desc`.
 
 **Timestamp**
-- Tất cả datetime theo RFC 3339.  
+
+- Tất cả datetime theo RFC 3339.
 
 ### Bảng tóm tắt endpoints REST v1
 
-| Nhóm | Method | Path | Auth | Mô tả |
-|---|---|---|---|---|
-| Auth | POST | `/api/v1/auth/register` | Public | Đăng ký + chọn role |
-| Auth | POST | `/api/v1/auth/login` | Public | Đăng nhập |
-| Auth | POST | `/api/v1/auth/refresh` | Public | Refresh token (*cơ chế lưu refresh: không xác định*) |
-| Auth | POST | `/api/v1/auth/logout` | User | Thu hồi refresh/session |
-| User | GET | `/api/v1/me` | User | Lấy profile hiện tại |
-| Admin | GET | `/api/v1/admin/users` | Admin | List & filter user |
-| KOL | GET | `/api/v1/kols` | User | List KOL (business dùng để tìm) |
-| KOL | GET | `/api/v1/kols/{kolId}` | User/Public (tuỳ visibility) | Xem KOL detail |
-| KOL | PATCH | `/api/v1/kols/{kolId}` | KOL/Admin | Update KOL profile |
-| Business | GET | `/api/v1/businesses/{businessId}` | User/Public (tuỳ) | Detail business |
-| Business | PATCH | `/api/v1/businesses/{businessId}` | Business/Admin | Update business profile |
-| Campaign | POST | `/api/v1/campaigns` | Business | Tạo campaign |
-| Campaign | GET | `/api/v1/campaigns` | User | List (filter theo status/role) |
-| Campaign | GET | `/api/v1/campaigns/{id}` | User | Detail campaign |
-| Campaign | PATCH | `/api/v1/campaigns/{id}` | Business/Admin | Update campaign (ràng buộc) |
-| Campaign | POST | `/api/v1/campaigns/{id}/publish` | Business | Publish (DRAFT→OPEN) |
-| Matching | GET | `/api/v1/campaigns/{id}/suggested-kols` | Business | Rule-based suggestions (P1) |
-| Participant | POST | `/api/v1/campaigns/{id}/invites` | Business | Invite KOL vào campaign |
-| Participant | POST | `/api/v1/campaigns/{id}/applications` | KOL | KOL apply campaign |
-| Participant | POST | `/api/v1/participants/{pid}/accept` | KOL/Business | Accept invite/app (tuỳ flow) |
-| Participant | PATCH | `/api/v1/participants/{pid}/status` | Business/KOL/Admin | Update status (Posting/Completed/Failed) |
-| KPI | POST | `/api/v1/participants/{pid}/metrics` | KOL | Submit metrics + proof |
-| KPI | POST | `/api/v1/participants/{pid}/metrics/verify` | Business/Admin | Verify metrics |
-| Review | POST | `/api/v1/reviews` | User | Tạo review/rating |
-| Review | GET | `/api/v1/reviews` | User/Public | List reviews theo toUser/campaign |
-| Ranking | GET | `/api/v1/rankings/kols` | Public | Bảng xếp hạng KOL |
-| Ranking | GET | `/api/v1/rankings/businesses` | Public | Bảng xếp hạng Business |
-| Public | GET | `/api/v1/public/kols/{slug}` | Public | Public KOL page data |
-| Public | GET | `/api/v1/public/businesses/{slug}` | Public | Public business page data (optional) |
-| Webhook | POST | `/api/v1/webhooks/social/{provider}` | Provider | Nhận callback metric (P2) |
+| Nhóm        | Method | Path                                        | Auth                         | Mô tả                                                |
+| ----------- | ------ | ------------------------------------------- | ---------------------------- | ---------------------------------------------------- |
+| Auth        | POST   | `/api/v1/auth/register`                     | Public                       | Đăng ký + chọn role                                  |
+| Auth        | POST   | `/api/v1/auth/login`                        | Public                       | Đăng nhập                                            |
+| Auth        | POST   | `/api/v1/auth/refresh`                      | Public                       | Refresh token (_cơ chế lưu refresh: không xác định_) |
+| Auth        | POST   | `/api/v1/auth/logout`                       | User                         | Thu hồi refresh/session                              |
+| User        | GET    | `/api/v1/me`                                | User                         | Lấy profile hiện tại                                 |
+| Admin       | GET    | `/api/v1/admin/users`                       | Admin                        | List & filter user                                   |
+| KOL         | GET    | `/api/v1/kols`                              | User                         | List KOL (business dùng để tìm)                      |
+| KOL         | GET    | `/api/v1/kols/{kolId}`                      | User/Public (tuỳ visibility) | Xem KOL detail                                       |
+| KOL         | PATCH  | `/api/v1/kols/{kolId}`                      | KOL/Admin                    | Update KOL profile                                   |
+| Business    | GET    | `/api/v1/businesses/{businessId}`           | User/Public (tuỳ)            | Detail business                                      |
+| Business    | PATCH  | `/api/v1/businesses/{businessId}`           | Business/Admin               | Update business profile                              |
+| Campaign    | POST   | `/api/v1/campaigns`                         | Business                     | Tạo campaign                                         |
+| Campaign    | GET    | `/api/v1/campaigns`                         | User                         | List (filter theo status/role)                       |
+| Campaign    | GET    | `/api/v1/campaigns/{id}`                    | User                         | Detail campaign                                      |
+| Campaign    | PATCH  | `/api/v1/campaigns/{id}`                    | Business/Admin               | Update campaign (ràng buộc)                          |
+| Campaign    | POST   | `/api/v1/campaigns/{id}/publish`            | Business                     | Publish (DRAFT→OPEN)                                 |
+| Matching    | GET    | `/api/v1/campaigns/{id}/suggested-kols`     | Business                     | Rule-based suggestions (P1)                          |
+| Participant | POST   | `/api/v1/campaigns/{id}/invites`            | Business                     | Invite KOL vào campaign                              |
+| Participant | POST   | `/api/v1/campaigns/{id}/applications`       | KOL                          | KOL apply campaign                                   |
+| Participant | POST   | `/api/v1/participants/{pid}/accept`         | KOL/Business                 | Accept invite/app (tuỳ flow)                         |
+| Participant | PATCH  | `/api/v1/participants/{pid}/status`         | Business/KOL/Admin           | Update status (Posting/Completed/Failed)             |
+| KPI         | POST   | `/api/v1/participants/{pid}/metrics`        | KOL                          | Submit metrics + proof                               |
+| KPI         | POST   | `/api/v1/participants/{pid}/metrics/verify` | Business/Admin               | Verify metrics                                       |
+| Review      | POST   | `/api/v1/reviews`                           | User                         | Tạo review/rating                                    |
+| Review      | GET    | `/api/v1/reviews`                           | User/Public                  | List reviews theo toUser/campaign                    |
+| Ranking     | GET    | `/api/v1/rankings/kols`                     | Public                       | Bảng xếp hạng KOL                                    |
+| Ranking     | GET    | `/api/v1/rankings/businesses`               | Public                       | Bảng xếp hạng Business                               |
+| Public      | GET    | `/api/v1/public/kols/{slug}`                | Public                       | Public KOL page data                                 |
+| Public      | GET    | `/api/v1/public/businesses/{slug}`          | Public                       | Public business page data (optional)                 |
+| Webhook     | POST   | `/api/v1/webhooks/social/{provider}`        | Provider                     | Nhận callback metric (P2)                            |
 
 ### Schema request/response mẫu và mã lỗi
 
 **Quy ước response success**
+
 ```json
 {
-  "data": { },
+  "data": {},
   "meta": { "requestId": "..." }
 }
 ```
 
 **Quy ước lỗi (RFC 9457 Problem Details)**
 Content-Type: `application/problem+json`
+
 ```json
 {
   "type": "https://example.com/problems/validation-error",
@@ -84,10 +92,12 @@ Content-Type: `application/problem+json`
   "requestId": "req_01H..."
 }
 ```
-Chuẩn Problem Details được định nghĩa để mang thông tin lỗi machine-readable cho HTTP APIs.  
 
-**Endpoint: Tạo campaign (POST /api/v1/campaigns)**  
+Chuẩn Problem Details được định nghĩa để mang thông tin lỗi machine-readable cho HTTP APIs.
+
+**Endpoint: Tạo campaign (POST /api/v1/campaigns)**\
 Request (MVP):
+
 ```json
 {
   "name": "Ra mắt sản phẩm X",
@@ -113,6 +123,7 @@ Request (MVP):
 ```
 
 Response:
+
 ```json
 {
   "data": {
@@ -127,8 +138,9 @@ Response:
 }
 ```
 
-**Endpoint: Invite KOL (POST /api/v1/campaigns/{id}/invites)**  
+**Endpoint: Invite KOL (POST /api/v1/campaigns/{id}/invites)**\
 Request:
+
 ```json
 {
   "kolId": "k1...",
@@ -139,6 +151,7 @@ Request:
 ```
 
 Response:
+
 ```json
 {
   "data": {
@@ -150,8 +163,9 @@ Response:
 }
 ```
 
-**Endpoint: Submit metrics (POST /api/v1/participants/{pid}/metrics)**  
+**Endpoint: Submit metrics (POST /api/v1/participants/{pid}/metrics)**\
 Request:
+
 ```json
 {
   "postedAt": "2026-04-10T12:00:00+07:00",
@@ -172,9 +186,10 @@ Request:
 
 ### Phác thảo GraphQL
 
-GraphQL hữu ích khi UI cần query nhiều entity liên quan (campaign → participants → metrics → reviews) trong 1 roundtrip và giảm overfetch/underfetch; đặc tả GraphQL được chuẩn hoá bởi GraphQL Foundation.  
+GraphQL hữu ích khi UI cần query nhiều entity liên quan (campaign → participants → metrics → reviews) trong 1 roundtrip và giảm overfetch/underfetch; đặc tả GraphQL được chuẩn hoá bởi GraphQL Foundation.
 
 **Schema khung (rút gọn)**
+
 ```graphql
 type Query {
   me: User!
@@ -194,6 +209,7 @@ type Mutation {
 ```
 
 **Ví dụ query ranking**
+
 ```graphql
 query Rankings($limit: Int!, $cursor: String) {
   rankingsKOLs(limit: $limit, cursor: $cursor) {
@@ -208,4 +224,3 @@ query Rankings($limit: Int!, $cursor: String) {
   }
 }
 ```
-

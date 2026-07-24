@@ -1,16 +1,18 @@
-import { z } from 'zod';
-import { createZodDto } from 'nestjs-zod';
 import { CursorPaginationRequestSchema } from '@/application/dtos/pagination.dto';
 import { ERoleType } from '@/core/enums';
+import { createZodDto } from 'nestjs-zod';
+import { z } from 'zod';
 
-export const RoleDtoSchema = z.object({
-  id: z.string(),
-  title: z.string(),
-  permissions: z.array(z.string()),
-  type: z.enum(ERoleType),
-  createdAt: z.iso.datetime(),
-  updatedAt: z.iso.datetime(),
-}).strict();
+export const RoleDtoSchema = z
+  .object({
+    id: z.string(),
+    title: z.string(),
+    permissions: z.array(z.string()),
+    type: z.enum(ERoleType),
+    createdAt: z.iso.datetime(),
+    updatedAt: z.iso.datetime(),
+  })
+  .strict();
 
 export class RoleDto extends createZodDto(RoleDtoSchema) {}
 

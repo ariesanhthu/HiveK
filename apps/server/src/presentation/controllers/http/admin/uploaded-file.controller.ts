@@ -1,43 +1,50 @@
 import {
-  Controller,
-  Get,
-  Post,
-  Patch,
-  Delete,
-  Body,
-  Param,
-  Query,
-  HttpCode,
-  HttpStatus,
-  UseInterceptors,
-  UploadedFile,
-  UploadedFiles,
-  BadRequestException,
-  UseGuards,
-} from '@nestjs/common';
-import { CommandBus, QueryBus } from '@nestjs/cqrs';
-import { ApiTags, ApiOperation, ApiConsumes, ApiBody, ApiBearerAuth, ApiSecurity } from '@nestjs/swagger';
-import { buildVersionedRoute } from '@presentation/utils';
-import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
-import { TargetType } from '@/core/enums/target-type.enum';
-import {
-  UploadedFileCreateCommand,
   UploadedFileBulkCreateCommand,
-  UploadedFileRestoreCommand,
+  UploadedFileCreateCommand,
   UploadedFileCreateInputDto,
+  UploadedFileRestoreCommand,
 } from '@/application/commands';
-import {
-  UploadedFileGetListQuery,
-  UploadedFileGetByIdQuery,
-  UploadedFileFilterDto,
-} from '@/application/queries';
 import { UploadedFileDto } from '@/application/dtos';
 import { PaginatedResponseDto } from '@/application/dtos/pagination.dto';
+import {
+  UploadedFileFilterDto,
+  UploadedFileGetByIdQuery,
+  UploadedFileGetListQuery,
+} from '@/application/queries';
+import { ERoleType } from '@/core/enums/role-type.enum';
+import { TargetType } from '@/core/enums/target-type.enum';
+import { Roles } from '@/presentation/decorators/roles.decorator';
 import { JwtAuthGuard, RolesGuard } from '@/presentation/middleware/guards';
 import { FileUploadValidationPipe } from '@/presentation/middleware/pipes/file-upload-validation.pipe';
-import { ERoleType } from '@/core/enums/role-type.enum';
-import { Roles } from '@/presentation/decorators/roles.decorator';
 import { isEmpty } from '@/shared/utils';
+import {
+  BadRequestException,
+  Body,
+  Controller,
+  Delete,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Param,
+  Patch,
+  Post,
+  Query,
+  UploadedFile,
+  UploadedFiles,
+  UseGuards,
+  UseInterceptors,
+} from '@nestjs/common';
+import { CommandBus, QueryBus } from '@nestjs/cqrs';
+import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
+import {
+  ApiBearerAuth,
+  ApiBody,
+  ApiConsumes,
+  ApiOperation,
+  ApiSecurity,
+  ApiTags,
+} from '@nestjs/swagger';
+import { buildVersionedRoute } from '@presentation/utils';
 
 @ApiTags('ADMIN-upload')
 @ApiBearerAuth()
@@ -53,7 +60,9 @@ export class UploadedFileAdminController {
 
   @Get()
   @ApiOperation({ summary: 'Get all uploaded files' })
-  async findAll(@Query() filters: UploadedFileFilterDto): Promise<PaginatedResponseDto<UploadedFileDto>> {
+  async findAll(
+    @Query() filters: UploadedFileFilterDto,
+  ): Promise<PaginatedResponseDto<UploadedFileDto>> {
     return this.queryBus.execute(new UploadedFileGetListQuery(filters));
   }
 
@@ -96,7 +105,9 @@ export class UploadedFileAdminController {
       required: ['file', 'targetType', 'targetId', 'targetField'],
     },
   })
-  @ApiOperation({ summary: 'Upload and create new file (Max 25MB, Images/Docs/PDF only)' })
+  @ApiOperation({
+    summary: 'Upload and create new file (Max 25MB, Images/Docs/PDF only)',
+  })
   async create(
     @UploadedFile(new FileUploadValidationPipe()) file: Express.Multer.File,
     @Body() input: UploadedFileCreateInputDto,
@@ -152,7 +163,9 @@ export class UploadedFileAdminController {
       required: ['files', 'targetType', 'targetId', 'targetField'],
     },
   })
-  @ApiOperation({ summary: 'Upload and create multiple files (limit to 10, Max 25MB each)' })
+  @ApiOperation({
+    summary: 'Upload and create multiple files (limit to 10, Max 25MB each)',
+  })
   async createBulk(
     @UploadedFiles(new FileUploadValidationPipe()) files: Express.Multer.File[],
     @Body() input: UploadedFileCreateInputDto,
@@ -161,7 +174,9 @@ export class UploadedFileAdminController {
       throw new BadRequestException('At least one file is required');
     }
     if (files.length > 10) {
-      throw new BadRequestException('Cannot upload more than 10 files at a time');
+      throw new BadRequestException(
+        'Cannot upload more than 10 files at a time',
+      );
     }
     return this.commandBus.execute(
       new UploadedFileBulkCreateCommand(

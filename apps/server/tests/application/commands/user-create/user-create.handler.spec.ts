@@ -1,8 +1,8 @@
-import { UserCreateCommandHandler } from '@/application/commands/user-create/user-create.handler';
 import { UserCreateCommand } from '@/application/commands/user-create/user-create.command';
+import { UserCreateCommandHandler } from '@/application/commands/user-create/user-create.handler';
+import { EnterpriseUserRoot } from '@/core/aggregate-roots';
 import { ERoleType } from '@/core/enums';
 import { UserConflictException } from '@/core/exceptions';
-import { EnterpriseUserRoot } from '@/core/aggregate-roots';
 
 describe('UserCreateCommandHandler', () => {
   let handler: UserCreateCommandHandler;
@@ -22,7 +22,7 @@ describe('UserCreateCommandHandler', () => {
       hashPassword: jest.fn().mockResolvedValue('hashedPassword'),
     };
     mockUow = {
-        execute: jest.fn((fn: any) => fn()),
+      execute: jest.fn((fn: any) => fn()),
     };
     handler = new UserCreateCommandHandler(
       mockUserRepository,

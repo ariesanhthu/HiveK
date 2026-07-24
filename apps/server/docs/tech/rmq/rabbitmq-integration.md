@@ -30,7 +30,7 @@ export interface IMessageQueueService {
 Create `apps/server/src/infrastructure/messaging/rabbitmq.service.ts`. This service implements the interface and wraps the NestJS `ClientProxy`.
 
 ```typescript
-import { Injectable, Inject } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { firstValueFrom } from 'rxjs';
 import { IMessageQueueService } from '../../application/interfaces/message-queue.interface';
@@ -57,8 +57,8 @@ Create `apps/server/src/infrastructure/modules/messaging.module.ts`. This module
 
 ```typescript
 import { Global, Module } from '@nestjs/common';
-import { ClientsModule, Transport } from '@nestjs/microservices';
 import { ConfigService } from '@nestjs/config';
+import { ClientsModule, Transport } from '@nestjs/microservices';
 import { RabbitMQService } from '../messaging/rabbitmq.service';
 
 @Global()
@@ -94,16 +94,16 @@ export class MessagingModule {}
 
 ## 4. Integration Steps
 
-1.  **Install Dependencies:**
-    ```bash
-    yarn workspace server add @nestjs/microservices amqplib amqp-connection-manager
-    ```
-2.  **Add Configuration:**
-    Ensure `RABBITMQ_URI` and `RABBITMQ_QUEUE` are defined in the `.env` file and correctly loaded by `ConfigService`.
-3.  **Import Module:**
-    Add `MessagingModule` to the `imports` array of `AppModule`.
-4.  **Inject and Use:**
-    Inject the service into any application service or controller using `@Inject('IMessageQueueService')`.
+1. **Install Dependencies:**
+   ```bash
+   yarn workspace server add @nestjs/microservices amqplib amqp-connection-manager
+   ```
+2. **Add Configuration:**
+   Ensure `RABBITMQ_URI` and `RABBITMQ_QUEUE` are defined in the `.env` file and correctly loaded by `ConfigService`.
+3. **Import Module:**
+   Add `MessagingModule` to the `imports` array of `AppModule`.
+4. **Inject and Use:**
+   Inject the service into any application service or controller using `@Inject('IMessageQueueService')`.
 
 ## 5. Rationale
 
@@ -111,4 +111,3 @@ export class MessagingModule {}
 - **Testability:** Mocking the `IMessageQueueService` interface in unit tests is straightforward.
 - **Consistency:** Follows the existing architectural patterns (core, application, infrastructure).
 - **Flexibility:** Switching from RabbitMQ to another message broker (like Redis or Kafka) would only require a new implementation in the infrastructure layer.
-

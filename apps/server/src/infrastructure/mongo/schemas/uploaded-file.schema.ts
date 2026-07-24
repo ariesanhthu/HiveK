@@ -1,6 +1,6 @@
+import { TargetType } from '@/core/enums/target-type.enum';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Schema as MongooseSchema } from 'mongoose';
-import { TargetType } from '@/core/enums/target-type.enum';
 import { softDeletePlugin } from '../utils';
 
 @Schema({
@@ -17,10 +17,20 @@ export class UploadedFileModel {
   @Prop({ type: MongooseSchema.Types.Number, required: true, min: 0 })
   size: number;
 
-  @Prop({ type: MongooseSchema.Types.String, required: true, lowercase: true, trim: true })
+  @Prop({
+    type: MongooseSchema.Types.String,
+    required: true,
+    lowercase: true,
+    trim: true,
+  })
   format: string;
 
-  @Prop({ type: MongooseSchema.Types.String, default: null, trim: true, maxlength: 500 })
+  @Prop({
+    type: MongooseSchema.Types.String,
+    default: null,
+    trim: true,
+    maxlength: 500,
+  })
   title: string | null;
 
   @Prop({ type: MongooseSchema.Types.String, required: true, enum: TargetType })

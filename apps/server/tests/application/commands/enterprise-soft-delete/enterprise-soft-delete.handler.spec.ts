@@ -1,8 +1,15 @@
-import { EnterpriseSoftDeleteCommandHandler } from '@/application/commands/enterprise-soft-delete/enterprise-soft-delete.handler';
 import { EnterpriseSoftDeleteCommand } from '@/application/commands/enterprise-soft-delete/enterprise-soft-delete.command';
-import { EnterpriseNotFoundException, EnterpriseForbiddenException, InvalidOperationException } from '@/core/exceptions';
+import { EnterpriseSoftDeleteCommandHandler } from '@/application/commands/enterprise-soft-delete/enterprise-soft-delete.handler';
 import { EnterpriseRoot } from '@/core/aggregate-roots';
-import { createMockEnterpriseRepository, createMockCampaignRepository } from '../../../__mocks__/mock-repositories';
+import {
+  EnterpriseForbiddenException,
+  EnterpriseNotFoundException,
+  InvalidOperationException,
+} from '@/core/exceptions';
+import {
+  createMockCampaignRepository,
+  createMockEnterpriseRepository,
+} from '../../../__mocks__/mock-repositories';
 import { createMockUnitOfWork } from '../../../__mocks__/mock-services';
 
 describe('EnterpriseSoftDeleteCommandHandler', () => {
@@ -15,27 +22,28 @@ describe('EnterpriseSoftDeleteCommandHandler', () => {
     mockEnterpriseRepository = createMockEnterpriseRepository();
     mockCampaignRepository = createMockCampaignRepository();
     mockUow = createMockUnitOfWork();
-    
+
     handler = new EnterpriseSoftDeleteCommandHandler(
-        mockEnterpriseRepository, 
-        mockCampaignRepository, 
-        mockUow
+      mockEnterpriseRepository,
+      mockCampaignRepository,
+      mockUow,
     );
   });
 
   const enterpriseId = 'ent-123';
   const userId = 'user-123';
 
-  const createMockEnterprise = () => EnterpriseRoot.instantiate(enterpriseId, {
-    userId: userId,
-    companyName: 'Test Ent',
-    contactEmail: 'test@ent.com',
-    isVerified: true,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-    deleteAt: null,
-    deleteBy: null,
-  });
+  const createMockEnterprise = () =>
+    EnterpriseRoot.instantiate(enterpriseId, {
+      userId: userId,
+      companyName: 'Test Ent',
+      contactEmail: 'test@ent.com',
+      isVerified: true,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      deleteAt: null,
+      deleteBy: null,
+    });
 
   describe('Happy Path', () => {
     it('should soft delete enterprise successfully', async () => {
@@ -62,7 +70,7 @@ describe('EnterpriseSoftDeleteCommandHandler', () => {
     it('should throw EnterpriseForbiddenException if requester is not owner', async () => {
       const enterprise = createMockEnterprise();
       mockEnterpriseRepository.findById.mockResolvedValue(enterprise);
-      
+
       const command = new EnterpriseSoftDeleteCommand(enterpriseId, 'wrong-user', 'admin-123');
       await expect(handler.execute(command)).rejects.toThrow(EnterpriseForbiddenException);
     });

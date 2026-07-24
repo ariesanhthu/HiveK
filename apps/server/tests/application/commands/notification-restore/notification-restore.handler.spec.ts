@@ -1,5 +1,5 @@
-import { NotificationRestoreCommandHandler } from '@/application/commands/notification-restore/notification-restore.handler';
 import { NotificationRestoreCommand } from '@/application/commands/notification-restore/notification-restore.command';
+import { NotificationRestoreCommandHandler } from '@/application/commands/notification-restore/notification-restore.handler';
 
 describe('NotificationRestoreCommandHandler', () => {
   let handler: NotificationRestoreCommandHandler;

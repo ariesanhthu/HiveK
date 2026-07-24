@@ -1,12 +1,12 @@
-"use client";
+'use client';
 
 /* ------------------------------------------------------------------ */
 /*  useCertificateProduct – Fetches data for the certificate page.     */
 /*  Parses the URL slug into productCode + kolCode, then calls API.    */
 /* ------------------------------------------------------------------ */
 
-import { useEffect, useState } from "react";
-import type { CertificateData } from "@/features/certificate-product/types";
+import type { CertificateData } from '@/features/certificate-product/types';
+import { useEffect, useState } from 'react';
 
 /** Regex: everything before the last `-kol-XXX` is the product slug. */
 const SLUG_RE = /^(.+)-(kol-\d{3})$/;
@@ -26,7 +26,7 @@ export function parseCertificateSlug(slug: string) {
 }
 
 export function useCertificateProduct(
-  slug: string
+  slug: string,
 ): UseCertificateProductReturn {
   const [data, setData] = useState<CertificateData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -38,7 +38,7 @@ export function useCertificateProduct(
 
   useEffect(() => {
     if (!productCode || !kolCode) {
-      setError("Link không hợp lệ. Vui lòng kiểm tra lại.");
+      setError('Link không hợp lệ. Vui lòng kiểm tra lại.');
       setIsLoading(false);
       return;
     }
@@ -51,14 +51,16 @@ export function useCertificateProduct(
 
       try {
         const res = await fetch(
-          `/api/certificate-product?productCode=${encodeURIComponent(productCode)}&kolCode=${encodeURIComponent(kolCode)}`
+          `/api/certificate-product?productCode=${encodeURIComponent(productCode)}&kolCode=${
+            encodeURIComponent(kolCode)
+          }`,
         );
 
         if (!res.ok) {
           const body = await res.json().catch(() => ({}));
           throw new Error(
-            (body as { error?: string }).error ??
-              "Không thể tải thông tin sản phẩm."
+            (body as { error?: string; }).error
+              ?? 'Không thể tải thông tin sản phẩm.',
           );
         }
 
@@ -69,7 +71,7 @@ export function useCertificateProduct(
           setError(
             err instanceof Error
               ? err.message
-              : "Đã có lỗi xảy ra. Vui lòng thử lại."
+              : 'Đã có lỗi xảy ra. Vui lòng thử lại.',
           );
         }
       } finally {

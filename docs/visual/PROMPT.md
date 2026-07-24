@@ -1,6 +1,7 @@
 @docs Set up a web-based React Flow visualization workspace for this repository under `docs/visual/`.
 
 Context
+
 - Markdown docs are the source of truth.
 - The visual graph is a derived but editable projection of the docs.
 - The graph must support two-way sync:
@@ -12,12 +13,14 @@ Context
 
 Main goal
 Create a self-contained React Flow workspace inside `docs/visual/` that can be opened locally in the browser and used as:
+
 - a visual explorer of docs and code relationships
 - a graph editor
 - a markdown-linked documentation workspace
 
 Required outputs
 Create and maintain:
+
 - `docs/visual/package.json`
 - `docs/visual/index.html`
 - `docs/visual/src/main.tsx` or `main.jsx`
@@ -29,6 +32,7 @@ Create and maintain:
 - `docs/visual/README.md`
 
 Tech requirements
+
 - Use React Flow as the graph editor/viewer
 - Use a lightweight local web setup that can run independently from the main app
 - Prefer Vite for the local web workspace
@@ -37,6 +41,7 @@ Tech requirements
 - Make the workspace easy for both humans and agents to inspect and edit
 
 Install/setup tasks
+
 1. Create a standalone frontend workspace under `docs/visual/`
 2. Install the required packages for:
    - React
@@ -49,6 +54,7 @@ Install/setup tasks
 
 UI requirements
 The React Flow UI must:
+
 - load graph data from `docs/visual/graph.json`
 - render nodes and edges clearly
 - support editing node labels
@@ -69,6 +75,7 @@ Data model requirements
 Use a stable graph schema.
 
 Nodes must support at least:
+
 - `id`
 - `type`
 - `label`
@@ -83,6 +90,7 @@ Nodes must support at least:
 - `lastSyncedAt`
 
 Edges must support at least:
+
 - `id`
 - `source`
 - `target`
@@ -91,6 +99,7 @@ Edges must support at least:
 
 Node type requirements
 Support these node types:
+
 - `feature`
 - `workflow`
 - `file`
@@ -98,6 +107,7 @@ Support these node types:
 - `note`
 
 Graph behavior rules
+
 - Keep the graph centered on feature -> workflow -> file
 - Avoid unnecessary visual complexity
 - Keep IDs stable
@@ -107,6 +117,7 @@ Graph behavior rules
 
 Editing requirements
 Implement a practical editing workflow:
+
 - clicking a node shows editable metadata
 - metadata panel allows editing:
   - label
@@ -122,6 +133,7 @@ Implement a practical editing workflow:
 - adding an edge should allow choosing a relation type
 
 Markdown integration requirements
+
 - If a node links to a markdown file, the UI should expose that link clearly
 - If a markdown file does not exist yet, allow creating it intentionally
 - If a user edits markdown from the UI, preserve human-written content as much as possible
@@ -132,28 +144,29 @@ Project structure requirements
 Create a clean structure similar to:
 
 docs/visual/
-  package.json
-  index.html
-  graph.json
-  README.md
-  src/
-    main.tsx
-    App.tsx
-    components/
-      GraphCanvas.tsx
-      Sidebar.tsx
-      NodeInspector.tsx
-      MarkdownEditor.tsx
-      Toolbar.tsx
-    lib/
-      graph.ts
-      markdown.ts
-      sync.ts
-      schema.ts
-    styles/
-      app.css
+package.json
+index.html
+graph.json
+README.md
+src/
+main.tsx
+App.tsx
+components/
+GraphCanvas.tsx
+Sidebar.tsx
+NodeInspector.tsx
+MarkdownEditor.tsx
+Toolbar.tsx
+lib/
+graph.ts
+markdown.ts
+sync.ts
+schema.ts
+styles/
+app.css
 
 Implementation expectations
+
 - Build a working first version, not a placeholder
 - Use reasonable defaults and example data if necessary
 - Preload the UI with a starter graph if `graph.json` is empty or missing
@@ -163,6 +176,7 @@ Implementation expectations
 
 README requirements
 In `docs/visual/README.md`, explain:
+
 - what this visual workspace is for
 - how to install dependencies
 - how to start the local web server
@@ -172,6 +186,7 @@ In `docs/visual/README.md`, explain:
 - current limitations, if any
 
 Execution rules
+
 - First inspect the existing repository structure and documentation rules
 - Read relevant `structure.md` files before modifying folders
 - Then create the React Flow workspace under `docs/visual/`
@@ -186,6 +201,7 @@ Produce a usable local web workspace that can actually be run and visually edite
 
 Final deliverable
 At the end, provide:
+
 - the files created or changed
 - how to run the visual workspace locally
 - any assumptions made

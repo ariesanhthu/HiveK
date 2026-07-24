@@ -1,6 +1,6 @@
+import { UploadedFileDto } from '@/application/dtos';
 import { Command } from '@nestjs/cqrs';
 import { UploadedFileCreateInputDto } from './uploaded-file-create.dto';
-import { UploadedFileDto } from '@/application/dtos';
 
 export class UploadedFileBulkCreateCommand extends Command<UploadedFileDto[]> {
   constructor(

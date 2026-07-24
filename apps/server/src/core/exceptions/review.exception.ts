@@ -1,7 +1,7 @@
 import {
-  NotFoundDomainException,
   BadRequestDomainException,
   ConflictDomainException,
+  NotFoundDomainException,
 } from '../common/exceptions/domain.exception';
 
 export class ReviewNotFoundException extends NotFoundDomainException {
@@ -11,7 +11,9 @@ export class ReviewNotFoundException extends NotFoundDomainException {
 }
 
 export class ReviewSpamException extends ConflictDomainException {
-  constructor(message: string = 'Review submission rejected due to spam detection') {
+  constructor(
+    message: string = 'Review submission rejected due to spam detection',
+  ) {
     super(message);
   }
 }
@@ -24,6 +26,8 @@ export class ReviewInvalidStatusTransitionException extends BadRequestDomainExce
 
 export class ReviewLowRecaptchaScoreException extends BadRequestDomainException {
   constructor(score: number, threshold: number = 0.5) {
-    super(`reCAPTCHA score ${score} is below minimum threshold of ${threshold}`);
+    super(
+      `reCAPTCHA score ${score} is below minimum threshold of ${threshold}`,
+    );
   }
 }

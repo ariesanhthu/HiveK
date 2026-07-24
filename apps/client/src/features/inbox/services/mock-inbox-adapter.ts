@@ -1,5 +1,5 @@
-import { MOCK_INBOX_CONVERSATIONS } from "@/features/inbox/data/mock-inbox";
-import type { InboxAdapter, InboxMessage } from "@/features/inbox/types";
+import { MOCK_INBOX_CONVERSATIONS } from '@/features/inbox/data/mock-inbox';
+import type { InboxAdapter, InboxMessage } from '@/features/inbox/types';
 
 function copyConversations() {
   return MOCK_INBOX_CONVERSATIONS.map((conversation) => ({
@@ -20,15 +20,15 @@ export const mockInboxAdapter: InboxAdapter = {
   },
 
   async sendMessage(input) {
-    const isNote = input.mode === "note";
+    const isNote = input.mode === 'note';
     const sentMessage: InboxMessage = {
       id: `message-${input.clientMessageId}`,
       clientMessageId: input.clientMessageId,
-      authorType: isNote ? "internal_note" : "current_user",
-      authorName: "Anh Thư",
+      authorType: isNote ? 'internal_note' : 'current_user',
+      authorName: 'Anh Thư',
       content: input.content,
       createdAt: new Date().toISOString(),
-      deliveryStatus: "delivered",
+      deliveryStatus: 'delivered',
     };
     return sentMessage;
   },

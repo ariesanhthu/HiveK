@@ -1,5 +1,5 @@
-import { useState } from 'react';
 import { SearchResultsFiltersPanel } from 'client';
+import { useState } from 'react';
 
 export function Default() {
   const [filters, setFilters] = useState({
@@ -14,24 +14,21 @@ export function Default() {
       <SearchResultsFiltersPanel
         filters={filters}
         onClearAll={() =>
-          setFilters({ platforms: [], nicheIds: [], followerMinK: 0, engagementMinPercent: 0 })
-        }
+          setFilters({ platforms: [], nicheIds: [], followerMinK: 0, engagementMinPercent: 0 })}
         onTogglePlatform={(p) =>
           setFilters((f) => ({
             ...f,
             platforms: f.platforms.includes(p)
               ? f.platforms.filter((x) => x !== p)
               : [...f.platforms, p],
-          }))
-        }
+          }))}
         onToggleNiche={(id) =>
           setFilters((f) => ({
             ...f,
             nicheIds: f.nicheIds.includes(id)
               ? f.nicheIds.filter((x) => x !== id)
               : [...f.nicheIds, id],
-          }))
-        }
+          }))}
         onFollowerMinKChange={(v) => setFilters((f) => ({ ...f, followerMinK: v }))}
         onEngagementMinChange={(v) => setFilters((f) => ({ ...f, engagementMinPercent: v }))}
       />

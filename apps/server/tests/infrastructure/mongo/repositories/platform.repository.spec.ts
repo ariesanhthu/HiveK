@@ -1,7 +1,7 @@
-import { Types } from 'mongoose';
-import { MongoPlatformRepository } from '@/infrastructure/mongo/repositories/platform.repository';
 import { PlatformRoot } from '@/core/aggregate-roots';
 import { PlatformApiStatus } from '@/core/enums/platform-api-status.enum';
+import { MongoPlatformRepository } from '@/infrastructure/mongo/repositories/platform.repository';
+import { Types } from 'mongoose';
 
 jest.mock('mongoose', () => {
   const actual = jest.requireActual('mongoose');
@@ -70,7 +70,9 @@ describe('MongoPlatformRepository', () => {
         apiStatus: PlatformApiStatus.STABLE,
       });
 
-      const saveMock = jest.fn().mockResolvedValue({ _id: new Types.ObjectId('generated-plat-id') });
+      const saveMock = jest.fn().mockResolvedValue({
+        _id: new Types.ObjectId('generated-plat-id'),
+      });
       mockModel.mockImplementation(() => ({ save: saveMock }));
 
       await repo.save(platform);
@@ -100,7 +102,7 @@ describe('MongoPlatformRepository', () => {
         expect.objectContaining({
           api_status: PlatformApiStatus.MAINTENANCE,
         }),
-        { upsert: true }
+        { upsert: true },
       );
     });
   });

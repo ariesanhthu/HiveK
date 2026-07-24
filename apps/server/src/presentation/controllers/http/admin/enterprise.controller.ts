@@ -1,28 +1,40 @@
-import { Controller, Get, Post, Patch, Param, Query, Body, HttpCode, HttpStatus, UseGuards, Delete } from '@nestjs/common';
-import { CommandBus, QueryBus } from '@nestjs/cqrs';
-import { EnterpriseGetByIdQuery, EnterpriseGetListQuery } from '@/application/queries';
 import {
-  EnterpriseCreateCommand,
-  EnterpriseUpdateCommand,
-  EnterpriseSoftDeleteCommand,
-  EnterpriseRestoreCommand,
-  EnterpriseCreateInputDto,
-  EnterpriseUpdateInputDto,
   EnterpriseAddUserCommand,
-  EnterpriseRevokeUserCommand,
   EnterpriseAddUserInputDto,
+  EnterpriseCreateCommand,
+  EnterpriseCreateInputDto,
+  EnterpriseRestoreCommand,
+  EnterpriseRevokeUserCommand,
   EnterpriseRevokeUserInputDto,
+  EnterpriseSoftDeleteCommand,
+  EnterpriseUpdateCommand,
+  EnterpriseUpdateInputDto,
 } from '@/application/commands';
-import { EnterpriseDto, EnterpriseDetailDto, SoftDeleteInputDto } from '@/application/dtos';
-import { ApiTags, ApiOperation, ApiBearerAuth, ApiSecurity } from '@nestjs/swagger';
-import { buildVersionedRoute } from '@presentation/utils';
-import { JwtAuthGuard } from '@/presentation/middleware/guards/jwt-auth.guard';
-import { CurrentUser } from '@/presentation/decorators/current-user.decorator';
+import { EnterpriseDetailDto, EnterpriseDto, SoftDeleteInputDto } from '@/application/dtos';
 import { PaginatedResponseDto } from '@/application/dtos/pagination.dto';
+import { EnterpriseGetByIdQuery, EnterpriseGetListQuery } from '@/application/queries';
 import { EnterpriseFilterDto } from '@/application/queries/enterprise-get-list/enterprise-get-list.dto';
 import { ERoleType } from '@/core/enums/role-type.enum';
-import { RolesGuard } from '@/presentation/middleware/guards/roles.guard';
+import { CurrentUser } from '@/presentation/decorators/current-user.decorator';
 import { Roles } from '@/presentation/decorators/roles.decorator';
+import { JwtAuthGuard } from '@/presentation/middleware/guards/jwt-auth.guard';
+import { RolesGuard } from '@/presentation/middleware/guards/roles.guard';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Param,
+  Patch,
+  Post,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
+import { CommandBus, QueryBus } from '@nestjs/cqrs';
+import { ApiBearerAuth, ApiOperation, ApiSecurity, ApiTags } from '@nestjs/swagger';
+import { buildVersionedRoute } from '@presentation/utils';
 
 @ApiTags('ADMIN-enterprises')
 @ApiBearerAuth()
@@ -34,7 +46,7 @@ export class EnterpriseAdminController {
   constructor(
     private readonly commandBus: CommandBus,
     private readonly queryBus: QueryBus,
-  ) { }
+  ) {}
 
   @Post()
   @UseGuards(JwtAuthGuard)
@@ -56,13 +68,17 @@ export class EnterpriseAdminController {
     @CurrentUser('sub') userId: string,
     @Body() input: EnterpriseUpdateInputDto,
   ): Promise<EnterpriseDto> {
-    return this.commandBus.execute(new EnterpriseUpdateCommand(id, userId, input));
+    return this.commandBus.execute(
+      new EnterpriseUpdateCommand(id, userId, input),
+    );
   }
 
   @Get()
   @UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: 'Get list of enterprises' })
-  async getList(@Query() filters: EnterpriseFilterDto): Promise<PaginatedResponseDto<EnterpriseDetailDto>> {
+  async getList(
+    @Query() filters: EnterpriseFilterDto,
+  ): Promise<PaginatedResponseDto<EnterpriseDetailDto>> {
     return this.queryBus.execute(new EnterpriseGetListQuery(filters));
   }
 
@@ -70,9 +86,10 @@ export class EnterpriseAdminController {
   @UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: 'Get enterprise by ID' })
   async getById(@Param('id') id: string): Promise<EnterpriseDetailDto> {
-    const enterprise = await this.queryBus.execute<EnterpriseGetByIdQuery, EnterpriseDetailDto>(
-      new EnterpriseGetByIdQuery(id),
-    );
+    const enterprise = await this.queryBus.execute<
+      EnterpriseGetByIdQuery,
+      EnterpriseDetailDto
+    >(new EnterpriseGetByIdQuery(id));
     return enterprise;
   }
 
@@ -85,7 +102,9 @@ export class EnterpriseAdminController {
     @Param('id') id: string,
     @Query() dto: SoftDeleteInputDto,
   ): Promise<void> {
-    return this.commandBus.execute(new EnterpriseSoftDeleteCommand(id, requestedBy, dto.deletedBy));
+    return this.commandBus.execute(
+      new EnterpriseSoftDeleteCommand(id, requestedBy, dto.deletedBy),
+    );
   }
 
   @Patch(':id/restore')
@@ -105,7 +124,9 @@ export class EnterpriseAdminController {
     @Param('id') enterpriseId: string,
     @Body() dto: EnterpriseAddUserInputDto,
   ): Promise<void> {
-    return this.commandBus.execute(new EnterpriseAddUserCommand(enterpriseId, dto, requestedBy));
+    return this.commandBus.execute(
+      new EnterpriseAddUserCommand(enterpriseId, dto, requestedBy),
+    );
   }
 
   @Delete(':id/members')
@@ -117,6 +138,8 @@ export class EnterpriseAdminController {
     @Param('id') enterpriseId: string,
     @Body() dto: EnterpriseRevokeUserInputDto,
   ): Promise<void> {
-    return this.commandBus.execute(new EnterpriseRevokeUserCommand(enterpriseId, dto, requestedBy));
+    return this.commandBus.execute(
+      new EnterpriseRevokeUserCommand(enterpriseId, dto, requestedBy),
+    );
   }
 }

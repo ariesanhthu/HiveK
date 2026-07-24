@@ -4,7 +4,7 @@ import { PlatformRoot } from '@/core/aggregate-roots';
 export class PlatformMapper {
   static toDto(root: PlatformRoot): PlatformDto {
     return {
-      id: root.id!,
+      id: root.id,
       name: root.name,
       baseUrl: root.baseUrl,
       apiStatus: root.apiStatus,

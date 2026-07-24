@@ -1,5 +1,3 @@
-import { readFileSync } from "fs";
-import { join } from "path";
 import {
   type FollowerRange,
   type KolBadge,
@@ -8,9 +6,11 @@ import {
   type KolRankingFilters,
   type KolRankingItem,
   type KolRankingResponse,
-} from "@/features/kol-ranking/types";
+} from '@/features/kol-ranking/types';
+import { readFileSync } from 'fs';
+import { join } from 'path';
 
-import { KOL_SEEDS, type KolSeed } from "@/data/mock-data";
+import { KOL_SEEDS, type KolSeed } from '@/data/mock-data';
 
 const PAGE_SIZE_DEFAULT = 10;
 const SCORE_WEIGHT_RATING = 35;
@@ -18,7 +18,7 @@ const SCORE_WEIGHT_ENGAGEMENT = 30;
 const SCORE_WEIGHT_FOLLOWERS = 35;
 const FOLLOWER_BASE = 1_000;
 const LIVE_JITTER_SCALE = 6;
-const CACHE_FILE_NAME = ".kol-cache.json";
+const CACHE_FILE_NAME = '.kol-cache.json';
 
 type KolCacheEntry = {
   name: string;
@@ -35,8 +35,8 @@ function loadYoutubeCache(): KolCache | null {
   if (cachedYoutubeData !== undefined) return cachedYoutubeData;
 
   try {
-    const cachePath = join(process.cwd(), "src", "data", CACHE_FILE_NAME);
-    const raw = readFileSync(cachePath, "utf-8");
+    const cachePath = join(process.cwd(), 'src', 'data', CACHE_FILE_NAME);
+    const raw = readFileSync(cachePath, 'utf-8');
     cachedYoutubeData = JSON.parse(raw) as KolCache;
     return cachedYoutubeData;
   } catch {
@@ -68,18 +68,18 @@ function hashSeed(value: string): number {
 }
 
 function toAvatarText(name: string): string {
-  const parts = name.split(" ");
+  const parts = name.split(' ');
   return parts
     .slice(0, 2)
-    .map((part) => part[0]?.toUpperCase() ?? "")
-    .join("");
+    .map((part) => part[0]?.toUpperCase() ?? '')
+    .join('');
 }
 
 function resolveFollowerRange(followerCount: number): FollowerRange {
-  if (followerCount < 100_000) return "0-100k";
-  if (followerCount < 500_000) return "100k-500k";
-  if (followerCount < 1_000_000) return "500k-1m";
-  return "1m+";
+  if (followerCount < 100_000) return '0-100k';
+  if (followerCount < 500_000) return '100k-500k';
+  if (followerCount < 1_000_000) return '500k-1m';
+  return '1m+';
 }
 
 function formatFollowers(value: number): number {
@@ -88,10 +88,9 @@ function formatFollowers(value: number): number {
 
 function getScore(seed: KolSeed): number {
   const normalizedFollowers = Math.log10(seed.followers / FOLLOWER_BASE);
-  const score =
-    seed.rating * SCORE_WEIGHT_RATING +
-    seed.engagementRate * SCORE_WEIGHT_ENGAGEMENT +
-    normalizedFollowers * SCORE_WEIGHT_FOLLOWERS;
+  const score = seed.rating * SCORE_WEIGHT_RATING
+    + seed.engagementRate * SCORE_WEIGHT_ENGAGEMENT
+    + normalizedFollowers * SCORE_WEIGHT_FOLLOWERS;
   return Number(score.toFixed(2));
 }
 
@@ -111,27 +110,25 @@ function withLiveJitter(seed: KolSeed, tickBucket: number): KolSeed {
 }
 
 function resolveBadge(rank: number): KolBadge {
-  if (rank <= 3) return "Ưu tú";
-  if (rank <= 10) return "Top 10";
-  if (rank <= 20) return "Ổn định";
-  return "Triển vọng";
+  if (rank <= 3) return 'Ưu tú';
+  if (rank <= 10) return 'Top 10';
+  if (rank <= 20) return 'Ổn định';
+  return 'Triển vọng';
 }
 
 function normalizeFilters(
-  partialFilters: Partial<KolRankingFilters>
+  partialFilters: Partial<KolRankingFilters>,
 ): KolRankingFilters {
-  const safePage =
-    partialFilters.page && partialFilters.page > 0 ? partialFilters.page : 1;
-  const safePageSize =
-    partialFilters.pageSize && partialFilters.pageSize > 0
-      ? partialFilters.pageSize
-      : PAGE_SIZE_DEFAULT;
+  const safePage = partialFilters.page && partialFilters.page > 0 ? partialFilters.page : 1;
+  const safePageSize = partialFilters.pageSize && partialFilters.pageSize > 0
+    ? partialFilters.pageSize
+    : PAGE_SIZE_DEFAULT;
 
   return {
-    niche: partialFilters.niche ?? "all",
-    platform: partialFilters.platform ?? "all",
-    followerRange: partialFilters.followerRange ?? "all",
-    search: partialFilters.search?.trim() ?? "",
+    niche: partialFilters.niche ?? 'all',
+    platform: partialFilters.platform ?? 'all',
+    followerRange: partialFilters.followerRange ?? 'all',
+    search: partialFilters.search?.trim() ?? '',
     page: safePage,
     pageSize: safePageSize,
   };
@@ -193,22 +190,22 @@ function buildRankedItems(tickBucket: number): KolRankingItem[] {
 
 function applyFilters(
   items: KolRankingItem[],
-  filters: KolRankingFilters
+  filters: KolRankingFilters,
 ): KolRankingItem[] {
   return items.filter((item) => {
-    if (filters.niche !== "all" && item.niche !== filters.niche) return false;
-    if (filters.platform !== "all" && item.platform !== filters.platform) {
+    if (filters.niche !== 'all' && item.niche !== filters.niche) return false;
+    if (filters.platform !== 'all' && item.platform !== filters.platform) {
       return false;
     }
     if (
-      filters.followerRange !== "all" &&
-      resolveFollowerRange(item.followers) !== filters.followerRange
+      filters.followerRange !== 'all'
+      && resolveFollowerRange(item.followers) !== filters.followerRange
     ) {
       return false;
     }
     if (
-      filters.search &&
-      !item.name.toLowerCase().includes(filters.search.toLowerCase())
+      filters.search
+      && !item.name.toLowerCase().includes(filters.search.toLowerCase())
     ) {
       return false;
     }
@@ -218,7 +215,7 @@ function applyFilters(
 
 export function getKolRankingsSnapshot(
   partialFilters: Partial<KolRankingFilters>,
-  tickBucket = Math.floor(Date.now() / 3_000)
+  tickBucket = Math.floor(Date.now() / 3_000),
 ): KolRankingResponse {
   const filters = normalizeFilters(partialFilters);
   const rankedItems = buildRankedItems(tickBucket);
@@ -242,7 +239,7 @@ export function getKolRankingsSnapshot(
 
 export function getKolRankingItemById(
   id: string,
-  tickBucket = Math.floor(Date.now() / 3_000)
+  tickBucket = Math.floor(Date.now() / 3_000),
 ): KolRankingItem | null {
   const normalizedId = id.trim().toLowerCase();
   if (!normalizedId) return null;

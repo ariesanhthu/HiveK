@@ -1,4 +1,4 @@
-import { Field, ObjectType, ID, Float, Int } from '@nestjs/graphql';
+import { Field, Float, ID, Int, ObjectType } from '@nestjs/graphql';
 import { GraphQLJSONObject } from 'graphql-type-json';
 import { CampaignType } from './campaign.type';
 import { UploadedFileType } from './uploaded-file.type';

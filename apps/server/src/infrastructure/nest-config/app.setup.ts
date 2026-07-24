@@ -1,20 +1,39 @@
-import { INestApplication, Logger } from '@nestjs/common';
-import { ZodValidationPipe } from 'nestjs-zod';
-import helmet from 'helmet';
-import { LoggingInterceptor, TransformInterceptor } from '@/presentation/middleware/interceptors';
+import { AppConfig } from '@/configs';
 import { HttpExceptionFilter } from '@/presentation/middleware/filters';
-import { RabbitMQFactoryService } from '@infrastructure/rabbitmq';
+import { LoggingInterceptor, TransformInterceptor } from '@/presentation/middleware/interceptors';
 import { errorMessage } from '@/shared/utils';
+import fastifyHelmet from '@fastify/helmet';
+import { RabbitMQFactoryService } from '@infrastructure/rabbitmq';
+import { INestApplication, Logger } from '@nestjs/common';
+import { NestFastifyApplication } from '@nestjs/platform-fastify';
+import { ZodValidationPipe } from 'nestjs-zod';
 
-export function setupApplication(app: INestApplication): void {
-  // Apply Security Headers
-  app.use((req, res, next) => {
-    if (!req.path?.startsWith('/hivek/graphql')) {
-      return helmet()(req, res, next);
-    }
-    return next();
+export async function setupApplication(
+  app: NestFastifyApplication,
+  appConfig: AppConfig,
+): Promise<void> {
+  // Apply Security Headers with Fastify Helmet (custom CSP for GraphQL Playground/Sandbox)
+  await app.register(fastifyHelmet, {
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: [`'self'`],
+        styleSrc: [
+          `'self'`,
+          `'unsafe-inline'`,
+          'cdn.jsdelivr.net',
+          'fonts.googleapis.com',
+        ],
+        fontSrc: [`'self'`, 'fonts.gstatic.com'],
+        imgSrc: [
+          `'self'`,
+          'data:',
+          'cdn.jsdelivr.net',
+          'apollo-server-landing-page.cdn.apollographql.com',
+        ],
+        scriptSrc: [`'self'`, `'unsafe-inline'`, 'cdn.jsdelivr.net'],
+      },
+    },
   });
-
 
   // Apply CORS
   app.enableCors({
@@ -24,19 +43,7 @@ export function setupApplication(app: INestApplication): void {
   });
 
   // Global Prefix for all routes
-  app.setGlobalPrefix('hivek');
-
-  // // Apply Global Pipes
-  // app.useGlobalPipes(new ZodValidationPipe());
-
-  // // Apply Global Interceptors
-  // app.useGlobalInterceptors(
-  //   new LoggingInterceptor(),
-  //   new TransformInterceptor(),
-  // );
-
-  // // Apply Global Filters (single catch-all filter handles all exceptions)
-  // app.useGlobalFilters(new HttpExceptionFilter());
+  app.setGlobalPrefix(appConfig.getGlobalPrefix());
 }
 
 /**
@@ -63,7 +70,7 @@ export async function setupRabbitMQMicroservice(
   maxRetries: number = -1,
   initialDelayMs: number = 1000,
   maxDelayMs: number = 30000,
-  factor: number = 2
+  factor: number = 2,
 ): Promise<void> {
   const logger = new Logger('RabbitMQSetup');
   let retries = 0;
@@ -71,12 +78,12 @@ export async function setupRabbitMQMicroservice(
 
   while (maxRetries === -1 || retries < maxRetries) {
     try {
-      logger.debug(`Attempting to connect RabbitMQ microservice (attempt ${retries + 1})...`);
+      logger.debug(
+        `Attempting to connect RabbitMQ microservice (attempt ${retries + 1})...`,
+      );
 
       // Load consumer config from file
-      const consumerConfig = rabbitmqFactory.readRMQConsumerConfig(
-        configPath
-      );
+      const consumerConfig = rabbitmqFactory.readRMQConsumerConfig(configPath);
 
       // Convert consumer config to NestJS microservice options
       const microserviceOptions = rabbitmqFactory.toNestJSMicroserviceOptions(consumerConfig);
@@ -84,17 +91,17 @@ export async function setupRabbitMQMicroservice(
       app.connectMicroservice(microserviceOptions);
       await app.startAllMicroservices();
       logger.log(
-        `✅ RabbitMQ microservice connected and ready to consume messages\n` +
-        `   Queue: ${consumerConfig.queues[0]?.name}\n` +
-        `   Exchange: ${consumerConfig.queues[0]?.bindings[0]?.exchange}`
+        `✅ RabbitMQ microservice connected and ready to consume messages\n`
+          + `   Queue: ${consumerConfig.queues[0]?.name}\n`
+          + `   Exchange: ${consumerConfig.queues[0]?.bindings[0]?.exchange}`,
       );
       return; // Success, exit retry loop
     } catch (error) {
       retries++;
       const errMsg = errorMessage(error);
       logger.warn(
-        `⚠️ Failed to connect RabbitMQ microservice (attempt ${retries}): ${errMsg}\n` +
-        `   Retrying in ${delayMs}ms...`
+        `⚠️ Failed to connect RabbitMQ microservice (attempt ${retries}): ${errMsg}\n`
+          + `   Retrying in ${delayMs}ms...`,
       );
 
       await sleep(delayMs);
@@ -103,7 +110,7 @@ export async function setupRabbitMQMicroservice(
   }
 
   logger.error(
-    `❌ Failed to connect RabbitMQ microservice after ${retries} attempts.\n` +
-    `   HTTP server is running, but message consumers are permanently unavailable.`
+    `❌ Failed to connect RabbitMQ microservice after ${retries} attempts.\n`
+      + `   HTTP server is running, but message consumers are permanently unavailable.`,
   );
 }

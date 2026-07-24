@@ -7,7 +7,10 @@ export interface IMessageQueueService {
    * @param pattern The message pattern (topic/routing key).
    * @param data The payload to send.
    */
-  emit<TEvent = string, TData = any>(pattern: TEvent, data: TData): void;
+  emit<TEvent = string, TData = Record<string, string | number | boolean>>(
+    pattern: TEvent,
+    data: TData,
+  ): void;
 
   /**
    * Send a request-response message.
@@ -15,5 +18,11 @@ export interface IMessageQueueService {
    * @param data The payload to send.
    * @returns A promise resolving to the result.
    */
-  send<TResult = any, TInput = any>(pattern: any, data: TInput): Promise<TResult>;
+  send<
+    TResult = Record<string, string | number | boolean>,
+    TInput = Record<string, string | number | boolean>,
+  >(
+    pattern: string | Record<string, string | number | boolean>,
+    data: TInput,
+  ): Promise<TResult>;
 }

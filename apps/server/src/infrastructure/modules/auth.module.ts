@@ -1,19 +1,19 @@
-import { Module, Global } from '@nestjs/common';
+import { Global, Module } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { CqrsModule } from '@nestjs/cqrs';
 import { JwtModule } from '@nestjs/jwt';
-import { ConfigService } from '@nestjs/config';
 import { PassportModule } from '@nestjs/passport';
 
 // Commands
 import {
-  AuthSignInCommandHandler,
-  AuthSignUpCommandHandler,
-  AuthSignOutCommandHandler,
-  AuthResetPasswordCommandHandler,
-  AuthRefreshTokenCommandHandler,
-  AuthGoogleSignInCommandHandler,
-  AuthSendOtpCommandHandler,
   AuthChangePasswordCommandHandler,
+  AuthGoogleSignInCommandHandler,
+  AuthRefreshTokenCommandHandler,
+  AuthResetPasswordCommandHandler,
+  AuthSendOtpCommandHandler,
+  AuthSignInCommandHandler,
+  AuthSignOutCommandHandler,
+  AuthSignUpCommandHandler,
   AuthVerifyOtpCommandHandler,
 } from '@/application/commands';
 
@@ -25,17 +25,21 @@ import { AUTH_JWT_SERVICE } from '@/application/interfaces';
 
 // Infrastructure
 import { AuthService } from '@/application/services/auth.service';
-import { 
-  JwtAuthService, 
-  JwtStrategy, 
-  GoogleStrategy, 
-  YoutubeStrategy, 
-  FacebookStrategy, 
-  TwitterStrategy 
+import {
+  FacebookStrategy,
+  GoogleStrategy,
+  JwtAuthService,
+  JwtStrategy,
+  TwitterStrategy,
+  YoutubeStrategy,
 } from '@infrastructure/auth';
 
 // AdminControllers
-import { AuthAdminController, AuthClientController, OAuthController } from '@/presentation/controllers'
+import {
+  AuthAdminController,
+  AuthClientController,
+  OAuthController,
+} from '@/presentation/controllers';
 import { AuthUserRmqController } from '@/presentation/controllers';
 
 const COMMAND_HANDLERS = [
@@ -50,9 +54,7 @@ const COMMAND_HANDLERS = [
   AuthVerifyOtpCommandHandler,
 ];
 
-const QUERY_HANDLERS = [
-  AuthGetProfileHandler,
-];
+const QUERY_HANDLERS = [AuthGetProfileHandler];
 
 const STRATEGIES = [
   GoogleStrategy,
@@ -82,14 +84,13 @@ const STRATEGIES = [
     JwtStrategy,
     AuthService,
     {
-      provide: AUTH_JWT_SERVICE,  
+      provide: AUTH_JWT_SERVICE,
       useClass: JwtAuthService,
     },
-    AuthUserRmqController
+    AuthUserRmqController,
   ],
-  exports: [JwtStrategy,  AUTH_JWT_SERVICE, AuthService],
+  exports: [JwtStrategy, AUTH_JWT_SERVICE, AuthService],
 })
 export class AuthModule {
-  constructor(
-  ) {}
+  constructor() {}
 }

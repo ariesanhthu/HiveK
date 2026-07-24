@@ -3,14 +3,14 @@ import * as crypto from 'crypto';
 export interface TransportMetadata {
   exchange?: string;
   routingKey?: string;
-  [key: string]: unknown;
+  [key: string]: string | number | boolean | undefined;
 }
 
 export interface EventMetadata {
   correlationId?: string;
   causationId?: string;
   requestId?: string;
-  [key: string]: unknown;
+  [key: string]: string | number | boolean | undefined;
 }
 
 export abstract class IntegrationEvent<T = any> {

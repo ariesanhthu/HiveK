@@ -1,24 +1,24 @@
-"use client";
+'use client';
 
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { getCampaignPlanningData } from "@/features/campaign-planning/services/campaign-planning-service";
-import { agenticApiClient } from "@/features/agentic-client/api/agentic-api-client";
-import { agenticQueryKeys } from "@/features/agentic-client/api/agentic-query-keys";
+import { agenticApiClient } from '@/features/agentic-client/api/agentic-api-client';
+import { agenticQueryKeys } from '@/features/agentic-client/api/agentic-query-keys';
+import { getCampaignPlanningData } from '@/features/campaign-planning/services/campaign-planning-service';
 import type {
-  CampaignPlanRequest,
   CampaignPlanningSnapshot,
+  CampaignPlanRequest,
   ContentValidationRequest,
   GenerateSinglePostRequest,
   KolKocMatchingRequest,
   SaveFeedbackRequest,
-} from "@/server/ai/types/agent.types";
+} from '@/server/ai/types/agent.types';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 function getInitialPlanningSnapshot(campaignId: string): CampaignPlanningSnapshot {
   const data = getCampaignPlanningData();
   return {
     ...data,
-    selectedCampaign:
-      data.campaigns.find((campaign) => campaign.id === campaignId) ?? data.campaigns[0],
+    selectedCampaign: data.campaigns.find((campaign) => campaign.id === campaignId)
+      ?? data.campaigns[0],
   };
 }
 
@@ -51,8 +51,7 @@ export function useGenerateSinglePostMutation(campaignId: string) {
 
 export function useValidateContentMutation() {
   return useMutation({
-    mutationFn: (payload: ContentValidationRequest) =>
-      agenticApiClient.validateContent(payload),
+    mutationFn: (payload: ContentValidationRequest) => agenticApiClient.validateContent(payload),
   });
 }
 

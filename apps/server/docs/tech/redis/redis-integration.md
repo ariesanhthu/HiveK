@@ -46,12 +46,13 @@ export class CacheKeyUtil {
 ## 3. Infrastructure Implementation
 
 ### 3.1 Redis Service
+
 Defined at [redis-cache.service.ts](file:///home/gnourt/data/hcmus/competition/start-up/HiveK/apps/server/src/infrastructure/cache/redis/redis-cache.service.ts):
 
 ```typescript
-import { Injectable, Inject, OnModuleDestroy } from '@nestjs/common';
-import Redis from 'ioredis';
 import { ICacheService, REDIS_CLIENT } from '@/application/interfaces/cache.interface';
+import { Inject, Injectable, OnModuleDestroy } from '@nestjs/common';
+import Redis from 'ioredis';
 
 @Injectable()
 export class RedisCacheService implements ICacheService, OnModuleDestroy {
@@ -92,15 +93,16 @@ export class RedisCacheService implements ICacheService, OnModuleDestroy {
 ```
 
 ### 3.2 Configuration & Module
+
 The client module registers the connection dynamically and registers globally inside the application:
 [redis-cache.module.ts](file:///home/gnourt/data/hcmus/competition/start-up/HiveK/apps/server/src/infrastructure/cache/redis/redis-cache.module.ts).
 
 ```typescript
+import { CACHE_SERVICE, REDIS_CLIENT } from '@/application/interfaces/cache.interface';
 import { Global, Module } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import Redis from 'ioredis';
 import { RedisCacheService } from './redis-cache.service';
-import { CACHE_SERVICE, REDIS_CLIENT } from '@/application/interfaces/cache.interface';
 
 @Global()
 @Module({

@@ -1,10 +1,10 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { getModelToken } from '@nestjs/mongoose';
+import { UNIT_OF_WORK } from '@/application/interfaces';
+import { KolProfileEntity } from '@/core/entities/kol-profile.entity';
 import { MongoKolProfileRepository } from '@/infrastructure/mongo/repositories/kol-profile.repository';
 import { KolProfileModel } from '@/infrastructure/mongo/schemas/kol-profile.schema';
-import { KolProfileEntity } from '@/core/entities/kol-profile.entity';
+import { getModelToken } from '@nestjs/mongoose';
+import { Test, TestingModule } from '@nestjs/testing';
 import { Types } from 'mongoose';
-import { UNIT_OF_WORK } from '@/application/interfaces';
 
 describe('MongoKolProfileRepository', () => {
   let repository: MongoKolProfileRepository;
@@ -34,10 +34,10 @@ describe('MongoKolProfileRepository', () => {
 
   beforeEach(async () => {
     mockKolProfileModel = jest.fn().mockImplementation((data) => ({
-        ...data,
-        save: jest.fn().mockResolvedValue({ _id: new Types.ObjectId() }),
+      ...data,
+      save: jest.fn().mockResolvedValue({ _id: new Types.ObjectId() }),
     }));
-    
+
     mockKolProfileModel.findById = jest.fn().mockReturnThis();
     mockKolProfileModel.findOne = jest.fn().mockReturnThis();
     mockKolProfileModel.findByIdAndUpdate = jest.fn().mockReturnThis();
@@ -46,7 +46,7 @@ describe('MongoKolProfileRepository', () => {
     mockKolProfileModel.exec = jest.fn();
 
     mockUow = {
-        getSession: jest.fn().mockReturnValue(null),
+      getSession: jest.fn().mockReturnValue(null),
     };
 
     const module: TestingModule = await Test.createTestingModule({

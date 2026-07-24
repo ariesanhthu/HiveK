@@ -1,18 +1,18 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { CommandBus, QueryBus } from '@nestjs/cqrs';
-import { AuthClientController } from '@/presentation/controllers/http/client/auth.controller';
-import { ERoleType } from '@/core/enums';
 import {
-  AuthSignInCommand,
-  AuthSignUpCommand,
-  AuthSignOutCommand,
-  AuthResetPasswordCommand,
-  AuthRefreshTokenCommand,
-  AuthSendOtpCommand,
   AuthChangePasswordCommand,
+  AuthRefreshTokenCommand,
+  AuthResetPasswordCommand,
+  AuthSendOtpCommand,
+  AuthSignInCommand,
+  AuthSignOutCommand,
+  AuthSignUpCommand,
   AuthVerifyOtpCommand,
 } from '@/application/commands';
 import { AuthGetProfileQuery } from '@/application/queries';
+import { ERoleType } from '@/core/enums';
+import { AuthClientController } from '@/presentation/controllers/http/client/auth.controller';
+import { CommandBus, QueryBus } from '@nestjs/cqrs';
+import { Test, TestingModule } from '@nestjs/testing';
 
 describe('AuthClientController', () => {
   let controller: AuthClientController;
@@ -56,7 +56,9 @@ describe('AuthClientController', () => {
 
       const result = await controller.signUpKOL(input as any);
 
-      expect(mockCommandBus.execute).toHaveBeenCalledWith(new AuthSignUpCommand(ERoleType.KOL, input as any));
+      expect(mockCommandBus.execute).toHaveBeenCalledWith(
+        new AuthSignUpCommand(ERoleType.KOL, input as any),
+      );
       expect(result).toEqual({ userId: 'user-123' });
     });
   });
@@ -68,7 +70,9 @@ describe('AuthClientController', () => {
 
       const result = await controller.signUpEnterprise(input as any);
 
-      expect(mockCommandBus.execute).toHaveBeenCalledWith(new AuthSignUpCommand(ERoleType.ENTERPRISE, input as any));
+      expect(mockCommandBus.execute).toHaveBeenCalledWith(
+        new AuthSignUpCommand(ERoleType.ENTERPRISE, input as any),
+      );
       expect(result).toEqual({ userId: 'user-456' });
     });
   });
@@ -99,7 +103,9 @@ describe('AuthClientController', () => {
 
       const result = await controller.refreshToken(req, input as any, res);
 
-      expect(mockCommandBus.execute).toHaveBeenCalledWith(new AuthRefreshTokenCommand(input as any));
+      expect(mockCommandBus.execute).toHaveBeenCalledWith(
+        new AuthRefreshTokenCommand(input as any),
+      );
       expect(res.cookie).toHaveBeenCalledWith('access_token', 'new-access', expect.any(Object));
       expect(res.cookie).toHaveBeenCalledWith('refresh_token', 'new-refresh', expect.any(Object));
       expect(result).toEqual(tokens);
@@ -127,7 +133,9 @@ describe('AuthClientController', () => {
 
       const result = await controller.resetPassword(input as any);
 
-      expect(mockCommandBus.execute).toHaveBeenCalledWith(new AuthResetPasswordCommand(input as any));
+      expect(mockCommandBus.execute).toHaveBeenCalledWith(
+        new AuthResetPasswordCommand(input as any),
+      );
       expect(result).toEqual({ success: true });
     });
   });
@@ -164,7 +172,9 @@ describe('AuthClientController', () => {
 
       const result = await controller.changePassword(userId, input as any);
 
-      expect(mockCommandBus.execute).toHaveBeenCalledWith(new AuthChangePasswordCommand(userId, input as any));
+      expect(mockCommandBus.execute).toHaveBeenCalledWith(
+        new AuthChangePasswordCommand(userId, input as any),
+      );
       expect(result).toEqual({ success: true });
     });
   });

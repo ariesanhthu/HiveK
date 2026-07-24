@@ -1,6 +1,6 @@
+import { ERoleType } from '@/core/enums';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Schema as MongooseSchema } from 'mongoose';
-import { ERoleType } from '@/core/enums';
 import { softDeletePlugin } from '../utils';
 
 @Schema({
@@ -9,35 +9,53 @@ import { softDeletePlugin } from '../utils';
   timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' },
 })
 export class UserModel {
-  @Prop({ 
-    type: MongooseSchema.Types.String, 
-    required: true, 
-    unique: true, 
-    lowercase: true, 
+  @Prop({
+    type: MongooseSchema.Types.String,
+    required: true,
+    unique: true,
+    lowercase: true,
     trim: true,
-    match: [/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/, 'Please fill a valid email address']
+    match: [
+      /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/,
+      'Please fill a valid email address',
+    ],
   })
   email: string;
 
-  @Prop({ 
-    type: MongooseSchema.Types.String, 
+  @Prop({
+    type: MongooseSchema.Types.String,
     required: true,
-    match: [/^\+?[1-9]\d{1,14}$/, 'Please fill a valid phone number']
+    match: [/^\+?[1-9]\d{1,14}$/, 'Please fill a valid phone number'],
   })
   phone: string;
 
   @Prop({ type: MongooseSchema.Types.String, required: true })
   password_hash: string;
 
-  @Prop({ type: MongooseSchema.Types.String, required: true, trim: true, minlength: 1, maxlength: 100 })
+  @Prop({
+    type: MongooseSchema.Types.String,
+    required: true,
+    trim: true,
+    minlength: 1,
+    maxlength: 100,
+  })
   full_name: string;
 
-  @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'UploadedFileModel', required: false, default: null })
+  @Prop({
+    type: MongooseSchema.Types.ObjectId,
+    ref: 'UploadedFileModel',
+    required: false,
+    default: null,
+  })
   avatar: MongooseSchema.Types.ObjectId | null;
 
   type: string;
 
-  @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'RoleModel', required: true })
+  @Prop({
+    type: MongooseSchema.Types.ObjectId,
+    ref: 'RoleModel',
+    required: true,
+  })
   role_id: MongooseSchema.Types.ObjectId;
 
   @Prop({ type: MongooseSchema.Types.Boolean, default: false })
@@ -73,7 +91,12 @@ AdminSchema.plugin(softDeletePlugin);
 
 @Schema()
 export class EnterpriseUserModel extends UserModel {
-  @Prop({ type: [MongooseSchema.Types.ObjectId], ref: 'EnterpriseModel', required: false, default: [] })
+  @Prop({
+    type: [MongooseSchema.Types.ObjectId],
+    ref: 'EnterpriseModel',
+    required: false,
+    default: [],
+  })
   enterprise_ids: MongooseSchema.Types.ObjectId[];
 }
 export const EnterpriseUserSchema = SchemaFactory.createForClass(EnterpriseUserModel);

@@ -1,4 +1,4 @@
-import { AMBASSADOR_CAMPAIGNS, AMBASSADOR_METRICS } from "@/data/mock-data";
+import { AMBASSADOR_CAMPAIGNS, AMBASSADOR_METRICS } from '@/data/mock-data';
 
 export async function getAmbassadorCampaigns() {
   // Simulate network delay

@@ -1,6 +1,6 @@
+import { EOtpType } from '@/core/enums/otp-type.enum';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Schema as MongooseSchema } from 'mongoose';
-import { EOtpType } from '@/core/enums/otp-type.enum';
 
 @Schema({
   collection: 'otps',
@@ -10,7 +10,12 @@ export class OtpModel {
   @Prop({ type: MongooseSchema.Types.String, required: true })
   code: string;
 
-  @Prop({ type: MongooseSchema.Types.String, required: true, lowercase: true, trim: true })
+  @Prop({
+    type: MongooseSchema.Types.String,
+    required: true,
+    lowercase: true,
+    trim: true,
+  })
   email: string;
 
   @Prop({ type: MongooseSchema.Types.String, required: true, enum: EOtpType })

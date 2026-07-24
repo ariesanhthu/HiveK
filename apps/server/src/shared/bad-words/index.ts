@@ -1,2 +1,2 @@
-export { sanitize } from './sanitizer'
-export type { SanitizeOptions, SanitizeResult } from './types'
+export { sanitize } from './sanitizer';
+export type { SanitizeOptions, SanitizeResult } from './types';

@@ -11,7 +11,7 @@ export function Default() {
     <div style={{ width: 1080 }}>
       <CampaignPlanningHeader
         campaigns={campaigns}
-        selectedCampaignId="ontop"
+        selectedCampaignId='ontop'
         onCampaignChange={() => {}}
         onAddCampaign={() => {}}
         onGeneratePlan={() => {}}

@@ -1,8 +1,12 @@
-import { CampaignInviteCollaboratorCommandHandler } from '@/application/commands/campaign-invite-collaborator/campaign-invite-collaborator.handler';
 import { CampaignInviteCollaboratorCommand } from '@/application/commands/campaign-invite-collaborator/campaign-invite-collaborator.command';
+import { CampaignInviteCollaboratorCommandHandler } from '@/application/commands/campaign-invite-collaborator/campaign-invite-collaborator.handler';
 import { CampaignRoot } from '@/core/aggregate-roots/campaign.aggregate';
-import { CampaignNotFoundException, UserNotFoundException, InvalidOperationException } from '@/core/exceptions';
 import { ECampaignStatus } from '@/core/enums/campaign-status.enum';
+import {
+  CampaignNotFoundException,
+  InvalidOperationException,
+  UserNotFoundException,
+} from '@/core/exceptions';
 
 describe('CampaignInviteCollaboratorCommandHandler', () => {
   let handler: CampaignInviteCollaboratorCommandHandler;
@@ -58,9 +62,14 @@ describe('CampaignInviteCollaboratorCommandHandler', () => {
   it('should successfully invite collaborators and send emails', async () => {
     const campaign = createMockCampaign();
     mockCampaignRepository.findById.mockResolvedValue(campaign);
-    mockUserRepository.findByIds.mockResolvedValue([{ id: collaboratorId, email: 'collab@test.com' }]);
+    mockUserRepository.findByIds.mockResolvedValue([{
+      id: collaboratorId,
+      email: 'collab@test.com',
+    }]);
 
-    const command = new CampaignInviteCollaboratorCommand(campaignId, { memberIds: [collaboratorId] }, ownerId);
+    const command = new CampaignInviteCollaboratorCommand(campaignId, {
+      memberIds: [collaboratorId],
+    }, ownerId);
     await handler.execute(command);
 
     expect(campaign.collaboratorIds).toContain(collaboratorId);
@@ -73,7 +82,9 @@ describe('CampaignInviteCollaboratorCommandHandler', () => {
 
   it('should throw CampaignNotFoundException if campaign does not exist', async () => {
     mockCampaignRepository.findById.mockResolvedValue(null);
-    const command = new CampaignInviteCollaboratorCommand(campaignId, { memberIds: [collaboratorId] }, ownerId);
+    const command = new CampaignInviteCollaboratorCommand(campaignId, {
+      memberIds: [collaboratorId],
+    }, ownerId);
 
     await expect(handler.execute(command)).rejects.toThrow(CampaignNotFoundException);
   });
@@ -83,7 +94,9 @@ describe('CampaignInviteCollaboratorCommandHandler', () => {
     mockCampaignRepository.findById.mockResolvedValue(campaign);
     mockUserRepository.findByIds.mockResolvedValue([]); // No users found
 
-    const command = new CampaignInviteCollaboratorCommand(campaignId, { memberIds: [collaboratorId] }, ownerId);
+    const command = new CampaignInviteCollaboratorCommand(campaignId, {
+      memberIds: [collaboratorId],
+    }, ownerId);
 
     await expect(handler.execute(command)).rejects.toThrow(UserNotFoundException);
   });
@@ -93,7 +106,9 @@ describe('CampaignInviteCollaboratorCommandHandler', () => {
     mockCampaignRepository.findById.mockResolvedValue(campaign);
     mockUserRepository.findByIds.mockResolvedValue([{ id: collaboratorId }]);
 
-    const command = new CampaignInviteCollaboratorCommand(campaignId, { memberIds: [collaboratorId] }, 'wrong-owner');
+    const command = new CampaignInviteCollaboratorCommand(campaignId, {
+      memberIds: [collaboratorId],
+    }, 'wrong-owner');
 
     await expect(handler.execute(command)).rejects.toThrow(InvalidOperationException);
   });

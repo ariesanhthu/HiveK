@@ -1,32 +1,34 @@
 import { type ILoggerService, LOGGER_SERVICE } from '@/application/interfaces';
-import {
-  Injectable,
-  NestInterceptor,
-  ExecutionContext,
-  CallHandler,
-  Logger,
-  Inject,
-} from '@nestjs/common';
+import { CallHandler, ExecutionContext, Inject, Injectable, NestInterceptor } from '@nestjs/common';
 import { GqlExecutionContext } from '@nestjs/graphql';
+import { FastifyReply, FastifyRequest } from 'fastify';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 
+interface GraphQLRequest {
+  body?: {
+    operationName?: string;
+  };
+}
+
+interface GraphQLContext {
+  req?: GraphQLRequest;
+}
+
 @Injectable()
 export class LoggingInterceptor implements NestInterceptor {
-  constructor (
-    @Inject(LOGGER_SERVICE)
-    private readonly logger: ILoggerService,
-  ) {
-    this.logger.setContext(LoggingInterceptor.name)
+  constructor(@Inject(LOGGER_SERVICE) private readonly logger: ILoggerService) {
+    this.logger.setContext(LoggingInterceptor.name);
   }
 
-  intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
-    const type = context.getType() as string;
-    if (type === 'graphql') {
+  intercept(context: ExecutionContext, next: CallHandler): Observable<unknown> {
+    const type = context.getType();
+
+    if ((type as string) === 'graphql') {
       const gqlCtx = GqlExecutionContext.create(context);
-      const ctx = gqlCtx.getContext();
-      const { req, res } = ctx;
-      const { operationName } = req.body;
+      const ctx = gqlCtx.getContext<GraphQLContext>();
+      const req = ctx.req;
+      const operationName = req?.body?.operationName;
       const now = Date.now();
 
       return next.handle().pipe(
@@ -37,14 +39,16 @@ export class LoggingInterceptor implements NestInterceptor {
         }),
       );
     }
+
     const ctx = context.switchToHttp();
-    const request = ctx.getRequest();
-    const { method, url } = request;
+    const request = ctx.getRequest<FastifyRequest>();
+    const method = request.method;
+    const url = request.url;
     const now = Date.now();
 
     return next.handle().pipe(
       tap(() => {
-        const response = ctx.getResponse();
+        const response = ctx.getResponse<FastifyReply>();
         const statusCode = response.statusCode;
         const delay = Date.now() - now;
         this.logger.log(`${method} ${url} ${statusCode} - ${delay}ms`);

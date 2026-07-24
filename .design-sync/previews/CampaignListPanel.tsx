@@ -47,12 +47,12 @@ export function TwoCampaigns() {
     <div style={{ width: 880, height: 620 }}>
       <CampaignListPanel
         campaigns={campaigns}
-        selectedCampaignId="ontop-fashion-windbreaker"
+        selectedCampaignId='ontop-fashion-windbreaker'
         participantCounts={{ 'ontop-fashion-windbreaker': 6, 'lala-skincare-serum': 3 }}
         onSelectCampaign={() => {}}
         onCreateCampaign={() => {}}
         onOpenTab={() => {}}
-        className="h-full"
+        className='h-full'
       />
     </div>
   );

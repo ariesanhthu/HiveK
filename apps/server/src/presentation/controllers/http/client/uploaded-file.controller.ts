@@ -1,32 +1,37 @@
 import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Param,
-  UseInterceptors,
-  UploadedFile,
-  UploadedFiles,
-  BadRequestException,
-  UseGuards,
-} from '@nestjs/common';
-import { CommandBus, QueryBus } from '@nestjs/cqrs';
-import { ApiTags, ApiOperation, ApiConsumes, ApiBody, ApiBearerAuth, ApiSecurity } from '@nestjs/swagger';
-import { buildVersionedRoute } from '@presentation/utils';
-import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
-import { TargetType } from '@/core/enums/target-type.enum';
-import {
-  UploadedFileCreateCommand,
   UploadedFileBulkCreateCommand,
+  UploadedFileCreateCommand,
   UploadedFileCreateInputDto,
 } from '@/application/commands';
-import {
-  UploadedFileGetByIdQuery,
-} from '@/application/queries';
 import { UploadedFileDto } from '@/application/dtos';
+import { UploadedFileGetByIdQuery } from '@/application/queries';
+import { TargetType } from '@/core/enums/target-type.enum';
 import { JwtAuthGuard } from '@/presentation/middleware/guards';
 import { FileUploadValidationPipe } from '@/presentation/middleware/pipes/file-upload-validation.pipe';
 import { isEmpty } from '@/shared/utils';
+import {
+  BadRequestException,
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  UploadedFile,
+  UploadedFiles,
+  UseGuards,
+  UseInterceptors,
+} from '@nestjs/common';
+import { CommandBus, QueryBus } from '@nestjs/cqrs';
+import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
+import {
+  ApiBearerAuth,
+  ApiBody,
+  ApiConsumes,
+  ApiOperation,
+  ApiSecurity,
+  ApiTags,
+} from '@nestjs/swagger';
+import { buildVersionedRoute } from '@presentation/utils';
 
 @ApiTags('CLIENT-upload')
 @ApiBearerAuth()
@@ -77,7 +82,9 @@ export class UploadedFileClientController {
       required: ['file', 'targetType', 'targetId', 'targetField'],
     },
   })
-  @ApiOperation({ summary: 'Upload and create new file (Max 25MB, Images/Docs/PDF only)' })
+  @ApiOperation({
+    summary: 'Upload and create new file (Max 25MB, Images/Docs/PDF only)',
+  })
   async create(
     @UploadedFile(new FileUploadValidationPipe()) file: Express.Multer.File,
     @Body() input: UploadedFileCreateInputDto,
@@ -133,7 +140,9 @@ export class UploadedFileClientController {
       required: ['files', 'targetType', 'targetId', 'targetField'],
     },
   })
-  @ApiOperation({ summary: 'Upload and create multiple files (limit to 10, Max 25MB each)' })
+  @ApiOperation({
+    summary: 'Upload and create multiple files (limit to 10, Max 25MB each)',
+  })
   async createBulk(
     @UploadedFiles(new FileUploadValidationPipe()) files: Express.Multer.File[],
     @Body() input: UploadedFileCreateInputDto,
@@ -142,7 +151,9 @@ export class UploadedFileClientController {
       throw new BadRequestException('At least one file is required');
     }
     if (files.length > 10) {
-      throw new BadRequestException('Cannot upload more than 10 files at a time');
+      throw new BadRequestException(
+        'Cannot upload more than 10 files at a time',
+      );
     }
     return this.commandBus.execute(
       new UploadedFileBulkCreateCommand(

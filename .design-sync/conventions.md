@@ -9,14 +9,14 @@ real React, compiled from the `apps/client` Next.js app, exposed on
 Style with Tailwind utility classes (the compiled stylesheet ships in the bundle).
 Colours come from CSS variables — use the semantic utility classes, not raw hex:
 
-| Purpose | Class / token |
-|---|---|
-| Brand / primary (amber `#f59e0b`) | `bg-primary`, `text-primary`, `border-primary-soft`, `bg-primary-soft` |
-| Body text | `text-foreground`, muted: `text-foreground-muted`, `text-muted` |
-| Surfaces | `bg-card`, `bg-muted`, page: `bg-background-light` / `bg-background-dark` |
-| Accents | `--color-tech-blue` (#3b82f6), `--color-creator-purple` (#8b5cf6), `--color-success` |
-| Radius | cards `rounded-2xl` / `rounded-[2rem]`, buttons `rounded-xl`, pills `rounded-full` |
-| Shadow | `shadow-sm`, hero cards `shadow-[0_8px_30px_rgb(0,0,0,0.06)]` |
+| Purpose                           | Class / token                                                                        |
+| --------------------------------- | ------------------------------------------------------------------------------------ |
+| Brand / primary (amber `#f59e0b`) | `bg-primary`, `text-primary`, `border-primary-soft`, `bg-primary-soft`               |
+| Body text                         | `text-foreground`, muted: `text-foreground-muted`, `text-muted`                      |
+| Surfaces                          | `bg-card`, `bg-muted`, page: `bg-background-light` / `bg-background-dark`            |
+| Accents                           | `--color-tech-blue` (#3b82f6), `--color-creator-purple` (#8b5cf6), `--color-success` |
+| Radius                            | cards `rounded-2xl` / `rounded-[2rem]`, buttons `rounded-xl`, pills `rounded-full`   |
+| Shadow                            | `shadow-sm`, hero cards `shadow-[0_8px_30px_rgb(0,0,0,0.06)]`                        |
 
 Dark mode is class-based: the `.dark` class on an ancestor swaps the token values
 (NOT `prefers-color-scheme`). Weights run heavy — headings `font-black`/`font-bold`.
@@ -53,17 +53,17 @@ props (arrays/objects), no context providers required.
 ```jsx
 const { Card, CardHeader, CardTitle, CardContent, Badge, Button } = window.HiveKUI;
 
-<Card className="rounded-2xl border-primary-soft shadow-sm">
+<Card className='rounded-2xl border-primary-soft shadow-sm'>
   <CardHeader>
     <CardTitle>Chiến dịch Cocoon</CardTitle>
-    <Badge variant="success">Đang chạy</Badge>
+    <Badge variant='success'>Đang chạy</Badge>
   </CardHeader>
-  <CardContent className="flex items-center justify-between gap-4">
-    <p className="text-2xl font-black text-foreground">2,4 triệu lượt tiếp cận</p>
-    <Button variant="default" size="lg">
+  <CardContent className='flex items-center justify-between gap-4'>
+    <p className='text-2xl font-black text-foreground'>2,4 triệu lượt tiếp cận</p>
+    <Button variant='default' size='lg'>
       Xem chi tiết
-      <span className="material-symbols-outlined">arrow_forward</span>
+      <span className='material-symbols-outlined'>arrow_forward</span>
     </Button>
   </CardContent>
-</Card>
+</Card>;
 ```

@@ -1,11 +1,11 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { getModelToken } from '@nestjs/mongoose';
-import { MongoNotificationRepository } from '@/infrastructure/mongo/repositories/notification.repository';
-import { NotificationModel } from '@/infrastructure/mongo/schemas/notification.schema';
+import { UNIT_OF_WORK } from '@/application/interfaces';
 import { NotificationRoot } from '@/core/aggregate-roots';
 import { NotificationType, TargetType } from '@/core/enums';
+import { MongoNotificationRepository } from '@/infrastructure/mongo/repositories/notification.repository';
+import { NotificationModel } from '@/infrastructure/mongo/schemas/notification.schema';
+import { getModelToken } from '@nestjs/mongoose';
+import { Test, TestingModule } from '@nestjs/testing';
 import { Types } from 'mongoose';
-import { UNIT_OF_WORK } from '@/application/interfaces';
 
 describe('MongoNotificationRepository', () => {
   let repository: MongoNotificationRepository;
@@ -25,10 +25,10 @@ describe('MongoNotificationRepository', () => {
 
   beforeEach(async () => {
     mockNotificationModel = jest.fn().mockImplementation((data) => ({
-        ...data,
-        save: jest.fn().mockResolvedValue({ _id: new Types.ObjectId() }),
+      ...data,
+      save: jest.fn().mockResolvedValue({ _id: new Types.ObjectId() }),
     }));
-    
+
     mockNotificationModel.findById = jest.fn().mockReturnThis();
     mockNotificationModel.findByIdAndUpdate = jest.fn().mockReturnThis();
     mockNotificationModel.findByIdAndDelete = jest.fn().mockReturnThis();
@@ -36,7 +36,7 @@ describe('MongoNotificationRepository', () => {
     mockNotificationModel.exec = jest.fn();
 
     mockUow = {
-        getSession: jest.fn().mockReturnValue(null),
+      getSession: jest.fn().mockReturnValue(null),
     };
 
     const module: TestingModule = await Test.createTestingModule({

@@ -1,25 +1,23 @@
-import { Injectable, Inject } from '@nestjs/common';
+import { RoleDto, RoleFilterDto } from '@/application/dtos';
+import { PaginatedResponseDto, SortOrder } from '@/application/dtos/pagination.dto';
+import { CACHE_SERVICE, IRoleReadService } from '@/application/interfaces';
+import type { ICacheService } from '@/application/interfaces';
+import { Nullable } from '@/core/types';
+import { CacheKeyUtil } from '@/shared/utils/cache-key.util';
+import { Inject, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, QueryFilter } from 'mongoose';
-import { IRoleReadService, CACHE_SERVICE } from '@/application/interfaces';
-import type { ICacheService } from '@/application/interfaces';
-import { RoleDto, RoleFilterDto } from '@/application/dtos';
 import { RoleDocument, RoleModel } from '../schemas/role.schema';
-import { Nullable } from '@/core/types';
-import { PaginatedResponseDto, SortOrder } from '@/application/dtos/pagination.dto';
 import { MongoSanitizeUtil } from '../utils';
-import { CacheKeyUtil } from '@/shared/utils/cache-key.util';
 
 @Injectable()
 export class MongoRoleReadService implements IRoleReadService {
   private readonly domain = 'role';
 
   constructor(
-    @InjectModel(RoleModel.name)
-    private readonly roleModel: Model<RoleDocument>,
-    @Inject(CACHE_SERVICE)
-    private readonly cacheService: ICacheService,
-  ) { }
+    @InjectModel(RoleModel.name) private readonly roleModel: Model<RoleDocument>,
+    @Inject(CACHE_SERVICE) private readonly cacheService: ICacheService,
+  ) {}
 
   async findById(id: string): Promise<Nullable<RoleDto>> {
     const cacheKey = CacheKeyUtil.id(this.domain, id);
@@ -35,7 +33,10 @@ export class MongoRoleReadService implements IRoleReadService {
   }
 
   async findByTitle(title: string): Promise<Nullable<RoleDto>> {
-    const cacheKey = CacheKeyUtil.custom(this.domain, `title:${title.toLowerCase()}`);
+    const cacheKey = CacheKeyUtil.custom(
+      this.domain,
+      `title:${title.toLowerCase()}`,
+    );
     const cached = await this.cacheService.get<RoleDto>(cacheKey);
     if (cached) return cached;
 
@@ -47,7 +48,9 @@ export class MongoRoleReadService implements IRoleReadService {
     return dto;
   }
 
-  async findAll(filters: RoleFilterDto = {} as any): Promise<PaginatedResponseDto<RoleDto>> {
+  async findAll(
+    filters: RoleFilterDto = {} as any,
+  ): Promise<PaginatedResponseDto<RoleDto>> {
     const cacheKey = CacheKeyUtil.list(this.domain, filters);
     const cached = await this.cacheService.get<PaginatedResponseDto<RoleDto>>(cacheKey);
     if (cached) return cached;
@@ -56,7 +59,10 @@ export class MongoRoleReadService implements IRoleReadService {
     const query: QueryFilter<RoleDocument> = {};
 
     if (title) {
-      query.title = { $regex: MongoSanitizeUtil.escapeRegex(title), $options: 'i' };
+      query.title = {
+        $regex: MongoSanitizeUtil.escapeRegex(title),
+        $options: 'i',
+      };
     }
 
     if (cursor) {
@@ -72,7 +78,9 @@ export class MongoRoleReadService implements IRoleReadService {
 
     const hasNextPage = docs.length > limit;
     const results = hasNextPage ? docs.slice(0, limit) : docs;
-    const nextCursor = hasNextPage ? results[results.length - 1]._id.toString() : null;
+    const nextCursor = hasNextPage
+      ? results[results.length - 1]._id.toString()
+      : null;
 
     const response = new PaginatedResponseDto(
       results.map((doc) => this.mapToDto(doc)),

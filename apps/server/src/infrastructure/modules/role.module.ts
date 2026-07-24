@@ -3,10 +3,10 @@ import { CqrsModule } from '@nestjs/cqrs';
 
 import {
   RoleCreateCommandHandler,
-  RoleUpdateCommandHandler,
-  RoleSoftDeleteCommandHandler,
   RoleHardDeleteCommandHandler,
   RoleRestoreCommandHandler,
+  RoleSoftDeleteCommandHandler,
+  RoleUpdateCommandHandler,
 } from '@/application/commands';
 
 import { RoleGetByIdQueryHandler, RoleGetListQueryHandler } from '@/application/queries';
@@ -21,10 +21,7 @@ const COMMAND_HANDLERS = [
   RoleRestoreCommandHandler,
 ];
 
-const QUERY_HANDLERS = [
-  RoleGetByIdQueryHandler,
-  RoleGetListQueryHandler,
-];
+const QUERY_HANDLERS = [RoleGetByIdQueryHandler, RoleGetListQueryHandler];
 
 @Module({
   imports: [UserModule, CqrsModule],

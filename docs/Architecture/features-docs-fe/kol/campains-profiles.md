@@ -4,26 +4,26 @@
 
 Đây là nơi KOL/KOC:
 
-* tìm campaign phù hợp
-* quản lý đơn apply
-* xử lý lời mời từ brand
-* theo dõi campaign đang chạy
-* nộp KPI/proof
-* xem lịch sử hợp tác
+- tìm campaign phù hợp
+- quản lý đơn apply
+- xử lý lời mời từ brand
+- theo dõi campaign đang chạy
+- nộp KPI/proof
+- xem lịch sử hợp tác
 
-Điều này bám đúng luồng sản phẩm: KOL có thể xem campaign mở, apply, được duyệt, thực hiện chiến dịch, submit KPI, rồi được chấm điểm/review.  
+Điều này bám đúng luồng sản phẩm: KOL có thể xem campaign mở, apply, được duyệt, thực hiện chiến dịch, submit KPI, rồi được chấm điểm/review.
 
 ### Profiles
 
 Đây là nơi KOL/KOC:
 
-* xây hồ sơ nghề nghiệp
-* chứng minh năng lực
-* tăng điểm match với brand
-* tạo public identity minh bạch
-* liên kết sang ranking / verification
+- xây hồ sơ nghề nghiệp
+- chứng minh năng lực
+- tăng điểm match với brand
+- tạo public identity minh bạch
+- liên kết sang ranking / verification
 
-Phần này cũng đúng với mô tả: KOL/KOC cần hồ sơ cá nhân gồm niche, follower, engagement, portfolio, social platforms, và có thể public/verified.  
+Phần này cũng đúng với mô tả: KOL/KOC cần hồ sơ cá nhân gồm niche, follower, engagement, portfolio, social platforms, và có thể public/verified.
 
 ---
 
@@ -58,72 +58,72 @@ Cho KOL/KOC tìm các campaign mở và apply.
 
 **Header**
 
-* tiêu đề: Discover Campaigns
-* subtitle: tìm cơ hội hợp tác phù hợp với hồ sơ của bạn
+- tiêu đề: Discover Campaigns
+- subtitle: tìm cơ hội hợp tác phù hợp với hồ sơ của bạn
 
 **Thanh filter trên cùng**
 
-* search keyword
-* platform
-* niche
-* budget range
-* follower requirement
-* location
-* campaign type
-* sort: newest / best match / highest budget / closing soon
+- search keyword
+- platform
+- niche
+- budget range
+- follower requirement
+- location
+- campaign type
+- sort: newest / best match / highest budget / closing soon
 
 **Khối main**
 
-* grid/list các campaign card
+- grid/list các campaign card
 
 **Sidebar phải hoặc drawer filter**
 
-* match score
-* profile completeness warning
-* gợi ý campaign dựa trên niche hiện tại
+- match score
+- profile completeness warning
+- gợi ý campaign dựa trên niche hiện tại
 
 ### Nội dung mỗi campaign card
 
-* tên campaign
-* brand name
-* sản phẩm/ngành
-* budget / fee range
-* platforms yêu cầu
-* follower range
-* deadline apply
-* match score
-* 2 CTA:
+- tên campaign
+- brand name
+- sản phẩm/ngành
+- budget / fee range
+- platforms yêu cầu
+- follower range
+- deadline apply
+- match score
+- 2 CTA:
 
-  * View details
-  * Apply
+  - View details
+  - Apply
 
 ### Component đề xuất
 
-* `CampaignSearchBar`
-* `CampaignFilterChips`
-* `CampaignSortSelect`
-* `CampaignMatchBadge`
-* `CampaignCard`
-* `RecommendedCampaignsPanel`
+- `CampaignSearchBar`
+- `CampaignFilterChips`
+- `CampaignSortSelect`
+- `CampaignMatchBadge`
+- `CampaignCard`
+- `RecommendedCampaignsPanel`
 
 ### Chức năng
 
-* filter realtime
-* lưu recent filters
-* đánh dấu saved campaign
-* apply nhanh
-* xem chi tiết
+- filter realtime
+- lưu recent filters
+- đánh dấu saved campaign
+- apply nhanh
+- xem chi tiết
 
 ### Ghi chú UX
 
 Nếu hồ sơ creator còn thiếu dữ liệu, nên hiện warning:
 
-* thiếu follower
-* thiếu portfolio
-* thiếu social account
-* chưa verified
+- thiếu follower
+- thiếu portfolio
+- thiếu social account
+- chưa verified
 
-vì những thứ này ảnh hưởng trực tiếp đến matching. Matching engine trong sản phẩm dựa vào niche, follower range, engagement, conversion history, rating, budget. 
+vì những thứ này ảnh hưởng trực tiếp đến matching. Matching engine trong sản phẩm dựa vào niche, follower range, engagement, conversion history, rating, budget.
 
 ---
 
@@ -137,61 +137,61 @@ Cho KOL/KOC xử lý các lời mời chủ động từ business.
 
 **Header**
 
-* Invitations
-* hiển thị số lượng pending
+- Invitations
+- hiển thị số lượng pending
 
 **Tabs**
 
-* All
-* Pending
-* Accepted
-* Declined
-* Expired
+- All
+- Pending
+- Accepted
+- Declined
+- Expired
 
 **Danh sách invitation**
 Mỗi item gồm:
 
-* brand
-* campaign title
-* mô tả ngắn
-* fee đề xuất
-* deadline phản hồi
-* KPI yêu cầu chính
-* badge “direct invite”
+- brand
+- campaign title
+- mô tả ngắn
+- fee đề xuất
+- deadline phản hồi
+- KPI yêu cầu chính
+- badge “direct invite”
 
 ### CTA
 
-* Accept
-* Decline
-* View detail
+- Accept
+- Decline
+- View detail
 
 ### Component
 
-* `InvitationStatusTabs`
-* `InvitationCard`
-* `InviteSummaryBar`
+- `InvitationStatusTabs`
+- `InvitationCard`
+- `InviteSummaryBar`
 
 ### Chức năng
 
-* chấp nhận lời mời
-* từ chối
-* xem điều kiện hợp tác
-* archive lời mời cũ
-* so sánh nhiều lời mời
+- chấp nhận lời mời
+- từ chối
+- xem điều kiện hợp tác
+- archive lời mời cũ
+- so sánh nhiều lời mời
 
 ### Ghi chú logic
 
 Khi accept:
 
-* tạo participant status `ACCEPTED`
-* chuyển sang Active Campaigns
+- tạo participant status `ACCEPTED`
+- chuyển sang Active Campaigns
 
 Khi decline:
 
-* lưu trạng thái declined
-* không còn hiện trong pending
+- lưu trạng thái declined
+- không còn hiện trong pending
 
-Trạng thái participant tối thiểu gồm pending, accepted, posting, completed, failed.  
+Trạng thái participant tối thiểu gồm pending, accepted, posting, completed, failed.
 
 ---
 
@@ -205,44 +205,44 @@ Cho creator theo dõi các campaign mình đã ứng tuyển.
 
 **Header**
 
-* Applied Campaigns
+- Applied Campaigns
 
 **Tabs**
 
-* Under Review
-* Shortlisted
-* Rejected
-* Withdrawn
+- Under Review
+- Shortlisted
+- Rejected
+- Withdrawn
 
 **Danh sách**
 Mỗi item:
 
-* campaign
-* brand
-* ngày apply
-* trạng thái
-* fee đề xuất
-* match score lúc apply
-* ghi chú từ business nếu có
+- campaign
+- brand
+- ngày apply
+- trạng thái
+- fee đề xuất
+- match score lúc apply
+- ghi chú từ business nếu có
 
 ### CTA
 
-* View application
-* Withdraw application
-* Re-apply nếu mở lại
+- View application
+- Withdraw application
+- Re-apply nếu mở lại
 
 ### Component
 
-* `AppliedCampaignTable`
-* `ApplicationStatusBadge`
-* `WithdrawApplicationDialog`
+- `AppliedCampaignTable`
+- `ApplicationStatusBadge`
+- `WithdrawApplicationDialog`
 
 ### Chức năng
 
-* xem trạng thái xét duyệt
-* xem lại nội dung apply
-* rút đơn
-* nhận thông báo khi có cập nhật
+- xem trạng thái xét duyệt
+- xem lại nội dung apply
+- rút đơn
+- nhận thông báo khi có cập nhật
 
 ---
 
@@ -256,55 +256,55 @@ Mỗi item:
 
 **Header**
 
-* Active Campaigns
-* summary: số campaign đang chạy, sắp tới deadline, đang chờ verify KPI
+- Active Campaigns
+- summary: số campaign đang chạy, sắp tới deadline, đang chờ verify KPI
 
 **Tabs**
 
-* All
-* Posting
-* Waiting Verification
-* Completed
-* Failed
+- All
+- Posting
+- Waiting Verification
+- Completed
+- Failed
 
 **Main content**
 dạng table hoặc cards có:
 
-* campaign name
-* brand
-* timeline
-* status
-* KPI progress
-* next deadline
-* approval state
+- campaign name
+- brand
+- timeline
+- status
+- KPI progress
+- next deadline
+- approval state
 
 ### Mỗi item hiển thị
 
-* tên chiến dịch
-* ngày bắt đầu / kết thúc
-* KPI target chính
-* progress bar
-* proof status
-* CTA:
+- tên chiến dịch
+- ngày bắt đầu / kết thúc
+- KPI target chính
+- progress bar
+- proof status
+- CTA:
 
-  * Open campaign
-  * Submit KPI
-  * View brief
+  - Open campaign
+  - Submit KPI
+  - View brief
 
 ### Component
 
-* `ActiveCampaignTable`
-* `CampaignProgressBar`
-* `KpiStatusPill`
-* `DeadlineWarningTag`
+- `ActiveCampaignTable`
+- `CampaignProgressBar`
+- `KpiStatusPill`
+- `DeadlineWarningTag`
 
 ### Chức năng
 
-* xem campaign đang thực hiện
-* thấy deadline gần
-* thấy KPI đã submit hay chưa
-* vào trang chi tiết campaign
-* nộp proof
+- xem campaign đang thực hiện
+- thấy deadline gần
+- thấy KPI đã submit hay chưa
+- vào trang chi tiết campaign
+- nộp proof
 
 ---
 
@@ -318,67 +318,67 @@ Cho creator xem toàn bộ brief và tiến trình của một campaign cụ th�
 
 #### Khu 1: Header summary
 
-* campaign name
-* brand
-* trạng thái
-* timeline
-* fee / reward
-* CTA chính: Submit KPI
+- campaign name
+- brand
+- trạng thái
+- timeline
+- fee / reward
+- CTA chính: Submit KPI
 
 #### Khu 2: Brief
 
-* mục tiêu campaign
-* audience
-* deliverables
-* content guideline
-* cấm gì / bắt buộc gì
-* hashtag / CTA / link tracking
+- mục tiêu campaign
+- audience
+- deliverables
+- content guideline
+- cấm gì / bắt buộc gì
+- hashtag / CTA / link tracking
 
 #### Khu 3: KPI Targets
 
-* reach target
-* views
-* CTR
-* conversions
-* progress hiện tại
+- reach target
+- views
+- CTR
+- conversions
+- progress hiện tại
 
 #### Khu 4: Submission Timeline
 
-* accepted
-* posting
-* submitted
-* verified
-* completed
+- accepted
+- posting
+- submitted
+- verified
+- completed
 
 #### Khu 5: Attachments / Assets
 
-* media kit
-* brief PDF
-* tracking links
-* product assets
+- media kit
+- brief PDF
+- tracking links
+- product assets
 
 #### Khu 6: Review / Notes
 
-* feedback từ business
-* yêu cầu chỉnh sửa
-* trạng thái xác nhận
+- feedback từ business
+- yêu cầu chỉnh sửa
+- trạng thái xác nhận
 
 ### Component
 
-* `CampaignDetailHeader`
-* `CampaignBriefCard`
-* `CampaignKpiSection`
-* `SubmissionTimeline`
-* `CampaignAssetsPanel`
-* `BrandFeedbackPanel`
+- `CampaignDetailHeader`
+- `CampaignBriefCard`
+- `CampaignKpiSection`
+- `SubmissionTimeline`
+- `CampaignAssetsPanel`
+- `BrandFeedbackPanel`
 
 ### Chức năng
 
-* xem toàn bộ thông tin chiến dịch
-* tải tài liệu
-* theo dõi tiến độ
-* nộp KPI/proof
-* xem business feedback
+- xem toàn bộ thông tin chiến dịch
+- tải tài liệu
+- theo dõi tiến độ
+- nộp KPI/proof
+- xem business feedback
 
 ---
 
@@ -390,44 +390,44 @@ Cho creator nhập dữ liệu hiệu suất và bằng chứng hoàn thành.
 
 ### Form fields
 
-* posting URL
-* postedAt
-* views
-* likes
-* comments
-* shares
-* clicks
-* conversions
-* note
-* upload screenshot / analytics proof
+- posting URL
+- postedAt
+- views
+- likes
+- comments
+- shares
+- clicks
+- conversions
+- note
+- upload screenshot / analytics proof
 
-Đây bám đúng mô hình KPI tracking manual submission + verify + tracking link.  
+Đây bám đúng mô hình KPI tracking manual submission + verify + tracking link.
 
 ### Bố cục
 
-* bên trái: form submit
-* bên phải: target KPI + hướng dẫn + trạng thái verify
+- bên trái: form submit
+- bên phải: target KPI + hướng dẫn + trạng thái verify
 
 ### Trạng thái
 
-* Draft
-* Submitted
-* Needs Revision
-* Verified
+- Draft
+- Submitted
+- Needs Revision
+- Verified
 
 ### Component
 
-* `KpiSubmissionForm`
-* `ProofUploader`
-* `KpiTargetSummary`
-* `VerificationStatusCard`
+- `KpiSubmissionForm`
+- `ProofUploader`
+- `KpiTargetSummary`
+- `VerificationStatusCard`
 
 ### Chức năng
 
-* lưu nháp
-* submit chính thức
-* sửa khi bị yêu cầu bổ sung
-* xem attainment %
+- lưu nháp
+- submit chính thức
+- sửa khi bị yêu cầu bổ sung
+- xem attainment %
 
 ---
 
@@ -439,18 +439,18 @@ Cho KOL/KOC nhìn lại lịch sử hợp tác để xây uy tín.
 
 ### Hiển thị
 
-* campaign đã hoàn thành
-* completion rate
-* average rating
-* KPI achieved %
-* brand feedback
-* public transparency impact
+- campaign đã hoàn thành
+- completion rate
+- average rating
+- KPI achieved %
+- brand feedback
+- public transparency impact
 
 ### Component
 
-* `CampaignHistoryTable`
-* `CompletionStatsPanel`
-* `PastReviewsList`
+- `CampaignHistoryTable`
+- `CompletionStatsPanel`
+- `PastReviewsList`
 
 ---
 
@@ -483,76 +483,76 @@ và public-facing:
 
 #### Khu 1: Hero profile
 
-* avatar
-* display name
-* verified badge
-* niche
-* city/location
-* follower tổng
-* engagement rate
-* score
-* nút Edit Profile
-* nút Preview Public Profile
+- avatar
+- display name
+- verified badge
+- niche
+- city/location
+- follower tổng
+- engagement rate
+- score
+- nút Edit Profile
+- nút Preview Public Profile
 
 #### Khu 2: Profile completeness
 
 card hiển thị:
 
-* 75% complete
-* checklist còn thiếu:
+- 75% complete
+- checklist còn thiếu:
 
-  * portfolio
-  * pricing
-  * TikTok link
-  * audience demographics
+  - portfolio
+  - pricing
+  - TikTok link
+  - audience demographics
 
 #### Khu 3: Professional info
 
-* bio
-* niche/category
-* content style
-* audience type
-* working platforms
-* language
-* location
+- bio
+- niche/category
+- content style
+- audience type
+- working platforms
+- language
+- location
 
 #### Khu 4: Performance highlights
 
-* follower count theo platform
-* engagement rate
-* average views
-* completed campaigns
-* rating
-* conversion performance nếu có
+- follower count theo platform
+- engagement rate
+- average views
+- completed campaigns
+- rating
+- conversion performance nếu có
 
 #### Khu 5: Portfolio
 
-* bài nổi bật
-* video nổi bật
-* brand từng hợp tác
-* media kit / CV
+- bài nổi bật
+- video nổi bật
+- brand từng hợp tác
+- media kit / CV
 
 #### Khu 6: Commercial info
 
-* booking range
-* collaboration formats
-* available campaign types
-* preferred industries
+- booking range
+- collaboration formats
+- available campaign types
+- preferred industries
 
 ### Component
 
-* `ProfileHeroCard`
-* `ProfileCompletionChecklist`
-* `PlatformStatsGrid`
-* `PortfolioGallery`
-* `CommercialInfoCard`
+- `ProfileHeroCard`
+- `ProfileCompletionChecklist`
+- `PlatformStatsGrid`
+- `PortfolioGallery`
+- `CommercialInfoCard`
 
 ### Chức năng
 
-* xem toàn bộ hồ sơ
-* kiểm tra mức hoàn chỉnh
-* vào edit
-* preview bản public
+- xem toàn bộ hồ sơ
+- kiểm tra mức hoàn chỉnh
+- vào edit
+- preview bản public
 
 ---
 
@@ -562,86 +562,86 @@ card hiển thị:
 
 ### Tab 1: Basic Info
 
-* avatar
-* display name
-* legal name nếu cần internal
-* bio
-* location
-* languages
+- avatar
+- display name
+- legal name nếu cần internal
+- bio
+- location
+- languages
 
 ### Tab 2: Creator Info
 
-* niche
-* content categories
-* audience demographics
-* content tone/style
-* preferred platforms
+- niche
+- content categories
+- audience demographics
+- content tone/style
+- preferred platforms
 
 ### Tab 3: Social Accounts
 
-* TikTok
-* Instagram
-* Facebook
-* YouTube
-* Threads
-* website/personal link
+- TikTok
+- Instagram
+- Facebook
+- YouTube
+- Threads
+- website/personal link
 
 ### Tab 4: Performance Metrics
 
-* follower count
-* average reach
-* engagement rate
-* average views
-* conversion proof nếu có
+- follower count
+- average reach
+- engagement rate
+- average views
+- conversion proof nếu có
 
 ### Tab 5: Portfolio
 
-* upload videos
-* image posts
-* case studies
-* CV / media kit
+- upload videos
+- image posts
+- case studies
+- CV / media kit
 
 ### Tab 6: Commercial Settings
 
-* fee range
-* campaign formats accepted
-* availability
-* collaboration notes
+- fee range
+- campaign formats accepted
+- availability
+- collaboration notes
 
 ### Tab 7: Visibility & Verification
 
-* profile public/private
-* show/hide selected metrics
-* request verification
+- profile public/private
+- show/hide selected metrics
+- request verification
 
 ### Component
 
-* `ProfileEditStepper`
-* `BasicInfoForm`
-* `SocialAccountsForm`
-* `MetricsForm`
-* `PortfolioUploader`
-* `VisibilitySettingsForm`
+- `ProfileEditStepper`
+- `BasicInfoForm`
+- `SocialAccountsForm`
+- `MetricsForm`
+- `PortfolioUploader`
+- `VisibilitySettingsForm`
 
 ### Chức năng
 
-* autosave
-* validate theo field
-* preview public
-* request verification
-* lưu version changes
+- autosave
+- validate theo field
+- preview public
+- request verification
+- lưu version changes
 
 ### Logic dữ liệu
 
 Các field quan trọng nhất cho matching là:
 
-* niche
-* follower count
-* engagement rate
-* rating/history
-* budget/fee fit
+- niche
+- follower count
+- engagement rate
+- rating/history
+- budget/fee fit
 
-vì đó là đầu vào của matching engine. 
+vì đó là đầu vào của matching engine.
 
 ---
 
@@ -653,20 +653,20 @@ Cho KOL/KOC xem trước public page của mình trước khi publish.
 
 ### Hiển thị
 
-* avatar
-* intro
-* platform stats
-* badges
-* completed campaigns
-* public reviews
-* verification block
-* transparency block
+- avatar
+- intro
+- platform stats
+- badges
+- completed campaigns
+- public reviews
+- verification block
+- transparency block
 
 ### CTA
 
-* Publish
-* Edit More
-* Copy Public Link
+- Publish
+- Edit More
+- Copy Public Link
 
 ---
 
@@ -680,46 +680,46 @@ Cho KOL/KOC xem trước public page của mình trước khi publish.
 
 #### Khu 1: Public hero
 
-* avatar
-* tên
-* niche
-* verified
-* rank
-* score
-* social links
+- avatar
+- tên
+- niche
+- verified
+- rank
+- score
+- social links
 
 #### Khu 2: Overview
 
-* bio
-* content focus
-* audience
-* brand fit
+- bio
+- content focus
+- audience
+- brand fit
 
 #### Khu 3: Stats
 
-* followers
-* engagement
-* completion rate
-* average rating
+- followers
+- engagement
+- completion rate
+- average rating
 
 #### Khu 4: Campaign history
 
-* các campaign đã public
-* trạng thái completed
-* highlights
+- các campaign đã public
+- trạng thái completed
+- highlights
 
 #### Khu 5: Reviews
 
-* feedback từ brand
-* feedback người dùng
+- feedback từ brand
+- feedback người dùng
 
 #### Khu 6: Transparency / Verification
 
-* verified certificate
-* disclosure score
-* trust score
+- verified certificate
+- disclosure score
+- trust score
 
-Trang public này gắn trực tiếp với Public Transparency Dashboard và ranking/verification. 
+Trang public này gắn trực tiếp với Public Transparency Dashboard và ranking/verification.
 
 ---
 
@@ -727,37 +727,37 @@ Trang public này gắn trực tiếp với Public Transparency Dashboard và ra
 
 Theo style hiện tại của Hive-K:
 
-* nền xám rất nhạt
-* card trắng
-* border nhẹ
-* radius 12px
-* shadow subtle
-* button amber
-* analytics blue
-* creator/badge purple
+- nền xám rất nhạt
+- card trắng
+- border nhẹ
+- radius 12px
+- shadow subtle
+- button amber
+- analytics blue
+- creator/badge purple
 
 Palette đã chốt:
 
-* Primary `#F59E0B`
-* Secondary `#FB923C`
-* Tech Blue `#3B82F6`
-* Creator Purple `#8B5CF6`
-* neutral text/border/background như style guide. 
+- Primary `#F59E0B`
+- Secondary `#FB923C`
+- Tech Blue `#3B82F6`
+- Creator Purple `#8B5CF6`
+- neutral text/border/background như style guide.
 
 ### Áp dụng cụ thể
 
 **Campaign pages**
 
-* emphasis vào CTA, deadlines, status
-* màu cảnh báo deadline: orange
-* verified KPI: green
-* analytics/progress: blue
+- emphasis vào CTA, deadlines, status
+- màu cảnh báo deadline: orange
+- verified KPI: green
+- analytics/progress: blue
 
 **Profile pages**
 
-* emphasis vào badge, trust, creator identity
-* badge/reputation: purple
-* primary edit/publish: amber
+- emphasis vào badge, trust, creator identity
+- badge/reputation: purple
+- primary edit/publish: amber
 
 ---
 
@@ -782,7 +782,7 @@ Palette đã chốt:
 /kol-verification/[id]
 ```
 
-Route này cũng khớp tốt với structure hiện có: đã có `ambassador/dashboard`, `campaigns`, `campaigns/[id]`, `kol-verification/[id]`, và có thể mở rộng thêm mà không phá kiến trúc hiện tại. 
+Route này cũng khớp tốt với structure hiện có: đã có `ambassador/dashboard`, `campaigns`, `campaigns/[id]`, `kol-verification/[id]`, và có thể mở rộng thêm mà không phá kiến trúc hiện tại.
 
 ---
 
@@ -803,12 +803,12 @@ flowchart LR
 
 Ý chính là:
 
-* **Profile tốt hơn** → match tốt hơn
-* **Campaign làm tốt hơn** → reputation tốt hơn
-* **Reputation tốt hơn** → public profile mạnh hơn
-* **public profile mạnh hơn** → dễ được mời campaign hơn
+- **Profile tốt hơn** → match tốt hơn
+- **Campaign làm tốt hơn** → reputation tốt hơn
+- **Reputation tốt hơn** → public profile mạnh hơn
+- **public profile mạnh hơn** → dễ được mời campaign hơn
 
-Đây chính là vòng lặp giá trị của Hive-K.  
+Đây chính là vòng lặp giá trị của Hive-K.
 
 ---
 
@@ -818,24 +818,24 @@ Nên làm trước:
 
 ### Campaigns
 
-* Discover
-* Invitations
-* Applied
-* Active
-* Campaign Detail
-* Submit KPI
+- Discover
+- Invitations
+- Applied
+- Active
+- Campaign Detail
+- Submit KPI
 
 ### Profiles
 
-* My Profile
-* Edit Profile
-* Public Preview basic
-* Public Profile basic
-* Verification block basic
+- My Profile
+- Edit Profile
+- Public Preview basic
+- Public Profile basic
+- Verification block basic
 
 Chưa cần làm sâu ngay:
 
-* earnings wallet
-* auto social sync
-* advanced audience analytics
-* AI-generated profile insights
+- earnings wallet
+- auto social sync
+- advanced audience analytics
+- AI-generated profile insights

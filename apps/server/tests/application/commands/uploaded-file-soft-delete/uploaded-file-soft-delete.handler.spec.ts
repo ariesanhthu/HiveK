@@ -1,8 +1,8 @@
-import { UploadedFileSoftDeleteCommandHandler } from '@/application/commands/uploaded-file-soft-delete/uploaded-file-soft-delete.handler';
 import { UploadedFileSoftDeleteCommand } from '@/application/commands/uploaded-file-soft-delete/uploaded-file-soft-delete.command';
-import { UploadedFileNotFoundException } from '@/core/exceptions';
+import { UploadedFileSoftDeleteCommandHandler } from '@/application/commands/uploaded-file-soft-delete/uploaded-file-soft-delete.handler';
 import { UploadedFileRoot } from '@/core/aggregate-roots';
 import { TargetType } from '@/core/enums';
+import { UploadedFileNotFoundException } from '@/core/exceptions';
 import { createMockUploadedFileRepository } from '../../../__mocks__/mock-repositories';
 
 describe('UploadedFileSoftDeleteCommandHandler', () => {
@@ -15,20 +15,21 @@ describe('UploadedFileSoftDeleteCommandHandler', () => {
   });
 
   const fileId = 'file-123';
-  const createMockFile = () => UploadedFileRoot.instantiate(fileId, {
-    url: 'http://test.com/file.jpg',
-    publicId: 'pub-123',
-    size: 1000,
-    format: 'jpg',
-    title: 'Test File',
-    targetType: TargetType.USER,
-    targetId: 'user-1',
-    targetField: 'avatar',
-    createdAt: new Date(),
-    updatedAt: new Date(),
-    deleteAt: null,
-    deleteBy: null,
-  });
+  const createMockFile = () =>
+    UploadedFileRoot.instantiate(fileId, {
+      url: 'http://test.com/file.jpg',
+      publicId: 'pub-123',
+      size: 1000,
+      format: 'jpg',
+      title: 'Test File',
+      targetType: TargetType.USER,
+      targetId: 'user-1',
+      targetField: 'avatar',
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      deleteAt: null,
+      deleteBy: null,
+    });
 
   describe('Happy Path', () => {
     it('should soft delete a file', async () => {
@@ -56,7 +57,8 @@ describe('UploadedFileSoftDeleteCommandHandler', () => {
     it('should throw UploadedFileNotFoundException when file not found', async () => {
       mockRepository.findById.mockResolvedValue(null);
 
-      await expect(handler.execute(new UploadedFileSoftDeleteCommand('nonexistent'))).rejects.toThrow(UploadedFileNotFoundException);
+      await expect(handler.execute(new UploadedFileSoftDeleteCommand('nonexistent'))).rejects
+        .toThrow(UploadedFileNotFoundException);
       expect(mockRepository.save).not.toHaveBeenCalled();
     });
   });

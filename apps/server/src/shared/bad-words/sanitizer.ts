@@ -1,6 +1,6 @@
-import { SanitizeOptions, SanitizeResult } from './types';
+import { EMAIL_REGEX, PHONE_REGEX, URL_REGEX } from './constants';
 import { detectProfanityIndices } from './profanity';
-import { URL_REGEX, EMAIL_REGEX, PHONE_REGEX } from './constants';
+import { SanitizeOptions, SanitizeResult } from './types';
 
 /**
  * Sanitizes the input text by:
@@ -19,7 +19,10 @@ import { URL_REGEX, EMAIL_REGEX, PHONE_REGEX } from './constants';
  * // => { sanitizedText: 'Buy now! Email ############', flaggedPercent: 40, ... }
  * ```
  */
-export function sanitize(input: string, options?: SanitizeOptions): SanitizeResult {
+export function sanitize(
+  input: string,
+  options?: SanitizeOptions,
+): SanitizeResult {
   const replaceChar = options?.replaceChar ?? '*';
   const removeLinks = options?.removeLinks !== false;
   const removeBadWords = options?.removeBadWords !== false;
@@ -33,7 +36,7 @@ export function sanitize(input: string, options?: SanitizeOptions): SanitizeResu
   if (removeLinks) {
     for (const match of input.matchAll(URL_REGEX)) {
       const m = match[0];
-      const start = match.index!;
+      const start = match.index;
       for (let i = start; i < start + m.length; i++) {
         flagged.add(i);
       }
@@ -45,7 +48,7 @@ export function sanitize(input: string, options?: SanitizeOptions): SanitizeResu
     for (const regex of [EMAIL_REGEX, PHONE_REGEX]) {
       for (const match of input.matchAll(regex)) {
         const m = match[0];
-        const start = match.index!;
+        const start = match.index;
         for (let i = start; i < start + m.length; i++) {
           flagged.add(i);
         }
@@ -70,8 +73,7 @@ export function sanitize(input: string, options?: SanitizeOptions): SanitizeResu
 
   // ── Step 3: Calculate stats ──────────────────────────────────
   const flaggedCharCount = flagged.size;
-  const flaggedPercent =
-    totalLen > 0 ? Math.round((flaggedCharCount / totalLen) * 100) : 0;
+  const flaggedPercent = totalLen > 0 ? Math.round((flaggedCharCount / totalLen) * 100) : 0;
 
   return {
     sanitizedText,

@@ -1,6 +1,6 @@
+import { OtpProps } from '../aggregate-roots/otp.aggregate';
 import { DomainEvent } from '../common/base.domain-event';
 import { EAggregateType } from '../enums/aggregate-type.enum';
-import { OtpProps } from '../aggregate-roots/otp.aggregate';
 
 export class VerificationOtpCreatedEvent extends DomainEvent<OtpProps> {
   public readonly eventType = 'VerificationOtpCreated';

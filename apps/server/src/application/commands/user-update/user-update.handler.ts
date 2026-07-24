@@ -1,19 +1,23 @@
+import { UserDto, UserMapper } from '@/application';
+import { AuthService } from '@/application/services/auth.service';
+import { UserNotFoundException } from '@/core/exceptions';
+import { type IUserRepository, USER_REPOSITORY } from '@/core/interfaces/repositories';
+import { PhoneNumberVO } from '@/core/value-objects/phone-number.value-object';
+import { Inject } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { UserUpdateCommand } from './user-update.command';
-import { Inject } from '@nestjs/common';
-import { UserNotFoundException } from '@/core/exceptions';
-import { USER_REPOSITORY, type IUserRepository } from '@/core/interfaces/repositories';
-import { AuthService } from '@/application/services/auth.service';
-import { PhoneNumberVO } from '@/core/value-objects/phone-number.value-object';
-import { UserDto, UserMapper } from '@/application';
 
 @CommandHandler(UserUpdateCommand)
-export class UserUpdateCommandHandler implements ICommandHandler<UserUpdateCommand, UserDto> {
+export class UserUpdateCommandHandler implements
+  ICommandHandler<
+    UserUpdateCommand,
+    UserDto
+  >
+{
   constructor(
-    @Inject(USER_REPOSITORY)
-    private readonly userRepository: IUserRepository,
+    @Inject(USER_REPOSITORY) private readonly userRepository: IUserRepository,
     private readonly authService: AuthService,
-  ) { }
+  ) {}
 
   async execute(command: UserUpdateCommand): Promise<UserDto> {
     const { id, input } = command;
@@ -25,7 +29,9 @@ export class UserUpdateCommandHandler implements ICommandHandler<UserUpdateComma
 
     if (input) {
       if (input.fullName !== undefined) user.updateFullName(input.fullName);
-      if (input.phone !== undefined) user.updatePhone(PhoneNumberVO.create({ value: input.phone }));
+      if (input.phone !== undefined) {
+        user.updatePhone(PhoneNumberVO.create({ value: input.phone }));
+      }
 
       await this.userRepository.save(user);
     }

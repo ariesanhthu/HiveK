@@ -48,15 +48,15 @@ Mỗi vai trò có:
 
 Vai trò hệ thống đề xuất:
 
-| Vai trò | Quyền chính |
-|---|---|
-| Owner | Toàn bộ workspace, billing, quyền |
-| Admin | Kết nối, thành viên, cấu hình |
-| Content Manager | Kế hoạch, duyệt, lịch |
-| Creator | Tạo và chỉnh bài |
-| Reviewer | Duyệt nội dung và dữ kiện được phân công |
-| Analyst | Xem phân tích |
-| Viewer | Chỉ xem |
+| Vai trò         | Quyền chính                              |
+| --------------- | ---------------------------------------- |
+| Owner           | Toàn bộ workspace, billing, quyền        |
+| Admin           | Kết nối, thành viên, cấu hình            |
+| Content Manager | Kế hoạch, duyệt, lịch                    |
+| Creator         | Tạo và chỉnh bài                         |
+| Reviewer        | Duyệt nội dung và dữ kiện được phân công |
+| Analyst         | Xem phân tích                            |
+| Viewer          | Chỉ xem                                  |
 
 ## 4. Quy trình duyệt
 

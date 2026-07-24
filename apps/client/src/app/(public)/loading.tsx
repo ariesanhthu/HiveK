@@ -1,5 +1,5 @@
-import React from "react";
-import { SectionSkeleton } from "@/components/global/sections/section-skeleton";
+import { SectionSkeleton } from '@/components/global/sections/section-skeleton';
+import React from 'react';
 
 /**
  * Route-level loading UI for (public) group.
@@ -7,8 +7,8 @@ import { SectionSkeleton } from "@/components/global/sections/section-skeleton";
  */
 export default function PublicLoading() {
   return (
-    <div className="animate-in fade-in duration-200">
-      <SectionSkeleton variant="page" />
+    <div className='animate-in fade-in duration-200'>
+      <SectionSkeleton variant='page' />
     </div>
   );
 }

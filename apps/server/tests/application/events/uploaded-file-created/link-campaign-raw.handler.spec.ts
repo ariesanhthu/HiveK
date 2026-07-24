@@ -15,10 +15,16 @@ describe('LinkCampaignRawHandler', () => {
   });
 
   it('should append raw contents to campaign when target is CAMPAIGN with raw field', async () => {
-    const campaign = { id: 'cmp-1', rawContents: [{ fileId: 'old-file', rawContent: '' }], update: jest.fn() };
+    const campaign = {
+      id: 'cmp-1',
+      rawContents: [{ fileId: 'old-file', rawContent: '' }],
+      update: jest.fn(),
+    };
     mockCampaignRepository.findById.mockResolvedValue(campaign);
 
-    await handler.handle(new UploadedFileCreatedEvent('file-1', TargetType.CAMPAIGN, 'cmp-1', 'raw'));
+    await handler.handle(
+      new UploadedFileCreatedEvent('file-1', TargetType.CAMPAIGN, 'cmp-1', 'raw'),
+    );
 
     expect(campaign.update).toHaveBeenCalledWith({
       rawContents: [
@@ -33,7 +39,9 @@ describe('LinkCampaignRawHandler', () => {
     const campaign = { id: 'cmp-2', rawContents: [], update: jest.fn() };
     mockCampaignRepository.findById.mockResolvedValue(campaign);
 
-    await handler.handle(new UploadedFileCreatedEvent('file-2', TargetType.CAMPAIGN, 'cmp-2', 'raw'));
+    await handler.handle(
+      new UploadedFileCreatedEvent('file-2', TargetType.CAMPAIGN, 'cmp-2', 'raw'),
+    );
 
     expect(campaign.update).toHaveBeenCalledWith({
       rawContents: [{ fileId: 'file-2', rawContent: '' }],
@@ -46,13 +54,17 @@ describe('LinkCampaignRawHandler', () => {
   });
 
   it('should ignore non-raw fields', async () => {
-    await handler.handle(new UploadedFileCreatedEvent('file-1', TargetType.CAMPAIGN, 'cmp-1', 'avatar'));
+    await handler.handle(
+      new UploadedFileCreatedEvent('file-1', TargetType.CAMPAIGN, 'cmp-1', 'avatar'),
+    );
     expect(mockCampaignRepository.findById).not.toHaveBeenCalled();
   });
 
   it('should silently skip if campaign not found', async () => {
     mockCampaignRepository.findById.mockResolvedValue(null);
-    await handler.handle(new UploadedFileCreatedEvent('file-1', TargetType.CAMPAIGN, 'nonexistent', 'raw'));
+    await handler.handle(
+      new UploadedFileCreatedEvent('file-1', TargetType.CAMPAIGN, 'nonexistent', 'raw'),
+    );
     expect(mockCampaignRepository.save).not.toHaveBeenCalled();
   });
 });

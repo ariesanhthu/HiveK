@@ -1,9 +1,16 @@
-import { EnterpriseHardDeleteCommandHandler } from '@/application/commands/enterprise-hard-delete/enterprise-hard-delete.handler';
 import { EnterpriseHardDeleteCommand } from '@/application/commands/enterprise-hard-delete/enterprise-hard-delete.command';
-import { EnterpriseNotFoundException, EnterpriseForbiddenException, InvalidOperationException } from '@/core/exceptions';
+import { EnterpriseHardDeleteCommandHandler } from '@/application/commands/enterprise-hard-delete/enterprise-hard-delete.handler';
 import { EnterpriseRoot } from '@/core/aggregate-roots';
-import { createMockEnterpriseRepository, createMockCampaignRepository } from '../../../__mocks__/mock-repositories';
-import { createMockUnitOfWork, createMockOutboxService } from '../../../__mocks__/mock-services';
+import {
+  EnterpriseForbiddenException,
+  EnterpriseNotFoundException,
+  InvalidOperationException,
+} from '@/core/exceptions';
+import {
+  createMockCampaignRepository,
+  createMockEnterpriseRepository,
+} from '../../../__mocks__/mock-repositories';
+import { createMockOutboxService, createMockUnitOfWork } from '../../../__mocks__/mock-services';
 
 describe('EnterpriseHardDeleteCommandHandler', () => {
   let handler: EnterpriseHardDeleteCommandHandler;
@@ -17,28 +24,29 @@ describe('EnterpriseHardDeleteCommandHandler', () => {
     mockCampaignRepository = createMockCampaignRepository();
     mockOutboxService = createMockOutboxService();
     mockUow = createMockUnitOfWork();
-    
+
     handler = new EnterpriseHardDeleteCommandHandler(
-        mockEnterpriseRepository, 
-        mockCampaignRepository, 
-        mockOutboxService as any,
-        mockUow
+      mockEnterpriseRepository,
+      mockCampaignRepository,
+      mockOutboxService as any,
+      mockUow,
     );
   });
 
   const enterpriseId = 'ent-123';
   const userId = 'user-123';
 
-  const createMockEnterprise = () => EnterpriseRoot.instantiate(enterpriseId, {
-    userId: userId,
-    companyName: 'Test Ent',
-    contactEmail: 'test@ent.com',
-    isVerified: true,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-    deleteAt: null,
-    deleteBy: null,
-  });
+  const createMockEnterprise = () =>
+    EnterpriseRoot.instantiate(enterpriseId, {
+      userId: userId,
+      companyName: 'Test Ent',
+      contactEmail: 'test@ent.com',
+      isVerified: true,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      deleteAt: null,
+      deleteBy: null,
+    });
 
   describe('Happy Path', () => {
     it('should hard delete enterprise and enqueue domain events to outbox', async () => {
@@ -52,7 +60,7 @@ describe('EnterpriseHardDeleteCommandHandler', () => {
 
       expect(mockCampaignRepository.delete).toHaveBeenCalledWith('camp-1');
       expect(mockEnterpriseRepository.delete).toHaveBeenCalledWith(enterpriseId);
-      
+
       // Verification: Currently EventMapper returns empty for EntityHardDeletedEvent
       // So no events are enqueued in the current implementation
       expect(mockOutboxService.enqueueMany).not.toHaveBeenCalled();
@@ -69,7 +77,7 @@ describe('EnterpriseHardDeleteCommandHandler', () => {
     it('should throw EnterpriseForbiddenException if requester is not owner', async () => {
       const enterprise = createMockEnterprise();
       mockEnterpriseRepository.findById.mockResolvedValue(enterprise);
-      
+
       const command = new EnterpriseHardDeleteCommand(enterpriseId, 'wrong-user');
       await expect(handler.execute(command)).rejects.toThrow(EnterpriseForbiddenException);
     });

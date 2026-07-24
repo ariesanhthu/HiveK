@@ -1,5 +1,5 @@
-import React from "react";
-import { cn } from "@/lib/utils";
+import { cn } from '@/lib/utils';
+import React from 'react';
 
 type CampaignKpiDonutProps = {
   label: string;
@@ -22,38 +22,38 @@ export function CampaignKpiDonut({
   const dashOffset = C * (1 - clamped / 100);
 
   return (
-    <div className="flex flex-col items-center gap-2 text-center">
-      <div className="relative h-32 w-32">
+    <div className='flex flex-col items-center gap-2 text-center'>
+      <div className='relative h-32 w-32'>
         <svg
-          viewBox="0 0 100 100"
-          className="h-full w-full -rotate-90"
+          viewBox='0 0 100 100'
+          className='h-full w-full -rotate-90'
           aria-hidden
         >
           <circle
-            cx="50"
-            cy="50"
+            cx='50'
+            cy='50'
             r={R - STROKE / 2}
-            fill="none"
+            fill='none'
             strokeWidth={STROKE}
-            className="stroke-muted"
+            className='stroke-muted'
           />
           <circle
-            cx="50"
-            cy="50"
+            cx='50'
+            cy='50'
             r={R - STROKE / 2}
-            fill="none"
+            fill='none'
             strokeWidth={STROKE}
             strokeDasharray={C}
             strokeDashoffset={dashOffset}
-            strokeLinecap="round"
+            strokeLinecap='round'
             className={cn(strokeClass)}
           />
         </svg>
-        <div className="absolute inset-0 flex flex-col items-center justify-center">
-          <span className="text-lg font-black text-foreground">{valueLabel}</span>
+        <div className='absolute inset-0 flex flex-col items-center justify-center'>
+          <span className='text-lg font-black text-foreground'>{valueLabel}</span>
         </div>
       </div>
-      <span className="text-xs font-semibold text-muted">{label}</span>
+      <span className='text-xs font-semibold text-muted'>{label}</span>
     </div>
   );
 }

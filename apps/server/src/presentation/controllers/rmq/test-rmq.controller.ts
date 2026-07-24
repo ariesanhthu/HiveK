@@ -1,5 +1,5 @@
-import { Injectable, Logger } from '@nestjs/common';
 import { RmqHandler } from '@/infrastructure/rabbitmq/rmq-consumer.registry';
+import { Injectable, Logger } from '@nestjs/common';
 
 @Injectable()
 export class TestRmqHandler {
@@ -12,6 +12,8 @@ export class TestRmqHandler {
 
   @RmqHandler({ queue: 'hivek_queue', pattern: 'default' })
   async handleDefaultEvent(data: any) {
-    this.logger.log(`📥 Received default event via RMQ: ${JSON.stringify(data)}`);
+    this.logger.log(
+      `📥 Received default event via RMQ: ${JSON.stringify(data)}`,
+    );
   }
 }

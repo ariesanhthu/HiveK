@@ -25,4 +25,3 @@
 - Khi thêm/bớt/đổi tên file hoặc folder trong `docs/`, luôn cập nhật:
   - `structure.md` tương ứng
   - `docs/visual/graph.json` nếu thay đổi ảnh hưởng tới feature/workflow/file trong graph.
-

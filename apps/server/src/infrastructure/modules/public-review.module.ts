@@ -2,21 +2,22 @@ import { Module } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
 
 // Controllers & Resolvers
-import { PublicReviewAdminController, PublicReviewClientController, PublicReviewResolver } from '@/presentation/controllers';
+import {
+  PublicReviewAdminController,
+  PublicReviewClientController,
+  PublicReviewResolver,
+} from '@/presentation/controllers';
 
 // Commands
 import {
   ReviewCreateCommandHandler,
   ReviewModerateCommandHandler,
-  ReviewSoftDeleteCommandHandler,
   ReviewRestoreCommandHandler,
+  ReviewSoftDeleteCommandHandler,
 } from '@/application/commands';
 
 // Queries
-import {
-  ReviewGetListHandler,
-  ReviewGetByIdHandler,
-} from '@/application/queries';
+import { ReviewGetByIdHandler, ReviewGetListHandler } from '@/application/queries';
 
 const COMMAND_HANDLERS = [
   ReviewCreateCommandHandler,
@@ -25,21 +26,12 @@ const COMMAND_HANDLERS = [
   ReviewRestoreCommandHandler,
 ];
 
-const QUERY_HANDLERS = [
-  ReviewGetListHandler,
-  ReviewGetByIdHandler,
-];
+const QUERY_HANDLERS = [ReviewGetListHandler, ReviewGetByIdHandler];
 
 @Module({
-  imports: [
-    CqrsModule,
-  ],
+  imports: [CqrsModule],
   controllers: [PublicReviewAdminController, PublicReviewClientController],
-  providers: [
-    PublicReviewResolver,
-    ...COMMAND_HANDLERS,
-    ...QUERY_HANDLERS,
-  ],
+  providers: [PublicReviewResolver, ...COMMAND_HANDLERS, ...QUERY_HANDLERS],
   exports: [],
 })
 export class PublicReviewModule {}

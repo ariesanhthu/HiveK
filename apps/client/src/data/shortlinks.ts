@@ -25,26 +25,26 @@ export function generateShortCode(productSlug: string, kolId: string): string {
     hash = ((hash << 5) - hash + char) | 0;
   }
   // Convert to base-36, take 6 chars, ensure no leading dash
-  return Math.abs(hash).toString(36).slice(0, 6).padEnd(6, "0");
+  return Math.abs(hash).toString(36).slice(0, 6).padEnd(6, '0');
 }
 
 /* ───────── Pre-generated short link table ───────── */
 
-const ENTRIES: Array<{ productSlug: string; kolId: string }> = [
+const ENTRIES: Array<{ productSlug: string; kolId: string; }> = [
   // Product × KOL combinations that exist in mock data
-  { productSlug: "nike-future-speed-run", kolId: "kol-001" },
-  { productSlug: "nike-future-speed-run", kolId: "kol-004" },
-  { productSlug: "nike-future-speed-run", kolId: "kol-008" },
-  { productSlug: "nike-future-speed-run", kolId: "kol-009" },
-  { productSlug: "summer-glow-skincare", kolId: "kol-003" },
-  { productSlug: "summer-glow-skincare", kolId: "kol-005" },
-  { productSlug: "summer-glow-skincare", kolId: "kol-006" },
-  { productSlug: "soundmaster-pro-review", kolId: "kol-002" },
-  { productSlug: "soundmaster-pro-review", kolId: "kol-007" },
-  { productSlug: "elite-chrono-collection", kolId: "kol-006" },
-  { productSlug: "elite-chrono-collection", kolId: "kol-010" },
-  { productSlug: "barista-series-home-hub", kolId: "kol-003" },
-  { productSlug: "barista-series-home-hub", kolId: "kol-004" },
+  { productSlug: 'nike-future-speed-run', kolId: 'kol-001' },
+  { productSlug: 'nike-future-speed-run', kolId: 'kol-004' },
+  { productSlug: 'nike-future-speed-run', kolId: 'kol-008' },
+  { productSlug: 'nike-future-speed-run', kolId: 'kol-009' },
+  { productSlug: 'summer-glow-skincare', kolId: 'kol-003' },
+  { productSlug: 'summer-glow-skincare', kolId: 'kol-005' },
+  { productSlug: 'summer-glow-skincare', kolId: 'kol-006' },
+  { productSlug: 'soundmaster-pro-review', kolId: 'kol-002' },
+  { productSlug: 'soundmaster-pro-review', kolId: 'kol-007' },
+  { productSlug: 'elite-chrono-collection', kolId: 'kol-006' },
+  { productSlug: 'elite-chrono-collection', kolId: 'kol-010' },
+  { productSlug: 'barista-series-home-hub', kolId: 'kol-003' },
+  { productSlug: 'barista-series-home-hub', kolId: 'kol-004' },
 ];
 
 /** code → ShortLink */
@@ -66,7 +66,7 @@ for (const { productSlug, kolId } of ENTRIES) {
  */
 export function getOrCreateShortCode(
   productSlug: string,
-  kolId: string
+  kolId: string,
 ): string {
   const key = `${productSlug}::${kolId}`;
   if (SHORTLINK_REVERSE[key]) return SHORTLINK_REVERSE[key];

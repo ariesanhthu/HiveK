@@ -1,6 +1,6 @@
+import { EReviewStatus } from '@/core/enums';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Schema as MongooseSchema } from 'mongoose';
-import { EReviewStatus } from '@/core/enums';
 import { softDeletePlugin } from '../utils';
 
 @Schema({ _id: false })
@@ -14,14 +14,20 @@ export class ReviewSecurityMetadataSubModel {
   @Prop({ required: true, type: Number, min: 0, max: 1 })
   recaptcha_score: number;
 }
-export const ReviewSecurityMetadataSubSchema = SchemaFactory.createForClass(ReviewSecurityMetadataSubModel);
+export const ReviewSecurityMetadataSubSchema = SchemaFactory.createForClass(
+  ReviewSecurityMetadataSubModel,
+);
 
 @Schema({
   collection: 'public_reviews',
   timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' },
 })
 export class PublicReviewModel {
-  @Prop({ required: true, type: MongooseSchema.Types.ObjectId, ref: 'CampaignProposalModel' })
+  @Prop({
+    required: true,
+    type: MongooseSchema.Types.ObjectId,
+    ref: 'CampaignProposalModel',
+  })
   proposal_id: MongooseSchema.Types.ObjectId;
 
   @Prop({ required: true, trim: true, maxlength: 100 })
@@ -33,7 +39,12 @@ export class PublicReviewModel {
   @Prop({ required: true, trim: true, maxlength: 2000 })
   comment: string;
 
-  @Prop({ required: true, type: String, enum: Object.values(EReviewStatus), default: EReviewStatus.PENDING })
+  @Prop({
+    required: true,
+    type: String,
+    enum: Object.values(EReviewStatus),
+    default: EReviewStatus.PENDING,
+  })
   status: EReviewStatus;
 
   @Prop({ type: ReviewSecurityMetadataSubSchema, required: true })

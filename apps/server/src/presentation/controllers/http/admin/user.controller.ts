@@ -1,17 +1,34 @@
-import { Controller, Get, Post, Patch, Delete, Param, Query, Body, HttpCode, HttpStatus } from '@nestjs/common';
-import { CommandBus, QueryBus } from '@nestjs/cqrs';
-import { UserGetByIdQuery, UserGetListQuery } from '@/application/queries';
-import { UserCreateCommand, UserUpdateCommand, UserSoftDeleteCommand, UserHardDeleteCommand, UserRestoreCommand } from '@/application/commands';
-import { UserDto, UserFilterDto, SoftDeleteInputDto } from '@/application/dtos';
-import { ApiTags, ApiOperation, ApiBearerAuth, ApiSecurity } from '@nestjs/swagger';
-import { buildVersionedRoute } from '@presentation/utils';
-import { JwtAuthGuard, RolesGuard } from '@/presentation/middleware/guards';
-import { UseGuards } from '@nestjs/common';
-import { Roles } from '@/presentation/decorators/roles.decorator';
-import { ERoleType } from '@/core/enums';
-import { PaginatedResponseDto } from '@/application/dtos/pagination.dto';
+import {
+  UserCreateCommand,
+  UserHardDeleteCommand,
+  UserRestoreCommand,
+  UserSoftDeleteCommand,
+  UserUpdateCommand,
+} from '@/application/commands';
 import { UserCreateInputDto } from '@/application/commands/user-create/user-create.dto';
 import { UserUpdateInputDto } from '@/application/commands/user-update/user-update.dto';
+import { SoftDeleteInputDto, UserDto, UserFilterDto } from '@/application/dtos';
+import { PaginatedResponseDto } from '@/application/dtos/pagination.dto';
+import { UserGetByIdQuery, UserGetListQuery } from '@/application/queries';
+import { ERoleType } from '@/core/enums';
+import { Roles } from '@/presentation/decorators/roles.decorator';
+import { JwtAuthGuard, RolesGuard } from '@/presentation/middleware/guards';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Param,
+  Patch,
+  Post,
+  Query,
+} from '@nestjs/common';
+import { UseGuards } from '@nestjs/common';
+import { CommandBus, QueryBus } from '@nestjs/cqrs';
+import { ApiBearerAuth, ApiOperation, ApiSecurity, ApiTags } from '@nestjs/swagger';
+import { buildVersionedRoute } from '@presentation/utils';
 
 @ApiTags('ADMIN-users')
 @ApiBearerAuth()
@@ -23,11 +40,11 @@ export class UserAdminController {
   constructor(
     private readonly commandBus: CommandBus,
     private readonly queryBus: QueryBus,
-  ) { }
+  ) {}
 
   @Post()
   @ApiOperation({ summary: 'Create a new user' })
-  async create(@Body() input: UserCreateInputDto): Promise<{ id: string }> {
+  async create(@Body() input: UserCreateInputDto): Promise<{ id: string; }> {
     const id = await this.commandBus.execute<UserCreateCommand, string>(
       new UserCreateCommand(input),
     );
@@ -45,10 +62,13 @@ export class UserAdminController {
 
   @Get()
   @ApiOperation({ summary: 'Get paginated list of users' })
-  async findAll(@Query() filters: UserFilterDto): Promise<PaginatedResponseDto<UserDto>> {
-    return this.queryBus.execute<UserGetListQuery, PaginatedResponseDto<UserDto>>(
-      new UserGetListQuery(filters),
-    );
+  async findAll(
+    @Query() filters: UserFilterDto,
+  ): Promise<PaginatedResponseDto<UserDto>> {
+    return this.queryBus.execute<
+      UserGetListQuery,
+      PaginatedResponseDto<UserDto>
+    >(new UserGetListQuery(filters));
   }
 
   @Get(':id')
@@ -67,7 +87,9 @@ export class UserAdminController {
     @Param('id') id: string,
     @Query() dto: SoftDeleteInputDto,
   ): Promise<void> {
-    return this.commandBus.execute(new UserSoftDeleteCommand(id, dto.deletedBy));
+    return this.commandBus.execute(
+      new UserSoftDeleteCommand(id, dto.deletedBy),
+    );
   }
 
   @Delete(':id')

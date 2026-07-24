@@ -73,59 +73,59 @@ Cần:
 
 ### Meta for Developers
 
-- Messenger Platform — Send Messages  
+- Messenger Platform — Send Messages\
   https://developers.facebook.com/documentation/business-messaging/messenger-platform/send-messages
 
-- Messenger and Instagram Messaging policy  
+- Messenger and Instagram Messaging policy\
   https://developers.facebook.com/documentation/business-messaging/messenger-platform/policy
 
-- Messenger Platform — Conversations API  
+- Messenger Platform — Conversations API\
   https://developers.facebook.com/documentation/business-messaging/messenger-platform/conversations
 
-- Messenger Platform — Webhooks  
+- Messenger Platform — Webhooks\
   https://developers.facebook.com/documentation/business-messaging/messenger-platform/webhooks
 
-- Messenger Platform — Overview and permissions  
+- Messenger Platform — Overview and permissions\
   https://developers.facebook.com/documentation/business-messaging/messenger-platform/overview
 
-- Instagram Messaging  
+- Instagram Messaging\
   https://developers.facebook.com/documentation/business-messaging/instagram-messaging
 
-- Instagram Conversations API  
+- Instagram Conversations API\
   https://developers.facebook.com/docs/instagram-platform/instagram-api-with-instagram-login/conversations-api/
 
-- Conversation Routing  
+- Conversation Routing\
   https://developers.facebook.com/documentation/business-messaging/messenger-platform/conversation-routing
 
 ### UX vận hành inbox
 
-- Intercom — Get started with Inbox  
+- Intercom — Get started with Inbox\
   https://www.intercom.com/help/en/articles/6274899-get-started-with-intercom-inbox
 
-- Intercom — Assign conversations  
+- Intercom — Assign conversations\
   https://www.intercom.com/help/en/articles/6561699-assign-conversations-to-teammates-and-teams
 
-- Intercom — Work as a team and respond at scale  
+- Intercom — Work as a team and respond at scale\
   https://www.intercom.com/help/en/articles/6988841-work-as-a-team-and-respond-to-conversations-at-scale
 
-- HubSpot — Conversations Inbox overview  
+- HubSpot — Conversations Inbox overview\
   https://knowledge.hubspot.com/inbox/overview-of-the-conversations-inbox
 
-- HubSpot — Connect channels to Inbox  
+- HubSpot — Connect channels to Inbox\
   https://knowledge.hubspot.com/inbox/connect-channels-to-the-conversations-inbox
 
-- Zendesk — Agent Workspace for messaging  
+- Zendesk — Agent Workspace for messaging\
   https://support.zendesk.com/hc/en-us/articles/4408821905434-Agent-Workspace-for-messaging
 
 ### Accessibility
 
-- WAI-ARIA  
+- WAI-ARIA\
   https://www.w3.org/TR/wai-aria-1.2/
 
-- WAI technique: role log  
+- WAI technique: role log\
   https://www.w3.org/WAI/WCAG21/Techniques/aria/ARIA23
 
-- ARIA Authoring Practices Guide  
+- ARIA Authoring Practices Guide\
   https://www.w3.org/WAI/ARIA/apg/
 
 ## 6. Kết luận thiết kế

@@ -1,15 +1,14 @@
-import { EventsHandler, IEventHandler } from '@nestjs/cqrs';
-import { Inject } from '@nestjs/common';
-import { USER_REPOSITORY, type IUserRepository } from '@/core/interfaces/repositories';
 import { TargetType } from '@/core/enums/target-type.enum';
+import { type IUserRepository, USER_REPOSITORY } from '@/core/interfaces/repositories';
+import { Inject } from '@nestjs/common';
+import { EventsHandler, IEventHandler } from '@nestjs/cqrs';
 import { UploadedFileCreatedEvent } from './uploaded-file-created.event';
 
 @EventsHandler(UploadedFileCreatedEvent)
 export class LinkUserAvatarHandler implements IEventHandler<UploadedFileCreatedEvent> {
   constructor(
-    @Inject(USER_REPOSITORY)
-    private readonly userRepository: IUserRepository,
-  ) { }
+    @Inject(USER_REPOSITORY) private readonly userRepository: IUserRepository,
+  ) {}
 
   async handle(event: UploadedFileCreatedEvent): Promise<void> {
     if (event.targetType !== TargetType.USER) {

@@ -22,13 +22,18 @@ const fmt = (v: number | string) => `${new Intl.NumberFormat('vi-VN').format(Num
 export function ActiveTooltip() {
   return (
     <div style={{ width: 480, height: 280 }}>
-      <ChartContainer config={config} className="h-full w-full" style={{ width: 480, height: 280 }}>
+      <ChartContainer config={config} className='h-full w-full' style={{ width: 480, height: 280 }}>
         <BarChart width={480} height={280} data={data} margin={{ top: 48 }}>
           <CartesianGrid vertical={false} />
-          <XAxis dataKey="platform" tickLine={false} axisLine={false} />
+          <XAxis dataKey='platform' tickLine={false} axisLine={false} />
           <YAxis tickLine={false} axisLine={false} width={36} />
           <ChartTooltip content={<ChartTooltipContent valueFormatter={fmt} />} />
-          <Bar dataKey="reach" fill="var(--color-reach)" radius={[6, 6, 0, 0]} isAnimationActive={false} />
+          <Bar
+            dataKey='reach'
+            fill='var(--color-reach)'
+            radius={[6, 6, 0, 0]}
+            isAnimationActive={false}
+          />
         </BarChart>
       </ChartContainer>
     </div>

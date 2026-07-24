@@ -1,9 +1,11 @@
 import { CampaignConfigPanel } from 'client';
 
 const img = (label: string, hue: number) =>
-  `data:image/svg+xml;utf8,${encodeURIComponent(
-    `<svg xmlns='http://www.w3.org/2000/svg' width='400' height='500'><rect width='400' height='500' fill='hsl(${hue} 45% 88%)'/><rect x='24' y='24' width='352' height='452' rx='16' fill='hsl(${hue} 40% 78%)'/><text x='200' y='260' font-family='sans-serif' font-size='22' font-weight='700' fill='hsl(${hue} 35% 38%)' text-anchor='middle'>${label}</text></svg>`
-  )}`;
+  `data:image/svg+xml;utf8,${
+    encodeURIComponent(
+      `<svg xmlns='http://www.w3.org/2000/svg' width='400' height='500'><rect width='400' height='500' fill='hsl(${hue} 45% 88%)'/><rect x='24' y='24' width='352' height='452' rx='16' fill='hsl(${hue} 40% 78%)'/><text x='200' y='260' font-family='sans-serif' font-size='22' font-weight='700' fill='hsl(${hue} 35% 38%)' text-anchor='middle'>${label}</text></svg>`,
+    )
+  }`;
 
 const campaign: any = {
   id: 'ontop-fashion-windbreaker',
@@ -32,8 +34,20 @@ const campaign: any = {
     suggestedHashtags: ['#ONTOP', '#OOTD'],
   },
   media: [
-    { id: 'm1', type: 'image', url: img('Lookbook phố', 20), name: 'Lookbook streetwear', role: 'lifestyle' },
-    { id: 'm2', type: 'image', url: img('Flatlay áo', 210), name: 'Flatlay áo khoác', role: 'product' },
+    {
+      id: 'm1',
+      type: 'image',
+      url: img('Lookbook phố', 20),
+      name: 'Lookbook streetwear',
+      role: 'lifestyle',
+    },
+    {
+      id: 'm2',
+      type: 'image',
+      url: img('Flatlay áo', 210),
+      name: 'Flatlay áo khoác',
+      role: 'product',
+    },
   ],
   platformContent: [
     {
@@ -52,7 +66,8 @@ const campaign: any = {
       primaryFormat: 'Text + 1 ảnh',
       contentAngle: 'Áo khoác nào mặc được cả tuần?',
       mediaDirection: 'Một ảnh outfit tối giản, nền sạch.',
-      caption: 'Một chiếc áo khoác gió dễ phối cứu khá nhiều ngày không biết mặc gì. Team thích màu basic hay màu nổi?',
+      caption:
+        'Một chiếc áo khoác gió dễ phối cứu khá nhiều ngày không biết mặc gì. Team thích màu basic hay màu nổi?',
       hashtags: ['#ONTOP', '#OOTD'],
     },
     {
@@ -66,15 +81,60 @@ const campaign: any = {
     },
   ],
   commentReplyExamples: [
-    { id: 'q1', intent: 'size', question: 'Mình cao 1m68 nặng 58kg mặc size nào?', answer: 'Bạn tham khảo size M nếu thích form vừa, hoặc L cho oversize nhẹ. Gửi thêm số đo vai/ngực để ON TOP check kỹ nha.' },
-    { id: 'q2', intent: 'material', question: 'Áo này có chống nước không shop?', answer: 'Áo chống thấm nhẹ, hợp mưa nhỏ hoặc đi đường gió. Mưa lớn lâu thì vẫn nên dùng áo mưa chuyên dụng nhé.' },
-    { id: 'q3', intent: 'pricing', question: 'Giá bao nhiêu, có mã giảm không?', answer: 'Bạn comment mã OTOP10 hoặc nhắn tin, tụi mình gửi giá hiện tại kèm voucher đơn đầu.' },
+    {
+      id: 'q1',
+      intent: 'size',
+      question: 'Mình cao 1m68 nặng 58kg mặc size nào?',
+      answer:
+        'Bạn tham khảo size M nếu thích form vừa, hoặc L cho oversize nhẹ. Gửi thêm số đo vai/ngực để ON TOP check kỹ nha.',
+    },
+    {
+      id: 'q2',
+      intent: 'material',
+      question: 'Áo này có chống nước không shop?',
+      answer:
+        'Áo chống thấm nhẹ, hợp mưa nhỏ hoặc đi đường gió. Mưa lớn lâu thì vẫn nên dùng áo mưa chuyên dụng nhé.',
+    },
+    {
+      id: 'q3',
+      intent: 'pricing',
+      question: 'Giá bao nhiêu, có mã giảm không?',
+      answer: 'Bạn comment mã OTOP10 hoặc nhắn tin, tụi mình gửi giá hiện tại kèm voucher đơn đầu.',
+    },
   ],
   postingPlan: [],
-  tracking: { impressions: 0, reach: 0, engagementRate: 0, clicks: 0, comments: 0, leads: 0, conversionRate: 0, spend: 0, revenue: 0 },
-  aiConfig: { numberOfPosts: 9, variantsPerPost: 3, creativity: 4, contentStrategies: [], generateCaption: true, generateHashtags: true, generateCta: true, generateMediaPrompt: true, generateSchedule: true, suggestCreators: true, approvalMode: 'per_post' },
-  invite: { enabled: true, defaultCode: 'ONTOP10', inviteLink: '/campaigns/ontop/invite?code=ONTOP10', permissions: ['view_brief'] },
-  createdAt: '', updatedAt: '',
+  tracking: {
+    impressions: 0,
+    reach: 0,
+    engagementRate: 0,
+    clicks: 0,
+    comments: 0,
+    leads: 0,
+    conversionRate: 0,
+    spend: 0,
+    revenue: 0,
+  },
+  aiConfig: {
+    numberOfPosts: 9,
+    variantsPerPost: 3,
+    creativity: 4,
+    contentStrategies: [],
+    generateCaption: true,
+    generateHashtags: true,
+    generateCta: true,
+    generateMediaPrompt: true,
+    generateSchedule: true,
+    suggestCreators: true,
+    approvalMode: 'per_post',
+  },
+  invite: {
+    enabled: true,
+    defaultCode: 'ONTOP10',
+    inviteLink: '/campaigns/ontop/invite?code=ONTOP10',
+    permissions: ['view_brief'],
+  },
+  createdAt: '',
+  updatedAt: '',
 };
 
 export function Default() {

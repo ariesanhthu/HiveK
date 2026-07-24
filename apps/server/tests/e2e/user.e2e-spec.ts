@@ -1,11 +1,14 @@
-import request from 'supertest';
-import { Test, TestingModule } from '@nestjs/testing';
+import {
+  AUTH_JWT_SERVICE,
+  type IAuthJwtService,
+} from '@/application/interfaces/auth-jwt.interface';
+import { setupApplication } from '@/infrastructure/nest-config/app.setup';
 import { INestApplication } from '@nestjs/common';
 import { getModelToken } from '@nestjs/mongoose';
+import { Test, TestingModule } from '@nestjs/testing';
 import { Model, Types } from 'mongoose';
+import request from 'supertest';
 import { AppModule } from '../../src/infrastructure/modules/app.module';
-import { AUTH_JWT_SERVICE, type IAuthJwtService } from '@/application/interfaces/auth-jwt.interface';
-import { setupApplication } from '@/infrastructure/nest-config/app.setup';
 
 describe('User Domain (e2e)', () => {
   let app: INestApplication;
@@ -41,7 +44,9 @@ describe('User Domain (e2e)', () => {
     userModel = app.get<Model<any>>(getModelToken('UserModel'));
 
     // Clean up and seed test users via direct MongoDB collection write
-    await userModel.deleteMany({ _id: { $in: [new Types.ObjectId(testUserId), new Types.ObjectId(adminId)] } });
+    await userModel.deleteMany({
+      _id: { $in: [new Types.ObjectId(testUserId), new Types.ObjectId(adminId)] },
+    });
     await userModel.collection.insertMany([
       {
         _id: new Types.ObjectId(testUserId),
@@ -68,12 +73,16 @@ describe('User Domain (e2e)', () => {
         enterprise_ids: [],
         created_at: new Date(),
         updated_at: new Date(),
-      }
+      },
     ]);
   });
 
   afterAll(async () => {
-    await userModel.deleteMany({ _id: { $in: [new Types.ObjectId(testUserId), new Types.ObjectId('64f7b2c9e8b3c9001f3e4e99')] } });
+    await userModel.deleteMany({
+      _id: {
+        $in: [new Types.ObjectId(testUserId), new Types.ObjectId('64f7b2c9e8b3c9001f3e4e99')],
+      },
+    });
     await userModel.deleteMany({ email: 'new-admin-e2e@hivek.com' });
     await app.close();
   });
@@ -84,7 +93,7 @@ describe('User Domain (e2e)', () => {
       .set('x-api-key', API_KEY)
       .set('Authorization', `Bearer ${kolToken}`)
       .expect(403);
-    
+
     expect(res.body.success).toBe(false);
     expect(res.body.error.code).toBe('FORBIDDEN');
   });
@@ -128,7 +137,7 @@ describe('User Domain (e2e)', () => {
         fullName: 'Updated Admin E2E',
       })
       .expect(200);
-    
+
     expect(updateRes.body.success).toBe(true);
 
     // 4. Get List
@@ -172,7 +181,7 @@ describe('User Domain (e2e)', () => {
       .set('x-api-key', API_KEY)
       .set('Authorization', `Bearer ${adminToken}`)
       .expect(404);
-    
+
     expect(finalGetRes.body.success).toBe(false);
     expect(finalGetRes.body.error.code).toBe('NOT_FOUND');
 

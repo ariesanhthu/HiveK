@@ -1,5 +1,5 @@
-import { Query } from '@nestjs/cqrs';
 import { KolProfileDto, ProjectionDto } from '@/application/dtos';
+import { Query } from '@nestjs/cqrs';
 
 export class KolProfileGetByIdQuery extends Query<KolProfileDto> {
   constructor(
@@ -9,4 +9,3 @@ export class KolProfileGetByIdQuery extends Query<KolProfileDto> {
     super();
   }
 }
-

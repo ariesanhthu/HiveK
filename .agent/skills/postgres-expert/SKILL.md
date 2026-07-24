@@ -27,12 +27,14 @@ If PostgreSQL-specific optimizations and features are needed, I'll continue with
 I'll analyze your PostgreSQL environment to provide targeted solutions:
 
 **Version Detection:**
+
 ```sql
 SELECT version();
 SHOW server_version;
 ```
 
 **Configuration Analysis:**
+
 ```sql
 -- Critical PostgreSQL settings
 SHOW shared_buffers;
@@ -45,6 +47,7 @@ SHOW checkpoint_completion_target;
 ```
 
 **Extension Discovery:**
+
 ```sql
 -- Installed extensions
 SELECT * FROM pg_extension;
@@ -54,6 +57,7 @@ SELECT * FROM pg_available_extensions WHERE installed_version IS NULL;
 ```
 
 **Database Health Check:**
+
 ```sql
 -- Connection and activity overview
 SELECT datname, numbackends, xact_commit, xact_rollback FROM pg_stat_database;
@@ -67,12 +71,14 @@ I'll categorize your issue into PostgreSQL-specific problem areas:
 ### Category 1: Query Performance & EXPLAIN Analysis
 
 **Common symptoms:**
+
 - Sequential scans on large tables
 - High cost estimates in EXPLAIN output
 - Nested Loop joins when Hash Join would be better
 - Query execution time much longer than expected
 
 **PostgreSQL-specific diagnostics:**
+
 ```sql
 -- Detailed execution analysis
 EXPLAIN (ANALYZE, BUFFERS, VERBOSE) SELECT ...;
@@ -91,6 +97,7 @@ WHERE blks_read > 0;
 ```
 
 **Progressive fixes:**
+
 1. **Minimal**: Add btree indexes on WHERE/JOIN columns, update table statistics with ANALYZE
 2. **Better**: Create composite indexes with optimal column ordering, tune query planner settings
 3. **Complete**: Implement covering indexes, expression indexes, and automated query performance monitoring
@@ -98,12 +105,14 @@ WHERE blks_read > 0;
 ### Category 2: JSONB Operations & Indexing
 
 **Common symptoms:**
+
 - Slow JSONB queries even with indexes
 - Full table scans on JSONB containment queries
 - Inefficient JSONPath operations
 - Large JSONB documents causing memory issues
 
 **JSONB-specific diagnostics:**
+
 ```sql
 -- Check JSONB index usage
 EXPLAIN (ANALYZE, BUFFERS) 
@@ -117,6 +126,7 @@ WHERE indexname LIKE '%gin%';
 ```
 
 **Index optimization strategies:**
+
 ```sql
 -- Default jsonb_ops (supports more operators)
 CREATE INDEX idx_jsonb_default ON api USING GIN (jdoc);
@@ -130,6 +140,7 @@ CREATE INDEX idx_jsonb_company ON api USING BTREE ((jdoc ->> 'company'));
 ```
 
 **Progressive fixes:**
+
 1. **Minimal**: Add basic GIN index on JSONB columns, use proper containment operators
 2. **Better**: Optimize index operator class choice, create expression indexes for frequently queried paths
 3. **Complete**: Implement JSONB schema validation, path-specific indexing strategy, and JSONB performance monitoring
@@ -137,12 +148,14 @@ CREATE INDEX idx_jsonb_company ON api USING BTREE ((jdoc ->> 'company'));
 ### Category 3: Advanced Indexing Strategies
 
 **Common symptoms:**
+
 - Unused indexes consuming space
 - Missing optimal indexes for query patterns
 - Index bloat affecting performance
 - Wrong index type for data access patterns
 
 **Index analysis:**
+
 ```sql
 -- Identify unused indexes
 SELECT 
@@ -172,6 +185,7 @@ JOIN index_columns i2 ON (
 ```
 
 **Index type selection:**
+
 ```sql
 -- B-tree (default) - equality, ranges, sorting
 CREATE INDEX idx_btree ON orders (customer_id, order_date);
@@ -194,6 +208,7 @@ CREATE INDEX idx_partial_active ON users (email) WHERE active = true;
 ```
 
 **Progressive fixes:**
+
 1. **Minimal**: Create basic indexes on WHERE clause columns, remove obviously unused indexes
 2. **Better**: Implement composite indexes with proper column ordering, choose optimal index types
 3. **Complete**: Automated index analysis, partial and expression indexes, index maintenance scheduling
@@ -201,12 +216,14 @@ CREATE INDEX idx_partial_active ON users (email) WHERE active = true;
 ### Category 4: Table Partitioning & Large Data Management
 
 **Common symptoms:**
+
 - Slow queries on large tables despite indexes
 - Maintenance operations taking too long
 - High storage costs for historical data
 - Query planner not using partition elimination
 
 **Partitioning diagnostics:**
+
 ```sql
 -- Check partition pruning effectiveness
 EXPLAIN (ANALYZE, BUFFERS) 
@@ -223,6 +240,7 @@ ORDER BY pg_total_relation_size(schemaname||'.'||tablename) DESC;
 ```
 
 **Partitioning strategies:**
+
 ```sql
 -- Range partitioning (time-series data)
 CREATE TABLE measurement (
@@ -256,6 +274,7 @@ CREATE TABLE orders_0 PARTITION OF orders
 ```
 
 **Progressive fixes:**
+
 1. **Minimal**: Implement basic range partitioning on date/time columns
 2. **Better**: Optimize partition elimination, automated partition management
 3. **Complete**: Multi-level partitioning, partition-wise joins, automated pruning and archival
@@ -263,12 +282,14 @@ CREATE TABLE orders_0 PARTITION OF orders
 ### Category 5: Connection Management & PgBouncer Integration
 
 **Common symptoms:**
+
 - "Too many connections" errors (max_connections exceeded)
 - Connection pool exhaustion messages
 - High memory usage due to too many PostgreSQL processes
 - Application connection timeouts
 
 **Connection analysis:**
+
 ```sql
 -- Monitor current connections
 SELECT 
@@ -289,6 +310,7 @@ ORDER BY query_runtime DESC;
 ```
 
 **PgBouncer configuration:**
+
 ```ini
 # pgbouncer.ini
 [databases]
@@ -317,6 +339,7 @@ server_idle_timeout = 600
 ```
 
 **Progressive fixes:**
+
 1. **Minimal**: Increase max_connections temporarily, implement basic connection timeouts
 2. **Better**: Deploy PgBouncer with transaction-level pooling, optimize pool sizing
 3. **Complete**: Full connection pooling architecture, monitoring, automatic scaling
@@ -324,12 +347,14 @@ server_idle_timeout = 600
 ### Category 6: Autovacuum Tuning & Maintenance
 
 **Common symptoms:**
+
 - Table bloat increasing over time
 - Autovacuum processes running too long
 - Lock contention during vacuum operations
 - Transaction ID wraparound warnings
 
 **Vacuum analysis:**
+
 ```sql
 -- Monitor autovacuum effectiveness
 SELECT 
@@ -355,6 +380,7 @@ ORDER BY age(datfrozenxid) DESC;
 ```
 
 **Autovacuum tuning:**
+
 ```sql
 -- Global autovacuum settings
 ALTER SYSTEM SET autovacuum_vacuum_scale_factor = 0.1;  -- Vacuum when 10% + threshold
@@ -374,6 +400,7 @@ ALTER TABLE bulk_load_table SET (autovacuum_enabled = false);
 ```
 
 **Progressive fixes:**
+
 1. **Minimal**: Adjust autovacuum thresholds for problem tables, increase maintenance_work_mem
 2. **Better**: Implement per-table autovacuum settings, monitor vacuum progress
 3. **Complete**: Automated vacuum scheduling, parallel vacuum for large indexes, comprehensive maintenance monitoring
@@ -381,12 +408,14 @@ ALTER TABLE bulk_load_table SET (autovacuum_enabled = false);
 ### Category 7: Replication & High Availability
 
 **Common symptoms:**
+
 - Replication lag increasing over time
 - Standby servers falling behind primary
 - Replication slots consuming excessive disk space
 - Failover procedures failing or taking too long
 
 **Replication monitoring:**
+
 ```sql
 -- Primary server replication status
 SELECT 
@@ -410,6 +439,7 @@ SELECT
 ```
 
 **Replication configuration:**
+
 ```sql
 -- Primary server setup (postgresql.conf)
 wal_level = replica
@@ -425,6 +455,7 @@ hot_standby_feedback = on
 ```
 
 **Progressive fixes:**
+
 1. **Minimal**: Monitor replication lag, increase wal_sender_timeout
 2. **Better**: Optimize network bandwidth, tune standby feedback settings
 3. **Complete**: Implement synchronous replication, automated failover, comprehensive monitoring
@@ -432,6 +463,7 @@ hot_standby_feedback = on
 ## Step 3: PostgreSQL Feature-Specific Solutions
 
 ### Extension Management
+
 ```sql
 -- Essential extensions
 CREATE EXTENSION IF NOT EXISTS pg_stat_statements;
@@ -446,6 +478,7 @@ CREATE EXTENSION IF NOT EXISTS postgis_topology;
 ```
 
 ### Advanced Query Techniques
+
 ```sql
 -- Window functions for analytics
 SELECT 
@@ -479,6 +512,7 @@ DO UPDATE SET
 ```
 
 ### Full-Text Search Implementation
+
 ```sql
 -- Create tsvector column and GIN index
 ALTER TABLE articles ADD COLUMN search_vector tsvector;
@@ -507,6 +541,7 @@ ORDER BY rank DESC;
 ## Step 4: Performance Configuration Matrix
 
 ### Memory Configuration (for 16GB RAM server)
+
 ```sql
 -- Core memory settings
 shared_buffers = '4GB'                    -- 25% of RAM
@@ -520,6 +555,7 @@ max_connections = 200                     -- Adjust based on connection pooling
 ```
 
 ### WAL and Checkpoint Configuration
+
 ```sql
 -- WAL settings
 max_wal_size = '4GB'                      -- Larger values reduce checkpoint frequency
@@ -533,6 +569,7 @@ checkpoint_timeout = '15min'              -- Maximum time between checkpoints
 ```
 
 ### Query Planner Configuration
+
 ```sql
 -- Planner settings
 random_page_cost = 1.1                    -- Lower for SSDs (default 4.0 for HDDs)
@@ -550,8 +587,9 @@ enable_seqscan = on                       -- Don't disable unless specific need
 ## Safety Guidelines
 
 **Critical PostgreSQL safety rules I follow:**
+
 - **No destructive operations**: Never DROP, DELETE without WHERE, or TRUNCATE without explicit confirmation
-- **Transaction wrapper**: Use BEGIN/COMMIT for multi-statement operations  
+- **Transaction wrapper**: Use BEGIN/COMMIT for multi-statement operations
 - **Backup verification**: Always confirm pg_basebackup or pg_dump success before schema changes
 - **Read-only analysis**: Default to SELECT, EXPLAIN, and monitoring queries for diagnostics
 - **Version compatibility**: Verify syntax and features match PostgreSQL version
@@ -560,21 +598,25 @@ enable_seqscan = on                       -- Don't disable unless specific need
 ## Advanced PostgreSQL Insights
 
 **Memory Architecture:**
+
 - PostgreSQL uses ~9MB per connection (process-based) vs MySQL's ~256KB (thread-based)
 - Shared buffers should be 25% of RAM on dedicated servers
 - work_mem is per sort/hash operation, not per connection
 
 **Query Planner Specifics:**
+
 - PostgreSQL's cost-based optimizer uses statistics from ANALYZE
-- random_page_cost = 1.1 for SSDs vs 4.0 default for HDDs  
+- random_page_cost = 1.1 for SSDs vs 4.0 default for HDDs
 - enable_seqscan = off is rarely recommended (planner knows best)
 
 **MVCC Implications:**
+
 - UPDATE creates new row version, requiring VACUUM for cleanup
 - Long transactions prevent VACUUM from reclaiming space
 - Transaction ID wraparound requires proactive monitoring
 
 **WAL and Durability:**
+
 - wal_level = replica enables streaming replication
 - synchronous_commit = off improves performance but risks data loss
 - WAL archiving enables point-in-time recovery
@@ -586,6 +628,7 @@ I'll now analyze your PostgreSQL environment and provide targeted optimizations 
 When reviewing PostgreSQL database code, focus on:
 
 ### Query Performance & Optimization
+
 - [ ] All queries use appropriate indexes (check EXPLAIN ANALYZE output)
 - [ ] Query execution plans show efficient access patterns (no unnecessary seq scans)
 - [ ] WHERE clause conditions are in optimal order for index usage
@@ -594,6 +637,7 @@ When reviewing PostgreSQL database code, focus on:
 - [ ] Query hints are used sparingly and only when necessary
 
 ### Index Strategy & Design
+
 - [ ] Indexes support common query patterns and WHERE clause conditions
 - [ ] Composite indexes follow proper column ordering (equality, sort, range)
 - [ ] Partial indexes are used for filtered datasets to reduce storage
@@ -602,6 +646,7 @@ When reviewing PostgreSQL database code, focus on:
 - [ ] Unused indexes are identified and removed to improve write performance
 
 ### JSONB & Advanced Features
+
 - [ ] JSONB operations use appropriate GIN indexes (jsonb_ops vs jsonb_path_ops)
 - [ ] JSONPath queries are optimized and use indexes effectively
 - [ ] Full-text search implementations use proper tsvector indexing
@@ -610,6 +655,7 @@ When reviewing PostgreSQL database code, focus on:
 - [ ] JSONB schema is validated to ensure data consistency
 
 ### Schema Design & Constraints
+
 - [ ] Table structure follows normalization principles appropriately
 - [ ] Foreign key constraints maintain referential integrity
 - [ ] Check constraints validate data at database level
@@ -618,6 +664,7 @@ When reviewing PostgreSQL database code, focus on:
 - [ ] Sequence usage and identity columns are configured properly
 
 ### Connection & Transaction Management
+
 - [ ] Database connections are pooled appropriately (PgBouncer configuration)
 - [ ] Connection limits are set based on actual application needs
 - [ ] Transaction isolation levels are appropriate for business requirements
@@ -626,6 +673,7 @@ When reviewing PostgreSQL database code, focus on:
 - [ ] Connection cleanup is handled properly in error scenarios
 
 ### Security & Access Control
+
 - [ ] Database credentials are stored securely and rotated regularly
 - [ ] User roles follow principle of least privilege
 - [ ] Row-level security is implemented where appropriate
@@ -634,6 +682,7 @@ When reviewing PostgreSQL database code, focus on:
 - [ ] Audit logging captures necessary security events
 
 ### Maintenance & Operations
+
 - [ ] VACUUM and ANALYZE operations are scheduled appropriately
 - [ ] Autovacuum settings are tuned for table characteristics
 - [ ] Backup and recovery procedures are tested and documented

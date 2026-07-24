@@ -1,11 +1,11 @@
 import {
   getKolRankings,
   parseKolRankingFilters,
-} from "@/features/kol-ranking/server/get-kol-rankings";
+} from '@/features/kol-ranking/server/get-kol-rankings';
 
 const STREAM_INTERVAL_MS = 3_000;
-export const runtime = "nodejs";
-export const dynamic = "force-dynamic";
+export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
 
 export function GET(request: Request) {
   const requestUrl = new URL(request.url);
@@ -20,7 +20,7 @@ export function GET(request: Request) {
         const payload = await getKolRankings(filters);
         if (!isClosed) {
           controller.enqueue(
-            encoder.encode(`data: ${JSON.stringify(payload)}\n\n`)
+            encoder.encode(`data: ${JSON.stringify(payload)}\n\n`),
           );
         }
       };
@@ -28,7 +28,7 @@ export function GET(request: Request) {
       void sendPayload();
       const intervalId = setInterval(() => void sendPayload(), STREAM_INTERVAL_MS);
 
-      request.signal.addEventListener("abort", () => {
+      request.signal.addEventListener('abort', () => {
         isClosed = true;
         clearInterval(intervalId);
         controller.close();
@@ -38,9 +38,9 @@ export function GET(request: Request) {
 
   return new Response(stream, {
     headers: {
-      "Content-Type": "text/event-stream",
-      Connection: "keep-alive",
-      "Cache-Control": "no-cache, no-transform",
+      'Content-Type': 'text/event-stream',
+      Connection: 'keep-alive',
+      'Cache-Control': 'no-cache, no-transform',
     },
   });
 }

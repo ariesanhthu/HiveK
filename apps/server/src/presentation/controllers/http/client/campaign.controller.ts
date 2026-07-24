@@ -1,32 +1,55 @@
-import { Controller, Get, Post, Patch, Param, Query, Body, HttpCode, HttpStatus, UseGuards, Delete } from '@nestjs/common';
-import { CommandBus, QueryBus } from '@nestjs/cqrs';
-import { ApiTags, ApiOperation, ApiBearerAuth, ApiSecurity } from '@nestjs/swagger';
-import { buildVersionedRoute } from '@presentation/utils';
 import {
   CampaignCreateCommand,
-  CampaignUpdateCommand,
-  CampaignSoftDeleteCommand,
-  CampaignRestoreCommand,
   CampaignCreateInputDto,
-  CampaignUpdateInputDto,
   CampaignParticipantCreateCommand,
-  CampaignParticipantUpdateCommand,
-  CampaignParticipantSoftDeleteCommand,
+  CampaignParticipantCreateInputDto,
   CampaignParticipantHardDeleteCommand,
   CampaignParticipantRestoreCommand,
-  CampaignParticipantUpdateStatusCommand,
-  CampaignParticipantCreateInputDto,
+  CampaignParticipantSoftDeleteCommand,
+  CampaignParticipantUpdateCommand,
   CampaignParticipantUpdateInputDto,
+  CampaignParticipantUpdateStatusCommand,
   CampaignParticipantUpdateStatusInputDto,
+  CampaignRestoreCommand,
+  CampaignSoftDeleteCommand,
+  CampaignUpdateCommand,
+  CampaignUpdateInputDto,
 } from '@/application/commands';
-import { CampaignGetListQuery, CampaignGetByIdQuery, CampaignFilterDto } from '@/application/queries';
+import {
+  CampaignInviteCollaboratorCommand,
+  CampaignInviteCollaboratorInputDto,
+  CampaignRevokeCollaboratorCommand,
+  CampaignRevokeCollaboratorInputDto,
+  CampaignUpdateStatusCommand,
+  CampaignUpdateStatusInputDto,
+} from '@/application/commands';
 import { CampaignDto, SoftDeleteInputDto } from '@/application/dtos';
 import { PaginatedResponseDto } from '@/application/dtos/pagination.dto';
-import { JwtAuthGuard, RolesGuard } from '@/presentation/middleware/guards';
-import { CurrentUser } from '@/presentation/decorators/current-user.decorator';
-import { CampaignInviteCollaboratorCommand, CampaignRevokeCollaboratorCommand, CampaignUpdateStatusCommand, CampaignUpdateStatusInputDto, CampaignInviteCollaboratorInputDto, CampaignRevokeCollaboratorInputDto } from '@/application/commands';
-import { Roles } from '@/presentation/decorators/roles.decorator';
+import {
+  CampaignFilterDto,
+  CampaignGetByIdQuery,
+  CampaignGetListQuery,
+} from '@/application/queries';
 import { ERoleType } from '@/core/enums';
+import { CurrentUser } from '@/presentation/decorators/current-user.decorator';
+import { Roles } from '@/presentation/decorators/roles.decorator';
+import { JwtAuthGuard, RolesGuard } from '@/presentation/middleware/guards';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Param,
+  Patch,
+  Post,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
+import { CommandBus, QueryBus } from '@nestjs/cqrs';
+import { ApiBearerAuth, ApiOperation, ApiSecurity, ApiTags } from '@nestjs/swagger';
+import { buildVersionedRoute } from '@presentation/utils';
 
 @ApiTags('CLIENT-campaigns')
 @ApiBearerAuth()
@@ -37,11 +60,13 @@ export class CampaignClientController {
   constructor(
     private readonly commandBus: CommandBus,
     private readonly queryBus: QueryBus,
-  ) { }
+  ) {}
 
   @Get()
   @ApiOperation({ summary: 'Get all campaigns' })
-  async findAll(@Query() filters: CampaignFilterDto): Promise<PaginatedResponseDto<CampaignDto>> {
+  async findAll(
+    @Query() filters: CampaignFilterDto,
+  ): Promise<PaginatedResponseDto<CampaignDto>> {
     return this.queryBus.execute(new CampaignGetListQuery(filters));
   }
 
@@ -57,7 +82,7 @@ export class CampaignClientController {
   @ApiOperation({ summary: 'Create new campaign' })
   async create(
     @CurrentUser('sub') userId: string,
-    @Body() input: CampaignCreateInputDto
+    @Body() input: CampaignCreateInputDto,
   ): Promise<CampaignDto> {
     input.ownerId = userId;
     return this.commandBus.execute(new CampaignCreateCommand(input));
@@ -72,7 +97,9 @@ export class CampaignClientController {
     @Param('id') id: string,
     @Body() input: CampaignUpdateInputDto,
   ): Promise<CampaignDto> {
-    return this.commandBus.execute(new CampaignUpdateCommand(id, userId, input));
+    return this.commandBus.execute(
+      new CampaignUpdateCommand(id, userId, input),
+    );
   }
 
   @Patch(':id/soft-delete')
@@ -85,7 +112,9 @@ export class CampaignClientController {
     @Param('id') id: string,
     @Query() dto: SoftDeleteInputDto,
   ): Promise<void> {
-    return this.commandBus.execute(new CampaignSoftDeleteCommand(id, userId, dto.deletedBy));
+    return this.commandBus.execute(
+      new CampaignSoftDeleteCommand(id, userId, dto.deletedBy),
+    );
   }
 
   @Patch(':id/restore')
@@ -107,7 +136,9 @@ export class CampaignClientController {
     @Param('id') id: string,
     @Body() input: CampaignUpdateStatusInputDto,
   ): Promise<void> {
-    return this.commandBus.execute(new CampaignUpdateStatusCommand(id, userId, input.status));
+    return this.commandBus.execute(
+      new CampaignUpdateStatusCommand(id, userId, input.status),
+    );
   }
 
   @Post(':id/collaborators/invite')
@@ -120,7 +151,9 @@ export class CampaignClientController {
     @Param('id') id: string,
     @Body() input: CampaignInviteCollaboratorInputDto,
   ): Promise<void> {
-    return this.commandBus.execute(new CampaignInviteCollaboratorCommand(id, input, requestedBy));
+    return this.commandBus.execute(
+      new CampaignInviteCollaboratorCommand(id, input, requestedBy),
+    );
   }
 
   @Delete(':id/collaborators/revoke')
@@ -133,7 +166,9 @@ export class CampaignClientController {
     @Param('id') id: string,
     @Body() input: CampaignRevokeCollaboratorInputDto,
   ): Promise<void> {
-    return this.commandBus.execute(new CampaignRevokeCollaboratorCommand(id, input, requestedBy));
+    return this.commandBus.execute(
+      new CampaignRevokeCollaboratorCommand(id, input, requestedBy),
+    );
   }
 
   // --- Campaign Participant Routes ---
@@ -171,7 +206,9 @@ export class CampaignClientController {
     @Param('participantId') participantId: string,
     @Body() input: CampaignParticipantUpdateInputDto,
   ): Promise<void> {
-    return this.commandBus.execute(new CampaignParticipantUpdateCommand(participantId, input));
+    return this.commandBus.execute(
+      new CampaignParticipantUpdateCommand(participantId, input),
+    );
   }
 
   @Patch(':campaignId/participants/:participantId/soft-delete')
@@ -184,7 +221,9 @@ export class CampaignClientController {
     @Param('participantId') participantId: string,
     @Query() dto: SoftDeleteInputDto,
   ): Promise<void> {
-    return this.commandBus.execute(new CampaignParticipantSoftDeleteCommand(participantId, dto.deletedBy));
+    return this.commandBus.execute(
+      new CampaignParticipantSoftDeleteCommand(participantId, dto.deletedBy),
+    );
   }
 
   @Delete(':campaignId/participants/:participantId')
@@ -196,7 +235,9 @@ export class CampaignClientController {
     @Param('campaignId') campaignId: string,
     @Param('participantId') participantId: string,
   ): Promise<void> {
-    return this.commandBus.execute(new CampaignParticipantHardDeleteCommand(participantId));
+    return this.commandBus.execute(
+      new CampaignParticipantHardDeleteCommand(participantId),
+    );
   }
 
   @UseGuards(RolesGuard)
@@ -208,7 +249,9 @@ export class CampaignClientController {
     @Param('campaignId') campaignId: string,
     @Param('participantId') participantId: string,
   ): Promise<void> {
-    return this.commandBus.execute(new CampaignParticipantRestoreCommand(participantId));
+    return this.commandBus.execute(
+      new CampaignParticipantRestoreCommand(participantId),
+    );
   }
 
   @Patch(':campaignId/participants/:participantId/status')
@@ -222,6 +265,8 @@ export class CampaignClientController {
     @CurrentUser('sub') userId: string,
     @Body() input: CampaignParticipantUpdateStatusInputDto,
   ): Promise<void> {
-    return this.commandBus.execute(new CampaignParticipantUpdateStatusCommand(participantId, userId, input));
+    return this.commandBus.execute(
+      new CampaignParticipantUpdateStatusCommand(participantId, userId, input),
+    );
   }
 }

@@ -1,5 +1,5 @@
-import { UserRestoreCommandHandler } from '@/application/commands/user-restore/user-restore.handler';
 import { UserRestoreCommand } from '@/application/commands/user-restore/user-restore.command';
+import { UserRestoreCommandHandler } from '@/application/commands/user-restore/user-restore.handler';
 import { UserNotFoundException } from '@/core/exceptions';
 
 describe('UserRestoreCommandHandler', () => {

@@ -1,4 +1,4 @@
-import { Card, CardHeader, CardTitle, CardContent } from 'client';
+import { Card, CardContent, CardHeader, CardTitle } from 'client';
 
 export function Default() {
   return (

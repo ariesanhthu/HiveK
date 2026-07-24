@@ -1,6 +1,6 @@
-import { KpiOverview } from "@/features/kol-analysis/components/kpi-overview";
-import { KolRankingTable } from "@/features/kol-analysis/components/kol-ranking-table";
-import type { KolAnalysisKpi, KolAnalysisProfile } from "@/features/kol-analysis/types";
+import { KolRankingTable } from '@/features/kol-analysis/components/kol-ranking-table';
+import { KpiOverview } from '@/features/kol-analysis/components/kpi-overview';
+import type { KolAnalysisKpi, KolAnalysisProfile } from '@/features/kol-analysis/types';
 
 type OverviewPanelProps = {
   kpis: KolAnalysisKpi[];
@@ -9,10 +9,9 @@ type OverviewPanelProps = {
 
 export function OverviewPanel({ kpis, ranking }: OverviewPanelProps) {
   return (
-    <div className="space-y-6">
+    <div className='space-y-6'>
       <KpiOverview kpis={kpis} />
       <KolRankingTable profiles={ranking} />
     </div>
   );
 }
-

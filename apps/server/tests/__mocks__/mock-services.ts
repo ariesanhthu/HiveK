@@ -1,10 +1,15 @@
-import { jest } from '@jest/globals';
+import {
+  type IAuthJwtService,
+  type IMailerService,
+  type IRoleReadService,
+  type IWebSocketService,
+} from '@/application/interfaces';
+import { type IUnitOfWork } from '@/application/interfaces/uow.interface';
 import { AuthService } from '@/application/services/auth.service';
 import { OutboxService } from '@/application/services/outbox.service';
-import { type IUnitOfWork } from '@/application/interfaces/uow.interface';
-import { CommandBus, QueryBus, EventBus } from '@nestjs/cqrs';
+import { jest } from '@jest/globals';
 import { ConfigService } from '@nestjs/config';
-import { type IRoleReadService, type IAuthJwtService, type IMailerService, type IWebSocketService } from '@/application/interfaces';
+import { CommandBus, EventBus, QueryBus } from '@nestjs/cqrs';
 
 /**
  * Centralized mock factories for all application service interfaces.
@@ -29,7 +34,9 @@ export const createMockOutboxService = (): jest.Mocked<OutboxService> => ({
 
 export const createMockJwtService = (): jest.Mocked<IAuthJwtService> => ({
   sign: jest.fn().mockReturnValue('mock-signed-jwt-token'),
-  verify: jest.fn().mockReturnValue({ sub: 'user-1', email: 'test@test.com', role: 'role-1', type: 'kol' } as any),
+  verify: jest.fn().mockReturnValue(
+    { sub: 'user-1', email: 'test@test.com', role: 'role-1', type: 'kol' } as any,
+  ),
   decode: jest.fn(),
   extractTokenFromHeader: jest.fn(),
   extractTokenFromCookie: jest.fn(),
@@ -64,7 +71,10 @@ export const createMockWebSocketService = (): jest.Mocked<IWebSocketService> => 
 });
 
 export const createMockStorageService = () => ({
-  upload: jest.fn().mockResolvedValue({ url: 'https://cloudinary.com/test.jpg', publicId: 'test-id' }),
+  upload: jest.fn().mockResolvedValue({
+    url: 'https://cloudinary.com/test.jpg',
+    publicId: 'test-id',
+  }),
   delete: jest.fn().mockResolvedValue(true),
   getUrl: jest.fn().mockReturnValue('https://cloudinary.com/test.jpg'),
 });

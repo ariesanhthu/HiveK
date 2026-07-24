@@ -15,12 +15,17 @@ const data = [
 export function BarByPlatform() {
   return (
     <div style={{ width: 480, height: 260 }}>
-      <ChartContainer config={config} className="h-full w-full" style={{ width: 480, height: 260 }}>
+      <ChartContainer config={config} className='h-full w-full' style={{ width: 480, height: 260 }}>
         <BarChart width={480} height={260} data={data}>
           <CartesianGrid vertical={false} />
-          <XAxis dataKey="platform" tickLine={false} axisLine={false} />
+          <XAxis dataKey='platform' tickLine={false} axisLine={false} />
           <YAxis tickLine={false} axisLine={false} width={36} />
-          <Bar dataKey="reach" fill="var(--color-reach)" radius={[6, 6, 0, 0]} isAnimationActive={false} />
+          <Bar
+            dataKey='reach'
+            fill='var(--color-reach)'
+            radius={[6, 6, 0, 0]}
+            isAnimationActive={false}
+          />
         </BarChart>
       </ChartContainer>
     </div>

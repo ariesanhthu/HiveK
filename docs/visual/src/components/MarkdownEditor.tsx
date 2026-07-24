@@ -1,6 +1,6 @@
-import React from "react";
-import { GraphNode } from "../lib/schema";
-import { copyMarkdownToClipboard, downloadMarkdown } from "../lib/markdown";
+import React from 'react';
+import { copyMarkdownToClipboard, downloadMarkdown } from '../lib/markdown';
+import { GraphNode } from '../lib/schema';
 
 type Props = {
   node: GraphNode | null;
@@ -13,13 +13,13 @@ export const MarkdownEditor: React.FC<Props> = ({
   node,
   markdownPath,
   markdownContent,
-  onMarkdownChange
+  onMarkdownChange,
 }) => {
   if (!node || !markdownPath) {
     return (
-      <section className="panel">
-        <h2 className="panel-title">Markdown</h2>
-        <p className="panel-empty">Chọn node có `path` trỏ tới file `.md` để xem và chỉnh sửa.</p>
+      <section className='panel'>
+        <h2 className='panel-title'>Markdown</h2>
+        <p className='panel-empty'>Chọn node có `path` trỏ tới file `.md` để xem và chỉnh sửa.</p>
       </section>
     );
   }
@@ -33,26 +33,25 @@ export const MarkdownEditor: React.FC<Props> = ({
   };
 
   return (
-    <section className="panel">
-      <h2 className="panel-title">Markdown: {markdownPath}</h2>
-      <div className="panel-toolbar">
-        <button className="primary-button" onClick={handleDownload}>
+    <section className='panel'>
+      <h2 className='panel-title'>Markdown: {markdownPath}</h2>
+      <div className='panel-toolbar'>
+        <button className='primary-button' onClick={handleDownload}>
           Tải xuống .md
         </button>
-        <button className="ghost-button" onClick={handleCopy}>
+        <button className='ghost-button' onClick={handleCopy}>
           Copy vào clipboard
         </button>
       </div>
       <textarea
-        className="panel-markdown-editor"
+        className='panel-markdown-editor'
         value={markdownContent}
         onChange={(event) => onMarkdownChange(event.target.value)}
       />
-      <p className="panel-hint">
+      <p className='panel-hint'>
         Lưu ý: Workspace này không ghi trực tiếp vào file trên disk. Hãy tải file `.md` về hoặc copy
         nội dung rồi cập nhật lại file tương ứng trong `docs/`.
       </p>
     </section>
   );
 };
-

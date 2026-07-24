@@ -1,5 +1,5 @@
-import { KolProfileRestoreCommandHandler } from '@/application/commands/kol-profile-restore/kol-profile-restore.handler';
 import { KolProfileRestoreCommand } from '@/application/commands/kol-profile-restore/kol-profile-restore.command';
+import { KolProfileRestoreCommandHandler } from '@/application/commands/kol-profile-restore/kol-profile-restore.handler';
 import { UserNotFoundException } from '@/core/exceptions';
 
 describe('KolProfileRestoreCommandHandler', () => {

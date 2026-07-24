@@ -1,10 +1,18 @@
-import { EnterpriseRevokeUserCommandHandler } from '@/application/commands/enterprise-revoke-user/enterprise-revoke-user.handler';
 import { EnterpriseRevokeUserCommand } from '@/application/commands/enterprise-revoke-user/enterprise-revoke-user.command';
-import { EnterpriseUserRoot, EnterpriseRoot } from '@/core/aggregate-roots';
+import { EnterpriseRevokeUserCommandHandler } from '@/application/commands/enterprise-revoke-user/enterprise-revoke-user.handler';
+import { EnterpriseRoot, EnterpriseUserRoot } from '@/core/aggregate-roots';
 import { ERoleType } from '@/core/enums';
-import { UserNotFoundException, InvalidUserTypeException, EnterpriseNotFoundException, EnterpriseForbiddenException } from '@/core/exceptions';
-import { createMockUserRepository, createMockEnterpriseRepository } from '../../../__mocks__/mock-repositories';
-import { createMockUnitOfWork, createMockOutboxService } from '../../../__mocks__/mock-services';
+import {
+  EnterpriseForbiddenException,
+  EnterpriseNotFoundException,
+  InvalidUserTypeException,
+  UserNotFoundException,
+} from '@/core/exceptions';
+import {
+  createMockEnterpriseRepository,
+  createMockUserRepository,
+} from '../../../__mocks__/mock-repositories';
+import { createMockOutboxService, createMockUnitOfWork } from '../../../__mocks__/mock-services';
 
 describe('EnterpriseRevokeUserCommandHandler', () => {
   let handler: EnterpriseRevokeUserCommandHandler;
@@ -20,10 +28,10 @@ describe('EnterpriseRevokeUserCommandHandler', () => {
     mockUow = createMockUnitOfWork();
 
     handler = new EnterpriseRevokeUserCommandHandler(
-        mockUserRepository, 
-        mockEnterpriseRepository, 
-        mockOutboxService as any,
-        mockUow
+      mockUserRepository,
+      mockEnterpriseRepository,
+      mockOutboxService as any,
+      mockUow,
     );
   });
 
@@ -31,16 +39,17 @@ describe('EnterpriseRevokeUserCommandHandler', () => {
   const ownerId = 'owner-123';
   const memberId = 'member-123';
 
-  const createMockEnterprise = () => EnterpriseRoot.instantiate(enterpriseId, {
-    userId: ownerId,
-    companyName: 'Test Ent',
-    contactEmail: 'test@ent.com',
-    isVerified: true,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-    deleteAt: null,
-    deleteBy: null,
-  });
+  const createMockEnterprise = () =>
+    EnterpriseRoot.instantiate(enterpriseId, {
+      userId: ownerId,
+      companyName: 'Test Ent',
+      contactEmail: 'test@ent.com',
+      isVerified: true,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      deleteAt: null,
+      deleteBy: null,
+    });
 
   const createMockUser = (id: string, entIds: string[] = []) => {
     const user = EnterpriseUserRoot.instantiate(id, {
@@ -66,11 +75,15 @@ describe('EnterpriseRevokeUserCommandHandler', () => {
     it('should revoke user from enterprise successfully and enqueue outbox event', async () => {
       const enterprise = createMockEnterprise();
       mockEnterpriseRepository.findById.mockResolvedValue(enterprise);
-      
+
       const member = createMockUser(memberId, [enterpriseId, 'ent-other']);
       mockUserRepository.findByIds.mockResolvedValue([member]);
 
-      const command = new EnterpriseRevokeUserCommand(enterpriseId, { memberIds: [memberId] }, ownerId);
+      const command = new EnterpriseRevokeUserCommand(
+        enterpriseId,
+        { memberIds: [memberId] },
+        ownerId,
+      );
       await handler.execute(command);
 
       expect(member.enterpriseIds).not.toContain(enterpriseId);
@@ -78,16 +91,16 @@ describe('EnterpriseRevokeUserCommandHandler', () => {
       expect(mockUserRepository.saveMany).toHaveBeenCalledWith([member]);
       expect(mockOutboxService.enqueueMany).toHaveBeenCalledWith([expect.objectContaining({
         eventType: 'NotifyEnterpriseRevocationEmail',
-        payload: expect.objectContaining({ 
-            userId: memberId,
-            enterpriseId,
-            enterpriseName: 'Enterprise',
+        payload: expect.objectContaining({
+          userId: memberId,
+          enterpriseId,
+          enterpriseName: 'Enterprise',
         }),
         transport: expect.objectContaining({
-            exchange: 'kpi_exchange',
-            routingKey: 'notification.enterprise_revocation'
+          exchange: 'kpi_exchange',
+          routingKey: 'notification.enterprise_revocation',
         }),
-        maxRetry: 5
+        maxRetry: 5,
       })]);
     });
   });
@@ -95,15 +108,23 @@ describe('EnterpriseRevokeUserCommandHandler', () => {
   describe('Sad Paths', () => {
     it('should throw EnterpriseNotFoundException if enterprise does not exist', async () => {
       mockEnterpriseRepository.findById.mockResolvedValue(null);
-      const command = new EnterpriseRevokeUserCommand(enterpriseId, { memberIds: [memberId] }, ownerId);
+      const command = new EnterpriseRevokeUserCommand(
+        enterpriseId,
+        { memberIds: [memberId] },
+        ownerId,
+      );
       await expect(handler.execute(command)).rejects.toThrow(EnterpriseNotFoundException);
     });
 
     it('should throw EnterpriseForbiddenException if requester is not owner', async () => {
       const enterprise = createMockEnterprise();
       mockEnterpriseRepository.findById.mockResolvedValue(enterprise);
-      
-      const command = new EnterpriseRevokeUserCommand(enterpriseId, { memberIds: [memberId] }, 'wrong-owner');
+
+      const command = new EnterpriseRevokeUserCommand(
+        enterpriseId,
+        { memberIds: [memberId] },
+        'wrong-owner',
+      );
       await expect(handler.execute(command)).rejects.toThrow(EnterpriseForbiddenException);
     });
   });

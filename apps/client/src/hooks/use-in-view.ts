@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from 'react';
 
 type UseInViewOptions = {
   rootMargin?: string;
@@ -12,7 +12,7 @@ type UseInViewOptions = {
  * Used for lazy-loading sections without pulling all section modules into one bundle.
  */
 export function useInView(options: UseInViewOptions = {}) {
-  const { rootMargin = "120px", threshold = 0.05 } = options;
+  const { rootMargin = '120px', threshold = 0.05 } = options;
   const ref = useRef<HTMLDivElement>(null);
   const [isInView, setIsInView] = useState(false);
 
@@ -25,7 +25,7 @@ export function useInView(options: UseInViewOptions = {}) {
         const [entry] = entries;
         if (entry?.isIntersecting) setIsInView(true);
       },
-      { rootMargin, threshold }
+      { rootMargin, threshold },
     );
     observer.observe(el);
     return () => observer.disconnect();

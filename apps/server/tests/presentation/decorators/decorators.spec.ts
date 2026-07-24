@@ -1,6 +1,6 @@
-import { Public, IS_PUBLIC_KEY } from '@/presentation/decorators/public.decorator';
-import { Roles, ROLES_KEY } from '@/presentation/decorators/roles.decorator';
 import { ERoleType } from '@/core/enums';
+import { IS_PUBLIC_KEY, Public } from '@/presentation/decorators/public.decorator';
+import { Roles, ROLES_KEY } from '@/presentation/decorators/roles.decorator';
 
 describe('Decorators', () => {
   describe('@Public', () => {

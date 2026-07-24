@@ -1,8 +1,8 @@
-import { Model, Types } from 'mongoose';
-import { MongoCampaignParticipantRepository } from '@/infrastructure/mongo/repositories/campaign-participant.repository';
-import { CampaignParticipantRoot } from '@/core/aggregate-roots';
-import { EParticipantStatus, EOutputType, EOutputStatus } from '@/core/enums';
 import { UNIT_OF_WORK } from '@/application/interfaces';
+import { CampaignParticipantRoot } from '@/core/aggregate-roots';
+import { EOutputStatus, EOutputType, EParticipantStatus } from '@/core/enums';
+import { MongoCampaignParticipantRepository } from '@/infrastructure/mongo/repositories/campaign-participant.repository';
+import { Model, Types } from 'mongoose';
 
 jest.mock('mongoose', () => {
   const actual = jest.requireActual('mongoose');
@@ -57,7 +57,7 @@ describe('MongoCampaignParticipantRepository', () => {
     mockModel.exec = jest.fn();
 
     mockUow = {
-        getSession: jest.fn().mockReturnValue(null),
+      getSession: jest.fn().mockReturnValue(null),
     };
 
     repo = new MongoCampaignParticipantRepository(mockModel as any, mockUow);
@@ -120,7 +120,9 @@ describe('MongoCampaignParticipantRepository', () => {
         kolProfileId: 'kol-123',
       });
 
-      const saveMock = jest.fn().mockResolvedValue({ _id: new Types.ObjectId('generated-part-id') });
+      const saveMock = jest.fn().mockResolvedValue({
+        _id: new Types.ObjectId('generated-part-id'),
+      });
       mockModel.mockImplementation(() => ({ save: saveMock }));
 
       await repo.save(participant);
@@ -153,7 +155,7 @@ describe('MongoCampaignParticipantRepository', () => {
           kol_profile_id: expect.any(Object),
           status: EParticipantStatus.JOINED,
         }),
-        { upsert: true }
+        { upsert: true },
       );
     });
   });

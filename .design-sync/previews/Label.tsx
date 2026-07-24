@@ -1,4 +1,4 @@
-import { Label, Input } from 'client';
+import { Input, Label } from 'client';
 
 export function Default() {
   return <Label>Tên chiến dịch</Label>;
@@ -7,8 +7,8 @@ export function Default() {
 export function WithInput() {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 6, width: 280 }}>
-      <Label htmlFor="email">Email liên hệ</Label>
-      <Input id="email" placeholder="ban@thuonghieu.vn" />
+      <Label htmlFor='email'>Email liên hệ</Label>
+      <Input id='email' placeholder='ban@thuonghieu.vn' />
     </div>
   );
 }

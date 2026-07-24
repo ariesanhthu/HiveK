@@ -1,4 +1,7 @@
-import { UploadedFileRoot, UploadedFileCreateProps } from '@core/aggregate-roots/uploaded-file.aggregate';
+import {
+  UploadedFileCreateProps,
+  UploadedFileRoot,
+} from '@core/aggregate-roots/uploaded-file.aggregate';
 import { TargetType } from '@core/enums';
 
 describe('UploadedFileRoot Aggregate Root', () => {
@@ -93,15 +96,43 @@ describe('UploadedFileRoot Aggregate Root', () => {
   describe('equals', () => {
     it('should return true for same id', () => {
       const now = new Date();
-      const f1 = UploadedFileRoot.instantiate('file-1', { ...defaultCreateProps, title: null, deleteAt: null, deleteBy: null, createdAt: now, updatedAt: now });
-      const f2 = UploadedFileRoot.instantiate('file-1', { ...defaultCreateProps, title: null, deleteAt: null, deleteBy: null, createdAt: now, updatedAt: now });
+      const f1 = UploadedFileRoot.instantiate('file-1', {
+        ...defaultCreateProps,
+        title: null,
+        deleteAt: null,
+        deleteBy: null,
+        createdAt: now,
+        updatedAt: now,
+      });
+      const f2 = UploadedFileRoot.instantiate('file-1', {
+        ...defaultCreateProps,
+        title: null,
+        deleteAt: null,
+        deleteBy: null,
+        createdAt: now,
+        updatedAt: now,
+      });
       expect(f1.equals(f2)).toBe(true);
     });
 
     it('should return false for different ids', () => {
       const now = new Date();
-      const f1 = UploadedFileRoot.instantiate('file-1', { ...defaultCreateProps, title: null, deleteAt: null, deleteBy: null, createdAt: now, updatedAt: now });
-      const f2 = UploadedFileRoot.instantiate('file-2', { ...defaultCreateProps, title: null, deleteAt: null, deleteBy: null, createdAt: now, updatedAt: now });
+      const f1 = UploadedFileRoot.instantiate('file-1', {
+        ...defaultCreateProps,
+        title: null,
+        deleteAt: null,
+        deleteBy: null,
+        createdAt: now,
+        updatedAt: now,
+      });
+      const f2 = UploadedFileRoot.instantiate('file-2', {
+        ...defaultCreateProps,
+        title: null,
+        deleteAt: null,
+        deleteBy: null,
+        createdAt: now,
+        updatedAt: now,
+      });
       expect(f1.equals(f2)).toBe(false);
     });
   });

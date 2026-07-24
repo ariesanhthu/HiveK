@@ -1,6 +1,6 @@
+import { PaginatedResponseDto } from '@/application/dtos/pagination.dto';
 import { EnterpriseGetListHandler } from '@/application/queries/enterprise-get-list/enterprise-get-list.handler';
 import { EnterpriseGetListQuery } from '@/application/queries/enterprise-get-list/enterprise-get-list.query';
-import { PaginatedResponseDto } from '@/application/dtos/pagination.dto';
 
 describe('EnterpriseGetListHandler', () => {
   let handler: EnterpriseGetListHandler;
@@ -14,7 +14,9 @@ describe('EnterpriseGetListHandler', () => {
   });
 
   it('should return paginated list of enterprises', async () => {
-    const mockList = new PaginatedResponseDto([{ id: 'ent-123', companyName: 'Enterprise 1' } as any], null);
+    const mockList = new PaginatedResponseDto([
+      { id: 'ent-123', companyName: 'Enterprise 1' } as any,
+    ], null);
     mockEnterpriseReadService.findAll.mockResolvedValue(mockList);
 
     const query = new EnterpriseGetListQuery({ limit: 10 });

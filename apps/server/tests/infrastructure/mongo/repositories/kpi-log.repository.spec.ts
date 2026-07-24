@@ -1,10 +1,10 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { getModelToken } from '@nestjs/mongoose';
+import { UNIT_OF_WORK } from '@/application/interfaces';
+import { KpiLogEntity } from '@/core/entities/kpi-log.entity';
 import { MongoKpiLogRepository } from '@/infrastructure/mongo/repositories/kpi-log.repository';
 import { KpiLogModel } from '@/infrastructure/mongo/schemas/kpi-log.schema';
-import { KpiLogEntity } from '@/core/entities/kpi-log.entity';
+import { getModelToken } from '@nestjs/mongoose';
+import { Test, TestingModule } from '@nestjs/testing';
 import { Types } from 'mongoose';
-import { UNIT_OF_WORK } from '@/application/interfaces';
 
 describe('MongoKpiLogRepository', () => {
   let repository: MongoKpiLogRepository;
@@ -31,10 +31,10 @@ describe('MongoKpiLogRepository', () => {
 
   beforeEach(async () => {
     mockKpiLogModel = jest.fn().mockImplementation((data) => ({
-        ...data,
-        save: jest.fn().mockResolvedValue({ _id: new Types.ObjectId() }),
+      ...data,
+      save: jest.fn().mockResolvedValue({ _id: new Types.ObjectId() }),
     }));
-    
+
     mockKpiLogModel.findById = jest.fn().mockReturnThis();
     mockKpiLogModel.findByIdAndUpdate = jest.fn().mockReturnThis();
     mockKpiLogModel.findByIdAndDelete = jest.fn().mockReturnThis();
@@ -42,7 +42,7 @@ describe('MongoKpiLogRepository', () => {
     mockKpiLogModel.exec = jest.fn();
 
     mockUow = {
-        getSession: jest.fn().mockReturnValue(null),
+      getSession: jest.fn().mockReturnValue(null),
     };
 
     const module: TestingModule = await Test.createTestingModule({

@@ -1,7 +1,11 @@
-import { EventMapper } from '@/application/mappers/event.mapper';
-import { VerificationOtpCreatedEvent, UserSignedUpEvent, EntityHardDeletedEvent } from '@/core/events';
-import { EOtpType, ERoleType, TargetType } from '@/core/enums';
 import { SendVerificationEmailRequestedEvent } from '@/application/events';
+import { EventMapper } from '@/application/mappers/event.mapper';
+import { EOtpType, ERoleType, TargetType } from '@/core/enums';
+import {
+  EntityHardDeletedEvent,
+  UserSignedUpEvent,
+  VerificationOtpCreatedEvent,
+} from '@/core/events';
 
 describe('EventMapper', () => {
   describe('mapToIntegrationEvents', () => {
@@ -54,13 +58,13 @@ describe('EventMapper', () => {
     });
 
     it('should handle multiple mixed events', () => {
-        const otpEvent = new VerificationOtpCreatedEvent('otp-1', { email: 't1@e.com' } as any);
-        const userEvent = new UserSignedUpEvent('user-1', { email: 't2@e.com' } as any);
+      const otpEvent = new VerificationOtpCreatedEvent('otp-1', { email: 't1@e.com' } as any);
+      const userEvent = new UserSignedUpEvent('user-1', { email: 't2@e.com' } as any);
 
-        const result = EventMapper.mapToIntegrationEvents([otpEvent, userEvent]);
+      const result = EventMapper.mapToIntegrationEvents([otpEvent, userEvent]);
 
-        expect(result).toHaveLength(1);
-        expect(result[0]).toBeInstanceOf(SendVerificationEmailRequestedEvent);
+      expect(result).toHaveLength(1);
+      expect(result[0]).toBeInstanceOf(SendVerificationEmailRequestedEvent);
     });
   });
 });

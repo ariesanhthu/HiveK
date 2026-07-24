@@ -1,5 +1,5 @@
-import { KolProfileVerifyPlatformAccountCommandHandler } from '@/application/commands/kol-profile-verify-platform-account/kol-profile-verify-platform-account.handler';
 import { KolProfileVerifyPlatformAccountCommand } from '@/application/commands/kol-profile-verify-platform-account/kol-profile-verify-platform-account.command';
+import { KolProfileVerifyPlatformAccountCommandHandler } from '@/application/commands/kol-profile-verify-platform-account/kol-profile-verify-platform-account.handler';
 import { KolProfileEntity } from '@/core/entities/kol-profile.entity';
 import { KolPlatformInfoVO } from '@/core/value-objects/kol-platform-info.value-object';
 
@@ -19,7 +19,10 @@ describe('KolProfileVerifyPlatformAccountCommandHandler', () => {
       emit: jest.fn(),
       send: jest.fn(),
     };
-    handler = new KolProfileVerifyPlatformAccountCommandHandler(mockKolProfileRepository, mockMqService);
+    handler = new KolProfileVerifyPlatformAccountCommandHandler(
+      mockKolProfileRepository,
+      mockMqService,
+    );
   });
 
   it('should link user to existing profile found by platform info', async () => {

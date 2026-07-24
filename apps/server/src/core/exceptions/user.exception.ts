@@ -1,4 +1,9 @@
-import { NotFoundDomainException, ConflictDomainException, ForbiddenDomainException, UnauthorizedDomainException } from '../common/exceptions/domain.exception';
+import {
+  ConflictDomainException,
+  ForbiddenDomainException,
+  NotFoundDomainException,
+  UnauthorizedDomainException,
+} from '../common/exceptions/domain.exception';
 
 export class UserNotFoundException extends NotFoundDomainException {
   constructor(identifier: string) {
@@ -13,7 +18,9 @@ export class UserConflictException extends ConflictDomainException {
 }
 
 export class UserForbiddenException extends ForbiddenDomainException {
-  constructor(message: string = 'You are not authorized to access/modify this user profile') {
+  constructor(
+    message: string = 'You are not authorized to access/modify this user profile',
+  ) {
     super(message);
   }
 }

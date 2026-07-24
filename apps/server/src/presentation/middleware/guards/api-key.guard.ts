@@ -1,45 +1,43 @@
-import {
-  CanActivate,
-  ExecutionContext,
-  Injectable,
-  UnauthorizedException,
-} from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
+import { SecurityConfig } from '@/configs';
+import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
 import { GqlExecutionContext } from '@nestjs/graphql';
+import { FastifyRequest } from 'fastify';
 import { Observable } from 'rxjs';
+
+interface GraphQLContext {
+  req?: FastifyRequest;
+}
 
 @Injectable()
 export class ApiKeyGuard implements CanActivate {
-  constructor(private readonly configService: ConfigService) {}
+  constructor(private readonly securityConfig: SecurityConfig) {}
 
   canActivate(
     context: ExecutionContext,
   ): boolean | Promise<boolean> | Observable<boolean> {
-    const type = context.getType() as string;
-    let request: any;
+    const type = context.getType();
+    let request: FastifyRequest | undefined;
 
-    if (type === 'graphql') {
+    if ((type as string) === 'graphql') {
       const gqlCtx = GqlExecutionContext.create(context);
-      request = gqlCtx.getContext().req;
+      request = gqlCtx.getContext<GraphQLContext>()?.req;
     } else {
-      request = context.switchToHttp().getRequest();
+      request = context.switchToHttp().getRequest<FastifyRequest>();
     }
 
     // Bypass API key check for GraphQL playground GET requests or Swagger docs
     if (
-      request &&
-      request.method === 'GET' &&
-      (
-        request.url?.includes('/graphql') || 
-        request.url?.includes('/hivek/graphql') ||
-        request.url?.includes('/hivek/api/docs')
-      )
+      request
+      && request.method === 'GET'
+      && (request.url?.includes('/graphql')
+        || request.url?.includes('/hivek/graphql')
+        || request.url?.includes('/hivek/api/docs'))
     ) {
       return true;
     }
 
     const apiKey = request?.headers['x-api-key'];
-    const validApiKey = this.configService.get<string>('API_KEY');
+    const validApiKey = this.securityConfig.getApiKey();
 
     if (!validApiKey) {
       return false;

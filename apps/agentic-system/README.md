@@ -70,11 +70,11 @@ Luồng hoàn chỉnh (mỗi bước là một endpoint thật):
 
 Copy `.env.example` sang `.env` rồi điền:
 
-| Muốn gì | Đặt biến |
-|---|---|
-| Lưu thật vào MongoDB Atlas | `MONGODB_URI=mongodb+srv://user:<mật khẩu thật>@.../` |
-| Dùng Gemini thật | `GEMINI_API_KEY=...` |
-| Ép dùng mock để demo/offline | `AI_AGENT_PROVIDER=mock` |
+| Muốn gì                      | Đặt biến                                              |
+| ---------------------------- | ----------------------------------------------------- |
+| Lưu thật vào MongoDB Atlas   | `MONGODB_URI=mongodb+srv://user:<mật khẩu thật>@.../` |
+| Dùng Gemini thật             | `GEMINI_API_KEY=...`                                  |
+| Ép dùng mock để demo/offline | `AI_AGENT_PROVIDER=mock`                              |
 
 > **Bẫy thường gặp:** Atlas đưa cho bạn chuỗi kết nối chứa literal `<db_password>`.
 > Phải thay bằng mật khẩu thật. Hệ thống phát hiện placeholder này và từ chối dùng
@@ -119,26 +119,26 @@ Nếu service Python không chạy, `use-ai-chat` tự quay về service mock c�
 ## 5. Kiến trúc
 
 ```
-                    ┌──────────────── FastAPI ────────────────┐
-   Next.js ──HTTP──▶│ /v1/chat  /v1/setup  /decision  SSE     │
-   (browser)        └────────────────┬────────────────────────┘
-                                     ▼
-                         ┌──── AgenticService ────┐   run lifecycle, idempotency,
-                         │  (service.py)          │   events, feedback loop
-                         └───────────┬────────────┘
-                                     ▼
-     START ▶ authenticate ▶ route ─┬─▶ handle_setup ─────────────────────▶ END
-                                   ├─▶ load_knowledge ▶ validate_required_facts
-                                   │        │                    │
-                                   │        │              (thiếu blocking)
-                                   │        │                    └────────▶ END
-                                   │        ▼
-                                   │   compile_context ─┬─▶ create_content_plan ▶ END
-                                   │                    └─▶ generate_draft
-                                   │                              ▼
-                                   │                        validate_draft ▶ END
-                                   ├─▶ analyze_performance ──────────────▶ END
-                                   └─▶ handle_smalltalk ─────────────────▶ END
+                 ┌──────────────── FastAPI ────────────────┐
+Next.js ──HTTP──▶│ /v1/chat  /v1/setup  /decision  SSE     │
+(browser)        └────────────────┬────────────────────────┘
+                                  ▼
+                      ┌──── AgenticService ────┐   run lifecycle, idempotency,
+                      │  (service.py)          │   events, feedback loop
+                      └───────────┬────────────┘
+                                  ▼
+  START ▶ authenticate ▶ route ─┬─▶ handle_setup ─────────────────────▶ END
+                                ├─▶ load_knowledge ▶ validate_required_facts
+                                │        │                    │
+                                │        │              (thiếu blocking)
+                                │        │                    └────────▶ END
+                                │        ▼
+                                │   compile_context ─┬─▶ create_content_plan ▶ END
+                                │                    └─▶ generate_draft
+                                │                              ▼
+                                │                        validate_draft ▶ END
+                                ├─▶ analyze_performance ──────────────▶ END
+                                └─▶ handle_smalltalk ─────────────────▶ END
 ```
 
 LangGraph lo phân nhánh + checkpoint. Các node là hàm Python thuần trong `nodes.py`
@@ -167,16 +167,16 @@ src/hivek_agent/
 
 ## 6. Những ràng buộc được ép bằng mã (không phải bằng lời hứa)
 
-| Nguyên tắc | Ép ở đâu |
-|---|---|
-| Không tự đăng bài | `validate_draft` luôn đặt `needs_review`; không endpoint nào publish. `publishing.*` có `requires_human_approval=True` và không intent nào thấy nó |
-| Không bịa dữ kiện | Composer chỉ đọc `CompiledContext`; validator chặn `unknown_fact_reference` + `unsupported_number` |
-| Không ghi đè dữ kiện đã xác nhận | `facts.py` tạo `conflict`, giữ cả hai, không xoá lịch sử |
-| Một lần sửa không thành luật | `promote_preferences`: cần lặp lại ≥2 lần (hoặc user pin) mới `repeated` |
-| Không dùng LLM cho việc code làm được | Router keyword trước; MFS/readiness tính bằng Python |
-| Không nhét cả tài liệu vào prompt | `ContextCompiler` + `guidance(max_chars=...)`; phần bỏ đi ghi vào `omitted_sections` |
-| Không rò dữ liệu giữa workspace | Repository bắt buộc `workspace_id` |
-| Không log secret | `NodeRun` chỉ giữ ID, token count, latency |
+| Nguyên tắc                            | Ép ở đâu                                                                                                                                           |
+| ------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Không tự đăng bài                     | `validate_draft` luôn đặt `needs_review`; không endpoint nào publish. `publishing.*` có `requires_human_approval=True` và không intent nào thấy nó |
+| Không bịa dữ kiện                     | Composer chỉ đọc `CompiledContext`; validator chặn `unknown_fact_reference` + `unsupported_number`                                                 |
+| Không ghi đè dữ kiện đã xác nhận      | `facts.py` tạo `conflict`, giữ cả hai, không xoá lịch sử                                                                                           |
+| Một lần sửa không thành luật          | `promote_preferences`: cần lặp lại ≥2 lần (hoặc user pin) mới `repeated`                                                                           |
+| Không dùng LLM cho việc code làm được | Router keyword trước; MFS/readiness tính bằng Python                                                                                               |
+| Không nhét cả tài liệu vào prompt     | `ContextCompiler` + `guidance(max_chars=...)`; phần bỏ đi ghi vào `omitted_sections`                                                               |
+| Không rò dữ liệu giữa workspace       | Repository bắt buộc `workspace_id`                                                                                                                 |
+| Không log secret                      | `NodeRun` chỉ giữ ID, token count, latency                                                                                                         |
 
 ## 7. Chưa làm (TODO có chủ đích)
 

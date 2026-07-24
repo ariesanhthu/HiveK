@@ -26,13 +26,13 @@ apps/server/docs/
 1. **Start with `architecture/architecture.md`** – it gives a visual diagram of the layer dependencies and explains the overall design philosophy (Clean Architecture, DDD, CQRS).
 2. **Drill down into each layer** – open the corresponding `*.md` file (`core.md`, `application.md`, `infrastructure.md`, `presentation.md`) to see concrete folder structures, responsibilities and key conventions.
 3. **Check the coding rules** – `rules/custom-rules.md` lists mandatory standards (no `any`, naming per layer, enum alias/value style, DI token usage). Treat this as a checklist during code reviews.
-4. **Cross‑reference** – each layer file contains a *Current Folder Structure* section that mirrors the actual file system. Use it to locate implementations quickly.
+4. **Cross‑reference** – each layer file contains a _Current Folder Structure_ section that mirrors the actual file system. Use it to locate implementations quickly.
 
 ## Quick Tips
 
-* **Naming** – follow the layer‑specific conventions (snake_case for DB fields, camelCase for code). Enum members are `SCREAMING_SNAKE_CASE` with lower‑snake values.
-* **DI Tokens** – every interface that acts as a port should have an exported `Symbol` token used for NestJS injection.
-* **Reuse** – when adding new features, copy the folder layout of a similar existing feature (e.g., `campaign-create`) and adapt the names.
+- **Naming** – follow the layer‑specific conventions (snake_case for DB fields, camelCase for code). Enum members are `SCREAMING_SNAKE_CASE` with lower‑snake values.
+- **DI Tokens** – every interface that acts as a port should have an exported `Symbol` token used for NestJS injection.
+- **Reuse** – when adding new features, copy the folder layout of a similar existing feature (e.g., `campaign-create`) and adapt the names.
 
 ---
 

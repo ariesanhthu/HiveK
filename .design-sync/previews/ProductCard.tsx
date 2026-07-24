@@ -7,9 +7,8 @@ const product = {
     'Tinh chất dưỡng sáng da chuyên sâu, làm mờ thâm nám và đều màu da sau 4 tuần sử dụng.',
   price: 480000,
   currency: '₫',
-  imageUrl:
-    'data:image/svg+xml;utf8,' +
-    encodeURIComponent(
+  imageUrl: 'data:image/svg+xml;utf8,'
+    + encodeURIComponent(
       '<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300"><rect width="400" height="300" fill="#fde68a"/><circle cx="200" cy="150" r="70" fill="#f59e0b"/></svg>',
     ),
   productPageUrl: '#',

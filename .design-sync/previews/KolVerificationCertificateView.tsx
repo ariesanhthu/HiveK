@@ -1,8 +1,7 @@
 import { KolVerificationCertificateView } from 'client';
 
-const avatarUrl =
-  'data:image/svg+xml;utf8,' +
-  encodeURIComponent(
+const avatarUrl = 'data:image/svg+xml;utf8,'
+  + encodeURIComponent(
     '<svg xmlns="http://www.w3.org/2000/svg" width="112" height="112"><rect width="112" height="112" fill="#fbcfe8"/><circle cx="56" cy="44" r="24" fill="#db2777"/><rect x="24" y="72" width="64" height="40" rx="18" fill="#db2777"/></svg>',
   );
 
@@ -47,5 +46,10 @@ const data = {
 };
 
 export function Default() {
-  return <KolVerificationCertificateView data={data} verifyUrl="https://hivek.vn/verify/HK-2026-0417-LC" />;
+  return (
+    <KolVerificationCertificateView
+      data={data}
+      verifyUrl='https://hivek.vn/verify/HK-2026-0417-LC'
+    />
+  );
 }

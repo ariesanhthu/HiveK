@@ -1,5 +1,5 @@
-import { z } from 'zod';
 import { createZodDto } from 'nestjs-zod';
+import { z } from 'zod';
 import { RoleCreateInputSchema } from '../role-create/role-create.dto';
 
 export const RoleUpdateInputSchema = RoleCreateInputSchema.partial();

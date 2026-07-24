@@ -1,33 +1,33 @@
-export type InboxChannel = "messenger" | "instagram" | "threads";
+export type InboxChannel = 'messenger' | 'instagram' | 'threads';
 export type ConversationStatus =
-  | "open"
-  | "needs_human"
-  | "waiting_for_customer"
-  | "snoozed"
-  | "resolved";
-export type ConversationPriority = "normal" | "high" | "urgent";
-export type HandlingMode = "limited_auto" | "suggestion_only" | "human";
+  | 'open'
+  | 'needs_human'
+  | 'waiting_for_customer'
+  | 'snoozed'
+  | 'resolved';
+export type ConversationPriority = 'normal' | 'high' | 'urgent';
+export type HandlingMode = 'limited_auto' | 'suggestion_only' | 'human';
 export type AiState =
-  | "active"
-  | "suggestion_only"
-  | "paused_by_user"
-  | "blocked_missing_data"
-  | "blocked_conflict"
-  | "handoff_requested";
+  | 'active'
+  | 'suggestion_only'
+  | 'paused_by_user'
+  | 'blocked_missing_data'
+  | 'blocked_conflict'
+  | 'handoff_requested';
 export type MessageAuthor =
-  | "customer"
-  | "ai_agent"
-  | "current_user"
-  | "workspace_member"
-  | "internal_note"
-  | "system";
+  | 'customer'
+  | 'ai_agent'
+  | 'current_user'
+  | 'workspace_member'
+  | 'internal_note'
+  | 'system';
 
 export type ChannelCapabilities = {
   canSendText: boolean;
   canSendAttachments: boolean;
   canOpenNativeConversation: boolean;
   canUseAutomation: boolean;
-  permissionStatus: "active" | "read_only" | "expired";
+  permissionStatus: 'active' | 'read_only' | 'expired';
   replyWindowExpiresAt?: string;
   policyNotice?: string;
 };
@@ -39,9 +39,9 @@ export type InboxMessage = {
   authorName: string;
   content: string;
   createdAt: string;
-  deliveryStatus: "sent" | "delivered" | "sending" | "failed";
+  deliveryStatus: 'sent' | 'delivered' | 'sending' | 'failed';
   isAutomated?: boolean;
-  confidence?: "high" | "medium" | "low";
+  confidence?: 'high' | 'medium' | 'low';
   evidence?: string[];
 };
 
@@ -75,15 +75,15 @@ export type InboxConversation = {
 };
 
 export type InboxView =
-  | "needs_human"
-  | "mine"
-  | "unassigned"
-  | "ai_active"
-  | "waiting"
-  | "all"
-  | "resolved";
+  | 'needs_human'
+  | 'mine'
+  | 'unassigned'
+  | 'ai_active'
+  | 'waiting'
+  | 'all'
+  | 'resolved';
 
-export type ComposerMode = "reply" | "note";
+export type ComposerMode = 'reply' | 'note';
 
 export type SendMessageInput = {
   conversationId: string;

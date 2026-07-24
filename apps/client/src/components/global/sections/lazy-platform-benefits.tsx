@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import React, { useEffect, useState } from "react";
-import { useInView } from "@/hooks/use-in-view";
+import { useInView } from '@/hooks/use-in-view';
+import React, { useEffect, useState } from 'react';
 
 type Props = {
   fallback: React.ReactNode;
@@ -10,7 +10,7 @@ type Props = {
 
 export function LazyPlatformBenefits({
   fallback,
-  minHeight = "380px",
+  minHeight = '380px',
 }: Props) {
   const [ref, isInView] = useInView();
   const [Component, setComponent] = useState<React.ComponentType | null>(null);
@@ -18,7 +18,7 @@ export function LazyPlatformBenefits({
   useEffect(() => {
     if (!isInView) return;
     let cancelled = false;
-    import("./platform-benefits-section").then((m) => {
+    import('./platform-benefits-section').then((m) => {
       if (!cancelled) setComponent(() => m.PlatformBenefitsSection);
     });
     return () => {

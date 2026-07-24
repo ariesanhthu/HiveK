@@ -6,12 +6,12 @@ activation: always_on
 
 When receiving a request, you **MUST** classify it into one of 4 types:
 
-| Symbol | Type | Description |
-|:------:|:-----|:------------|
-| 🔍 | **CONSULT** | Ask for opinions, compare approaches, propose solutions |
-| 🏗️ | **BUILD** | Create new feature, component, module, page |
-| 🔧 | **DEBUG** | Fix bug, error, unexpected behavior |
-| ⚡ | **OPTIMIZE** | Improve performance, refactor, clean code |
+| Symbol | Type         | Description                                             |
+| :----: | :----------- | :------------------------------------------------------ |
+|   🔍   | **CONSULT**  | Ask for opinions, compare approaches, propose solutions |
+|   🏗️    | **BUILD**    | Create new feature, component, module, page             |
+|   🔧   | **DEBUG**    | Fix bug, error, unexpected behavior                     |
+|   ⚡   | **OPTIMIZE** | Improve performance, refactor, clean code               |
 
 ## Recognition Rules
 
@@ -25,6 +25,7 @@ OPTIMIZE → "slow", "refactor", "clean", "improve", "optimize"
 ## When Type Is Unclear
 
 Ask the user:
+
 > "I want to confirm the task type:
 > A. Consult (compare, suggest)
 > B. Build (create new code)

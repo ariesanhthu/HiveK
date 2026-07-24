@@ -1,5 +1,5 @@
-import { MongoClient, ObjectId } from 'mongodb';
 import * as fs from 'fs';
+import { MongoClient, ObjectId } from 'mongodb';
 import * as path from 'path';
 
 // Load .env file manually to support standalone execution
@@ -22,7 +22,8 @@ const loadEnv = () => {
 
 loadEnv();
 
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://root:root%40123@localhost:27017/hivek?authSource=admin';
+const MONGODB_URI = process.env.MONGODB_URI
+  || 'mongodb://root:root%40123@localhost:27017/hivek?authSource=admin';
 
 // Formats unique_id (e.g., "minh_hoang.a3_auto" -> "Minh Hoang A3 Auto")
 const formatDisplayName = (uniqueId: string): string => {
@@ -42,14 +43,16 @@ async function recover() {
     await client.connect();
     const db = client.db('tiktok_crawler');
 
-    console.log('🧹 Clearing damaged user, tiktok_users, and youtube_users collections to rebuild...');
+    console.log(
+      '🧹 Clearing damaged user, tiktok_users, and youtube_users collections to rebuild...',
+    );
     await db.collection('user').deleteMany({});
     await db.collection('tiktok_users').deleteMany({});
     await db.collection('youtube_users').deleteMany({});
 
     // 1. Fetch completed users from queues
     console.log('🔄 Loading logs from tiktok_processed_user and youtube_processed_user...');
-    
+
     const processedTiktok = await db.collection('tiktok_processed_user')
       .find({ status: 'COMPLETED' })
       .toArray();
@@ -58,7 +61,9 @@ async function recover() {
       .find({ status: 'COMPLETED' })
       .toArray();
 
-    console.log(`📊 Found ${processedTiktok.length} completed TikTok logs and ${processedYoutube.length} completed YouTube logs.`);
+    console.log(
+      `📊 Found ${processedTiktok.length} completed TikTok logs and ${processedYoutube.length} completed YouTube logs.`,
+    );
 
     // 2. Rebuild tiktok_users collection
     if (processedTiktok.length > 0) {
@@ -129,7 +134,6 @@ async function recover() {
     console.log(`- tiktok_users: ${processedTiktok.length}`);
     console.log(`- youtube_users: ${processedYoutube.length}`);
     console.log(`- user mappings: ${processedYoutube.filter(y => y.tiktok_user_id).length}`);
-
   } catch (error) {
     console.error('❌ Error during recovery:', error);
   } finally {

@@ -23,10 +23,12 @@ export function enumToArray<T extends Record<string, string>>(e: T): string[] {
 export function enumToOptions<T extends Record<string, string>>(
   e: T,
   formatLabel?: (value: string) => string,
-): { value: string; label: string }[] {
+): { value: string; label: string; }[] {
   return enumToArray(e).map((value) => ({
     value,
-    label: formatLabel ? formatLabel(value) : value.charAt(0).toUpperCase() + value.slice(1),
+    label: formatLabel
+      ? formatLabel(value)
+      : value.charAt(0).toUpperCase() + value.slice(1),
   }));
 }
 
@@ -38,6 +40,8 @@ export function enumToOptions<T extends Record<string, string>>(
  * enumToMap(Status) // { DRAFT: 'draft', ACTIVE: 'active' }
  * ```
  */
-export function enumToMap<T extends Record<string, string>>(e: T): Record<keyof T, string> {
+export function enumToMap<T extends Record<string, string>>(
+  e: T,
+): Record<keyof T, string> {
   return { ...e };
 }

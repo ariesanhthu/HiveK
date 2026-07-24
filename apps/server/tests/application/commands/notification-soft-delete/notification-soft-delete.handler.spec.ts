@@ -1,5 +1,5 @@
-import { NotificationSoftDeleteCommandHandler } from '@/application/commands/notification-soft-delete/notification-soft-delete.handler';
 import { NotificationSoftDeleteCommand } from '@/application/commands/notification-soft-delete/notification-soft-delete.command';
+import { NotificationSoftDeleteCommandHandler } from '@/application/commands/notification-soft-delete/notification-soft-delete.handler';
 
 describe('NotificationSoftDeleteCommandHandler', () => {
   let handler: NotificationSoftDeleteCommandHandler;
@@ -16,6 +16,10 @@ describe('NotificationSoftDeleteCommandHandler', () => {
     const command = new NotificationSoftDeleteCommand(['receipt-123'], 'user-123');
     await handler.execute(command);
 
-    expect(mockUserNotificationRepository.softDeleteMany).toHaveBeenCalledWith(['receipt-123'], 'user-123', 'user-123');
+    expect(mockUserNotificationRepository.softDeleteMany).toHaveBeenCalledWith(
+      ['receipt-123'],
+      'user-123',
+      'user-123',
+    );
   });
 });

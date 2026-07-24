@@ -1,5 +1,5 @@
 export enum ERoleType {
-  'ENTERPRISE' = 'enterprise',
-  'KOL' = 'kol',
-  'ADMIN' = 'admin',
+  ENTERPRISE = 'enterprise',
+  KOL = 'kol',
+  ADMIN = 'admin',
 }

@@ -2,8 +2,8 @@ import { SelectedProfileCard } from 'client';
 
 function avatar(hue: number) {
   return (
-    'data:image/svg+xml;utf8,' +
-    encodeURIComponent(
+    'data:image/svg+xml;utf8,'
+    + encodeURIComponent(
       `<svg xmlns="http://www.w3.org/2000/svg" width="96" height="96"><rect width="96" height="96" fill="hsl(${hue},70%,88%)"/><circle cx="48" cy="38" r="20" fill="hsl(${hue},65%,55%)"/><rect x="20" y="62" width="56" height="34" rx="16" fill="hsl(${hue},65%,55%)"/></svg>`,
     )
   );

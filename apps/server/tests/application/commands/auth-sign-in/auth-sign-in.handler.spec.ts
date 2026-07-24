@@ -1,12 +1,12 @@
-import { jest } from '@jest/globals';
-import { AuthSignInCommandHandler } from '@/application/commands/auth-sign-in/auth-sign-in.handler';
 import { AuthSignInCommand } from '@/application/commands/auth-sign-in/auth-sign-in.command';
+import { AuthSignInCommandHandler } from '@/application/commands/auth-sign-in/auth-sign-in.handler';
+import { KOLUserRoot } from '@/core/aggregate-roots/kol-user.aggregate';
 import { ERoleType } from '@/core/enums';
 import { InvalidCredentialsException } from '@/core/exceptions';
+import { PhoneNumberVO } from '@/core/value-objects/phone-number.value-object';
+import { jest } from '@jest/globals';
 import { createMockUserRepository } from '../../../__mocks__/mock-repositories';
 import { createMockAuthService } from '../../../__mocks__/mock-services';
-import { KOLUserRoot } from '@/core/aggregate-roots/kol-user.aggregate';
-import { PhoneNumberVO } from '@/core/value-objects/phone-number.value-object';
 
 describe('AuthSignInCommandHandler', () => {
   let handler: AuthSignInCommandHandler;
@@ -62,7 +62,10 @@ describe('AuthSignInCommandHandler', () => {
       });
       expect(mockAuthService.normalizeEmail).toHaveBeenCalledWith('user@example.com');
       expect(mockUserRepository.findByEmail).toHaveBeenCalledWith('user@example.com');
-      expect(mockAuthService.comparePassword).toHaveBeenCalledWith('password123', 'hashed-password');
+      expect(mockAuthService.comparePassword).toHaveBeenCalledWith(
+        'password123',
+        'hashed-password',
+      );
       expect(mockAuthService.generateTokens).toHaveBeenCalledWith({
         sub: 'user-123',
         email: 'user@example.com',

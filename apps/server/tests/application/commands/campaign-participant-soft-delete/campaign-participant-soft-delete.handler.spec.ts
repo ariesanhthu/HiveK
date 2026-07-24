@@ -1,8 +1,8 @@
-import { CampaignParticipantSoftDeleteCommandHandler } from '@/application/commands/campaign-participant-soft-delete/campaign-participant-soft-delete.handler';
 import { CampaignParticipantSoftDeleteCommand } from '@/application/commands/campaign-participant-soft-delete/campaign-participant-soft-delete.command';
+import { CampaignParticipantSoftDeleteCommandHandler } from '@/application/commands/campaign-participant-soft-delete/campaign-participant-soft-delete.handler';
 import { CampaignParticipantRoot } from '@/core/aggregate-roots';
-import { CampaignParticipantNotFoundException } from '@/core/exceptions';
 import { EOutputStatus, EOutputType } from '@/core/enums';
+import { CampaignParticipantNotFoundException } from '@/core/exceptions';
 
 describe('CampaignParticipantSoftDeleteCommandHandler', () => {
   let handler: CampaignParticipantSoftDeleteCommandHandler;
@@ -88,7 +88,9 @@ describe('CampaignParticipantSoftDeleteCommandHandler', () => {
     mockParticipantRepository.findById.mockResolvedValue(participant);
 
     const command = new CampaignParticipantSoftDeleteCommand('participant-123', 'admin-user');
-    await expect(handler.execute(command)).rejects.toThrow('Cannot delete participant with published outputs');
+    await expect(handler.execute(command)).rejects.toThrow(
+      'Cannot delete participant with published outputs',
+    );
   });
 });
 

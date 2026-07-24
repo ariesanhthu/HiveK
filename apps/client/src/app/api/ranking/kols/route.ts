@@ -1,10 +1,10 @@
-import { NextResponse } from "next/server";
 import {
   getKolRankings,
   parseKolRankingFilters,
-} from "@/features/kol-ranking/server/get-kol-rankings";
+} from '@/features/kol-ranking/server/get-kol-rankings';
+import { NextResponse } from 'next/server';
 
-export const dynamic = "force-dynamic";
+export const dynamic = 'force-dynamic';
 
 export async function GET(request: Request) {
   const requestUrl = new URL(request.url);
@@ -13,7 +13,7 @@ export async function GET(request: Request) {
 
   return NextResponse.json(payload, {
     headers: {
-      "Cache-Control": "no-store",
+      'Cache-Control': 'no-store',
     },
   });
 }

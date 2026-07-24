@@ -12,11 +12,15 @@ describe('PhoneNumberVO', () => {
   });
 
   it('should throw error if phone number does not start with "+"', () => {
-    expect(() => PhoneNumberVO.create({ value: '84123456789' })).toThrow('Invalid phone number format');
+    expect(() => PhoneNumberVO.create({ value: '84123456789' })).toThrow(
+      'Invalid phone number format',
+    );
   });
 
   it('should throw error if phone number contains non-digits after "+"', () => {
-    expect(() => PhoneNumberVO.create({ value: '+84123-456-789' })).toThrow('Invalid phone number format');
+    expect(() => PhoneNumberVO.create({ value: '+84123-456-789' })).toThrow(
+      'Invalid phone number format',
+    );
   });
 
   it('should equality check work correctly', () => {

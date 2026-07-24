@@ -1,15 +1,18 @@
-import request from 'supertest';
-import { Test, TestingModule } from '@nestjs/testing';
-import { INestApplication } from '@nestjs/common';
-import { getModelToken } from '@nestjs/mongoose';
-import { Model, Types } from 'mongoose';
-import { CommandBus } from '@nestjs/cqrs';
-import { AppModule } from '../../src/infrastructure/modules/app.module';
-import { AUTH_JWT_SERVICE, type IAuthJwtService } from '@/application/interfaces/auth-jwt.interface';
-import { NotificationType, NotificationChannel } from '@/core/enums';
 import { NotificationSendCommand } from '@/application/commands';
+import {
+  AUTH_JWT_SERVICE,
+  type IAuthJwtService,
+} from '@/application/interfaces/auth-jwt.interface';
+import { NotificationChannel, NotificationType } from '@/core/enums';
 import { NotificationModel, UserNotificationModel } from '@/infrastructure/mongo/schemas';
 import { setupApplication } from '@/infrastructure/nest-config/app.setup';
+import { INestApplication } from '@nestjs/common';
+import { CommandBus } from '@nestjs/cqrs';
+import { getModelToken } from '@nestjs/mongoose';
+import { Test, TestingModule } from '@nestjs/testing';
+import { Model, Types } from 'mongoose';
+import request from 'supertest';
+import { AppModule } from '../../src/infrastructure/modules/app.module';
 
 describe('Notification System (e2e)', () => {
   let app: INestApplication;
@@ -87,7 +90,7 @@ describe('Notification System (e2e)', () => {
           broadcastType: 'direct',
           userIds: [testUserId],
         },
-      })
+      }),
     );
 
     // Wait for the asynchronous Event Handler to write to the database
@@ -103,7 +106,7 @@ describe('Notification System (e2e)', () => {
     expect(listRes.body.data.length).toBeGreaterThanOrEqual(1);
 
     const targetNoti = listRes.body.data.find(
-      (n: any) => n.title === 'E2E Test Notification'
+      (n: any) => n.title === 'E2E Test Notification',
     );
     expect(targetNoti).toBeDefined();
     expect(targetNoti.content).toBe('This is a test notification payload');
@@ -125,7 +128,7 @@ describe('Notification System (e2e)', () => {
       .expect(200);
 
     const updatedNoti = checkReadRes.body.data.find(
-      (n: any) => n.id === receiptId
+      (n: any) => n.id === receiptId,
     );
     expect(updatedNoti).toBeDefined();
     expect(updatedNoti.isRead).toBe(true);
@@ -144,7 +147,7 @@ describe('Notification System (e2e)', () => {
       .expect(200);
 
     const finalNoti = checkDeletedRes.body.data.find(
-      (n: any) => n.id === receiptId
+      (n: any) => n.id === receiptId,
     );
     expect(finalNoti).toBeUndefined();
   });
@@ -161,7 +164,7 @@ describe('Notification System (e2e)', () => {
           broadcastType: 'direct',
           userIds: [testUserId],
         },
-      })
+      }),
     );
     await new Promise((resolve) => setTimeout(resolve, 1000));
 

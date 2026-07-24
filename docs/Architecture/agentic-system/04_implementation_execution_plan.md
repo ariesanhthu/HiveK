@@ -205,15 +205,15 @@ export const contentWritingPrompt = {
 
 ```ts
 export const campaignWizardStepIds = [
-  "basics",
-  "product_offer",
-  "audience_insight",
-  "brand_voice",
-  "platform_strategy",
-  "trend_learning",
-  "media_qna",
-  "creators",
-  "final_review",
+  'basics',
+  'product_offer',
+  'audience_insight',
+  'brand_voice',
+  'platform_strategy',
+  'trend_learning',
+  'media_qna',
+  'creators',
+  'final_review',
 ] as const;
 
 export type CampaignWizardStepId = typeof campaignWizardStepIds[number];
@@ -227,22 +227,22 @@ export const CampaignBriefSchema = z.object({
   brandId: z.string(),
   name: z.string().min(1),
   status: z.enum([
-    "draft",
-    "briefing",
-    "ready_to_generate",
-    "generating",
-    "reviewing",
-    "scheduled",
-    "published",
-    "archived",
+    'draft',
+    'briefing',
+    'ready_to_generate',
+    'generating',
+    'reviewing',
+    'scheduled',
+    'published',
+    'archived',
   ]),
   objective: z.enum([
-    "awareness",
-    "engagement",
-    "traffic",
-    "leads",
-    "sales",
-    "creator_recruitment",
+    'awareness',
+    'engagement',
+    'traffic',
+    'leads',
+    'sales',
+    'creator_recruitment',
   ]),
   product: z.object({
     name: z.string().min(1),
@@ -265,13 +265,13 @@ export const CampaignBriefSchema = z.object({
   }),
   brandVoice: z.object({
     tone: z.array(z.string()).default([]),
-    emojiPolicy: z.enum(["none", "low", "medium"]).default("low"),
+    emojiPolicy: z.enum(['none', 'low', 'medium']).default('low'),
     wordsToUse: z.array(z.string()).default([]),
     wordsToAvoid: z.array(z.string()).default([]),
     approvedExamples: z.array(z.string()).default([]),
     rejectedExamples: z.array(z.string()).default([]),
   }),
-  platforms: z.array(z.enum(["facebook", "instagram", "threads"])).min(1),
+  platforms: z.array(z.enum(['facebook', 'instagram', 'threads'])).min(1),
   cta: z.string().min(1),
   landingUrl: z.string().url().optional(),
   createdAt: z.string(),
@@ -285,28 +285,28 @@ export const CampaignBriefSchema = z.object({
 export const TrendSignalSchema = z.object({
   id: z.string(),
   sourceType: z.enum([
-    "user_pasted_post",
-    "competitor_example",
-    "creator_example",
-    "brand_history",
-    "performance_data",
-    "manual_note",
-    "platform_observation",
+    'user_pasted_post',
+    'competitor_example',
+    'creator_example',
+    'brand_history',
+    'performance_data',
+    'manual_note',
+    'platform_observation',
   ]),
-  platform: z.enum(["facebook", "instagram", "threads", "tiktok"]),
+  platform: z.enum(['facebook', 'instagram', 'threads', 'tiktok']),
   rawText: z.string().optional(),
   sourceUrl: z.string().url().optional(),
   screenshotNote: z.string().optional(),
   observedAt: z.string(),
   trendType: z.enum([
-    "hook_pattern",
-    "content_structure",
-    "visual_format",
-    "cta_pattern",
-    "comment_pattern",
-    "storytelling_angle",
-    "meme_reference",
-    "ugc_style",
+    'hook_pattern',
+    'content_structure',
+    'visual_format',
+    'cta_pattern',
+    'comment_pattern',
+    'storytelling_angle',
+    'meme_reference',
+    'ugc_style',
   ]),
   summary: z.string(),
   extractedPattern: z.string(),
@@ -334,10 +334,10 @@ export const CampaignPostNodeSchema = z.object({
   campaignId: z.string(),
   dayIndex: z.number().int().positive(),
   scheduledAt: z.string().optional(),
-  platform: z.enum(["facebook", "instagram", "threads"]),
-  contentType: z.enum(["caption", "carousel", "reels", "thread", "album", "story"]),
-  funnelStage: z.enum(["awareness", "consideration", "conversion", "retention"]),
-  status: z.enum(["draft", "needs-review", "approved", "scheduled", "published", "rejected"]),
+  platform: z.enum(['facebook', 'instagram', 'threads']),
+  contentType: z.enum(['caption', 'carousel', 'reels', 'thread', 'album', 'story']),
+  funnelStage: z.enum(['awareness', 'consideration', 'conversion', 'retention']),
+  status: z.enum(['draft', 'needs-review', 'approved', 'scheduled', 'published', 'rejected']),
   title: z.string(),
   goal: z.string(),
   angle: z.string(),
@@ -410,8 +410,8 @@ Request:
 
 ```ts
 type LearnTrendsRequest = {
-  platform?: "facebook" | "instagram" | "threads";
-  trendMode: "safe" | "balanced" | "aggressive";
+  platform?: 'facebook' | 'instagram' | 'threads';
+  trendMode: 'safe' | 'balanced' | 'aggressive';
   samples: Array<{
     sourceType: string;
     platform: string;
@@ -469,26 +469,26 @@ export async function runCampaignHarnessWorkflow(input: HarnessRunRequest) {
   }
 
   switch (input.runMode) {
-    case "analyze_brief":
+    case 'analyze_brief':
       return analyzeCampaignBriefWorkflow(campaign);
-    case "learn_trends":
+    case 'learn_trends':
       return learnCampaignTrendsWorkflow(campaign, input);
-    case "generate_plan":
+    case 'generate_plan':
       return generateCampaignPlanWorkflow(campaign, input);
-    case "generate_posts":
+    case 'generate_posts':
       return generatePostDraftsWorkflow(campaign, input);
-    case "validate_posts":
+    case 'validate_posts':
       return validatePostsWorkflow(campaign, input);
-    case "match_media":
+    case 'match_media':
       return matchMediaToPostsWorkflow(campaign, input);
-    case "match_creators":
+    case 'match_creators':
       return matchCreatorsWorkflow(campaign, input);
-    case "draft_creator_outreach":
+    case 'draft_creator_outreach':
       return draftCreatorOutreachWorkflow(campaign, input);
-    case "schedule_posts":
+    case 'schedule_posts':
       return scheduleApprovedPostsWorkflow(campaign, input);
     default:
-      throw new Error("Unsupported run mode");
+      throw new Error('Unsupported run mode');
   }
 }
 ```

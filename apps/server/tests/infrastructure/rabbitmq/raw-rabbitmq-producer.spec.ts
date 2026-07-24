@@ -1,5 +1,5 @@
-import * as amqp from 'amqplib';
 import { RawRabbitMQProducerClient } from '@/infrastructure/rabbitmq/raw-rabbitmq-producer';
+import * as amqp from 'amqplib';
 import { createMockLoggerService } from '../../__mocks__/mock-services';
 
 jest.mock('amqplib');
@@ -61,7 +61,7 @@ describe('RawRabbitMQProducerClient', () => {
       expect(mockChannel.assertExchange).toHaveBeenCalledWith(
         mockConfig.exchange_contract.name,
         mockConfig.exchange_contract.type,
-        expect.anything()
+        expect.anything(),
       );
       expect(client.isHealthy()).toBe(true);
     });
@@ -69,7 +69,7 @@ describe('RawRabbitMQProducerClient', () => {
     it('should not reconnect if already connected', async () => {
       await client.connect();
       expect(amqp.connect).toHaveBeenCalledTimes(1);
-      
+
       await client.connect();
       expect(amqp.connect).toHaveBeenCalledTimes(1);
     });
@@ -78,7 +78,7 @@ describe('RawRabbitMQProducerClient', () => {
       (amqp.connect as jest.Mock).mockRejectedValueOnce(new Error('Connection failed'));
       // Mock sleep to return immediately
       (client as any).sleep = jest.fn().mockResolvedValue({});
-      
+
       // We don't want to enter infinite retry loop in test
       const originalRetries = mockConfig.connection.reconnect.max_retries;
       mockConfig.connection.reconnect.max_retries = 1;
@@ -86,7 +86,7 @@ describe('RawRabbitMQProducerClient', () => {
       await client.connect();
       expect(mockLogger.error).toHaveBeenCalled();
       expect(client.isHealthy()).toBe(false);
-      
+
       mockConfig.connection.reconnect.max_retries = originalRetries;
     });
   });
@@ -101,7 +101,7 @@ describe('RawRabbitMQProducerClient', () => {
         'test.key',
         expect.any(Buffer),
         expect.anything(),
-        expect.any(Function)
+        expect.any(Function),
       );
     });
 

@@ -4,19 +4,19 @@ export const PASSWORD_MIN_LENGTH = 8;
 
 export const PASSWORD_MAX_LENGTH = 128;
 
-export type SignInFieldKey = "email" | "password";
+export type SignInFieldKey = 'email' | 'password';
 
 export type SignUpFieldKey =
-  | "fullName"
-  | "email"
-  | "password"
-  | "confirmPassword";
+  | 'fullName'
+  | 'email'
+  | 'password'
+  | 'confirmPassword';
 
 export type SignInFieldErrors = Partial<Record<SignInFieldKey, string>>;
 
 export type SignUpFieldErrors = Partial<Record<SignUpFieldKey, string>>;
 
-export type SignUpRole = "brand" | "creator";
+export type SignUpRole = 'brand' | 'creator';
 
 function normalizeEmail(value: string): string {
   return value.trim().toLowerCase();
@@ -28,19 +28,19 @@ function normalizeEmail(value: string): string {
  */
 export function validateSignInFields(
   emailRaw: string,
-  passwordRaw: string
+  passwordRaw: string,
 ): SignInFieldErrors {
   const errors: SignInFieldErrors = {};
   const email = normalizeEmail(emailRaw);
 
   if (!email) {
-    errors.email = "Vui lòng nhập email.";
+    errors.email = 'Vui lòng nhập email.';
   } else if (!EMAIL_PATTERN.test(email)) {
-    errors.email = "Email không hợp lệ.";
+    errors.email = 'Email không hợp lệ.';
   }
 
   if (!passwordRaw) {
-    errors.password = "Vui lòng nhập mật khẩu.";
+    errors.password = 'Vui lòng nhập mật khẩu.';
   }
 
   return errors;
@@ -51,7 +51,7 @@ function validatePasswordStrength(password: string): string | undefined {
     return `Mật khẩu tối thiểu ${PASSWORD_MIN_LENGTH} ký tự.`;
   }
   if (password.length > PASSWORD_MAX_LENGTH) {
-    return "Mật khẩu quá dài.";
+    return 'Mật khẩu quá dài.';
   }
   return undefined;
 }
@@ -70,15 +70,15 @@ export function validateSignUpFields(input: {
   const email = normalizeEmail(input.emailRaw);
 
   if (!name) {
-    errors.fullName = "Vui lòng nhập họ tên.";
+    errors.fullName = 'Vui lòng nhập họ tên.';
   } else if (name.length > 120) {
-    errors.fullName = "Họ tên quá dài.";
+    errors.fullName = 'Họ tên quá dài.';
   }
 
   if (!email) {
-    errors.email = "Vui lòng nhập email.";
+    errors.email = 'Vui lòng nhập email.';
   } else if (!EMAIL_PATTERN.test(email)) {
-    errors.email = "Email không hợp lệ.";
+    errors.email = 'Email không hợp lệ.';
   }
 
   const pwErr = validatePasswordStrength(input.password);
@@ -87,9 +87,9 @@ export function validateSignUpFields(input: {
   }
 
   if (!input.confirmPassword) {
-    errors.confirmPassword = "Vui lòng xác nhận mật khẩu.";
+    errors.confirmPassword = 'Vui lòng xác nhận mật khẩu.';
   } else if (input.password !== input.confirmPassword) {
-    errors.confirmPassword = "Mật khẩu xác nhận không khớp.";
+    errors.confirmPassword = 'Mật khẩu xác nhận không khớp.';
   }
 
   return errors;

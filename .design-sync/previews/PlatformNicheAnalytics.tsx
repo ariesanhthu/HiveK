@@ -15,12 +15,36 @@ const nicheEngagement = [
 ];
 
 const scatterPoints = [
-  { name: 'Linh Chi', niche: 'Làm đẹp', engagementQuality: 78, kolScore: 87.6, followers: 1_280_000 },
-  { name: 'Minh Quang', niche: 'Công nghệ', engagementQuality: 65, kolScore: 72.1, followers: 542_000 },
+  {
+    name: 'Linh Chi',
+    niche: 'Làm đẹp',
+    engagementQuality: 78,
+    kolScore: 87.6,
+    followers: 1_280_000,
+  },
+  {
+    name: 'Minh Quang',
+    niche: 'Công nghệ',
+    engagementQuality: 65,
+    kolScore: 72.1,
+    followers: 542_000,
+  },
   { name: 'Thu Hà', niche: 'Đời sống', engagementQuality: 71, kolScore: 80.3, followers: 890_000 },
   { name: 'Đức Anh', niche: 'Game', engagementQuality: 58, kolScore: 66.4, followers: 320_000 },
-  { name: 'Bảo Ngọc', niche: 'Thể hình', engagementQuality: 69, kolScore: 76.8, followers: 610_000 },
-  { name: 'Hoàng Long', niche: 'Công nghệ', engagementQuality: 62, kolScore: 70.2, followers: 245_000 },
+  {
+    name: 'Bảo Ngọc',
+    niche: 'Thể hình',
+    engagementQuality: 69,
+    kolScore: 76.8,
+    followers: 610_000,
+  },
+  {
+    name: 'Hoàng Long',
+    niche: 'Công nghệ',
+    engagementQuality: 62,
+    kolScore: 70.2,
+    followers: 245_000,
+  },
 ];
 
 const audienceTree = [

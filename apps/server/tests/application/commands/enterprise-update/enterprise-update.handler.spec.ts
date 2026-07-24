@@ -1,7 +1,7 @@
-import { EnterpriseUpdateCommandHandler } from '@/application/commands/enterprise-update/enterprise-update.handler';
 import { EnterpriseUpdateCommand } from '@/application/commands/enterprise-update/enterprise-update.command';
-import { EnterpriseNotFoundException, EnterpriseForbiddenException } from '@/core/exceptions';
+import { EnterpriseUpdateCommandHandler } from '@/application/commands/enterprise-update/enterprise-update.handler';
 import { EnterpriseRoot } from '@/core/aggregate-roots';
+import { EnterpriseForbiddenException, EnterpriseNotFoundException } from '@/core/exceptions';
 import { createMockEnterpriseRepository } from '../../../__mocks__/mock-repositories';
 
 describe('EnterpriseUpdateCommandHandler', () => {
@@ -16,16 +16,17 @@ describe('EnterpriseUpdateCommandHandler', () => {
   const enterpriseId = 'ent-123';
   const userId = 'user-123';
 
-  const createMockEnterprise = () => EnterpriseRoot.instantiate(enterpriseId, {
-    userId: userId,
-    companyName: 'Old Company',
-    contactEmail: 'old@test.com',
-    isVerified: true,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-    deleteAt: null,
-    deleteBy: null,
-  });
+  const createMockEnterprise = () =>
+    EnterpriseRoot.instantiate(enterpriseId, {
+      userId: userId,
+      companyName: 'Old Company',
+      contactEmail: 'old@test.com',
+      isVerified: true,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      deleteAt: null,
+      deleteBy: null,
+    });
 
   describe('Happy Path', () => {
     it('should update enterprise successfully if owned by current user', async () => {

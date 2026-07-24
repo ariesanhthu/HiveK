@@ -2,8 +2,8 @@
 // FeatureShowcaseSection, so no directive needed (a directive here would make
 // this a client entry and its function props would trip Next's serializable
 // props check).
-import { motion } from "framer-motion";
-import { GALAXY_FEATURES, type GalaxyFeature, type GalaxyFeatureId } from "./galaxy-data";
+import { motion } from 'framer-motion';
+import { GALAXY_FEATURES, type GalaxyFeature, type GalaxyFeatureId } from './galaxy-data';
 
 // Normalize raw orbitPercent values (defined up to 108) so the widest ring
 // fits inside the container with a small margin for the satellite dot.
@@ -33,7 +33,7 @@ const planetStartAngle = (index: number) => 15 + (360 / GALAXY_FEATURES.length) 
 const TILT_SQUASH = 0.8;
 
 /** Solar-system flourish per planet (visual only, not feature data). */
-const PLANET_RING: GalaxyFeatureId = "campaigns";
+const PLANET_RING: GalaxyFeatureId = 'campaigns';
 
 /** Moon orbit radius as a multiple of the planet size, by moon index. */
 const moonOrbit = (i: number) => 0.72 + i * 0.26;
@@ -47,7 +47,7 @@ const moonOrbit = (i: number) => 0.72 + i * 0.26;
 function spinStyle(durationSeconds: number, startAngleDeg: number, reverse = false) {
   const angle = ((startAngleDeg % 360) + 360) % 360;
   return {
-    animation: `${reverse ? "hk-spin-rev" : "hk-spin"} ${durationSeconds}s linear infinite`,
+    animation: `${reverse ? 'hk-spin-rev' : 'hk-spin'} ${durationSeconds}s linear infinite`,
     animationDelay: `${(-(angle / 360) * durationSeconds).toFixed(3)}s`,
   } as const;
 }
@@ -87,16 +87,20 @@ export function PlanetSphere({
 }) {
   return (
     <span
-      className="relative flex items-center justify-center"
+      className='relative flex items-center justify-center'
       style={{ width: sizeCss, height: sizeCss }}
     >
-      {/* Halo — radial gradient, no huge box-shadow (renders cleanly in
-          transformed layers). */}
+      {
+        /* Halo — radial gradient, no huge box-shadow (renders cleanly in
+          transformed layers). */
+      }
       <span
-        className="pointer-events-none absolute inset-[-70%] rounded-full"
+        className='pointer-events-none absolute inset-[-70%] rounded-full'
         style={{
-          background: `radial-gradient(circle, color-mix(in srgb, ${feature.color} ${isSelected ? 45 : 18}%, transparent) 0%, transparent 68%)`,
-          transition: "background .3s",
+          background: `radial-gradient(circle, color-mix(in srgb, ${feature.color} ${
+            isSelected ? 45 : 18
+          }%, transparent) 0%, transparent 68%)`,
+          transition: 'background .3s',
         }}
         aria-hidden
       />
@@ -104,11 +108,11 @@ export function PlanetSphere({
       {/* Saturn-style ring, drawn behind the sphere. */}
       {feature.id === PLANET_RING && (
         <span
-          className="pointer-events-none absolute rounded-[50%] border"
+          className='pointer-events-none absolute rounded-[50%] border'
           style={{
-            width: "185%",
-            height: "52%",
-            transform: "rotate(-24deg)",
+            width: '185%',
+            height: '52%',
+            transform: 'rotate(-24deg)',
             borderWidth: 2,
             borderColor: `color-mix(in srgb, ${feature.color} 65%, transparent)`,
           }}
@@ -118,14 +122,15 @@ export function PlanetSphere({
 
       {/* The sphere: lit from the upper-left like a real planet. */}
       <span
-        className="relative flex h-full w-full items-center justify-center rounded-full"
+        className='relative flex h-full w-full items-center justify-center rounded-full'
         style={{
-          background: `radial-gradient(circle at 32% 28%, color-mix(in srgb, ${feature.color} 45%, #ffffff) 0%, ${feature.color} 46%, color-mix(in srgb, ${feature.color} 45%, #000000) 100%)`,
-          boxShadow: "inset -4px -6px 12px rgba(0,0,0,0.45)",
+          background:
+            `radial-gradient(circle at 32% 28%, color-mix(in srgb, ${feature.color} 45%, #ffffff) 0%, ${feature.color} 46%, color-mix(in srgb, ${feature.color} 45%, #000000) 100%)`,
+          boxShadow: 'inset -4px -6px 12px rgba(0,0,0,0.45)',
         }}
       >
         <span
-          className="material-symbols-outlined text-white/95"
+          className='material-symbols-outlined text-white/95'
           style={{ fontSize: `calc(${sizeCss} * 0.44)` }}
           aria-hidden
         >
@@ -134,27 +139,32 @@ export function PlanetSphere({
 
         {/* Light sweep across the surface in close-up — hints at rotation. */}
         {detailed && (
-          <span className="pointer-events-none absolute inset-0 overflow-hidden rounded-full" aria-hidden>
+          <span
+            className='pointer-events-none absolute inset-0 overflow-hidden rounded-full'
+            aria-hidden
+          >
             <span
-              className="absolute inset-0"
+              className='absolute inset-0'
               style={{
                 background:
-                  "linear-gradient(115deg, transparent 32%, rgba(255,255,255,0.16) 46%, transparent 60%)",
-                animation: "hk-sheen 5.2s ease-in-out infinite",
+                  'linear-gradient(115deg, transparent 32%, rgba(255,255,255,0.16) 46%, transparent 60%)',
+                animation: 'hk-sheen 5.2s ease-in-out infinite',
               }}
             />
           </span>
         )}
       </span>
 
-      {/* Moon orbit guides, only visible in the close-up. Sizes are all
+      {
+        /* Moon orbit guides, only visible in the close-up. Sizes are all
           proportional to sizeCss so the close-up can be a small planet scaled
-          up by the camera zoom and still look identical. */}
-      {detailed &&
-        feature.moons.map((moon, i) => (
+          up by the camera zoom and still look identical. */
+      }
+      {detailed
+        && feature.moons.map((moon, i) => (
           <span
             key={moon.label}
-            className="pointer-events-none absolute rounded-full border border-dashed border-white/15"
+            className='pointer-events-none absolute rounded-full border border-dashed border-white/15'
             style={{
               width: `calc(${sizeCss} * ${(moonOrbit(i) * 2).toFixed(3)})`,
               height: `calc(${sizeCss} * ${(moonOrbit(i) * 2).toFixed(3)})`,
@@ -172,46 +182,48 @@ export function PlanetSphere({
         return (
           <span
             key={moon.label}
-            className="pointer-events-none absolute left-1/2 top-1/2"
+            className='pointer-events-none absolute left-1/2 top-1/2'
             style={{ width: 0, height: 0, ...spinStyle(duration, startAngle) }}
             aria-hidden={!detailed}
           >
             <span
-              className="absolute left-0 top-0"
+              className='absolute left-0 top-0'
               style={{ transform: `translateX(calc(${sizeCss} * ${moonOrbit(i).toFixed(3)}))` }}
             >
               {/* Counter-rotation keeps the moon's icon and label upright. */}
               <span
-                className="absolute left-0 top-0 block"
+                className='absolute left-0 top-0 block'
                 style={spinStyle(duration, startAngle, true)}
               >
-                {/* Centering via framer x/y (not translate classes) so the
-                    staggered entrance scale doesn't override it. */}
+                {
+                  /* Centering via framer x/y (not translate classes) so the
+                    staggered entrance scale doesn't override it. */
+                }
                 <motion.span
-                  className="absolute flex flex-col items-center"
-                  style={{ x: "-50%", y: "-50%", gap: `calc(${sizeCss} * 0.013)` }}
+                  className='absolute flex flex-col items-center'
+                  style={{ x: '-50%', y: '-50%', gap: `calc(${sizeCss} * 0.013)` }}
                   initial={{ opacity: 0, scale: 0.3 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{
                     delay: detailed ? 0.3 + i * 0.14 : 0,
-                    type: "spring",
+                    type: 'spring',
                     stiffness: 260,
                     damping: 18,
                   }}
                 >
                   <span
-                    className="flex items-center justify-center rounded-full"
+                    className='flex items-center justify-center rounded-full'
                     style={{
                       width: `calc(${sizeCss} * ${moonSize})`,
                       height: `calc(${sizeCss} * ${moonSize})`,
                       background:
-                        "radial-gradient(circle at 35% 30%, #f3f4f6 0%, #9ca3af 60%, #4b5563 100%)",
-                      boxShadow: "inset -2px -3px 6px rgba(0,0,0,0.4)",
+                        'radial-gradient(circle at 35% 30%, #f3f4f6 0%, #9ca3af 60%, #4b5563 100%)',
+                      boxShadow: 'inset -2px -3px 6px rgba(0,0,0,0.4)',
                     }}
                   >
                     {detailed && (
                       <span
-                        className="material-symbols-outlined text-gray-800"
+                        className='material-symbols-outlined text-gray-800'
                         style={{ fontSize: `calc(${sizeCss} * ${moonSize} * 0.6)` }}
                       >
                         {moon.icon}
@@ -220,9 +232,9 @@ export function PlanetSphere({
                   </span>
                   {detailed && (
                     <span
-                      className="whitespace-nowrap rounded-full border border-white/15 font-bold text-white/90"
+                      className='whitespace-nowrap rounded-full border border-white/15 font-bold text-white/90'
                       style={{
-                        backgroundColor: "rgba(7, 11, 24, 0.75)",
+                        backgroundColor: 'rgba(7, 11, 24, 0.75)',
                         fontSize: `calc(${sizeCss} * 0.034)`,
                         padding: `calc(${sizeCss} * 0.007) calc(${sizeCss} * 0.034)`,
                         borderWidth: `calc(${sizeCss} * 0.0034)`,
@@ -269,19 +281,19 @@ function Planet({
     // hk-orbit marks the orbital spinners so the section can pause just the
     // orbital motion while zoomed (moons keep animating).
     <div
-      className="hk-orbit absolute left-1/2 top-1/2"
+      className='hk-orbit absolute left-1/2 top-1/2'
       style={{ width: 0, height: 0, ...spinStyle(ORBIT_PERIOD_SECONDS, startAngle) }}
     >
       <div
-        className="absolute left-0 top-0"
+        className='absolute left-0 top-0'
         style={{ transform: `translateX(calc(var(--gsize) * ${radius.toFixed(4)}))` }}
       >
         {/* Counter z-rotation cancels the orbit rotation for the content. */}
-        <div className="hk-orbit" style={spinStyle(ORBIT_PERIOD_SECONDS, startAngle, true)}>
+        <div className='hk-orbit' style={spinStyle(ORBIT_PERIOD_SECONDS, startAngle, true)}>
           {/* Counter-squash restores the planet's true shape. */}
           <div style={{ transform: `scaleY(${(1 / TILT_SQUASH).toFixed(4)})` }}>
             <motion.button
-              type="button"
+              type='button'
               data-planet-id={feature.id}
               onClick={() => onSelect(feature.id)}
               aria-label={`Phóng to ${feature.label}`}
@@ -289,8 +301,8 @@ function Planet({
               whileHover={{ scale: 1.15 }}
               whileTap={{ scale: 0.95 }}
               animate={{ scale: isSelected && !detailed ? 1.2 : 1 }}
-              transition={{ type: "spring", stiffness: 300, damping: 20 }}
-              className="pointer-events-auto absolute flex -translate-x-1/2 -translate-y-1/2 cursor-zoom-in items-center justify-center"
+              transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+              className='pointer-events-auto absolute flex -translate-x-1/2 -translate-y-1/2 cursor-zoom-in items-center justify-center'
               style={{ width: dotSize, height: dotSize }}
             >
               <PlanetSphere
@@ -300,8 +312,10 @@ function Planet({
                 detailed={detailed}
               />
 
-              {/* Floating label chip for the selected planet (hidden while
-                  zoomed — the moon labels take over). */}
+              {
+                /* Floating label chip for the selected planet (hidden while
+                  zoomed — the moon labels take over). */
+              }
               <motion.span
                 initial={false}
                 animate={{
@@ -309,8 +323,8 @@ function Planet({
                   y: isSelected && !detailed ? 0 : -6,
                   scale: isSelected && !detailed ? 1 : 0.85,
                 }}
-                transition={{ type: "spring", stiffness: 320, damping: 22 }}
-                className="pointer-events-none absolute left-1/2 top-full mt-2 -translate-x-1/2 whitespace-nowrap rounded-full border px-3 py-1 text-[11px] font-bold text-white"
+                transition={{ type: 'spring', stiffness: 320, damping: 22 }}
+                className='pointer-events-none absolute left-1/2 top-full mt-2 -translate-x-1/2 whitespace-nowrap rounded-full border px-3 py-1 text-[11px] font-bold text-white'
                 style={{
                   backgroundColor: `color-mix(in srgb, ${feature.color} 30%, #070b18)`,
                   borderColor: `color-mix(in srgb, ${feature.color} 60%, transparent)`,
@@ -330,43 +344,42 @@ function Sun() {
   return (
     <div style={{ transform: `scaleY(${(1 / TILT_SQUASH).toFixed(4)})` }}>
       <div
-        className="relative flex flex-col items-center justify-center rounded-full"
+        className='relative flex flex-col items-center justify-center rounded-full'
         style={{
-          width: "calc(var(--gsize) * 0.15)",
-          height: "calc(var(--gsize) * 0.15)",
+          width: 'calc(var(--gsize) * 0.15)',
+          height: 'calc(var(--gsize) * 0.15)',
           background:
-            "radial-gradient(circle at 38% 35%, #fffbeb 0%, #fde68a 28%, #f59e0b 62%, #d97706 100%)",
-          animation: "hk-pulse 4s ease-in-out infinite",
+            'radial-gradient(circle at 38% 35%, #fffbeb 0%, #fde68a 28%, #f59e0b 62%, #d97706 100%)',
+          animation: 'hk-pulse 4s ease-in-out infinite',
         }}
       >
         {/* Corona — layered radial gradients instead of box-shadow. */}
         <span
-          className="pointer-events-none absolute inset-[-90%] rounded-full"
+          className='pointer-events-none absolute inset-[-90%] rounded-full'
           style={{
             background:
-              "radial-gradient(circle, rgba(245,158,11,0.5) 0%, rgba(245,158,11,0.18) 35%, transparent 68%)",
+              'radial-gradient(circle, rgba(245,158,11,0.5) 0%, rgba(245,158,11,0.18) 35%, transparent 68%)',
           }}
           aria-hidden
         />
         <span
-          className="pointer-events-none absolute inset-[-45%] rounded-full"
+          className='pointer-events-none absolute inset-[-45%] rounded-full'
           style={{
-            background:
-              "radial-gradient(circle, rgba(253,230,138,0.55) 0%, transparent 65%)",
-            animation: "hk-glow 2.6s ease-in-out infinite",
+            background: 'radial-gradient(circle, rgba(253,230,138,0.55) 0%, transparent 65%)',
+            animation: 'hk-glow 2.6s ease-in-out infinite',
           }}
           aria-hidden
         />
         <span
-          className="material-symbols-outlined relative text-amber-950"
-          style={{ fontSize: "calc(var(--gsize) * 0.05)" }}
+          className='material-symbols-outlined relative text-amber-950'
+          style={{ fontSize: 'calc(var(--gsize) * 0.05)' }}
           aria-hidden
         >
           hive
         </span>
         <span
-          className="relative px-1 font-black uppercase tracking-wide text-amber-950"
-          style={{ fontSize: "calc(var(--gsize) * 0.018)" }}
+          className='relative px-1 font-black uppercase tracking-wide text-amber-950'
+          style={{ fontSize: 'calc(var(--gsize) * 0.018)' }}
         >
           Hive-K
         </span>
@@ -380,33 +393,35 @@ export function GalaxyOrbit({ selectedId, zoomedId, onSelect }: GalaxyOrbitProps
 
   return (
     <div
-      className="relative mx-auto select-none [--gsize:min(92vw,420px)] sm:[--gsize:min(88vw,560px)] lg:[--gsize:min(66vw,780px)]"
+      className='relative mx-auto select-none [--gsize:min(92vw,420px)] sm:[--gsize:min(88vw,560px)] lg:[--gsize:min(66vw,780px)]'
       style={{
-        width: "var(--gsize)",
-        height: "calc(var(--gsize) * 0.9)",
-        maxWidth: "100%",
+        width: 'var(--gsize)',
+        height: 'calc(var(--gsize) * 0.9)',
+        maxWidth: '100%',
       }}
     >
       {/* Ambient nebula behind the whole system, tinted by selection. */}
       <div
-        className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full blur-[80px]"
+        className='pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full blur-[80px]'
         style={{
-          width: "calc(var(--gsize) * 0.5)",
-          height: "calc(var(--gsize) * 0.4)",
-          backgroundColor: `color-mix(in srgb, ${selected?.color ?? "var(--color-primary)"} 22%, transparent)`,
-          transition: "background-color .6s",
+          width: 'calc(var(--gsize) * 0.5)',
+          height: 'calc(var(--gsize) * 0.4)',
+          backgroundColor: `color-mix(in srgb, ${
+            selected?.color ?? 'var(--color-primary)'
+          } 22%, transparent)`,
+          transition: 'background-color .6s',
         }}
         aria-hidden
       />
 
       {/* The tilted (squashed) orbital plane. */}
       <div
-        className="absolute left-1/2 top-1/2 flex items-center justify-center"
+        className='absolute left-1/2 top-1/2 flex items-center justify-center'
         style={{
-          width: "var(--gsize)",
-          height: "var(--gsize)",
-          marginLeft: "calc(var(--gsize) * -0.5)",
-          marginTop: "calc(var(--gsize) * -0.5)",
+          width: 'var(--gsize)',
+          height: 'var(--gsize)',
+          marginLeft: 'calc(var(--gsize) * -0.5)',
+          marginTop: 'calc(var(--gsize) * -0.5)',
           transform: `scaleY(${TILT_SQUASH})`,
         }}
       >
@@ -416,17 +431,19 @@ export function GalaxyOrbit({ selectedId, zoomedId, onSelect }: GalaxyOrbitProps
           return (
             <div
               key={f.id}
-              className={`pointer-events-none absolute rounded-full border ${isSelected ? "" : "border-dashed"}`}
+              className={`pointer-events-none absolute rounded-full border ${
+                isSelected ? '' : 'border-dashed'
+              }`}
               style={{
                 width: `calc(var(--gsize) * ${orbitFraction(f).toFixed(4)})`,
                 height: `calc(var(--gsize) * ${orbitFraction(f).toFixed(4)})`,
                 borderColor: isSelected
                   ? `color-mix(in srgb, ${f.color} 60%, transparent)`
-                  : "color-mix(in srgb, #ffffff 16%, transparent)",
+                  : 'color-mix(in srgb, #ffffff 16%, transparent)',
                 boxShadow: isSelected
                   ? `0 0 34px color-mix(in srgb, ${f.color} 20%, transparent), inset 0 0 34px color-mix(in srgb, ${f.color} 10%, transparent)`
-                  : "none",
-                transition: "border-color .4s, box-shadow .4s",
+                  : 'none',
+                transition: 'border-color .4s, box-shadow .4s',
               }}
             />
           );
@@ -434,19 +451,21 @@ export function GalaxyOrbit({ selectedId, zoomedId, onSelect }: GalaxyOrbitProps
 
         {/* Asteroid belt drifting between the outer orbits. */}
         <div
-          className="pointer-events-none absolute left-1/2 top-1/2"
+          className='pointer-events-none absolute left-1/2 top-1/2'
           style={{ width: 0, height: 0, ...spinStyle(140, 0) }}
           aria-hidden
         >
           {ASTEROIDS.map((a) => (
             <span
               key={a.id}
-              className="absolute rounded-full bg-white"
+              className='absolute rounded-full bg-white'
               style={{
                 width: a.size,
                 height: a.size,
                 opacity: a.opacity,
-                transform: `rotate(${a.angle}deg) translateX(calc(var(--gsize) * ${a.radius.toFixed(4)}))`,
+                transform: `rotate(${a.angle}deg) translateX(calc(var(--gsize) * ${
+                  a.radius.toFixed(4)
+                }))`,
               }}
             />
           ))}
@@ -456,10 +475,10 @@ export function GalaxyOrbit({ selectedId, zoomedId, onSelect }: GalaxyOrbitProps
         {[0, 1.6].map((delay) => (
           <span
             key={delay}
-            className="pointer-events-none absolute rounded-full border border-primary/40"
+            className='pointer-events-none absolute rounded-full border border-primary/40'
             style={{
-              width: "calc(var(--gsize) * 0.18)",
-              height: "calc(var(--gsize) * 0.18)",
+              width: 'calc(var(--gsize) * 0.18)',
+              height: 'calc(var(--gsize) * 0.18)',
               animation: `hk-ripple 3.2s ease-out ${delay}s infinite`,
             }}
           />

@@ -1,23 +1,34 @@
-import { Controller, Get, Post, Patch, Param, Body, HttpCode, HttpStatus, UseGuards, Delete } from '@nestjs/common';
-import { CommandBus, QueryBus } from '@nestjs/cqrs';
-import { EnterpriseGetByIdQuery } from '@/application/queries';
 import {
-  EnterpriseCreateCommand,
-  EnterpriseUpdateCommand,
-  EnterpriseCreateInputDto,
-  EnterpriseUpdateInputDto,
   EnterpriseAddUserCommand,
-  EnterpriseRevokeUserCommand,
   EnterpriseAddUserInputDto,
+  EnterpriseCreateCommand,
+  EnterpriseCreateInputDto,
+  EnterpriseRevokeUserCommand,
   EnterpriseRevokeUserInputDto,
+  EnterpriseUpdateCommand,
+  EnterpriseUpdateInputDto,
 } from '@/application/commands';
-import { EnterpriseDto, EnterpriseDetailDto } from '@/application/dtos';
-import { ApiTags, ApiOperation, ApiBearerAuth, ApiSecurity } from '@nestjs/swagger';
-import { buildVersionedRoute } from '@presentation/utils';
-import { JwtAuthGuard, RolesGuard } from '@/presentation/middleware/guards';
+import { EnterpriseDetailDto, EnterpriseDto } from '@/application/dtos';
+import { EnterpriseGetByIdQuery } from '@/application/queries';
+import { ERoleType } from '@/core/enums/role-type.enum';
 import { CurrentUser } from '@/presentation/decorators/current-user.decorator';
 import { Roles } from '@/presentation/decorators/roles.decorator';
-import { ERoleType } from '@/core/enums/role-type.enum';
+import { JwtAuthGuard, RolesGuard } from '@/presentation/middleware/guards';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Param,
+  Patch,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
+import { CommandBus, QueryBus } from '@nestjs/cqrs';
+import { ApiBearerAuth, ApiOperation, ApiSecurity, ApiTags } from '@nestjs/swagger';
+import { buildVersionedRoute } from '@presentation/utils';
 
 @ApiTags('CLIENT-enterprises')
 @ApiBearerAuth()
@@ -29,7 +40,7 @@ export class EnterpriseClientController {
   constructor(
     private readonly commandBus: CommandBus,
     private readonly queryBus: QueryBus,
-  ) { }
+  ) {}
 
   @Post()
   @ApiOperation({ summary: 'Create new enterprise profile' })
@@ -47,15 +58,18 @@ export class EnterpriseClientController {
     @CurrentUser('sub') userId: string,
     @Body() input: EnterpriseUpdateInputDto,
   ): Promise<EnterpriseDto> {
-    return this.commandBus.execute(new EnterpriseUpdateCommand(id, userId, input));
+    return this.commandBus.execute(
+      new EnterpriseUpdateCommand(id, userId, input),
+    );
   }
 
   @Get(':id')
   @ApiOperation({ summary: 'Get enterprise by ID' })
   async getById(@Param('id') id: string): Promise<EnterpriseDetailDto> {
-    const enterprise = await this.queryBus.execute<EnterpriseGetByIdQuery, EnterpriseDetailDto>(
-      new EnterpriseGetByIdQuery(id),
-    );
+    const enterprise = await this.queryBus.execute<
+      EnterpriseGetByIdQuery,
+      EnterpriseDetailDto
+    >(new EnterpriseGetByIdQuery(id));
     return enterprise;
   }
 
@@ -68,7 +82,9 @@ export class EnterpriseClientController {
     @Param('id') enterpriseId: string,
     @Body() dto: EnterpriseAddUserInputDto,
   ): Promise<void> {
-    return this.commandBus.execute(new EnterpriseAddUserCommand(enterpriseId, dto, requestedBy));
+    return this.commandBus.execute(
+      new EnterpriseAddUserCommand(enterpriseId, dto, requestedBy),
+    );
   }
 
   @Delete(':id/members')
@@ -80,6 +96,8 @@ export class EnterpriseClientController {
     @Param('id') enterpriseId: string,
     @Body() dto: EnterpriseRevokeUserInputDto,
   ): Promise<void> {
-    return this.commandBus.execute(new EnterpriseRevokeUserCommand(enterpriseId, dto, requestedBy));
+    return this.commandBus.execute(
+      new EnterpriseRevokeUserCommand(enterpriseId, dto, requestedBy),
+    );
   }
 }

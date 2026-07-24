@@ -1,6 +1,6 @@
-import { Test, TestingModule } from '@nestjs/testing';
 import { OAuthController } from '@/presentation/controllers/http/oauth.controller';
 import { GoogleAuthGuard } from '@/presentation/middleware/guards';
+import { Test, TestingModule } from '@nestjs/testing';
 
 describe('OAuthController', () => {
   let controller: OAuthController;

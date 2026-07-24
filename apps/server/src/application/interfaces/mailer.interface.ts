@@ -1,4 +1,4 @@
-import { JsonObject } from "@/core/types";
+import { JsonObject } from '@/core/types';
 
 export interface ISendMailOptions {
   to: string | string[];
@@ -12,7 +12,7 @@ export interface ISendMailOptions {
   bcc?: string | string[];
   attachments?: Array<{
     filename: string;
-    content?: any;
+    content?: string | Buffer;
     path?: string;
     contentType?: string;
   }>;

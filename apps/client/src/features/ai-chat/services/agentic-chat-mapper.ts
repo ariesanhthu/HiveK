@@ -1,11 +1,11 @@
 import type {
   AgenticChatResponse,
   AgenticNextAction,
-} from "@/features/ai-chat/services/agentic-chat-client";
+} from '@/features/ai-chat/services/agentic-chat-client';
 import {
   getNextIncompleteSetupStep,
   getSetupProgress,
-} from "@/features/ai-chat/services/ai-chat-service";
+} from '@/features/ai-chat/services/ai-chat-service';
 import type {
   AiChatAction,
   AiChatDecision,
@@ -14,37 +14,37 @@ import type {
   AiChatSetup,
   AiChatWidget,
   SetupStepId,
-} from "@/features/ai-chat/types";
+} from '@/features/ai-chat/types';
 
 const FALLBACK_REPLY =
-  "Mình đã nhận yêu cầu nhưng chưa có nội dung trả lời. Bạn thử diễn đạt lại giúp mình nhé.";
+  'Mình đã nhận yêu cầu nhưng chưa có nội dung trả lời. Bạn thử diễn đạt lại giúp mình nhé.';
 
 const AI_CHAT_INTENTS: readonly AiChatIntent[] = [
-  "quick-start",
-  "plan-posts",
-  "campaign-ideas",
-  "find-creators",
-  "analyze-content",
+  'quick-start',
+  'plan-posts',
+  'campaign-ideas',
+  'find-creators',
+  'analyze-content',
 ];
 
 const AI_CHAT_DECISIONS: readonly AiChatDecision[] = [
-  "approve",
-  "reject",
-  "edit",
-  "regenerate",
-  "pin_as_good",
+  'approve',
+  'reject',
+  'edit',
+  'regenerate',
+  'pin_as_good',
 ];
 
-const STEP_WIDGET_TYPE: Record<SetupStepId, AiChatWidget["type"]> = {
-  social: "social-connect",
-  brand: "brand-form",
-  drive: "drive-form",
+const STEP_WIDGET_TYPE: Record<SetupStepId, AiChatWidget['type']> = {
+  social: 'social-connect',
+  brand: 'brand-form',
+  drive: 'drive-form',
 };
 
-const WIDGET_TYPE_STEP: Partial<Record<AiChatWidget["type"], SetupStepId>> = {
-  "social-connect": "social",
-  "brand-form": "brand",
-  "drive-form": "drive",
+const WIDGET_TYPE_STEP: Partial<Record<AiChatWidget['type'], SetupStepId>> = {
+  'social-connect': 'social',
+  'brand-form': 'brand',
+  'drive-form': 'drive',
 };
 
 /**
@@ -53,11 +53,11 @@ const WIDGET_TYPE_STEP: Partial<Record<AiChatWidget["type"], SetupStepId>> = {
  * an `AiChatIntent` and would silently drop the action's button.
  */
 const AGENT_INTENT_ALIASES: Record<string, AiChatIntent> = {
-  setup: "quick-start",
-  update_knowledge: "quick-start",
-  create_content_plan: "plan-posts",
-  create_post: "campaign-ideas",
-  analyze_performance: "analyze-content",
+  setup: 'quick-start',
+  update_knowledge: 'quick-start',
+  create_content_plan: 'plan-posts',
+  create_post: 'campaign-ideas',
+  analyze_performance: 'analyze-content',
 };
 
 function mapIntent(intent: string | null | undefined): AiChatIntent | null {
@@ -67,7 +67,7 @@ function mapIntent(intent: string | null | undefined): AiChatIntent | null {
   const aliased = AGENT_INTENT_ALIASES[raw];
   if (aliased) return aliased;
 
-  const normalized = raw.replace(/_/g, "-");
+  const normalized = raw.replace(/_/g, '-');
   return AI_CHAT_INTENTS.find((known) => known === normalized) ?? null;
 }
 
@@ -85,29 +85,29 @@ function isExternalHref(href: string): boolean {
 /** Action payloads keep snake_case keys even though the reply is camelCase. */
 function readAssetId(payload: Record<string, unknown>): string | null {
   const assetId = payload.asset_id ?? payload.assetId;
-  return typeof assetId === "string" && assetId.length > 0 ? assetId : null;
+  return typeof assetId === 'string' && assetId.length > 0 ? assetId : null;
 }
 
 function mapAction(
   action: AgenticNextAction,
-  replyAssetId: string | null
+  replyAssetId: string | null,
 ): AiChatAction | null {
   const base = { id: action.id, label: action.label, variant: action.variant };
 
-  if (action.kind === "href") {
+  if (action.kind === 'href') {
     if (!action.href) return null;
 
     return {
       ...base,
-      kind: "href",
+      kind: 'href',
       href: action.href,
       external: isExternalHref(action.href),
     };
   }
 
-  if (action.kind === "intent") {
+  if (action.kind === 'intent') {
     const intent = mapIntent(action.intent);
-    return intent ? { ...base, kind: "intent", intent } : null;
+    return intent ? { ...base, kind: 'intent', intent } : null;
   }
 
   const decision = mapDecision(action.decision);
@@ -115,12 +115,12 @@ function mapAction(
 
   if (!decision || !assetId) return null;
 
-  return { ...base, kind: "decision", decision, assetId };
+  return { ...base, kind: 'decision', decision, assetId };
 }
 
 export function mapChatActions(
   actions: AgenticNextAction[],
-  replyAssetId: string | null
+  replyAssetId: string | null,
 ): AiChatAction[] {
   return actions
     .map((action) => mapAction(action, replyAssetId))
@@ -128,8 +128,8 @@ export function mapChatActions(
 }
 
 export function resolveWidget(
-  widgetType: AiChatWidget["type"] | undefined,
-  setup: AiChatSetup
+  widgetType: AiChatWidget['type'] | undefined,
+  setup: AiChatSetup,
 ): AiChatWidget | undefined {
   if (!widgetType) return undefined;
 
@@ -143,18 +143,18 @@ export function resolveWidget(
   // two of them (audience, product) have no field in this UI — so it would ask
   // for a step already done and stall the flow. Advance to the next open step.
   const nextStep = getNextIncompleteSetupStep(setup);
-  return nextStep ? { type: STEP_WIDGET_TYPE[nextStep] } : { type: "setup-complete" };
+  return nextStep ? { type: STEP_WIDGET_TYPE[nextStep] } : { type: 'setup-complete' };
 }
 
 export function mapChatTurn(
   response: AgenticChatResponse,
-  setup: AiChatSetup
+  setup: AiChatSetup,
 ): AiChatMessageDraft {
   const widget = resolveWidget(response.widget?.type, setup);
   const actions = mapChatActions(response.nextActions, response.asset?.assetId ?? null);
 
   return {
-    role: "assistant",
+    role: 'assistant',
     content: response.reply.trim() || FALLBACK_REPLY,
     ...(widget ? { widget } : {}),
     ...(actions.length > 0 ? { actions } : {}),

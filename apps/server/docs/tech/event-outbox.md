@@ -19,6 +19,7 @@ graph TD
 ```
 
 ### Components and Responsibilities:
+
 1. **Aggregate Root (`BaseAggregateRoot`)**: Domain entity that encapsulates business logic and accumulates internal domain events (`domainEvents`).
 2. **Command Handler**: Application-level orchestrator. Resolves domain commands, calls repository `.save()`, and executes `publishEvents(aggregate)` on the injected event service.
 3. **Event Service (`IEventService` / `EventService`)**: Infrastructure implementation that:
@@ -36,7 +37,9 @@ graph TD
 ## 2. Code Definitions
 
 ### 2.1 Event Service Interface (Application Layer)
+
 Defined at [event-service.interface.ts](file:///home/gnourt/data/hcmus/competition/start-up/HiveK/apps/server/src/application/interfaces/event-service.interface.ts):
+
 ```typescript
 import { BaseAggregateRoot } from '@/core/common';
 
@@ -50,28 +53,30 @@ export const EVENT_SERVICE = Symbol('IEventService');
 ```
 
 ### 2.2 Event Service Implementation (Infrastructure Layer)
+
 Defined at [event.service.ts](file:///home/gnourt/data/hcmus/competition/start-up/HiveK/apps/server/src/infrastructure/events/event.service.ts):
+
 ```typescript
+import { type IUnitOfWork, UNIT_OF_WORK } from '@/application/interfaces';
+import {
+  DOMAIN_EVENT_MAPPER,
+  type IDomainEventMapper,
+} from '@/application/interfaces/domain-event-mapper.interface';
+import { IEventService } from '@/application/interfaces/event-service.interface';
+import { BaseAggregateRoot } from '@/core/common';
 import { Inject, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, ClientSession } from 'mongoose';
-import { IEventService } from '@/application/interfaces/event-service.interface';
-import { DOMAIN_EVENT_MAPPER, type IDomainEventMapper } from '@/application/interfaces/domain-event-mapper.interface';
-import { BaseAggregateRoot } from '@/core/common';
-import { OutboxModel, EOutboxStatus } from '../mongo/schemas/outbox.schema';
+import { ClientSession, Model } from 'mongoose';
+import { EOutboxStatus, OutboxModel } from '../mongo/schemas/outbox.schema';
 import { OutboxEventEmitter } from './outbox/outbox-event.emitter';
-import { type IUnitOfWork, UNIT_OF_WORK } from '@/application/interfaces';
 
 @Injectable()
 export class EventService implements IEventService {
   constructor(
-    @Inject(DOMAIN_EVENT_MAPPER)
-    private readonly eventMapper: IDomainEventMapper,
-    @InjectModel(OutboxModel.name)
-    private readonly outboxModel: Model<OutboxModel>,
+    @Inject(DOMAIN_EVENT_MAPPER) private readonly eventMapper: IDomainEventMapper,
+    @InjectModel(OutboxModel.name) private readonly outboxModel: Model<OutboxModel>,
     private readonly outboxEmitter: OutboxEventEmitter,
-    @Inject(UNIT_OF_WORK)
-    private readonly uow: IUnitOfWork,
+    @Inject(UNIT_OF_WORK) private readonly uow: IUnitOfWork,
   ) {}
 
   async publishEvents(
@@ -83,7 +88,7 @@ export class EventService implements IEventService {
       agg.clearDomainEvents();
       return events;
     });
-    
+
     if (domainEvents.length === 0) return;
 
     const integrationEvents = this.eventMapper.mapToIntegrationEvents(domainEvents);
@@ -102,14 +107,16 @@ export class EventService implements IEventService {
 
     const activeSession = (this.uow as any).getSession?.() || undefined;
     await this.outboxModel.insertMany(outboxRows, { session: activeSession as ClientSession });
-    
+
     this.outboxEmitter.emit();
   }
 }
 ```
 
 ### 2.3 Outbox Event Emitter
+
 Defined at [outbox-event.emitter.ts](file:///home/gnourt/data/hcmus/competition/start-up/HiveK/apps/server/src/infrastructure/events/outbox/outbox-event.emitter.ts):
+
 ```typescript
 import { Injectable } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
@@ -125,30 +132,39 @@ export class OutboxEventEmitter {
 ```
 
 ### 2.4 Outbox Processor Service
+
 Defined at [outbox-processor.service.ts](file:///home/gnourt/data/hcmus/competition/start-up/HiveK/apps/server/src/infrastructure/events/outbox/outbox-processor.service.ts):
+
 ```typescript
-import { Injectable, Inject } from '@nestjs/common';
-import { Cron, CronExpression } from '@nestjs/schedule';
+import {
+  type ILoggerService,
+  type IMessageQueueService,
+  type IUnitOfWork,
+  LOGGER_SERVICE,
+  MESSAGE_QUEUE_SERVICE,
+  UNIT_OF_WORK,
+} from '@/application/interfaces';
+import {
+  EOutboxStatus,
+  OutboxDocument,
+  OutboxModel,
+} from '@/infrastructure/mongo/schemas/outbox.schema';
+import { errorMessage, toError } from '@/shared/utils';
+import { Inject, Injectable } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
 import { InjectModel } from '@nestjs/mongoose';
+import { Cron, CronExpression } from '@nestjs/schedule';
 import { Model } from 'mongoose';
-import { OutboxModel, OutboxDocument, EOutboxStatus } from '@/infrastructure/mongo/schemas/outbox.schema';
-import { MESSAGE_QUEUE_SERVICE, type IMessageQueueService, UNIT_OF_WORK, type IUnitOfWork, LOGGER_SERVICE, type ILoggerService } from '@/application/interfaces';
-import { errorMessage, toError } from '@/shared/utils';
 
 @Injectable()
 export class OutboxProcessorService {
   private isProcessing = false;
 
   constructor(
-    @InjectModel(OutboxModel.name)
-    private readonly outboxModel: Model<OutboxModel>,
-    @Inject(MESSAGE_QUEUE_SERVICE)
-    private readonly mqService: IMessageQueueService,
-    @Inject(UNIT_OF_WORK)
-    private readonly uow: IUnitOfWork,
-    @Inject(LOGGER_SERVICE)
-    private readonly logger: ILoggerService,
+    @InjectModel(OutboxModel.name) private readonly outboxModel: Model<OutboxModel>,
+    @Inject(MESSAGE_QUEUE_SERVICE) private readonly mqService: IMessageQueueService,
+    @Inject(UNIT_OF_WORK) private readonly uow: IUnitOfWork,
+    @Inject(LOGGER_SERVICE) private readonly logger: ILoggerService,
   ) {
     this.logger.setContext(OutboxProcessorService.name);
   }

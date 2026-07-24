@@ -1,7 +1,7 @@
 import { BaseAggregateRoot } from '@/core/common/base.aggregate-root';
-import { ERoleType } from '../enums';
 import { Nullable } from '@/core/types';
 import { PhoneNumberVO } from '@/core/value-objects/phone-number.value-object';
+import { ERoleType } from '../enums';
 
 export interface UserProps {
   email: string;
@@ -20,12 +20,26 @@ export interface UserProps {
   googleId: Nullable<string>;
 }
 
-export type UserCreateProps = Omit<UserProps, 'createdAt' | 'updatedAt' | 'deleteAt' | 'deleteBy' | 'refreshToken' | 'googleId' | 'isEmailVerified' | 'avatar'> & {
-  googleId?: Nullable<string>;
-  isEmailVerified?: boolean;
-};
+export type UserCreateProps =
+  & Omit<
+    UserProps,
+    | 'createdAt'
+    | 'updatedAt'
+    | 'deleteAt'
+    | 'deleteBy'
+    | 'refreshToken'
+    | 'googleId'
+    | 'isEmailVerified'
+    | 'avatar'
+  >
+  & {
+    googleId?: Nullable<string>;
+    isEmailVerified?: boolean;
+  };
 
-export abstract class UserRoot<T extends UserProps = UserProps> extends BaseAggregateRoot<T> {
+export abstract class UserRoot<
+  T extends UserProps = UserProps,
+> extends BaseAggregateRoot<T> {
   protected constructor(props: T, id?: string) {
     super(props, id);
   }

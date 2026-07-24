@@ -4,7 +4,7 @@ import { KolProfileEntity } from '@/core/entities/kol-profile.entity';
 export class KolProfileMapper {
   static toDto(entity: KolProfileEntity): KolProfileDto {
     return {
-      id: entity.id!,
+      id: entity.id,
       userId: entity.userId,
       verificationType: entity.verificationType,
       name: entity.name,

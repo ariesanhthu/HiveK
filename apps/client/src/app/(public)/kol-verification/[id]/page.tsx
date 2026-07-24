@@ -1,18 +1,18 @@
-import type { Metadata } from "next";
-import { headers } from "next/headers";
 import {
   getCertificateById,
   KolVerificationCertificateView,
-} from "@/features/kol-verification-certificate";
+} from '@/features/kol-verification-certificate';
+import type { Metadata } from 'next';
+import { headers } from 'next/headers';
 
 type PageProps = {
-  params: Promise<{ id: string }>;
+  params: Promise<{ id: string; }>;
 };
 
 async function resolveVerifyUrl(id: string): Promise<string> {
   const h = await headers();
-  const host = h.get("x-forwarded-host") ?? h.get("host");
-  const proto = h.get("x-forwarded-proto") ?? "http";
+  const host = h.get('x-forwarded-host') ?? h.get('host');
+  const proto = h.get('x-forwarded-proto') ?? 'http';
   if (!host) {
     return `/kol-verification/${encodeURIComponent(id)}`;
   }
@@ -27,7 +27,7 @@ export async function generateMetadata({
   return {
     title: `${data.displayName} | Chứng nhận xác minh | Hive-K`,
     description:
-      "Chứng nhận xác minh creator: metrics, kiểm tra hệ thống và phản hồi đối tác đã xác minh.",
+      'Chứng nhận xác minh creator: metrics, kiểm tra hệ thống và phản hồi đối tác đã xác minh.',
     openGraph: {
       title: `Creator Verification — ${data.displayName}`,
       description: `Verification ID ${data.verificationId}`,
@@ -44,7 +44,7 @@ export default async function KolVerificationCertificatePage({
   const verifyUrl = await resolveVerifyUrl(decoded);
 
   return (
-    <div className="min-h-[60vh] bg-muted/40">
+    <div className='min-h-[60vh] bg-muted/40'>
       <KolVerificationCertificateView data={data} verifyUrl={verifyUrl} />
     </div>
   );

@@ -1,13 +1,17 @@
+import { NotificationType, TargetType } from '@/core/enums';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Schema as MongooseSchema } from 'mongoose';
-import { NotificationType, TargetType } from '@/core/enums';
 
 @Schema({
   collection: 'notifications',
   timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' },
 })
 export class NotificationModel {
-  @Prop({ required: true, type: MongooseSchema.Types.String, enum: NotificationType })
+  @Prop({
+    required: true,
+    type: MongooseSchema.Types.String,
+    enum: NotificationType,
+  })
   type: NotificationType;
 
   @Prop({ required: true, type: MongooseSchema.Types.String })

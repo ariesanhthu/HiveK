@@ -1,13 +1,16 @@
-import { UserProps, UserRoot, UserCreateProps } from './user.aggregate';
 import { ERoleType } from '../enums';
-import { UserSignedUpEvent, UserAddedToEnterpriseEvent, UserRevokedFromEnterpriseEvent } from '../events';
+import {
+  UserAddedToEnterpriseEvent,
+  UserRevokedFromEnterpriseEvent,
+  UserSignedUpEvent,
+} from '../events';
+import { UserCreateProps, UserProps, UserRoot } from './user.aggregate';
 
 export interface EnterpriseUserProps extends UserProps {
   enterpriseIds: string[];
 }
 
-export interface EnterpriseUserCreateProps extends UserCreateProps {
-}
+export type EnterpriseUserCreateProps = UserCreateProps;
 
 export class EnterpriseUserRoot extends UserRoot<EnterpriseUserProps> {
   private constructor(props: EnterpriseUserProps, id?: string) {
@@ -16,15 +19,14 @@ export class EnterpriseUserRoot extends UserRoot<EnterpriseUserProps> {
 
   public override setId(id: string): void {
     super.setId(id);
-    this.addDomainEvent(new UserSignedUpEvent(
-      this.id,
-      {
+    this.addDomainEvent(
+      new UserSignedUpEvent(this.id, {
         email: this.props.email,
         fullName: this.props.fullName,
         phone: this.props.phone?.value,
         type: ERoleType.ENTERPRISE,
-      },
-    ));
+      }),
+    );
   }
 
   public static create(props: EnterpriseUserCreateProps): EnterpriseUserRoot {
@@ -45,7 +47,10 @@ export class EnterpriseUserRoot extends UserRoot<EnterpriseUserProps> {
     });
   }
 
-  public static instantiate(id: string, props: EnterpriseUserProps): EnterpriseUserRoot {
+  public static instantiate(
+    id: string,
+    props: EnterpriseUserProps,
+  ): EnterpriseUserRoot {
     return new EnterpriseUserRoot(props, id);
   }
 
@@ -60,32 +65,32 @@ export class EnterpriseUserRoot extends UserRoot<EnterpriseUserProps> {
     this.props.enterpriseIds.push(enterpriseId);
     this.props.updatedAt = new Date();
 
-    this.addDomainEvent(new UserAddedToEnterpriseEvent(
-      this.id!,
-      {
-        userId: this.id!,
+    this.addDomainEvent(
+      new UserAddedToEnterpriseEvent(this.id, {
+        userId: this.id,
         userEmail: this.email,
         enterpriseId,
         enterpriseName,
-      }
-    ));
+      }),
+    );
   }
 
   public revokeEnterprise(enterpriseId: string, enterpriseName?: string): void {
     if (!this.props.enterpriseIds.includes(enterpriseId)) {
       return;
     }
-    this.props.enterpriseIds = this.props.enterpriseIds.filter(id => id !== enterpriseId);
+    this.props.enterpriseIds = this.props.enterpriseIds.filter(
+      (id) => id !== enterpriseId,
+    );
     this.props.updatedAt = new Date();
 
-    this.addDomainEvent(new UserRevokedFromEnterpriseEvent(
-      this.id!,
-      {
-        userId: this.id!,
+    this.addDomainEvent(
+      new UserRevokedFromEnterpriseEvent(this.id, {
+        userId: this.id,
         userEmail: this.email,
         enterpriseId,
         enterpriseName,
-      }
-    ));
+      }),
+    );
   }
 }

@@ -1,6 +1,6 @@
-import { z } from 'zod';
-import { createZodDto } from 'nestjs-zod';
 import { CursorPaginationRequestSchema } from '@/application/dtos/pagination.dto';
+import { createZodDto } from 'nestjs-zod';
+import { z } from 'zod';
 
 export const CampaignFilterSchema = CursorPaginationRequestSchema.extend({
   name: z.string().optional(),

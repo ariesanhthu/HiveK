@@ -1,21 +1,23 @@
-import { z } from 'zod';
-import { createZodDto } from 'nestjs-zod';
-import { ERoleType } from '@/core/enums';
 import { CursorPaginationRequestSchema } from '@/application/dtos/pagination.dto';
+import { ERoleType } from '@/core/enums';
+import { createZodDto } from 'nestjs-zod';
+import { z } from 'zod';
 import { RoleDto } from './role.dto';
 import { UploadedFileDto } from './uploaded-file.dto';
 
-const BaseUserDtoSchema = z.object({
-  id: z.string(),
-  email: z.string(),
-  phone: z.string(),
-  fullName: z.string(),
-  avatar: z.string().nullable(),
-  roleId: z.string(),
-  isEmailVerified: z.boolean(),
-  createdAt: z.string(),
-  updatedAt: z.string(),
-}).strict();
+const BaseUserDtoSchema = z
+  .object({
+    id: z.string(),
+    email: z.string(),
+    phone: z.string(),
+    fullName: z.string(),
+    avatar: z.string().nullable(),
+    roleId: z.string(),
+    isEmailVerified: z.boolean(),
+    createdAt: z.string(),
+    updatedAt: z.string(),
+  })
+  .strict();
 
 export const AdminDtoSchema = BaseUserDtoSchema.extend({
   type: z.literal(ERoleType.ADMIN),
@@ -47,12 +49,15 @@ export const UserFilterSchema = CursorPaginationRequestSchema.extend({
   fullName: z.string().optional(),
   type: z.enum(ERoleType).optional(),
   roleId: z.string().optional(),
-  isEmailVerified: z.preprocess((val) => val === 'true' || val === true, z.boolean()).optional(),
+  isEmailVerified: z
+    .preprocess((val) => val === 'true' || val === true, z.boolean())
+    .optional(),
 });
 
 export class UserFilterDto extends createZodDto(UserFilterSchema) {}
 
-type DistributiveOmit<T, K extends keyof any> = T extends any ? Omit<T, K> : never;
+type DistributiveOmit<T, K extends keyof any> = T extends any ? Omit<T, K>
+  : never;
 
 export type UserDetailDto = DistributiveOmit<UserDto, 'avatar'> & {
   avatar: UploadedFileDto | null;
