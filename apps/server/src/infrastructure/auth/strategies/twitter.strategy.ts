@@ -20,10 +20,17 @@ export class TwitterStrategy extends PassportStrategy(Strategy, 'twitter') {
     });
   }
 
-  async validate(req: any, token: string, tokenSecret: string, profile: any): Promise<any> {
+  async validate(
+    req: any,
+    token: string,
+    tokenSecret: string,
+    profile: any,
+  ): Promise<any> {
     const userId = req.user?.sub || req.user?.id;
     if (!userId) {
-      throw new UnauthorizedException('No authenticated user session found for verification');
+      throw new UnauthorizedException(
+        'No authenticated user session found for verification',
+      );
     }
 
     const { id, username, displayName, emails } = profile;

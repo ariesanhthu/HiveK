@@ -30,13 +30,17 @@ export class CampaignParticipantResolver {
     const projectionDto = new ProjectionDto();
     projectionDto.fields = fieldsMap;
 
-    return this.queryBus.execute(new CampaignParticipantGetByIdQuery(id, projectionDto));
+    return this.queryBus.execute(
+      new CampaignParticipantGetByIdQuery(id, projectionDto),
+    );
   }
 
   @Query(() => CampaignParticipantResponse, { name: 'campaignParticipants' })
   async getCampaignParticipants(
-    @Args('filters', { type: () => CampaignParticipantFilterInput, nullable: true }) filters:
-      CampaignParticipantFilterInput,
+    @Args('filters', {
+      type: () => CampaignParticipantFilterInput,
+      nullable: true,
+    }) filters: CampaignParticipantFilterInput,
     @Info() info: GraphQLResolveInfo,
   ) {
     const fieldsMap = graphqlFields(info);

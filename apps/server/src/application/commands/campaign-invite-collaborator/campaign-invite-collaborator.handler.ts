@@ -14,8 +14,11 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { CampaignInviteCollaboratorCommand } from './campaign-invite-collaborator.command';
 
 @CommandHandler(CampaignInviteCollaboratorCommand)
-export class CampaignInviteCollaboratorCommandHandler
-  implements ICommandHandler<CampaignInviteCollaboratorCommand, void>
+export class CampaignInviteCollaboratorCommandHandler implements
+  ICommandHandler<
+    CampaignInviteCollaboratorCommand,
+    void
+  >
 {
   constructor(
     @Inject(CAMPAIGN_REPOSITORY) private readonly campaignRepository: ICampaignRepository,
@@ -35,8 +38,8 @@ export class CampaignInviteCollaboratorCommandHandler
 
       const users = await this.userRepository.findByIds(dto.memberIds);
       if (users.length !== dto.memberIds.length) {
-        const foundIds = new Set(users.map(u => u.id));
-        const missingIds = dto.memberIds.filter(id => !foundIds.has(id));
+        const foundIds = new Set(users.map((u) => u.id));
+        const missingIds = dto.memberIds.filter((id) => !foundIds.has(id));
         throw new UserNotFoundException(missingIds.join(', '));
       }
 

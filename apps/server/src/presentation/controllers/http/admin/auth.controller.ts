@@ -69,7 +69,9 @@ export class AuthAdminController {
     @Body() input: AuthSignInInputDto,
     @Res({ passthrough: true }) response: Response,
   ) {
-    const result = await this.commandBus.execute(new AuthSignInCommand(input, true));
+    const result = await this.commandBus.execute(
+      new AuthSignInCommand(input, true),
+    );
     if (result && result.accessToken) {
       response.cookie('access_token', result.accessToken, {
         httpOnly: true,
@@ -180,7 +182,9 @@ export class AuthAdminController {
     @CurrentUser('sub') userId: string,
     @Body() input: AuthChangePasswordInputDto,
   ) {
-    return this.commandBus.execute(new AuthChangePasswordCommand(userId, input));
+    return this.commandBus.execute(
+      new AuthChangePasswordCommand(userId, input),
+    );
   }
 
   @Get('profile')

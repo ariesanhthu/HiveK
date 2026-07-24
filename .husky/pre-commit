@@ -1,1 +1,2 @@
-pnpm exec dprint check
+pnpm --filter server exec tsc --noEmit -p tsconfig.build.json
+pnpm exec lint-staged

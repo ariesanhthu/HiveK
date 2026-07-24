@@ -14,16 +14,24 @@ export class FacebookStrategy extends PassportStrategy(Strategy, 'facebook') {
     super({
       clientID: authConfig.getFacebookAppId(),
       clientSecret: authConfig.getFacebookAppSecret(),
-      callbackURL: authConfig.getFacebookCallbackUrl() || 'http://localhost/dummy-callback',
+      callbackURL: authConfig.getFacebookCallbackUrl()
+        || 'http://localhost/dummy-callback',
       profileFields: ['id', 'displayName', 'emails'],
       passReqToCallback: true,
     });
   }
 
-  async validate(req: any, accessToken: string, refreshToken: string, profile: any): Promise<any> {
-    const userId = req.query.state || (req.user?.sub || req.user?.id);
+  async validate(
+    req: any,
+    accessToken: string,
+    refreshToken: string,
+    profile: any,
+  ): Promise<any> {
+    const userId = req.query.state || req.user?.sub || req.user?.id;
     if (!userId) {
-      throw new UnauthorizedException('No user state or user session provided for verification');
+      throw new UnauthorizedException(
+        'No user state or user session provided for verification',
+      );
     }
 
     const { id, displayName, emails } = profile;

@@ -21,7 +21,10 @@ export class MongoKolProfileRepository implements IKolProfileRepository {
   }
 
   async findById(id: string): Promise<Nullable<KolProfileEntity>> {
-    const doc = await this.kolProfileModel.findById(id).session(this.session).exec();
+    const doc = await this.kolProfileModel
+      .findById(id)
+      .session(this.session)
+      .exec();
     return doc ? this.mapToDomain(doc) : null;
   }
 
@@ -29,27 +32,36 @@ export class MongoKolProfileRepository implements IKolProfileRepository {
     platformId: string,
     externalId: string,
   ): Promise<Nullable<KolProfileEntity>> {
-    const doc = await this.kolProfileModel.findOne({
-      'platforms.platform_id': platformId,
-      'platforms.external_id': externalId,
-    }).session(this.session).exec();
+    const doc = await this.kolProfileModel
+      .findOne({
+        'platforms.platform_id': platformId,
+        'platforms.external_id': externalId,
+      })
+      .session(this.session)
+      .exec();
     return doc ? this.mapToDomain(doc) : null;
   }
 
   async findByUserId(userId: string): Promise<Nullable<KolProfileEntity>> {
-    const doc = await this.kolProfileModel.findOne({ user_id: new Types.ObjectId(userId) as any })
-      .session(this.session).exec();
+    const doc = await this.kolProfileModel
+      .findOne({ user_id: new Types.ObjectId(userId) as any })
+      .session(this.session)
+      .exec();
     return doc ? this.mapToDomain(doc) : null;
   }
 
   async existsByPlatformId(platformId: string): Promise<boolean> {
-    const doc = await this.kolProfileModel.findOne(
-      {
-        'platforms.platform_id': platformId,
-        delete_at: null,
-      },
-      { _id: 1 },
-    ).session(this.session).lean().exec();
+    const doc = await this.kolProfileModel
+      .findOne(
+        {
+          'platforms.platform_id': platformId,
+          delete_at: null,
+        },
+        { _id: 1 },
+      )
+      .session(this.session)
+      .lean()
+      .exec();
     return !!doc;
   }
 
@@ -61,18 +73,22 @@ export class MongoKolProfileRepository implements IKolProfileRepository {
       const saved = await created.save({ session: this.session });
       entity.setId(saved._id.toString());
     } else {
-      await this.kolProfileModel.findByIdAndUpdate(entity.id, data, { upsert: true }).session(
-        this.session,
-      ).exec();
+      await this.kolProfileModel
+        .findByIdAndUpdate(entity.id, data, { upsert: true })
+        .session(this.session)
+        .exec();
     }
   }
 
   async saveMany(entities: KolProfileEntity[]): Promise<void> {
-    await Promise.all(entities.map(e => this.save(e)));
+    await Promise.all(entities.map((e) => this.save(e)));
   }
 
   async delete(id: string): Promise<void> {
-    await this.kolProfileModel.findByIdAndDelete(id).session(this.session).exec();
+    await this.kolProfileModel
+      .findByIdAndDelete(id)
+      .session(this.session)
+      .exec();
   }
 
   private mapToDomain(doc: KolProfileDocument): KolProfileEntity {
@@ -122,7 +138,9 @@ export class MongoKolProfileRepository implements IKolProfileRepository {
     }));
 
     return {
-      user_id: entity.userId ? new Types.ObjectId(entity.userId) as any : null,
+      user_id: entity.userId
+        ? (new Types.ObjectId(entity.userId) as any)
+        : null,
       verification_type: entity.verificationType,
       name: entity.name,
       location: entity.location ?? null,

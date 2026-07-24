@@ -8,8 +8,11 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { EnterpriseUpdateCommand } from './enterprise-update.command';
 
 @CommandHandler(EnterpriseUpdateCommand)
-export class EnterpriseUpdateCommandHandler
-  implements ICommandHandler<EnterpriseUpdateCommand, EnterpriseDto>
+export class EnterpriseUpdateCommandHandler implements
+  ICommandHandler<
+    EnterpriseUpdateCommand,
+    EnterpriseDto
+  >
 {
   constructor(
     @Inject(ENTERPRISE_REPOSITORY) private readonly enterpriseRepository: IEnterpriseRepository,

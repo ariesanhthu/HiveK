@@ -88,7 +88,9 @@ export class KolProfileAdminController {
     @Param('id') id: string,
     @Query() dto: SoftDeleteInputDto,
   ): Promise<void> {
-    return this.commandBus.execute(new KolProfileSoftDeleteCommand(id, dto.deletedBy));
+    return this.commandBus.execute(
+      new KolProfileSoftDeleteCommand(id, dto.deletedBy),
+    );
   }
 
   @Delete(':id')

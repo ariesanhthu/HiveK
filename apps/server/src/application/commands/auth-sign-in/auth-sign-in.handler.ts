@@ -8,8 +8,11 @@ import { AuthSignInCommand } from './auth-sign-in.command';
 import { AuthSignInOutputDto } from './auth-sign-in.dto';
 
 @CommandHandler(AuthSignInCommand)
-export class AuthSignInCommandHandler
-  implements ICommandHandler<AuthSignInCommand, AuthSignInOutputDto>
+export class AuthSignInCommandHandler implements
+  ICommandHandler<
+    AuthSignInCommand,
+    AuthSignInOutputDto
+  >
 {
   constructor(
     @Inject(USER_REPOSITORY) private readonly userRepository: IUserRepository,

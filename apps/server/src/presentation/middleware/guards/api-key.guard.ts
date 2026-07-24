@@ -15,12 +15,12 @@ export class ApiKeyGuard implements CanActivate {
   canActivate(
     context: ExecutionContext,
   ): boolean | Promise<boolean> | Observable<boolean> {
-    const type = context.getType() as string;
+    const type = context.getType();
     let request: FastifyRequest | undefined;
 
-    if (type === 'graphql') {
+    if ((type as string) === 'graphql') {
       const gqlCtx = GqlExecutionContext.create(context);
-      request = gqlCtx.getContext<GraphQLContext>().req;
+      request = gqlCtx.getContext<GraphQLContext>()?.req;
     } else {
       request = context.switchToHttp().getRequest<FastifyRequest>();
     }
@@ -29,11 +29,9 @@ export class ApiKeyGuard implements CanActivate {
     if (
       request
       && request.method === 'GET'
-      && (
-        request.url?.includes('/graphql')
+      && (request.url?.includes('/graphql')
         || request.url?.includes('/hivek/graphql')
-        || request.url?.includes('/hivek/api/docs')
-      )
+        || request.url?.includes('/hivek/api/docs'))
     ) {
       return true;
     }

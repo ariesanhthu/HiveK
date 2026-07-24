@@ -1,4 +1,8 @@
-import { IntegrationEvent } from '@/core/common/base.integration-event';
+import {
+  EventMetadata,
+  IntegrationEvent,
+  TransportMetadata,
+} from '@/core/common/base.integration-event';
 
 export interface NotifyKolCampaignInvitationPayload {
   campaignParticipantId: string;
@@ -15,8 +19,8 @@ export class NotifyKolCampaignInvitationEvent
 
   constructor(
     payload: NotifyKolCampaignInvitationPayload,
-    metadata?: any,
-    transport?: any,
+    metadata?: EventMetadata,
+    transport?: TransportMetadata,
   ) {
     super(payload, metadata, transport);
   }

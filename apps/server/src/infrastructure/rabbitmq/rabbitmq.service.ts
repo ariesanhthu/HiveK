@@ -19,7 +19,10 @@ export class RabbitMQService implements IMessageQueueService {
   /**
    * Emit event to RabbitMQ exchange with routing key
    */
-  async emit<TEvent = string, TData = any>(pattern: TEvent, data: TData): Promise<void> {
+  async emit<TEvent = string, TData = any>(
+    pattern: TEvent,
+    data: TData,
+  ): Promise<void> {
     try {
       const routingKey = this.resolveRoutingKey(pattern as string);
       this.logger.debug(
@@ -27,7 +30,9 @@ export class RabbitMQService implements IMessageQueueService {
       );
       await this.producer.publish(routingKey, data);
     } catch (error) {
-      this.logger.error(`Failed to emit event "${pattern}": ${errorMessage(error)}`);
+      this.logger.error(
+        `Failed to emit event "${pattern}": ${errorMessage(error)}`,
+      );
       throw error;
     }
   }

@@ -14,15 +14,16 @@ import { buildVersionedRoute } from '@presentation/utils';
 @UseGuards(JwtAuthGuard)
 @Controller(buildVersionedRoute('client', 'users', 1))
 export class UserClientController {
-  constructor(
-    private readonly queryBus: QueryBus,
-  ) {}
+  constructor(private readonly queryBus: QueryBus) {}
   @Get()
   @ApiOperation({ summary: 'Get paginated list of users' })
-  async findAll(@Query() filters: UserFilterDto): Promise<PaginatedResponseDto<UserDto>> {
-    return this.queryBus.execute<UserGetListQuery, PaginatedResponseDto<UserDto>>(
-      new UserGetListQuery(filters),
-    );
+  async findAll(
+    @Query() filters: UserFilterDto,
+  ): Promise<PaginatedResponseDto<UserDto>> {
+    return this.queryBus.execute<
+      UserGetListQuery,
+      PaginatedResponseDto<UserDto>
+    >(new UserGetListQuery(filters));
   }
 
   @Get(':id')

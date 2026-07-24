@@ -35,7 +35,11 @@ export class PlatformModel {
   })
   api_status: PlatformApiStatus;
 
-  @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'UploadedFileModel', default: null })
+  @Prop({
+    type: MongooseSchema.Types.ObjectId,
+    ref: 'UploadedFileModel',
+    default: null,
+  })
   icon: MongooseSchema.Types.ObjectId | null;
 
   @Prop({ type: MongooseSchema.Types.Date, default: null })

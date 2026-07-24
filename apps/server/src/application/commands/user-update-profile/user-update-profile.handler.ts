@@ -6,14 +6,19 @@ import { UserUpdateProfileCommand } from './user-update-profile.command';
 import { UserUpdateProfileOutputDto } from './user-update-profile.dto';
 
 @CommandHandler(UserUpdateProfileCommand)
-export class UserUpdateProfileCommandHandler
-  implements ICommandHandler<UserUpdateProfileCommand, UserUpdateProfileOutputDto>
+export class UserUpdateProfileCommandHandler implements
+  ICommandHandler<
+    UserUpdateProfileCommand,
+    UserUpdateProfileOutputDto
+  >
 {
   constructor(
     @Inject(USER_REPOSITORY) private readonly userRepository: IUserRepository,
   ) {}
 
-  async execute(command: UserUpdateProfileCommand): Promise<UserUpdateProfileOutputDto> {
+  async execute(
+    command: UserUpdateProfileCommand,
+  ): Promise<UserUpdateProfileOutputDto> {
     const { userId, input } = command;
 
     const user = await this.userRepository.findById(userId);
@@ -25,7 +30,9 @@ export class UserUpdateProfileCommandHandler
     if ((input as any).firstName) {
       anyProps.fullName = `${(input as any).firstName} ${(input as any).lastName || ''}`;
     }
-    if (input.avatarUrl !== undefined) anyProps.avatar = input.avatarUrl ?? null;
+    if (input.avatarUrl !== undefined) {
+      anyProps.avatar = input.avatarUrl ?? null;
+    }
 
     await this.userRepository.save(user);
 

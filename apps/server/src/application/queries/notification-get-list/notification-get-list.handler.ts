@@ -6,15 +6,20 @@ import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { NotificationGetListQuery } from './notification-get-list.query';
 
 @QueryHandler(NotificationGetListQuery)
-export class NotificationGetListQueryHandler
-  implements IQueryHandler<NotificationGetListQuery, PaginatedResponseDto<NotificationDto>>
+export class NotificationGetListQueryHandler implements
+  IQueryHandler<
+    NotificationGetListQuery,
+    PaginatedResponseDto<NotificationDto>
+  >
 {
   constructor(
     @Inject(NOTIFICATION_READ_SERVICE) private readonly notificationReadService:
       INotificationReadService,
   ) {}
 
-  async execute(query: NotificationGetListQuery): Promise<PaginatedResponseDto<NotificationDto>> {
+  async execute(
+    query: NotificationGetListQuery,
+  ): Promise<PaginatedResponseDto<NotificationDto>> {
     return this.notificationReadService.findAll(query.filters);
   }
 }

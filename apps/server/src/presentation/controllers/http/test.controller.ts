@@ -61,7 +61,10 @@ export class TestController {
   @Get('broadcast-ws')
   testBroadcastWs(@Query('msg') msg: string = 'Hello World') {
     this.logger.log('Broadcasting message via WebSocket...');
-    this.wsService.broadcastAll('test_broadcast', { message: msg, timestamp: new Date() });
+    this.wsService.broadcastAll('test_broadcast', {
+      message: msg,
+      timestamp: new Date(),
+    });
     return { status: 'WS Broadcast sent!' };
   }
 
@@ -70,10 +73,16 @@ export class TestController {
    * GET /hivek/api/test/emit-user-ws?userId=123
    */
   @Get('emit-user-ws')
-  testEmitUserWs(@Query('userId') userId: string, @Query('msg') msg: string = 'Hello User') {
+  testEmitUserWs(
+    @Query('userId') userId: string,
+    @Query('msg') msg: string = 'Hello User',
+  ) {
     if (!userId) return { error: 'userId is required' };
     this.logger.log(`Emitting message to user ${userId} via WebSocket...`);
-    this.wsService.emitToUser(userId, 'test_user_event', { message: msg, timestamp: new Date() });
+    this.wsService.emitToUser(userId, 'test_user_event', {
+      message: msg,
+      timestamp: new Date(),
+    });
     return { status: `WS Message sent to user ${userId}!` };
   }
 }
@@ -82,7 +91,10 @@ export class TestController {
 @Public()
 @Controller('kol-profiles')
 export class TestKOLController {
-  constructor(private readonly queryBus: QueryBus, private readonly commandBus: CommandBus) {}
+  constructor(
+    private readonly queryBus: QueryBus,
+    private readonly commandBus: CommandBus,
+  ) {}
 
   @Public()
   @Get('platforms')

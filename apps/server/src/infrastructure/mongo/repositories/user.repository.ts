@@ -39,39 +39,51 @@ export class MongoUserRepository implements IUserRepository {
   }
 
   async findByIds(ids: string[]): Promise<UserRoot[]> {
-    const objectIds = ids.map(id => new Types.ObjectId(id));
+    const objectIds = ids.map((id) => new Types.ObjectId(id));
     const docs = await this.userModel
       .find({ _id: { $in: objectIds } })
       .session(this.session)
       .exec();
-    return docs.map(doc => this.mapToDomain(doc));
+    return docs.map((doc) => this.mapToDomain(doc));
   }
 
   async findByEmail(email: string): Promise<Nullable<UserRoot>> {
-    const doc = await this.userModel.findOne({ email }).session(this.session).exec();
+    const doc = await this.userModel
+      .findOne({ email })
+      .session(this.session)
+      .exec();
     return doc ? this.mapToDomain(doc) : null;
   }
 
   async findByEnterpriseId(enterpriseId: string): Promise<UserRoot[]> {
-    const docs = await this.userModel.find({ enterprise_ids: new Types.ObjectId(enterpriseId) })
-      .session(this.session).exec();
-    return docs.map(doc => this.mapToDomain(doc));
+    const docs = await this.userModel
+      .find({ enterprise_ids: new Types.ObjectId(enterpriseId) })
+      .session(this.session)
+      .exec();
+    return docs.map((doc) => this.mapToDomain(doc));
   }
 
   async existsByRoleId(roleId: string): Promise<boolean> {
-    const doc = await this.userModel.findOne(
-      {
-        role_id: new Schema.Types.ObjectId(roleId),
-        delete_at: null,
-      },
-      { _id: 1 },
-    ).session(this.session).lean().exec();
+    const doc = await this.userModel
+      .findOne(
+        {
+          role_id: new Schema.Types.ObjectId(roleId),
+          delete_at: null,
+        },
+        { _id: 1 },
+      )
+      .session(this.session)
+      .lean()
+      .exec();
     return !!doc;
   }
 
   async save(user: UserRoot): Promise<void> {
     const data = this.mapToPersistence(user);
-    let model: Model<EnterpriseUserDocument> | Model<AdminUserDocument> | Model<KOLUserDocument>;
+    let model:
+      | Model<EnterpriseUserDocument>
+      | Model<AdminUserDocument>
+      | Model<KOLUserDocument>;
     switch (user.type) {
       case ERoleType.ENTERPRISE:
         model = this.enterpriseUserModel;
@@ -91,13 +103,15 @@ export class MongoUserRepository implements IUserRepository {
       const saved = await created.save({ session: this.session });
       user.setId(saved._id.toString());
     } else {
-      await (model as Model<UserDocument>).findByIdAndUpdate(new Types.ObjectId(user.id), data)
-        .session(this.session).exec();
+      await (model as Model<UserDocument>)
+        .findByIdAndUpdate(new Types.ObjectId(user.id), data)
+        .session(this.session)
+        .exec();
     }
   }
 
   async saveMany(users: UserRoot[]): Promise<void> {
-    await Promise.all(users.map(u => this.save(u)));
+    await Promise.all(users.map((u) => this.save(u)));
   }
 
   async delete(id: string): Promise<void> {
@@ -167,11 +181,14 @@ export class MongoUserRepository implements IUserRepository {
       google_id: user.googleId,
     };
 
-    if (user instanceof EnterpriseUserRoot || user.type === ERoleType.ENTERPRISE) {
+    if (
+      user instanceof EnterpriseUserRoot
+      || user.type === ERoleType.ENTERPRISE
+    ) {
       return {
         ...base,
-        enterprise_ids: (user as EnterpriseUserRoot).enterpriseIds.map(id =>
-          new Types.ObjectId(id)
+        enterprise_ids: (user as EnterpriseUserRoot).enterpriseIds.map(
+          (id) => new Types.ObjectId(id),
         ),
       };
     }

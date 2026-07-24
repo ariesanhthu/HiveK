@@ -14,8 +14,11 @@ import { CommandHandler, EventBus, ICommandHandler } from '@nestjs/cqrs';
 import { UploadedFileBulkCreateCommand } from './uploaded-file-bulk-create.command';
 
 @CommandHandler(UploadedFileBulkCreateCommand)
-export class UploadedFileBulkCreateCommandHandler
-  implements ICommandHandler<UploadedFileBulkCreateCommand, UploadedFileDto[]>
+export class UploadedFileBulkCreateCommandHandler implements
+  ICommandHandler<
+    UploadedFileBulkCreateCommand,
+    UploadedFileDto[]
+  >
 {
   constructor(
     @Inject(UPLOADED_FILE_REPOSITORY) private readonly repository: IUploadedFileRepository,
@@ -24,7 +27,9 @@ export class UploadedFileBulkCreateCommandHandler
     private readonly eventBus: EventBus,
   ) {}
 
-  async execute(command: UploadedFileBulkCreateCommand): Promise<UploadedFileDto[]> {
+  async execute(
+    command: UploadedFileBulkCreateCommand,
+  ): Promise<UploadedFileDto[]> {
     const { files, input } = command;
     const targetField = toCamelCase(input.targetField);
 
@@ -64,7 +69,7 @@ export class UploadedFileBulkCreateCommandHandler
 
       await this.eventBus.publish(
         new UploadedFileCreatedEvent(
-          root.id!,
+          root.id,
           root.targetType,
           root.targetId,
           root.targetField,

@@ -5,8 +5,11 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { EnterpriseVerifyCommand } from './enterprise-verify.command';
 
 @CommandHandler(EnterpriseVerifyCommand)
-export class EnterpriseVerifyCommandHandler
-  implements ICommandHandler<EnterpriseVerifyCommand, void>
+export class EnterpriseVerifyCommandHandler implements
+  ICommandHandler<
+    EnterpriseVerifyCommand,
+    void
+  >
 {
   constructor(
     @Inject(ENTERPRISE_REPOSITORY) private readonly enterpriseRepository: IEnterpriseRepository,

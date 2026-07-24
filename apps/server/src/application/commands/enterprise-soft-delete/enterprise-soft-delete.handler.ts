@@ -15,8 +15,11 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { EnterpriseSoftDeleteCommand } from './enterprise-soft-delete.command';
 
 @CommandHandler(EnterpriseSoftDeleteCommand)
-export class EnterpriseSoftDeleteCommandHandler
-  implements ICommandHandler<EnterpriseSoftDeleteCommand, void>
+export class EnterpriseSoftDeleteCommandHandler implements
+  ICommandHandler<
+    EnterpriseSoftDeleteCommand,
+    void
+  >
 {
   constructor(
     @Inject(ENTERPRISE_REPOSITORY) private readonly enterpriseRepository: IEnterpriseRepository,

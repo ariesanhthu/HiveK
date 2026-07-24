@@ -9,7 +9,12 @@ import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { ReviewGetByIdQuery } from './review-get-by-id.query';
 
 @QueryHandler(ReviewGetByIdQuery)
-export class ReviewGetByIdHandler implements IQueryHandler<ReviewGetByIdQuery, ReviewDto> {
+export class ReviewGetByIdHandler implements
+  IQueryHandler<
+    ReviewGetByIdQuery,
+    ReviewDto
+  >
+{
   constructor(
     @Inject(PUBLIC_REVIEW_READ_SERVICE) private readonly reviewReadService:
       IPublicReviewReadService,

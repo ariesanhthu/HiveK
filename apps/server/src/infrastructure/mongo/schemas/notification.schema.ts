@@ -7,7 +7,11 @@ import { HydratedDocument, Schema as MongooseSchema } from 'mongoose';
   timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' },
 })
 export class NotificationModel {
-  @Prop({ required: true, type: MongooseSchema.Types.String, enum: NotificationType })
+  @Prop({
+    required: true,
+    type: MongooseSchema.Types.String,
+    enum: NotificationType,
+  })
   type: NotificationType;
 
   @Prop({ required: true, type: MongooseSchema.Types.String })

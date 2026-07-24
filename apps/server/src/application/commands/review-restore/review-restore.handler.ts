@@ -8,7 +8,12 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { ReviewRestoreCommand } from './review-restore.command';
 
 @CommandHandler(ReviewRestoreCommand)
-export class ReviewRestoreCommandHandler implements ICommandHandler<ReviewRestoreCommand, void> {
+export class ReviewRestoreCommandHandler implements
+  ICommandHandler<
+    ReviewRestoreCommand,
+    void
+  >
+{
   constructor(
     @Inject(PUBLIC_REVIEW_REPOSITORY) private readonly reviewRepository: IPublicReviewRepository,
   ) {}

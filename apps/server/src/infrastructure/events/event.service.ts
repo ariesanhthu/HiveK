@@ -8,6 +8,7 @@ import { BaseAggregateRoot } from '@/core/common';
 import { Inject, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { ClientSession, Model } from 'mongoose';
+import { MongoUnitOfWork } from '../mongo/mongo-uow';
 import { EOutboxStatus, OutboxModel } from '../mongo/schemas/outbox.schema';
 import { OutboxEventEmitter } from './outbox/outbox-event.emitter';
 
@@ -38,7 +39,7 @@ export class EventService implements IEventService {
     if (integrationEvents.length === 0) return;
 
     // Convert integration events to Outbox Mongoose documents
-    const outboxRows = integrationEvents.map(event => ({
+    const outboxRows = integrationEvents.map((event) => ({
       event_type: event.eventType,
       payload: event.payload,
       metadata: event.metadata ?? null,
@@ -49,8 +50,10 @@ export class EventService implements IEventService {
       created_at: new Date(),
     }));
 
-    const activeSession = (this.uow as any).getSession?.() || undefined;
-    await this.outboxModel.insertMany(outboxRows, { session: activeSession as ClientSession });
+    const activeSession = (this.uow as MongoUnitOfWork).getSession() || undefined;
+    await this.outboxModel.insertMany(outboxRows, {
+      session: activeSession,
+    });
 
     // Notify the outbox processor to run immediately
     this.outboxEmitter.emit();

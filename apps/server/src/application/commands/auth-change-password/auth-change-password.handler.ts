@@ -19,8 +19,11 @@ import { AuthChangePasswordCommand } from './auth-change-password.command';
 import { AuthChangePasswordOutputDto } from './auth-change-password.dto';
 
 @CommandHandler(AuthChangePasswordCommand)
-export class AuthChangePasswordCommandHandler
-  implements ICommandHandler<AuthChangePasswordCommand, AuthChangePasswordOutputDto>
+export class AuthChangePasswordCommandHandler implements
+  ICommandHandler<
+    AuthChangePasswordCommand,
+    AuthChangePasswordOutputDto
+  >
 {
   constructor(
     @Inject(USER_REPOSITORY) private readonly userRepository: IUserRepository,
@@ -30,7 +33,9 @@ export class AuthChangePasswordCommandHandler
     @Inject(UNIT_OF_WORK) private readonly uow: IUnitOfWork,
   ) {}
 
-  async execute(command: AuthChangePasswordCommand): Promise<AuthChangePasswordOutputDto> {
+  async execute(
+    command: AuthChangePasswordCommand,
+  ): Promise<AuthChangePasswordOutputDto> {
     return this.uow.execute(async () => {
       const { userId, input } = command;
 
@@ -57,13 +62,18 @@ export class AuthChangePasswordCommandHandler
         throw new InvalidPasswordException();
       }
 
-      const newHashedPassword = await this.authService.hashPassword(input.newPassword);
+      const newHashedPassword = await this.authService.hashPassword(
+        input.newPassword,
+      );
 
       user.updatePassword(newHashedPassword);
 
       await this.userRepository.save(user);
 
-      await this.otpRepository.deleteByEmailAndType(user.email, EOtpType.CHANGE_PASSWORD);
+      await this.otpRepository.deleteByEmailAndType(
+        user.email,
+        EOtpType.CHANGE_PASSWORD,
+      );
 
       await this.eventService.publishEvents(user);
 

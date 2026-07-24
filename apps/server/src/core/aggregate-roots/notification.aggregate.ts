@@ -12,7 +12,10 @@ export interface NotificationProps {
   updatedAt: Date;
 }
 
-export type NotificationCreateProps = Omit<NotificationProps, 'createdAt' | 'updatedAt'>;
+export type NotificationCreateProps = Omit<
+  NotificationProps,
+  'createdAt' | 'updatedAt'
+>;
 
 export class NotificationRoot extends BaseAggregateRoot<NotificationProps> {
   private constructor(props: NotificationProps, id?: string) {
@@ -28,7 +31,10 @@ export class NotificationRoot extends BaseAggregateRoot<NotificationProps> {
     });
   }
 
-  public static instantiate(id: string, props: NotificationProps): NotificationRoot {
+  public static instantiate(
+    id: string,
+    props: NotificationProps,
+  ): NotificationRoot {
     return new NotificationRoot(props, id);
   }
 

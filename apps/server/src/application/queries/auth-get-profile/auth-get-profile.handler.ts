@@ -5,7 +5,12 @@ import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { AuthGetProfileQuery } from './auth-get-profile.query';
 
 @QueryHandler(AuthGetProfileQuery)
-export class AuthGetProfileHandler implements IQueryHandler<AuthGetProfileQuery, UserDetailDto> {
+export class AuthGetProfileHandler implements
+  IQueryHandler<
+    AuthGetProfileQuery,
+    UserDetailDto
+  >
+{
   constructor(
     @Inject(USER_READ_SERVICE) private readonly userReadService: IUserReadService,
   ) {}

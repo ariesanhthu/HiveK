@@ -28,7 +28,10 @@ export class MongoRoleRepository implements IRoleRepository {
   }
 
   async findByTitle(title: string): Promise<Nullable<RoleRoot>> {
-    const doc = await this.roleModel.findOne({ title }).session(this.session).exec();
+    const doc = await this.roleModel
+      .findOne({ title })
+      .session(this.session)
+      .exec();
     return doc ? this.mapToDomain(doc) : null;
   }
 
@@ -40,15 +43,17 @@ export class MongoRoleRepository implements IRoleRepository {
       const saved = await created.save({ session: this.session });
       role.setId(saved._id.toString());
     } else {
-      await this.roleModel.findByIdAndUpdate(role.id, data, { upsert: true }).session(this.session)
+      await this.roleModel
+        .findByIdAndUpdate(role.id, data, { upsert: true })
+        .session(this.session)
         .exec();
     }
 
-    await this.invalidateCache(role.id!, role.title);
+    await this.invalidateCache(role.id, role.title);
   }
 
   async saveMany(roles: RoleRoot[]): Promise<void> {
-    await Promise.all(roles.map(r => this.save(r)));
+    await Promise.all(roles.map((r) => this.save(r)));
   }
 
   async delete(id: string): Promise<void> {
@@ -63,7 +68,9 @@ export class MongoRoleRepository implements IRoleRepository {
     const domain = 'role';
     await Promise.all([
       this.cacheService.del(CacheKeyUtil.id(domain, id)),
-      this.cacheService.del(CacheKeyUtil.custom(domain, `title:${title.toLowerCase()}`)),
+      this.cacheService.del(
+        CacheKeyUtil.custom(domain, `title:${title.toLowerCase()}`),
+      ),
       this.cacheService.delByPattern(CacheKeyUtil.listPattern(domain)),
     ]);
   }
@@ -83,7 +90,9 @@ export class MongoRoleRepository implements IRoleRepository {
     });
   }
 
-  private mapToPersistence(role: RoleRoot): Omit<RoleModel, 'created_at' | 'updated_at'> {
+  private mapToPersistence(
+    role: RoleRoot,
+  ): Omit<RoleModel, 'created_at' | 'updated_at'> {
     return {
       title: role.title,
       permissions: role.permissions,

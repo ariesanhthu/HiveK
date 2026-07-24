@@ -15,15 +15,26 @@ export class YoutubeStrategy extends PassportStrategy(Strategy, 'youtube') {
       clientID: authConfig.getYoutubeClientId(),
       clientSecret: authConfig.getYoutubeClientSecret(),
       callbackURL: authConfig.getYoutubeCallbackUrl() || 'http://localhost/dummy-callback',
-      scope: ['email', 'profile', 'https://www.googleapis.com/auth/youtube.readonly'],
+      scope: [
+        'email',
+        'profile',
+        'https://www.googleapis.com/auth/youtube.readonly',
+      ],
       passReqToCallback: true,
     });
   }
 
-  async validate(req: any, accessToken: string, refreshToken: string, profile: any): Promise<any> {
+  async validate(
+    req: any,
+    accessToken: string,
+    refreshToken: string,
+    profile: any,
+  ): Promise<any> {
     const userId = req.query.state;
     if (!userId) {
-      throw new UnauthorizedException('No user state provided for verification');
+      throw new UnauthorizedException(
+        'No user state provided for verification',
+      );
     }
 
     const { id, emails, displayName } = profile;

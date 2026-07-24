@@ -22,7 +22,10 @@ export class MongoNotificationRepository implements INotificationRepository {
   }
 
   async findById(id: string): Promise<Nullable<NotificationRoot>> {
-    const doc = await this.notificationModel.findById(id).session(this.session).exec();
+    const doc = await this.notificationModel
+      .findById(id)
+      .session(this.session)
+      .exec();
     return doc ? this.mapToDomain(doc) : null;
   }
 
@@ -34,17 +37,22 @@ export class MongoNotificationRepository implements INotificationRepository {
       const saved = await created.save({ session: this.session });
       notification.setId(saved._id.toString());
     } else {
-      await this.notificationModel.findByIdAndUpdate(notification.id, data, { upsert: true })
-        .session(this.session).exec();
+      await this.notificationModel
+        .findByIdAndUpdate(notification.id, data, { upsert: true })
+        .session(this.session)
+        .exec();
     }
   }
 
   async saveMany(notifications: NotificationRoot[]): Promise<void> {
-    await Promise.all(notifications.map(n => this.save(n)));
+    await Promise.all(notifications.map((n) => this.save(n)));
   }
 
   async delete(id: string): Promise<void> {
-    await this.notificationModel.findByIdAndDelete(id).session(this.session).exec();
+    await this.notificationModel
+      .findByIdAndDelete(id)
+      .session(this.session)
+      .exec();
   }
 
   private mapToDomain(doc: NotificationDocument): NotificationRoot {

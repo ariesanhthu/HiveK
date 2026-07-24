@@ -11,7 +11,12 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { RoleSoftDeleteCommand } from './role-soft-delete.command';
 
 @CommandHandler(RoleSoftDeleteCommand)
-export class RoleSoftDeleteCommandHandler implements ICommandHandler<RoleSoftDeleteCommand, void> {
+export class RoleSoftDeleteCommandHandler implements
+  ICommandHandler<
+    RoleSoftDeleteCommand,
+    void
+  >
+{
   constructor(
     @Inject(ROLE_REPOSITORY) private readonly roleRepository: IRoleRepository,
     @Inject(USER_REPOSITORY) private readonly userRepository: IUserRepository,

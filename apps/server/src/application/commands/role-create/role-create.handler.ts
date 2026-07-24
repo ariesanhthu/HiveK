@@ -6,7 +6,12 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { RoleCreateCommand } from './role-create.command';
 
 @CommandHandler(RoleCreateCommand)
-export class RoleCreateCommandHandler implements ICommandHandler<RoleCreateCommand, string> {
+export class RoleCreateCommandHandler implements
+  ICommandHandler<
+    RoleCreateCommand,
+    string
+  >
+{
   constructor(
     @Inject(ROLE_REPOSITORY) private readonly roleRepository: IRoleRepository,
   ) {}
@@ -16,7 +21,9 @@ export class RoleCreateCommandHandler implements ICommandHandler<RoleCreateComma
 
     const existingRole = await this.roleRepository.findByTitle(input.title);
     if (existingRole) {
-      throw new RoleConflictException(`Role with title '${input.title}' already exists`);
+      throw new RoleConflictException(
+        `Role with title '${input.title}' already exists`,
+      );
     }
 
     const role = RoleRoot.create({
@@ -27,6 +34,6 @@ export class RoleCreateCommandHandler implements ICommandHandler<RoleCreateComma
 
     await this.roleRepository.save(role);
 
-    return role.id!;
+    return role.id;
   }
 }

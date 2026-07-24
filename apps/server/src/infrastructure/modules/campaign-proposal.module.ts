@@ -41,10 +41,11 @@ const QUERY_HANDLERS = [
 ];
 
 @Module({
-  imports: [
-    CqrsModule,
+  imports: [CqrsModule],
+  controllers: [
+    CampaignProposalAdminController,
+    CampaignProposalClientController,
   ],
-  controllers: [CampaignProposalAdminController, CampaignProposalClientController],
   providers: [
     CampaignProposalResolver,
     // Command & Query Handlers

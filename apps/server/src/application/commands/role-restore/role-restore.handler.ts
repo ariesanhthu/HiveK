@@ -5,7 +5,12 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { RoleRestoreCommand } from './role-restore.command';
 
 @CommandHandler(RoleRestoreCommand)
-export class RoleRestoreCommandHandler implements ICommandHandler<RoleRestoreCommand, void> {
+export class RoleRestoreCommandHandler implements
+  ICommandHandler<
+    RoleRestoreCommand,
+    void
+  >
+{
   constructor(
     @Inject(ROLE_REPOSITORY) private readonly roleRepository: IRoleRepository,
   ) {}

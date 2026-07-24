@@ -10,15 +10,20 @@ import { CampaignParticipantGetByIdQuery } from './campaign-participant-get-by-i
 import { CampaignParticipantNotFoundException } from '@/core/exceptions';
 
 @QueryHandler(CampaignParticipantGetByIdQuery)
-export class CampaignParticipantGetByIdQueryHandler
-  implements IQueryHandler<CampaignParticipantGetByIdQuery, CampaignParticipantDto>
+export class CampaignParticipantGetByIdQueryHandler implements
+  IQueryHandler<
+    CampaignParticipantGetByIdQuery,
+    CampaignParticipantDto
+  >
 {
   constructor(
     @Inject(CAMPAIGN_PARTICIPANT_READ_SERVICE) private readonly readService:
       ICampaignParticipantReadService,
   ) {}
 
-  async execute(query: CampaignParticipantGetByIdQuery): Promise<CampaignParticipantDto> {
+  async execute(
+    query: CampaignParticipantGetByIdQuery,
+  ): Promise<CampaignParticipantDto> {
     const result = await this.readService.findById(query.id, query.projection);
     if (!result) {
       throw new CampaignParticipantNotFoundException(query.id);

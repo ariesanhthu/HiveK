@@ -23,7 +23,11 @@ export const ReviewSecurityMetadataSubSchema = SchemaFactory.createForClass(
   timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' },
 })
 export class PublicReviewModel {
-  @Prop({ required: true, type: MongooseSchema.Types.ObjectId, ref: 'CampaignProposalModel' })
+  @Prop({
+    required: true,
+    type: MongooseSchema.Types.ObjectId,
+    ref: 'CampaignProposalModel',
+  })
   proposal_id: MongooseSchema.Types.ObjectId;
 
   @Prop({ required: true, trim: true, maxlength: 100 })

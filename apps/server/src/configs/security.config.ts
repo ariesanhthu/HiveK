@@ -60,4 +60,7 @@ export class SecurityConfig extends BaseConfigService<SecurityConfigDto> {
 /**
  * Register 'security' namespace with NestJS ConfigModule.
  */
-export const securityConfig = registerAs('security', () => new SecurityConfig());
+export const securityConfig = registerAs(
+  'security',
+  () => new SecurityConfig(),
+);

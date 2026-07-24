@@ -63,7 +63,9 @@ export class CampaignAdminController {
 
   @Get()
   @ApiOperation({ summary: 'Get all campaigns' })
-  async findAll(@Query() filters: CampaignFilterDto): Promise<PaginatedResponseDto<CampaignDto>> {
+  async findAll(
+    @Query() filters: CampaignFilterDto,
+  ): Promise<PaginatedResponseDto<CampaignDto>> {
     return this.queryBus.execute(new CampaignGetListQuery(filters));
   }
 
@@ -90,7 +92,9 @@ export class CampaignAdminController {
     @Param('id') id: string,
     @Body() input: CampaignUpdateInputDto,
   ): Promise<CampaignDto> {
-    return this.commandBus.execute(new CampaignUpdateCommand(id, userId, input));
+    return this.commandBus.execute(
+      new CampaignUpdateCommand(id, userId, input),
+    );
   }
 
   @Patch(':id/soft-delete')
@@ -101,7 +105,9 @@ export class CampaignAdminController {
     @Param('id') id: string,
     @Query() dto: SoftDeleteInputDto,
   ): Promise<void> {
-    await this.commandBus.execute(new CampaignSoftDeleteCommand(id, userId, dto.deletedBy));
+    await this.commandBus.execute(
+      new CampaignSoftDeleteCommand(id, userId, dto.deletedBy),
+    );
   }
 
   @Patch(':id/restore')
@@ -119,7 +125,9 @@ export class CampaignAdminController {
     @Param('id') id: string,
     @Body() input: CampaignUpdateStatusInputDto,
   ): Promise<void> {
-    await this.commandBus.execute(new CampaignUpdateStatusCommand(id, userId, input.status));
+    await this.commandBus.execute(
+      new CampaignUpdateStatusCommand(id, userId, input.status),
+    );
   }
 
   @Post(':id/collaborators')
@@ -130,7 +138,9 @@ export class CampaignAdminController {
     @Param('id') id: string,
     @Body() input: CampaignInviteCollaboratorInputDto,
   ): Promise<void> {
-    await this.commandBus.execute(new CampaignInviteCollaboratorCommand(id, input, requestedBy));
+    await this.commandBus.execute(
+      new CampaignInviteCollaboratorCommand(id, input, requestedBy),
+    );
   }
 
   @Delete(':id/collaborators')
@@ -141,7 +151,9 @@ export class CampaignAdminController {
     @Param('id') id: string,
     @Body() input: CampaignRevokeCollaboratorInputDto,
   ): Promise<void> {
-    await this.commandBus.execute(new CampaignRevokeCollaboratorCommand(id, input, requestedBy));
+    await this.commandBus.execute(
+      new CampaignRevokeCollaboratorCommand(id, input, requestedBy),
+    );
   }
 
   // --- Campaign Participant Routes ---
@@ -175,7 +187,9 @@ export class CampaignAdminController {
     @Param('participantId') participantId: string,
     @Body() input: CampaignParticipantUpdateInputDto,
   ): Promise<void> {
-    return this.commandBus.execute(new CampaignParticipantUpdateCommand(participantId, input));
+    return this.commandBus.execute(
+      new CampaignParticipantUpdateCommand(participantId, input),
+    );
   }
 
   @Patch(':campaignId/participants/:participantId/soft-delete')
@@ -198,7 +212,9 @@ export class CampaignAdminController {
     @Param('campaignId') campaignId: string,
     @Param('participantId') participantId: string,
   ): Promise<void> {
-    await this.commandBus.execute(new CampaignParticipantHardDeleteCommand(participantId));
+    await this.commandBus.execute(
+      new CampaignParticipantHardDeleteCommand(participantId),
+    );
   }
 
   @Patch(':campaignId/participants/:participantId/restore')
@@ -208,6 +224,8 @@ export class CampaignAdminController {
     @Param('campaignId') campaignId: string,
     @Param('participantId') participantId: string,
   ): Promise<void> {
-    await this.commandBus.execute(new CampaignParticipantRestoreCommand(participantId));
+    await this.commandBus.execute(
+      new CampaignParticipantRestoreCommand(participantId),
+    );
   }
 }

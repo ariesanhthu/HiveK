@@ -5,8 +5,11 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { PlatformRestoreCommand } from './platform-restore.command';
 
 @CommandHandler(PlatformRestoreCommand)
-export class PlatformRestoreCommandHandler
-  implements ICommandHandler<PlatformRestoreCommand, void>
+export class PlatformRestoreCommandHandler implements
+  ICommandHandler<
+    PlatformRestoreCommand,
+    void
+  >
 {
   constructor(
     @Inject(PLATFORM_REPOSITORY) private readonly platformRepository: IPlatformRepository,

@@ -7,7 +7,12 @@ import { CommandHandler, EventBus, ICommandHandler } from '@nestjs/cqrs';
 import { KpiLogCreateCommand } from './kpi-log-create.command';
 
 @CommandHandler(KpiLogCreateCommand)
-export class KpiLogCreateCommandHandler implements ICommandHandler<KpiLogCreateCommand, void> {
+export class KpiLogCreateCommandHandler implements
+  ICommandHandler<
+    KpiLogCreateCommand,
+    void
+  >
+{
   private readonly logger = new Logger(KpiLogCreateCommandHandler.name);
 
   constructor(
@@ -49,7 +54,9 @@ export class KpiLogCreateCommandHandler implements ICommandHandler<KpiLogCreateC
 
       this.logger.log(`Saved KPI Log for participant ${payload.participantId}`);
 
-      this.eventBus.publish(new KpiMetricsUpdatedEvent(payload.participantId, kpiLog.id!));
+      this.eventBus.publish(
+        new KpiMetricsUpdatedEvent(payload.participantId, kpiLog.id),
+      );
     });
   }
 }

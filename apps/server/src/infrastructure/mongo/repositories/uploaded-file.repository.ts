@@ -25,10 +25,14 @@ export class MongoUploadedFileRepository implements IUploadedFileRepository {
     return doc ? this.mapToDomain(doc) : null;
   }
 
-  async findByTarget(targetId: string, targetType: TargetType): Promise<UploadedFileRoot[]> {
-    const docs = await this.model.find({ target_id: targetId, target_type: targetType }).session(
-      this.session,
-    ).exec();
+  async findByTarget(
+    targetId: string,
+    targetType: TargetType,
+  ): Promise<UploadedFileRoot[]> {
+    const docs = await this.model
+      .find({ target_id: targetId, target_type: targetType })
+      .session(this.session)
+      .exec();
     return docs.map((doc) => this.mapToDomain(doc));
   }
 
@@ -40,13 +44,15 @@ export class MongoUploadedFileRepository implements IUploadedFileRepository {
       const saved = await created.save({ session: this.session });
       root.setId(saved._id.toString());
     } else {
-      await this.model.findByIdAndUpdate(root.id, data, { upsert: true }).session(this.session)
+      await this.model
+        .findByIdAndUpdate(root.id, data, { upsert: true })
+        .session(this.session)
         .exec();
     }
   }
 
   async saveMany(roots: UploadedFileRoot[]): Promise<void> {
-    await Promise.all(roots.map(r => this.save(r)));
+    await Promise.all(roots.map((r) => this.save(r)));
   }
 
   async delete(id: string): Promise<void> {

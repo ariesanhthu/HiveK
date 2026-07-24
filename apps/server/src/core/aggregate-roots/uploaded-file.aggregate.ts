@@ -48,7 +48,10 @@ export class UploadedFileRoot extends BaseAggregateRoot<UploadedFileProps> {
     });
   }
 
-  public static instantiate(id: string, props: UploadedFileProps): UploadedFileRoot {
+  public static instantiate(
+    id: string,
+    props: UploadedFileProps,
+  ): UploadedFileRoot {
     return new UploadedFileRoot(props, id);
   }
 

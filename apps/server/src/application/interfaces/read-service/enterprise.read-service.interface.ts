@@ -3,8 +3,11 @@ import { EnterpriseFilterDto } from '@/application/queries/enterprise-get-list/e
 import { Nullable } from '@core/types';
 import { IBaseReadService } from './base.read-service.interface';
 
-export interface IEnterpriseReadService
-  extends IBaseReadService<EnterpriseDetailDto, EnterpriseFilterDto>
+export interface IEnterpriseReadService extends
+  IBaseReadService<
+    EnterpriseDetailDto,
+    EnterpriseFilterDto
+  >
 {
   findByUserId(userId: string): Promise<Nullable<EnterpriseDetailDto>>;
 }

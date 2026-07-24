@@ -46,7 +46,9 @@ export class PublicReviewClientController {
   @UseGuards(RecaptchaGuard)
   @Throttle({ default: { limit: 3, ttl: 5 * 60 * 1000 } })
   @HttpCode(HttpStatus.CREATED)
-  @ApiOperation({ summary: 'Submit a public review (with reCAPTCHA & rate limiting)' })
+  @ApiOperation({
+    summary: 'Submit a public review (with reCAPTCHA & rate limiting)',
+  })
   async create(@Body() input: ReviewCreateInputDto): Promise<ReviewDto> {
     return this.commandBus.execute(new ReviewCreateCommand(input));
   }
@@ -54,7 +56,9 @@ export class PublicReviewClientController {
   @Public()
   @Get()
   @ApiOperation({ summary: 'Get approved reviews' })
-  async findAll(@Query() filters: ReviewFilterInputDto): Promise<PaginatedResponseDto<ReviewDto>> {
+  async findAll(
+    @Query() filters: ReviewFilterInputDto,
+  ): Promise<PaginatedResponseDto<ReviewDto>> {
     const safeFilters = { ...filters, status: 'approved' };
     return this.queryBus.execute(new ReviewGetListQuery(safeFilters));
   }
@@ -66,7 +70,9 @@ export class PublicReviewClientController {
   @ApiSecurity('x-api-key')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(ERoleType.ENTERPRISE)
-  @ApiOperation({ summary: 'Get all reviews (including pending) for moderation' })
+  @ApiOperation({
+    summary: 'Get all reviews (including pending) for moderation',
+  })
   async findAllForModeration(
     @Query() filters: ReviewFilterInputDto,
   ): Promise<PaginatedResponseDto<ReviewDto>> {

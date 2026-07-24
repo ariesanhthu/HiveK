@@ -4,6 +4,7 @@ import { IBaseReadService } from './base.read-service.interface';
 
 export const UPLOADED_FILE_READ_SERVICE = Symbol('UPLOADED_FILE_READ_SERVICE');
 
-export interface IUploadedFileReadService
-  extends IBaseReadService<UploadedFileDto, UploadedFileFilterDto>
-{}
+export type IUploadedFileReadService = IBaseReadService<
+  UploadedFileDto,
+  UploadedFileFilterDto
+>;

@@ -25,22 +25,34 @@ export class MongoPublicReviewRepository implements IPublicReviewRepository {
   }
 
   async findById(id: string): Promise<Nullable<PublicReviewRoot>> {
-    const doc = await this.reviewModel.findById(id).session(this.session).exec();
+    const doc = await this.reviewModel
+      .findById(id)
+      .session(this.session)
+      .exec();
     return doc ? this.mapToDomain(doc) : null;
   }
 
   async findByProposalId(proposalId: string): Promise<PublicReviewRoot[]> {
-    const docs = await this.reviewModel.find({
-      proposal_id: new Types.ObjectId(proposalId) as any,
-    }).session(this.session).exec();
+    const docs = await this.reviewModel
+      .find({
+        proposal_id: new Types.ObjectId(proposalId) as any,
+      })
+      .session(this.session)
+      .exec();
     return docs.map((doc) => this.mapToDomain(doc));
   }
 
-  async findByProposalIdAndStatus(proposalId: string, status: string): Promise<PublicReviewRoot[]> {
-    const docs = await this.reviewModel.find({
-      proposal_id: new Types.ObjectId(proposalId) as any,
-      status: status as EReviewStatus,
-    }).session(this.session).exec();
+  async findByProposalIdAndStatus(
+    proposalId: string,
+    status: string,
+  ): Promise<PublicReviewRoot[]> {
+    const docs = await this.reviewModel
+      .find({
+        proposal_id: new Types.ObjectId(proposalId) as any,
+        status: status as EReviewStatus,
+      })
+      .session(this.session)
+      .exec();
     return docs.map((doc) => this.mapToDomain(doc));
   }
 
@@ -52,9 +64,10 @@ export class MongoPublicReviewRepository implements IPublicReviewRepository {
       const saved = await created.save({ session: this.session });
       review.setId(saved._id.toString());
     } else {
-      await this.reviewModel.findByIdAndUpdate(review.id, data, { upsert: true }).session(
-        this.session,
-      ).exec();
+      await this.reviewModel
+        .findByIdAndUpdate(review.id, data, { upsert: true })
+        .session(this.session)
+        .exec();
     }
   }
 

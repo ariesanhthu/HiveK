@@ -29,14 +29,20 @@ export class CampaignKOLOutputEntity extends BaseEntity<CampaignKOLOutputProps> 
     id?: string,
   ): CampaignKOLOutputEntity {
     const now = new Date();
-    return new CampaignKOLOutputEntity({
-      ...props,
-      createdAt: now,
-      updatedAt: now,
-    }, id);
+    return new CampaignKOLOutputEntity(
+      {
+        ...props,
+        createdAt: now,
+        updatedAt: now,
+      },
+      id,
+    );
   }
 
-  public static instantiate(id: string, props: CampaignKOLOutputProps): CampaignKOLOutputEntity {
+  public static instantiate(
+    id: string,
+    props: CampaignKOLOutputProps,
+  ): CampaignKOLOutputEntity {
     return new CampaignKOLOutputEntity(props, id);
   }
 
@@ -101,7 +107,9 @@ export class CampaignKOLOutputEntity extends BaseEntity<CampaignKOLOutputProps> 
     this.props.updatedAt = new Date();
   }
 
-  public update(props: Partial<Omit<CampaignKOLOutputProps, 'createdAt' | 'updatedAt'>>): void {
+  public update(
+    props: Partial<Omit<CampaignKOLOutputProps, 'createdAt' | 'updatedAt'>>,
+  ): void {
     Object.assign(this.props, props);
     this.props.updatedAt = new Date();
   }

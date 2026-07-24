@@ -77,7 +77,9 @@ export class CampaignProposalAdminController {
     @Param('id') id: string,
     @Body() input: ProposalUpdateInputDto,
   ): Promise<ProposalDto> {
-    return this.commandBus.execute(new ProposalUpdateCommand(id, input, userId));
+    return this.commandBus.execute(
+      new ProposalUpdateCommand(id, input, userId),
+    );
   }
 
   @Patch(':id/status')
@@ -88,7 +90,9 @@ export class CampaignProposalAdminController {
     @Param('id') id: string,
     @Body() input: ProposalUpdateStatusInputDto,
   ): Promise<void> {
-    return this.commandBus.execute(new ProposalUpdateStatusCommand(id, input.status, userId));
+    return this.commandBus.execute(
+      new ProposalUpdateStatusCommand(id, input.status, userId),
+    );
   }
 
   @Patch(':id/soft-delete')

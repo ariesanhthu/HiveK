@@ -7,7 +7,12 @@ import { softDeletePlugin } from '../utils';
   timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' },
 })
 export class EnterpriseModel {
-  @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'UserModel', required: true, unique: true })
+  @Prop({
+    type: MongooseSchema.Types.ObjectId,
+    ref: 'UserModel',
+    required: true,
+    unique: true,
+  })
   user_id: MongooseSchema.Types.ObjectId;
 
   @Prop({
@@ -19,7 +24,12 @@ export class EnterpriseModel {
   })
   company_name: string;
 
-  @Prop({ type: MongooseSchema.Types.String, required: true, trim: true, maxlength: 2000 })
+  @Prop({
+    type: MongooseSchema.Types.String,
+    required: true,
+    trim: true,
+    maxlength: 2000,
+  })
   description: string;
 
   @Prop({
@@ -27,7 +37,10 @@ export class EnterpriseModel {
     required: true,
     trim: true,
     lowercase: true,
-    match: [/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/, 'Please fill a valid email address'],
+    match: [
+      /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/,
+      'Please fill a valid email address',
+    ],
   })
   contact_email: string;
 
@@ -44,7 +57,11 @@ export class EnterpriseModel {
   @Prop({ type: MongooseSchema.Types.String, default: null, trim: true })
   tax_id: string | null;
 
-  @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'UploadedFileModel', default: null })
+  @Prop({
+    type: MongooseSchema.Types.ObjectId,
+    ref: 'UploadedFileModel',
+    default: null,
+  })
   logo_url_id: MongooseSchema.Types.ObjectId | null;
 
   @Prop({ type: MongooseSchema.Types.Boolean, default: false })

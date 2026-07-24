@@ -28,11 +28,14 @@ export class CampaignEnterpriseOutputEntity extends BaseEntity<CampaignEnterpris
     id?: string,
   ): CampaignEnterpriseOutputEntity {
     const now = new Date();
-    return new CampaignEnterpriseOutputEntity({
-      ...props,
-      createdAt: now,
-      updatedAt: now,
-    }, id);
+    return new CampaignEnterpriseOutputEntity(
+      {
+        ...props,
+        createdAt: now,
+        updatedAt: now,
+      },
+      id,
+    );
   }
 
   public static instantiate(
@@ -101,7 +104,9 @@ export class CampaignEnterpriseOutputEntity extends BaseEntity<CampaignEnterpris
   }
 
   public update(
-    props: Partial<Omit<CampaignEnterpriseOutputProps, 'createdAt' | 'updatedAt'>>,
+    props: Partial<
+      Omit<CampaignEnterpriseOutputProps, 'createdAt' | 'updatedAt'>
+    >,
   ): void {
     Object.assign(this.props, props);
     this.props.updatedAt = new Date();

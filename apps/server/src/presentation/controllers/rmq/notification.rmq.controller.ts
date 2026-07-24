@@ -25,8 +25,13 @@ export class NotificationRmqController {
     this.logger.setContext(NotificationRmqController.name);
   }
 
-  @RmqHandler({ queue: 'notification_queue', pattern: 'notification.verification_otp' })
-  async handleSendVerificationOtpEmail(data: SendVerificationEmailRequestedPayload): Promise<void> {
+  @RmqHandler({
+    queue: 'notification_queue',
+    pattern: 'notification.verification_otp',
+  })
+  async handleSendVerificationOtpEmail(
+    data: SendVerificationEmailRequestedPayload,
+  ): Promise<void> {
     const { email, otpCode, type, expireAt } = data;
 
     this.logger.log(`Processing email request for ${email} ...`);
@@ -61,7 +66,10 @@ export class NotificationRmqController {
     return;
   }
 
-  @RmqHandler({ queue: 'notification_queue', pattern: 'notification.enterprise_invitation' })
+  @RmqHandler({
+    queue: 'notification_queue',
+    pattern: 'notification.enterprise_invitation',
+  })
   async handleSendEnterpriseInvitationEmail(
     data: NotifyEnterpriseInvitationPayload,
   ): Promise<void> {
@@ -85,7 +93,10 @@ export class NotificationRmqController {
     this.logger.log(`Processing email request for ${userEmail} done`);
   }
 
-  @RmqHandler({ queue: 'notification_queue', pattern: 'notification.enterprise_revocation' })
+  @RmqHandler({
+    queue: 'notification_queue',
+    pattern: 'notification.enterprise_revocation',
+  })
   async handleSendEnterpriseRevocationEmail(
     data: NotifyEnterpriseInvitationPayload,
   ): Promise<void> {

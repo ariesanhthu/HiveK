@@ -21,7 +21,12 @@ export class GoogleStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  async validate(req: any, accessToken: string, refreshToken: string, profile: any): Promise<any> {
+  async validate(
+    req: any,
+    accessToken: string,
+    refreshToken: string,
+    profile: any,
+  ): Promise<any> {
     const { id, emails, displayName, photos } = profile;
     const email = emails[0].value;
 
@@ -34,7 +39,7 @@ export class GoogleStrategy extends PassportStrategy(Strategy) {
           type = state.type as ERoleType;
         }
       } catch (e) {
-        if (Object.values(ERoleType).includes(stateStr as any)) {
+        if (Object.values(ERoleType).includes(stateStr)) {
           type = stateStr as ERoleType;
         }
       }

@@ -4,6 +4,11 @@ import { IBaseReadService } from './base.read-service.interface';
 
 export const PUBLIC_REVIEW_READ_SERVICE = Symbol('PUBLIC_REVIEW_READ_SERVICE');
 
-export interface IPublicReviewReadService extends IBaseReadService<ReviewDto, ReviewFilterDto> {
+export interface IPublicReviewReadService extends
+  IBaseReadService<
+    ReviewDto,
+    ReviewFilterDto
+  >
+{
   findByProposalId(proposalId: string): Promise<ReviewDto[]>;
 }

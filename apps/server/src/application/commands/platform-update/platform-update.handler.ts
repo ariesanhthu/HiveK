@@ -12,8 +12,11 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { PlatformUpdateCommand } from './platform-update.command';
 
 @CommandHandler(PlatformUpdateCommand)
-export class PlatformUpdateCommandHandler
-  implements ICommandHandler<PlatformUpdateCommand, PlatformDto>
+export class PlatformUpdateCommandHandler implements
+  ICommandHandler<
+    PlatformUpdateCommand,
+    PlatformDto
+  >
 {
   constructor(
     @Inject(PLATFORM_REPOSITORY) private readonly platformRepository: IPlatformRepository,

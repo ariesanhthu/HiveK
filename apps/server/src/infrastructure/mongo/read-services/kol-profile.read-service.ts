@@ -38,10 +38,16 @@ export class MongoKolProfileReadService implements IKolProfileReadService {
     const query: QueryFilter<KolProfileDocument> = {};
 
     if (name) {
-      query.name = { $regex: MongoSanitizeUtil.escapeRegex(name), $options: 'i' };
+      query.name = {
+        $regex: MongoSanitizeUtil.escapeRegex(name),
+        $options: 'i',
+      };
     }
     if (location) {
-      query.location = { $regex: MongoSanitizeUtil.escapeRegex(location), $options: 'i' };
+      query.location = {
+        $regex: MongoSanitizeUtil.escapeRegex(location),
+        $options: 'i',
+      };
     }
     if (gender) {
       query.gender = gender;
@@ -70,7 +76,9 @@ export class MongoKolProfileReadService implements IKolProfileReadService {
 
     const hasNextPage = docs.length > limit;
     const results = hasNextPage ? docs.slice(0, limit) : docs;
-    const nextCursor = hasNextPage ? results[results.length - 1]._id.toString() : null;
+    const nextCursor = hasNextPage
+      ? results[results.length - 1]._id.toString()
+      : null;
 
     const duration = performance.now() - start;
     // Log ra để quan sát trong lúc K6 đang bắn tải
@@ -84,7 +92,10 @@ export class MongoKolProfileReadService implements IKolProfileReadService {
     );
   }
 
-  async findById(id: string, projection?: any): Promise<Nullable<KolProfileDetailDto>> {
+  async findById(
+    id: string,
+    projection?: any,
+  ): Promise<Nullable<KolProfileDetailDto>> {
     let queryBuilder: any = this.kolProfileModel.findById(id);
 
     if (projection) {
@@ -141,13 +152,19 @@ export class MongoKolProfileReadService implements IKolProfileReadService {
   }
 
   async findByEmail(email: string): Promise<Nullable<KolProfileDetailDto>> {
-    const doc = await this.kolProfileModel.findOne({ email }).populate('user_id').lean().exec();
+    const doc = await this.kolProfileModel
+      .findOne({ email })
+      .populate('user_id')
+      .lean()
+      .exec();
     return doc ? this.mapToDto(doc) : null;
   }
 
   async findByName(name: string): Promise<KolProfileDetailDto[]> {
     const docs = await this.kolProfileModel
-      .find({ name: { $regex: MongoSanitizeUtil.escapeRegex(name), $options: 'i' } })
+      .find({
+        name: { $regex: MongoSanitizeUtil.escapeRegex(name), $options: 'i' },
+      })
       .populate('user_id')
       .lean()
       .exec();
@@ -170,10 +187,14 @@ export class MongoKolProfileReadService implements IKolProfileReadService {
       isVerified: doc.is_verified,
       scores: doc.scores || {},
       platforms: (doc.platforms || []).map((p: any) => ({
-        platformId: p.platform_id && typeof p.platform_id === 'object' && p.platform_id._id
+        platformId: p.platform_id
+            && typeof p.platform_id === 'object'
+            && p.platform_id._id
           ? p.platform_id._id.toString()
           : p.platform_id?.toString() || '',
-        platform: p.platform_id && typeof p.platform_id === 'object' && p.platform_id._id
+        platform: p.platform_id
+            && typeof p.platform_id === 'object'
+            && p.platform_id._id
           ? {
             id: p.platform_id._id.toString(),
             name: p.platform_id.name,
@@ -200,7 +221,7 @@ export class MongoKolProfileReadService implements IKolProfileReadService {
           type: doc.user_id.type,
           createdAt: doc.user_id.created_at,
           updatedAt: doc.user_id.updated_at,
-        } as any
+        }
         : undefined,
     };
   }

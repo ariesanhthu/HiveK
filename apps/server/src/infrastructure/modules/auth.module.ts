@@ -54,9 +54,7 @@ const COMMAND_HANDLERS = [
   AuthVerifyOtpCommandHandler,
 ];
 
-const QUERY_HANDLERS = [
-  AuthGetProfileHandler,
-];
+const QUERY_HANDLERS = [AuthGetProfileHandler];
 
 const STRATEGIES = [
   GoogleStrategy,

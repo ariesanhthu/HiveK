@@ -9,15 +9,20 @@ import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { ProposalGetListQuery } from './proposal-get-list.query';
 
 @QueryHandler(ProposalGetListQuery)
-export class ProposalGetListHandler
-  implements IQueryHandler<ProposalGetListQuery, PaginatedResponseDto<ProposalDto>>
+export class ProposalGetListHandler implements
+  IQueryHandler<
+    ProposalGetListQuery,
+    PaginatedResponseDto<ProposalDto>
+  >
 {
   constructor(
     @Inject(CAMPAIGN_PROPOSAL_READ_SERVICE) private readonly proposalReadService:
       ICampaignProposalReadService,
   ) {}
 
-  async execute(query: ProposalGetListQuery): Promise<PaginatedResponseDto<ProposalDto>> {
+  async execute(
+    query: ProposalGetListQuery,
+  ): Promise<PaginatedResponseDto<ProposalDto>> {
     return this.proposalReadService.findAll(query.filters);
   }
 }

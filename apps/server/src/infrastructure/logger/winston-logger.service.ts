@@ -20,10 +20,18 @@ export class WinstonLoggerService implements ILoggerService {
   }
 
   log(message: any, context?: string, metadata?: JsonObject): void {
-    this.winstonLogger.info(message, { context: context || this.context, ...(metadata || {}) });
+    this.winstonLogger.info(message, {
+      context: context || this.context,
+      ...(metadata || {}),
+    });
   }
 
-  error(message: any, trace?: string, context?: string, metadata?: JsonObject): void {
+  error(
+    message: any,
+    trace?: string,
+    context?: string,
+    metadata?: JsonObject,
+  ): void {
     this.winstonLogger.error(message, {
       stack: trace,
       context: context || this.context,
@@ -32,16 +40,25 @@ export class WinstonLoggerService implements ILoggerService {
   }
 
   warn(message: any, context?: string, metadata?: JsonObject): void {
-    this.winstonLogger.warn(message, { context: context || this.context, ...(metadata || {}) });
+    this.winstonLogger.warn(message, {
+      context: context || this.context,
+      ...(metadata || {}),
+    });
   }
 
   debug(message: any, context?: string, metadata?: JsonObject): void {
     if (env('NODE_ENV', 'development') !== 'development') return;
-    this.winstonLogger.debug(message, { context: context || this.context, ...(metadata || {}) });
+    this.winstonLogger.debug(message, {
+      context: context || this.context,
+      ...(metadata || {}),
+    });
   }
 
   verbose(message: any, context?: string, metadata?: JsonObject): void {
     if (env('NODE_ENV', 'development') !== 'development') return;
-    this.winstonLogger.verbose(message, { context: context || this.context, ...(metadata || {}) });
+    this.winstonLogger.verbose(message, {
+      context: context || this.context,
+      ...(metadata || {}),
+    });
   }
 }

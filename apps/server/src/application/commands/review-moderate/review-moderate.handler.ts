@@ -8,7 +8,12 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { ReviewModerateCommand } from './review-moderate.command';
 
 @CommandHandler(ReviewModerateCommand)
-export class ReviewModerateCommandHandler implements ICommandHandler<ReviewModerateCommand, void> {
+export class ReviewModerateCommandHandler implements
+  ICommandHandler<
+    ReviewModerateCommand,
+    void
+  >
+{
   constructor(
     @Inject(PUBLIC_REVIEW_REPOSITORY) private readonly reviewRepository: IPublicReviewRepository,
   ) {}
@@ -27,8 +32,10 @@ export class ReviewModerateCommandHandler implements ICommandHandler<ReviewModer
       } else {
         review.reject();
       }
-    } catch (error: any) {
-      throw new ReviewInvalidStatusTransitionException(error.message);
+    } catch (error) {
+      throw new ReviewInvalidStatusTransitionException(
+        error instanceof Error ? error.message : String(error),
+      );
     }
 
     await this.reviewRepository.save(review);

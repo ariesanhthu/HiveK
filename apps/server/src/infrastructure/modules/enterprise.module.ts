@@ -28,14 +28,9 @@ const COMMAND_HANDLERS = [
   EnterpriseRevokeUserCommandHandler,
 ];
 
-const QUERY_HANDLERS = [
-  EnterpriseGetByIdHandler,
-  EnterpriseGetListHandler,
-];
+const QUERY_HANDLERS = [EnterpriseGetByIdHandler, EnterpriseGetListHandler];
 
-const EVENT_HANDLERS = [
-  LinkEnterpriseLogoHandler,
-];
+const EVENT_HANDLERS = [LinkEnterpriseLogoHandler];
 
 @Module({
   imports: [CqrsModule, UploadedFileModule, UserModule],

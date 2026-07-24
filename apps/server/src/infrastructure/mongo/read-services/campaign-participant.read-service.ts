@@ -14,7 +14,10 @@ export class MongoCampaignParticipantReadService implements ICampaignParticipant
     @InjectModel(CampaignModel.name) private readonly campaignModel: Model<CampaignDocument>,
   ) {}
 
-  async findById(id: string, projection?: any): Promise<Nullable<CampaignParticipantDto>> {
+  async findById(
+    id: string,
+    projection?: any,
+  ): Promise<Nullable<CampaignParticipantDto>> {
     const pipeline: any[] = [
       { $match: { 'participants._id': new Types.ObjectId(id) } },
       { $unwind: '$participants' },
@@ -46,10 +49,15 @@ export class MongoCampaignParticipantReadService implements ICampaignParticipant
                           '$$value',
                           {
                             $filter: {
-                              input: { $ifNull: ['$$this.campaign_kol_outputs', []] },
+                              input: {
+                                $ifNull: ['$$this.campaign_kol_outputs', []],
+                              },
                               as: 'out',
                               cond: {
-                                $eq: ['$$out.campaign_participant_id', new Types.ObjectId(id)],
+                                $eq: [
+                                  '$$out.campaign_participant_id',
+                                  new Types.ObjectId(id),
+                                ],
                               },
                             },
                           },
@@ -89,7 +97,14 @@ export class MongoCampaignParticipantReadService implements ICampaignParticipant
     filters: CampaignParticipantFilterDto,
     projection?: any,
   ): Promise<PaginatedResponseDto<CampaignParticipantDto>> {
-    const { cursor, limit = 10, sort = SortOrder.DESC, campaignId, kolProfileId, status } = filters;
+    const {
+      cursor,
+      limit = 10,
+      sort = SortOrder.DESC,
+      campaignId,
+      kolProfileId,
+      status,
+    } = filters;
     const pipeline: any[] = [];
 
     // Optimize stage: if filtering by campaignId, match first
@@ -101,9 +116,11 @@ export class MongoCampaignParticipantReadService implements ICampaignParticipant
       { $unwind: '$participants' },
       {
         $match: {
-          'delete_at': null, // Only fetch from active campaigns
+          delete_at: null, // Only fetch from active campaigns
           ...(kolProfileId
-            ? { 'participants.kol_profile_id': new Types.ObjectId(kolProfileId) }
+            ? {
+              'participants.kol_profile_id': new Types.ObjectId(kolProfileId),
+            }
             : {}),
           ...(status ? { 'participants.status': status } : {}),
         },
@@ -158,9 +175,16 @@ export class MongoCampaignParticipantReadService implements ICampaignParticipant
                         '$$value',
                         {
                           $filter: {
-                            input: { $ifNull: ['$$this.campaign_kol_outputs', []] },
+                            input: {
+                              $ifNull: ['$$this.campaign_kol_outputs', []],
+                            },
                             as: 'out',
-                            cond: { $eq: ['$$out.campaign_participant_id', '$participants._id'] },
+                            cond: {
+                              $eq: [
+                                '$$out.campaign_participant_id',
+                                '$participants._id',
+                              ],
+                            },
                           },
                         },
                       ],
@@ -197,7 +221,9 @@ export class MongoCampaignParticipantReadService implements ICampaignParticipant
 
     const hasNextPage = docs.length > limit;
     const results = hasNextPage ? docs.slice(0, limit) : docs;
-    const nextCursor = hasNextPage ? results[results.length - 1].participants._id.toString() : null;
+    const nextCursor = hasNextPage
+      ? results[results.length - 1].participants._id.toString()
+      : null;
 
     return new PaginatedResponseDto(
       results.map((doc: any) => this.mapAggregateToDto(doc)),
@@ -209,11 +235,11 @@ export class MongoCampaignParticipantReadService implements ICampaignParticipant
 
   private mapAggregateToDto(doc: any): CampaignParticipantDto {
     const outputs = (doc.outputs || []).map((o: any) => {
-      const platformDoc = (doc.outputPlatforms || []).find((p: any) =>
-        p._id.toString() === o.platform_id.toString()
+      const platformDoc = (doc.outputPlatforms || []).find(
+        (p: any) => p._id.toString() === o.platform_id.toString(),
       );
-      const fileDoc = (doc.outputFiles || []).find((f: any) =>
-        f._id.toString() === o.file_id?.toString()
+      const fileDoc = (doc.outputFiles || []).find(
+        (f: any) => f._id.toString() === o.file_id?.toString(),
       );
 
       return {
@@ -224,12 +250,16 @@ export class MongoCampaignParticipantReadService implements ICampaignParticipant
         isScheduleForPost: o.is_schedule_for_post,
         fileId: o.file_id ? o.file_id.toString() : null,
         scheduledAt: o.scheduled_at
-          ? (o.scheduled_at instanceof Date ? o.scheduled_at.toISOString() : o.scheduled_at)
+          ? o.scheduled_at instanceof Date
+            ? o.scheduled_at.toISOString()
+            : o.scheduled_at
           : null,
         status: o.status,
         url: o.url || null,
         postedAt: o.posted_at
-          ? (o.posted_at instanceof Date ? o.posted_at.toISOString() : o.posted_at)
+          ? o.posted_at instanceof Date
+            ? o.posted_at.toISOString()
+            : o.posted_at
           : null,
         platform: platformDoc
           ? {
@@ -261,19 +291,19 @@ export class MongoCampaignParticipantReadService implements ICampaignParticipant
       kolProfileId: doc.participants.kol_profile_id.toString(),
       status: doc.participants.status,
       joinedAt: doc.participants.joined_at
-        ? (doc.participants.joined_at instanceof Date
+        ? doc.participants.joined_at instanceof Date
           ? doc.participants.joined_at.toISOString()
-          : doc.participants.joined_at)
+          : doc.participants.joined_at
         : null,
       createdAt: doc.participants.created_at
-        ? (doc.participants.created_at instanceof Date
+        ? doc.participants.created_at instanceof Date
           ? doc.participants.created_at.toISOString()
-          : doc.participants.created_at)
+          : doc.participants.created_at
         : new Date().toISOString(),
       updatedAt: doc.participants.updated_at
-        ? (doc.participants.updated_at instanceof Date
+        ? doc.participants.updated_at instanceof Date
           ? doc.participants.updated_at.toISOString()
-          : doc.participants.updated_at)
+          : doc.participants.updated_at
         : new Date().toISOString(),
       outputs,
       campaign: {
@@ -313,22 +343,26 @@ export class MongoCampaignParticipantReadService implements ICampaignParticipant
                 scheduledTime: post.scheduledTime,
                 platformId: post.platformId,
                 status: post.status,
-                campaignKOLOutputs: (post.campaignKOLOutputs || []).map((o: any) => ({
-                  id: o._id?.toString() || o.id?.toString(),
-                  campaignParticipantId: o.campaignParticipantId?.toString(),
-                  platformId: o.platformId?.toString(),
-                  uniqueId: o.uniqueId,
-                  outputType: o.outputType,
-                  title: o.title,
-                  isScheduleForPost: o.isScheduleForPost,
-                  scheduledAt: o.scheduledAt,
-                  fileId: o.fileId?.toString() || null,
-                  status: o.status,
-                  url: o.url,
-                  postedAt: o.postedAt,
-                  isTrackingActive: o.isTrackingActive,
-                })),
-                campaignEnterpriseOutputs: (post.campaignEnterpriseOutputs || []).map((o: any) => ({
+                campaignKOLOutputs: (post.campaignKOLOutputs || []).map(
+                  (o: any) => ({
+                    id: o._id?.toString() || o.id?.toString(),
+                    campaignParticipantId: o.campaignParticipantId?.toString(),
+                    platformId: o.platformId?.toString(),
+                    uniqueId: o.uniqueId,
+                    outputType: o.outputType,
+                    title: o.title,
+                    isScheduleForPost: o.isScheduleForPost,
+                    scheduledAt: o.scheduledAt,
+                    fileId: o.fileId?.toString() || null,
+                    status: o.status,
+                    url: o.url,
+                    postedAt: o.postedAt,
+                    isTrackingActive: o.isTrackingActive,
+                  }),
+                ),
+                campaignEnterpriseOutputs: (
+                  post.campaignEnterpriseOutputs || []
+                ).map((o: any) => ({
                   id: o._id?.toString() || o.id?.toString(),
                   platformId: o.platformId?.toString(),
                   uniqueId: o.uniqueId,
@@ -350,7 +384,9 @@ export class MongoCampaignParticipantReadService implements ICampaignParticipant
       kolProfile: kolProfileDoc
         ? {
           id: kolProfileDoc._id.toString(),
-          userId: kolProfileDoc.user_id ? kolProfileDoc.user_id.toString() : null,
+          userId: kolProfileDoc.user_id
+            ? kolProfileDoc.user_id.toString()
+            : null,
           verificationType: kolProfileDoc.verification_type ?? null,
           name: kolProfileDoc.name,
           location: kolProfileDoc.location,

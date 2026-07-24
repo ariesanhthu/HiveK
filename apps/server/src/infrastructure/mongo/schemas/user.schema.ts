@@ -15,7 +15,10 @@ export class UserModel {
     unique: true,
     lowercase: true,
     trim: true,
-    match: [/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/, 'Please fill a valid email address'],
+    match: [
+      /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/,
+      'Please fill a valid email address',
+    ],
   })
   email: string;
 
@@ -48,7 +51,11 @@ export class UserModel {
 
   type: string;
 
-  @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'RoleModel', required: true })
+  @Prop({
+    type: MongooseSchema.Types.ObjectId,
+    ref: 'RoleModel',
+    required: true,
+  })
   role_id: MongooseSchema.Types.ObjectId;
 
   @Prop({ type: MongooseSchema.Types.Boolean, default: false })

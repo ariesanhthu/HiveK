@@ -58,7 +58,9 @@ export class RoleSeedService implements OnModuleInit {
 
     try {
       await this.roleModel.insertMany(defaultRoles);
-      this.logger.log(`Successfully seeded ${defaultRoles.length} default roles.`);
+      this.logger.log(
+        `Successfully seeded ${defaultRoles.length} default roles.`,
+      );
     } catch (error) {
       this.logger.error('Failed to seed default roles:', error);
     }
@@ -73,12 +75,11 @@ export class RoleSeedService implements OnModuleInit {
       return;
     }
     const roles = await this.roleModel.find();
-    const adminRole = roles.find(r => r.type === ERoleType.ADMIN);
+    const adminRole = roles.find((r) => r.type === ERoleType.ADMIN);
     if (!adminRole) {
       throw new Error('No admin role found in system');
     }
 
-    let user;
     const passwordHash = await bcrypt.hash(env('ADMIN_PASSWORD'), 10);
     const commonProps = {
       email: env('ADMIN_EMAIL'),
@@ -91,7 +92,7 @@ export class RoleSeedService implements OnModuleInit {
       isEmailVerified: true,
     };
 
-    user = AdminRoot.create(commonProps);
+    const user = AdminRoot.create(commonProps);
     await this.userRepository.save(user);
   }
 }

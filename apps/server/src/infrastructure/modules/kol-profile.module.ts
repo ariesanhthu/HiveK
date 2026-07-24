@@ -38,7 +38,11 @@ const QUERY_HANDLERS = [
 
 @Module({
   imports: [CqrsModule],
-  controllers: [KolProfileAdminController, KolProfileClientController, TestKOLController],
+  controllers: [
+    KolProfileAdminController,
+    KolProfileClientController,
+    TestKOLController,
+  ],
   providers: [...COMMAND_HANDLERS, ...QUERY_HANDLERS, KolProfileResolver],
   exports: [],
 })

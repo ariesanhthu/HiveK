@@ -12,6 +12,8 @@ export const getRmqUri = (): string => {
   const vhostPart = vhost ? `/${encodeURIComponent(vhost)}` : '';
 
   return `${protocol}://${encodeURIComponent(RMQ_USER)}:${
-    encodeURIComponent(RMQ_PASSWORD)
+    encodeURIComponent(
+      RMQ_PASSWORD,
+    )
   }@${RMQ_HOST}:${port}${vhostPart}`;
 };

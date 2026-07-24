@@ -5,8 +5,11 @@ import { IBaseReadService } from './base.read-service.interface';
 
 export const PLATFORM_READ_SERVICE = Symbol('PLATFORM_READ_SERVICE');
 
-export interface IPlatformReadService
-  extends IBaseReadService<PlatformDetailDto, PlatformFilterDto>
+export interface IPlatformReadService extends
+  IBaseReadService<
+    PlatformDetailDto,
+    PlatformFilterDto
+  >
 {
   findByName(name: string): Promise<Nullable<PlatformDetailDto>>;
 }

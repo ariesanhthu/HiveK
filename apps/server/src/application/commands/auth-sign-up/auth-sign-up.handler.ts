@@ -18,8 +18,11 @@ import { AuthSignUpCommand } from './auth-sign-up.command';
 import { AuthSignUpOutputDto } from './auth-sign-up.dto';
 
 @CommandHandler(AuthSignUpCommand)
-export class AuthSignUpCommandHandler
-  implements ICommandHandler<AuthSignUpCommand, AuthSignUpOutputDto>
+export class AuthSignUpCommandHandler implements
+  ICommandHandler<
+    AuthSignUpCommand,
+    AuthSignUpOutputDto
+  >
 {
   constructor(
     @Inject(USER_REPOSITORY) private readonly userRepository: IUserRepository,
@@ -41,7 +44,7 @@ export class AuthSignUpCommandHandler
       }
 
       const roles = await this.roleReadService.findAll();
-      const defaultRole = roles.data.find(r => r.title.toUpperCase() === type.toUpperCase())
+      const defaultRole = roles.data.find((r) => r.title.toUpperCase() === type.toUpperCase())
         || roles.data[0];
       if (!defaultRole) {
         throw new RoleNotFoundException(type);
@@ -59,7 +62,7 @@ export class AuthSignUpCommandHandler
         passwordHash,
         fullName: input.fullName || 'DEFAULT NAME',
         type,
-        roleId: defaultRole.id!,
+        roleId: defaultRole.id,
       };
 
       let user;
@@ -80,7 +83,10 @@ export class AuthSignUpCommandHandler
       await this.userRepository.save(user);
       console.log('Created user');
       await this.commandBus.execute(
-        new AuthSendOtpCommand({ email: normalizedEmail, type: EOtpType.CREATE_ACCOUNT }),
+        new AuthSendOtpCommand({
+          email: normalizedEmail,
+          type: EOtpType.CREATE_ACCOUNT,
+        }),
       );
 
       await this.eventService.publishEvents(user);

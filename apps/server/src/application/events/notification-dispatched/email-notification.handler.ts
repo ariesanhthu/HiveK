@@ -43,7 +43,9 @@ export class EmailNotificationHandler implements IEventHandler<NotificationDispa
       return;
     }
 
-    this.logger.log(`Dispatching notifications to ${users.length} email addresses...`);
+    this.logger.log(
+      `Dispatching notifications to ${users.length} email addresses...`,
+    );
 
     for (const user of users) {
       try {
@@ -59,7 +61,9 @@ export class EmailNotificationHandler implements IEventHandler<NotificationDispa
         });
       } catch (mailError) {
         const errorMsg = mailError instanceof Error ? mailError.message : String(mailError);
-        this.logger.error(`Failed to send notification email to ${user.email}: ${errorMsg}`);
+        this.logger.error(
+          `Failed to send notification email to ${user.email}: ${errorMsg}`,
+        );
       }
     }
   }

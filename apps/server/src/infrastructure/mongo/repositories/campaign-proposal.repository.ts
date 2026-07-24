@@ -26,19 +26,30 @@ export class MongoCampaignProposalRepository implements ICampaignProposalReposit
   }
 
   async findById(id: string): Promise<Nullable<CampaignProposalRoot>> {
-    const doc = await this.proposalModel.findById(id).session(this.session).exec();
+    const doc = await this.proposalModel
+      .findById(id)
+      .session(this.session)
+      .exec();
     return doc ? this.mapToDomain(doc) : null;
   }
 
   async findBySlug(slug: string): Promise<Nullable<CampaignProposalRoot>> {
-    const doc = await this.proposalModel.findOne({ slug }).session(this.session).exec();
+    const doc = await this.proposalModel
+      .findOne({ slug })
+      .session(this.session)
+      .exec();
     return doc ? this.mapToDomain(doc) : null;
   }
 
-  async findByCampaignId(campaignId: string): Promise<Nullable<CampaignProposalRoot>> {
-    const doc = await this.proposalModel.findOne({
-      campaign_id: new Types.ObjectId(campaignId) as any,
-    }).session(this.session).exec();
+  async findByCampaignId(
+    campaignId: string,
+  ): Promise<Nullable<CampaignProposalRoot>> {
+    const doc = await this.proposalModel
+      .findOne({
+        campaign_id: new Types.ObjectId(campaignId) as any,
+      })
+      .session(this.session)
+      .exec();
     return doc ? this.mapToDomain(doc) : null;
   }
 
@@ -50,9 +61,10 @@ export class MongoCampaignProposalRepository implements ICampaignProposalReposit
       const saved = await created.save({ session: this.session });
       proposal.setId(saved._id.toString());
     } else {
-      await this.proposalModel.findByIdAndUpdate(proposal.id, data, { upsert: true }).session(
-        this.session,
-      ).exec();
+      await this.proposalModel
+        .findByIdAndUpdate(proposal.id, data, { upsert: true })
+        .session(this.session)
+        .exec();
     }
   }
 
@@ -89,7 +101,7 @@ export class MongoCampaignProposalRepository implements ICampaignProposalReposit
           imageId: product.image_id,
           affiliateUrls: product.affiliate_urls instanceof Map
             ? Object.fromEntries(product.affiliate_urls)
-            : (product.affiliate_urls || {}),
+            : product.affiliate_urls || {},
         })
       ),
       vouchers: (doc.vouchers || []).map((voucher) =>
@@ -104,7 +116,7 @@ export class MongoCampaignProposalRepository implements ICampaignProposalReposit
       status: doc.status,
       metrics: doc.metrics instanceof Map
         ? Object.fromEntries(doc.metrics)
-        : (doc.metrics || { totalViews: 0, totalClicks: 0 }),
+        : doc.metrics || { totalViews: 0, totalClicks: 0 },
       deleteAt: doc.delete_at,
       deleteBy: doc.delete_by,
       createdAt: (doc as any).created_at,

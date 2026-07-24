@@ -12,7 +12,9 @@ import { OutboxProcessorService } from './outbox/outbox-processor.service';
 @Global()
 @Module({
   imports: [
-    MongooseModule.forFeature([{ name: OutboxModel.name, schema: OutboxSchema }]),
+    MongooseModule.forFeature([
+      { name: OutboxModel.name, schema: OutboxSchema },
+    ]),
     RabbitMQModule,
   ],
   providers: [

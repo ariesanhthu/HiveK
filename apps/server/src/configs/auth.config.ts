@@ -90,10 +90,10 @@ export class AuthConfigDto {
 export class AuthConfig extends BaseConfigService<AuthConfigDto> {
   constructor() {
     super(AuthConfigDto, {
-      jwtSecret: process.env.JWT_SECRET as string,
+      jwtSecret: process.env.JWT_SECRET,
       jwtAccessExpirationMinutes: process.env.JWT_ACCESS_EXPIRATION_MINUTES
         ? parseInt(process.env.JWT_ACCESS_EXPIRATION_MINUTES, 10)
-        : (undefined as unknown as number),
+        : undefined,
       jwtRefreshExpirationDays: process.env.JWT_REFRESH_EXPIRATION_DAYS
         ? parseInt(process.env.JWT_REFRESH_EXPIRATION_DAYS, 10)
         : undefined,

@@ -22,9 +22,9 @@ export class LoggingInterceptor implements NestInterceptor {
   }
 
   intercept(context: ExecutionContext, next: CallHandler): Observable<unknown> {
-    const type = context.getType() as string;
+    const type = context.getType();
 
-    if (type === 'graphql') {
+    if ((type as string) === 'graphql') {
       const gqlCtx = GqlExecutionContext.create(context);
       const ctx = gqlCtx.getContext<GraphQLContext>();
       const req = ctx.req;

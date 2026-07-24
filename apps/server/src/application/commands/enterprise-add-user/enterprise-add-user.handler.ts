@@ -19,8 +19,11 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { EnterpriseAddUserCommand } from './enterprise-add-user.command';
 
 @CommandHandler(EnterpriseAddUserCommand)
-export class EnterpriseAddUserCommandHandler
-  implements ICommandHandler<EnterpriseAddUserCommand, void>
+export class EnterpriseAddUserCommandHandler implements
+  ICommandHandler<
+    EnterpriseAddUserCommand,
+    void
+  >
 {
   constructor(
     @Inject(USER_REPOSITORY) private readonly userRepository: IUserRepository,
@@ -44,15 +47,18 @@ export class EnterpriseAddUserCommandHandler
 
       const users = await this.userRepository.findByIds(input.memberIds);
       if (users.length !== input.memberIds.length) {
-        const foundIds = new Set(users.map(u => u.id));
-        const missingIds = input.memberIds.filter(id => !foundIds.has(id));
+        const foundIds = new Set(users.map((u) => u.id));
+        const missingIds = input.memberIds.filter((id) => !foundIds.has(id));
         throw new UserNotFoundException(missingIds.join(', '));
       }
 
       const usersToUpdate: EnterpriseUserRoot[] = [];
 
       for (const user of users) {
-        if (user.type !== ERoleType.ENTERPRISE || !(user instanceof EnterpriseUserRoot)) {
+        if (
+          user.type !== ERoleType.ENTERPRISE
+          || !(user instanceof EnterpriseUserRoot)
+        ) {
           throw new InvalidUserTypeException(
             'User must be an enterprise user to be added to an enterprise',
           );

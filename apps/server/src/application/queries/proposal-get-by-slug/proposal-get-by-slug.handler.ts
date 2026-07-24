@@ -9,8 +9,11 @@ import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { ProposalGetBySlugQuery } from './proposal-get-by-slug.query';
 
 @QueryHandler(ProposalGetBySlugQuery)
-export class ProposalGetBySlugHandler
-  implements IQueryHandler<ProposalGetBySlugQuery, ProposalDto>
+export class ProposalGetBySlugHandler implements
+  IQueryHandler<
+    ProposalGetBySlugQuery,
+    ProposalDto
+  >
 {
   constructor(
     @Inject(CAMPAIGN_PROPOSAL_READ_SERVICE) private readonly proposalReadService:

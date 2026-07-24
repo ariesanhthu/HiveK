@@ -35,9 +35,7 @@ const QUERY_HANDLERS = [
   CampaignParticipantGetListQueryHandler,
 ];
 
-const EVENT_HANDLERS = [
-  LinkCampaignParticipantOutputFileHandler,
-];
+const EVENT_HANDLERS = [LinkCampaignParticipantOutputFileHandler];
 
 @Module({
   imports: [CqrsModule, CampaignModule],

@@ -4,7 +4,7 @@ import { UploadedFileDto } from '../dtos';
 export class UploadedFileMapper {
   static toDto(root: UploadedFileRoot): UploadedFileDto {
     return {
-      id: root.id!,
+      id: root.id,
       url: root.url,
       publicId: root.publicId,
       size: root.size,

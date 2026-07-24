@@ -12,8 +12,11 @@ import { Types } from 'mongoose';
 import { CampaignParticipantUpdateCommand } from './campaign-participant-update.command';
 
 @CommandHandler(CampaignParticipantUpdateCommand)
-export class CampaignParticipantUpdateCommandHandler
-  implements ICommandHandler<CampaignParticipantUpdateCommand, void>
+export class CampaignParticipantUpdateCommandHandler implements
+  ICommandHandler<
+    CampaignParticipantUpdateCommand,
+    void
+  >
 {
   constructor(
     @Inject(CAMPAIGN_REPOSITORY) private readonly campaignRepository: ICampaignRepository,
@@ -28,7 +31,7 @@ export class CampaignParticipantUpdateCommandHandler
       throw new CampaignParticipantNotFoundException(id);
     }
 
-    const participant = campaign.participants.find(p => p.id === id);
+    const participant = campaign.participants.find((p) => p.id === id);
     if (!participant) {
       throw new CampaignParticipantNotFoundException(id);
     }
@@ -54,7 +57,7 @@ export class CampaignParticipantUpdateCommandHandler
       if (!campaign.props.schedule?.timeline) return null;
       for (const day of campaign.props.schedule.timeline) {
         for (const post of day.posts) {
-          const found = post.campaignKOLOutputs.find(x => x.id === outputId);
+          const found = post.campaignKOLOutputs.find((x) => x.id === outputId);
           if (found) return found;
         }
       }
@@ -62,54 +65,64 @@ export class CampaignParticipantUpdateCommandHandler
     };
 
     if (input.outputs) {
-      const mappedOutputs: CampaignKOLOutputEntity[] = input.outputs.map((o) => {
-        const outputId = o.id || new Types.ObjectId().toString();
-        const existingOutput = o.id ? findExistingOutput(o.id) : null;
-        const fileId = existingOutput ? existingOutput.fileId : null;
+      const mappedOutputs: CampaignKOLOutputEntity[] = input.outputs.map(
+        (o) => {
+          const outputId = o.id || new Types.ObjectId().toString();
+          const existingOutput = o.id ? findExistingOutput(o.id) : null;
+          const fileId = existingOutput ? existingOutput.fileId : null;
 
-        const status = o.isScheduleForPost ? EOutputStatus.SCHEDULED : EOutputStatus.PUBLISHED;
-        const url = o.isScheduleForPost ? null : o.url || null;
-        const postedAt = o.isScheduleForPost ? null : new Date();
+          const status = o.isScheduleForPost
+            ? EOutputStatus.SCHEDULED
+            : EOutputStatus.PUBLISHED;
+          const url = o.isScheduleForPost ? null : o.url || null;
+          const postedAt = o.isScheduleForPost ? null : new Date();
 
-        if (!o.isScheduleForPost && !url) {
-          throw new InvalidOperationException('Published output requires a URL');
-        }
+          if (!o.isScheduleForPost && !url) {
+            throw new InvalidOperationException(
+              'Published output requires a URL',
+            );
+          }
 
-        const isNewlyPublished = status === EOutputStatus.PUBLISHED && url
-          && (!existingOutput || existingOutput.status !== EOutputStatus.PUBLISHED
-            || !existingOutput.isTrackingActive);
+          const isNewlyPublished = status === EOutputStatus.PUBLISHED
+            && url
+            && (!existingOutput
+              || existingOutput.status !== EOutputStatus.PUBLISHED
+              || !existingOutput.isTrackingActive);
 
-        if (isNewlyPublished) {
-          trackingEventsToEmit.push({
-            campaignId: campaign.id!,
-            participantId: participant.id,
-            outputId,
-            url,
+          if (isNewlyPublished) {
+            trackingEventsToEmit.push({
+              campaignId: campaign.id,
+              participantId: participant.id,
+              outputId,
+              url,
+              platformId: o.platformId
+                || (existingOutput ? existingOutput.platformId : ''),
+            });
+          }
+
+          return CampaignKOLOutputEntity.instantiate(outputId, {
+            campaignParticipantId: participant.id,
             platformId: o.platformId || (existingOutput ? existingOutput.platformId : ''),
+            uniqueId: existingOutput ? existingOutput.uniqueId || null : null,
+            outputType: o.outputType,
+            title: o.title,
+            isScheduleForPost: o.isScheduleForPost,
+            fileId,
+            scheduledAt: o.scheduledAt ? new Date(o.scheduledAt) : null,
+            status,
+            url,
+            postedAt: existingOutput
+                && existingOutput.status === EOutputStatus.PUBLISHED
+              ? existingOutput.postedAt
+              : postedAt,
+            isTrackingActive: existingOutput
+              ? existingOutput.isTrackingActive
+              : status === EOutputStatus.PUBLISHED,
+            createdAt: existingOutput ? existingOutput.createdAt : new Date(),
+            updatedAt: new Date(),
           });
-        }
-
-        return CampaignKOLOutputEntity.instantiate(outputId, {
-          campaignParticipantId: participant.id,
-          platformId: o.platformId || (existingOutput ? existingOutput.platformId : ''),
-          uniqueId: existingOutput ? (existingOutput.uniqueId || null) : null,
-          outputType: o.outputType,
-          title: o.title,
-          isScheduleForPost: o.isScheduleForPost,
-          fileId,
-          scheduledAt: o.scheduledAt ? new Date(o.scheduledAt) : null,
-          status,
-          url,
-          postedAt: existingOutput && existingOutput.status === EOutputStatus.PUBLISHED
-            ? existingOutput.postedAt
-            : postedAt,
-          isTrackingActive: existingOutput
-            ? existingOutput.isTrackingActive
-            : (status === EOutputStatus.PUBLISHED),
-          createdAt: existingOutput ? existingOutput.createdAt : new Date(),
-          updatedAt: new Date(),
-        });
-      });
+        },
+      );
 
       campaign.updateKOLOutputs(participant.id, mappedOutputs);
     }

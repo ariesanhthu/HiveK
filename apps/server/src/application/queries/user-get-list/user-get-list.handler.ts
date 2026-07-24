@@ -6,14 +6,19 @@ import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { UserGetListQuery } from './user-get-list.query';
 
 @QueryHandler(UserGetListQuery)
-export class UserGetListHandler
-  implements IQueryHandler<UserGetListQuery, PaginatedResponseDto<UserDetailDto>>
+export class UserGetListHandler implements
+  IQueryHandler<
+    UserGetListQuery,
+    PaginatedResponseDto<UserDetailDto>
+  >
 {
   constructor(
     @Inject(USER_READ_SERVICE) private readonly readService: IUserReadService,
   ) {}
 
-  async execute(query: UserGetListQuery): Promise<PaginatedResponseDto<UserDetailDto>> {
+  async execute(
+    query: UserGetListQuery,
+  ): Promise<PaginatedResponseDto<UserDetailDto>> {
     return this.readService.findAll(query.filters);
   }
 }

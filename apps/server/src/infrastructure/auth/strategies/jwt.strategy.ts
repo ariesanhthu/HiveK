@@ -30,7 +30,9 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }
 
   async validate(payload: IJwtPayload) {
-    const user = await this.commandBus.execute(new UserCheckValidCommand({ id: payload.sub }));
+    const user = await this.commandBus.execute(
+      new UserCheckValidCommand({ id: payload.sub }),
+    );
     const jwtPayload = {
       sub: user.id,
       email: user.email,

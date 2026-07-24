@@ -12,9 +12,7 @@ const COMMAND_HANDLERS = [
   KpiLogTerminateCommandHandler,
 ];
 
-const QUERY_HANDLERS = [
-  KpiLogGetListHandler,
-];
+const QUERY_HANDLERS = [KpiLogGetListHandler];
 
 const EVENT_HANDLERS = [
   KpiMetricsUpdatedWsHandler,

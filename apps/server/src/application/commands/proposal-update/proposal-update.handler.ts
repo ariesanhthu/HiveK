@@ -19,8 +19,11 @@ interface UpdateFields {
 }
 
 @CommandHandler(ProposalUpdateCommand)
-export class ProposalUpdateCommandHandler
-  implements ICommandHandler<ProposalUpdateCommand, ProposalDto>
+export class ProposalUpdateCommandHandler implements
+  ICommandHandler<
+    ProposalUpdateCommand,
+    ProposalDto
+  >
 {
   constructor(
     @Inject(CAMPAIGN_PROPOSAL_REPOSITORY) private readonly proposalRepository:
@@ -38,7 +41,9 @@ export class ProposalUpdateCommandHandler
     const updateProps: UpdateFields = {};
 
     if (input.title !== undefined) updateProps.title = input.title;
-    if (input.description !== undefined) updateProps.description = input.description;
+    if (input.description !== undefined) {
+      updateProps.description = input.description;
+    }
     if (input.mediaSlides !== undefined) {
       updateProps.mediaSlides = input.mediaSlides.map((slide) =>
         MediaSlideVO.create({

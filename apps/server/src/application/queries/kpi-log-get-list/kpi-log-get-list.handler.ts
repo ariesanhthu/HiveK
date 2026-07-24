@@ -6,14 +6,19 @@ import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { KpiLogGetListQuery } from './kpi-log-get-list.query';
 
 @QueryHandler(KpiLogGetListQuery)
-export class KpiLogGetListHandler
-  implements IQueryHandler<KpiLogGetListQuery, PaginatedResponseDto<KpiLogDto>>
+export class KpiLogGetListHandler implements
+  IQueryHandler<
+    KpiLogGetListQuery,
+    PaginatedResponseDto<KpiLogDto>
+  >
 {
   constructor(
     @Inject(KPI_LOG_READ_SERVICE) private readonly kpiLogReadService: IKpiLogReadService,
   ) {}
 
-  async execute(query: KpiLogGetListQuery): Promise<PaginatedResponseDto<KpiLogDto>> {
+  async execute(
+    query: KpiLogGetListQuery,
+  ): Promise<PaginatedResponseDto<KpiLogDto>> {
     return this.kpiLogReadService.findAll(query.filters);
   }
 }

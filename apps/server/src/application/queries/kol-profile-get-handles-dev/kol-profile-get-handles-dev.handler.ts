@@ -11,16 +11,25 @@ import { Model } from 'mongoose';
 import { KolProfileGetHandlesDevQuery } from './kol-profile-get-handles-dev.query';
 
 @QueryHandler(KolProfileGetHandlesDevQuery)
-export class KolProfileGetHandlesDevHandler
-  implements IQueryHandler<KolProfileGetHandlesDevQuery, PaginatedResponseDto<any>>
+export class KolProfileGetHandlesDevHandler implements
+  IQueryHandler<
+    KolProfileGetHandlesDevQuery,
+    PaginatedResponseDto<any>
+  >
 {
   constructor(
     @InjectModel(KolProfileModel.name) private readonly kolProfileModel: Model<KolProfileDocument>,
     @InjectModel(PlatformModel.name) private readonly platformModel: Model<PlatformDocument>,
   ) {}
 
-  async execute(query: KolProfileGetHandlesDevQuery): Promise<PaginatedResponseDto<any>> {
-    const { cursor, limit = 10, sort = SortOrder.DESC } = query.pagination || {};
+  async execute(
+    query: KolProfileGetHandlesDevQuery,
+  ): Promise<PaginatedResponseDto<any>> {
+    const {
+      cursor,
+      limit = 10,
+      sort = SortOrder.DESC,
+    } = query.pagination || {};
 
     const platforms = await this.platformModel.find({}).lean().exec();
     const platformIdToName = new Map<string, string>();
@@ -42,7 +51,9 @@ export class KolProfileGetHandlesDevHandler
 
     const hasNextPage = docs.length > limit;
     const results = hasNextPage ? docs.slice(0, limit) : docs;
-    const nextCursor = hasNextPage ? results[results.length - 1]._id.toString() : null;
+    const nextCursor = hasNextPage
+      ? results[results.length - 1]._id.toString()
+      : null;
 
     const mappedResults = results.map((doc: any) => {
       const mappedDoc: any = {
@@ -57,6 +68,11 @@ export class KolProfileGetHandlesDevHandler
       return mappedDoc;
     });
 
-    return new PaginatedResponseDto(mappedResults, nextCursor, hasNextPage, mappedResults.length);
+    return new PaginatedResponseDto(
+      mappedResults,
+      nextCursor,
+      hasNextPage,
+      mappedResults.length,
+    );
   }
 }

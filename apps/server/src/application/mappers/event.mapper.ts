@@ -21,21 +21,17 @@ export class EventMapper {
   public static mapToIntegrationEvent(event: DomainEvent): IntegrationEvent[] {
     switch (true) {
       case event instanceof EntityHardDeletedEvent:
-        return EventMapper.mapEntityHardDeletedEvent(event as EntityHardDeletedEvent);
+        return EventMapper.mapEntityHardDeletedEvent(event);
       case event instanceof UserSignedUpEvent:
-        return EventMapper.mapUserSignedUpEvent(event as UserSignedUpEvent);
+        return EventMapper.mapUserSignedUpEvent(event);
       case event instanceof VerificationOtpCreatedEvent:
-        return EventMapper.mapVerificationOtpCreatedEvent(event as VerificationOtpCreatedEvent);
+        return EventMapper.mapVerificationOtpCreatedEvent(event);
       case event instanceof UserAddedToEnterpriseEvent:
-        return EventMapper.mapUserAddedToEnterpriseEvent(event as UserAddedToEnterpriseEvent);
+        return EventMapper.mapUserAddedToEnterpriseEvent(event);
       case event instanceof UserRevokedFromEnterpriseEvent:
-        return EventMapper.mapUserRevokedFromEnterpriseEvent(
-          event as UserRevokedFromEnterpriseEvent,
-        );
+        return EventMapper.mapUserRevokedFromEnterpriseEvent(event);
       case event instanceof CampaignParticipantCreatedEvent:
-        return EventMapper.mapCampaignParticipantCreatedEvent(
-          event as CampaignParticipantCreatedEvent,
-        );
+        return EventMapper.mapCampaignParticipantCreatedEvent(event);
       default:
         return [];
     }
@@ -44,15 +40,21 @@ export class EventMapper {
   /**
    * Maps a single DomainEvent to one or many IntegrationEvents.
    */
-  public static mapToIntegrationEvents(events: DomainEvent[]): IntegrationEvent[] {
+  public static mapToIntegrationEvents(
+    events: DomainEvent[],
+  ): IntegrationEvent[] {
     return events.flatMap((event) => EventMapper.mapToIntegrationEvent(event));
   }
 
-  private static mapEntityHardDeletedEvent(event: EntityHardDeletedEvent): IntegrationEvent[] {
+  private static mapEntityHardDeletedEvent(
+    event: EntityHardDeletedEvent,
+  ): IntegrationEvent[] {
     return [];
   }
 
-  private static mapUserSignedUpEvent(event: UserSignedUpEvent): IntegrationEvent[] {
+  private static mapUserSignedUpEvent(
+    event: UserSignedUpEvent,
+  ): IntegrationEvent[] {
     return [];
   }
 

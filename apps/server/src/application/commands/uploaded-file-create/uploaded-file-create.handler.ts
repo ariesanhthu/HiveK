@@ -14,8 +14,11 @@ import { CommandHandler, EventBus, ICommandHandler } from '@nestjs/cqrs';
 import { UploadedFileCreateCommand } from './uploaded-file-create.command';
 
 @CommandHandler(UploadedFileCreateCommand)
-export class UploadedFileCreateCommandHandler
-  implements ICommandHandler<UploadedFileCreateCommand, UploadedFileDto>
+export class UploadedFileCreateCommandHandler implements
+  ICommandHandler<
+    UploadedFileCreateCommand,
+    UploadedFileDto
+  >
 {
   constructor(
     @Inject(UPLOADED_FILE_REPOSITORY) private readonly repository: IUploadedFileRepository,
@@ -58,7 +61,7 @@ export class UploadedFileCreateCommandHandler
     // Publish creation event to let target domains link the file asynchronously
     await this.eventBus.publish(
       new UploadedFileCreatedEvent(
-        root.id!,
+        root.id,
         root.targetType,
         root.targetId,
         root.targetField,

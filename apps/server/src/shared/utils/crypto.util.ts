@@ -10,7 +10,10 @@ import { createCipheriv, createDecipheriv, createHash, randomBytes } from 'crypt
  * hashData('hello', 'md5') // '5d41402abc4b2a76b9719d911017c592'
  * ```
  */
-export function hashData(data: string, algorithm: 'sha256' | 'sha512' | 'md5' = 'sha256'): string {
+export function hashData(
+  data: string,
+  algorithm: 'sha256' | 'sha512' | 'md5' = 'sha256',
+): string {
   return createHash(algorithm).update(data).digest('hex');
 }
 

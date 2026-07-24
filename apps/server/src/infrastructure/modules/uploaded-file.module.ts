@@ -26,17 +26,19 @@ const COMMAND_HANDLERS = [
   UploadedFileRestoreCommandHandler,
 ];
 
-const QUERY_HANDLERS = [
-  UploadedFileGetByIdHandler,
-  UploadedFileGetListHandler,
-];
+const QUERY_HANDLERS = [UploadedFileGetByIdHandler, UploadedFileGetListHandler];
 
 const EVENT_HANDLERS = [];
 
 @Module({
   imports: [CqrsModule, InfrastructureModule],
   controllers: [UploadedFileAdminController, UploadedFileClientController],
-  providers: [...COMMAND_HANDLERS, ...QUERY_HANDLERS, ...EVENT_HANDLERS, UploadService],
+  providers: [
+    ...COMMAND_HANDLERS,
+    ...QUERY_HANDLERS,
+    ...EVENT_HANDLERS,
+    UploadService,
+  ],
   exports: [UploadService],
 })
 export class UploadedFileModule {}

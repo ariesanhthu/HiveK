@@ -6,6 +6,7 @@ import {
   MESSAGE_QUEUE_SERVICE,
   UNIT_OF_WORK,
 } from '@/application/interfaces';
+import { MongoUnitOfWork } from '@/infrastructure/mongo/mongo-uow';
 import {
   EOutboxStatus,
   OutboxDocument,
@@ -46,13 +47,15 @@ export class OutboxProcessorService {
   @Cron(CronExpression.EVERY_10_SECONDS)
   async process() {
     if (this.isProcessing) {
-      this.logger.debug('Outbox processing is already in progress, skipping this tick.');
+      this.logger.debug(
+        'Outbox processing is already in progress, skipping this tick.',
+      );
       return;
     }
     this.isProcessing = true;
 
     try {
-      const activeSession = (this.uow as any).getSession?.() || undefined;
+      const activeSession = (this.uow as MongoUnitOfWork).getSession() || undefined;
       const pendingMessages = await this.outboxModel
         .find({ status: EOutboxStatus.PENDING })
         .sort({ created_at: 1 })
@@ -65,24 +68,33 @@ export class OutboxProcessorService {
         return;
       }
 
-      this.logger.log(`Found ${pendingMessages.length} pending outbox messages.`);
+      this.logger.log(
+        `Found ${pendingMessages.length} pending outbox messages.`,
+      );
 
       for (const message of pendingMessages) {
         await this.dispatch(message);
       }
     } catch (error) {
-      this.logger.error('Error during outbox processing batch', toError(error).stack);
+      this.logger.error(
+        'Error during outbox processing batch',
+        toError(error).stack,
+      );
     } finally {
       this.isProcessing = false;
     }
   }
 
   private async dispatch(message: OutboxDocument) {
-    const activeSession = (this.uow as any).getSession?.() || undefined;
+    const activeSession = (this.uow as MongoUnitOfWork).getSession() || undefined;
     try {
-      this.logger.debug(`Processing outbox message: ${message._id}`, undefined, {
-        eventType: message.event_type,
-      });
+      this.logger.debug(
+        `Processing outbox message: ${message._id}`,
+        undefined,
+        {
+          eventType: message.event_type,
+        },
+      );
 
       // 1. Mark as processing to prevent other instances/concurrency issues
       message.status = EOutboxStatus.PROCESSING;
@@ -90,7 +102,10 @@ export class OutboxProcessorService {
 
       // 2. Dispatch to RabbitMQ
       if (message.transport && message.transport.routingKey) {
-        await (this.mqService.emit)(message.transport.routingKey, message.payload);
+        await this.mqService.emit(
+          message.transport.routingKey,
+          message.payload,
+        );
       } else {
         // Do not send if transport is not defined
         this.logger.debug('No transport defined for message', undefined, {
@@ -110,10 +125,14 @@ export class OutboxProcessorService {
       );
     } catch (error) {
       const reason = errorMessage(error);
-      this.logger.warn(`Failed to dispatch outbox message ${message._id}: ${reason}`, undefined, {
-        retryCount: message.retry_count,
-        maxRetry: message.max_retry,
-      });
+      this.logger.warn(
+        `Failed to dispatch outbox message ${message._id}: ${reason}`,
+        undefined,
+        {
+          retryCount: message.retry_count,
+          maxRetry: message.max_retry,
+        },
+      );
 
       // 4. Mark as failed (handles retry logic)
       message.retry_count += 1;

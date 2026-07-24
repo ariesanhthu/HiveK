@@ -16,8 +16,11 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { EnterpriseHardDeleteCommand } from './enterprise-hard-delete.command';
 
 @CommandHandler(EnterpriseHardDeleteCommand)
-export class EnterpriseHardDeleteCommandHandler
-  implements ICommandHandler<EnterpriseHardDeleteCommand, void>
+export class EnterpriseHardDeleteCommandHandler implements
+  ICommandHandler<
+    EnterpriseHardDeleteCommand,
+    void
+  >
 {
   constructor(
     @Inject(ENTERPRISE_REPOSITORY) private readonly enterpriseRepository: IEnterpriseRepository,
@@ -53,7 +56,7 @@ export class EnterpriseHardDeleteCommandHandler
       // Hard delete: remove all associated campaigns first
       const campaigns = await this.campaignRepository.findByEnterpriseId(id);
       for (const campaign of campaigns) {
-        await this.campaignRepository.delete(campaign.id!);
+        await this.campaignRepository.delete(campaign.id);
       }
 
       await this.enterpriseRepository.delete(id);

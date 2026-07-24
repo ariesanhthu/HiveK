@@ -17,8 +17,11 @@ import { AuthGoogleSignInCommand } from './auth-google-sign-in.command';
 import { AuthGoogleSignInOutputDto } from './auth-google-sign-in.dto';
 
 @CommandHandler(AuthGoogleSignInCommand)
-export class AuthGoogleSignInCommandHandler
-  implements ICommandHandler<AuthGoogleSignInCommand, AuthGoogleSignInOutputDto>
+export class AuthGoogleSignInCommandHandler implements
+  ICommandHandler<
+    AuthGoogleSignInCommand,
+    AuthGoogleSignInOutputDto
+  >
 {
   constructor(
     @Inject(USER_REPOSITORY) private readonly userRepository: IUserRepository,
@@ -28,7 +31,9 @@ export class AuthGoogleSignInCommandHandler
     @Inject(UNIT_OF_WORK) private readonly uow: IUnitOfWork,
   ) {}
 
-  async execute(command: AuthGoogleSignInCommand): Promise<AuthGoogleSignInOutputDto> {
+  async execute(
+    command: AuthGoogleSignInCommand,
+  ): Promise<AuthGoogleSignInOutputDto> {
     return this.uow.execute(async () => {
       const { input } = command;
 
@@ -55,7 +60,7 @@ export class AuthGoogleSignInCommandHandler
           passwordHash: '',
           fullName: input.displayName || 'Google User',
           type,
-          roleId: defaultRole.id!,
+          roleId: defaultRole.id,
           googleId: input.googleId,
           isEmailVerified: true,
         };
@@ -76,7 +81,7 @@ export class AuthGoogleSignInCommandHandler
       }
 
       const payload = {
-        sub: user.id!,
+        sub: user.id,
         email: user.email,
         role: user.roleId,
         type: user.type,

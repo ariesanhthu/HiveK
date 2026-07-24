@@ -21,10 +21,7 @@ const COMMAND_HANDLERS = [
   RoleRestoreCommandHandler,
 ];
 
-const QUERY_HANDLERS = [
-  RoleGetByIdQueryHandler,
-  RoleGetListQueryHandler,
-];
+const QUERY_HANDLERS = [RoleGetByIdQueryHandler, RoleGetListQueryHandler];
 
 @Module({
   imports: [UserModule, CqrsModule],

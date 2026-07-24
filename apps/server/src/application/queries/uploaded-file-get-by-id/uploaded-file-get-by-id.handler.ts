@@ -9,8 +9,11 @@ import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { UploadedFileGetByIdQuery } from './uploaded-file-get-by-id.query';
 
 @QueryHandler(UploadedFileGetByIdQuery)
-export class UploadedFileGetByIdHandler
-  implements IQueryHandler<UploadedFileGetByIdQuery, UploadedFileDto>
+export class UploadedFileGetByIdHandler implements
+  IQueryHandler<
+    UploadedFileGetByIdQuery,
+    UploadedFileDto
+  >
 {
   constructor(
     @Inject(UPLOADED_FILE_READ_SERVICE) private readonly readService: IUploadedFileReadService,

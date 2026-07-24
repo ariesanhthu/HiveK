@@ -86,9 +86,7 @@ export class CloudinaryStorageService implements IStorageService {
       const duration = Date.now() - startTime;
 
       if (result.result === 'ok' || result.result === 'not found') {
-        this.logger.log(
-          `Deleted from Cloudinary (${duration}ms): ${publicId}`,
-        );
+        this.logger.log(`Deleted from Cloudinary (${duration}ms): ${publicId}`);
         return true;
       }
 
@@ -125,7 +123,9 @@ export class CloudinaryStorageService implements IStorageService {
     }
 
     try {
-      this.logger.log(`Starting bulk delete of ${publicIds.length} files from Cloudinary`);
+      this.logger.log(
+        `Starting bulk delete of ${publicIds.length} files from Cloudinary`,
+      );
 
       const apiResponse = await cloudinary.api.delete_resources(publicIds, {
         resource_type: options?.resourceType || 'image',
@@ -153,13 +153,19 @@ export class CloudinaryStorageService implements IStorageService {
     } catch (error) {
       this.logger.warn(
         `Cloudinary bulk delete API failed (${
-          errorMessage(error)
+          errorMessage(
+            error,
+          )
         }). Falling back to individual deletes.`,
       );
 
       const deletePromises = publicIds.map((publicId) =>
         this.delete(publicId, options)
-          .then((success) => ({ success, publicId, error: success ? undefined : 'Delete failed' }))
+          .then((success) => ({
+            success,
+            publicId,
+            error: success ? undefined : 'Delete failed',
+          }))
           .catch((err) => ({ success: false, publicId, error: err.message }))
       );
 

@@ -11,8 +11,11 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { PlatformSoftDeleteCommand } from './platform-soft-delete.command';
 
 @CommandHandler(PlatformSoftDeleteCommand)
-export class PlatformSoftDeleteCommandHandler
-  implements ICommandHandler<PlatformSoftDeleteCommand, void>
+export class PlatformSoftDeleteCommandHandler implements
+  ICommandHandler<
+    PlatformSoftDeleteCommand,
+    void
+  >
 {
   constructor(
     @Inject(PLATFORM_REPOSITORY) private readonly platformRepository: IPlatformRepository,

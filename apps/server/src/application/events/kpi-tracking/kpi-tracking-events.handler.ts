@@ -26,24 +26,32 @@ export class KpiMetricsUpdatedWsHandler implements IEventHandler<KpiMetricsUpdat
     const campaign = await this.campaignRepository.findByParticipantId(participantId);
     if (!campaign) return;
 
-    const participant = campaign.participants.find(p => p.id === participantId);
+    const participant = campaign.participants.find(
+      (p) => p.id === participantId,
+    );
     if (!participant) return;
 
     const kpiLog = await this.kpiLogRepository.findById(kpiLogId);
     if (!kpiLog) return;
 
     // Notify the KOL
-    this.websocketService.emitToUser(participant.kolProfileId, 'kpi_metrics_updated', {
-      participantId,
-      campaignId: campaign.id!,
-      kpiLog: {
-        id: kpiLog.id,
-        timestamp: kpiLog.timestamp,
-        metrics: kpiLog.metrics,
+    this.websocketService.emitToUser(
+      participant.kolProfileId,
+      'kpi_metrics_updated',
+      {
+        participantId,
+        campaignId: campaign.id,
+        kpiLog: {
+          id: kpiLog.id,
+          timestamp: kpiLog.timestamp,
+          metrics: kpiLog.metrics,
+        },
       },
-    });
+    );
 
-    this.logger.log(`Pushed kpi_metrics_updated socket event to user_${participant.kolProfileId}`);
+    this.logger.log(
+      `Pushed kpi_metrics_updated socket event to user_${participant.kolProfileId}`,
+    );
   }
 }
 
@@ -62,15 +70,21 @@ export class KpiTrackingTerminatedWsHandler implements IEventHandler<KpiTracking
     const campaign = await this.campaignRepository.findByParticipantId(participantId);
     if (!campaign) return;
 
-    const participant = campaign.participants.find(p => p.id === participantId);
+    const participant = campaign.participants.find(
+      (p) => p.id === participantId,
+    );
     if (!participant) return;
 
     // Notify the KOL
-    this.websocketService.emitToUser(participant.kolProfileId, 'kpi_tracking_terminated', {
-      participantId,
-      campaignId: campaign.id!,
-      outputId,
-    });
+    this.websocketService.emitToUser(
+      participant.kolProfileId,
+      'kpi_tracking_terminated',
+      {
+        participantId,
+        campaignId: campaign.id,
+        outputId,
+      },
+    );
 
     this.logger.log(
       `Pushed kpi_tracking_terminated socket event to user_${participant.kolProfileId}`,

@@ -10,8 +10,11 @@ import { Types } from 'mongoose';
 import { CampaignCreateCommand } from './campaign-create.command';
 
 @CommandHandler(CampaignCreateCommand)
-export class CampaignCreateCommandHandler
-  implements ICommandHandler<CampaignCreateCommand, CampaignDto>
+export class CampaignCreateCommandHandler implements
+  ICommandHandler<
+    CampaignCreateCommand,
+    CampaignDto
+  >
 {
   constructor(
     @Inject(CAMPAIGN_REPOSITORY) private readonly campaignRepository: ICampaignRepository,
@@ -28,41 +31,49 @@ export class CampaignCreateCommandHandler
           posts: (day.posts || []).map((post) => ({
             scheduledTime: new Date(post.scheduledTime),
             platformId: post.platformId,
-            status: (post.status || ESchedulePostStatus.DRAFT) as ESchedulePostStatus,
+            status: post.status || ESchedulePostStatus.DRAFT,
             campaignKOLOutputs: (post.campaignKOLOutputs || []).map((o) =>
-              CampaignKOLOutputEntity.instantiate(o.id || new Types.ObjectId().toString(), {
-                campaignParticipantId: o.campaignParticipantId,
-                platformId: o.platformId,
-                uniqueId: o.uniqueId || null,
-                outputType: o.outputType,
-                title: o.title,
-                isScheduleForPost: o.isScheduleForPost,
-                scheduledAt: o.scheduledAt ? new Date(o.scheduledAt) : null,
-                fileId: o.fileId || null,
-                status: o.status,
-                url: o.url || null,
-                postedAt: o.postedAt ? new Date(o.postedAt) : null,
-                isTrackingActive: o.isTrackingActive || false,
-                createdAt: new Date(),
-                updatedAt: new Date(),
-              })
+              CampaignKOLOutputEntity.instantiate(
+                o.id || new Types.ObjectId().toString(),
+                {
+                  campaignParticipantId: o.campaignParticipantId,
+                  platformId: o.platformId,
+                  uniqueId: o.uniqueId || null,
+                  outputType: o.outputType,
+                  title: o.title,
+                  isScheduleForPost: o.isScheduleForPost,
+                  scheduledAt: o.scheduledAt ? new Date(o.scheduledAt) : null,
+                  fileId: o.fileId || null,
+                  status: o.status,
+                  url: o.url || null,
+                  postedAt: o.postedAt ? new Date(o.postedAt) : null,
+                  isTrackingActive: o.isTrackingActive || false,
+                  createdAt: new Date(),
+                  updatedAt: new Date(),
+                },
+              )
             ),
-            campaignEnterpriseOutputs: (post.campaignEnterpriseOutputs || []).map((o) =>
-              CampaignEnterpriseOutputEntity.instantiate(o.id || new Types.ObjectId().toString(), {
-                platformId: o.platformId,
-                uniqueId: o.uniqueId || undefined,
-                outputType: o.outputType,
-                title: o.title,
-                isScheduleForPost: o.isScheduleForPost,
-                scheduledAt: o.scheduledAt ? new Date(o.scheduledAt) : null,
-                fileId: o.fileId || null,
-                status: o.status,
-                url: o.url || null,
-                postedAt: o.postedAt ? new Date(o.postedAt) : null,
-                isTrackingActive: o.isTrackingActive || false,
-                createdAt: new Date(),
-                updatedAt: new Date(),
-              })
+            campaignEnterpriseOutputs: (
+              post.campaignEnterpriseOutputs || []
+            ).map((o) =>
+              CampaignEnterpriseOutputEntity.instantiate(
+                o.id || new Types.ObjectId().toString(),
+                {
+                  platformId: o.platformId,
+                  uniqueId: o.uniqueId || undefined,
+                  outputType: o.outputType,
+                  title: o.title,
+                  isScheduleForPost: o.isScheduleForPost,
+                  scheduledAt: o.scheduledAt ? new Date(o.scheduledAt) : null,
+                  fileId: o.fileId || null,
+                  status: o.status,
+                  url: o.url || null,
+                  postedAt: o.postedAt ? new Date(o.postedAt) : null,
+                  isTrackingActive: o.isTrackingActive || false,
+                  createdAt: new Date(),
+                  updatedAt: new Date(),
+                },
+              )
             ),
           })),
         })),

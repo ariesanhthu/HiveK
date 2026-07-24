@@ -9,7 +9,12 @@ import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { ProposalGetByIdQuery } from './proposal-get-by-id.query';
 
 @QueryHandler(ProposalGetByIdQuery)
-export class ProposalGetByIdHandler implements IQueryHandler<ProposalGetByIdQuery, ProposalDto> {
+export class ProposalGetByIdHandler implements
+  IQueryHandler<
+    ProposalGetByIdQuery,
+    ProposalDto
+  >
+{
   constructor(
     @Inject(CAMPAIGN_PROPOSAL_READ_SERVICE) private readonly proposalReadService:
       ICampaignProposalReadService,

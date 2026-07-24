@@ -5,7 +5,12 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { RoleUpdateCommand } from './role-update.command';
 
 @CommandHandler(RoleUpdateCommand)
-export class RoleUpdateCommandHandler implements ICommandHandler<RoleUpdateCommand, void> {
+export class RoleUpdateCommandHandler implements
+  ICommandHandler<
+    RoleUpdateCommand,
+    void
+  >
+{
   constructor(
     @Inject(ROLE_REPOSITORY) private readonly roleRepository: IRoleRepository,
   ) {}
@@ -21,7 +26,9 @@ export class RoleUpdateCommandHandler implements ICommandHandler<RoleUpdateComma
     if (input.title && input.title !== role.title) {
       const existingRole = await this.roleRepository.findByTitle(input.title);
       if (existingRole) {
-        throw new RoleConflictException(`Role with title '${input.title}' already exists`);
+        throw new RoleConflictException(
+          `Role with title '${input.title}' already exists`,
+        );
       }
     }
 

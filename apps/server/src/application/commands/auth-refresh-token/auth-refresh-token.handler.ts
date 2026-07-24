@@ -8,8 +8,11 @@ import { AuthRefreshTokenCommand } from './auth-refresh-token.command';
 import { AuthRefreshTokenOutputDto } from './auth-refresh-token.dto';
 
 @CommandHandler(AuthRefreshTokenCommand)
-export class AuthRefreshTokenCommandHandler
-  implements ICommandHandler<AuthRefreshTokenCommand, AuthRefreshTokenOutputDto>
+export class AuthRefreshTokenCommandHandler implements
+  ICommandHandler<
+    AuthRefreshTokenCommand,
+    AuthRefreshTokenOutputDto
+  >
 {
   constructor(
     @Inject(USER_REPOSITORY) private readonly userRepository: IUserRepository,
@@ -17,7 +20,9 @@ export class AuthRefreshTokenCommandHandler
     private readonly authService: AuthService,
   ) {}
 
-  async execute(command: AuthRefreshTokenCommand): Promise<AuthRefreshTokenOutputDto> {
+  async execute(
+    command: AuthRefreshTokenCommand,
+  ): Promise<AuthRefreshTokenOutputDto> {
     const { input } = command;
 
     let payload;

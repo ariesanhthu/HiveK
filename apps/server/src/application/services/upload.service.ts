@@ -36,8 +36,8 @@ export class UploadService {
     ];
     const normalized = formatOrMimetype.toLowerCase();
 
-    if (images.some(img => normalized.includes(img))) return 'image';
-    if (videos.some(vid => normalized.includes(vid))) return 'video';
+    if (images.some((img) => normalized.includes(img))) return 'image';
+    if (videos.some((vid) => normalized.includes(vid))) return 'video';
     return 'raw';
   }
 
@@ -54,7 +54,10 @@ export class UploadService {
     let size = currentBuffer.length;
 
     if (size > MAX_FILE_SIZE) {
-      if (mimetype.startsWith('image/') || this.getResourceType(mimetype) === 'image') {
+      if (
+        mimetype.startsWith('image/')
+        || this.getResourceType(mimetype) === 'image'
+      ) {
         try {
           // Attempt 1: Compress image
           let sharpInstance = sharp(currentBuffer);
@@ -68,13 +71,18 @@ export class UploadService {
 
           // Output based on format with standard quality reduction
           if (metadata.format === 'png') {
-            currentBuffer = await sharpInstance.png({ quality: 75, compressionLevel: 8 })
+            currentBuffer = await sharpInstance
+              .png({ quality: 75, compressionLevel: 8 })
               .toBuffer();
           } else if (metadata.format === 'webp') {
-            currentBuffer = await sharpInstance.webp({ quality: 75 }).toBuffer();
+            currentBuffer = await sharpInstance
+              .webp({ quality: 75 })
+              .toBuffer();
           } else {
             // Default to jpeg/jpg
-            currentBuffer = await sharpInstance.jpeg({ quality: 75 }).toBuffer();
+            currentBuffer = await sharpInstance
+              .jpeg({ quality: 75 })
+              .toBuffer();
           }
 
           size = currentBuffer.length;
@@ -84,20 +92,28 @@ export class UploadService {
             let sharpInstanceHard = sharp(currentBuffer);
             const newWidthHard = newWidth
               || (metadata.width ? Math.min(metadata.width, 1280) : 1280);
-            sharpInstanceHard = sharpInstanceHard.resize({ width: newWidthHard });
+            sharpInstanceHard = sharpInstanceHard.resize({
+              width: newWidthHard,
+            });
 
-            currentBuffer = await sharpInstanceHard.jpeg({ quality: 50 }).toBuffer();
+            currentBuffer = await sharpInstanceHard
+              .jpeg({ quality: 50 })
+              .toBuffer();
             size = currentBuffer.length;
           }
 
           if (size > MAX_FILE_SIZE) {
-            throw new BadRequestException('Image could not be compressed under the 2MB limit');
+            throw new BadRequestException(
+              'Image could not be compressed under the 2MB limit',
+            );
           }
         } catch (error) {
           if (error instanceof BadRequestException) {
             throw error;
           }
-          throw new BadRequestException(`Failed to compress image: ${error.message}`);
+          throw new BadRequestException(
+            `Failed to compress image: ${error.message}`,
+          );
         }
       } else {
         throw new BadRequestException('File size exceeds the 2MB limit');

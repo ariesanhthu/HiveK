@@ -6,8 +6,11 @@ import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { PlatformGetByIdQuery } from './platform-get-by-id.query';
 
 @QueryHandler(PlatformGetByIdQuery)
-export class PlatformGetByIdHandler
-  implements IQueryHandler<PlatformGetByIdQuery, PlatformDetailDto>
+export class PlatformGetByIdHandler implements
+  IQueryHandler<
+    PlatformGetByIdQuery,
+    PlatformDetailDto
+  >
 {
   constructor(
     @Inject(PLATFORM_READ_SERVICE) private readonly platformReadService: IPlatformReadService,

@@ -11,8 +11,11 @@ import { Model } from 'mongoose';
 import { NotificationSendCommand } from './notification-send.command';
 
 @CommandHandler(NotificationSendCommand)
-export class NotificationSendCommandHandler
-  implements ICommandHandler<NotificationSendCommand, void>
+export class NotificationSendCommandHandler implements
+  ICommandHandler<
+    NotificationSendCommand,
+    void
+  >
 {
   constructor(
     private readonly eventBus: EventBus,
@@ -46,7 +49,9 @@ export class NotificationSendCommandHandler
       case 'enterprise': {
         const { enterpriseId } = props.audience;
         if (!enterpriseId) {
-          throw new InvalidOperationException('Enterprise ID is required for enterprise broadcast');
+          throw new InvalidOperationException(
+            'Enterprise ID is required for enterprise broadcast',
+          );
         }
 
         const enterprise = await this.enterpriseRepository.findById(enterpriseId);
@@ -56,7 +61,11 @@ export class NotificationSendCommandHandler
 
         // Fetch enterprise members
         const members = await this.userModel
-          .find({ type: ERoleType.ENTERPRISE, enterprise_id: enterpriseId, delete_at: null })
+          .find({
+            type: ERoleType.ENTERPRISE,
+            enterprise_id: enterpriseId,
+            delete_at: null,
+          })
           .select('_id')
           .lean()
           .exec();

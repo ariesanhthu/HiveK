@@ -33,7 +33,10 @@ export class MongoRoleReadService implements IRoleReadService {
   }
 
   async findByTitle(title: string): Promise<Nullable<RoleDto>> {
-    const cacheKey = CacheKeyUtil.custom(this.domain, `title:${title.toLowerCase()}`);
+    const cacheKey = CacheKeyUtil.custom(
+      this.domain,
+      `title:${title.toLowerCase()}`,
+    );
     const cached = await this.cacheService.get<RoleDto>(cacheKey);
     if (cached) return cached;
 
@@ -45,7 +48,9 @@ export class MongoRoleReadService implements IRoleReadService {
     return dto;
   }
 
-  async findAll(filters: RoleFilterDto = {} as any): Promise<PaginatedResponseDto<RoleDto>> {
+  async findAll(
+    filters: RoleFilterDto = {} as any,
+  ): Promise<PaginatedResponseDto<RoleDto>> {
     const cacheKey = CacheKeyUtil.list(this.domain, filters);
     const cached = await this.cacheService.get<PaginatedResponseDto<RoleDto>>(cacheKey);
     if (cached) return cached;
@@ -54,7 +59,10 @@ export class MongoRoleReadService implements IRoleReadService {
     const query: QueryFilter<RoleDocument> = {};
 
     if (title) {
-      query.title = { $regex: MongoSanitizeUtil.escapeRegex(title), $options: 'i' };
+      query.title = {
+        $regex: MongoSanitizeUtil.escapeRegex(title),
+        $options: 'i',
+      };
     }
 
     if (cursor) {
@@ -70,7 +78,9 @@ export class MongoRoleReadService implements IRoleReadService {
 
     const hasNextPage = docs.length > limit;
     const results = hasNextPage ? docs.slice(0, limit) : docs;
-    const nextCursor = hasNextPage ? results[results.length - 1]._id.toString() : null;
+    const nextCursor = hasNextPage
+      ? results[results.length - 1]._id.toString()
+      : null;
 
     const response = new PaginatedResponseDto(
       results.map((doc) => this.mapToDto(doc)),

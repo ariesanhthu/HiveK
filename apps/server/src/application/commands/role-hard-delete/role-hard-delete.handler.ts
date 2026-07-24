@@ -11,7 +11,12 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { RoleHardDeleteCommand } from './role-hard-delete.command';
 
 @CommandHandler(RoleHardDeleteCommand)
-export class RoleHardDeleteCommandHandler implements ICommandHandler<RoleHardDeleteCommand, void> {
+export class RoleHardDeleteCommandHandler implements
+  ICommandHandler<
+    RoleHardDeleteCommand,
+    void
+  >
+{
   constructor(
     @Inject(ROLE_REPOSITORY) private readonly roleRepository: IRoleRepository,
     @Inject(USER_REPOSITORY) private readonly userRepository: IUserRepository,

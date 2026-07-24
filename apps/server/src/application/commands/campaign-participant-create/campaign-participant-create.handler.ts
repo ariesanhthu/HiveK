@@ -19,8 +19,11 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { CampaignParticipantCreateCommand } from './campaign-participant-create.command';
 
 @CommandHandler(CampaignParticipantCreateCommand)
-export class CampaignParticipantCreateCommandHandler
-  implements ICommandHandler<CampaignParticipantCreateCommand, string>
+export class CampaignParticipantCreateCommandHandler implements
+  ICommandHandler<
+    CampaignParticipantCreateCommand,
+    string
+  >
 {
   constructor(
     @Inject(CAMPAIGN_REPOSITORY) private readonly campaignRepository: ICampaignRepository,
@@ -49,21 +52,32 @@ export class CampaignParticipantCreateCommandHandler
         );
       }
 
-      const kolProfile = await this.kolProfileRepository.findById(input.kolProfileId);
+      const kolProfile = await this.kolProfileRepository.findById(
+        input.kolProfileId,
+      );
       if (!kolProfile) {
         throw new UserNotFoundException(input.kolProfileId);
       }
 
       if (!kolProfile.userId) {
-        throw new InvalidOperationException('KOL profile is not linked to a user');
+        throw new InvalidOperationException(
+          'KOL profile is not linked to a user',
+        );
       }
 
-      const existing = campaign.participants.some(p => p.kolProfileId === input.kolProfileId);
+      const existing = campaign.participants.some(
+        (p) => p.kolProfileId === input.kolProfileId,
+      );
       if (existing) {
-        throw new InvalidOperationException('KOL is already a participant of this campaign');
+        throw new InvalidOperationException(
+          'KOL is already a participant of this campaign',
+        );
       }
 
-      participantId = campaign.addParticipant(input.kolProfileId, kolProfile.email);
+      participantId = campaign.addParticipant(
+        input.kolProfileId,
+        kolProfile.email,
+      );
 
       await this.campaignRepository.save(campaign);
 

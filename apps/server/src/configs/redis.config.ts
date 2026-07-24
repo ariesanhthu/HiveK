@@ -36,10 +36,10 @@ export class RedisConfigDto {
 export class RedisConfig extends BaseConfigService<RedisConfigDto> {
   constructor() {
     super(RedisConfigDto, {
-      host: process.env.REDIS_HOST as string,
+      host: process.env.REDIS_HOST,
       port: process.env.REDIS_PORT
         ? parseInt(process.env.REDIS_PORT, 10)
-        : (undefined as unknown as number),
+        : undefined,
       password: process.env.REDIS_PASSWORD,
     });
   }

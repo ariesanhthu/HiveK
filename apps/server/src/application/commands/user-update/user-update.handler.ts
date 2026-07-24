@@ -8,7 +8,12 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { UserUpdateCommand } from './user-update.command';
 
 @CommandHandler(UserUpdateCommand)
-export class UserUpdateCommandHandler implements ICommandHandler<UserUpdateCommand, UserDto> {
+export class UserUpdateCommandHandler implements
+  ICommandHandler<
+    UserUpdateCommand,
+    UserDto
+  >
+{
   constructor(
     @Inject(USER_REPOSITORY) private readonly userRepository: IUserRepository,
     private readonly authService: AuthService,
@@ -24,7 +29,9 @@ export class UserUpdateCommandHandler implements ICommandHandler<UserUpdateComma
 
     if (input) {
       if (input.fullName !== undefined) user.updateFullName(input.fullName);
-      if (input.phone !== undefined) user.updatePhone(PhoneNumberVO.create({ value: input.phone }));
+      if (input.phone !== undefined) {
+        user.updatePhone(PhoneNumberVO.create({ value: input.phone }));
+      }
 
       await this.userRepository.save(user);
     }

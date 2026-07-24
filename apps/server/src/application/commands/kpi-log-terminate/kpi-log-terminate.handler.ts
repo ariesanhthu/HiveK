@@ -9,8 +9,11 @@ import { CommandHandler, EventBus, ICommandHandler } from '@nestjs/cqrs';
 import { KpiLogTerminateCommand } from './kpi-log-terminate.command';
 
 @CommandHandler(KpiLogTerminateCommand)
-export class KpiLogTerminateCommandHandler
-  implements ICommandHandler<KpiLogTerminateCommand, void>
+export class KpiLogTerminateCommandHandler implements
+  ICommandHandler<
+    KpiLogTerminateCommand,
+    void
+  >
 {
   private readonly logger = new Logger(KpiLogTerminateCommandHandler.name);
 
@@ -32,7 +35,9 @@ export class KpiLogTerminateCommandHandler
         return;
       }
 
-      const campaign = await this.campaignRepository.findByParticipantId(payload.participantId);
+      const campaign = await this.campaignRepository.findByParticipantId(
+        payload.participantId,
+      );
       if (!campaign) {
         this.logger.error(
           `Campaign for Participant ${payload.participantId} not found for termination event`,

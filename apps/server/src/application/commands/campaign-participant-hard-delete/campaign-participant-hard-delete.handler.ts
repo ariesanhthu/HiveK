@@ -9,8 +9,11 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { CampaignParticipantHardDeleteCommand } from './campaign-participant-hard-delete.command';
 
 @CommandHandler(CampaignParticipantHardDeleteCommand)
-export class CampaignParticipantHardDeleteCommandHandler
-  implements ICommandHandler<CampaignParticipantHardDeleteCommand, void>
+export class CampaignParticipantHardDeleteCommandHandler implements
+  ICommandHandler<
+    CampaignParticipantHardDeleteCommand,
+    void
+  >
 {
   constructor(
     @Inject(CAMPAIGN_REPOSITORY) private readonly campaignRepository: ICampaignRepository,
@@ -24,7 +27,7 @@ export class CampaignParticipantHardDeleteCommandHandler
       throw new CampaignParticipantNotFoundException(id);
     }
 
-    const participant = campaign.participants.find(p => p.id === id);
+    const participant = campaign.participants.find((p) => p.id === id);
     if (!participant) {
       throw new CampaignParticipantNotFoundException(id);
     }
@@ -38,7 +41,7 @@ export class CampaignParticipantHardDeleteCommandHandler
       for (const day of campaign.props.schedule.timeline) {
         for (const post of day.posts) {
           const hasPublishedOutputs = post.campaignKOLOutputs.some(
-            o => o.campaignParticipantId === id && o.status === EOutputStatus.PUBLISHED,
+            (o) => o.campaignParticipantId === id && o.status === EOutputStatus.PUBLISHED,
           );
           if (hasPublishedOutputs) {
             throw new InvalidOperationException(
@@ -57,7 +60,7 @@ export class CampaignParticipantHardDeleteCommandHandler
       for (const day of campaign.props.schedule.timeline) {
         for (const post of day.posts) {
           post.campaignKOLOutputs = post.campaignKOLOutputs.filter(
-            o => o.campaignParticipantId !== id,
+            (o) => o.campaignParticipantId !== id,
           );
         }
       }

@@ -7,8 +7,11 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { NotificationRestoreCommand } from './notification-restore.command';
 
 @CommandHandler(NotificationRestoreCommand)
-export class NotificationRestoreCommandHandler
-  implements ICommandHandler<NotificationRestoreCommand, void>
+export class NotificationRestoreCommandHandler implements
+  ICommandHandler<
+    NotificationRestoreCommand,
+    void
+  >
 {
   constructor(
     @Inject(USER_NOTIFICATION_REPOSITORY) private readonly userNotificationRepository:

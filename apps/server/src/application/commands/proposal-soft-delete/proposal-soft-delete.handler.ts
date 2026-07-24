@@ -8,8 +8,11 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { ProposalSoftDeleteCommand } from './proposal-soft-delete.command';
 
 @CommandHandler(ProposalSoftDeleteCommand)
-export class ProposalSoftDeleteCommandHandler
-  implements ICommandHandler<ProposalSoftDeleteCommand, void>
+export class ProposalSoftDeleteCommandHandler implements
+  ICommandHandler<
+    ProposalSoftDeleteCommand,
+    void
+  >
 {
   constructor(
     @Inject(CAMPAIGN_PROPOSAL_REPOSITORY) private readonly proposalRepository:

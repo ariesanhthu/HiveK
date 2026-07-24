@@ -15,8 +15,11 @@ import { AuthResetPasswordCommand } from './auth-reset-password.command';
 import { AuthResetPasswordOutputDto } from './auth-reset-password.dto';
 
 @CommandHandler(AuthResetPasswordCommand)
-export class AuthResetPasswordCommandHandler
-  implements ICommandHandler<AuthResetPasswordCommand, AuthResetPasswordOutputDto>
+export class AuthResetPasswordCommandHandler implements
+  ICommandHandler<
+    AuthResetPasswordCommand,
+    AuthResetPasswordOutputDto
+  >
 {
   constructor(
     @Inject(USER_REPOSITORY) private readonly userRepository: IUserRepository,
@@ -26,7 +29,9 @@ export class AuthResetPasswordCommandHandler
     @Inject(UNIT_OF_WORK) private readonly uow: IUnitOfWork,
   ) {}
 
-  async execute(command: AuthResetPasswordCommand): Promise<AuthResetPasswordOutputDto> {
+  async execute(
+    command: AuthResetPasswordCommand,
+  ): Promise<AuthResetPasswordOutputDto> {
     return this.uow.execute(async () => {
       const { input } = command;
       const normalizedEmail = this.authService.normalizeEmail(input.email);
@@ -45,13 +50,18 @@ export class AuthResetPasswordCommandHandler
         throw new InvalidOperationException('Invalid or expired OTP');
       }
 
-      const hashedPassword = await this.authService.hashPassword(input.newPassword);
+      const hashedPassword = await this.authService.hashPassword(
+        input.newPassword,
+      );
 
       user.updatePassword(hashedPassword);
 
       await this.userRepository.save(user);
 
-      await this.otpRepository.deleteByEmailAndType(normalizedEmail, EOtpType.RESET_PASSWORD);
+      await this.otpRepository.deleteByEmailAndType(
+        normalizedEmail,
+        EOtpType.RESET_PASSWORD,
+      );
 
       await this.eventService.publishEvents(user);
 

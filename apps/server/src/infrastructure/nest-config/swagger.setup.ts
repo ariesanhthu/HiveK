@@ -2,7 +2,10 @@ import { AppConfig } from '@/configs';
 import { INestApplication } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
-export function setupSwagger(app: INestApplication, appConfig: AppConfig): void {
+export function setupSwagger(
+  app: INestApplication,
+  appConfig: AppConfig,
+): void {
   const config = new DocumentBuilder()
     .setTitle(appConfig.getSwaggerTitle())
     .setDescription(appConfig.getSwaggerDescription())
@@ -30,11 +33,12 @@ export function setupSwagger(app: INestApplication, appConfig: AppConfig): void 
 
   const fullDocument = SwaggerModule.createDocument(app, config);
 
-  fullDocument.tags = fullDocument.tags?.filter(tag => tag.name !== '');
+  fullDocument.tags = fullDocument.tags?.filter((tag) => tag.name !== '');
   for (const path in fullDocument.paths) {
     for (const method in fullDocument.paths[path]) {
-      (fullDocument as any).paths[path][method].tags = (fullDocument as any).paths[path][method]
-        .tags?.filter((tag: string) => tag !== '');
+      (fullDocument as any).paths[path][method].tags = (
+        fullDocument as any
+      ).paths[path][method].tags?.filter((tag: string) => tag !== '');
     }
   }
 
@@ -43,12 +47,14 @@ export function setupSwagger(app: INestApplication, appConfig: AppConfig): void 
   const isClientPath = (path: string) => path.includes(`/client`);
   const isSharedPath = (path: string) => !isAdminPath(path) && !isClientPath(path);
   const adminPaths = Object.fromEntries(
-    Object.entries(fullDocument.paths).filter(([path]) => isAdminPath(path) || isSharedPath(path)),
+    Object.entries(fullDocument.paths).filter(
+      ([path]) => isAdminPath(path) || isSharedPath(path),
+    ),
   );
 
   const clientPaths = Object.fromEntries(
-    Object.entries(fullDocument.paths).filter(([path]) =>
-      isClientPath(path) || (isSharedPath(path))
+    Object.entries(fullDocument.paths).filter(
+      ([path]) => isClientPath(path) || isSharedPath(path),
     ),
   );
 

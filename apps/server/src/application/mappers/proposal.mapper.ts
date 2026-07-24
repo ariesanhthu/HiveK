@@ -4,7 +4,7 @@ import { CampaignProposalRoot } from '@/core/aggregate-roots';
 export class ProposalMapper {
   static toDto(root: CampaignProposalRoot): ProposalDto {
     return {
-      id: root.id!,
+      id: root.id,
       campaignId: root.campaignId,
       slug: root.slug,
       title: root.title,

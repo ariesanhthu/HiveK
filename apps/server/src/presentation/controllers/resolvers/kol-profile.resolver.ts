@@ -46,6 +46,8 @@ export class KolProfileResolver {
     const projectionDto = new ProjectionDto();
     projectionDto.fields = dataFieldsMap;
 
-    return this.queryBus.execute(new KolProfileGetListQuery(filters as any, projectionDto));
+    return this.queryBus.execute(
+      new KolProfileGetListQuery(filters as any, projectionDto),
+    );
   }
 }

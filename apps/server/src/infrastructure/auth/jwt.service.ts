@@ -1,4 +1,5 @@
 import {
+  AuthJwtRequest,
   IAuthJwtService,
   IJwtPayload,
   IJwtSignOptions,
@@ -12,7 +13,7 @@ export class JwtAuthService implements IAuthJwtService {
   constructor(private readonly jwtService: JwtService) {}
 
   sign(payload: IJwtPayload, options?: IJwtSignOptions): string {
-    const signOptions: any = {};
+    const signOptions: Record<string, string | number | boolean | (string | RegExp)[]> = {};
 
     if (options) {
       if (options.expiresInMinutes !== undefined) {
@@ -29,11 +30,11 @@ export class JwtAuthService implements IAuthJwtService {
   }
 
   verify(token: string, options?: IJwtVerifyOptions): IJwtPayload {
-    return this.jwtService.verify(token, options);
+    return this.jwtService.verify(token, options as Parameters<JwtService['verify']>[1]);
   }
 
   decode(token: string): IJwtPayload {
-    return this.jwtService.decode(token) as IJwtPayload;
+    return this.jwtService.decode(token);
   }
 
   extractTokenFromHeader(authHeader?: string): string | null {
@@ -43,7 +44,7 @@ export class JwtAuthService implements IAuthJwtService {
     return authHeader.split(' ')[1];
   }
 
-  extractTokenFromCookie(req: any, cookieName = 'access_token'): string | null {
+  extractTokenFromCookie(req: AuthJwtRequest, cookieName = 'access_token'): string | null {
     if (req && req.cookies) {
       return req.cookies[cookieName] || null;
     }
@@ -72,8 +73,11 @@ export class JwtAuthService implements IAuthJwtService {
     return this.verify(token);
   }
 
-  verifyRequest(req: any): IJwtPayload {
-    let token = this.extractTokenFromHeader(req?.headers?.['authorization']);
+  verifyRequest(req: AuthJwtRequest): IJwtPayload {
+    const authHeader = Array.isArray(req?.headers?.['authorization'])
+      ? req.headers['authorization'][0]
+      : req?.headers?.['authorization'];
+    let token = this.extractTokenFromHeader(authHeader);
     if (!token) {
       token = this.extractTokenFromCookie(req, 'access_token');
     }

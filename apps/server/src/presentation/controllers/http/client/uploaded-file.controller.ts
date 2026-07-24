@@ -82,7 +82,9 @@ export class UploadedFileClientController {
       required: ['file', 'targetType', 'targetId', 'targetField'],
     },
   })
-  @ApiOperation({ summary: 'Upload and create new file (Max 25MB, Images/Docs/PDF only)' })
+  @ApiOperation({
+    summary: 'Upload and create new file (Max 25MB, Images/Docs/PDF only)',
+  })
   async create(
     @UploadedFile(new FileUploadValidationPipe()) file: Express.Multer.File,
     @Body() input: UploadedFileCreateInputDto,
@@ -138,7 +140,9 @@ export class UploadedFileClientController {
       required: ['files', 'targetType', 'targetId', 'targetField'],
     },
   })
-  @ApiOperation({ summary: 'Upload and create multiple files (limit to 10, Max 25MB each)' })
+  @ApiOperation({
+    summary: 'Upload and create multiple files (limit to 10, Max 25MB each)',
+  })
   async createBulk(
     @UploadedFiles(new FileUploadValidationPipe()) files: Express.Multer.File[],
     @Body() input: UploadedFileCreateInputDto,
@@ -147,7 +151,9 @@ export class UploadedFileClientController {
       throw new BadRequestException('At least one file is required');
     }
     if (files.length > 10) {
-      throw new BadRequestException('Cannot upload more than 10 files at a time');
+      throw new BadRequestException(
+        'Cannot upload more than 10 files at a time',
+      );
     }
     return this.commandBus.execute(
       new UploadedFileBulkCreateCommand(

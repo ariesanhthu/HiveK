@@ -13,8 +13,11 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { PlatformCreateCommand } from './platform-create.command';
 
 @CommandHandler(PlatformCreateCommand)
-export class PlatformCreateCommandHandler
-  implements ICommandHandler<PlatformCreateCommand, PlatformDto>
+export class PlatformCreateCommandHandler implements
+  ICommandHandler<
+    PlatformCreateCommand,
+    PlatformDto
+  >
 {
   constructor(
     @Inject(PLATFORM_REPOSITORY) private readonly platformRepository: IPlatformRepository,
@@ -23,9 +26,13 @@ export class PlatformCreateCommandHandler
   async execute(command: PlatformCreateCommand): Promise<PlatformDto> {
     const { input } = command;
 
-    const existingPlatform = await this.platformRepository.findByName(input.name);
+    const existingPlatform = await this.platformRepository.findByName(
+      input.name,
+    );
     if (existingPlatform) {
-      throw new PlatformConflictException(`Platform with name ${input.name} already exists`);
+      throw new PlatformConflictException(
+        `Platform with name ${input.name} already exists`,
+      );
     }
 
     const platform = PlatformRoot.create({

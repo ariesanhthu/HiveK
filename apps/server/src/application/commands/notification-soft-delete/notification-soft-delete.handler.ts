@@ -7,8 +7,11 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { NotificationSoftDeleteCommand } from './notification-soft-delete.command';
 
 @CommandHandler(NotificationSoftDeleteCommand)
-export class NotificationSoftDeleteCommandHandler
-  implements ICommandHandler<NotificationSoftDeleteCommand, void>
+export class NotificationSoftDeleteCommandHandler implements
+  ICommandHandler<
+    NotificationSoftDeleteCommand,
+    void
+  >
 {
   constructor(
     @Inject(USER_NOTIFICATION_REPOSITORY) private readonly userNotificationRepository:

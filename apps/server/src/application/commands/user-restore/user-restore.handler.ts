@@ -5,7 +5,12 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { UserRestoreCommand } from './user-restore.command';
 
 @CommandHandler(UserRestoreCommand)
-export class UserRestoreCommandHandler implements ICommandHandler<UserRestoreCommand, void> {
+export class UserRestoreCommandHandler implements
+  ICommandHandler<
+    UserRestoreCommand,
+    void
+  >
+{
   constructor(
     @Inject(USER_REPOSITORY) private readonly userRepository: IUserRepository,
   ) {}

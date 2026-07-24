@@ -25,7 +25,9 @@ export class LinkCampaignParticipantOutputFileHandler
       return;
     }
 
-    const campaign = await this.campaignRepository.findByOutputId(event.targetId);
+    const campaign = await this.campaignRepository.findByOutputId(
+      event.targetId,
+    );
     if (!campaign) {
       return;
     }

@@ -40,7 +40,9 @@ export class PublicReviewAdminController {
 
   @Get()
   @ApiOperation({ summary: 'Get all reviews' })
-  async findAll(@Query() filters: ReviewFilterInputDto): Promise<PaginatedResponseDto<ReviewDto>> {
+  async findAll(
+    @Query() filters: ReviewFilterInputDto,
+  ): Promise<PaginatedResponseDto<ReviewDto>> {
     return this.queryBus.execute(new ReviewGetListQuery(filters));
   }
 
@@ -58,7 +60,9 @@ export class PublicReviewAdminController {
     @Param('id') id: string,
     @Body() input: ReviewModerateInputDto,
   ): Promise<void> {
-    return this.commandBus.execute(new ReviewModerateCommand(id, input.action, userId));
+    return this.commandBus.execute(
+      new ReviewModerateCommand(id, input.action, userId),
+    );
   }
 
   @Patch(':id/soft-delete')

@@ -42,7 +42,10 @@ export class PublicReviewRoot extends BaseAggregateRoot<PublicReviewProps> {
     });
   }
 
-  public static instantiate(id: string, props: PublicReviewProps): PublicReviewRoot {
+  public static instantiate(
+    id: string,
+    props: PublicReviewProps,
+  ): PublicReviewRoot {
     return new PublicReviewRoot(props, id);
   }
 

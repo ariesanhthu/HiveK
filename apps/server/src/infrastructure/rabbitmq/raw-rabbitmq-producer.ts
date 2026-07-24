@@ -33,7 +33,9 @@ export class RawRabbitMQProducerClient {
     }
 
     try {
-      this.logger.log(`Connecting to RabbitMQ at ${this.config.connection.vhost}...`);
+      this.logger.log(
+        `Connecting to RabbitMQ at ${this.config.connection.vhost}...`,
+      );
       this.connection = await amqp.connect(this.config.connection.uri);
 
       // Handle connection errors
@@ -91,7 +93,9 @@ export class RawRabbitMQProducerClient {
       this.isConnected = false;
       this.logger.log('Disconnected from RabbitMQ');
     } catch (error) {
-      this.logger.error(`Error disconnecting from RabbitMQ: ${errorMessage(error)}`);
+      this.logger.error(
+        `Error disconnecting from RabbitMQ: ${errorMessage(error)}`,
+      );
     }
   }
 
@@ -133,7 +137,7 @@ export class RawRabbitMQProducerClient {
       const publishOptions = this.buildPublishOptions(options);
 
       return new Promise((resolve, reject) => {
-        this.channel!.publish(
+        this.channel.publish(
           this.config.exchange_contract.name,
           routingKey,
           buffer,
@@ -174,9 +178,7 @@ export class RawRabbitMQProducerClient {
         autoDelete: options.autoDelete,
       });
 
-      this.logger.debug(
-        `Exchange "${name}" (${type}) declared successfully`,
-      );
+      this.logger.debug(`Exchange "${name}" (${type}) declared successfully`);
     } catch (error) {
       this.logger.error(`Failed to declare exchange: ${errorMessage(error)}`);
       throw error;
@@ -189,14 +191,18 @@ export class RawRabbitMQProducerClient {
   private async reconnectWithBackoff(): Promise<void> {
     const config = this.config.connection.reconnect;
 
-    if (config.max_retries !== -1 && this.connectionAttempts >= config.max_retries) {
+    if (
+      config.max_retries !== -1
+      && this.connectionAttempts >= config.max_retries
+    ) {
       throw new Error(
         `Max reconnection attempts (${config.max_retries}) reached`,
       );
     }
 
     const delayMs = Math.min(
-      config.initial_delay_ms * Math.pow(config.factor, this.connectionAttempts),
+      config.initial_delay_ms
+        * Math.pow(config.factor, this.connectionAttempts),
       config.max_delay_ms,
     );
 
@@ -217,9 +223,7 @@ export class RawRabbitMQProducerClient {
   /**
    * Build RabbitMQ publish options from config
    */
-  private buildPublishOptions(
-    options?: PublishOptions,
-  ): amqp.Options.Publish {
+  private buildPublishOptions(options?: PublishOptions): amqp.Options.Publish {
     const config = this.config.publish;
     const headers = {
       message_id: randomUUID(),
@@ -263,7 +267,9 @@ export class RawRabbitMQProducerClient {
    * Get connection status
    */
   isHealthy(): boolean {
-    return this.isConnected && this.connection !== null && this.channel !== null;
+    return (
+      this.isConnected && this.connection !== null && this.channel !== null
+    );
   }
 }
 

@@ -31,7 +31,13 @@ export class MongoCampaignProposalReadService implements ICampaignProposalReadSe
   async findAll(
     filters: ProposalFilterDto = {} as any,
   ): Promise<PaginatedResponseDto<ProposalDto>> {
-    const { cursor, limit = 10, sort = SortOrder.DESC, campaignId, status } = filters;
+    const {
+      cursor,
+      limit = 10,
+      sort = SortOrder.DESC,
+      campaignId,
+      status,
+    } = filters;
     const query: QueryFilter<CampaignProposalDocument> = {};
 
     if (campaignId) {
@@ -55,7 +61,9 @@ export class MongoCampaignProposalReadService implements ICampaignProposalReadSe
 
     const hasNextPage = docs.length > limit;
     const results = hasNextPage ? docs.slice(0, limit) : docs;
-    const nextCursor = hasNextPage ? results[results.length - 1]._id.toString() : null;
+    const nextCursor = hasNextPage
+      ? results[results.length - 1]._id.toString()
+      : null;
 
     return new PaginatedResponseDto(
       results.map((doc) => this.mapToDto(doc)),
@@ -85,7 +93,7 @@ export class MongoCampaignProposalReadService implements ICampaignProposalReadSe
         imageId: product.image_id,
         affiliateUrls: product.affiliate_urls instanceof Map
           ? Object.fromEntries(product.affiliate_urls)
-          : (product.affiliate_urls || {}),
+          : product.affiliate_urls || {},
       })),
       vouchers: (doc.vouchers || []).map((voucher: any) => ({
         code: voucher.code,
@@ -97,7 +105,7 @@ export class MongoCampaignProposalReadService implements ICampaignProposalReadSe
       status: doc.status,
       metrics: doc.metrics instanceof Map
         ? Object.fromEntries(doc.metrics)
-        : (doc.metrics || {}),
+        : doc.metrics || {},
       createdAt: doc.created_at || doc.createdAt,
       updatedAt: doc.updated_at || doc.updatedAt,
     };

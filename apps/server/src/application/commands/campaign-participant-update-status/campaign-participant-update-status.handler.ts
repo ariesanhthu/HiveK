@@ -17,15 +17,20 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { CampaignParticipantUpdateStatusCommand } from './campaign-participant-update-status.command';
 
 @CommandHandler(CampaignParticipantUpdateStatusCommand)
-export class CampaignParticipantUpdateStatusCommandHandler
-  implements ICommandHandler<CampaignParticipantUpdateStatusCommand, void>
+export class CampaignParticipantUpdateStatusCommandHandler implements
+  ICommandHandler<
+    CampaignParticipantUpdateStatusCommand,
+    void
+  >
 {
   constructor(
     @Inject(CAMPAIGN_REPOSITORY) private readonly campaignRepository: ICampaignRepository,
     @Inject(KOL_PROFILE_REPOSITORY) private readonly kolProfileRepository: IKolProfileRepository,
   ) {}
 
-  async execute(command: CampaignParticipantUpdateStatusCommand): Promise<void> {
+  async execute(
+    command: CampaignParticipantUpdateStatusCommand,
+  ): Promise<void> {
     const { id, userId, input } = command;
 
     const campaign = await this.campaignRepository.findByParticipantId(id);
@@ -33,7 +38,7 @@ export class CampaignParticipantUpdateStatusCommandHandler
       throw new CampaignParticipantNotFoundException(id);
     }
 
-    const participant = campaign.participants.find(p => p.id === id);
+    const participant = campaign.participants.find((p) => p.id === id);
     if (!participant) {
       throw new CampaignParticipantNotFoundException(id);
     }
@@ -52,7 +57,9 @@ export class CampaignParticipantUpdateStatusCommandHandler
     } else if (input.status === EParticipantStatus.REJECTED) {
       campaign.rejectParticipant(participant.kolProfileId);
     } else {
-      throw new InvalidOperationException('Only JOINED or REJECTED status transitions are allowed');
+      throw new InvalidOperationException(
+        'Only JOINED or REJECTED status transitions are allowed',
+      );
     }
 
     await this.campaignRepository.save(campaign);

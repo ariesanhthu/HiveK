@@ -35,8 +35,10 @@ export class CampaignProposalResolver {
   @Public()
   @Query(() => CampaignProposalResponse, { name: 'campaignProposals' })
   async getCampaignProposals(
-    @Args('filters', { type: () => CampaignProposalFilterInput, nullable: true }) filters?:
-      CampaignProposalFilterInput,
+    @Args('filters', {
+      type: () => CampaignProposalFilterInput,
+      nullable: true,
+    }) filters?: CampaignProposalFilterInput,
   ) {
     return this.queryBus.execute(new ProposalGetListQuery(filters as any));
   }

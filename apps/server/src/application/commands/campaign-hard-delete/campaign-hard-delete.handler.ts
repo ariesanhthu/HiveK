@@ -8,8 +8,11 @@ import { ECampaignStatus } from '@/core/enums/campaign-status.enum';
 import { InvalidOperationException } from '@/core/exceptions';
 
 @CommandHandler(CampaignHardDeleteCommand)
-export class CampaignHardDeleteCommandHandler
-  implements ICommandHandler<CampaignHardDeleteCommand, void>
+export class CampaignHardDeleteCommandHandler implements
+  ICommandHandler<
+    CampaignHardDeleteCommand,
+    void
+  >
 {
   constructor(
     @Inject(CAMPAIGN_REPOSITORY) private readonly campaignRepository: ICampaignRepository,
@@ -24,7 +27,8 @@ export class CampaignHardDeleteCommandHandler
     }
 
     if (
-      campaign.status !== ECampaignStatus.DRAFT && campaign.status !== ECampaignStatus.CANCELLED
+      campaign.status !== ECampaignStatus.DRAFT
+      && campaign.status !== ECampaignStatus.CANCELLED
     ) {
       throw new InvalidOperationException(
         'Campaign can only be deleted in DRAFT or CANCELLED status',

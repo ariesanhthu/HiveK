@@ -32,7 +32,9 @@ export const RABBITMQ_CONSUMER_CLIENT = Symbol('RABBITMQ_CONSUMER_CLIENT');
     {
       provide: RABBITMQ_CONFIG,
       useFactory: (nestConfigService: RabbitMQFactoryService) => {
-        return nestConfigService.readRMQProducerConfig('kpi_tracking/config.producer.json');
+        return nestConfigService.readRMQProducerConfig(
+          'kpi_tracking/config.producer.json',
+        );
       },
       inject: [RabbitMQFactoryService],
     },
@@ -40,7 +42,9 @@ export const RABBITMQ_CONSUMER_CLIENT = Symbol('RABBITMQ_CONSUMER_CLIENT');
     {
       provide: RABBITMQ_CONSUMER_CONFIG,
       useFactory: (nestConfigService: RabbitMQFactoryService) => {
-        return nestConfigService.readRMQConsumerConfig('kpi_tracking/config.consumer.json');
+        return nestConfigService.readRMQConsumerConfig(
+          'kpi_tracking/config.consumer.json',
+        );
       },
       inject: [RabbitMQFactoryService],
     },
@@ -99,8 +103,9 @@ export class RabbitMQModule implements OnModuleDestroy, OnApplicationBootstrap {
           return;
         }
 
-        this.metadataScanner.getAllMethodNames(Object.getPrototypeOf(instance)).forEach(
-          (methodName) => {
+        this.metadataScanner
+          .getAllMethodNames(Object.getPrototypeOf(instance))
+          .forEach((methodName) => {
             const handlerOptions = this.reflector.get<RmqHandlerOptions>(
               RMQ_HANDLER_METADATA,
               instance[methodName],
@@ -111,23 +116,19 @@ export class RabbitMQModule implements OnModuleDestroy, OnApplicationBootstrap {
                 ...handlerOptions,
                 target: instance,
                 methodName,
-                callback: instance[methodName],
+                callback: instance[methodName] as (...args: any[]) => any,
               });
               this.logger.log(
                 `Registered RMQ handler: ${instance.constructor.name}.${methodName} for queue "${handlerOptions.queue}"`,
               );
             }
-          },
-        );
+          });
       });
     });
   }
 
   async onModuleDestroy() {
     this.logger.log('Disconnecting RabbitMQ clients...');
-    await Promise.all([
-      this.producer.disconnect(),
-      this.consumer.disconnect(),
-    ]);
+    await Promise.all([this.producer.disconnect(), this.consumer.disconnect()]);
   }
 }

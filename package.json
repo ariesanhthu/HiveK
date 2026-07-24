@@ -13,14 +13,23 @@
     "d2": "d2 --watch docs/d2/*.d2 docs/d2/*.png",
     "format": "dprint fmt",
     "format:check": "dprint check",
+    "typecheck": "pnpm --filter server typecheck",
     "prepare": "husky"
+  },
+  "lint-staged": {
+    "apps/server/**/*.{ts,tsx,js,jsx}": [
+      "eslint -c apps/server/eslint.config.mjs --fix",
+      "dprint fmt"
+    ],
+    "*.{json,md}": [
+      "dprint fmt"
+    ]
   },
   "devDependencies": {
     "concurrently": "^9.0.0",
     "dprint": "^0.55.2",
     "husky": "^9.1.7",
     "lint-staged": "^17.2.0",
-    "prettier": "^3.9.6",
     "turbo": "^2.9.14"
   }
 }

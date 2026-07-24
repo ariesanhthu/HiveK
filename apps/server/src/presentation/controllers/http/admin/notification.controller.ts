@@ -75,7 +75,9 @@ export class NotificationAdminController {
     @CurrentUser('sub') userId: string,
     @Body() dto: NotificationSoftDeleteDto,
   ): Promise<void> {
-    return this.commandBus.execute(new NotificationSoftDeleteCommand(dto.ids, userId));
+    return this.commandBus.execute(
+      new NotificationSoftDeleteCommand(dto.ids, userId),
+    );
   }
 
   @Patch('restore')
@@ -85,7 +87,9 @@ export class NotificationAdminController {
     @CurrentUser('sub') userId: string,
     @Body() dto: NotificationRestoreDto,
   ): Promise<void> {
-    return this.commandBus.execute(new NotificationRestoreCommand(dto.ids, userId));
+    return this.commandBus.execute(
+      new NotificationRestoreCommand(dto.ids, userId),
+    );
   }
 
   @Delete('hard-delete')
@@ -95,6 +99,8 @@ export class NotificationAdminController {
     @CurrentUser('sub') userId: string,
     @Body() dto: NotificationHardDeleteDto,
   ): Promise<void> {
-    return this.commandBus.execute(new NotificationHardDeleteCommand(dto.ids, userId));
+    return this.commandBus.execute(
+      new NotificationHardDeleteCommand(dto.ids, userId),
+    );
   }
 }

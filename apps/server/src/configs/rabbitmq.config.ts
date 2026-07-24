@@ -48,7 +48,9 @@ export class RabbitMQConfig extends BaseConfigService<RabbitMQConfigDto> {
       user: process.env.RMQ_USER,
       password: process.env.RMQ_PASSWORD,
       host: process.env.RMQ_HOST,
-      port: process.env.RMQ_PORT ? parseInt(process.env.RMQ_PORT, 10) : undefined,
+      port: process.env.RMQ_PORT
+        ? parseInt(process.env.RMQ_PORT, 10)
+        : undefined,
       vhost: process.env.RMQ_VHOST,
     });
   }
@@ -101,4 +103,7 @@ export class RabbitMQConfig extends BaseConfigService<RabbitMQConfigDto> {
 /**
  * Register 'rabbitmq' namespace with NestJS ConfigModule.
  */
-export const rabbitmqConfig = registerAs('rabbitmq', () => new RabbitMQConfig());
+export const rabbitmqConfig = registerAs(
+  'rabbitmq',
+  () => new RabbitMQConfig(),
+);

@@ -75,7 +75,9 @@ export class AuthClientController {
   @ApiOperation({ summary: 'Sign up as Enterprise (Rate limited: 5/min)' })
   @ApiTooManyRequestsResponse({ description: 'Too many requests' })
   async signUpEnterprise(@Body() input: AuthSignUpInputDto) {
-    return this.commandBus.execute(new AuthSignUpCommand(ERoleType.ENTERPRISE, input));
+    return this.commandBus.execute(
+      new AuthSignUpCommand(ERoleType.ENTERPRISE, input),
+    );
   }
 
   @Public()
@@ -199,7 +201,9 @@ export class AuthClientController {
     @CurrentUser('sub') userId: string,
     @Body() input: AuthChangePasswordInputDto,
   ) {
-    return this.commandBus.execute(new AuthChangePasswordCommand(userId, input));
+    return this.commandBus.execute(
+      new AuthChangePasswordCommand(userId, input),
+    );
   }
 
   @Get('profile')

@@ -8,8 +8,11 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { UploadedFileRestoreCommand } from './uploaded-file-restore.command';
 
 @CommandHandler(UploadedFileRestoreCommand)
-export class UploadedFileRestoreCommandHandler
-  implements ICommandHandler<UploadedFileRestoreCommand, void>
+export class UploadedFileRestoreCommandHandler implements
+  ICommandHandler<
+    UploadedFileRestoreCommand,
+    void
+  >
 {
   constructor(
     @Inject(UPLOADED_FILE_REPOSITORY) private readonly repository: IUploadedFileRepository,

@@ -4,7 +4,7 @@ import { RoleRoot } from '@/core/aggregate-roots/role.aggregate';
 export class RoleMapper {
   static toDto(root: RoleRoot): RoleDto {
     return {
-      id: root.id!,
+      id: root.id,
       title: root.title,
       permissions: root.permissions,
       type: root.type,

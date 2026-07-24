@@ -4,4 +4,6 @@ import { EnterpriseCreateInputSchema } from '../enterprise-create/enterprise-cre
 
 export const EnterpriseUpdateInputSchema = EnterpriseCreateInputSchema.partial();
 
-export class EnterpriseUpdateInputDto extends createZodDto(EnterpriseUpdateInputSchema) {}
+export class EnterpriseUpdateInputDto extends createZodDto(
+  EnterpriseUpdateInputSchema,
+) {}

@@ -43,7 +43,7 @@ export class InAppNotificationHandler implements IEventHandler<NotificationDispa
       // 2. Create user-specific receipt for each recipient
       const userNotifications = recipientIds.map((recipientId) =>
         UserNotificationRoot.create({
-          notificationId: notification.id!,
+          notificationId: notification.id,
           recipientId,
         })
       );

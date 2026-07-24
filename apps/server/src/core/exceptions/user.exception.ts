@@ -18,7 +18,9 @@ export class UserConflictException extends ConflictDomainException {
 }
 
 export class UserForbiddenException extends ForbiddenDomainException {
-  constructor(message: string = 'You are not authorized to access/modify this user profile') {
+  constructor(
+    message: string = 'You are not authorized to access/modify this user profile',
+  ) {
     super(message);
   }
 }

@@ -30,11 +30,15 @@ export class RawRabbitMQConsumerClient {
     }
 
     try {
-      this.logger.log(`Connecting to RabbitMQ (Consumer) at ${this.config.connection.vhost}...`);
+      this.logger.log(
+        `Connecting to RabbitMQ (Consumer) at ${this.config.connection.vhost}...`,
+      );
       this.connection = await amqp.connect(this.config.connection.uri);
 
       this.connection.on('error', (error) => {
-        this.logger.error(`RabbitMQ Consumer Connection Error: ${error.message}`);
+        this.logger.error(
+          `RabbitMQ Consumer Connection Error: ${error.message}`,
+        );
         this.isConnected = false;
         this.reconnectWithBackoff();
       });
@@ -91,7 +95,9 @@ export class RawRabbitMQConsumerClient {
       this.isConnected = false;
       this.logger.log('RabbitMQ Consumer disconnected');
     } catch (error) {
-      this.logger.error(`Error disconnecting RabbitMQ Consumer: ${errorMessage(error)}`);
+      this.logger.error(
+        `Error disconnecting RabbitMQ Consumer: ${errorMessage(error)}`,
+      );
     }
   }
 
@@ -123,7 +129,11 @@ export class RawRabbitMQConsumerClient {
         // Usually, in this custom pattern, producer asserts the exchange.
         // But for safety, one might want to assert it as 'topic' by default or based on some convention.
         // Here we just bind assuming exchange exists.
-        await this.channel.bindQueue(queueConfig.name, binding.exchange, binding.routing_key);
+        await this.channel.bindQueue(
+          queueConfig.name,
+          binding.exchange,
+          binding.routing_key,
+        );
         this.logger.debug(
           `Bound queue "${queueConfig.name}" to exchange "${binding.exchange}" with routing key "${binding.routing_key}"`,
         );
@@ -141,7 +151,9 @@ export class RawRabbitMQConsumerClient {
       const handlers = RmqHandlerRegistry.getHandlersForQueue(queueConfig.name);
 
       if (handlers.length === 0) {
-        this.logger.warn(`No handlers registered for queue "${queueConfig.name}"`);
+        this.logger.warn(
+          `No handlers registered for queue "${queueConfig.name}"`,
+        );
         continue;
       }
 
@@ -176,30 +188,40 @@ export class RawRabbitMQConsumerClient {
 
     try {
       const parsedMessage = JSON.parse(content);
-      this.logger.debug(`Routing message with content "${parsedMessage.pattern}"`);
+      this.logger.debug(
+        `Routing message with content "${parsedMessage.pattern}"`,
+      );
       // NestJS protocol check: messages from our producer have { pattern: routingKey, data: ... }
       const pattern = parsedMessage.pattern || routingKey;
       const data = parsedMessage.data !== undefined ? parsedMessage.data : parsedMessage;
 
-      this.logger.debug(`All handlers: ${handlers.map((h) => h.pattern).join(', ')}`);
+      this.logger.debug(
+        `All handlers: ${handlers.map((h) => h.pattern).join(', ')}`,
+      );
       const handler = handlers.find((h) => this.matchPattern(h.pattern, pattern));
 
       if (handler) {
-        this.logger.debug(`Routing message with pattern "${pattern}" to ${handler.methodName}`);
+        this.logger.debug(
+          `Routing message with pattern "${pattern}" to ${handler.methodName}`,
+        );
         await handler.callback.apply(handler.target, [data, msg]);
 
         if (!this.config.consume.no_ack && this.config.consume.manual_ack) {
           this.channel.ack(msg);
         }
       } else {
-        this.logger.warn(`No handler found for pattern "${pattern}" in queue "${queueName}"`);
+        this.logger.warn(
+          `No handler found for pattern "${pattern}" in queue "${queueName}"`,
+        );
         // If no handler, we might want to ack anyway or nack/requeue
         if (!this.config.consume.no_ack) {
           this.channel.ack(msg);
         }
       }
     } catch (error) {
-      this.logger.error(`Error handling RMQ message from ${queueName}: ${errorMessage(error)}`);
+      this.logger.error(
+        `Error handling RMQ message from ${queueName}: ${errorMessage(error)}`,
+      );
 
       if (!this.config.consume.no_ack) {
         this.channel.nack(msg, false, this.config.consume.requeue_on_error);
@@ -210,7 +232,10 @@ export class RawRabbitMQConsumerClient {
   /**
    * Simple pattern matching (exact match or * wildcard)
    */
-  private matchPattern(handlerPattern: string, incomingPattern: string): boolean {
+  private matchPattern(
+    handlerPattern: string,
+    incomingPattern: string,
+  ): boolean {
     if (handlerPattern === incomingPattern) return true;
     if (handlerPattern === '*') return true;
 
@@ -232,17 +257,23 @@ export class RawRabbitMQConsumerClient {
 
   private async reconnectWithBackoff(): Promise<void> {
     const config = this.config.connection.reconnect;
-    if (config.max_retries !== -1 && this.connectionAttempts >= config.max_retries) {
+    if (
+      config.max_retries !== -1
+      && this.connectionAttempts >= config.max_retries
+    ) {
       throw new Error(`Max reconnection attempts reached for RMQ Consumer`);
     }
 
     const delayMs = Math.min(
-      config.initial_delay_ms * Math.pow(config.factor, this.connectionAttempts),
+      config.initial_delay_ms
+        * Math.pow(config.factor, this.connectionAttempts),
       config.max_delay_ms,
     );
 
     this.connectionAttempts++;
-    this.logger.warn(`Consumer reconnection attempt ${this.connectionAttempts} in ${delayMs}ms...`);
+    this.logger.warn(
+      `Consumer reconnection attempt ${this.connectionAttempts} in ${delayMs}ms...`,
+    );
 
     await new Promise((resolve) => setTimeout(resolve, delayMs));
 

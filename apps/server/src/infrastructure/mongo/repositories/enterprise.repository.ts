@@ -24,13 +24,18 @@ export class MongoEnterpriseRepository implements IEnterpriseRepository {
   }
 
   async findById(id: string): Promise<Nullable<EnterpriseRoot>> {
-    const doc = await this.enterpriseModel.findById(id).session(this.session).exec();
+    const doc = await this.enterpriseModel
+      .findById(id)
+      .session(this.session)
+      .exec();
     return doc ? this.mapToDomain(doc) : null;
   }
 
   async findByUserId(userId: string): Promise<Nullable<EnterpriseRoot>> {
-    const doc = await this.enterpriseModel.findOne({ user_id: new Types.ObjectId(userId) as any })
-      .session(this.session).exec();
+    const doc = await this.enterpriseModel
+      .findOne({ user_id: new Types.ObjectId(userId) as any })
+      .session(this.session)
+      .exec();
     return doc ? this.mapToDomain(doc) : null;
   }
 
@@ -42,22 +47,29 @@ export class MongoEnterpriseRepository implements IEnterpriseRepository {
       const saved = await created.save({ session: this.session });
       enterprise.setId(saved._id.toString());
     } else {
-      await this.enterpriseModel.findByIdAndUpdate(enterprise.id, data, { upsert: true }).session(
-        this.session,
-      ).exec();
+      await this.enterpriseModel
+        .findByIdAndUpdate(enterprise.id, data, { upsert: true })
+        .session(this.session)
+        .exec();
     }
 
-    await this.invalidateCache(enterprise.id!, enterprise.userId);
+    await this.invalidateCache(enterprise.id, enterprise.userId);
   }
 
   async saveMany(enterprises: EnterpriseRoot[]): Promise<void> {
-    await Promise.all(enterprises.map(e => this.save(e)));
+    await Promise.all(enterprises.map((e) => this.save(e)));
   }
 
   async delete(id: string): Promise<void> {
-    const doc = await this.enterpriseModel.findById(id).session(this.session).exec();
+    const doc = await this.enterpriseModel
+      .findById(id)
+      .session(this.session)
+      .exec();
     if (doc) {
-      await this.enterpriseModel.findByIdAndDelete(id).session(this.session).exec();
+      await this.enterpriseModel
+        .findByIdAndDelete(id)
+        .session(this.session)
+        .exec();
       await this.invalidateCache(id, doc.user_id ? doc.user_id.toString() : '');
     }
   }
@@ -69,7 +81,9 @@ export class MongoEnterpriseRepository implements IEnterpriseRepository {
       this.cacheService.delByPattern(CacheKeyUtil.listPattern(domain)),
     ];
     if (userId) {
-      invalidations.push(this.cacheService.del(CacheKeyUtil.custom(domain, `userId:${userId}`)));
+      invalidations.push(
+        this.cacheService.del(CacheKeyUtil.custom(domain, `userId:${userId}`)),
+      );
     }
     await Promise.all(invalidations);
   }
@@ -108,7 +122,9 @@ export class MongoEnterpriseRepository implements IEnterpriseRepository {
       contact_phone: enterprise.contactPhone?.value ?? null,
       website: enterprise.website ?? null,
       tax_id: enterprise.taxId ?? null,
-      logo_url_id: enterprise.logoUrlId ? new Types.ObjectId(enterprise.logoUrlId) as any : null,
+      logo_url_id: enterprise.logoUrlId
+        ? (new Types.ObjectId(enterprise.logoUrlId) as any)
+        : null,
       is_verified: enterprise.isVerified,
       delete_at: enterprise.deleteAt,
       delete_by: enterprise.deleteBy,

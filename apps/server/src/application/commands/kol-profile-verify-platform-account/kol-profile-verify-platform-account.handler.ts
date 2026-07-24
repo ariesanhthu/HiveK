@@ -9,15 +9,20 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { KolProfileVerifyPlatformAccountCommand } from './kol-profile-verify-platform-account.command';
 
 @CommandHandler(KolProfileVerifyPlatformAccountCommand)
-export class KolProfileVerifyPlatformAccountCommandHandler
-  implements ICommandHandler<KolProfileVerifyPlatformAccountCommand, KolProfileDto>
+export class KolProfileVerifyPlatformAccountCommandHandler implements
+  ICommandHandler<
+    KolProfileVerifyPlatformAccountCommand,
+    KolProfileDto
+  >
 {
   constructor(
     @Inject(KOL_PROFILE_REPOSITORY) private readonly kolProfileRepository: IKolProfileRepository,
     @Inject(MESSAGE_QUEUE_SERVICE) private readonly mqService: IMessageQueueService,
   ) {}
 
-  async execute(command: KolProfileVerifyPlatformAccountCommand): Promise<KolProfileDto> {
+  async execute(
+    command: KolProfileVerifyPlatformAccountCommand,
+  ): Promise<KolProfileDto> {
     const { userId, platformId, externalId, uniqueId, displayName, email } = command;
 
     // 1. Check if a profile with this platform already exists

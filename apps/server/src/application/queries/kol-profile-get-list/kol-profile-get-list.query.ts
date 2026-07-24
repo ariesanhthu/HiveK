@@ -5,7 +5,9 @@ import { KolProfileFilterDto } from './kol-profile-get-list.dto';
 
 import { ProjectionDto } from '@/application/dtos/projection.dto';
 
-export class KolProfileGetListQuery extends Query<PaginatedResponseDto<KolProfileDto>> {
+export class KolProfileGetListQuery extends Query<
+  PaginatedResponseDto<KolProfileDto>
+> {
   constructor(
     public readonly filters?: KolProfileFilterDto,
     public readonly projection?: ProjectionDto,

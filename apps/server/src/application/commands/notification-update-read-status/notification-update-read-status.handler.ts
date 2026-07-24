@@ -8,8 +8,11 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { NotificationUpdateReadStatusCommand } from './notification-update-read-status.command';
 
 @CommandHandler(NotificationUpdateReadStatusCommand)
-export class NotificationUpdateReadStatusCommandHandler
-  implements ICommandHandler<NotificationUpdateReadStatusCommand, void>
+export class NotificationUpdateReadStatusCommandHandler implements
+  ICommandHandler<
+    NotificationUpdateReadStatusCommand,
+    void
+  >
 {
   constructor(
     @Inject(USER_NOTIFICATION_REPOSITORY) private readonly userNotificationRepository:
@@ -22,7 +25,11 @@ export class NotificationUpdateReadStatusCommandHandler
     if (isEmpty(ids)) {
       await this.userNotificationRepository.markAll(userId, isRead);
     } else {
-      await this.userNotificationRepository.updateReadStatus(ids, userId, isRead);
+      await this.userNotificationRepository.updateReadStatus(
+        ids,
+        userId,
+        isRead,
+      );
     }
   }
 }

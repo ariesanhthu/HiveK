@@ -17,18 +17,28 @@ export class MongoUserReadService implements IUserReadService {
   ) {}
 
   async findById(id: string): Promise<Nullable<UserDetailDto>> {
-    const doc = await this.userModel.findById(id).populate('role_id').populate('avatar').lean()
+    const doc = await this.userModel
+      .findById(id)
+      .populate('role_id')
+      .populate('avatar')
+      .lean()
       .exec();
     return doc ? this.mapToDto(doc) : null;
   }
 
   async findByEmail(email: string): Promise<Nullable<UserDetailDto>> {
-    const doc = await this.userModel.findOne({ email }).populate('role_id').populate('avatar')
-      .lean().exec();
+    const doc = await this.userModel
+      .findOne({ email })
+      .populate('role_id')
+      .populate('avatar')
+      .lean()
+      .exec();
     return doc ? this.mapToDto(doc) : null;
   }
 
-  async findAll(filters: UserFilterDto = {} as any): Promise<PaginatedResponseDto<UserDetailDto>> {
+  async findAll(
+    filters: UserFilterDto = {} as any,
+  ): Promise<PaginatedResponseDto<UserDetailDto>> {
     const {
       cursor,
       limit = 10,
@@ -43,13 +53,22 @@ export class MongoUserReadService implements IUserReadService {
     const query: QueryFilter<UserDocument> = {};
 
     if (email) {
-      query.email = { $regex: MongoSanitizeUtil.escapeRegex(email), $options: 'i' };
+      query.email = {
+        $regex: MongoSanitizeUtil.escapeRegex(email),
+        $options: 'i',
+      };
     }
     if (phone) {
-      query.phone = { $regex: MongoSanitizeUtil.escapeRegex(phone), $options: 'i' };
+      query.phone = {
+        $regex: MongoSanitizeUtil.escapeRegex(phone),
+        $options: 'i',
+      };
     }
     if (fullName) {
-      query.full_name = { $regex: MongoSanitizeUtil.escapeRegex(fullName), $options: 'i' };
+      query.full_name = {
+        $regex: MongoSanitizeUtil.escapeRegex(fullName),
+        $options: 'i',
+      };
     }
     if (type) {
       query.type = type;
@@ -76,7 +95,9 @@ export class MongoUserReadService implements IUserReadService {
 
     const hasNextPage = docs.length > limit;
     const results = hasNextPage ? docs.slice(0, limit) : docs;
-    const nextCursor = hasNextPage ? results[results.length - 1]._id.toString() : null;
+    const nextCursor = hasNextPage
+      ? results[results.length - 1]._id.toString()
+      : null;
 
     return new PaginatedResponseDto(
       results.map((doc) => this.mapToDto(doc)),
@@ -133,7 +154,7 @@ export class MongoUserReadService implements IUserReadService {
           enterpriseIds: doc.enterprise_ids
             ? doc.enterprise_ids.map((id: any) => id.toString())
             : [],
-        } as any;
+        };
       case ERoleType.ADMIN:
         return {
           ...baseFields,

@@ -55,14 +55,20 @@ export class MongoUnitOfWork implements IUnitOfWork {
    * should ideally not be used directly with ALS in this pattern.
    */
   async startTransaction(): Promise<void> {
-    throw new Error('Use execute() instead for AsyncLocalStorage-based transactions');
+    throw new Error(
+      'Use execute() instead for AsyncLocalStorage-based transactions',
+    );
   }
 
   async commitTransaction(): Promise<void> {
-    throw new Error('Use execute() instead for AsyncLocalStorage-based transactions');
+    throw new Error(
+      'Use execute() instead for AsyncLocalStorage-based transactions',
+    );
   }
 
   async rollbackTransaction(): Promise<void> {
-    throw new Error('Use execute() instead for AsyncLocalStorage-based transactions');
+    throw new Error(
+      'Use execute() instead for AsyncLocalStorage-based transactions',
+    );
   }
 }

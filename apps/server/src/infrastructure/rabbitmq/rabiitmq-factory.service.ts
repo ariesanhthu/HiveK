@@ -25,11 +25,15 @@ export class RabbitMQFactoryService {
   readRMQProducerConfig(filePath: string): RabbitMQProducerConfig {
     try {
       const resolvedPath = this.resolvePath(filePath);
-      this.loggerService.debug(`Reading RMQ producer config from: ${resolvedPath}`);
+      this.loggerService.debug(
+        `Reading RMQ producer config from: ${resolvedPath}`,
+      );
 
       const fileContent = fs.readFileSync(resolvedPath, 'utf-8');
       const rawConfig = JSON.parse(fileContent);
-      const config = this.replacePlaceholders(rawConfig) as RabbitMQProducerConfig;
+      const config = this.replacePlaceholders(
+        rawConfig,
+      ) as RabbitMQProducerConfig;
 
       if (config.role !== 'producer') {
         throw new BadRequestException(
@@ -45,7 +49,9 @@ export class RabbitMQFactoryService {
       }
       const msg = errorMessage(error);
       this.loggerService.error(`Failed to read RMQ producer config: ${msg}`);
-      throw new BadRequestException(`Failed to read RMQ producer config: ${msg}`);
+      throw new BadRequestException(
+        `Failed to read RMQ producer config: ${msg}`,
+      );
     }
   }
 
@@ -58,11 +64,15 @@ export class RabbitMQFactoryService {
   readRMQConsumerConfig(filePath: string): RabbitMQConsumerConfig {
     try {
       const resolvedPath = this.resolvePath(filePath);
-      this.loggerService.debug(`Reading RMQ consumer config from: ${resolvedPath}`);
+      this.loggerService.debug(
+        `Reading RMQ consumer config from: ${resolvedPath}`,
+      );
 
       const fileContent = fs.readFileSync(resolvedPath, 'utf-8');
       const rawConfig = JSON.parse(fileContent);
-      const config = this.replacePlaceholders(rawConfig) as RabbitMQConsumerConfig;
+      const config = this.replacePlaceholders(
+        rawConfig,
+      ) as RabbitMQConsumerConfig;
 
       if (config.role !== 'consumer') {
         throw new BadRequestException(
@@ -78,7 +88,9 @@ export class RabbitMQFactoryService {
       }
       const msg = errorMessage(error);
       this.loggerService.error(`Failed to read RMQ consumer config: ${msg}`);
-      throw new BadRequestException(`Failed to read RMQ consumer config: ${msg}`);
+      throw new BadRequestException(
+        `Failed to read RMQ consumer config: ${msg}`,
+      );
     }
   }
 
@@ -92,14 +104,23 @@ export class RabbitMQFactoryService {
     if (path.isAbsolute(filePath)) {
       return filePath;
     }
-    const configDir = path.join(__dirname, '../..', 'infrastructure', 'rabbitmq', 'config');
+    const configDir = path.join(
+      __dirname,
+      '../..',
+      'infrastructure',
+      'rabbitmq',
+      'config',
+    );
     return path.join(configDir, filePath);
   }
 
   /** Replace placeholder {{RABBITMQ_URI}} with actual URI from env */
   private replacePlaceholders<T>(obj: T): T {
     const json = JSON.stringify(obj);
-    const replaced = json.replace(/"\{\{RABBITMQ_URI\}\}"/g, `"${this.getRmqUri()}"`);
+    const replaced = json.replace(
+      /"\{\{RABBITMQ_URI\}\}"/g,
+      `"${this.getRmqUri()}"`,
+    );
     return JSON.parse(replaced) as T;
   }
 
@@ -146,7 +167,9 @@ export class RabbitMQFactoryService {
     const primaryBinding = primaryQueue?.bindings[0];
 
     if (!primaryQueue) {
-      throw new BadRequestException('Consumer config must have at least one queue');
+      throw new BadRequestException(
+        'Consumer config must have at least one queue',
+      );
     }
 
     return {
@@ -212,7 +235,9 @@ export class RabbitMQFactoryService {
     const vhostPart = vhost ? `/${encodeURIComponent(vhost)}` : '';
 
     return `amqp://${encodeURIComponent(user)}:${
-      encodeURIComponent(password)
+      encodeURIComponent(
+        password,
+      )
     }@${host}:${port}${vhostPart}`;
   }
 }

@@ -37,7 +37,9 @@ export type UserCreateProps =
     isEmailVerified?: boolean;
   };
 
-export abstract class UserRoot<T extends UserProps = UserProps> extends BaseAggregateRoot<T> {
+export abstract class UserRoot<
+  T extends UserProps = UserProps,
+> extends BaseAggregateRoot<T> {
   protected constructor(props: T, id?: string) {
     super(props, id);
   }

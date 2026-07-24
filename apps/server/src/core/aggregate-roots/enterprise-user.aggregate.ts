@@ -10,8 +10,7 @@ export interface EnterpriseUserProps extends UserProps {
   enterpriseIds: string[];
 }
 
-export interface EnterpriseUserCreateProps extends UserCreateProps {
-}
+export type EnterpriseUserCreateProps = UserCreateProps;
 
 export class EnterpriseUserRoot extends UserRoot<EnterpriseUserProps> {
   private constructor(props: EnterpriseUserProps, id?: string) {
@@ -21,15 +20,12 @@ export class EnterpriseUserRoot extends UserRoot<EnterpriseUserProps> {
   public override setId(id: string): void {
     super.setId(id);
     this.addDomainEvent(
-      new UserSignedUpEvent(
-        this.id,
-        {
-          email: this.props.email,
-          fullName: this.props.fullName,
-          phone: this.props.phone?.value,
-          type: ERoleType.ENTERPRISE,
-        },
-      ),
+      new UserSignedUpEvent(this.id, {
+        email: this.props.email,
+        fullName: this.props.fullName,
+        phone: this.props.phone?.value,
+        type: ERoleType.ENTERPRISE,
+      }),
     );
   }
 
@@ -51,7 +47,10 @@ export class EnterpriseUserRoot extends UserRoot<EnterpriseUserProps> {
     });
   }
 
-  public static instantiate(id: string, props: EnterpriseUserProps): EnterpriseUserRoot {
+  public static instantiate(
+    id: string,
+    props: EnterpriseUserProps,
+  ): EnterpriseUserRoot {
     return new EnterpriseUserRoot(props, id);
   }
 
@@ -67,15 +66,12 @@ export class EnterpriseUserRoot extends UserRoot<EnterpriseUserProps> {
     this.props.updatedAt = new Date();
 
     this.addDomainEvent(
-      new UserAddedToEnterpriseEvent(
-        this.id!,
-        {
-          userId: this.id!,
-          userEmail: this.email,
-          enterpriseId,
-          enterpriseName,
-        },
-      ),
+      new UserAddedToEnterpriseEvent(this.id, {
+        userId: this.id,
+        userEmail: this.email,
+        enterpriseId,
+        enterpriseName,
+      }),
     );
   }
 
@@ -83,19 +79,18 @@ export class EnterpriseUserRoot extends UserRoot<EnterpriseUserProps> {
     if (!this.props.enterpriseIds.includes(enterpriseId)) {
       return;
     }
-    this.props.enterpriseIds = this.props.enterpriseIds.filter(id => id !== enterpriseId);
+    this.props.enterpriseIds = this.props.enterpriseIds.filter(
+      (id) => id !== enterpriseId,
+    );
     this.props.updatedAt = new Date();
 
     this.addDomainEvent(
-      new UserRevokedFromEnterpriseEvent(
-        this.id!,
-        {
-          userId: this.id!,
-          userEmail: this.email,
-          enterpriseId,
-          enterpriseName,
-        },
-      ),
+      new UserRevokedFromEnterpriseEvent(this.id, {
+        userId: this.id,
+        userEmail: this.email,
+        enterpriseId,
+        enterpriseName,
+      }),
     );
   }
 }

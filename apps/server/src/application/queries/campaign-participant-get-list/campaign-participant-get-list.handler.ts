@@ -9,9 +9,11 @@ import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { CampaignParticipantGetListQuery } from './campaign-participant-get-list.query';
 
 @QueryHandler(CampaignParticipantGetListQuery)
-export class CampaignParticipantGetListQueryHandler
-  implements
-    IQueryHandler<CampaignParticipantGetListQuery, PaginatedResponseDto<CampaignParticipantDto>>
+export class CampaignParticipantGetListQueryHandler implements
+  IQueryHandler<
+    CampaignParticipantGetListQuery,
+    PaginatedResponseDto<CampaignParticipantDto>
+  >
 {
   constructor(
     @Inject(CAMPAIGN_PARTICIPANT_READ_SERVICE) private readonly readService:

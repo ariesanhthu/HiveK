@@ -6,10 +6,15 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { UserCheckValidCommand } from './user-check-valid.command';
 
 @CommandHandler(UserCheckValidCommand)
-export class UserCheckValidCommandHandler
-  implements ICommandHandler<UserCheckValidCommand, UserDto>
+export class UserCheckValidCommandHandler implements
+  ICommandHandler<
+    UserCheckValidCommand,
+    UserDto
+  >
 {
-  constructor(@Inject(USER_REPOSITORY) private readonly userRepository: IUserRepository) {}
+  constructor(
+    @Inject(USER_REPOSITORY) private readonly userRepository: IUserRepository,
+  ) {}
 
   async execute(command: UserCheckValidCommand): Promise<UserDto> {
     const { id } = command.input;

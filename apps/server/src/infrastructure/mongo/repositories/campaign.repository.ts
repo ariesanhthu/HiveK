@@ -26,18 +26,26 @@ export class MongoCampaignRepository implements ICampaignRepository {
   }
 
   async findById(id: string): Promise<Nullable<CampaignRoot>> {
-    const doc = await this.campaignModel.findById(id).session(this.session).exec();
+    const doc = await this.campaignModel
+      .findById(id)
+      .session(this.session)
+      .exec();
     return doc ? this.mapToDomain(doc) : null;
   }
 
   async findByEnterpriseId(enterpriseId: string): Promise<CampaignRoot[]> {
-    const docs = await this.campaignModel.find({
-      enterprise_id: new Schema.Types.ObjectId(enterpriseId),
-    }).session(this.session).exec();
-    return docs.map(doc => this.mapToDomain(doc));
+    const docs = await this.campaignModel
+      .find({
+        enterprise_id: new Schema.Types.ObjectId(enterpriseId),
+      })
+      .session(this.session)
+      .exec();
+    return docs.map((doc) => this.mapToDomain(doc));
   }
 
-  async findByParticipantId(participantId: string): Promise<Nullable<CampaignRoot>> {
+  async findByParticipantId(
+    participantId: string,
+  ): Promise<Nullable<CampaignRoot>> {
     const doc = await this.campaignModel
       .findOne({ 'participants._id': new Types.ObjectId(participantId) })
       .session(this.session)
@@ -50,7 +58,9 @@ export class MongoCampaignRepository implements ICampaignRepository {
     const doc = await this.campaignModel
       .findOne({
         $or: [
-          { 'schedule.timeline.posts.campaign_kol_outputs._id': new Types.ObjectId(outputId) },
+          {
+            'schedule.timeline.posts.campaign_kol_outputs._id': new Types.ObjectId(outputId),
+          },
           {
             'schedule.timeline.posts.campaign_enterprise_outputs._id': new Types.ObjectId(outputId),
           },
@@ -76,14 +86,20 @@ export class MongoCampaignRepository implements ICampaignRepository {
   }
 
   async hasActiveCampaigns(enterpriseId: string): Promise<boolean> {
-    const doc = await this.campaignModel.findOne(
-      {
-        enterprise_id: new Schema.Types.ObjectId(enterpriseId),
-        status: { $nin: [ECampaignStatus.COMPLETED, ECampaignStatus.CANCELLED] },
-        delete_at: null,
-      },
-      { _id: 1 },
-    ).session(this.session).lean().exec();
+    const doc = await this.campaignModel
+      .findOne(
+        {
+          enterprise_id: new Schema.Types.ObjectId(enterpriseId),
+          status: {
+            $nin: [ECampaignStatus.COMPLETED, ECampaignStatus.CANCELLED],
+          },
+          delete_at: null,
+        },
+        { _id: 1 },
+      )
+      .session(this.session)
+      .lean()
+      .exec();
     return !!doc;
   }
 
@@ -95,14 +111,15 @@ export class MongoCampaignRepository implements ICampaignRepository {
       const saved = await created.save({ session: this.session });
       campaign.setId(saved._id.toString());
     } else {
-      await this.campaignModel.findByIdAndUpdate(campaign.id, data, { upsert: true }).session(
-        this.session,
-      ).exec();
+      await this.campaignModel
+        .findByIdAndUpdate(campaign.id, data, { upsert: true })
+        .session(this.session)
+        .exec();
     }
   }
 
   async saveMany(campaigns: CampaignRoot[]): Promise<void> {
-    await Promise.all(campaigns.map(c => this.save(c)));
+    await Promise.all(campaigns.map((c) => this.save(c)));
   }
 
   async delete(id: string): Promise<void> {
@@ -162,25 +179,28 @@ export class MongoCampaignRepository implements ICampaignRepository {
               scheduledTime: post.scheduled_time,
               platformId: post.platform_id.toString(),
               status: post.status,
-              campaignKOLOutputs: (post.campaign_kol_outputs || []).map((o: any) =>
-                CampaignKOLOutputEntity.instantiate(o._id.toString(), {
-                  campaignParticipantId: o.campaign_participant_id.toString(),
-                  platformId: o.platform_id.toString(),
-                  uniqueId: o.unique_id,
-                  outputType: o.output_type,
-                  title: o.title,
-                  isScheduleForPost: o.is_schedule_for_post,
-                  scheduledAt: o.scheduled_at,
-                  fileId: o.file_id ? o.file_id.toString() : null,
-                  status: o.status,
-                  url: o.url,
-                  postedAt: o.posted_at,
-                  isTrackingActive: o.is_tracking_active || false,
-                  createdAt: o.created_at || new Date(),
-                  updatedAt: o.updated_at || new Date(),
-                })
+              campaignKOLOutputs: (post.campaign_kol_outputs || []).map(
+                (o: any) =>
+                  CampaignKOLOutputEntity.instantiate(o._id.toString(), {
+                    campaignParticipantId: o.campaign_participant_id.toString(),
+                    platformId: o.platform_id.toString(),
+                    uniqueId: o.unique_id,
+                    outputType: o.output_type,
+                    title: o.title,
+                    isScheduleForPost: o.is_schedule_for_post,
+                    scheduledAt: o.scheduled_at,
+                    fileId: o.file_id ? o.file_id.toString() : null,
+                    status: o.status,
+                    url: o.url,
+                    postedAt: o.posted_at,
+                    isTrackingActive: o.is_tracking_active || false,
+                    createdAt: o.created_at || new Date(),
+                    updatedAt: o.updated_at || new Date(),
+                  }),
               ),
-              campaignEnterpriseOutputs: (post.campaign_enterprise_outputs || []).map((o: any) =>
+              campaignEnterpriseOutputs: (
+                post.campaign_enterprise_outputs || []
+              ).map((o: any) =>
                 CampaignEnterpriseOutputEntity.instantiate(o._id.toString(), {
                   platformId: o.platform_id.toString(),
                   uniqueId: o.unique_id ?? undefined,
@@ -249,30 +269,40 @@ export class MongoCampaignRepository implements ICampaignRepository {
               scheduled_time: post.scheduledTime,
               platform_id: new Types.ObjectId(post.platformId) as any,
               status: post.status,
-              campaign_kol_outputs: (post.campaignKOLOutputs || []).map((o) => ({
+              campaign_kol_outputs: (post.campaignKOLOutputs || []).map(
+                (o) => ({
+                  _id: new Types.ObjectId(o.id),
+                  campaign_participant_id: new Types.ObjectId(
+                    o.campaignParticipantId,
+                  ) as any,
+                  platform_id: new Types.ObjectId(o.platformId) as any,
+                  unique_id: o.uniqueId || null,
+                  output_type: o.outputType,
+                  title: o.title,
+                  is_schedule_for_post: o.isScheduleForPost,
+                  scheduled_at: o.scheduledAt,
+                  file_id: o.fileId
+                    ? (new Types.ObjectId(o.fileId) as any)
+                    : null,
+                  status: o.status,
+                  url: o.url || null,
+                  posted_at: o.postedAt,
+                  is_tracking_active: o.isTrackingActive,
+                }),
+              ),
+              campaign_enterprise_outputs: (
+                post.campaignEnterpriseOutputs || []
+              ).map((o) => ({
                 _id: new Types.ObjectId(o.id),
-                campaign_participant_id: new Types.ObjectId(o.campaignParticipantId) as any,
                 platform_id: new Types.ObjectId(o.platformId) as any,
                 unique_id: o.uniqueId || null,
                 output_type: o.outputType,
                 title: o.title,
                 is_schedule_for_post: o.isScheduleForPost,
                 scheduled_at: o.scheduledAt,
-                file_id: o.fileId ? new Types.ObjectId(o.fileId) as any : null,
-                status: o.status,
-                url: o.url || null,
-                posted_at: o.postedAt,
-                is_tracking_active: o.isTrackingActive,
-              })),
-              campaign_enterprise_outputs: (post.campaignEnterpriseOutputs || []).map((o) => ({
-                _id: new Types.ObjectId(o.id),
-                platform_id: new Types.ObjectId(o.platformId) as any,
-                unique_id: o.uniqueId || null,
-                output_type: o.outputType,
-                title: o.title,
-                is_schedule_for_post: o.isScheduleForPost,
-                scheduled_at: o.scheduledAt,
-                file_id: o.fileId ? new Types.ObjectId(o.fileId) as any : null,
+                file_id: o.fileId
+                  ? (new Types.ObjectId(o.fileId) as any)
+                  : null,
                 status: o.status,
                 url: o.url || null,
                 posted_at: o.postedAt,

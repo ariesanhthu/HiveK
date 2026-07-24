@@ -17,8 +17,16 @@ export class MongoUploadedFileReadService implements IUploadedFileReadService {
   async findAll(
     filters: UploadedFileFilterDto = {} as any,
   ): Promise<PaginatedResponseDto<UploadedFileDto>> {
-    const { cursor, limit = 10, sort = SortOrder.DESC, targetId, format, size, minSize, maxSize } =
-      filters;
+    const {
+      cursor,
+      limit = 10,
+      sort = SortOrder.DESC,
+      targetId,
+      format,
+      size,
+      minSize,
+      maxSize,
+    } = filters;
     const query: QueryFilter<UploadedFileDocument> = { delete_at: null };
 
     if (targetId) {
@@ -54,7 +62,9 @@ export class MongoUploadedFileReadService implements IUploadedFileReadService {
 
     const hasNextPage = docs.length > limit;
     const results = hasNextPage ? docs.slice(0, limit) : docs;
-    const nextCursor = hasNextPage ? results[results.length - 1]._id.toString() : null;
+    const nextCursor = hasNextPage
+      ? results[results.length - 1]._id.toString()
+      : null;
 
     return new PaginatedResponseDto(
       results.map((doc) => this.mapToDto(doc)),
@@ -65,7 +75,10 @@ export class MongoUploadedFileReadService implements IUploadedFileReadService {
   }
 
   async findById(id: string): Promise<Nullable<UploadedFileDto>> {
-    const doc = await this.model.findOne({ _id: id, delete_at: null }).lean().exec();
+    const doc = await this.model
+      .findOne({ _id: id, delete_at: null })
+      .lean()
+      .exec();
     return doc ? this.mapToDto(doc) : null;
   }
 

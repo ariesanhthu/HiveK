@@ -7,7 +7,12 @@ import { UserGetByIdQuery } from './user-get-by-id.query';
 import { UserNotFoundException } from '@/core/exceptions';
 
 @QueryHandler(UserGetByIdQuery)
-export class UserGetByIdHandler implements IQueryHandler<UserGetByIdQuery, UserDetailDto> {
+export class UserGetByIdHandler implements
+  IQueryHandler<
+    UserGetByIdQuery,
+    UserDetailDto
+  >
+{
   constructor(
     @Inject(USER_READ_SERVICE) private readonly readService: IUserReadService,
   ) {}

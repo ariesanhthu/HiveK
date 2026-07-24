@@ -49,15 +49,17 @@ export class MongoOtpRepository implements IOtpRepository {
       type: otp.type,
       expired_at: otp.expiresAt,
     };
-    await this.otpModel.findOneAndUpdate(
-      filter,
-      { $set: update },
-      { upsert: true, session: this.session },
-    ).exec();
+    await this.otpModel
+      .findOneAndUpdate(
+        filter,
+        { $set: update },
+        { upsert: true, session: this.session },
+      )
+      .exec();
   }
 
   async saveMany(otps: OtpRoot[]): Promise<void> {
-    const bulkOps = otps.map(otp => ({
+    const bulkOps = otps.map((otp) => ({
       updateOne: {
         filter: { _id: otp.id },
         update: {
@@ -76,21 +78,32 @@ export class MongoOtpRepository implements IOtpRepository {
     }
   }
 
-  async findValidOtp(email: string, code: string, type: EOtpType): Promise<OtpRoot | null> {
-    const doc = await this.otpModel.findOne({
-      email,
-      code,
-      type,
-      expired_at: { $gt: new Date() },
-    }).session(this.session).lean().exec();
+  async findValidOtp(
+    email: string,
+    code: string,
+    type: EOtpType,
+  ): Promise<OtpRoot | null> {
+    const doc = await this.otpModel
+      .findOne({
+        email,
+        code,
+        type,
+        expired_at: { $gt: new Date() },
+      })
+      .session(this.session)
+      .lean()
+      .exec();
     return this.mapToDomain(doc);
   }
 
   async deleteByEmailAndType(email: string, type: EOtpType): Promise<void> {
-    await this.otpModel.deleteMany({
-      email,
-      type,
-    }).session(this.session).exec();
+    await this.otpModel
+      .deleteMany({
+        email,
+        type,
+      })
+      .session(this.session)
+      .exec();
   }
 
   async findRecentOtp(
@@ -99,11 +112,15 @@ export class MongoOtpRepository implements IOtpRepository {
     withinSeconds: number,
   ): Promise<OtpRoot | null> {
     const cutoffDate = new Date(Date.now() - withinSeconds * 1000);
-    const doc = await this.otpModel.findOne({
-      email: email.toLowerCase().trim(),
-      type,
-      created_at: { $gt: cutoffDate },
-    }).session(this.session).lean().exec();
+    const doc = await this.otpModel
+      .findOne({
+        email: email.toLowerCase().trim(),
+        type,
+        created_at: { $gt: cutoffDate },
+      })
+      .session(this.session)
+      .lean()
+      .exec();
     return this.mapToDomain(doc);
   }
 

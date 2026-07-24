@@ -27,7 +27,7 @@ export class MongoConfigDto {
 export class MongoConfig extends BaseConfigService<MongoConfigDto> {
   constructor() {
     super(MongoConfigDto, {
-      uri: process.env.MONGODB_URI as string,
+      uri: process.env.MONGODB_URI,
     });
   }
 

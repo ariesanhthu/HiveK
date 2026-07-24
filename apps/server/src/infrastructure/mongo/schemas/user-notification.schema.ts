@@ -6,10 +6,18 @@ import { HydratedDocument, Schema as MongooseSchema } from 'mongoose';
   timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' },
 })
 export class UserNotificationModel {
-  @Prop({ required: true, type: MongooseSchema.Types.ObjectId, ref: 'NotificationModel' })
+  @Prop({
+    required: true,
+    type: MongooseSchema.Types.ObjectId,
+    ref: 'NotificationModel',
+  })
   notification_id: MongooseSchema.Types.ObjectId;
 
-  @Prop({ required: true, type: MongooseSchema.Types.ObjectId, ref: 'UserModel' })
+  @Prop({
+    required: true,
+    type: MongooseSchema.Types.ObjectId,
+    ref: 'UserModel',
+  })
   recipient_id: MongooseSchema.Types.ObjectId;
 
   @Prop({ type: MongooseSchema.Types.Boolean, required: true, default: false })
@@ -29,4 +37,6 @@ export class UserNotificationModel {
 }
 
 export type UserNotificationDocument = HydratedDocument<UserNotificationModel>;
-export const UserNotificationSchema = SchemaFactory.createForClass(UserNotificationModel);
+export const UserNotificationSchema = SchemaFactory.createForClass(
+  UserNotificationModel,
+);

@@ -25,8 +25,12 @@ export class MongoEnterpriseReadService implements IEnterpriseReadService {
     const cached = await this.cacheService.get<EnterpriseDetailDto>(cacheKey);
     if (cached) return cached;
 
-    const doc = await this.enterpriseModel.findById(id).populate('user_id').populate('logo_url_id')
-      .lean().exec();
+    const doc = await this.enterpriseModel
+      .findById(id)
+      .populate('user_id')
+      .populate('logo_url_id')
+      .lean()
+      .exec();
     if (!doc) return null;
 
     const dto = this.mapToDto(doc);
@@ -39,8 +43,12 @@ export class MongoEnterpriseReadService implements IEnterpriseReadService {
     const cached = await this.cacheService.get<EnterpriseDetailDto>(cacheKey);
     if (cached) return cached;
 
-    const doc = await this.enterpriseModel.findOne({ user_id: new Types.ObjectId(userId) as any })
-      .populate('user_id').populate('logo_url_id').lean().exec();
+    const doc = await this.enterpriseModel
+      .findOne({ user_id: new Types.ObjectId(userId) as any })
+      .populate('user_id')
+      .populate('logo_url_id')
+      .lean()
+      .exec();
     if (!doc) return null;
 
     const dto = this.mapToDto(doc);
@@ -52,7 +60,9 @@ export class MongoEnterpriseReadService implements IEnterpriseReadService {
     filters: EnterpriseFilterDto = {} as any,
   ): Promise<PaginatedResponseDto<EnterpriseDetailDto>> {
     const cacheKey = CacheKeyUtil.list(this.domain, filters);
-    const cached = await this.cacheService.get<PaginatedResponseDto<EnterpriseDetailDto>>(cacheKey);
+    const cached = await this.cacheService.get<PaginatedResponseDto<EnterpriseDetailDto>>(
+      cacheKey,
+    );
     if (cached) return cached;
 
     const {
@@ -67,10 +77,16 @@ export class MongoEnterpriseReadService implements IEnterpriseReadService {
     const query: QueryFilter<EnterpriseDocument> = {};
 
     if (companyName) {
-      query.company_name = { $regex: MongoSanitizeUtil.escapeRegex(companyName), $options: 'i' };
+      query.company_name = {
+        $regex: MongoSanitizeUtil.escapeRegex(companyName),
+        $options: 'i',
+      };
     }
     if (contactEmail) {
-      query.contact_email = { $regex: MongoSanitizeUtil.escapeRegex(contactEmail), $options: 'i' };
+      query.contact_email = {
+        $regex: MongoSanitizeUtil.escapeRegex(contactEmail),
+        $options: 'i',
+      };
     }
     if (taxId) {
       query.tax_id = taxId;
@@ -94,7 +110,9 @@ export class MongoEnterpriseReadService implements IEnterpriseReadService {
 
     const hasNextPage = docs.length > limit;
     const results = hasNextPage ? docs.slice(0, limit) : docs;
-    const nextCursor = hasNextPage ? results[results.length - 1]._id.toString() : null;
+    const nextCursor = hasNextPage
+      ? results[results.length - 1]._id.toString()
+      : null;
 
     const response = new PaginatedResponseDto(
       results.map((doc) => this.mapToDto(doc)),
@@ -119,7 +137,9 @@ export class MongoEnterpriseReadService implements IEnterpriseReadService {
       contactPhone: doc.contact_phone,
       website: doc.website,
       taxId: doc.tax_id,
-      logoUrlId: doc.logo_url_id && typeof doc.logo_url_id === 'object' && doc.logo_url_id._id
+      logoUrlId: doc.logo_url_id
+          && typeof doc.logo_url_id === 'object'
+          && doc.logo_url_id._id
         ? {
           id: doc.logo_url_id._id.toString(),
           url: doc.logo_url_id.url,
@@ -148,7 +168,7 @@ export class MongoEnterpriseReadService implements IEnterpriseReadService {
           type: doc.user_id.type,
           createdAt: doc.user_id.created_at,
           updatedAt: doc.user_id.updated_at,
-        } as any
+        }
         : undefined,
     };
   }

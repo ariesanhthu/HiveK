@@ -3,9 +3,7 @@ import { Command } from '@nestjs/cqrs';
 import { ReviewCreateInputDto } from './review-create.dto';
 
 export class ReviewCreateCommand extends Command<ReviewDto> {
-  constructor(
-    public readonly input: ReviewCreateInputDto,
-  ) {
+  constructor(public readonly input: ReviewCreateInputDto) {
     super();
   }
 }

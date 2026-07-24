@@ -7,8 +7,11 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { CampaignUpdateCommand } from './campaign-update.command';
 
 @CommandHandler(CampaignUpdateCommand)
-export class CampaignUpdateCommandHandler
-  implements ICommandHandler<CampaignUpdateCommand, CampaignDto>
+export class CampaignUpdateCommandHandler implements
+  ICommandHandler<
+    CampaignUpdateCommand,
+    CampaignDto
+  >
 {
   constructor(
     @Inject(CAMPAIGN_REPOSITORY) private readonly campaignRepository: ICampaignRepository,
@@ -23,14 +26,21 @@ export class CampaignUpdateCommandHandler
     }
 
     // Owner and collaborator can update
-    if (campaign.ownerId !== requestedBy && !campaign.collaboratorIds.includes(requestedBy)) {
+    if (
+      campaign.ownerId !== requestedBy
+      && !campaign.collaboratorIds.includes(requestedBy)
+    ) {
       throw new CampaignForbiddenException();
     }
 
     const campaignUpdateProps = {
       ...(input.budget !== undefined ? { budget: input.budget } : {}),
-      ...(input.financialTarget !== undefined ? { financialTarget: input.financialTarget } : {}),
-      ...(input.description !== undefined ? { description: input.description } : {}),
+      ...(input.financialTarget !== undefined
+        ? { financialTarget: input.financialTarget }
+        : {}),
+      ...(input.description !== undefined
+        ? { description: input.description }
+        : {}),
       ...(input.platformTarget !== undefined
         ? {
           platformTarget: input.platformTarget.map((item) => ({

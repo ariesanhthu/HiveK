@@ -58,15 +58,18 @@ export class EnterpriseClientController {
     @CurrentUser('sub') userId: string,
     @Body() input: EnterpriseUpdateInputDto,
   ): Promise<EnterpriseDto> {
-    return this.commandBus.execute(new EnterpriseUpdateCommand(id, userId, input));
+    return this.commandBus.execute(
+      new EnterpriseUpdateCommand(id, userId, input),
+    );
   }
 
   @Get(':id')
   @ApiOperation({ summary: 'Get enterprise by ID' })
   async getById(@Param('id') id: string): Promise<EnterpriseDetailDto> {
-    const enterprise = await this.queryBus.execute<EnterpriseGetByIdQuery, EnterpriseDetailDto>(
-      new EnterpriseGetByIdQuery(id),
-    );
+    const enterprise = await this.queryBus.execute<
+      EnterpriseGetByIdQuery,
+      EnterpriseDetailDto
+    >(new EnterpriseGetByIdQuery(id));
     return enterprise;
   }
 
@@ -79,7 +82,9 @@ export class EnterpriseClientController {
     @Param('id') enterpriseId: string,
     @Body() dto: EnterpriseAddUserInputDto,
   ): Promise<void> {
-    return this.commandBus.execute(new EnterpriseAddUserCommand(enterpriseId, dto, requestedBy));
+    return this.commandBus.execute(
+      new EnterpriseAddUserCommand(enterpriseId, dto, requestedBy),
+    );
   }
 
   @Delete(':id/members')
@@ -91,6 +96,8 @@ export class EnterpriseClientController {
     @Param('id') enterpriseId: string,
     @Body() dto: EnterpriseRevokeUserInputDto,
   ): Promise<void> {
-    return this.commandBus.execute(new EnterpriseRevokeUserCommand(enterpriseId, dto, requestedBy));
+    return this.commandBus.execute(
+      new EnterpriseRevokeUserCommand(enterpriseId, dto, requestedBy),
+    );
   }
 }

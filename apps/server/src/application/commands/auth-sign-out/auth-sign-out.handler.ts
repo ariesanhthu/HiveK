@@ -7,8 +7,11 @@ import { AuthSignOutCommand } from './auth-sign-out.command';
 import { AuthSignOutOutputDto } from './auth-sign-out.dto';
 
 @CommandHandler(AuthSignOutCommand)
-export class AuthSignOutCommandHandler
-  implements ICommandHandler<AuthSignOutCommand, AuthSignOutOutputDto>
+export class AuthSignOutCommandHandler implements
+  ICommandHandler<
+    AuthSignOutCommand,
+    AuthSignOutOutputDto
+  >
 {
   constructor(
     @Inject(USER_REPOSITORY) private readonly userRepository: IUserRepository,

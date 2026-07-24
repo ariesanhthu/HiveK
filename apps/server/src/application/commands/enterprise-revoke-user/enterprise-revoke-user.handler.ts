@@ -19,8 +19,11 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { EnterpriseRevokeUserCommand } from './enterprise-revoke-user.command';
 
 @CommandHandler(EnterpriseRevokeUserCommand)
-export class EnterpriseRevokeUserCommandHandler
-  implements ICommandHandler<EnterpriseRevokeUserCommand, void>
+export class EnterpriseRevokeUserCommandHandler implements
+  ICommandHandler<
+    EnterpriseRevokeUserCommand,
+    void
+  >
 {
   constructor(
     @Inject(USER_REPOSITORY) private readonly userRepository: IUserRepository,
@@ -45,15 +48,18 @@ export class EnterpriseRevokeUserCommandHandler
 
       const users = await this.userRepository.findByIds(memberIds);
       if (users.length !== memberIds.length) {
-        const foundIds = new Set(users.map(u => u.id));
-        const missingIds = memberIds.filter(id => !foundIds.has(id));
+        const foundIds = new Set(users.map((u) => u.id));
+        const missingIds = memberIds.filter((id) => !foundIds.has(id));
         throw new UserNotFoundException(missingIds.join(', '));
       }
 
       const usersToUpdate: EnterpriseUserRoot[] = [];
 
       for (const user of users) {
-        if (user.type !== ERoleType.ENTERPRISE || !(user instanceof EnterpriseUserRoot)) {
+        if (
+          user.type !== ERoleType.ENTERPRISE
+          || !(user instanceof EnterpriseUserRoot)
+        ) {
           throw new InvalidUserTypeException(
             'User must be an enterprise user to be revoked from an enterprise',
           );

@@ -41,7 +41,10 @@ export class EnterpriseRoot extends BaseAggregateRoot<EnterpriseProps> {
     });
   }
 
-  public static instantiate(id: string, props: EnterpriseProps): EnterpriseRoot {
+  public static instantiate(
+    id: string,
+    props: EnterpriseProps,
+  ): EnterpriseRoot {
     return new EnterpriseRoot(props, id);
   }
 
@@ -108,26 +111,33 @@ export class EnterpriseRoot extends BaseAggregateRoot<EnterpriseProps> {
   }
 
   public update(props: Partial<EnterpriseProps>): void {
-    if (props.companyName !== undefined) this.props.companyName = props.companyName;
-    if (props.description !== undefined) this.props.description = props.description;
-    if (props.contactEmail !== undefined) this.props.contactEmail = props.contactEmail;
-    if (props.contactPhone !== undefined) this.props.contactPhone = props.contactPhone;
+    if (props.companyName !== undefined) {
+      this.props.companyName = props.companyName;
+    }
+    if (props.description !== undefined) {
+      this.props.description = props.description;
+    }
+    if (props.contactEmail !== undefined) {
+      this.props.contactEmail = props.contactEmail;
+    }
+    if (props.contactPhone !== undefined) {
+      this.props.contactPhone = props.contactPhone;
+    }
     if (props.website !== undefined) this.props.website = props.website;
     if (props.taxId !== undefined) this.props.taxId = props.taxId;
     if (props.logoUrlId !== undefined) this.props.logoUrlId = props.logoUrlId;
-    if (props.isVerified !== undefined) this.props.isVerified = props.isVerified;
+    if (props.isVerified !== undefined) {
+      this.props.isVerified = props.isVerified;
+    }
     this.props.updatedAt = new Date();
   }
 
   public markForHardDelete(): void {
     this.addDomainEvent(
-      new EntityHardDeletedEvent(
-        this.id!,
-        {
-          entityId: this.id!,
-          targetType: TargetType.ENTERPRISE,
-        },
-      ),
+      new EntityHardDeletedEvent(this.id, {
+        entityId: this.id,
+        targetType: TargetType.ENTERPRISE,
+      }),
     );
   }
 }

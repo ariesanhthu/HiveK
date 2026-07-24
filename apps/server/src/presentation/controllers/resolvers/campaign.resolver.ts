@@ -18,10 +18,7 @@ export class CampaignResolver {
   constructor(private readonly queryBus: QueryBus) {}
 
   @Query(() => CampaignType, { name: 'campaign' })
-  async getCampaign(
-    @Args('id') id: string,
-    @Info() info: GraphQLResolveInfo,
-  ) {
+  async getCampaign(@Args('id') id: string, @Info() info: GraphQLResolveInfo) {
     const fieldsMap = graphqlFields(info);
 
     const projectionDto = new ProjectionDto();
@@ -42,6 +39,8 @@ export class CampaignResolver {
     const projectionDto = new ProjectionDto();
     projectionDto.fields = dataFieldsMap;
 
-    return this.queryBus.execute(new CampaignGetListQuery(filters as any, projectionDto));
+    return this.queryBus.execute(
+      new CampaignGetListQuery(filters as any, projectionDto),
+    );
   }
 }

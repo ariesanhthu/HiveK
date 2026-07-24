@@ -5,8 +5,11 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { KolProfileRestoreCommand } from './kol-profile-restore.command';
 
 @CommandHandler(KolProfileRestoreCommand)
-export class KolProfileRestoreCommandHandler
-  implements ICommandHandler<KolProfileRestoreCommand, void>
+export class KolProfileRestoreCommandHandler implements
+  ICommandHandler<
+    KolProfileRestoreCommand,
+    void
+  >
 {
   constructor(
     @Inject(KOL_PROFILE_REPOSITORY) private readonly kolProfileRepository: IKolProfileRepository,

@@ -6,7 +6,12 @@ import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { RoleGetByIdQuery } from './role-get-by-id.query';
 
 @QueryHandler(RoleGetByIdQuery)
-export class RoleGetByIdQueryHandler implements IQueryHandler<RoleGetByIdQuery, RoleDto> {
+export class RoleGetByIdQueryHandler implements
+  IQueryHandler<
+    RoleGetByIdQuery,
+    RoleDto
+  >
+{
   constructor(
     @Inject(ROLE_READ_SERVICE) private readonly readService: IRoleReadService,
   ) {}

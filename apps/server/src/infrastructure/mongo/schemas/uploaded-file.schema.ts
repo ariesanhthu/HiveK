@@ -17,10 +17,20 @@ export class UploadedFileModel {
   @Prop({ type: MongooseSchema.Types.Number, required: true, min: 0 })
   size: number;
 
-  @Prop({ type: MongooseSchema.Types.String, required: true, lowercase: true, trim: true })
+  @Prop({
+    type: MongooseSchema.Types.String,
+    required: true,
+    lowercase: true,
+    trim: true,
+  })
   format: string;
 
-  @Prop({ type: MongooseSchema.Types.String, default: null, trim: true, maxlength: 500 })
+  @Prop({
+    type: MongooseSchema.Types.String,
+    default: null,
+    trim: true,
+    maxlength: 500,
+  })
   title: string | null;
 
   @Prop({ type: MongooseSchema.Types.String, required: true, enum: TargetType })

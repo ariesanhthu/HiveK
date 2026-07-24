@@ -12,6 +12,8 @@ export class TestRmqHandler {
 
   @RmqHandler({ queue: 'hivek_queue', pattern: 'default' })
   async handleDefaultEvent(data: any) {
-    this.logger.log(`📥 Received default event via RMQ: ${JSON.stringify(data)}`);
+    this.logger.log(
+      `📥 Received default event via RMQ: ${JSON.stringify(data)}`,
+    );
   }
 }

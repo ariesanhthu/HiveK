@@ -8,7 +8,10 @@ import { CommandBus } from '@nestjs/cqrs';
 export class EnterpriseUserRmqController {
   constructor(private readonly commandBus: CommandBus) {}
 
-  @RmqHandler({ queue: 'enterprise_user_queue', pattern: 'enterprise.user.added' })
+  @RmqHandler({
+    queue: 'enterprise_user_queue',
+    pattern: 'enterprise.user.added',
+  })
   async handleUserAdded(data: any) {
     const { userId, enterpriseId, companyName } = data;
 
@@ -27,7 +30,10 @@ export class EnterpriseUserRmqController {
     );
   }
 
-  @RmqHandler({ queue: 'enterprise_user_queue', pattern: 'enterprise.user.revoked' })
+  @RmqHandler({
+    queue: 'enterprise_user_queue',
+    pattern: 'enterprise.user.revoked',
+  })
   async handleUserRevoked(data: any) {
     const { userId, enterpriseId, companyName } = data;
 

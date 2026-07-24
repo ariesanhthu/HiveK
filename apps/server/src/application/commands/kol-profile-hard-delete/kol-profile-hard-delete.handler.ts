@@ -5,8 +5,11 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { KolProfileHardDeleteCommand } from './kol-profile-hard-delete.command';
 
 @CommandHandler(KolProfileHardDeleteCommand)
-export class KolProfileHardDeleteCommandHandler
-  implements ICommandHandler<KolProfileHardDeleteCommand, void>
+export class KolProfileHardDeleteCommandHandler implements
+  ICommandHandler<
+    KolProfileHardDeleteCommand,
+    void
+  >
 {
   constructor(
     @Inject(KOL_PROFILE_REPOSITORY) private readonly kolProfileRepository: IKolProfileRepository,

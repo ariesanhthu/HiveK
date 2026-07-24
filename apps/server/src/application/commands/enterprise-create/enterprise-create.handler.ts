@@ -19,8 +19,11 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { EnterpriseCreateCommand } from './enterprise-create.command';
 
 @CommandHandler(EnterpriseCreateCommand)
-export class EnterpriseCreateCommandHandler
-  implements ICommandHandler<EnterpriseCreateCommand, EnterpriseDto>
+export class EnterpriseCreateCommandHandler implements
+  ICommandHandler<
+    EnterpriseCreateCommand,
+    EnterpriseDto
+  >
 {
   constructor(
     @Inject(ENTERPRISE_REPOSITORY) private readonly enterpriseRepository: IEnterpriseRepository,
@@ -45,7 +48,9 @@ export class EnterpriseCreateCommandHandler
 
       const existing = await this.enterpriseRepository.findByUserId(userId);
       if (existing) {
-        throw new EnterpriseConflictException('User already has an enterprise profile');
+        throw new EnterpriseConflictException(
+          'User already has an enterprise profile',
+        );
       }
 
       const enterprise = EnterpriseRoot.create({
@@ -63,7 +68,7 @@ export class EnterpriseCreateCommandHandler
 
       await this.enterpriseRepository.save(enterprise);
 
-      user.addEnterprise(enterprise.id!);
+      user.addEnterprise(enterprise.id);
       await this.userRepository.save(user);
 
       return EnterpriseMapper.toDto(enterprise);

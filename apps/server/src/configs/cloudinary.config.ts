@@ -86,4 +86,7 @@ export class CloudinaryConfig extends BaseConfigService<CloudinaryConfigDto> {
 /**
  * Register 'cloudinary' namespace with NestJS ConfigModule.
  */
-export const cloudinaryConfig = registerAs('cloudinary', () => new CloudinaryConfig());
+export const cloudinaryConfig = registerAs(
+  'cloudinary',
+  () => new CloudinaryConfig(),
+);

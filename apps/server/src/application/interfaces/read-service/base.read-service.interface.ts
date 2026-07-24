@@ -23,5 +23,8 @@ export interface IBaseReadService<
   /**
    * Fetches a paginated response of read-optimized DTOs based on filters and cursor.
    */
-  findAll(filters?: Filters, projection?: ProjectionDto): Promise<PaginatedResponseDto<DTO>>;
+  findAll(
+    filters?: Filters,
+    projection?: ProjectionDto,
+  ): Promise<PaginatedResponseDto<DTO>>;
 }

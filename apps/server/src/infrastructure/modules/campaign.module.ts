@@ -40,14 +40,9 @@ const COMMAND_HANDLERS = [
   CampaignRevokeCollaboratorCommandHandler,
 ];
 
-const QUERY_HANDLERS = [
-  CampaignGetListHandler,
-  CampaignGetByIdHandler,
-];
+const QUERY_HANDLERS = [CampaignGetListHandler, CampaignGetByIdHandler];
 
-const EVENT_HANDLERS = [
-  LinkCampaignRawHandler,
-];
+const EVENT_HANDLERS = [LinkCampaignRawHandler];
 
 @Module({
   imports: [CqrsModule, UserModule],

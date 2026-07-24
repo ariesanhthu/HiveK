@@ -20,11 +20,21 @@ export class MongoCampaignReadService implements ICampaignReadService {
     filters: CampaignFilterDto = {} as any,
     projection?: any,
   ): Promise<PaginatedResponseDto<CampaignDetailDto>> {
-    const { cursor, limit = 10, sort = SortOrder.DESC, name, ownerId, enterpriseId } = filters;
+    const {
+      cursor,
+      limit = 10,
+      sort = SortOrder.DESC,
+      name,
+      ownerId,
+      enterpriseId,
+    } = filters;
     const query: QueryFilter<CampaignDocument> = {};
 
     if (name) {
-      query.description = { $regex: MongoSanitizeUtil.escapeRegex(name), $options: 'i' };
+      query.description = {
+        $regex: MongoSanitizeUtil.escapeRegex(name),
+        $options: 'i',
+      };
     }
 
     if (ownerId) {
@@ -120,14 +130,18 @@ export class MongoCampaignReadService implements ICampaignReadService {
         });
       }
     } else {
-      queryBuilder = queryBuilder.populate('owner_id').populate('enterprise_id');
+      queryBuilder = queryBuilder
+        .populate('owner_id')
+        .populate('enterprise_id');
     }
 
     const docs = await queryBuilder.lean().exec();
 
     const hasNextPage = docs.length > limit;
     const results = hasNextPage ? docs.slice(0, limit) : docs;
-    const nextCursor = hasNextPage ? results[results.length - 1]._id.toString() : null;
+    const nextCursor = hasNextPage
+      ? results[results.length - 1]._id.toString()
+      : null;
 
     return new PaginatedResponseDto(
       results.map((doc: any) => this.mapToDto(doc)),
@@ -137,7 +151,10 @@ export class MongoCampaignReadService implements ICampaignReadService {
     );
   }
 
-  async findById(id: string, projection?: any): Promise<Nullable<CampaignDetailDto>> {
+  async findById(
+    id: string,
+    projection?: any,
+  ): Promise<Nullable<CampaignDetailDto>> {
     let queryBuilder: any = this.campaignModel.findById(id);
 
     if (projection) {
@@ -216,7 +233,9 @@ export class MongoCampaignReadService implements ICampaignReadService {
         });
       }
     } else {
-      queryBuilder = queryBuilder.populate('owner_id').populate('enterprise_id');
+      queryBuilder = queryBuilder
+        .populate('owner_id')
+        .populate('enterprise_id');
     }
 
     const doc = await queryBuilder.lean().exec();
@@ -229,10 +248,11 @@ export class MongoCampaignReadService implements ICampaignReadService {
       ownerId: doc.owner_id && typeof doc.owner_id === 'object' && doc.owner_id._id
         ? doc.owner_id._id.toString()
         : doc.owner_id?.toString() || '',
-      enterpriseId:
-        doc.enterprise_id && typeof doc.enterprise_id === 'object' && doc.enterprise_id._id
-          ? doc.enterprise_id._id.toString()
-          : doc.enterprise_id?.toString() || null,
+      enterpriseId: doc.enterprise_id
+          && typeof doc.enterprise_id === 'object'
+          && doc.enterprise_id._id
+        ? doc.enterprise_id._id.toString()
+        : doc.enterprise_id?.toString() || null,
       budget: doc.budget,
       financialTarget: doc.financial_target instanceof Map
         ? Object.fromEntries(doc.financial_target)
@@ -260,22 +280,26 @@ export class MongoCampaignReadService implements ICampaignReadService {
               scheduledTime: post.scheduledTime,
               platformId: post.platformId,
               status: post.status,
-              campaignKOLOutputs: (post.campaignKOLOutputs || []).map((o: any) => ({
-                id: o._id?.toString() || o.id?.toString(),
-                campaignParticipantId: o.campaignParticipantId?.toString(),
-                platformId: o.platformId?.toString(),
-                uniqueId: o.uniqueId,
-                outputType: o.outputType,
-                title: o.title,
-                isScheduleForPost: o.isScheduleForPost,
-                scheduledAt: o.scheduledAt,
-                fileId: o.fileId?.toString() || null,
-                status: o.status,
-                url: o.url,
-                postedAt: o.postedAt,
-                isTrackingActive: o.isTrackingActive,
-              })),
-              campaignEnterpriseOutputs: (post.campaignEnterpriseOutputs || []).map((o: any) => ({
+              campaignKOLOutputs: (post.campaignKOLOutputs || []).map(
+                (o: any) => ({
+                  id: o._id?.toString() || o.id?.toString(),
+                  campaignParticipantId: o.campaignParticipantId?.toString(),
+                  platformId: o.platformId?.toString(),
+                  uniqueId: o.uniqueId,
+                  outputType: o.outputType,
+                  title: o.title,
+                  isScheduleForPost: o.isScheduleForPost,
+                  scheduledAt: o.scheduledAt,
+                  fileId: o.fileId?.toString() || null,
+                  status: o.status,
+                  url: o.url,
+                  postedAt: o.postedAt,
+                  isTrackingActive: o.isTrackingActive,
+                }),
+              ),
+              campaignEnterpriseOutputs: (
+                post.campaignEnterpriseOutputs || []
+              ).map((o: any) => ({
                 id: o._id?.toString() || o.id?.toString(),
                 platformId: o.platformId?.toString(),
                 uniqueId: o.uniqueId,
@@ -305,31 +329,37 @@ export class MongoCampaignReadService implements ICampaignReadService {
           email: doc.owner_id.email,
           phone: doc.owner_id.phone,
           fullName: doc.owner_id.full_name,
-          roleId: doc.owner_id.role_id ? doc.owner_id.role_id.toString() : '',
+          roleId: doc.owner_id.role_id
+            ? doc.owner_id.role_id.toString()
+            : '',
           isEmailVerified: doc.owner_id.is_email_verified,
           type: doc.owner_id.type,
           createdAt: doc.owner_id.created_at,
           updatedAt: doc.owner_id.updated_at,
-        } as any
+        }
         : undefined,
-      enterprise:
-        doc.enterprise_id && typeof doc.enterprise_id === 'object' && doc.enterprise_id._id
-          ? {
-            id: doc.enterprise_id._id.toString(),
-            userId: doc.enterprise_id.user_id ? doc.enterprise_id.user_id.toString() : '',
-            companyName: doc.enterprise_id.company_name,
-            description: doc.enterprise_id.description,
-            contactEmail: doc.enterprise_id.contact_email,
-            contactPhone: doc.enterprise_id.contact_phone,
-            website: doc.enterprise_id.website,
-            taxId: doc.enterprise_id.tax_id,
-            logoUrlId: doc.enterprise_id.logo_url_id,
-            isVerified: doc.enterprise_id.is_verified,
-            createdAt: doc.enterprise_id.created_at,
-            updatedAt: doc.enterprise_id.updated_at,
-          }
-          : undefined,
-      collaborators: Array.isArray(doc.collaborator_ids) && doc.collaborator_ids.length > 0
+      enterprise: doc.enterprise_id
+          && typeof doc.enterprise_id === 'object'
+          && doc.enterprise_id._id
+        ? {
+          id: doc.enterprise_id._id.toString(),
+          userId: doc.enterprise_id.user_id
+            ? doc.enterprise_id.user_id.toString()
+            : '',
+          companyName: doc.enterprise_id.company_name,
+          description: doc.enterprise_id.description,
+          contactEmail: doc.enterprise_id.contact_email,
+          contactPhone: doc.enterprise_id.contact_phone,
+          website: doc.enterprise_id.website,
+          taxId: doc.enterprise_id.tax_id,
+          logoUrlId: doc.enterprise_id.logo_url_id,
+          isVerified: doc.enterprise_id.is_verified,
+          createdAt: doc.enterprise_id.created_at,
+          updatedAt: doc.enterprise_id.updated_at,
+        }
+        : undefined,
+      collaborators: Array.isArray(doc.collaborator_ids)
+          && doc.collaborator_ids.length > 0
           && typeof doc.collaborator_ids[0] === 'object'
         ? doc.collaborator_ids.map((u: any) => ({
           id: u._id.toString(),

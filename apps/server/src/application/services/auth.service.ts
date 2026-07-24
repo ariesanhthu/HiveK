@@ -30,8 +30,12 @@ export class AuthService {
     const accessExpiration = this.authConfig.getJwtAccessExpirationMinutes();
     const refreshExpiration = this.authConfig.getJwtRefreshExpirationDays() * 24 * 60;
 
-    const accessToken = this.jwtService.sign(payload, { expiresInMinutes: accessExpiration });
-    const refreshToken = this.jwtService.sign(payload, { expiresInMinutes: refreshExpiration });
+    const accessToken = this.jwtService.sign(payload, {
+      expiresInMinutes: accessExpiration,
+    });
+    const refreshToken = this.jwtService.sign(payload, {
+      expiresInMinutes: refreshExpiration,
+    });
 
     return { accessToken, refreshToken };
   }

@@ -11,7 +11,9 @@ import {
 import { CampaignParticipantCreatedEvent } from '../events/campaign-participant-created.domain-event';
 
 function generateId(): string {
-  const timestamp = Math.floor(Date.now() / 1000).toString(16).padStart(8, '0');
+  const timestamp = Math.floor(Date.now() / 1000)
+    .toString(16)
+    .padStart(8, '0');
   const random = Array.from({ length: 16 }, () => Math.floor(Math.random() * 16).toString(16)).join(
     '',
   );
@@ -171,7 +173,12 @@ export class CampaignRoot extends BaseAggregateRoot<CampaignProps> {
   }
 
   public update(
-    props: Partial<Omit<CampaignProps, 'status' | 'collaboratorIds' | 'createdAt' | 'updatedAt'>>,
+    props: Partial<
+      Omit<
+        CampaignProps,
+        'status' | 'collaboratorIds' | 'createdAt' | 'updatedAt'
+      >
+    >,
   ): void {
     Object.assign(this.props, props);
     this.props.updatedAt = new Date();
@@ -185,7 +192,9 @@ export class CampaignRoot extends BaseAggregateRoot<CampaignProps> {
   public softDelete(deletedBy: string): void {
     // Invariant Guard: Check if any participant is in JOINED or COMPLETED status
     const hasActiveParticipants = this.props.participants.some(
-      p => p.status === EParticipantStatus.JOINED || p.status === EParticipantStatus.COMPLETED,
+      (p) =>
+        p.status === EParticipantStatus.JOINED
+        || p.status === EParticipantStatus.COMPLETED,
     );
     if (hasActiveParticipants) {
       throw new InvalidOperationException(
@@ -197,12 +206,16 @@ export class CampaignRoot extends BaseAggregateRoot<CampaignProps> {
     if (this.props.schedule?.timeline) {
       for (const day of this.props.schedule.timeline) {
         for (const post of day.posts) {
-          const hasPublishedOutputs = post.campaignKOLOutputs.some(o =>
-            o.status === EOutputStatus.PUBLISHED
+          const hasPublishedOutputs = post.campaignKOLOutputs.some(
+            (o) => o.status === EOutputStatus.PUBLISHED,
           )
-            || post.campaignEnterpriseOutputs.some(o => o.status === EOutputStatus.PUBLISHED);
+            || post.campaignEnterpriseOutputs.some(
+              (o) => o.status === EOutputStatus.PUBLISHED,
+            );
           if (hasPublishedOutputs) {
-            throw new InvalidOperationException('Cannot delete campaign with published outputs');
+            throw new InvalidOperationException(
+              'Cannot delete campaign with published outputs',
+            );
           }
         }
       }
@@ -221,13 +234,17 @@ export class CampaignRoot extends BaseAggregateRoot<CampaignProps> {
 
   public inviteCollaborator(userId: string, requestedBy: string): void {
     if (this.props.ownerId !== requestedBy) {
-      throw new InvalidOperationException('Only campaign owner can invite collaborators');
+      throw new InvalidOperationException(
+        'Only campaign owner can invite collaborators',
+      );
     }
     if (this.props.collaboratorIds.includes(userId)) {
       throw new InvalidOperationException('User is already a collaborator');
     }
     if (this.props.ownerId === userId) {
-      throw new InvalidOperationException('Owner cannot be invited as a collaborator');
+      throw new InvalidOperationException(
+        'Owner cannot be invited as a collaborator',
+      );
     }
     this.props.collaboratorIds.push(userId);
     this.props.updatedAt = new Date();
@@ -235,11 +252,15 @@ export class CampaignRoot extends BaseAggregateRoot<CampaignProps> {
 
   public revokeCollaborator(userId: string, requestedBy: string): void {
     if (this.props.ownerId !== requestedBy) {
-      throw new InvalidOperationException('Only campaign owner can revoke collaborators');
+      throw new InvalidOperationException(
+        'Only campaign owner can revoke collaborators',
+      );
     }
     const index = this.props.collaboratorIds.indexOf(userId);
     if (index === -1) {
-      throw new InvalidOperationException('User is not a collaborator in this campaign');
+      throw new InvalidOperationException(
+        'User is not a collaborator in this campaign',
+      );
     }
     this.props.collaboratorIds.splice(index, 1);
     this.props.updatedAt = new Date();
@@ -253,19 +274,26 @@ export class CampaignRoot extends BaseAggregateRoot<CampaignProps> {
 
   // Participant management
   public addParticipant(kolProfileId: string, kolEmail?: string): string {
-    const existing = this.props.participants.find(p => p.kolProfileId === kolProfileId);
+    const existing = this.props.participants.find(
+      (p) => p.kolProfileId === kolProfileId,
+    );
     if (existing) {
-      throw new InvalidOperationException('KOL is already a participant of this campaign');
+      throw new InvalidOperationException(
+        'KOL is already a participant of this campaign',
+      );
     }
 
     const now = new Date();
     const participantId = generateId();
 
-    const participant = CampaignParticipantEntity.create({
-      kolProfileId,
-      status: EParticipantStatus.PENDING_APPROVAL,
-      joinedAt: null,
-    }, participantId);
+    const participant = CampaignParticipantEntity.create(
+      {
+        kolProfileId,
+        status: EParticipantStatus.PENDING_APPROVAL,
+        joinedAt: null,
+      },
+      participantId,
+    );
 
     this.props.participants.push(participant);
     this.props.updatedAt = now;
@@ -273,7 +301,7 @@ export class CampaignRoot extends BaseAggregateRoot<CampaignProps> {
     this.addDomainEvent(
       new CampaignParticipantCreatedEvent(participantId, {
         campaignParticipantId: participantId,
-        campaignId: this.id!,
+        campaignId: this.id,
         kolProfileId,
         kolEmail,
         campaignName: this.props.description,
@@ -284,24 +312,31 @@ export class CampaignRoot extends BaseAggregateRoot<CampaignProps> {
   }
 
   public joinParticipant(kolProfileId: string): void {
-    const p = this.props.participants.find(x => x.kolProfileId === kolProfileId);
+    const p = this.props.participants.find(
+      (x) => x.kolProfileId === kolProfileId,
+    );
     if (!p) {
       throw new InvalidOperationException('Participant not found');
     }
     if (p.status !== EParticipantStatus.PENDING_APPROVAL) {
-      throw new InvalidOperationException('Can only join when status is PENDING_APPROVAL');
+      throw new InvalidOperationException(
+        'Can only join when status is PENDING_APPROVAL',
+      );
     }
     p.join();
     this.props.updatedAt = new Date();
   }
 
   public rejectParticipant(kolProfileId: string): void {
-    const p = this.props.participants.find(x => x.kolProfileId === kolProfileId);
+    const p = this.props.participants.find(
+      (x) => x.kolProfileId === kolProfileId,
+    );
     if (!p) {
       throw new InvalidOperationException('Participant not found');
     }
     if (
-      p.status !== EParticipantStatus.PENDING_APPROVAL && p.status !== EParticipantStatus.JOINED
+      p.status !== EParticipantStatus.PENDING_APPROVAL
+      && p.status !== EParticipantStatus.JOINED
     ) {
       throw new InvalidOperationException(
         'Can only reject when status is PENDING_APPROVAL or JOINED',
@@ -313,10 +348,14 @@ export class CampaignRoot extends BaseAggregateRoot<CampaignProps> {
       for (const day of this.props.schedule.timeline) {
         for (const post of day.posts) {
           const published = post.campaignKOLOutputs.some(
-            o => o.campaignParticipantId === p.id && o.status === EOutputStatus.PUBLISHED,
+            (o) =>
+              o.campaignParticipantId === p.id
+              && o.status === EOutputStatus.PUBLISHED,
           );
           if (published) {
-            throw new InvalidOperationException('Cannot reject participant with published outputs');
+            throw new InvalidOperationException(
+              'Cannot reject participant with published outputs',
+            );
           }
         }
       }
@@ -327,32 +366,40 @@ export class CampaignRoot extends BaseAggregateRoot<CampaignProps> {
   }
 
   public completeParticipant(kolProfileId: string): void {
-    const p = this.props.participants.find(x => x.kolProfileId === kolProfileId);
+    const p = this.props.participants.find(
+      (x) => x.kolProfileId === kolProfileId,
+    );
     if (!p) {
       throw new InvalidOperationException('Participant not found');
     }
     if (p.status !== EParticipantStatus.JOINED) {
-      throw new InvalidOperationException('Can only complete when status is JOINED');
+      throw new InvalidOperationException(
+        'Can only complete when status is JOINED',
+      );
     }
     p.complete();
     this.props.updatedAt = new Date();
   }
 
   public removeParticipant(participantId: string): void {
-    const idx = this.props.participants.findIndex(p => p.id === participantId);
+    const idx = this.props.participants.findIndex(
+      (p) => p.id === participantId,
+    );
     if (idx === -1) {
       throw new InvalidOperationException('Participant not found');
     }
     const p = this.props.participants[idx];
     if (p.status !== EParticipantStatus.REJECTED) {
-      throw new InvalidOperationException('Can only remove participant when status is REJECTED');
+      throw new InvalidOperationException(
+        'Can only remove participant when status is REJECTED',
+      );
     }
     this.props.participants.splice(idx, 1);
     this.props.updatedAt = new Date();
   }
 
   public restoreParticipant(participantId: string): void {
-    const p = this.props.participants.find(x => x.id === participantId);
+    const p = this.props.participants.find((x) => x.id === participantId);
     if (!p) {
       throw new InvalidOperationException('Participant not found');
     }
@@ -361,7 +408,7 @@ export class CampaignRoot extends BaseAggregateRoot<CampaignProps> {
   }
 
   public softDeleteParticipant(participantId: string, deletedBy: string): void {
-    const p = this.props.participants.find(x => x.id === participantId);
+    const p = this.props.participants.find((x) => x.id === participantId);
     if (!p) {
       throw new InvalidOperationException('Participant not found');
     }
@@ -375,13 +422,17 @@ export class CampaignRoot extends BaseAggregateRoot<CampaignProps> {
     if (this.props.schedule?.timeline) {
       for (const day of this.props.schedule.timeline) {
         for (const post of day.posts) {
-          const kolOutput = post.campaignKOLOutputs.find(o => o.id === outputId);
+          const kolOutput = post.campaignKOLOutputs.find(
+            (o) => o.id === outputId,
+          );
           if (kolOutput) {
             kolOutput.setFileId(fileId);
             found = true;
             break;
           }
-          const entOutput = post.campaignEnterpriseOutputs.find(o => o.id === outputId);
+          const entOutput = post.campaignEnterpriseOutputs.find(
+            (o) => o.id === outputId,
+          );
           if (entOutput) {
             entOutput.setFileId(fileId);
             found = true;
@@ -404,13 +455,17 @@ export class CampaignRoot extends BaseAggregateRoot<CampaignProps> {
     if (this.props.schedule?.timeline) {
       for (const day of this.props.schedule.timeline) {
         for (const post of day.posts) {
-          const kolOutput = post.campaignKOLOutputs.find(o => o.id === outputId);
+          const kolOutput = post.campaignKOLOutputs.find(
+            (o) => o.id === outputId,
+          );
           if (kolOutput) {
             kolOutput.publish(url);
             found = true;
             break;
           }
-          const entOutput = post.campaignEnterpriseOutputs.find(o => o.id === outputId);
+          const entOutput = post.campaignEnterpriseOutputs.find(
+            (o) => o.id === outputId,
+          );
           if (entOutput) {
             entOutput.publish(url);
             found = true;
@@ -428,18 +483,25 @@ export class CampaignRoot extends BaseAggregateRoot<CampaignProps> {
     this.props.updatedAt = new Date();
   }
 
-  public updateTrackingStatus(outputId: string, isTrackingActive: boolean): void {
+  public updateTrackingStatus(
+    outputId: string,
+    isTrackingActive: boolean,
+  ): void {
     let found = false;
     if (this.props.schedule?.timeline) {
       for (const day of this.props.schedule.timeline) {
         for (const post of day.posts) {
-          const kolOutput = post.campaignKOLOutputs.find(o => o.id === outputId);
+          const kolOutput = post.campaignKOLOutputs.find(
+            (o) => o.id === outputId,
+          );
           if (kolOutput) {
             kolOutput.updateTrackingStatus(isTrackingActive);
             found = true;
             break;
           }
-          const entOutput = post.campaignEnterpriseOutputs.find(o => o.id === outputId);
+          const entOutput = post.campaignEnterpriseOutputs.find(
+            (o) => o.id === outputId,
+          );
           if (entOutput) {
             entOutput.updateTrackingStatus(isTrackingActive);
             found = true;
@@ -457,8 +519,13 @@ export class CampaignRoot extends BaseAggregateRoot<CampaignProps> {
     this.props.updatedAt = new Date();
   }
 
-  public updateKOLOutputs(campaignParticipantId: string, outputs: CampaignKOLOutputEntity[]): void {
-    const participant = this.props.participants.find(p => p.id === campaignParticipantId);
+  public updateKOLOutputs(
+    campaignParticipantId: string,
+    outputs: CampaignKOLOutputEntity[],
+  ): void {
+    const participant = this.props.participants.find(
+      (p) => p.id === campaignParticipantId,
+    );
     if (!participant) {
       throw new InvalidOperationException('Participant not found');
     }
@@ -471,7 +538,7 @@ export class CampaignRoot extends BaseAggregateRoot<CampaignProps> {
     for (const day of this.props.schedule.timeline) {
       for (const post of day.posts) {
         post.campaignKOLOutputs = post.campaignKOLOutputs.filter(
-          o => o.campaignParticipantId !== campaignParticipantId,
+          (o) => o.campaignParticipantId !== campaignParticipantId,
         );
       }
     }
@@ -479,7 +546,9 @@ export class CampaignRoot extends BaseAggregateRoot<CampaignProps> {
     // Now, insert the updated outputs into the schedule.
     for (const output of outputs) {
       if (output.campaignParticipantId !== campaignParticipantId) {
-        throw new InvalidOperationException('Output does not belong to this participant');
+        throw new InvalidOperationException(
+          'Output does not belong to this participant',
+        );
       }
 
       const scheduledTime = output.scheduledAt || new Date();
@@ -490,7 +559,7 @@ export class CampaignRoot extends BaseAggregateRoot<CampaignProps> {
       dateOnly.setHours(0, 0, 0, 0);
 
       let day = this.props.schedule.timeline.find(
-        d => new Date(d.date).setHours(0, 0, 0, 0) === dateOnly.getTime(),
+        (d) => new Date(d.date).setHours(0, 0, 0, 0) === dateOnly.getTime(),
       );
       if (!day) {
         day = { date: dateOnly, posts: [] };
@@ -499,9 +568,10 @@ export class CampaignRoot extends BaseAggregateRoot<CampaignProps> {
 
       // Find or create the SchedulePost on that day
       let post = day.posts.find(
-        p =>
+        (p) =>
           p.platformId === platformId
-          && new Date(p.scheduledTime).getTime() === new Date(scheduledTime).getTime(),
+          && new Date(p.scheduledTime).getTime()
+            === new Date(scheduledTime).getTime(),
       );
       if (!post) {
         post = {

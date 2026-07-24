@@ -62,10 +62,13 @@ export class UserAdminController {
 
   @Get()
   @ApiOperation({ summary: 'Get paginated list of users' })
-  async findAll(@Query() filters: UserFilterDto): Promise<PaginatedResponseDto<UserDto>> {
-    return this.queryBus.execute<UserGetListQuery, PaginatedResponseDto<UserDto>>(
-      new UserGetListQuery(filters),
-    );
+  async findAll(
+    @Query() filters: UserFilterDto,
+  ): Promise<PaginatedResponseDto<UserDto>> {
+    return this.queryBus.execute<
+      UserGetListQuery,
+      PaginatedResponseDto<UserDto>
+    >(new UserGetListQuery(filters));
   }
 
   @Get(':id')
@@ -84,7 +87,9 @@ export class UserAdminController {
     @Param('id') id: string,
     @Query() dto: SoftDeleteInputDto,
   ): Promise<void> {
-    return this.commandBus.execute(new UserSoftDeleteCommand(id, dto.deletedBy));
+    return this.commandBus.execute(
+      new UserSoftDeleteCommand(id, dto.deletedBy),
+    );
   }
 
   @Delete(':id')

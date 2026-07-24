@@ -16,7 +16,12 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { ReviewCreateCommand } from './review-create.command';
 
 @CommandHandler(ReviewCreateCommand)
-export class ReviewCreateCommandHandler implements ICommandHandler<ReviewCreateCommand, ReviewDto> {
+export class ReviewCreateCommandHandler implements
+  ICommandHandler<
+    ReviewCreateCommand,
+    ReviewDto
+  >
+{
   constructor(
     @Inject(PUBLIC_REVIEW_REPOSITORY) private readonly reviewRepository: IPublicReviewRepository,
     @Inject(CAMPAIGN_PROPOSAL_REPOSITORY) private readonly proposalRepository:
@@ -38,7 +43,9 @@ export class ReviewCreateCommandHandler implements ICommandHandler<ReviewCreateC
     });
 
     if (!securityMetadata.isRecaptchaValid(0.5)) {
-      throw new ReviewLowRecaptchaScoreException(input.securityMetadata.recaptchaScore);
+      throw new ReviewLowRecaptchaScoreException(
+        input.securityMetadata.recaptchaScore,
+      );
     }
 
     const review = PublicReviewRoot.create({

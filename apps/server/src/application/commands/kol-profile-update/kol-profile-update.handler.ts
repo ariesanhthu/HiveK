@@ -9,8 +9,11 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { KolProfileUpdateCommand } from './kol-profile-update.command';
 
 @CommandHandler(KolProfileUpdateCommand)
-export class KolProfileUpdateCommandHandler
-  implements ICommandHandler<KolProfileUpdateCommand, KolProfileDto>
+export class KolProfileUpdateCommandHandler implements
+  ICommandHandler<
+    KolProfileUpdateCommand,
+    KolProfileDto
+  >
 {
   constructor(
     @Inject(KOL_PROFILE_REPOSITORY) private readonly kolProfileRepository: IKolProfileRepository,

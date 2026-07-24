@@ -5,8 +5,11 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { CampaignSoftDeleteCommand } from './campaign-soft-delete.command';
 
 @CommandHandler(CampaignSoftDeleteCommand)
-export class CampaignSoftDeleteCommandHandler
-  implements ICommandHandler<CampaignSoftDeleteCommand, void>
+export class CampaignSoftDeleteCommandHandler implements
+  ICommandHandler<
+    CampaignSoftDeleteCommand,
+    void
+  >
 {
   constructor(
     @Inject(CAMPAIGN_REPOSITORY) private readonly campaignRepository: ICampaignRepository,

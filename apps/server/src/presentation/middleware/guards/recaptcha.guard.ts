@@ -12,7 +12,9 @@ export class RecaptchaGuard implements CanActivate {
   constructor(private readonly securityConfig: SecurityConfig) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const request = context.switchToHttp().getRequest<FastifyRequest<{ Body: RecaptchaBody; }>>();
+    const request = context
+      .switchToHttp()
+      .getRequest<FastifyRequest<{ Body: RecaptchaBody; }>>();
     const recaptchaToken = request.body?.recaptchaToken;
 
     if (!recaptchaToken) {

@@ -18,17 +18,23 @@ export class CampaignParticipantEntity extends BaseEntity<CampaignParticipantPro
   }
 
   public static create(
-    props: Omit<CampaignParticipantProps, 'createdAt' | 'updatedAt' | 'deleteAt' | 'deleteBy'>,
+    props: Omit<
+      CampaignParticipantProps,
+      'createdAt' | 'updatedAt' | 'deleteAt' | 'deleteBy'
+    >,
     id?: string,
   ): CampaignParticipantEntity {
     const now = new Date();
-    return new CampaignParticipantEntity({
-      ...props,
-      deleteAt: null,
-      deleteBy: null,
-      createdAt: now,
-      updatedAt: now,
-    }, id);
+    return new CampaignParticipantEntity(
+      {
+        ...props,
+        deleteAt: null,
+        deleteBy: null,
+        createdAt: now,
+        updatedAt: now,
+      },
+      id,
+    );
   }
 
   public static instantiate(
@@ -82,7 +88,10 @@ export class CampaignParticipantEntity extends BaseEntity<CampaignParticipantPro
     this.props.updatedAt = new Date();
   }
 
-  public updateStatus(status: EParticipantStatus, joinedAt?: Nullable<Date>): void {
+  public updateStatus(
+    status: EParticipantStatus,
+    joinedAt?: Nullable<Date>,
+  ): void {
     this.props.status = status;
     if (joinedAt !== undefined) {
       this.props.joinedAt = joinedAt;

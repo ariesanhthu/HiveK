@@ -20,7 +20,10 @@ export class MongoKpiLogRepository implements IKpiLogRepository {
   }
 
   async findById(id: string): Promise<Nullable<KpiLogEntity>> {
-    const doc = await this.kpiLogModel.findById(id).session(this.session).exec();
+    const doc = await this.kpiLogModel
+      .findById(id)
+      .session(this.session)
+      .exec();
     return doc ? this.mapToDomain(doc) : null;
   }
 
@@ -32,14 +35,15 @@ export class MongoKpiLogRepository implements IKpiLogRepository {
       const saved = await created.save({ session: this.session });
       entity.setId(saved._id.toString());
     } else {
-      await this.kpiLogModel.findByIdAndUpdate(entity.id, data, { upsert: true }).session(
-        this.session,
-      ).exec();
+      await this.kpiLogModel
+        .findByIdAndUpdate(entity.id, data, { upsert: true })
+        .session(this.session)
+        .exec();
     }
   }
 
   async saveMany(entities: KpiLogEntity[]): Promise<void> {
-    await Promise.all(entities.map(e => this.save(e)));
+    await Promise.all(entities.map((e) => this.save(e)));
   }
 
   async delete(id: string): Promise<void> {

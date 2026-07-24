@@ -5,8 +5,11 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { EnterpriseRestoreCommand } from './enterprise-restore.command';
 
 @CommandHandler(EnterpriseRestoreCommand)
-export class EnterpriseRestoreCommandHandler
-  implements ICommandHandler<EnterpriseRestoreCommand, void>
+export class EnterpriseRestoreCommandHandler implements
+  ICommandHandler<
+    EnterpriseRestoreCommand,
+    void
+  >
 {
   constructor(
     @Inject(ENTERPRISE_REPOSITORY) private readonly enterpriseRepository: IEnterpriseRepository,

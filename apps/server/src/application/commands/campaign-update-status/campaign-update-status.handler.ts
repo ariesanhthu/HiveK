@@ -5,8 +5,11 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { CampaignUpdateStatusCommand } from './campaign-update-status.command';
 
 @CommandHandler(CampaignUpdateStatusCommand)
-export class CampaignUpdateStatusCommandHandler
-  implements ICommandHandler<CampaignUpdateStatusCommand, void>
+export class CampaignUpdateStatusCommandHandler implements
+  ICommandHandler<
+    CampaignUpdateStatusCommand,
+    void
+  >
 {
   constructor(
     @Inject(CAMPAIGN_REPOSITORY) private readonly campaignRepository: ICampaignRepository,

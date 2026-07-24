@@ -10,7 +10,12 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { UserCreateCommand } from './user-create.command';
 
 @CommandHandler(UserCreateCommand)
-export class UserCreateCommandHandler implements ICommandHandler<UserCreateCommand, string> {
+export class UserCreateCommandHandler implements
+  ICommandHandler<
+    UserCreateCommand,
+    string
+  >
+{
   constructor(
     @Inject(USER_REPOSITORY) private readonly userRepository: IUserRepository,
     private readonly authService: AuthService,
@@ -52,7 +57,9 @@ export class UserCreateCommandHandler implements ICommandHandler<UserCreateComma
           user = AdminRoot.create(commonProps);
           break;
         default:
-          throw new InvalidUserTypeException(`Invalid user type: ${input.type}`);
+          throw new InvalidUserTypeException(
+            `Invalid user type: ${input.type}`,
+          );
       }
 
       await this.userRepository.save(user);

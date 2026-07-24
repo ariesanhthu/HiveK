@@ -22,7 +22,10 @@ export class MongoUserNotificationRepository implements IUserNotificationReposit
   }
 
   async findById(id: string): Promise<Nullable<UserNotificationRoot>> {
-    const doc = await this.userNotificationModel.findById(id).session(this.session).exec();
+    const doc = await this.userNotificationModel
+      .findById(id)
+      .session(this.session)
+      .exec();
     return doc ? this.mapToDomain(doc) : null;
   }
 
@@ -34,19 +37,25 @@ export class MongoUserNotificationRepository implements IUserNotificationReposit
       const saved = await created.save({ session: this.session });
       userNotification.setId(saved._id.toString());
     } else {
-      await this.userNotificationModel.findByIdAndUpdate(userNotification.id, data, {
-        upsert: true,
-      }).session(this.session).exec();
+      await this.userNotificationModel
+        .findByIdAndUpdate(userNotification.id, data, {
+          upsert: true,
+        })
+        .session(this.session)
+        .exec();
     }
   }
 
   async delete(id: string): Promise<void> {
-    await this.userNotificationModel.findByIdAndDelete(id).session(this.session).exec();
+    await this.userNotificationModel
+      .findByIdAndDelete(id)
+      .session(this.session)
+      .exec();
   }
 
   async saveMany(userNotifications: UserNotificationRoot[]): Promise<void> {
     if (userNotifications.length === 0) return;
-    const documents = userNotifications.map(un => this.mapToPersistence(un));
+    const documents = userNotifications.map((un) => this.mapToPersistence(un));
     const result = await this.userNotificationModel.insertMany(documents, {
       session: this.session,
     });
@@ -61,51 +70,77 @@ export class MongoUserNotificationRepository implements IUserNotificationReposit
       ? { $set: { is_read: true, read_at: new Date() } }
       : { $set: { is_read: false, read_at: null } };
 
-    await this.userNotificationModel.updateMany(
-      { recipient_id: new Types.ObjectId(recipientId), is_read: !isRead } as any,
-      update,
-    ).session(this.session).exec();
+    await this.userNotificationModel
+      .updateMany(
+        {
+          recipient_id: new Types.ObjectId(recipientId),
+          is_read: !isRead,
+        } as any,
+        update,
+      )
+      .session(this.session)
+      .exec();
   }
 
-  async updateReadStatus(ids: string[], recipientId: string, isRead: boolean): Promise<void> {
+  async updateReadStatus(
+    ids: string[],
+    recipientId: string,
+    isRead: boolean,
+  ): Promise<void> {
     const update = isRead
       ? { $set: { is_read: true, read_at: new Date() } }
       : { $set: { is_read: false, read_at: null } };
 
-    await this.userNotificationModel.updateMany(
-      {
-        _id: { $in: ids.map(id => new Types.ObjectId(id)) },
-        recipient_id: new Types.ObjectId(recipientId),
-      } as any,
-      update,
-    ).session(this.session).exec();
+    await this.userNotificationModel
+      .updateMany(
+        {
+          _id: { $in: ids.map((id) => new Types.ObjectId(id)) },
+          recipient_id: new Types.ObjectId(recipientId),
+        } as any,
+        update,
+      )
+      .session(this.session)
+      .exec();
   }
 
-  async softDeleteMany(ids: string[], recipientId: string, deletedBy: string): Promise<void> {
-    await this.userNotificationModel.updateMany(
-      {
-        _id: { $in: ids.map(id => new Types.ObjectId(id)) },
-        recipient_id: new Types.ObjectId(recipientId),
-      } as any,
-      { $set: { delete_at: new Date(), delete_by: deletedBy } },
-    ).session(this.session).exec();
+  async softDeleteMany(
+    ids: string[],
+    recipientId: string,
+    deletedBy: string,
+  ): Promise<void> {
+    await this.userNotificationModel
+      .updateMany(
+        {
+          _id: { $in: ids.map((id) => new Types.ObjectId(id)) },
+          recipient_id: new Types.ObjectId(recipientId),
+        } as any,
+        { $set: { delete_at: new Date(), delete_by: deletedBy } },
+      )
+      .session(this.session)
+      .exec();
   }
 
   async restoreMany(ids: string[], recipientId: string): Promise<void> {
-    await this.userNotificationModel.updateMany(
-      {
-        _id: { $in: ids.map(id => new Types.ObjectId(id)) },
-        recipient_id: new Types.ObjectId(recipientId),
-      } as any,
-      { $set: { delete_at: null, delete_by: null } },
-    ).session(this.session).exec();
+    await this.userNotificationModel
+      .updateMany(
+        {
+          _id: { $in: ids.map((id) => new Types.ObjectId(id)) },
+          recipient_id: new Types.ObjectId(recipientId),
+        } as any,
+        { $set: { delete_at: null, delete_by: null } },
+      )
+      .session(this.session)
+      .exec();
   }
 
   async hardDeleteMany(ids: string[], recipientId: string): Promise<void> {
-    await this.userNotificationModel.deleteMany({
-      _id: { $in: ids.map(id => new Types.ObjectId(id)) },
-      recipient_id: new Types.ObjectId(recipientId),
-    } as any).session(this.session).exec();
+    await this.userNotificationModel
+      .deleteMany({
+        _id: { $in: ids.map((id) => new Types.ObjectId(id)) },
+        recipient_id: new Types.ObjectId(recipientId),
+      } as any)
+      .session(this.session)
+      .exec();
   }
 
   private mapToDomain(doc: UserNotificationDocument): UserNotificationRoot {
@@ -124,13 +159,21 @@ export class MongoUserNotificationRepository implements IUserNotificationReposit
     });
   }
 
-  private mapToPersistence(
-    userNotification: UserNotificationRoot,
-  ): Omit<UserNotificationModel, 'created_at' | 'updated_at'> & { _id?: Types.ObjectId; } {
+  private mapToPersistence(userNotification: UserNotificationRoot):
+    & Omit<
+      UserNotificationModel,
+      'created_at' | 'updated_at'
+    >
+    & {
+      _id?: Types.ObjectId;
+    }
+  {
     const data: Omit<UserNotificationModel, 'created_at' | 'updated_at'> & {
       _id?: Types.ObjectId;
     } = {
-      notification_id: new Types.ObjectId(userNotification.notificationId) as any,
+      notification_id: new Types.ObjectId(
+        userNotification.notificationId,
+      ) as any,
       recipient_id: new Types.ObjectId(userNotification.recipientId) as any,
       is_read: userNotification.isRead,
       read_at: userNotification.readAt,

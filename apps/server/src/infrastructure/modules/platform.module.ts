@@ -22,14 +22,9 @@ const COMMAND_HANDLERS = [
   PlatformRestoreCommandHandler,
 ];
 
-const QUERY_HANDLERS = [
-  PlatformGetListHandler,
-  PlatformGetByIdHandler,
-];
+const QUERY_HANDLERS = [PlatformGetListHandler, PlatformGetByIdHandler];
 
-const EVENT_HANDLERS = [
-  LinkPlatformIconHandler,
-];
+const EVENT_HANDLERS = [LinkPlatformIconHandler];
 
 @Module({
   imports: [CqrsModule, UploadedFileModule],

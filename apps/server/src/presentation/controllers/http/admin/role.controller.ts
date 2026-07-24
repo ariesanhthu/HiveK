@@ -62,10 +62,13 @@ export class RoleAdminController {
 
   @Get()
   @ApiOperation({ summary: 'Get paginated list of roles' })
-  async findAll(@Query() filters: RoleFilterDto): Promise<PaginatedResponseDto<RoleDto>> {
-    return this.queryBus.execute<RoleGetListQuery, PaginatedResponseDto<RoleDto>>(
-      new RoleGetListQuery(filters),
-    );
+  async findAll(
+    @Query() filters: RoleFilterDto,
+  ): Promise<PaginatedResponseDto<RoleDto>> {
+    return this.queryBus.execute<
+      RoleGetListQuery,
+      PaginatedResponseDto<RoleDto>
+    >(new RoleGetListQuery(filters));
   }
 
   @Get(':id')

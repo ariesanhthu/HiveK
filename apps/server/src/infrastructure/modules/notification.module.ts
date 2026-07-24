@@ -36,7 +36,12 @@ const EVENT_HANDLERS = [InAppNotificationHandler, EmailNotificationHandler];
 @Module({
   imports: [CqrsModule, EnterpriseModule],
   controllers: [NotificationAdminController, NotificationClientController],
-  providers: [...COMMAND_HANDLERS, ...QUERY_HANDLERS, ...EVENT_HANDLERS, NotificationRmqController],
+  providers: [
+    ...COMMAND_HANDLERS,
+    ...QUERY_HANDLERS,
+    ...EVENT_HANDLERS,
+    NotificationRmqController,
+  ],
   exports: [],
 })
 export class NotificationModule {}

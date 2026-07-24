@@ -31,14 +31,12 @@ interface ValidationErrorItem {
 
 @Catch()
 export class HttpExceptionFilter implements ExceptionFilter {
-  constructor(
-    @Inject(LOGGER_SERVICE) private readonly logger: ILoggerService,
-  ) {
+  constructor(@Inject(LOGGER_SERVICE) private readonly logger: ILoggerService) {
     this.logger.setContext(HttpExceptionFilter.name);
   }
 
   catch(exception: unknown, host: ArgumentsHost) {
-    if (isFunction(host.getType) && (host.getType() as string) === 'graphql') {
+    if (isFunction(host.getType) && host.getType<string>() === 'graphql') {
       throw exception;
     }
 
@@ -65,9 +63,11 @@ export class HttpExceptionFilter implements ExceptionFilter {
       const res = exception.getResponse();
       const rawMessage = isString(res)
         ? res
-        : (isObject(res) && 'message' in res ? (res as Record<string, unknown>).message : undefined)
+        : (isObject(res) && 'message' in res ? res.message : undefined)
           || exception.message;
-      const message = Array.isArray(rawMessage) ? rawMessage.join(',') : String(rawMessage);
+      const message = Array.isArray(rawMessage)
+        ? rawMessage.join(',')
+        : String(rawMessage);
       const code = this.httpStatusToCode(status);
       const details = this.extractDetails(res);
       const body = ApiResponseHelper.error(code, message, details);
@@ -78,7 +78,9 @@ export class HttpExceptionFilter implements ExceptionFilter {
           exception.stack,
         );
       } else {
-        this.logger.warn(`${reqMethod} ${reqUrl} ${status} - ${code}: ${message}`);
+        this.logger.warn(
+          `${reqMethod} ${reqUrl} ${status} - ${code}: ${message}`,
+        );
       }
       return response.status(status).send(body);
     }
@@ -87,12 +89,15 @@ export class HttpExceptionFilter implements ExceptionFilter {
     const errObj = exception as Error | undefined;
     const message = errObj?.message || 'Internal server error';
     this.logger.error(`${reqMethod} ${reqUrl} 500 - ${message}`, errObj?.stack);
-    return response.status(HttpStatus.INTERNAL_SERVER_ERROR).send(
-      ApiResponseHelper.error('INTERNAL_ERROR', message),
-    );
+    return response
+      .status(HttpStatus.INTERNAL_SERVER_ERROR)
+      .send(ApiResponseHelper.error('INTERNAL_ERROR', message));
   }
 
-  private mapDomainException(exception: DomainException): { status: HttpStatus; code: string; } {
+  private mapDomainException(exception: DomainException): {
+    status: HttpStatus;
+    code: string;
+  } {
     if (exception instanceof NotFoundDomainException) {
       return { status: HttpStatus.NOT_FOUND, code: 'NOT_FOUND' };
     }
@@ -126,7 +131,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
 
   private extractDetails(res: string | object): ErrorDetail[] | undefined {
     if (!isObject(res)) return undefined;
-    const body = res as Record<string, unknown>;
+    const body = res;
 
     if (Array.isArray(body.errors)) {
       return (body.errors as (string | ValidationErrorItem)[]).map((e) => {
@@ -142,7 +147,9 @@ export class HttpExceptionFilter implements ExceptionFilter {
       });
     }
     if (Array.isArray(body.message)) {
-      return (body.message as string[]).map((msg) => ({ message: String(msg) }));
+      return (body.message as string[]).map((msg) => ({
+        message: String(msg),
+      }));
     }
     return undefined;
   }

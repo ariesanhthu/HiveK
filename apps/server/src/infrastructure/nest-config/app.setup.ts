@@ -17,7 +17,12 @@ export async function setupApplication(
     contentSecurityPolicy: {
       directives: {
         defaultSrc: [`'self'`],
-        styleSrc: [`'self'`, `'unsafe-inline'`, 'cdn.jsdelivr.net', 'fonts.googleapis.com'],
+        styleSrc: [
+          `'self'`,
+          `'unsafe-inline'`,
+          'cdn.jsdelivr.net',
+          'fonts.googleapis.com',
+        ],
         fontSrc: [`'self'`, 'fonts.gstatic.com'],
         imgSrc: [
           `'self'`,
@@ -73,12 +78,12 @@ export async function setupRabbitMQMicroservice(
 
   while (maxRetries === -1 || retries < maxRetries) {
     try {
-      logger.debug(`Attempting to connect RabbitMQ microservice (attempt ${retries + 1})...`);
+      logger.debug(
+        `Attempting to connect RabbitMQ microservice (attempt ${retries + 1})...`,
+      );
 
       // Load consumer config from file
-      const consumerConfig = rabbitmqFactory.readRMQConsumerConfig(
-        configPath,
-      );
+      const consumerConfig = rabbitmqFactory.readRMQConsumerConfig(configPath);
 
       // Convert consumer config to NestJS microservice options
       const microserviceOptions = rabbitmqFactory.toNestJSMicroserviceOptions(consumerConfig);

@@ -7,8 +7,11 @@ import { EnterpriseGetByIdQuery } from './enterprise-get-by-id.query';
 import { EnterpriseNotFoundException } from '@/core/exceptions';
 
 @QueryHandler(EnterpriseGetByIdQuery)
-export class EnterpriseGetByIdHandler
-  implements IQueryHandler<EnterpriseGetByIdQuery, EnterpriseDetailDto>
+export class EnterpriseGetByIdHandler implements
+  IQueryHandler<
+    EnterpriseGetByIdQuery,
+    EnterpriseDetailDto
+  >
 {
   constructor(
     @Inject(ENTERPRISE_READ_SERVICE) private readonly readService: IEnterpriseReadService,

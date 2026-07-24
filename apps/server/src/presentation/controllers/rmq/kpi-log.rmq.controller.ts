@@ -11,22 +11,32 @@ export class KpiLogRmqController {
 
   @RmqHandler({ queue: 'server_kpi_queue', pattern: 'tracking.success' })
   async handleTrackingSuccess(data: any) {
-    this.logger.log(`📥 Received tracking.success via RMQ: ${JSON.stringify(data)}`);
+    this.logger.log(
+      `📥 Received tracking.success via RMQ: ${JSON.stringify(data)}`,
+    );
     try {
       await this.commandBus.execute(new KpiLogCreateCommand(data));
     } catch (error) {
-      this.logger.error(`Error processing tracking.success: ${error.message}`, error.stack);
+      this.logger.error(
+        `Error processing tracking.success: ${error.message}`,
+        error.stack,
+      );
       throw error; // Re-throw to trigger NACK/Requeue if configured
     }
   }
 
   @RmqHandler({ queue: 'server_kpi_queue', pattern: 'tracking.terminated' })
   async handleTrackingTerminated(data: any) {
-    this.logger.log(`📥 Received tracking.terminated via RMQ: ${JSON.stringify(data)}`);
+    this.logger.log(
+      `📥 Received tracking.terminated via RMQ: ${JSON.stringify(data)}`,
+    );
     try {
       await this.commandBus.execute(new KpiLogTerminateCommand(data));
     } catch (error) {
-      this.logger.error(`Error processing tracking.terminated: ${error.message}`, error.stack);
+      this.logger.error(
+        `Error processing tracking.terminated: ${error.message}`,
+        error.stack,
+      );
       throw error;
     }
   }

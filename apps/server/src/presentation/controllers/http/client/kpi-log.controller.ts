@@ -17,7 +17,9 @@ export class KpiLogClientController {
   @Get()
   @UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: 'Get paginated KPI logs' })
-  async findAll(@Query() filters: KpiLogFilterDto): Promise<PaginatedResponseDto<KpiLogDto>> {
+  async findAll(
+    @Query() filters: KpiLogFilterDto,
+  ): Promise<PaginatedResponseDto<KpiLogDto>> {
     return this.queryBus.execute(new KpiLogGetListQuery(filters));
   }
 }

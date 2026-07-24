@@ -8,8 +8,11 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { ProposalUpdateMetricsCommand } from './proposal-update-metrics.command';
 
 @CommandHandler(ProposalUpdateMetricsCommand)
-export class ProposalUpdateMetricsCommandHandler
-  implements ICommandHandler<ProposalUpdateMetricsCommand, void>
+export class ProposalUpdateMetricsCommandHandler implements
+  ICommandHandler<
+    ProposalUpdateMetricsCommand,
+    void
+  >
 {
   constructor(
     @Inject(CAMPAIGN_PROPOSAL_REPOSITORY) private readonly proposalRepository:

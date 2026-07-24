@@ -20,8 +20,11 @@ import { AuthSendOtpCommand } from './auth-send-otp.command';
 import { AuthSendOtpOutputDto } from './auth-send-otp.dto';
 
 @CommandHandler(AuthSendOtpCommand)
-export class AuthSendOtpCommandHandler
-  implements ICommandHandler<AuthSendOtpCommand, AuthSendOtpOutputDto>
+export class AuthSendOtpCommandHandler implements
+  ICommandHandler<
+    AuthSendOtpCommand,
+    AuthSendOtpOutputDto
+  >
 {
   constructor(
     @Inject(OTP_REPOSITORY) private readonly otpRepository: IOtpRepository,
@@ -37,7 +40,10 @@ export class AuthSendOtpCommandHandler
       const normalizedEmail = this.authService.normalizeEmail(input.email);
 
       // Validate userId and user status for CREATE_ACCOUNT or CHANGE_PASSWORD types
-      if (input.type === EOtpType.CREATE_ACCOUNT || input.type === EOtpType.CHANGE_PASSWORD) {
+      if (
+        input.type === EOtpType.CREATE_ACCOUNT
+        || input.type === EOtpType.CHANGE_PASSWORD
+      ) {
         if (!command.userId) {
           throw new ForbiddenDomainException('User must sign in');
         }
@@ -48,7 +54,11 @@ export class AuthSendOtpCommandHandler
       }
 
       // Rate limiting check: max 1 OTP of each type per email per minute
-      const recentOtp = await this.otpRepository.findRecentOtp(normalizedEmail, input.type, 60);
+      const recentOtp = await this.otpRepository.findRecentOtp(
+        normalizedEmail,
+        input.type,
+        60,
+      );
       if (recentOtp) {
         throw new OtpRateLimitException();
       }
@@ -59,7 +69,10 @@ export class AuthSendOtpCommandHandler
       expiresAt.setMinutes(expiresAt.getMinutes() + 5); // 5 minutes validity
 
       // Clean up any existing OTPs of the same type for this email
-      await this.otpRepository.deleteByEmailAndType(normalizedEmail, input.type);
+      await this.otpRepository.deleteByEmailAndType(
+        normalizedEmail,
+        input.type,
+      );
 
       // Save new OTP
       const otp = OtpRoot.create({

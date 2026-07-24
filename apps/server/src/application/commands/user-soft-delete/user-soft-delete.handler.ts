@@ -5,7 +5,12 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { UserSoftDeleteCommand } from './user-soft-delete.command';
 
 @CommandHandler(UserSoftDeleteCommand)
-export class UserSoftDeleteCommandHandler implements ICommandHandler<UserSoftDeleteCommand, void> {
+export class UserSoftDeleteCommandHandler implements
+  ICommandHandler<
+    UserSoftDeleteCommand,
+    void
+  >
+{
   constructor(
     @Inject(USER_REPOSITORY) private readonly userRepository: IUserRepository,
   ) {}

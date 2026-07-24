@@ -4,7 +4,11 @@ import { softDeletePlugin } from '../utils';
 
 @Schema({ _id: false })
 export class NativePlatformInfo {
-  @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'PlatformModel', required: true })
+  @Prop({
+    type: MongooseSchema.Types.ObjectId,
+    ref: 'PlatformModel',
+    required: true,
+  })
   platform_id: string;
 
   @Prop({ type: MongooseSchema.Types.String, required: true, trim: true })
@@ -31,7 +35,11 @@ export class NativePlatformInfo {
   timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' },
 })
 export class KolProfileModel {
-  @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'UserModel', default: null })
+  @Prop({
+    type: MongooseSchema.Types.ObjectId,
+    ref: 'UserModel',
+    default: null,
+  })
   user_id: MongooseSchema.Types.ObjectId | null;
 
   @Prop({ type: MongooseSchema.Types.String, default: null })
@@ -60,7 +68,10 @@ export class KolProfileModel {
     required: true,
     trim: true,
     lowercase: true,
-    match: [/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/, 'Please fill a valid email address'],
+    match: [
+      /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/,
+      'Please fill a valid email address',
+    ],
   })
   email: string;
 
@@ -70,7 +81,10 @@ export class KolProfileModel {
   })
   phone: string;
 
-  @Prop({ type: [SchemaFactory.createForClass(NativePlatformInfo)], default: [] })
+  @Prop({
+    type: [SchemaFactory.createForClass(NativePlatformInfo)],
+    default: [],
+  })
   platforms: NativePlatformInfo[];
 
   @Prop({ type: MongooseSchema.Types.Boolean, default: false })

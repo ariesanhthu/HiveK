@@ -8,8 +8,11 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { UploadedFileSoftDeleteCommand } from './uploaded-file-soft-delete.command';
 
 @CommandHandler(UploadedFileSoftDeleteCommand)
-export class UploadedFileSoftDeleteCommandHandler
-  implements ICommandHandler<UploadedFileSoftDeleteCommand, void>
+export class UploadedFileSoftDeleteCommandHandler implements
+  ICommandHandler<
+    UploadedFileSoftDeleteCommand,
+    void
+  >
 {
   constructor(
     @Inject(UPLOADED_FILE_REPOSITORY) private readonly repository: IUploadedFileRepository,

@@ -25,14 +25,9 @@ const COMMAND_HANDLERS = [
   UserCheckValidCommandHandler,
 ];
 
-const QUERY_HANDLERS = [
-  UserGetByIdHandler,
-  UserGetListHandler,
-];
+const QUERY_HANDLERS = [UserGetByIdHandler, UserGetListHandler];
 
-const EVENT_HANDLERS = [
-  LinkUserAvatarHandler,
-];
+const EVENT_HANDLERS = [LinkUserAvatarHandler];
 
 @Module({
   imports: [CqrsModule],
