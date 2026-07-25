@@ -22,7 +22,7 @@ const BUSINESS_NAV_BASE: Omit<DashboardNavItem, "isActive">[] = [
     icon: "auto_awesome",
     href: "/campaign-planning",
   },
-  { id: "discovery", label: "Khám phá KOL", icon: "travel_explore", href: "/kol-matching" },
+  { id: "discovery", label: "Khám phá CTV", icon: "travel_explore", href: "/kol-matching" },
   { id: "analytics", label: "Phân tích", icon: "bar_chart", href: "/kol-analysis" },
   {
     id: "settings",

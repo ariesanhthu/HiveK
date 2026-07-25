@@ -24,16 +24,16 @@ export const GALAXY_FEATURES: GalaxyFeature[] = [
   {
     id: "ai-matching",
     label: "Ghép đôi AI",
-    tagline: "Tìm KOL phù hợp nhất bằng AI trong vài giây",
+    tagline: "Tìm cộng tác viên phù hợp nhất bằng AI trong vài giây",
     highlights: [
       "Phân tích 50+ chỉ số của từng creator",
-      "Gợi ý KOL theo ngân sách và ngành hàng",
+      "Gợi ý cộng tác viên theo yêu cầu và lĩnh vực",
       "Kết quả ghép đôi chỉ trong vài giây",
     ],
     moons: [
       { label: "Lọc theo ngân sách", icon: "tune" },
       { label: "Điểm tương thích", icon: "percent" },
-      { label: "Đề xuất top KOL", icon: "star" },
+      { label: "Đề xuất top cộng tác viên", icon: "star" },
     ],
     icon: "auto_awesome",
     color: "var(--color-tech-blue)",
@@ -60,12 +60,12 @@ export const GALAXY_FEATURES: GalaxyFeature[] = [
   },
   {
     id: "analysis",
-    label: "Phân tích KOL",
-    tagline: "Chấm điểm uy tín, mức độ rủi ro của từng creator",
+    label: "Phân tích Cộng tác viên",
+    tagline: "Chấm điểm uy tín, mức độ rủi ro của từng cộng tác viên",
     highlights: [
-      "Chấm điểm uy tín từng KOL/KOC",
+      "Chấm điểm uy tín từng cộng tác viên",
       "Phát hiện follower ảo và rủi ro thương hiệu",
-      "So sánh hiệu suất giữa các creator",
+      "So sánh hiệu suất giữa các cộng tác viên",
     ],
     moons: [
       { label: "Phát hiện follower ảo", icon: "person_off" },
@@ -98,9 +98,9 @@ export const GALAXY_FEATURES: GalaxyFeature[] = [
   {
     id: "ranking",
     label: "Bảng xếp hạng",
-    tagline: "Khám phá top KOL/KOC đang dẫn đầu thị trường",
+    tagline: "Khám phá top cộng tác viên đang dẫn đầu",
     highlights: [
-      "Top KOL/KOC theo ngành và nền tảng",
+      "Top cộng tác viên theo lĩnh vực và nền tảng",
       "Xu hướng tăng trưởng cập nhật mỗi tuần",
       "Khám phá những gương mặt mới nổi bật",
     ],

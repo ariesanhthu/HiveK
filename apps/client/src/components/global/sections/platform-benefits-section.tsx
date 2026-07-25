@@ -12,7 +12,7 @@ export const PlatformBenefitsSection: React.FC = () => {
             Khai phá tiềm năng của bạn
           </h3>
           <p className="mt-4 max-w-2xl text-foreground-muted">
-            Chúng tôi đơn giản hóa việc kết nối giữa KOL và các thương hiệu hàng đầu, tập trung vào tăng trưởng và tương tác thực chất.
+            Chúng tôi đơn giản hóa việc kết nối giữa cộng tác viên và các đối tác giáo dục, homestay — tập trung vào tăng trưởng và tương tác thực chất.
           </p>
         </div>
 
@@ -27,7 +27,7 @@ export const PlatformBenefitsSection: React.FC = () => {
               Ghép đôi thông minh
             </h4>
             <p className="text-base leading-relaxed text-foreground-muted">
-              AI gợi ý thương hiệu phù hợp với tệp khán giả riêng của bạn để tạo nên các chiến dịch hoàn hảo.
+               AI gợi ý đối tác phù hợp với hồ sơ gia sư / homestay của bạn để tạo nên các chiến dịch hoàn hảo.
             </p>
           </div>
 
@@ -41,7 +41,7 @@ export const PlatformBenefitsSection: React.FC = () => {
               Phân tích thời gian thực
             </h4>
             <p className="text-base leading-relaxed text-foreground-muted">
-              Bảng điều khiển toàn diện giúp theo dõi lượng tương tác, sự phát triển khán giả và ROI chiến dịch ngay lập tức.
+               Bảng điều khiển toàn diện giúp theo dõi lượng tương tác, sự phát triển cộng tác viên và ROI chiến dịch ngay lập tức.
             </p>
           </div>
 

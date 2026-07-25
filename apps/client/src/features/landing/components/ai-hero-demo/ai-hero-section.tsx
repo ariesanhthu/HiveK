@@ -86,21 +86,21 @@ export function AiHeroSection() {
             CHÚNG TÔI LÀ AI
           </div>
           <p className="mx-auto mt-5 max-w-[760px] text-[1.4rem] font-semibold leading-relaxed text-foreground">
-            Nơi <span className="text-primary">creator</span> và{" "}
-            <span className="text-primary">nhãn hàng</span> gặp nhau — vận hành bằng AI.
+            Nơi <span className="text-primary">cộng tác viên</span> và{" "}
+            <span className="text-primary">đối tác</span> gặp nhau — vận hành bằng AI.
           </p>
           <div className="mt-7 flex items-center justify-center gap-8">
             <div className="text-center">
               <div className="text-2xl font-black text-foreground">2.000+</div>
-              <div className="text-[0.76rem] font-semibold text-foreground-muted">KOL &amp; Creator</div>
+              <div className="text-[0.76rem] font-semibold text-foreground-muted">Cộng tác viên & Gia sư</div>
             </div>
             <div className="text-center">
               <div className="text-2xl font-black text-foreground">500+</div>
-              <div className="text-[0.76rem] font-semibold text-foreground-muted">Nhãn hàng</div>
+              <div className="text-[0.76rem] font-semibold text-foreground-muted">Đối tác</div>
             </div>
             <div className="text-center">
               <div className="text-2xl font-black text-foreground">12+</div>
-              <div className="text-[0.76rem] font-semibold text-foreground-muted">Ngành hàng</div>
+              <div className="text-[0.76rem] font-semibold text-foreground-muted">Lĩnh vực</div>
             </div>
           </div>
         </div>

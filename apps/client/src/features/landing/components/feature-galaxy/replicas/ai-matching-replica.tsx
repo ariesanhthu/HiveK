@@ -5,15 +5,15 @@ import { useEffect, useState } from "react";
 
 const STAGES = [
   { label: "Phân tích yêu cầu chiến dịch", status: "done" as const },
-  { label: "Quét hồ sơ 12,400+ KOL/KOC", status: "done" as const },
+  { label: "Quét hồ sơ 12,400+ Cộng tác viên", status: "done" as const },
   { label: "Chấm điểm tương thích bằng AI", status: "active" as const },
   { label: "Xếp hạng & đề xuất top ứng viên", status: "pending" as const },
 ];
 
 const CANDIDATES = [
-  { name: "Sun HT", handle: "@SunHT", type: "KOL", match: 98, followers: "1.2M", er: "9.8%" },
-  { name: "Giang Ơi", handle: "@GiangOi", type: "KOL", match: 92, followers: "2.2M", er: "9.2%" },
-  { name: "Vy Vy Food", handle: "@vyvyfood", type: "KOC", match: 87, followers: "340K", er: "11.4%" },
+  { name: "Sun HT", handle: "@SunHT", type: "CTV", match: 98, followers: "1.2M", er: "9.8%" },
+  { name: "Giang Ơi", handle: "@GiangOi", type: "CTV", match: 92, followers: "2.2M", er: "9.2%" },
+  { name: "Vy Vy Food", handle: "@vyvyfood", type: "Gia sư", match: 87, followers: "340K", er: "11.4%" },
 ];
 
 export function AiMatchingReplica() {

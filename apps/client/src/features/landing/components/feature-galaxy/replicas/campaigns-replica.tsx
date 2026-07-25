@@ -6,21 +6,21 @@ const TABS = ["Cấu hình", "Content", "Tracking", "Người tham gia"];
 
 const CAMPAIGNS = [
   {
-    name: "Glow Summer Skincare",
+    name: "Tuyển gia sư Toán Q.1",
     status: "Đã lên lịch",
     tone: "success" as const,
-    objective: "Ra mắt sản phẩm · Chăm sóc da",
-    platforms: ["TikTok", "Instagram"],
+    objective: "Tuyển dụng · Giáo dục",
+    platforms: ["Facebook", "Zalo"],
     posts: 12,
     scheduled: 8,
     people: 5,
   },
   {
-    name: "Nike: Tốc độ Tương lai",
+    name: "Homestay Đà Lạt Promo",
     status: "Đang duyệt",
     tone: "warning" as const,
-    objective: "Nhận diện thương hiệu · Giày dép",
-    platforms: ["YouTube", "TikTok"],
+    objective: "Quảng bá · Du lịch",
+    platforms: ["TikTok", "Instagram"],
     posts: 6,
     scheduled: 2,
     people: 3,
@@ -133,7 +133,7 @@ export function CampaignsReplica() {
             <div className="flex -space-x-2">
               {[1, 2, 3, 4].map((n) => (
                 <span key={n} className="flex size-7 items-center justify-center rounded-full border-2 border-card bg-primary-soft text-[9px] font-bold text-primary">
-                  KOL
+                  CTV
                 </span>
               ))}
             </div>
