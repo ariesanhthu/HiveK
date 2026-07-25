@@ -3,6 +3,7 @@ import { PassportStrategy } from '@nestjs/passport';
 import { Inject, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import type { IJwtPayload } from '@/application/interfaces/auth-jwt.interface';
+import type { AuthenticatedRequest } from '@/core/types/common.type';
 import { CommandBus } from '@nestjs/cqrs';
 import { type ILoggerService, LOGGER_SERVICE, UserCheckValidCommand } from '@/application';
 
@@ -17,7 +18,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     super({
       jwtFromRequest: ExtractJwt.fromExtractors([
         ExtractJwt.fromAuthHeaderAsBearerToken(),
-        (req: any) => {
+        (req: AuthenticatedRequest) => {
           if (req && req.cookies) {
             return req.cookies['access_token'] || null;
           }
@@ -36,7 +37,8 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       sub: user.id,
       email: user.email,
       role: user.roleId,
-      type: user.type
+      type: user.type,
+      isEmailVerified: user.isEmailVerified,
     };
     this.logger.debug(`Validating user`, undefined, jwtPayload);
 

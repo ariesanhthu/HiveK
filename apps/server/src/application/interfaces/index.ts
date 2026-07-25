@@ -10,6 +10,10 @@ export * from './read-service/proposal.read-service.interface';
 export * from './read-service/review.read-service.interface';
 export * from './read-service/notification.read-service.interface';
 export * from './read-service/campaign-participant.read-service.interface';
+export * from './read-service/package.read-service.interface';
+export * from './read-service/bill.read-service.interface';
+export * from './read-service/payment-provider.read-service.interface';
+export * from './read-service/enterprise-invitation.read-service.interface';
 
 export * from './uow.interface';
 
@@ -23,3 +27,8 @@ export * from './post-scheduler.interface';
 export * from './cache.interface';
 export * from './event-service.interface';
 export * from './domain-event-mapper.interface';
+export * from './image-processor.interface';
+export * from './read-service/subscription.read-service.interface';
+export * from './read-service/subscription-history.read-service.interface';
+export * from './read-service/quota-usage.read-service.interface';
+export * from './read-service/enterprise-quota-allocation.read-service.interface';

@@ -33,18 +33,13 @@ export const CampaignEnterpriseOutputInputSchema = z.object({
   isTrackingActive: z.boolean().optional().default(false),
 }).strict();
 
-export const SchedulePostSchema = z.object({
-  scheduledTime: z.iso.datetime(),
-  platformId: z.string().min(1),
-  status: z.enum(ESchedulePostStatus).optional().default(ESchedulePostStatus.DRAFT),
-  campaignKOLOutputs: z.array(CampaignKOLOutputInputSchema).optional().default([]),
-  campaignEnterpriseOutputs: z.array(CampaignEnterpriseOutputInputSchema).optional().default([]),
-}).strict();
+// @code-comment(SchedulePostSchema): Kept for future reuse.
+// export const SchedulePostSchema = z.object({ ... }).strict();
 
 export const ScheduleDaySchema = z.object({
   date: z.iso.datetime(),
   label: z.string().max(200).optional(),
-  posts: z.array(SchedulePostSchema),
+  posts: z.array(z.string()),  // ScheduledPost IDs
 }).strict();
 
 export const CampaignScheduleSchema = z.object({
@@ -62,8 +57,9 @@ export const CampaignCreateInputSchema = z.object({
     minFollowers: z.number().nonnegative().optional(),
     maxFollowers: z.number().nonnegative().optional(),
     note: z.string().max(500).optional(),
-    others: z.record(z.string(), z.any()).optional(),
+    extras: z.record(z.string(), z.any()).optional(),
   }).strict()).optional().default([]),
+  extras: z.record(z.string(), z.any()).optional(),
   schedule: CampaignScheduleSchema.optional(),
 }).strict();
 

@@ -34,8 +34,8 @@ export class MongoCampaignProposalRepository implements ICampaignProposalReposit
 
   async findByCampaignId(campaignId: string): Promise<Nullable<CampaignProposalRoot>> {
     const doc = await this.proposalModel.findOne({
-      campaign_id: new Types.ObjectId(campaignId) as any,
-    }).session(this.session).exec();
+      campaign_id: new Types.ObjectId(campaignId),
+    } as Record<string, unknown>).session(this.session).exec();
     return doc ? this.mapToDomain(doc) : null;
   }
 
@@ -102,14 +102,14 @@ export class MongoCampaignProposalRepository implements ICampaignProposalReposit
         : (doc.metrics || { totalViews: 0, totalClicks: 0 }),
       deleteAt: doc.delete_at,
       deleteBy: doc.delete_by,
-      createdAt: (doc as any).created_at,
-      updatedAt: (doc as any).updated_at,
+      createdAt: doc.created_at,
+      updatedAt: doc.updated_at,
     });
   }
 
-  private mapToPersistence(proposal: CampaignProposalRoot): Omit<CampaignProposalModel, 'created_at' | 'updated_at'> {
+  private mapToPersistence(proposal: CampaignProposalRoot): Record<string, unknown> {
     return {
-      campaign_id: new Types.ObjectId(proposal.campaignId) as any,
+      campaign_id: new Types.ObjectId(proposal.campaignId),
       slug: proposal.slug,
       title: proposal.title,
       description: proposal.description,

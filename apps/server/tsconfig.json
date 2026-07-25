@@ -29,5 +29,6 @@
       "@presentation/*": ["./src/presentation/*"],
       "@application/*": ["./src/application/*"]
     }
-  }
+  },
+  "exclude": ["node_modules", "dist", "ref"]
 }

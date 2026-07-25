@@ -2,8 +2,8 @@ import { Controller, Get, Patch, Delete, Param, Query, Body, HttpCode, HttpStatu
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { ApiTags, ApiOperation, ApiBearerAuth, ApiSecurity } from '@nestjs/swagger';
 import { buildVersionedRoute } from '@presentation/utils';
-import { JwtAuthGuard } from '@/presentation/middleware/guards/jwt-auth.guard';
-import { CurrentUser } from '@/presentation/decorators/current-user.decorator';
+import { JwtAuthGuard, RolesGuard } from '@/presentation/middleware/guards';
+import { CurrentUser, Roles, ApiOkResponseEnvelope, ApiPaginatedResponseEnvelope } from '@/presentation/decorators';
 import { NotificationGetListQuery } from '@/application/queries';
 import {
   NotificationUpdateReadStatusCommand,
@@ -20,9 +20,7 @@ import {
   NotificationFilterDto,
 } from '@/application/dtos';
 import { PaginatedResponseDto } from '@/application/dtos/pagination.dto';
-import { RolesGuard } from '@/presentation/middleware/guards/roles.guard';
 import { ERoleType } from '@/core/enums/role-type.enum';
-import { Roles } from '@/presentation/decorators/roles.decorator';
 
 @ApiTags('ADMIN-notifications')
 @ApiBearerAuth()
@@ -38,6 +36,7 @@ export class NotificationAdminController {
 
   @Get()
   @ApiOperation({ summary: "Get currently logged-in user's notifications" })
+  @ApiPaginatedResponseEnvelope(NotificationDto)
   async findAll(
     @CurrentUser('sub') userId: string,
     @Query() filters: NotificationFilterDto,
@@ -86,3 +85,4 @@ export class NotificationAdminController {
     return this.commandBus.execute(new NotificationHardDeleteCommand(dto.ids, userId));
   }
 }
+

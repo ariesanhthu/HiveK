@@ -12,4 +12,13 @@ export enum EAggregateType {
   USER_NOTIFICATION = 'user_notification',
   USER = 'user',
   OTP = 'otp',
+  BILL = 'bill',
+  PACKAGE = 'package',
+  PAYMENT = 'payment',
+  SUBSCRIPTION = 'subscription',
+  SOCIAL_PAGE = 'social_page',
+  SCHEDULED_POST = 'scheduled_post',
+  AUTO_REPLY_RULE = 'auto_reply_rule',
+  CREDIT_WALLET = 'credit_wallet',
+  QUOTA_USAGE = 'quota_usage',
 }

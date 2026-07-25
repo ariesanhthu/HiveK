@@ -32,13 +32,13 @@ export class KpiLogTerminateCommandHandler implements ICommandHandler<KpiLogTerm
         return;
       }
 
-      try {
-        campaign.updateTrackingStatus(payload.outputId, false);
-        await this.campaignRepository.save(campaign);
-        this.logger.log(`Terminated tracking for output ${payload.outputId} of participant ${payload.participantId}`);
-      } catch (e) {
-        this.logger.error(`Error terminating tracking: ${e.message}`);
-      }
+      // @code-comment(SchedulePost): updateTrackingStatus disabled — schedule posts are now ScheduledPost IDs.
+      // try {
+      //   campaign.updateTrackingStatus(payload.outputId, false);
+      //   await this.campaignRepository.save(campaign);
+      // } catch (e) {
+      //   this.logger.error(`Error terminating tracking: ${e.message}`);
+      // }
 
       this.eventBus.publish(new KpiTrackingTerminatedEvent(payload.participantId, payload.outputId));
     });

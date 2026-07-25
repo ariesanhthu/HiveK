@@ -9,7 +9,7 @@ export const PlatformTargetItemDtoSchema = z.object({
   minFollowers: z.number().optional(),
   maxFollowers: z.number().optional(),
   note: z.string().optional(),
-  others: z.record(z.string(), z.any()).optional(),
+    extras: z.record(z.string(), z.unknown()).optional(),
 }).strict();
 
 export const RawContentItemDtoSchema = z.object({
@@ -21,7 +21,7 @@ export const CampaignParticipantSubDtoSchema = z.object({
   id: z.string(),
   kolProfileId: z.string(),
   status: z.string(),
-  joinedAt: z.any().nullable(),
+  joinedAt: z.iso.datetime().nullable(),
 }).strict();
 
 export const CampaignKOLOutputDtoSchema = z.object({
@@ -32,11 +32,11 @@ export const CampaignKOLOutputDtoSchema = z.object({
   outputType: z.string(),
   title: z.string(),
   isScheduleForPost: z.boolean(),
-  scheduledAt: z.any().nullable(),
+  scheduledAt: z.iso.datetime().nullable(),
   fileId: z.string().nullable(),
   status: z.string(),
   url: z.string().nullable(),
-  postedAt: z.any().nullable(),
+  postedAt: z.iso.datetime().nullable(),
   isTrackingActive: z.boolean(),
 }).strict();
 
@@ -47,26 +47,21 @@ export const CampaignEnterpriseOutputDtoSchema = z.object({
   outputType: z.string(),
   title: z.string(),
   isScheduleForPost: z.boolean(),
-  scheduledAt: z.any().nullable(),
+  scheduledAt: z.iso.datetime().nullable(),
   fileId: z.string().nullable(),
   status: z.string(),
   url: z.string().nullable(),
-  postedAt: z.any().nullable(),
+  postedAt: z.iso.datetime().nullable(),
   isTrackingActive: z.boolean(),
 }).strict();
 
-export const SchedulePostDtoSchema = z.object({
-  scheduledTime: z.any(),
-  platformId: z.string(),
-  status: z.string(),
-  campaignKOLOutputs: z.array(CampaignKOLOutputDtoSchema).optional().default([]),
-  campaignEnterpriseOutputs: z.array(CampaignEnterpriseOutputDtoSchema).optional().default([]),
-}).strict();
+// @code-comment(SchedulePostDtoSchema): Kept for future reuse.
+// export const SchedulePostDtoSchema = z.object({ ... }).strict();
 
 export const ScheduleDayDtoSchema = z.object({
-  date: z.any(),
+  date: z.iso.datetime(),
   label: z.string().optional(),
-  posts: z.array(SchedulePostDtoSchema),
+  posts: z.array(z.string()),  // ScheduledPost IDs
 }).strict();
 
 export const CampaignScheduleDtoSchema = z.object({
@@ -78,12 +73,13 @@ export const CampaignDtoSchema = z.object({
   ownerId: z.string(),
   enterpriseId: z.string().nullable(),
   budget: z.number(),
-  financialTarget: z.record(z.string(), z.any()),
+  financialTarget: z.record(z.string(), z.unknown()),
   description: z.string(),
   platformTarget: z.array(PlatformTargetItemDtoSchema),
   status: z.enum(ECampaignStatus),
   collaboratorIds: z.array(z.string()),
   rawContents: z.array(RawContentItemDtoSchema),
+  extras: z.record(z.string(), z.unknown()).optional(),
   schedule: CampaignScheduleDtoSchema.optional(),
   participants: z.array(CampaignParticipantSubDtoSchema).optional().default([]),
 }).strict();

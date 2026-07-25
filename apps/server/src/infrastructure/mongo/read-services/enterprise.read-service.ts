@@ -40,7 +40,7 @@ export class MongoEnterpriseReadService implements IEnterpriseReadService {
     const cached = await this.cacheService.get<EnterpriseDetailDto>(cacheKey);
     if (cached) return cached;
 
-    const doc = await this.enterpriseModel.findOne({ user_id: new Types.ObjectId(userId) as any }).populate('user_id').populate('logo_url_id').lean().exec();
+    const doc = await this.enterpriseModel.findOne({ user_id: new Types.ObjectId(userId) }).populate('user_id').populate('logo_url_id').lean().exec();
     if (!doc) return null;
 
     const dto = this.mapToDto(doc);
@@ -48,7 +48,62 @@ export class MongoEnterpriseReadService implements IEnterpriseReadService {
     return dto;
   }
 
-  async findAll(filters: EnterpriseFilterDto = {} as any): Promise<PaginatedResponseDto<EnterpriseDetailDto>> {
+  async findByUserIdOrMember(userId: string, filters: EnterpriseFilterDto = {}): Promise<PaginatedResponseDto<EnterpriseDetailDto>> {
+    // const filterKey = JSON.stringify(filters);
+    // const cacheKey = CacheKeyUtil.custom(this.domain, `user:${userId}:list:${filterKey}`);
+    // const cached = await this.cacheService.get<PaginatedResponseDto<EnterpriseDetailDto>>(cacheKey);
+    // if (cached) return cached;
+
+    const { cursor, limit = 10, sort = SortOrder.DESC, companyName, contactEmail, taxId, isVerified } = filters;
+    const query: QueryFilter<EnterpriseDocument> = {
+      $or: [
+        { user_id: new Types.ObjectId(userId) },
+        { 'members.user_id': new Types.ObjectId(userId) },
+      ],
+    };
+
+    if (companyName) {
+      query.company_name = { $regex: MongoSanitizeUtil.escapeRegex(companyName), $options: 'i' };
+    }
+    if (contactEmail) {
+      query.contact_email = { $regex: MongoSanitizeUtil.escapeRegex(contactEmail), $options: 'i' };
+    }
+    if (taxId) {
+      query.tax_id = taxId;
+    }
+    if (isVerified !== undefined) {
+      query.is_verified = isVerified;
+    }
+
+    if (cursor) {
+      query._id = sort === SortOrder.DESC ? { $lt: cursor } : { $gt: cursor };
+    }
+
+    const docs = await this.enterpriseModel
+      .find(query)
+      .sort({ _id: sort === SortOrder.DESC ? -1 : 1 })
+      .limit(limit + 1)
+      .populate('user_id')
+      .populate('logo_url_id')
+      .lean()
+      .exec();
+
+    const hasNextPage = docs.length > limit;
+    const results = hasNextPage ? docs.slice(0, limit) : docs;
+    const nextCursor = hasNextPage ? results[results.length - 1]._id.toString() : null;
+
+    const response = new PaginatedResponseDto(
+      results.map((doc) => this.mapToDto(doc)),
+      nextCursor,
+      hasNextPage,
+      limit,
+    );
+
+    // await this.cacheService.set(cacheKey, response, 300);
+    return response;
+  }
+
+  async findAll(filters: EnterpriseFilterDto = {}): Promise<PaginatedResponseDto<EnterpriseDetailDto>> {
     const cacheKey = CacheKeyUtil.list(this.domain, filters);
     const cached = await this.cacheService.get<PaginatedResponseDto<EnterpriseDetailDto>>(cacheKey);
     if (cached) return cached;
@@ -121,6 +176,15 @@ export class MongoEnterpriseReadService implements IEnterpriseReadService {
         updatedAt: doc.logo_url_id.updated_at,
       } : null,
       isVerified: doc.is_verified,
+      members: (doc.members || []).map((m: any) => ({
+        userId: m.user_id ? m.user_id.toString() : '',
+        mode: m.mode,
+      })),
+      knowledgeBase: doc.knowledge_base ? {
+        rawText: doc.knowledge_base.raw_text,
+        externalLinks: doc.knowledge_base.external_links || [],
+        updatedAt: doc.knowledge_base.updated_at ? new Date(doc.knowledge_base.updated_at).toISOString() : new Date().toISOString(),
+      } : undefined,
       createdAt: doc.created_at,
       updatedAt: doc.updated_at,
       user: doc.user_id && typeof doc.user_id === 'object' && doc.user_id._id ? {
@@ -133,7 +197,7 @@ export class MongoEnterpriseReadService implements IEnterpriseReadService {
         type: doc.user_id.type,
         createdAt: doc.user_id.created_at,
         updatedAt: doc.user_id.updated_at,
-      } as any : undefined,
+      } : undefined,
     };
   }
 }

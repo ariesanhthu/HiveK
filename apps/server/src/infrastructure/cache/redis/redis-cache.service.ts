@@ -9,9 +9,13 @@ export class RedisCacheService implements ICacheService, OnModuleDestroy {
   ) {}
 
   async get<T>(key: string): Promise<T | null> {
-    const data = await this.redisClient.get(key);
-    if (!data) return null;
-    return JSON.parse(data) as T;
+    try {
+      const data = await this.redisClient.get(key);
+      if (!data) return null;
+      return JSON.parse(data) as T;
+    } catch (err) {
+      return;
+    }
   }
 
   async set<T>(key: string, value: T, ttlSeconds?: number): Promise<void> {

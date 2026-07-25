@@ -14,6 +14,17 @@ export class EnterpriseMapper {
       taxId: root.taxId,
       logoUrlId: root.logoUrlId,
       isVerified: root.isVerified,
+      members: (root.members || []).map((m) => ({
+        userId: m.userId,
+        mode: m.mode,
+      })),
+      knowledgeBase: root.knowledgeBase
+        ? {
+            rawText: root.knowledgeBase.rawText,
+            externalLinks: root.knowledgeBase.externalLinks,
+            updatedAt: root.knowledgeBase.updatedAt.toISOString(),
+          }
+        : undefined,
       createdAt: root.createdAt.toISOString(),
       updatedAt: root.updatedAt.toISOString(),
     };

@@ -1,13 +1,12 @@
-import { Controller, Get, Post, Patch, Delete, Param, Query, Body, HttpCode, HttpStatus } from '@nestjs/common';
+import { Controller, Get, Post, Patch, Delete, Param, Query, Body, HttpCode, HttpStatus, UseGuards } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { UserGetByIdQuery, UserGetListQuery } from '@/application/queries';
 import { UserCreateCommand, UserUpdateCommand, UserSoftDeleteCommand, UserHardDeleteCommand, UserRestoreCommand } from '@/application/commands';
-import { UserDto, UserFilterDto, SoftDeleteInputDto } from '@/application/dtos';
+import { UserFilterDto, SoftDeleteInputDto, UserDetailDto, AdminDto } from '@/application/dtos';
 import { ApiTags, ApiOperation, ApiBearerAuth, ApiSecurity } from '@nestjs/swagger';
 import { buildVersionedRoute } from '@presentation/utils';
 import { JwtAuthGuard, RolesGuard } from '@/presentation/middleware/guards';
-import { UseGuards } from '@nestjs/common';
-import { Roles } from '@/presentation/decorators/roles.decorator';
+import { Roles, ApiOkResponseEnvelope, ApiPaginatedResponseEnvelope } from '@/presentation/decorators';
 import { ERoleType } from '@/core/enums';
 import { PaginatedResponseDto } from '@/application/dtos/pagination.dto';
 import { UserCreateInputDto } from '@/application/commands/user-create/user-create.dto';
@@ -27,6 +26,7 @@ export class UserAdminController {
 
   @Post()
   @ApiOperation({ summary: 'Create a new user' })
+  @ApiOkResponseEnvelope()
   async create(@Body() input: UserCreateInputDto): Promise<{ id: string }> {
     const id = await this.commandBus.execute<UserCreateCommand, string>(
       new UserCreateCommand(input),
@@ -36,6 +36,7 @@ export class UserAdminController {
 
   @Patch(':id')
   @ApiOperation({ summary: 'Update a user' })
+  @ApiOkResponseEnvelope()
   async update(
     @Param('id') id: string,
     @Body() input: UserUpdateInputDto,
@@ -45,19 +46,16 @@ export class UserAdminController {
 
   @Get()
   @ApiOperation({ summary: 'Get paginated list of users' })
-  async findAll(@Query() filters: UserFilterDto): Promise<PaginatedResponseDto<UserDto>> {
-    return this.queryBus.execute<UserGetListQuery, PaginatedResponseDto<UserDto>>(
-      new UserGetListQuery(filters),
-    );
+  @ApiPaginatedResponseEnvelope(AdminDto)
+  async findAll(@Query() filters: UserFilterDto): Promise<PaginatedResponseDto<any>> {
+    return this.queryBus.execute(new UserGetListQuery(filters));
   }
 
   @Get(':id')
   @ApiOperation({ summary: 'Get user by ID' })
-  async getById(@Param('id') id: string): Promise<UserDto> {
-    const user = await this.queryBus.execute<UserGetByIdQuery, UserDto>(
-      new UserGetByIdQuery(id),
-    );
-    return user;
+  @ApiOkResponseEnvelope(UserDetailDto)
+  async getById(@Param('id') id: string): Promise<any> {
+    return this.queryBus.execute(new UserGetByIdQuery(id));
   }
 
   @Patch(':id/soft-delete')
@@ -84,3 +82,4 @@ export class UserAdminController {
     await this.commandBus.execute(new UserRestoreCommand(id));
   }
 }
+

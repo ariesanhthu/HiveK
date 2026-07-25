@@ -1,20 +1,23 @@
-import { Model, Types } from 'mongoose';
-import { MongoCampaignRepository } from '@/infrastructure/mongo/repositories/campaign.repository';
-import { CampaignRoot } from '@/core/aggregate-roots';
-import { ECampaignStatus } from '@/core/enums/campaign-status.enum';
-import { UNIT_OF_WORK } from '@/application/interfaces';
+// Enterprise schema loading triggers SchemaFactory.createForClass which breaks with mongoose mock
+jest.mock('@/infrastructure/mongo/schemas/enterprise.schema', () => ({}));
 
+// Keep real Types.ObjectId to avoid SchemaFactory.createForClass validation failures
 jest.mock('mongoose', () => {
   const actual = jest.requireActual('mongoose');
   return {
     ...actual,
     Types: {
-      ObjectId: jest.fn().mockImplementation((id: string) => ({
-        toString: () => id,
-      })),
+      ...actual.Types,
+      ObjectId: actual.Types.ObjectId,
     },
   };
 });
+
+import { Types } from 'mongoose';
+import { MongoCampaignRepository } from '@/infrastructure/mongo/repositories/campaign.repository';
+import { CampaignRoot } from '@/core/aggregate-roots';
+import { ECampaignStatus } from '@/core/enums/campaign-status.enum';
+import { UNIT_OF_WORK } from '@/application/interfaces';
 
 describe('MongoCampaignRepository', () => {
   let repo: MongoCampaignRepository;
@@ -22,9 +25,9 @@ describe('MongoCampaignRepository', () => {
   let mockUow: any;
 
   const campaignDoc = {
-    _id: new Types.ObjectId('camp-123'),
-    owner_id: new Types.ObjectId('owner-123'),
-    enterprise_id: new Types.ObjectId('ent-123'),
+    _id: new Types.ObjectId('507f1f77bcf86cd799439021'),
+    owner_id: new Types.ObjectId('507f1f77bcf86cd799439023'),
+    enterprise_id: new Types.ObjectId('507f1f77bcf86cd799439024'),
     budget: 5000,
     financial_target: { sales: 10000 },
     description: 'Summer sale campaign',
@@ -34,14 +37,14 @@ describe('MongoCampaignRepository', () => {
         minFollowers: 1000,
         maxFollowers: 5000,
         note: 'E2E target platform',
-        others: { age: '18-25' },
+        extras: { age: '18-25' },
       },
     ],
     status: ECampaignStatus.DRAFT,
-    collaborator_ids: ['owner-123'],
+    collaborator_ids: ['507f1f77bcf86cd799439023'],
     raw_contents: [
       {
-        fileId: 'file-123',
+        fileId: '507f1f77bcf86cd799439015',
         rawContent: 'Original details text',
       },
     ],
@@ -70,11 +73,11 @@ describe('MongoCampaignRepository', () => {
     it('should return CampaignRoot when document is found', async () => {
       (mockModel.exec as jest.Mock).mockResolvedValueOnce(campaignDoc);
 
-      const result = await repo.findById('camp-123');
+      const result = await repo.findById('507f1f77bcf86cd799439021');
 
-      expect(mockModel.findById).toHaveBeenCalledWith('camp-123');
+      expect(mockModel.findById).toHaveBeenCalledWith('507f1f77bcf86cd799439021');
       expect(result).toBeInstanceOf(CampaignRoot);
-      expect(result?.id).toBe('camp-123');
+      expect(result?.id).toBe('507f1f77bcf86cd799439021');
       expect(result?.budget).toBe(5000);
       expect(result?.description).toBe('Summer sale campaign');
     });
@@ -82,7 +85,7 @@ describe('MongoCampaignRepository', () => {
     it('should return null when document is not found', async () => {
       (mockModel.exec as jest.Mock).mockResolvedValueOnce(null);
 
-      const result = await repo.findById('camp-456');
+      const result = await repo.findById('507f1f77bcf86cd799439021');
 
       expect(result).toBeNull();
     });
@@ -91,8 +94,8 @@ describe('MongoCampaignRepository', () => {
   describe('save', () => {
     it('should create new campaign document when id is undefined', async () => {
       const campaign = CampaignRoot.create({
-        ownerId: 'owner-123',
-        enterpriseId: 'ent-123',
+        ownerId: '507f1f77bcf86cd799439023',
+        enterpriseId: '507f1f77bcf86cd799439024',
         budget: 5000,
         financialTarget: {},
         description: 'Summer sale campaign',
@@ -100,26 +103,27 @@ describe('MongoCampaignRepository', () => {
         rawContents: [],
       });
 
-      const saveMock = jest.fn().mockResolvedValue({ _id: new Types.ObjectId('generated-camp-id') });
+      const saveMock = jest.fn().mockResolvedValue({ _id: new Types.ObjectId('507f1f77bcf86cd799439022') });
       mockModel.mockImplementation(() => ({ save: saveMock }));
 
       await repo.save(campaign);
 
       expect(saveMock).toHaveBeenCalled();
-      expect(campaign.id).toBe('generated-camp-id');
+      expect(campaign.id).toBe('507f1f77bcf86cd799439022');
     });
 
     it('should update existing campaign document when id is present', async () => {
-      const campaign = CampaignRoot.instantiate('camp-123', {
-        ownerId: 'owner-123',
-        enterpriseId: 'ent-123',
+      const campaign = CampaignRoot.instantiate('507f1f77bcf86cd799439021', {
+        ownerId: '507f1f77bcf86cd799439023',
+        enterpriseId: '507f1f77bcf86cd799439024',
         budget: 5000,
         financialTarget: {},
         description: 'Summer sale campaign Updated',
         platformTarget: [],
         status: ECampaignStatus.DRAFT,
-        collaboratorIds: ['owner-123'],
+        collaboratorIds: ['507f1f77bcf86cd799439023'],
         rawContents: [],
+        participants: [],
         deleteAt: null,
         deleteBy: null,
         createdAt: new Date(),
@@ -131,7 +135,7 @@ describe('MongoCampaignRepository', () => {
       await repo.save(campaign);
 
       expect(mockModel.findByIdAndUpdate).toHaveBeenCalledWith(
-        'camp-123',
+        '507f1f77bcf86cd799439021',
         expect.objectContaining({
           description: 'Summer sale campaign Updated',
         }),
@@ -144,9 +148,9 @@ describe('MongoCampaignRepository', () => {
     it('should call findByIdAndDelete with the correct id', async () => {
       (mockModel.exec as jest.Mock).mockResolvedValueOnce(undefined);
 
-      await repo.delete('camp-123');
+      await repo.delete('507f1f77bcf86cd799439021');
 
-      expect(mockModel.findByIdAndDelete).toHaveBeenCalledWith('camp-123');
+      expect(mockModel.findByIdAndDelete).toHaveBeenCalledWith('507f1f77bcf86cd799439021');
     });
   });
 });

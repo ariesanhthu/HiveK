@@ -16,8 +16,6 @@ import {
   CampaignParticipantGetListQueryHandler 
 } from '@/application/queries';
 
-import { LinkCampaignParticipantOutputFileHandler } from '@/application/events';
-
 import { 
   CampaignParticipantResolver
 } from '@/presentation/controllers'
@@ -39,7 +37,6 @@ const QUERY_HANDLERS = [
 ]
 
 const EVENT_HANDLERS = [
-  LinkCampaignParticipantOutputFileHandler
 ]
 
 @Module({

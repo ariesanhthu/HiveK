@@ -1,6 +1,28 @@
 import { DomainEvent, IntegrationEvent } from '@/core/common';
-import { EntityHardDeletedEvent, UserSignedUpEvent, VerificationOtpCreatedEvent, UserAddedToEnterpriseEvent, UserRevokedFromEnterpriseEvent, CampaignParticipantCreatedEvent } from '@/core/events';
-import { SendVerificationEmailRequestedEvent, NotifyEnterpriseInvitationEvent, NotifyEnterpriseRevocationEvent, NotifyKolCampaignInvitationEvent } from '../events';
+import { EGrantType } from '@/core/enums';
+import {
+  EntityHardDeletedEvent,
+  UserSignedUpEvent,
+  VerificationOtpCreatedEvent,
+  UserAddedToEnterpriseEvent,
+  UserRevokedFromEnterpriseEvent,
+  CampaignParticipantCreatedEvent,
+  SubscriptionUpdatedEvent,
+  PaymentAuthorizedEvent,
+  SocialPageConnectedEvent,
+  PostScheduledEvent,
+  PostPublishedEvent,
+  PostFailedEvent,
+} from '@/core/events';
+import {
+  SendVerificationEmailRequestedEvent,
+  NotifyEnterpriseInvitationEvent,
+  NotifyEnterpriseRevocationEvent,
+  NotifyKolCampaignInvitationEvent,
+  CapturePaymentRequestEvent,
+  RequestAuthUpdateSubscriptionEvent,
+  PostScheduledIntegrationEvent,
+} from '../events';
 
 export class EventMapper {
   /**
@@ -20,6 +42,39 @@ export class EventMapper {
         return EventMapper.mapUserRevokedFromEnterpriseEvent(event as UserRevokedFromEnterpriseEvent);
       case event instanceof CampaignParticipantCreatedEvent:
         return EventMapper.mapCampaignParticipantCreatedEvent(event as CampaignParticipantCreatedEvent);
+      case event instanceof PaymentAuthorizedEvent:
+        return [new CapturePaymentRequestEvent((event as PaymentAuthorizedEvent).payload)];
+      case event instanceof SubscriptionUpdatedEvent: {
+        const e = event as SubscriptionUpdatedEvent;
+        const quotaRecord: Record<string, number> = {};
+        for (const grant of e.payload.details.newGrants) {
+          if (grant.type === EGrantType.QUOTA_HARD || grant.type === EGrantType.QUOTA_RENEWABLE) {
+            quotaRecord[grant.key] = grant.value;
+          }
+        }
+        return [
+          new RequestAuthUpdateSubscriptionEvent(
+            {
+              id: e.payload.subscriptionHistoryId,
+              enterprise_id: e.payload.enterpriseId,
+              permission: e.payload.details.newPermissions,
+              quota: quotaRecord,
+              timestamp: new Date().toISOString(),
+            },
+            undefined,
+            {
+              topic: 'payment.subscription.auth.updated',
+              key: e.payload.subscriptionHistoryId,
+            }
+          ),
+        ];
+      }
+      case event instanceof PostScheduledEvent:
+        return EventMapper.mapPostScheduledEvent(event as PostScheduledEvent);
+      case event instanceof SocialPageConnectedEvent:
+      case event instanceof PostPublishedEvent:
+      case event instanceof PostFailedEvent:
+        return [];
       default:
         return [];
     }
@@ -104,6 +159,25 @@ export class EventMapper {
       {
         exchange: 'kpi_exchange',
         routingKey: 'notification.kol_campaign_invitation',
+      }
+    );
+    return [e];
+  }
+
+  private static mapPostScheduledEvent(event: PostScheduledEvent): IntegrationEvent[] {
+    const e = new PostScheduledIntegrationEvent(
+      {
+        postId: event.payload.postId,
+        enterpriseId: event.payload.enterpriseId,
+        socialPageId: event.payload.socialPageId,
+        scheduledAt: event.payload.scheduledAt.toISOString(),
+      },
+      {
+        deliverAt: event.payload.scheduledAt,
+      },
+      {
+        exchange: 'kpi_exchange',
+        routingKey: 'post.scheduled',
       }
     );
     return [e];

@@ -28,6 +28,9 @@ import { ScheduleModule } from '@nestjs/schedule';
 import { RedisCacheModule } from '../cache/redis/redis-cache.module';
 import { EventsModule } from '../events/events.module';
 import { EventEmitterModule } from '@nestjs/event-emitter';
+import { BillingModule } from '@/infrastructure/modules/billing.module';
+import { SubscriptionModule } from '@/infrastructure/modules/subscription.module';
+import { SocialNetworkModule } from '@/infrastructure/social-network/common/social-network.module';
 
 @Module({
   imports: [
@@ -54,6 +57,9 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
     GraphqlModule,
     RedisCacheModule,
     EventsModule,
+    BillingModule,
+    SubscriptionModule,
+    SocialNetworkModule,
     // ThrottlerModule.forRoot([
     //   {
     //     ttl: 60000, // 1 minute

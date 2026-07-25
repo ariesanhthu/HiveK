@@ -8,21 +8,15 @@ import {
   EnterpriseRestoreCommand,
   EnterpriseCreateInputDto,
   EnterpriseUpdateInputDto,
-  EnterpriseAddUserCommand,
-  EnterpriseRevokeUserCommand,
-  EnterpriseAddUserInputDto,
-  EnterpriseRevokeUserInputDto,
 } from '@/application/commands';
 import { EnterpriseDto, EnterpriseDetailDto, SoftDeleteInputDto } from '@/application/dtos';
 import { ApiTags, ApiOperation, ApiBearerAuth, ApiSecurity } from '@nestjs/swagger';
 import { buildVersionedRoute } from '@presentation/utils';
-import { JwtAuthGuard } from '@/presentation/middleware/guards/jwt-auth.guard';
-import { CurrentUser } from '@/presentation/decorators/current-user.decorator';
+import { JwtAuthGuard, RolesGuard } from '@/presentation/middleware/guards';
+import { CurrentUser, Roles, ApiOkResponseEnvelope, ApiPaginatedResponseEnvelope } from '@/presentation/decorators';
 import { PaginatedResponseDto } from '@/application/dtos/pagination.dto';
 import { EnterpriseFilterDto } from '@/application/queries/enterprise-get-list/enterprise-get-list.dto';
 import { ERoleType } from '@/core/enums/role-type.enum';
-import { RolesGuard } from '@/presentation/middleware/guards/roles.guard';
-import { Roles } from '@/presentation/decorators/roles.decorator';
 
 @ApiTags('ADMIN-enterprises')
 @ApiBearerAuth()
@@ -40,6 +34,7 @@ export class EnterpriseAdminController {
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Create new enterprise profile' })
+  @ApiOkResponseEnvelope(EnterpriseDto)
   async create(
     @CurrentUser('sub') userId: string,
     @Body() input: EnterpriseCreateInputDto,
@@ -51,6 +46,7 @@ export class EnterpriseAdminController {
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Update enterprise profile' })
+  @ApiOkResponseEnvelope(EnterpriseDto)
   async update(
     @Param('id') id: string,
     @CurrentUser('sub') userId: string,
@@ -62,6 +58,7 @@ export class EnterpriseAdminController {
   @Get()
   @UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: 'Get list of enterprises' })
+  @ApiPaginatedResponseEnvelope(EnterpriseDetailDto)
   async getList(@Query() filters: EnterpriseFilterDto): Promise<PaginatedResponseDto<EnterpriseDetailDto>> {
     return this.queryBus.execute(new EnterpriseGetListQuery(filters));
   }
@@ -69,6 +66,7 @@ export class EnterpriseAdminController {
   @Get(':id')
   @UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: 'Get enterprise by ID' })
+  @ApiOkResponseEnvelope(EnterpriseDetailDto)
   async getById(@Param('id') id: string): Promise<EnterpriseDetailDto> {
     const enterprise = await this.queryBus.execute<EnterpriseGetByIdQuery, EnterpriseDetailDto>(
       new EnterpriseGetByIdQuery(id),
@@ -95,28 +93,5 @@ export class EnterpriseAdminController {
   async restore(@Param('id') id: string): Promise<void> {
     return this.commandBus.execute(new EnterpriseRestoreCommand(id));
   }
-
-  @Post(':id/members')
-  @UseGuards(JwtAuthGuard)
-  @HttpCode(HttpStatus.NO_CONTENT)
-  @ApiOperation({ summary: 'Add user to enterprise' })
-  async addUser(
-    @CurrentUser('sub') requestedBy: string,
-    @Param('id') enterpriseId: string,
-    @Body() dto: EnterpriseAddUserInputDto,
-  ): Promise<void> {
-    return this.commandBus.execute(new EnterpriseAddUserCommand(enterpriseId, dto, requestedBy));
-  }
-
-  @Delete(':id/members')
-  @UseGuards(JwtAuthGuard)
-  @HttpCode(HttpStatus.NO_CONTENT)
-  @ApiOperation({ summary: 'Remove user from enterprise' })
-  async removeUser(
-    @CurrentUser('sub') requestedBy: string,
-    @Param('id') enterpriseId: string,
-    @Body() dto: EnterpriseRevokeUserInputDto,
-  ): Promise<void> {
-    return this.commandBus.execute(new EnterpriseRevokeUserCommand(enterpriseId, dto, requestedBy));
-  }
 }
+

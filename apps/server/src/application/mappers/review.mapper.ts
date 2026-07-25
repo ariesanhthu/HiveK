@@ -10,7 +10,7 @@ export class ReviewMapper {
       rating: root.rating,
       comment: root.comment,
       status: root.status,
-      createdAt: root.createdAt,
+      createdAt: root.createdAt.toISOString(),
     };
   }
 

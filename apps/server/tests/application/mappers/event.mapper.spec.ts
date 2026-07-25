@@ -1,6 +1,6 @@
 import { EventMapper } from '@/application/mappers/event.mapper';
 import { VerificationOtpCreatedEvent, UserSignedUpEvent, EntityHardDeletedEvent } from '@/core/events';
-import { EOtpType, ERoleType, TargetType } from '@/core/enums';
+import { EOtpType, ERoleType, ETargetType } from '@/core/enums';
 import { SendVerificationEmailRequestedEvent } from '@/application/events';
 
 describe('EventMapper', () => {
@@ -45,7 +45,7 @@ describe('EventMapper', () => {
     it('should return empty array for EntityHardDeletedEvent (currently unmapped)', () => {
       const domainEvent = new EntityHardDeletedEvent('ent-1', {
         entityId: 'ent-1',
-        targetType: TargetType.USER,
+        targetType: ETargetType.USER,
       });
 
       const integrationEvents = EventMapper.mapToIntegrationEvents([domainEvent]);

@@ -1,6 +1,7 @@
 import { BaseAggregateRoot } from '@/core/common/base.aggregate-root';
-import { TargetType } from '../enums/target-type.enum';
+import { ETargetType } from '../enums/target-type.enum';
 import { Nullable } from '@/core/types';
+import { UploadedFileCreatedEvent } from '../events/uploaded-file-created.domain-event';
 
 export interface UploadedFileProps {
   url: string;
@@ -8,7 +9,7 @@ export interface UploadedFileProps {
   size: number;
   format: string;
   title: Nullable<string>;
-  targetType: TargetType;
+  targetType: ETargetType;
   targetId: string;
   targetField: string;
   deleteAt: Nullable<Date>;
@@ -23,7 +24,7 @@ export interface UploadedFileCreateProps {
   size: number;
   format: string;
   title?: Nullable<string>;
-  targetType: TargetType;
+  targetType: ETargetType;
   targetId: string;
   targetField: string;
 }
@@ -38,7 +39,7 @@ export class UploadedFileRoot extends BaseAggregateRoot<UploadedFileProps> {
 
   public static create(props: UploadedFileCreateProps): UploadedFileRoot {
     const now = new Date();
-    return new UploadedFileRoot({
+    const root = new UploadedFileRoot({
       ...props,
       title: props.title ?? null,
       createdAt: now,
@@ -46,6 +47,15 @@ export class UploadedFileRoot extends BaseAggregateRoot<UploadedFileProps> {
       deleteAt: null,
       deleteBy: null,
     });
+    root.addDomainEvent(
+      new UploadedFileCreatedEvent(root.id!, {
+        fileId: root.id!,
+        targetType: root.targetType,
+        targetId: root.targetId,
+        targetField: root.targetField,
+      }),
+    );
+    return root;
   }
 
   public static instantiate(id: string, props: UploadedFileProps): UploadedFileRoot {
@@ -72,7 +82,7 @@ export class UploadedFileRoot extends BaseAggregateRoot<UploadedFileProps> {
     return this.props.title;
   }
 
-  get targetType(): TargetType {
+  get targetType(): ETargetType {
     return this.props.targetType;
   }
 

@@ -19,12 +19,14 @@ import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { ApiTags, ApiOperation, ApiConsumes, ApiBody, ApiBearerAuth, ApiSecurity } from '@nestjs/swagger';
 import { buildVersionedRoute } from '@presentation/utils';
 import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
-import { TargetType } from '@/core/enums/target-type.enum';
+import { ETargetType } from '@/core/enums/target-type.enum';
 import {
   UploadedFileCreateCommand,
   UploadedFileBulkCreateCommand,
   UploadedFileRestoreCommand,
   UploadedFileCreateInputDto,
+  UploadedFileSoftDeleteCommand,
+  UploadedFileDeleteCommand,
 } from '@/application/commands';
 import {
   UploadedFileGetListQuery,
@@ -36,7 +38,7 @@ import { PaginatedResponseDto } from '@/application/dtos/pagination.dto';
 import { JwtAuthGuard, RolesGuard } from '@/presentation/middleware/guards';
 import { FileUploadValidationPipe } from '@/presentation/middleware/pipes/file-upload-validation.pipe';
 import { ERoleType } from '@/core/enums/role-type.enum';
-import { Roles } from '@/presentation/decorators/roles.decorator';
+import { Roles, ApiOkResponseEnvelope, ApiPaginatedResponseEnvelope } from '@/presentation/decorators';
 import { isEmpty } from '@/shared/utils';
 
 @ApiTags('ADMIN-upload')
@@ -49,16 +51,18 @@ export class UploadedFileAdminController {
   constructor(
     private readonly commandBus: CommandBus,
     private readonly queryBus: QueryBus,
-  ) {}
+  ) { }
 
   @Get()
   @ApiOperation({ summary: 'Get all uploaded files' })
+  @ApiPaginatedResponseEnvelope(UploadedFileDto)
   async findAll(@Query() filters: UploadedFileFilterDto): Promise<PaginatedResponseDto<UploadedFileDto>> {
     return this.queryBus.execute(new UploadedFileGetListQuery(filters));
   }
 
   @Get(':id')
   @ApiOperation({ summary: 'Get uploaded file by ID' })
+  @ApiOkResponseEnvelope(UploadedFileDto)
   async findById(@Param('id') id: string): Promise<UploadedFileDto> {
     return this.queryBus.execute(new UploadedFileGetByIdQuery(id));
   }
@@ -81,7 +85,7 @@ export class UploadedFileAdminController {
         },
         targetType: {
           type: 'string',
-          enum: Object.values(TargetType),
+          enum: Object.values(ETargetType),
           description: 'Domain target type (USER, KOL_PROFILE, PLATFORM, CAMPAIGN, ENTERPRISE)',
         },
         targetId: {
@@ -97,6 +101,7 @@ export class UploadedFileAdminController {
     },
   })
   @ApiOperation({ summary: 'Upload and create new file (Max 25MB, Images/Docs/PDF only)' })
+  @ApiOkResponseEnvelope(UploadedFileDto)
   async create(
     @UploadedFile(new FileUploadValidationPipe()) file: Express.Multer.File,
     @Body() input: UploadedFileCreateInputDto,
@@ -137,7 +142,7 @@ export class UploadedFileAdminController {
         },
         targetType: {
           type: 'string',
-          enum: Object.values(TargetType),
+          enum: Object.values(ETargetType),
           description: 'Domain target type (USER, KOL_PROFILE, PLATFORM, CAMPAIGN, ENTERPRISE)',
         },
         targetId: {
@@ -153,15 +158,13 @@ export class UploadedFileAdminController {
     },
   })
   @ApiOperation({ summary: 'Upload and create multiple files (limit to 10, Max 25MB each)' })
+  @ApiOkResponseEnvelope(UploadedFileDto)
   async createBulk(
     @UploadedFiles(new FileUploadValidationPipe()) files: Express.Multer.File[],
     @Body() input: UploadedFileCreateInputDto,
   ): Promise<UploadedFileDto[]> {
     if (isEmpty(files)) {
       throw new BadRequestException('At least one file is required');
-    }
-    if (files.length > 10) {
-      throw new BadRequestException('Cannot upload more than 10 files at a time');
     }
     return this.commandBus.execute(
       new UploadedFileBulkCreateCommand(
@@ -175,29 +178,28 @@ export class UploadedFileAdminController {
     );
   }
 
-  /*
   @Patch(':id/soft-delete')
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: 'Soft delete uploaded file' })
   async delete(
     @Param('id') id: string,
-    @Query() dto: SoftDeleteInputDto,
+    @Body() dto: { deletedBy: string },
   ): Promise<void> {
-    return this.commandBus.execute(new UploadedFileSoftDeleteCommand(id, dto.deletedBy));
+    await this.commandBus.execute(new UploadedFileSoftDeleteCommand(id, dto.deletedBy));
   }
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: 'Hard delete uploaded file' })
   async hardDelete(@Param('id') id: string): Promise<void> {
-    return this.commandBus.execute(new UploadedFileDeleteCommand(id));
+    await this.commandBus.execute(new UploadedFileDeleteCommand(id));
   }
-  */
 
   @Patch(':id/restore')
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: 'Restore soft deleted uploaded file' })
   async restore(@Param('id') id: string): Promise<void> {
-    return this.commandBus.execute(new UploadedFileRestoreCommand(id));
+    await this.commandBus.execute(new UploadedFileRestoreCommand(id));
   }
 }
+

@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { createZodDto } from 'nestjs-zod';
-import { NotificationType, TargetType } from '@/core/enums';
+import { NotificationType, ETargetType } from '@/core/enums';
 
 import { CursorPaginationRequestSchema } from '@/application/dtos/pagination.dto';
 
@@ -10,14 +10,14 @@ export const NotificationDtoSchema = z.object({
   type: z.enum(NotificationType),
   title: z.string(),
   content: z.string(),
-  targetType: z.enum(TargetType).nullable().optional(),
+  targetType: z.enum(ETargetType).nullable().optional(),
   targetId: z.string().nullable().optional(),
   isRead: z.boolean(),
-  readAt: z.string().nullable().optional(),
-  createdAt: z.string(),
+  readAt: z.iso.datetime().nullable().optional(),
+  createdAt: z.iso.datetime(),
 }).strict();
 
-export class NotificationDto extends createZodDto(NotificationDtoSchema) {}
+export class NotificationDto extends createZodDto(NotificationDtoSchema) { }
 
 export const NotificationFilterDtoSchema = CursorPaginationRequestSchema.extend({
   recipientId: z.string().optional(),
@@ -27,4 +27,4 @@ export const NotificationFilterDtoSchema = CursorPaginationRequestSchema.extend(
   ),
 });
 
-export class NotificationFilterDto extends createZodDto(NotificationFilterDtoSchema) {}
+export class NotificationFilterDto extends createZodDto(NotificationFilterDtoSchema) { }

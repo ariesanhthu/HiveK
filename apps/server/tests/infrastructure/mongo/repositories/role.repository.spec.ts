@@ -1,19 +1,22 @@
-import { Types } from 'mongoose';
-import { MongoRoleRepository } from '@/infrastructure/mongo/repositories/role.repository';
-import { RoleRoot } from '@/core/aggregate-roots';
-import { ERoleType } from '@/core/enums';
+// Enterprise schema loading triggers SchemaFactory.createForClass which breaks with mongoose mock
+jest.mock('@/infrastructure/mongo/schemas/enterprise.schema', () => ({}));
 
+// Keep real Types.ObjectId to avoid SchemaFactory.createForClass validation failures
 jest.mock('mongoose', () => {
   const actual = jest.requireActual('mongoose');
   return {
     ...actual,
     Types: {
-      ObjectId: jest.fn().mockImplementation((id: string) => ({
-        toString: () => id,
-      })),
+      ...actual.Types,
+      ObjectId: actual.Types.ObjectId,
     },
   };
 });
+
+import { Types } from 'mongoose';
+import { MongoRoleRepository } from '@/infrastructure/mongo/repositories/role.repository';
+import { RoleRoot } from '@/core/aggregate-roots';
+import { ERoleType } from '@/core/enums';
 
 describe('MongoRoleRepository', () => {
   let repo: MongoRoleRepository;
@@ -21,7 +24,7 @@ describe('MongoRoleRepository', () => {
   let mockUow: any;
 
   const roleDoc = {
-    _id: new Types.ObjectId('role-123'),
+    _id: new Types.ObjectId('507f1f77bcf86cd799439011'),
     title: 'Admin',
     permissions: ['read', 'write'],
     type: ERoleType.ADMIN,
@@ -30,6 +33,13 @@ describe('MongoRoleRepository', () => {
     created_at: new Date(),
     updated_at: new Date(),
   } as any;
+
+  const mockCacheService = {
+    get: jest.fn().mockResolvedValue(null),
+    set: jest.fn().mockResolvedValue(undefined),
+    del: jest.fn().mockResolvedValue(undefined),
+    delByPattern: jest.fn().mockResolvedValue(undefined),
+  };
 
   beforeEach(() => {
     mockModel = jest.fn();
@@ -45,18 +55,18 @@ describe('MongoRoleRepository', () => {
       getSession: jest.fn().mockReturnValue(null),
     };
 
-    repo = new MongoRoleRepository(mockModel as any, mockUow);
+    repo = new MongoRoleRepository(mockModel as any, mockUow, mockCacheService as any);
   });
 
   describe('findById', () => {
     it('should return RoleRoot when document is found', async () => {
       (mockModel.exec as jest.Mock).mockResolvedValueOnce(roleDoc);
 
-      const result = await repo.findById('role-123');
+      const result = await repo.findById('507f1f77bcf86cd799439011');
 
-      expect(mockModel.findById).toHaveBeenCalledWith('role-123');
+      expect(mockModel.findById).toHaveBeenCalledWith('507f1f77bcf86cd799439011');
       expect(result).toBeInstanceOf(RoleRoot);
-      expect(result?.id).toBe('role-123');
+      expect(result?.id).toBe('507f1f77bcf86cd799439011');
       expect(result?.title).toBe('Admin');
     });
   });
@@ -80,17 +90,17 @@ describe('MongoRoleRepository', () => {
         type: ERoleType.ENTERPRISE_ADMIN,
       });
 
-      const saveMock = jest.fn().mockResolvedValue({ _id: new Types.ObjectId('gen-role-id') });
+      const saveMock = jest.fn().mockResolvedValue({ _id: new Types.ObjectId('507f1f77bcf86cd799439012') });
       mockModel.mockImplementation(() => ({ save: saveMock }));
 
       await repo.save(role);
 
       expect(saveMock).toHaveBeenCalled();
-      expect(role.id).toBe('gen-role-id');
+      expect(role.id).toBe('507f1f77bcf86cd799439012');
     });
 
     it('should update existing role document when id is present', async () => {
-      const role = RoleRoot.instantiate('role-123', {
+      const role = RoleRoot.instantiate('507f1f77bcf86cd799439011', {
         title: 'Admin Updated',
         permissions: ['*'],
         type: ERoleType.ADMIN,
@@ -105,7 +115,7 @@ describe('MongoRoleRepository', () => {
       await repo.save(role);
 
       expect(mockModel.findByIdAndUpdate).toHaveBeenCalledWith(
-        'role-123',
+        '507f1f77bcf86cd799439011',
         expect.objectContaining({
           title: 'Admin Updated',
         }),

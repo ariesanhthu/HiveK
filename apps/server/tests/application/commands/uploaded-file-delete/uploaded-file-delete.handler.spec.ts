@@ -2,26 +2,29 @@ import { UploadedFileDeleteCommandHandler } from '@/application/commands/uploade
 import { UploadedFileDeleteCommand } from '@/application/commands/uploaded-file-delete/uploaded-file-delete.command';
 import { UploadedFileNotFoundException } from '@/core/exceptions';
 import { UploadedFileRoot } from '@/core/aggregate-roots';
-import { TargetType } from '@/core/enums';
+import { ETargetType } from '@/core/enums';
 import { createMockUploadedFileRepository } from '../../../__mocks__/mock-repositories';
-import { createMockStorageService, createMockAuthService } from '../../../__mocks__/mock-services';
+import { createMockStorageService } from '../../../__mocks__/mock-services';
 import { UploadService } from '@/application/services';
+import { IMAGE_PROCESSOR_SERVICE, type IImageProcessorService } from '@/application/interfaces';
 
 describe('UploadedFileDeleteCommandHandler', () => {
   let handler: UploadedFileDeleteCommandHandler;
   let mockRepository: ReturnType<typeof createMockUploadedFileRepository>;
   let mockStorageService: ReturnType<typeof createMockStorageService>;
   let uploadService: UploadService;
+  let mockImageProcessor: jest.Mocked<IImageProcessorService>;
 
   beforeEach(() => {
     mockRepository = createMockUploadedFileRepository();
     mockStorageService = createMockStorageService();
-    uploadService = new UploadService();
+    mockImageProcessor = { compress: jest.fn() };
+    uploadService = new UploadService(mockImageProcessor);
 
     handler = new UploadedFileDeleteCommandHandler(
-        mockRepository, 
-        mockStorageService as any, 
-        uploadService
+        mockRepository,
+        mockStorageService as any,
+        uploadService,
     );
   });
 
@@ -32,7 +35,7 @@ describe('UploadedFileDeleteCommandHandler', () => {
     size: 1000,
     format: 'jpg',
     title: 'Test File',
-    targetType: TargetType.USER,
+    targetType: ETargetType.USER,
     targetId: 'user-1',
     targetField: 'avatar',
     createdAt: new Date(),
@@ -52,10 +55,20 @@ describe('UploadedFileDeleteCommandHandler', () => {
       expect(mockRepository.delete).toHaveBeenCalledWith(fileId);
     });
 
-    it('should skip storage deletion if publicId is missing', async () => {
+    it('should skip storage deletion if publicId is empty', async () => {
       const file = UploadedFileRoot.instantiate(fileId, {
-        ...createMockFile().props,
+        url: 'http://test.com/file.jpg',
         publicId: '',
+        size: 1000,
+        format: 'jpg',
+        title: 'Test File',
+        targetType: ETargetType.USER,
+        targetId: 'user-1',
+        targetField: 'avatar',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        deleteAt: null,
+        deleteBy: null,
       });
       mockRepository.findById.mockResolvedValue(file);
 

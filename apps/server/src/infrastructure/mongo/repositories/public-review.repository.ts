@@ -30,16 +30,16 @@ export class MongoPublicReviewRepository implements IPublicReviewRepository {
 
   async findByProposalId(proposalId: string): Promise<PublicReviewRoot[]> {
     const docs = await this.reviewModel.find({
-      proposal_id: new Types.ObjectId(proposalId) as any,
-    }).session(this.session).exec();
+      proposal_id: new Types.ObjectId(proposalId),
+    } as Record<string, unknown>).session(this.session).exec();
     return docs.map((doc) => this.mapToDomain(doc));
   }
 
-  async findByProposalIdAndStatus(proposalId: string, status: string): Promise<PublicReviewRoot[]> {
+  async findByProposalIdAndStatus(proposalId: string, status: EReviewStatus): Promise<PublicReviewRoot[]> {
     const docs = await this.reviewModel.find({
-      proposal_id: new Types.ObjectId(proposalId) as any,
-      status: status as EReviewStatus,
-    }).session(this.session).exec();
+      proposal_id: new Types.ObjectId(proposalId),
+      status,
+    } as Record<string, unknown>).session(this.session).exec();
     return docs.map((doc) => this.mapToDomain(doc));
   }
 
@@ -80,14 +80,14 @@ export class MongoPublicReviewRepository implements IPublicReviewRepository {
       }),
       deleteAt: doc.delete_at,
       deleteBy: doc.delete_by,
-      createdAt: (doc as any).created_at,
-      updatedAt: (doc as any).updated_at,
+      createdAt: doc.created_at,
+      updatedAt: doc.updated_at,
     });
   }
 
-  private mapToPersistence(review: PublicReviewRoot): Omit<PublicReviewModel, 'created_at' | 'updated_at'> {
+  private mapToPersistence(review: PublicReviewRoot): Record<string, unknown> {
     return {
-      proposal_id: new Types.ObjectId(review.proposalId) as any,
+      proposal_id: new Types.ObjectId(review.proposalId),
       author_name: review.authorName,
       rating: review.rating,
       comment: review.comment,

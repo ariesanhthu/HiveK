@@ -4,7 +4,7 @@ import { AuthSendOtpCommand } from '@/application/commands/auth-send-otp/auth-se
 import { EOtpType, ERoleType } from '@/core/enums';
 import { OtpRateLimitException, ForbiddenDomainException, UserNotFoundException } from '@/core/exceptions';
 import { createMockOtpRepository, createMockUserRepository } from '../../../__mocks__/mock-repositories';
-import { createMockAuthService, createMockOutboxService, createMockUnitOfWork } from '../../../__mocks__/mock-services';
+import { createMockAuthService, createMockEventService, createMockUnitOfWork } from '../../../__mocks__/mock-services';
 import { OtpRoot } from '@/core/aggregate-roots/otp.aggregate';
 import { KOLUserRoot } from '@/core/aggregate-roots/kol-user.aggregate';
 import { PhoneNumberVO } from '@/core/value-objects/phone-number.value-object';
@@ -13,21 +13,21 @@ describe('AuthSendOtpCommandHandler', () => {
   let handler: AuthSendOtpCommandHandler;
   let mockOtpRepository: ReturnType<typeof createMockOtpRepository>;
   let mockUserRepository: ReturnType<typeof createMockUserRepository>;
-  let mockOutboxService: ReturnType<typeof createMockOutboxService>;
+  let mockEventService: ReturnType<typeof createMockEventService>;
   let mockAuthService: ReturnType<typeof createMockAuthService>;
   let mockUow: ReturnType<typeof createMockUnitOfWork>;
 
   beforeEach(() => {
     mockOtpRepository = createMockOtpRepository();
     mockUserRepository = createMockUserRepository();
-    mockOutboxService = createMockOutboxService();
+    mockEventService = createMockEventService();
     mockAuthService = createMockAuthService();
     mockUow = createMockUnitOfWork();
 
     handler = new AuthSendOtpCommandHandler(
       mockOtpRepository,
       mockUserRepository,
-      mockOutboxService,
+      mockEventService,
       mockAuthService,
       mockUow,
     );
@@ -38,17 +38,35 @@ describe('AuthSendOtpCommandHandler', () => {
       const input = { email: 'user@example.com', type: EOtpType.RESET_PASSWORD };
       const command = new AuthSendOtpCommand(input);
 
+      const mockUser = KOLUserRoot.instantiate('user-123', {
+        email: 'user@example.com',
+        phone: PhoneNumberVO.create({ value: '+84987654321' }),
+        passwordHash: 'hashed',
+        roleId: 'role-1',
+        isEmailVerified: false,
+        type: ERoleType.KOL,
+        fullName: 'KOL User',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        deleteAt: null,
+        deleteBy: null,
+        refreshToken: null,
+        googleId: null,
+      });
+
+      mockUserRepository.findByEmail.mockResolvedValue(mockUser);
       mockOtpRepository.findRecentOtp.mockResolvedValue(null);
 
       const result = await handler.execute(command);
 
       expect(result).toEqual({ success: true });
       expect(mockAuthService.normalizeEmail).toHaveBeenCalledWith('user@example.com');
+      expect(mockUserRepository.findByEmail).toHaveBeenCalledWith('user@example.com');
       expect(mockOtpRepository.findRecentOtp).toHaveBeenCalledWith('user@example.com', EOtpType.RESET_PASSWORD, 60);
       expect(mockOtpRepository.deleteByEmailAndType).toHaveBeenCalledWith('user@example.com', EOtpType.RESET_PASSWORD);
       expect(mockOtpRepository.save).toHaveBeenCalledWith(expect.any(OtpRoot));
       
-      expect(mockOutboxService.enqueueMany).toHaveBeenCalled();
+      expect(mockEventService.publishEvents).toHaveBeenCalled();
       expect(mockUow.execute).toHaveBeenCalled();
     });
 
@@ -81,7 +99,7 @@ describe('AuthSendOtpCommandHandler', () => {
       expect(result).toEqual({ success: true });
       expect(mockUserRepository.findById).toHaveBeenCalledWith(userId);
       expect(mockOtpRepository.save).toHaveBeenCalledWith(expect.any(OtpRoot));
-      expect(mockOutboxService.enqueueMany).toHaveBeenCalled();
+      expect(mockEventService.publishEvents).toHaveBeenCalled();
     });
   });
 
@@ -89,6 +107,24 @@ describe('AuthSendOtpCommandHandler', () => {
     it('should throw OtpRateLimitException if an OTP was sent within the last 60 seconds', async () => {
       const input = { email: 'busy@example.com', type: EOtpType.RESET_PASSWORD };
       const command = new AuthSendOtpCommand(input);
+
+      const mockUser = KOLUserRoot.instantiate('user-456', {
+        email: 'busy@example.com',
+        phone: PhoneNumberVO.create({ value: '+84987654321' }),
+        passwordHash: 'hashed',
+        roleId: 'role-1',
+        isEmailVerified: false,
+        type: ERoleType.KOL,
+        fullName: 'KOL User',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        deleteAt: null,
+        deleteBy: null,
+        refreshToken: null,
+        googleId: null,
+      });
+
+      mockUserRepository.findByEmail.mockResolvedValue(mockUser);
 
       const recentOtp = OtpRoot.instantiate({
         id: 'otp-1',

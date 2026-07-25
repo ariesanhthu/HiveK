@@ -1,10 +1,8 @@
 import { CommandHandler, ICommandHandler, EventBus } from '@nestjs/cqrs';
 import { Inject } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
 import { ERoleType } from '@/core/enums';
-import { UserModel, UserDocument } from '@/infrastructure/mongo/schemas/user.schema';
 import { ENTERPRISE_REPOSITORY, type IEnterpriseRepository } from '@/core/interfaces/repositories';
+import { USER_READ_SERVICE, type IUserReadService } from '@/application/interfaces';
 import { NotificationSendCommand } from './notification-send.command';
 import { NotificationDispatchedEvent } from '@/application/events';
 import { EnterpriseNotFoundException, InvalidOperationException } from '@/core/exceptions';
@@ -14,8 +12,8 @@ import { isEmpty } from '@/shared/utils';
 export class NotificationSendCommandHandler implements ICommandHandler<NotificationSendCommand, void> {
   constructor(
     private readonly eventBus: EventBus,
-    @InjectModel(UserModel.name)
-    private readonly userModel: Model<UserDocument>,
+    @Inject(USER_READ_SERVICE)
+    private readonly userReadService: IUserReadService,
     @Inject(ENTERPRISE_REPOSITORY)
     private readonly enterpriseRepository: IEnterpriseRepository,
   ) {}
@@ -33,12 +31,7 @@ export class NotificationSendCommandHandler implements ICommandHandler<Notificat
         break;
       }
       case 'admin': {
-        const admins = await this.userModel
-          .find({ type: ERoleType.ADMIN, delete_at: null })
-          .select('_id')
-          .lean()
-          .exec();
-        recipientIds.push(...admins.map((admin) => admin._id.toString()));
+        recipientIds.push(...await this.userReadService.findByRoleType(ERoleType.ADMIN));
         break;
       }
       case 'enterprise': {
@@ -53,13 +46,7 @@ export class NotificationSendCommandHandler implements ICommandHandler<Notificat
         }
 
         // Fetch enterprise members
-        const members = await this.userModel
-          .find({ type: ERoleType.ENTERPRISE, enterprise_id: enterpriseId, delete_at: null })
-          .select('_id')
-          .lean()
-          .exec();
-
-        const memberIds = members.map((m) => m._id.toString());
+        const memberIds = await this.userReadService.findByEnterprise(enterpriseId);
         const uniqueIds = new Set<string>(memberIds);
 
         // Include enterprise owner
@@ -71,16 +58,14 @@ export class NotificationSendCommandHandler implements ICommandHandler<Notificat
         break;
       }
       case 'all': {
-        const allUsers = await this.userModel
-          .find({ delete_at: null })
-          .select('_id')
-          .lean()
-          .exec();
-        recipientIds.push(...allUsers.map((u) => u._id.toString()));
+        recipientIds.push(...await this.userReadService.findAllActive());
         break;
       }
-      default:
-        throw new InvalidOperationException(`Unknown broadcast type: ${(props.audience as any).broadcastType}`);
+      default: {
+        // Exhaustive check - TypeScript will error if we miss a case
+        const _exhaustiveCheck: never = props.audience.broadcastType;
+        throw new InvalidOperationException(`Unknown broadcast type: ${_exhaustiveCheck}`);
+      }
     }
 
     if (recipientIds.length === 0) {

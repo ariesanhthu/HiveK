@@ -6,7 +6,7 @@ import { UserNotFoundException, InvalidOperationException } from '@/core/excepti
 import { createMockUserRepository, createMockOtpRepository } from '../../../__mocks__/mock-repositories';
 import {
   createMockAuthService,
-  createMockOutboxService,
+  createMockEventService,
   createMockUnitOfWork,
 } from '../../../__mocks__/mock-services';
 import { PhoneNumberVO } from '@/core/value-objects/phone-number.value-object';
@@ -16,21 +16,21 @@ describe('AuthVerifyOtpCommandHandler', () => {
   let mockUserRepository: ReturnType<typeof createMockUserRepository>;
   let mockOtpRepository: ReturnType<typeof createMockOtpRepository>;
   let mockAuthService: ReturnType<typeof createMockAuthService>;
-  let mockOutboxService: ReturnType<typeof createMockOutboxService>;
+  let mockEventService: ReturnType<typeof createMockEventService>;
   let mockUow: ReturnType<typeof createMockUnitOfWork>;
 
   beforeEach(() => {
     mockUserRepository = createMockUserRepository();
     mockOtpRepository = createMockOtpRepository();
     mockAuthService = createMockAuthService();
-    mockOutboxService = createMockOutboxService();
+    mockEventService = createMockEventService();
     mockUow = createMockUnitOfWork();
 
     handler = new AuthVerifyOtpCommandHandler(
       mockUserRepository,
       mockOtpRepository,
       mockAuthService,
-      mockOutboxService,
+      mockEventService,
       mockUow,
     );
   });

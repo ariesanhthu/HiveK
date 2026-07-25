@@ -9,5 +9,18 @@ export * from './notification.repository';
 export * from './user-notification.repository';
 export * from './otp.repository';
 export * from './kpi-log.repository';
-
-
+export * from './campaign-proposal.repository';
+export * from './public-review.repository';
+export * from './mongo-bill.repository';
+export * from './mongo-package.repository';
+export * from './mongo-payment-provider.repository';
+export * from './mongo-payment.repository';
+export * from './mongo-subscription.repository';
+export * from './mongo-subscription-history.repository';
+export * from './social-page.repository';
+export * from './scheduled-post.repository';
+export * from './auto-reply-rule.repository';
+export * from './mongo-credit-wallet.repository';
+export * from './mongo-quota-usage.repository';
+export * from './enterprise-invitation.repository';
+export * from './mongo-enterprise-quota-allocation.repository';

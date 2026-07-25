@@ -12,7 +12,7 @@ export interface ISendMailOptions {
   bcc?: string | string[];
   attachments?: Array<{
     filename: string;
-    content?: any;
+    content?: Buffer | string;
     path?: string;
     contentType?: string;
   }>;

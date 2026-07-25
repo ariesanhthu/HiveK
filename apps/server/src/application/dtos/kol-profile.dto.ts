@@ -23,7 +23,7 @@ export const KolProfileDtoSchema = z.object({
   phone: z.string(),
   platforms: z.array(KolPlatformInfoDtoSchema),
   isVerified: z.boolean(),
-  scores: z.record(z.string(), z.any()).optional(),
+  scores: z.record(z.string(), z.unknown()).optional(),
 }).strict();
 
 import { UserDto } from './user.dto';

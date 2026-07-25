@@ -11,7 +11,7 @@ export class EnterpriseType {
   userId: string;
 
   @Field(() => UserType, { nullable: true })
-  user?: any;
+  user?: UserType | null;
 
   @Field()
   companyName: string;
@@ -35,7 +35,7 @@ export class EnterpriseType {
   logoUrlId?: string;
 
   @Field(() => UploadedFileType, { nullable: true })
-  logoUrl?: any;
+  logoUrl?: UploadedFileType | null;
 
   @Field()
   isVerified: boolean;

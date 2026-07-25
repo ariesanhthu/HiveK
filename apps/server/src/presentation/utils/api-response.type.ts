@@ -1,7 +1,9 @@
+import type { JsonObject, JsonValue } from '@/core/types/common.type';
+
 export interface ApiResponse<T> {
-  success: boolean;       // Always present. True for 2xx, False for 4xx/5xx
+  success: boolean;
   data: T | null;         // Holds payload on success; null on error
-  error: {                // Holds details on error; null on success
+  error: {
     code: string;         // Machine-readable error identifier (e.g., "NOT_FOUND")
     message: string;      // Human-readable generic error message
     details?: Array<{     // Optional: Contextual errors (validation, boundaries)
@@ -9,15 +11,12 @@ export interface ApiResponse<T> {
       message: string;
     }>;
   } | null;
-  meta: (CursorPaginationMeta & {
-    [key: string]: any;
-  }) | {                // Holds metadata; null if not applicable
-    [key: string]: any;   // Allows for other custom metadata keys
-  } | null;
+  meta: CursorPaginationMeta | JsonObject | null;
 }
 
 export interface CursorPaginationMeta {
   cursor: string;
   has_next: boolean;
   limit: number;
+  [key: string]: JsonValue;
 }

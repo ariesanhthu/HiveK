@@ -1,12 +1,12 @@
 import { BaseAggregateRoot } from '@/core/common/base.aggregate-root';
 import { Nullable } from '@/core/types';
-import { NotificationType, TargetType } from '@/core/enums';
+import { NotificationType, ETargetType } from '@/core/enums';
 
 export interface NotificationProps {
   type: NotificationType;
   title: string;
   content: string;
-  targetType: Nullable<TargetType>;
+  targetType: Nullable<ETargetType>;
   targetId: Nullable<string>;
   createdAt: Date;
   updatedAt: Date;
@@ -44,7 +44,7 @@ export class NotificationRoot extends BaseAggregateRoot<NotificationProps> {
     return this.props.content;
   }
 
-  get targetType(): Nullable<TargetType> {
+  get targetType(): Nullable<ETargetType> {
     return this.props.targetType;
   }
 

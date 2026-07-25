@@ -5,7 +5,7 @@ import { KOLUserRoot } from '@/core/aggregate-roots/kol-user.aggregate';
 import { OtpRoot } from '@/core/aggregate-roots/otp.aggregate';
 import { UserNotFoundException, InvalidOperationException } from '@/core/exceptions';
 import { createMockUserRepository, createMockOtpRepository } from '../../../__mocks__/mock-repositories';
-import { createMockAuthService, createMockOutboxService, createMockUnitOfWork } from '../../../__mocks__/mock-services';
+import { createMockAuthService, createMockEventService, createMockUnitOfWork } from '../../../__mocks__/mock-services';
 import { PhoneNumberVO } from '@/core/value-objects/phone-number.value-object';
 
 describe('AuthResetPasswordCommandHandler', () => {
@@ -13,21 +13,21 @@ describe('AuthResetPasswordCommandHandler', () => {
   let mockUserRepository: ReturnType<typeof createMockUserRepository>;
   let mockOtpRepository: ReturnType<typeof createMockOtpRepository>;
   let mockAuthService: ReturnType<typeof createMockAuthService>;
-  let mockOutboxService: ReturnType<typeof createMockOutboxService>;
+  let mockEventService: ReturnType<typeof createMockEventService>;
   let mockUow: ReturnType<typeof createMockUnitOfWork>;
 
   beforeEach(() => {
     mockUserRepository = createMockUserRepository();
     mockOtpRepository = createMockOtpRepository();
     mockAuthService = createMockAuthService();
-    mockOutboxService = createMockOutboxService();
+    mockEventService = createMockEventService();
     mockUow = createMockUnitOfWork();
 
     handler = new AuthResetPasswordCommandHandler(
       mockUserRepository,
       mockOtpRepository,
       mockAuthService,
-      mockOutboxService,
+      mockEventService,
       mockUow,
     );
   });

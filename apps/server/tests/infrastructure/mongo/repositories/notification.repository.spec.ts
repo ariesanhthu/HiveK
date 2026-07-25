@@ -3,7 +3,7 @@ import { getModelToken } from '@nestjs/mongoose';
 import { MongoNotificationRepository } from '@/infrastructure/mongo/repositories/notification.repository';
 import { NotificationModel } from '@/infrastructure/mongo/schemas/notification.schema';
 import { NotificationRoot } from '@/core/aggregate-roots';
-import { NotificationType, TargetType } from '@/core/enums';
+import { NotificationType, ETargetType } from '@/core/enums';
 import { Types } from 'mongoose';
 import { UNIT_OF_WORK } from '@/application/interfaces';
 
@@ -17,7 +17,7 @@ describe('MongoNotificationRepository', () => {
     type: NotificationType.SYSTEM,
     title: 'Test Notification',
     content: 'Content',
-    target_type: TargetType.ALL,
+    target_type: ETargetType.ALL,
     target_id: null,
     created_at: new Date(),
     updated_at: new Date(),
@@ -70,7 +70,7 @@ describe('MongoNotificationRepository', () => {
       type: NotificationType.SYSTEM,
       title: 'New Notification',
       content: 'Content',
-      targetType: TargetType.ALL,
+      targetType: ETargetType.ALL,
       targetId: null,
     });
 

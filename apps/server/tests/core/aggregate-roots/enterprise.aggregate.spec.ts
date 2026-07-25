@@ -1,4 +1,5 @@
 import { EnterpriseRoot } from '@core/aggregate-roots/enterprise.aggregate';
+import { PhoneNumberVO } from '@core/value-objects/phone-number.value-object';
 
 describe('EnterpriseRoot', () => {
   const props = {
@@ -6,13 +7,16 @@ describe('EnterpriseRoot', () => {
     companyName: 'ACME Corp',
     description: 'A cool company',
     contactEmail: 'contact@acme.com',
-    contactPhone: '987654321',
+    contactPhone: PhoneNumberVO.create({ value: '+1987654321' }),
     website: 'https://acme.com',
     taxId: 'TAX-001',
     logoUrlId: 'logo-123',
     isVerified: true,
+    members: [],
     createdAt: new Date(),
     updatedAt: new Date(),
+    deleteAt: null,
+    deleteBy: null,
   };
 
   it('should create and get properties correctly', () => {

@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import type { AuthenticatedRequest } from '@/core/types/common.type';
 import { IAuthJwtService, IJwtPayload, IJwtSignOptions, IJwtVerifyOptions } from '@/application/interfaces/auth-jwt.interface';
 
 @Injectable()
@@ -7,7 +8,7 @@ export class JwtAuthService implements IAuthJwtService {
   constructor(private readonly jwtService: JwtService) {}
 
   sign(payload: IJwtPayload, options?: IJwtSignOptions): string {
-    const signOptions: any = {};
+    const signOptions: Record<string, unknown> = {};
 
     if (options) {
       if (options.expiresInMinutes !== undefined) {
@@ -38,7 +39,7 @@ export class JwtAuthService implements IAuthJwtService {
     return authHeader.split(' ')[1];
   }
 
-  extractTokenFromCookie(req: any, cookieName = 'access_token'): string | null {
+  extractTokenFromCookie(req: AuthenticatedRequest, cookieName = 'access_token'): string | null {
     if (req && req.cookies) {
       return req.cookies[cookieName] || null;
     }
@@ -67,7 +68,7 @@ export class JwtAuthService implements IAuthJwtService {
     return this.verify(token);
   }
 
-  verifyRequest(req: any): IJwtPayload {
+  verifyRequest(req: AuthenticatedRequest): IJwtPayload {
     let token = this.extractTokenFromHeader(req?.headers?.['authorization']);
     if (!token) {
       token = this.extractTokenFromCookie(req, 'access_token');

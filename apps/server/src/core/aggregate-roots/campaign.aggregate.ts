@@ -1,14 +1,10 @@
 import { BaseAggregateRoot } from '@/core/common/base.aggregate-root';
-import { JsonObject, Nullable } from '@/core/types';
+import { JsonObject, Nullable, FileId } from '@/core/types';
 import { ECampaignStatus } from '@/core/enums/campaign-status.enum';
-import { EParticipantStatus, EOutputStatus, EOutputType, ESchedulePostStatus } from '@/core/enums';
+import { EParticipantStatus } from '@/core/enums';
 import { InvalidOperationException } from '@/core/exceptions';
 import { CampaignParticipantCreatedEvent } from '../events/campaign-participant-created.domain-event';
-import {
-  CampaignParticipantEntity,
-  CampaignKOLOutputEntity,
-  CampaignEnterpriseOutputEntity,
-} from '../entities';
+import { CampaignParticipantEntity } from '../entities';
 
 function generateId(): string {
   const timestamp = Math.floor(Date.now() / 1000).toString(16).padStart(8, '0');
@@ -21,28 +17,29 @@ export interface PlatformTargetItem {
   minFollowers?: number;
   maxFollowers?: number;
   note?: string;
-  others?: JsonObject;
+  extras?: JsonObject;
 }
 
 export interface RawContentItem {
-  fileId: string;
+  fileId: FileId;
   rawContent?: string;
 }
 
-export interface SchedulePost {
-  scheduledTime: Date;
-  platformId: string;
-  status: ESchedulePostStatus;
-  campaignKOLOutputs: CampaignKOLOutputEntity[];
-  campaignEnterpriseOutputs: CampaignEnterpriseOutputEntity[];
-  createdAt?: Date;
-  updatedAt?: Date;
-}
+// @code-comment(SchedulePost): Kept for future reuse when schedule posts are inlined again.
+// export interface SchedulePost {
+//   scheduledTime: Date;
+//   platformId: string;
+//   status: ESchedulePostStatus;
+//   campaignKOLOutputs: CampaignKOLOutputEntity[];
+//   campaignEnterpriseOutputs: CampaignEnterpriseOutputEntity[];
+//   createdAt?: Date;
+//   updatedAt?: Date;
+// }
 
 export interface ScheduleDay {
   date: Date;
   label?: string;
-  posts: SchedulePost[];
+  posts: string[];  // ScheduledPost IDs
 }
 
 export interface CampaignSchedule {
@@ -58,6 +55,7 @@ export interface CampaignProps {
   financialTarget: JsonObject;
   description: string;
   platformTarget: PlatformTargetItem[];
+  extras?: JsonObject;
   status: ECampaignStatus;
   collaboratorIds: string[];
   rawContents: RawContentItem[];
@@ -121,6 +119,10 @@ export class CampaignRoot extends BaseAggregateRoot<CampaignProps> {
     return this.props.platformTarget;
   }
 
+  get extras(): JsonObject | undefined {
+    return this.props.extras;
+  }
+
   get status(): ECampaignStatus {
     return this.props.status;
   }
@@ -176,18 +178,18 @@ export class CampaignRoot extends BaseAggregateRoot<CampaignProps> {
       throw new InvalidOperationException('Cannot delete campaign with joined or completed participants');
     }
 
-    // Invariant Guard: Check if any output is PUBLISHED
-    if (this.props.schedule?.timeline) {
-      for (const day of this.props.schedule.timeline) {
-        for (const post of day.posts) {
-          const hasPublishedOutputs = post.campaignKOLOutputs.some(o => o.status === EOutputStatus.PUBLISHED) ||
-            post.campaignEnterpriseOutputs.some(o => o.status === EOutputStatus.PUBLISHED);
-          if (hasPublishedOutputs) {
-            throw new InvalidOperationException('Cannot delete campaign with published outputs');
-          }
-        }
-      }
-    }
+    // @code-comment(SchedulePost): Output publishing guard disabled until schedule posts are re-inlined.
+    // if (this.props.schedule?.timeline) {
+    //   for (const day of this.props.schedule.timeline) {
+    //     for (const post of day.posts) {
+    //       const hasPublishedOutputs = post.campaignKOLOutputs.some(o => o.status === EOutputStatus.PUBLISHED) ||
+    //         post.campaignEnterpriseOutputs.some(o => o.status === EOutputStatus.PUBLISHED);
+    //       if (hasPublishedOutputs) {
+    //         throw new InvalidOperationException('Cannot delete campaign with published outputs');
+    //       }
+    //     }
+    //   }
+    // }
 
     this.props.deleteAt = new Date();
     this.props.deleteBy = deletedBy;
@@ -285,19 +287,19 @@ export class CampaignRoot extends BaseAggregateRoot<CampaignProps> {
       throw new InvalidOperationException('Can only reject when status is PENDING_APPROVAL or JOINED');
     }
 
-    // Invariant Guard: Check if the KOL has any PUBLISHED outputs in the schedule
-    if (this.props.schedule?.timeline) {
-      for (const day of this.props.schedule.timeline) {
-        for (const post of day.posts) {
-          const published = post.campaignKOLOutputs.some(
-            o => o.campaignParticipantId === p.id && o.status === EOutputStatus.PUBLISHED
-          );
-          if (published) {
-            throw new InvalidOperationException('Cannot reject participant with published outputs');
-          }
-        }
-      }
-    }
+    // @code-comment(SchedulePost): Participant rejection output guard disabled.
+    // if (this.props.schedule?.timeline) {
+    //   for (const day of this.props.schedule.timeline) {
+    //     for (const post of day.posts) {
+    //       const published = post.campaignKOLOutputs.some(
+    //         o => o.campaignParticipantId === p.id && o.status === EOutputStatus.PUBLISHED
+    //       );
+    //       if (published) {
+    //         throw new InvalidOperationException('Cannot reject participant with published outputs');
+    //       }
+    //     }
+    //   }
+    // }
 
     p.reject();
     this.props.updatedAt = new Date();
@@ -346,146 +348,10 @@ export class CampaignRoot extends BaseAggregateRoot<CampaignProps> {
     this.props.updatedAt = new Date();
   }
 
-  // Output / Deliverable Management in schedule
-  public setOutputFileId(outputId: string, fileId: string): void {
-    let found = false;
-    if (this.props.schedule?.timeline) {
-      for (const day of this.props.schedule.timeline) {
-        for (const post of day.posts) {
-          const kolOutput = post.campaignKOLOutputs.find(o => o.id === outputId);
-          if (kolOutput) {
-            kolOutput.setFileId(fileId);
-            found = true;
-            break;
-          }
-          const entOutput = post.campaignEnterpriseOutputs.find(o => o.id === outputId);
-          if (entOutput) {
-            entOutput.setFileId(fileId);
-            found = true;
-            break;
-          }
-        }
-        if (found) break;
-      }
-    }
-    if (!found) {
-      throw new InvalidOperationException(`Output with ID '${outputId}' not found in campaign schedule`);
-    }
-    this.props.updatedAt = new Date();
-  }
-
-  public publishOutput(outputId: string, url: string): void {
-    let found = false;
-    if (this.props.schedule?.timeline) {
-      for (const day of this.props.schedule.timeline) {
-        for (const post of day.posts) {
-          const kolOutput = post.campaignKOLOutputs.find(o => o.id === outputId);
-          if (kolOutput) {
-            kolOutput.publish(url);
-            found = true;
-            break;
-          }
-          const entOutput = post.campaignEnterpriseOutputs.find(o => o.id === outputId);
-          if (entOutput) {
-            entOutput.publish(url);
-            found = true;
-            break;
-          }
-        }
-        if (found) break;
-      }
-    }
-    if (!found) {
-      throw new InvalidOperationException(`Output with ID '${outputId}' not found in campaign schedule`);
-    }
-    this.props.updatedAt = new Date();
-  }
-
-  public updateTrackingStatus(outputId: string, isTrackingActive: boolean): void {
-    let found = false;
-    if (this.props.schedule?.timeline) {
-      for (const day of this.props.schedule.timeline) {
-        for (const post of day.posts) {
-          const kolOutput = post.campaignKOLOutputs.find(o => o.id === outputId);
-          if (kolOutput) {
-            kolOutput.updateTrackingStatus(isTrackingActive);
-            found = true;
-            break;
-          }
-          const entOutput = post.campaignEnterpriseOutputs.find(o => o.id === outputId);
-          if (entOutput) {
-            entOutput.updateTrackingStatus(isTrackingActive);
-            found = true;
-            break;
-          }
-        }
-        if (found) break;
-      }
-    }
-    if (!found) {
-      throw new InvalidOperationException(`Output with ID '${outputId}' not found in campaign schedule`);
-    }
-    this.props.updatedAt = new Date();
-  }
-
-  public updateKOLOutputs(campaignParticipantId: string, outputs: CampaignKOLOutputEntity[]): void {
-    const participant = this.props.participants.find(p => p.id === campaignParticipantId);
-    if (!participant) {
-      throw new InvalidOperationException('Participant not found');
-    }
-
-    if (!this.props.schedule) {
-      this.props.schedule = { timeline: [] };
-    }
-
-    // First, remove all existing outputs for this campaignParticipantId across all posts in the schedule
-    for (const day of this.props.schedule.timeline) {
-      for (const post of day.posts) {
-        post.campaignKOLOutputs = post.campaignKOLOutputs.filter(
-          o => o.campaignParticipantId !== campaignParticipantId
-        );
-      }
-    }
-
-    // Now, insert the updated outputs into the schedule.
-    for (const output of outputs) {
-      if (output.campaignParticipantId !== campaignParticipantId) {
-        throw new InvalidOperationException('Output does not belong to this participant');
-      }
-
-      const scheduledTime = output.scheduledAt || new Date();
-      const platformId = output.platformId;
-
-      // Find or create the ScheduleDay
-      const dateOnly = new Date(scheduledTime);
-      dateOnly.setHours(0, 0, 0, 0);
-
-      let day = this.props.schedule.timeline.find(
-        d => new Date(d.date).setHours(0, 0, 0, 0) === dateOnly.getTime()
-      );
-      if (!day) {
-        day = { date: dateOnly, posts: [] };
-        this.props.schedule.timeline.push(day);
-      }
-
-      // Find or create the SchedulePost on that day
-      let post = day.posts.find(
-        p => p.platformId === platformId && new Date(p.scheduledTime).getTime() === new Date(scheduledTime).getTime()
-      );
-      if (!post) {
-        post = {
-          scheduledTime,
-          platformId,
-          status: ESchedulePostStatus.DRAFT,
-          campaignKOLOutputs: [],
-          campaignEnterpriseOutputs: [],
-        };
-        day.posts.push(post);
-      }
-
-      post.campaignKOLOutputs.push(output);
-    }
-
-    this.props.updatedAt = new Date();
-  }
+  // @code-comment(SchedulePost): setOutputFileId, publishOutput, updateTrackingStatus, updateKOLOutputs
+  // are disabled until schedule posts are re-inlined (posts field is now string[] of ScheduledPost IDs).
+  // public setOutputFileId(outputId: string, fileId: string): void { ... }
+  // public publishOutput(outputId: string, url: string): void { ... }
+  // public updateTrackingStatus(outputId: string, isTrackingActive: boolean): void { ... }
+  // public updateKOLOutputs(campaignParticipantId: string, outputs: CampaignKOLOutputEntity[]): void { ... }
 }

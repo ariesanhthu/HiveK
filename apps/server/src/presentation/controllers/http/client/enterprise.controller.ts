@@ -1,28 +1,34 @@
-import { Controller, Get, Post, Patch, Param, Body, HttpCode, HttpStatus, UseGuards, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Patch, Param, Body, HttpCode, HttpStatus, UseGuards, Delete, Query } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
-import { EnterpriseGetByIdQuery } from '@/application/queries';
+import { EnterpriseGetByIdQuery, EnterpriseGetInvitationsQuery, EnterpriseGetMyListQuery, EnterpriseGetMyInvitationsQuery, EnterpriseGetMyInvitationsInputDto } from '@/application/queries';
+
 import {
   EnterpriseCreateCommand,
   EnterpriseUpdateCommand,
   EnterpriseCreateInputDto,
   EnterpriseUpdateInputDto,
-  EnterpriseAddUserCommand,
-  EnterpriseRevokeUserCommand,
-  EnterpriseAddUserInputDto,
-  EnterpriseRevokeUserInputDto,
+  EnterpriseInviteMemberCommand,
+  EnterpriseAcceptInvitationCommand,
+  EnterpriseInviteMemberInputDto,
+  EnterpriseRevokeMemberCommand,
+  EnterpriseRevokeMemberInputDto,
+  EnterpriseRevokeInvitationCommand,
+  EnterpriseChangeMemberModeCommand,
+  EnterpriseChangeMemberModeInputDto,
 } from '@/application/commands';
-import { EnterpriseDto, EnterpriseDetailDto } from '@/application/dtos';
+import { EnterpriseDto, EnterpriseDetailDto, EnterpriseInvitationDto } from '@/application/dtos';
+import { EnterpriseFilterDto } from '@/application/queries/enterprise-get-list/enterprise-get-list.dto';
+import { PaginatedResponseDto } from '@/application/dtos/pagination.dto';
 import { ApiTags, ApiOperation, ApiBearerAuth, ApiSecurity } from '@nestjs/swagger';
 import { buildVersionedRoute } from '@presentation/utils';
-import { JwtAuthGuard, RolesGuard } from '@/presentation/middleware/guards';
-import { CurrentUser } from '@/presentation/decorators/current-user.decorator';
-import { Roles } from '@/presentation/decorators/roles.decorator';
+import { JwtAuthGuard, RolesGuard, UserVerifiedGuard } from '@/presentation/middleware/guards';
+import { CurrentUser, Roles, ApiOkResponseEnvelope, ApiPaginatedResponseEnvelope } from '@/presentation/decorators';
 import { ERoleType } from '@/core/enums/role-type.enum';
 
 @ApiTags('CLIENT-enterprises')
 @ApiBearerAuth()
 @ApiSecurity('x-api-key')
-@UseGuards(JwtAuthGuard, RolesGuard)
+@UseGuards(JwtAuthGuard, RolesGuard, UserVerifiedGuard)
 @Roles(ERoleType.ENTERPRISE)
 @Controller(buildVersionedRoute('client', 'enterprises', 1))
 export class EnterpriseClientController {
@@ -33,6 +39,7 @@ export class EnterpriseClientController {
 
   @Post()
   @ApiOperation({ summary: 'Create new enterprise profile' })
+  @ApiOkResponseEnvelope(EnterpriseDto)
   async create(
     @CurrentUser('sub') userId: string,
     @Body() input: EnterpriseCreateInputDto,
@@ -42,6 +49,7 @@ export class EnterpriseClientController {
 
   @Patch(':id')
   @ApiOperation({ summary: 'Update enterprise profile' })
+  @ApiOkResponseEnvelope(EnterpriseDto)
   async update(
     @Param('id') id: string,
     @CurrentUser('sub') userId: string,
@@ -50,8 +58,29 @@ export class EnterpriseClientController {
     return this.commandBus.execute(new EnterpriseUpdateCommand(id, userId, input));
   }
 
+  @Get('me')
+  @ApiOperation({ summary: 'Get my enterprises list (owned or member)' })
+  @ApiPaginatedResponseEnvelope(EnterpriseDetailDto)
+  async getMyList(
+    @CurrentUser('sub') userId: string,
+    @Query() filters: EnterpriseFilterDto,
+  ): Promise<PaginatedResponseDto<EnterpriseDetailDto>> {
+    return this.queryBus.execute(new EnterpriseGetMyListQuery(userId, filters));
+  }
+
+  @Get('invitations/me')
+  @ApiOperation({ summary: 'Get current user enterprise invitations' })
+  @ApiPaginatedResponseEnvelope(EnterpriseInvitationDto)
+  async getMyInvitations(
+    @CurrentUser('email') email: string,
+    @Query() filters: EnterpriseGetMyInvitationsInputDto,
+  ): Promise<PaginatedResponseDto<EnterpriseInvitationDto>> {
+    return this.queryBus.execute(new EnterpriseGetMyInvitationsQuery(email, filters));
+  }
+
   @Get(':id')
   @ApiOperation({ summary: 'Get enterprise by ID' })
+  @ApiOkResponseEnvelope(EnterpriseDetailDto)
   async getById(@Param('id') id: string): Promise<EnterpriseDetailDto> {
     const enterprise = await this.queryBus.execute<EnterpriseGetByIdQuery, EnterpriseDetailDto>(
       new EnterpriseGetByIdQuery(id),
@@ -59,27 +88,63 @@ export class EnterpriseClientController {
     return enterprise;
   }
 
-  @Post(':id/members')
+  @Post(':id/invitations')
+  @ApiOperation({ summary: 'Invite a user to the enterprise' })
+  @ApiOkResponseEnvelope(EnterpriseInvitationDto)
+  async inviteMember(
+    @Param('id') enterpriseId: string,
+    @CurrentUser('sub') requestedBy: string,
+    @Body() input: EnterpriseInviteMemberInputDto,
+  ): Promise<EnterpriseInvitationDto> {
+    return this.commandBus.execute(new EnterpriseInviteMemberCommand(enterpriseId, requestedBy, input));
+  }
+
+  @Post(':id/invitations/:invitationId/accept')
+  @ApiOperation({ summary: 'Accept an enterprise invitation' })
+  @ApiOkResponseEnvelope()
+  async acceptInvitation(
+    @Param('id') enterpriseId: string,
+    @Param('invitationId') invitationId: string,
+    @CurrentUser('sub') userId: string,
+  ): Promise<{ success: boolean }> {
+    await this.commandBus.execute(new EnterpriseAcceptInvitationCommand(enterpriseId, invitationId, userId));
+    return { success: true };
+  }
+
+  @Delete(':id/invitations/:invitationId')
   @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
-  @ApiOperation({ summary: 'Add user to enterprise' })
-  async addUser(
-    @CurrentUser('sub') requestedBy: string,
+  @ApiOperation({ summary: 'Cancel/revoke a pending invitation' })
+  async cancelInvitation(
     @Param('id') enterpriseId: string,
-    @Body() dto: EnterpriseAddUserInputDto,
+    @Param('invitationId') invitationId: string,
+    @CurrentUser('sub') requestedBy: string,
   ): Promise<void> {
-    return this.commandBus.execute(new EnterpriseAddUserCommand(enterpriseId, dto, requestedBy));
+    return this.commandBus.execute(new EnterpriseRevokeInvitationCommand(enterpriseId, invitationId, requestedBy));
   }
 
   @Delete(':id/members')
   @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
-  @ApiOperation({ summary: 'Remove user from enterprise' })
+  @ApiOperation({ summary: 'Revoke a member from the enterprise (post-acceptance)' })
   async removeUser(
     @CurrentUser('sub') requestedBy: string,
     @Param('id') enterpriseId: string,
-    @Body() dto: EnterpriseRevokeUserInputDto,
+    @Body() dto: EnterpriseRevokeMemberInputDto,
   ): Promise<void> {
-    return this.commandBus.execute(new EnterpriseRevokeUserCommand(enterpriseId, dto, requestedBy));
+    return this.commandBus.execute(new EnterpriseRevokeMemberCommand(enterpriseId, requestedBy, dto));
+  }
+
+  @Patch(':id/members/mode')
+  @UseGuards(JwtAuthGuard)
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiOperation({ summary: 'Change enterprise member role mode (promote/demote)' })
+  async changeMemberMode(
+    @Param('id') enterpriseId: string,
+    @CurrentUser('sub') requestedBy: string,
+    @Body() dto: EnterpriseChangeMemberModeInputDto,
+  ): Promise<void> {
+    return this.commandBus.execute(new EnterpriseChangeMemberModeCommand(enterpriseId, requestedBy, dto));
   }
 }
+

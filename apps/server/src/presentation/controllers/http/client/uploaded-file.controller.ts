@@ -14,7 +14,7 @@ import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { ApiTags, ApiOperation, ApiConsumes, ApiBody, ApiBearerAuth, ApiSecurity } from '@nestjs/swagger';
 import { buildVersionedRoute } from '@presentation/utils';
 import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
-import { TargetType } from '@/core/enums/target-type.enum';
+import { ETargetType } from '@/core/enums/target-type.enum';
 import {
   UploadedFileCreateCommand,
   UploadedFileBulkCreateCommand,
@@ -26,6 +26,7 @@ import {
 import { UploadedFileDto } from '@/application/dtos';
 import { JwtAuthGuard } from '@/presentation/middleware/guards';
 import { FileUploadValidationPipe } from '@/presentation/middleware/pipes/file-upload-validation.pipe';
+import { ApiOkResponseEnvelope } from '@/presentation/decorators';
 import { isEmpty } from '@/shared/utils';
 
 @ApiTags('CLIENT-upload')
@@ -37,9 +38,11 @@ export class UploadedFileClientController {
   constructor(
     private readonly commandBus: CommandBus,
     private readonly queryBus: QueryBus,
-  ) {}
+  ) { }
+
   @Get(':id')
   @ApiOperation({ summary: 'Get uploaded file by ID' })
+  @ApiOkResponseEnvelope(UploadedFileDto)
   async findById(@Param('id') id: string): Promise<UploadedFileDto> {
     return this.queryBus.execute(new UploadedFileGetByIdQuery(id));
   }
@@ -62,7 +65,7 @@ export class UploadedFileClientController {
         },
         targetType: {
           type: 'string',
-          enum: Object.values(TargetType),
+          enum: Object.values(ETargetType),
           description: 'Domain target type (USER, KOL_PROFILE, PLATFORM, CAMPAIGN, ENTERPRISE)',
         },
         targetId: {
@@ -78,6 +81,7 @@ export class UploadedFileClientController {
     },
   })
   @ApiOperation({ summary: 'Upload and create new file (Max 25MB, Images/Docs/PDF only)' })
+  @ApiOkResponseEnvelope(UploadedFileDto)
   async create(
     @UploadedFile(new FileUploadValidationPipe()) file: Express.Multer.File,
     @Body() input: UploadedFileCreateInputDto,
@@ -118,7 +122,7 @@ export class UploadedFileClientController {
         },
         targetType: {
           type: 'string',
-          enum: Object.values(TargetType),
+          enum: Object.values(ETargetType),
           description: 'Domain target type (USER, KOL_PROFILE, PLATFORM, CAMPAIGN, ENTERPRISE)',
         },
         targetId: {
@@ -134,15 +138,13 @@ export class UploadedFileClientController {
     },
   })
   @ApiOperation({ summary: 'Upload and create multiple files (limit to 10, Max 25MB each)' })
+  @ApiOkResponseEnvelope(UploadedFileDto)
   async createBulk(
     @UploadedFiles(new FileUploadValidationPipe()) files: Express.Multer.File[],
     @Body() input: UploadedFileCreateInputDto,
   ): Promise<UploadedFileDto[]> {
     if (isEmpty(files)) {
       throw new BadRequestException('At least one file is required');
-    }
-    if (files.length > 10) {
-      throw new BadRequestException('Cannot upload more than 10 files at a time');
     }
     return this.commandBus.execute(
       new UploadedFileBulkCreateCommand(
@@ -156,3 +158,4 @@ export class UploadedFileClientController {
     );
   }
 }
+

@@ -8,4 +8,13 @@ export * from './kpi-log.read-service';
 export * from './uploaded-file.read-service';
 export * from './notification.read-service';
 export * from './campaign-participant.read-service';
-
+export * from './campaign-proposal.read-service';
+export * from './public-review.read-service';
+export * from './package.read-service';
+export * from './bill.read-service';
+export * from './payment-provider.read-service';
+export * from './enterprise-invitation.read-service';
+export * from './subscription.read-service';
+export * from './subscription-history.read-service';
+export * from './quota-usage.read-service';
+export * from './enterprise-quota-allocation.read-service';

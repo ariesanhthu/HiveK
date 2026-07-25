@@ -186,6 +186,9 @@ export class CloudinaryStorageService implements IStorageService {
    * Map Cloudinary response to UploadResult
    */
   private mapToUploadResult(result: UploadApiResponse): UploadResult {
+    if (!result.public_id) {
+      throw new Error('Cloudinary response missing public_id');
+    }
     return {
       url: result.secure_url,
       format: result.format,

@@ -1,8 +1,9 @@
 import type { ApiResponse, CursorPaginationMeta } from './api-response.type';
+import type { JsonObject } from '@/core/types/common.type';
 import { isObject } from '@/shared/utils';
 
 export class ApiResponseHelper {
-  static success<T>(data: T, meta?: CursorPaginationMeta | Record<string, any> | null): ApiResponse<T> {
+  static success<T>(data: T, meta?: CursorPaginationMeta | JsonObject | null): ApiResponse<T> {
     return {
       success: true,
       data,

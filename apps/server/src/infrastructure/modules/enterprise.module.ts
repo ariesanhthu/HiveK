@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
 import { EnterpriseAdminController, EnterpriseClientController } from '@/presentation/controllers';
-import { EnterpriseGetByIdHandler, EnterpriseGetListHandler } from '@/application/queries';
+import { EnterpriseGetByIdHandler, EnterpriseGetListHandler, EnterpriseGetInvitationsQueryHandler, EnterpriseGetMyListHandler, EnterpriseGetMyInvitationsQueryHandler } from '@/application/queries';
 
 import {
   EnterpriseCreateCommandHandler,
@@ -9,13 +9,15 @@ import {
   EnterpriseSoftDeleteCommandHandler,
   EnterpriseHardDeleteCommandHandler,
   EnterpriseRestoreCommandHandler,
-  EnterpriseAddUserCommandHandler,
-  EnterpriseRevokeUserCommandHandler,
+  EnterpriseInviteMemberCommandHandler,
+  EnterpriseAcceptInvitationCommandHandler,
+  EnterpriseRevokeMemberCommandHandler,
+  EnterpriseRevokeInvitationCommandHandler,
+  EnterpriseChangeMemberModeCommandHandler,
 } from '@/application/commands';
 
 import { UploadedFileModule } from './uploaded-file.module';
 import { UserModule } from './user.module';
-import { LinkEnterpriseLogoHandler } from '@/application/events';
 import { EnterpriseUserRmqController } from '@/presentation/controllers';
 
 const COMMAND_HANDLERS = [
@@ -24,17 +26,22 @@ const COMMAND_HANDLERS = [
   EnterpriseSoftDeleteCommandHandler,
   EnterpriseHardDeleteCommandHandler,
   EnterpriseRestoreCommandHandler,
-  EnterpriseAddUserCommandHandler,
-  EnterpriseRevokeUserCommandHandler,
+  EnterpriseInviteMemberCommandHandler,
+  EnterpriseAcceptInvitationCommandHandler,
+  EnterpriseRevokeMemberCommandHandler,
+  EnterpriseRevokeInvitationCommandHandler,
+  EnterpriseChangeMemberModeCommandHandler,
 ];
 
 const QUERY_HANDLERS = [
   EnterpriseGetByIdHandler,
-  EnterpriseGetListHandler
-]
+  EnterpriseGetListHandler,
+  EnterpriseGetInvitationsQueryHandler,
+  EnterpriseGetMyListHandler,
+  EnterpriseGetMyInvitationsQueryHandler,
+];
 
 const EVENT_HANDLERS = [
-  LinkEnterpriseLogoHandler,
 ]
 
 @Module({

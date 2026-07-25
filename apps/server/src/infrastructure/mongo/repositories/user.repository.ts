@@ -1,6 +1,6 @@
 import { Injectable, Inject } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, Types, ClientSession, Schema } from 'mongoose';
+import { Model, Types, ClientSession } from 'mongoose';
 import { IUserRepository } from '@/core/interfaces/repositories';
 import { UserRoot, AdminRoot, EnterpriseUserRoot, KOLUserRoot } from '@/core/aggregate-roots';
 import { UserModel, UserDocument, EnterpriseUserModel, EnterpriseUserDocument, AdminUserDocument, KOLUserDocument } from '../schemas/user.schema';
@@ -56,7 +56,7 @@ export class MongoUserRepository implements IUserRepository {
   async existsByRoleId(roleId: string): Promise<boolean> {
     const doc = await this.userModel.findOne(
       {
-        role_id: new Schema.Types.ObjectId(roleId),
+        role_id: new Types.ObjectId(roleId),
         delete_at: null,
       },
       { _id: 1 }
@@ -98,7 +98,7 @@ export class MongoUserRepository implements IUserRepository {
     await this.userModel.findByIdAndDelete(id).session(this.session).exec();
   }
 
-  private mapToDomain(doc: UserDocument): UserRoot {
+  private mapToDomain(doc: UserDocument | EnterpriseUserDocument): UserRoot {
     if (!doc._id) {
       throw new Error('User document ID is missing');
     }
@@ -131,7 +131,7 @@ export class MongoUserRepository implements IUserRepository {
         return EnterpriseUserRoot.instantiate(id, {
           ...props,
           type: ERoleType.ENTERPRISE,
-          enterpriseIds: (doc as any).enterprise_ids ? (doc as any).enterprise_ids.map((eid: any) => eid.toString()) : [],
+          enterpriseIds: 'enterprise_ids' in doc ? (doc as EnterpriseUserDocument).enterprise_ids.map(eid => eid.toString()) : [],
         });
       case ERoleType.KOL:
         return KOLUserRoot.instantiate(id, {
@@ -143,8 +143,8 @@ export class MongoUserRepository implements IUserRepository {
     }
   }
 
-  private mapToPersistence(user: UserRoot): any {
-    const base = {
+  private mapToPersistence(user: UserRoot): Record<string, unknown> {
+    const base: Record<string, unknown> = {
       _id: user.id ? new Types.ObjectId(user.id) : undefined,
       email: user.email,
       phone: user.phone.value,

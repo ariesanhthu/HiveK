@@ -42,10 +42,18 @@ Each command or query is a **feature folder** named with kebab-case (e.g., `camp
 | Event | `{EventName}Event` | `NotificationDispatchedEvent` |
 
 ### Shared DTOs
-Reusable DTOs (not specific to a single command/query) live in `dtos/` and are named with domain prefix:
-- `campaign.dto.ts` → `CampaignDto`
-- `pagination.dto.ts` → `PaginationDto`
-- `user.dto.ts` → `UserDto`
+## DTO Standards (NestJS-Zod & Dates)
+
+1. **`createZodDto` Class Exports**: Every DTO must be backed by a Zod schema and exported as a concrete class extending `createZodDto(Schema)`:
+   ```ts
+   export const UserDtoSchema = z.object({ ... }).strict();
+   export class UserDto extends createZodDto(UserDtoSchema) {}
+   ```
+   *Do NOT export DTOs using `export type Dto = z.infer<typeof Schema>` or plain TypeScript classes without `createZodDto`, as Swagger OpenAPI documentation generation requires runtime class constructors.*
+
+2. **Date Property Rules (`z.iso.datetime()`)**: Application response DTOs represent serialized JSON payloads over HTTP where native JavaScript `Date` objects cannot exist.
+   - **Schema Definition**: Date fields in DTO schemas must be defined using `z.iso.datetime()` (e.g., `createdAt: z.iso.datetime()`, `expiresAt: z.iso.datetime().nullable()`). Do NOT use `z.date()` or `z.coerce.date()`.
+   - **Mapper & Read Service Mapping**: Mappers and Read Services mapping domain entities or Mongoose documents to DTOs must explicitly convert date values to ISO 8601 strings using `.toISOString()`.
 
 ## Key Principles
 1. **CQRS Separation** – Commands mutate state via the Core layer; Queries read data via read‑services without touching aggregates.

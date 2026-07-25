@@ -13,8 +13,8 @@ export class UploadedFileMapper {
       targetType: root.targetType,
       targetId: root.targetId,
       targetField: root.targetField,
-      createdAt: root.createdAt,
-      updatedAt: root.updatedAt,
+      createdAt: root.createdAt.toISOString(),
+      updatedAt: root.updatedAt.toISOString(),
     };
   }
 

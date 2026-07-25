@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { createZodDto } from 'nestjs-zod';
-import { TargetType } from '@/core/enums/target-type.enum';
+import { ETargetType } from '@/core/enums/target-type.enum';
 
 export const UploadedFileDtoSchema = z.object({
   id: z.string(),
@@ -9,11 +9,11 @@ export const UploadedFileDtoSchema = z.object({
   size: z.number().int().positive(),
   format: z.string(),
   title: z.string().nullable(),
-  targetType: z.enum(TargetType),
+  targetType: z.enum(ETargetType),
   targetId: z.string(),
   targetField: z.string(),
-  createdAt: z.date(),
-  updatedAt: z.date(),
+  createdAt: z.iso.datetime(),
+  updatedAt: z.iso.datetime(),
 }).strict();
 
-export class UploadedFileDto extends createZodDto(UploadedFileDtoSchema) {}
+export class UploadedFileDto extends createZodDto(UploadedFileDtoSchema) { }

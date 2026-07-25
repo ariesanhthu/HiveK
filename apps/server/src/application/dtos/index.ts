@@ -12,4 +12,16 @@ export * from './campaign-participant.dto';
 export * from './projection.dto';
 export * from './proposal.dto';
 export * from './review.dto';
+export * from './package.dto';
+export * from './bill.dto';
+export * from './payment-provider.dto';
+export * from './payment.dto';
+export * from './subscription.dto';
+export * from './subscription-history.dto';
+export * from './social-page.dto';
+export * from './scheduled-post.dto';
+export * from './auto-reply-rule.dto';
+export * from './enterprise-invitation.dto';
 
+export * from './quota-usage.dto';
+export * from './enterprise-quota-allocation.dto';

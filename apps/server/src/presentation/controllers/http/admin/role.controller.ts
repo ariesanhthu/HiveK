@@ -12,7 +12,7 @@ import {
 } from '@/application/commands';
 import { RoleDto, RoleFilterDto, SoftDeleteInputDto } from '@/application/dtos';
 import { JwtAuthGuard, RolesGuard } from '@/presentation/middleware/guards';
-import { Roles } from '@/presentation/decorators/roles.decorator';
+import { Roles, ApiOkResponseEnvelope, ApiPaginatedResponseEnvelope } from '@/presentation/decorators';
 import { ERoleType } from '@/core/enums';
 import { PaginatedResponseDto } from '@/application/dtos/pagination.dto';
 import { RoleCreateInputDto } from '@/application/commands/role-create/role-create.dto';
@@ -32,6 +32,7 @@ export class RoleAdminController {
 
   @Post()
   @ApiOperation({ summary: 'Create a new role' })
+  @ApiOkResponseEnvelope()
   async create(@Body() input: RoleCreateInputDto): Promise<{ id: string }> {
     const id = await this.commandBus.execute<RoleCreateCommand, string>(
       new RoleCreateCommand(input),
@@ -41,6 +42,7 @@ export class RoleAdminController {
 
   @Patch(':id')
   @ApiOperation({ summary: 'Update a role' })
+  @ApiOkResponseEnvelope()
   async update(
     @Param('id') id: string,
     @Body() input: RoleUpdateInputDto,
@@ -50,6 +52,7 @@ export class RoleAdminController {
 
   @Get()
   @ApiOperation({ summary: 'Get paginated list of roles' })
+  @ApiPaginatedResponseEnvelope(RoleDto)
   async findAll(@Query() filters: RoleFilterDto): Promise<PaginatedResponseDto<RoleDto>> {
     return this.queryBus.execute<RoleGetListQuery, PaginatedResponseDto<RoleDto>>(
       new RoleGetListQuery(filters),
@@ -58,6 +61,7 @@ export class RoleAdminController {
 
   @Get(':id')
   @ApiOperation({ summary: 'Get role by ID' })
+  @ApiOkResponseEnvelope(RoleDto)
   async findById(@Param('id') id: string): Promise<RoleDto> {
     return this.queryBus.execute<RoleGetByIdQuery, RoleDto>(
       new RoleGetByIdQuery(id),
@@ -88,3 +92,4 @@ export class RoleAdminController {
     await this.commandBus.execute(new RoleRestoreCommand(id));
   }
 }
+

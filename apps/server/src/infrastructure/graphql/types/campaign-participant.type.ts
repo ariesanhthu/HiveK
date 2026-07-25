@@ -13,7 +13,7 @@ export class CampaignOutputType {
   platformId: string;
 
   @Field(() => PlatformType, { nullable: true })
-  platform?: any;
+  platform?: PlatformType | null;
 
   @Field()
   outputType: string;
@@ -28,7 +28,7 @@ export class CampaignOutputType {
   fileId?: string;
 
   @Field(() => UploadedFileType, { nullable: true })
-  file?: any;
+  file?: UploadedFileType | null;
 
   @Field({ nullable: true })
   scheduledAt?: string;
@@ -52,13 +52,13 @@ export class CampaignParticipantType {
   campaignId: string;
 
   @Field(() => CampaignType, { nullable: true })
-  campaign?: any;
+  campaign?: CampaignType | null;
 
   @Field()
   kolProfileId: string;
 
   @Field(() => KolProfileType, { nullable: true })
-  kolProfile?: any;
+  kolProfile?: KolProfileType | null;
 
   @Field()
   status: string;

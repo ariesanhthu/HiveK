@@ -14,36 +14,43 @@ export interface ProjectionConfig {
   populate?: Record<string, PopulateConfig>;
 }
 
+interface PopulateOption {
+  path: string;
+  model?: string;
+  select?: string;
+  populate?: PopulateOption[];
+}
+
 export function parseMongoProjection(
   projection: ProjectionDto,
   config: ProjectionConfig,
-): { select?: string; populate?: any[] } {
+): { select?: string; populate?: PopulateOption[] } {
   // If fields is an array, we normalize it to a key-value record
   const fieldsInput = projection.fields;
-  const fieldsMap: Record<string, any> = Array.isArray(fieldsInput)
-    ? (fieldsInput as any[]).reduce((acc, current) => {
+  const fieldsMap: Record<string, unknown> = Array.isArray(fieldsInput)
+    ? (fieldsInput as string[]).reduce((acc, current) => {
         acc[current] = {};
         return acc;
-      }, {} as Record<string, any>)
+      }, {} as Record<string, unknown>)
     : fieldsInput || {};
 
   return parseMongoProjectionMap(fieldsMap, config);
 }
 
 function parseMongoProjectionMap(
-  fieldsMap: Record<string, any>,
+  fieldsMap: Record<string, unknown>,
   config: ProjectionConfig,
-): { select?: string; populate?: any[] } {
+): { select?: string; populate?: PopulateOption[] } {
   const selectFields: string[] = [];
-  const populateOptions: any[] = [];
+  const populateOptions: PopulateOption[] = [];
 
-  Object.keys(fieldsMap).forEach((field) => {
+  for (const field of Object.keys(fieldsMap)) {
     // Check if it's a populate relation
     if (config.populate && config.populate[field]) {
       const popConfig = config.populate[field];
-      const popOption: any = { path: popConfig.path };
-      if ((popConfig as any).model) {
-        popOption.model = (popConfig as any).model;
+      const popOption: PopulateOption = { path: popConfig.path };
+      if (popConfig.model) {
+        popOption.model = popConfig.model;
       }
 
       // Map inner select fields if defined
@@ -58,7 +65,7 @@ function parseMongoProjectionMap(
       }
 
       // If the fields map has nested selection for this relation, and the config allows nested population
-      const subFieldsMap = fieldsMap[field];
+      const subFieldsMap = fieldsMap[field] as Record<string, unknown> | undefined;
       if (subFieldsMap && Object.keys(subFieldsMap).length > 0 && popConfig.populate) {
         const subResult = parseMongoProjectionMap(subFieldsMap, {
           allowedFields: popConfig.select,
@@ -78,7 +85,7 @@ function parseMongoProjectionMap(
         selectFields.push(mapped === 'id' ? '_id' : mapped);
       }
     }
-  });
+  }
 
   return {
     select: selectFields.length > 0 ? selectFields.join(' ') : undefined,

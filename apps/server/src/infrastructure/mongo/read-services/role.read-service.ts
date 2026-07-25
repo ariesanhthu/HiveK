@@ -1,6 +1,6 @@
 import { Injectable, Inject } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, QueryFilter } from 'mongoose';
+import { FlattenMaps, Model, QueryFilter } from 'mongoose';
 import { IRoleReadService, CACHE_SERVICE } from '@/application/interfaces';
 import type { ICacheService } from '@/application/interfaces';
 import { RoleDto, RoleFilterDto } from '@/application/dtos';
@@ -47,7 +47,7 @@ export class MongoRoleReadService implements IRoleReadService {
     return dto;
   }
 
-  async findAll(filters: RoleFilterDto = {} as any): Promise<PaginatedResponseDto<RoleDto>> {
+  async findAll(filters: RoleFilterDto = {}): Promise<PaginatedResponseDto<RoleDto>> {
     const cacheKey = CacheKeyUtil.list(this.domain, filters);
     const cached = await this.cacheService.get<PaginatedResponseDto<RoleDto>>(cacheKey);
     if (cached) return cached;
@@ -85,14 +85,14 @@ export class MongoRoleReadService implements IRoleReadService {
     return response;
   }
 
-  private mapToDto(doc: any): RoleDto {
+  private mapToDto(doc: FlattenMaps<RoleDocument>): RoleDto {
     return {
       id: doc._id.toString(),
       title: doc.title,
       permissions: doc.permissions,
       type: doc.type,
-      createdAt: doc.created_at,
-      updatedAt: doc.updated_at,
+      createdAt: doc.created_at?.toISOString() || '',
+      updatedAt: doc.updated_at?.toISOString() || '',
     };
   }
 }

@@ -31,6 +31,7 @@ describe('CampaignUpdateCommandHandler', () => {
       deleteBy: null,
       createdAt: new Date(),
       updatedAt: new Date(),
+      participants: [],
     });
 
     mockCampaignRepository.findById.mockResolvedValue(mockCampaign);
@@ -65,6 +66,7 @@ describe('CampaignUpdateCommandHandler', () => {
       deleteBy: null,
       createdAt: new Date(),
       updatedAt: new Date(),
+      participants: [],
     });
 
     mockCampaignRepository.findById.mockResolvedValue(mockCampaign);
@@ -95,6 +97,7 @@ describe('CampaignUpdateCommandHandler', () => {
       deleteBy: null,
       createdAt: new Date(),
       updatedAt: new Date(),
+      participants: [],
     });
 
     mockCampaignRepository.findById.mockResolvedValue(mockCampaign);

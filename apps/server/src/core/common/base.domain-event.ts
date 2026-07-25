@@ -1,6 +1,6 @@
 import { EAggregateType } from '../enums/aggregate-type.enum';
 
-export abstract class DomainEvent<T = any> {
+export abstract class DomainEvent<T = unknown> {
   abstract eventType: string;
   abstract aggregateType: EAggregateType;
   occurredAt = new Date();

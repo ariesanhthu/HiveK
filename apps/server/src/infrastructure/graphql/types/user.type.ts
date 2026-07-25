@@ -17,13 +17,13 @@ export class UserType {
   fullName: string;
 
   @Field(() => UploadedFileType, { nullable: true })
-  avatar?: any;
+  avatar?: UploadedFileType | null;
 
   @Field()
   roleId: string;
 
   @Field(() => RoleType, { nullable: true })
-  role?: any;
+  role?: RoleType | null;
 
   @Field()
   isEmailVerified: boolean;

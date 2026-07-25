@@ -16,7 +16,7 @@ describe('CampaignMapper', () => {
           minFollowers: 1000,
           maxFollowers: 5000,
           note: 'E2E target platform',
-          others: { age: '18-25' },
+          extras: { age: '18-25' },
         },
       ],
       status: ECampaignStatus.DRAFT,
@@ -27,6 +27,7 @@ describe('CampaignMapper', () => {
           rawContent: 'Original details text',
         },
       ],
+      participants: [],
     } as any;
 
     const dto = CampaignMapper.toDto(mockRoot);
@@ -49,6 +50,7 @@ describe('CampaignMapper', () => {
       status: ECampaignStatus.DRAFT,
       collaboratorIds: ['owner-123'],
       rawContents: [],
+      participants: [],
     } as any;
 
     const dtos = CampaignMapper.toListDto([mockRoot]);

@@ -9,10 +9,10 @@ export const CampaignOutputDtoSchema = z.object({
   title: z.string(),
   isScheduleForPost: z.boolean(),
   fileId: z.string().nullable(),
-  scheduledAt: z.string().nullable(),
+  scheduledAt: z.iso.datetime().nullable(),
   status: z.enum(EOutputStatus),
   url: z.string().nullable(),
-  postedAt: z.string().nullable(),
+  postedAt: z.iso.datetime().nullable(),
 }).strict();
 
 import { CampaignDetailDto } from './campaign.dto';
@@ -30,9 +30,9 @@ export const CampaignParticipantDtoSchema = z.object({
   campaignId: z.string(),
   kolProfileId: z.string(),
   status: z.enum(EParticipantStatus),
-  joinedAt: z.string().nullable(),
-  createdAt: z.string(),
-  updatedAt: z.string(),
+  joinedAt: z.iso.datetime().nullable(),
+  createdAt: z.iso.datetime(),
+  updatedAt: z.iso.datetime(),
   outputs: z.array(CampaignOutputDtoSchema),
 }).strict();
 

@@ -7,7 +7,7 @@ import { KolProfileUpdateCommand, KolProfileHardDeleteCommand, UpdateKolProfileD
 import { KolProfileDto } from '@/application/dtos';
 import { PaginatedResponseDto, CursorPaginationRequestDto } from '@/application/dtos/pagination.dto';
 import { JwtAuthGuard, YoutubeAuthGuard, FacebookAuthGuard } from '@/presentation/middleware/guards';
-import { Public } from '@/presentation/decorators/public.decorator';
+import { Public, ApiOkResponseEnvelope, ApiPaginatedResponseEnvelope } from '@/presentation/decorators';
 import { AuthGuard } from '@nestjs/passport';
 
 @ApiTags('CLIENT-kol-profiles')
@@ -74,6 +74,7 @@ export class KolProfileClientController {
   @Public()
   @Get()
   @ApiOperation({ summary: 'Search/List KOL profiles' })
+  @ApiPaginatedResponseEnvelope(KolProfileDto)
   async findAll(@Query() filters: KolProfileFilterDto): Promise<PaginatedResponseDto<KolProfileDto>> {
     return this.queryBus.execute(new KolProfileGetListQuery(filters));
   }
@@ -81,6 +82,7 @@ export class KolProfileClientController {
   @Public()
   @Get('platforms')
   @ApiOperation({ summary: 'Get KOL profile handles mapping (for dev)' })
+  @ApiPaginatedResponseEnvelope(KolProfileDto)
   async findHandlesDev(@Query() pagination: CursorPaginationRequestDto): Promise<PaginatedResponseDto<any>> {
     return this.queryBus.execute(new KolProfileGetHandlesDevQuery(pagination));
   }
@@ -88,6 +90,7 @@ export class KolProfileClientController {
   @Public()
   @Get(':id')
   @ApiOperation({ summary: 'Get KOL profile by ID' })
+  @ApiOkResponseEnvelope(KolProfileDto)
   async findById(@Param('id') id: string): Promise<KolProfileDto> {
     return this.queryBus.execute(new KolProfileGetByIdQuery(id));
   }
@@ -95,6 +98,7 @@ export class KolProfileClientController {
   @Public()
   @Patch(':id')
   @ApiOperation({ summary: 'Update anything of an influencer (PATCH)' })
+  @ApiOkResponseEnvelope(KolProfileDto)
   async update(@Param('id') id: string, @Body() input: UpdateKolProfileDto): Promise<KolProfileDto> {
     return this.commandBus.execute(new KolProfileUpdateCommand(id, input));
   }
@@ -107,3 +111,4 @@ export class KolProfileClientController {
     return this.commandBus.execute(new KolProfileHardDeleteCommand(id));
   }
 }
+

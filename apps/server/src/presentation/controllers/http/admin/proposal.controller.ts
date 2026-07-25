@@ -12,12 +12,11 @@ import {
   ProposalSoftDeleteCommand,
   ProposalRestoreCommand,
 } from '@/application/commands';
-import { ProposalGetByIdQuery, ProposalGetListQuery, ProposalFilterDto } from '@/application/queries';
+import { ProposalGetByIdQuery, ProposalGetListQuery } from '@/application/queries';
 import { ProposalDto, ProposalFilterDto as ProposalFilterInputDto } from '@/application/dtos';
 import { PaginatedResponseDto } from '@/application/dtos/pagination.dto';
 import { JwtAuthGuard, RolesGuard } from '@/presentation/middleware/guards';
-import { CurrentUser } from '@/presentation/decorators/current-user.decorator';
-import { Roles } from '@/presentation/decorators/roles.decorator';
+import { CurrentUser, Roles, ApiOkResponseEnvelope, ApiPaginatedResponseEnvelope } from '@/presentation/decorators';
 import { ERoleType } from '@/core/enums';
 
 @ApiTags('ADMIN-proposals')
@@ -34,18 +33,21 @@ export class CampaignProposalAdminController {
 
   @Get()
   @ApiOperation({ summary: 'Get all campaign proposals' })
+  @ApiPaginatedResponseEnvelope(ProposalDto)
   async findAll(@Query() filters: ProposalFilterInputDto): Promise<PaginatedResponseDto<ProposalDto>> {
     return this.queryBus.execute(new ProposalGetListQuery(filters));
   }
 
   @Get(':id')
   @ApiOperation({ summary: 'Get campaign proposal by ID' })
+  @ApiOkResponseEnvelope(ProposalDto)
   async findById(@Param('id') id: string): Promise<ProposalDto> {
     return this.queryBus.execute(new ProposalGetByIdQuery(id));
   }
 
   @Post()
   @ApiOperation({ summary: 'Create campaign proposal' })
+  @ApiOkResponseEnvelope(ProposalDto)
   async create(
     @CurrentUser('sub') userId: string,
     @Body() input: ProposalCreateInputDto,
@@ -55,6 +57,7 @@ export class CampaignProposalAdminController {
 
   @Patch(':id')
   @ApiOperation({ summary: 'Update campaign proposal' })
+  @ApiOkResponseEnvelope(ProposalDto)
   async update(
     @CurrentUser('sub') userId: string,
     @Param('id') id: string,
@@ -91,3 +94,4 @@ export class CampaignProposalAdminController {
     return this.commandBus.execute(new ProposalRestoreCommand(id));
   }
 }
+

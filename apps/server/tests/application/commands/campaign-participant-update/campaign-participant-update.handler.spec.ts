@@ -1,140 +1,79 @@
 import { CampaignParticipantUpdateCommandHandler } from '@/application/commands/campaign-participant-update/campaign-participant-update.handler';
 import { CampaignParticipantUpdateCommand } from '@/application/commands/campaign-participant-update/campaign-participant-update.command';
-import { CampaignParticipantRoot } from '@/core/aggregate-roots';
+import { CampaignRoot } from '@/core/aggregate-roots';
+import { CampaignParticipantEntity } from '@/core/entities';
 import { CampaignParticipantNotFoundException } from '@/core/exceptions';
-import { EParticipantStatus, EOutputStatus, EOutputType } from '@/core/enums';
+import { EParticipantStatus, ECampaignStatus } from '@/core/enums';
 
 describe('CampaignParticipantUpdateCommandHandler', () => {
   let handler: CampaignParticipantUpdateCommandHandler;
-  let mockParticipantRepository: any;
+  let mockCampaignRepository: any;
 
   beforeEach(() => {
-    mockParticipantRepository = {
-      findById: jest.fn(),
+    mockCampaignRepository = {
+      findByParticipantId: jest.fn(),
       save: jest.fn(),
     };
-    handler = new CampaignParticipantUpdateCommandHandler(mockParticipantRepository);
+    handler = new CampaignParticipantUpdateCommandHandler(mockCampaignRepository);
   });
 
-  it('should throw CampaignParticipantNotFoundException if participant not found', async () => {
-    mockParticipantRepository.findById.mockResolvedValue(null);
+  const createCampaignWithParticipant = (participantId: string, status: EParticipantStatus) => {
+    const participant = CampaignParticipantEntity.instantiate(participantId, {
+      kolProfileId: 'kol-1',
+      status,
+      joinedAt: status === EParticipantStatus.PENDING_APPROVAL ? null : new Date(),
+      deleteAt: null,
+      deleteBy: null,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
+
+    return CampaignRoot.instantiate('campaign-123', {
+      ownerId: 'owner-1',
+      enterpriseId: 'ent-1',
+      budget: 5000,
+      financialTarget: {},
+      description: 'Test Campaign',
+      platformTarget: [],
+      status: ECampaignStatus.IN_PROGRESS,
+      collaboratorIds: [],
+      rawContents: [],
+      deleteAt: null,
+      deleteBy: null,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      participants: [participant],
+    });
+  };
+
+  it('should throw CampaignParticipantNotFoundException if campaign not found', async () => {
+    mockCampaignRepository.findByParticipantId.mockResolvedValue(null);
 
     const command = new CampaignParticipantUpdateCommand('non-existent', { status: EParticipantStatus.JOINED });
     await expect(handler.execute(command)).rejects.toThrow(CampaignParticipantNotFoundException);
   });
 
-  it('should transition status using join() if target status is JOINED and current is PENDING_APPROVAL', async () => {
-    const participant = CampaignParticipantRoot.instantiate('participant-123', {
-      campaignId: 'camp-1',
-      kolProfileId: 'kol-1',
-      status: EParticipantStatus.PENDING_APPROVAL,
-      joinedAt: null,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-      outputs: [],
-      deleteAt: null,
-      deleteBy: null,
-    });
-
-    mockParticipantRepository.findById.mockResolvedValue(participant);
+  it('should transition status using join() if target is JOINED and current is PENDING_APPROVAL', async () => {
+    const campaign = createCampaignWithParticipant('participant-123', EParticipantStatus.PENDING_APPROVAL);
+    mockCampaignRepository.findByParticipantId.mockResolvedValue(campaign);
 
     const command = new CampaignParticipantUpdateCommand('participant-123', { status: EParticipantStatus.JOINED });
     await handler.execute(command);
 
-    expect(participant.status).toBe(EParticipantStatus.JOINED);
-    expect(participant.joinedAt).toBeInstanceOf(Date);
-    expect(mockParticipantRepository.save).toHaveBeenCalledWith(participant);
+    const updated = campaign.participants[0];
+    expect(updated.status).toBe(EParticipantStatus.JOINED);
+    expect(updated.joinedAt).toBeInstanceOf(Date);
+    expect(mockCampaignRepository.save).toHaveBeenCalledWith(campaign);
   });
 
-  it('should update outputs and preserve existing fileId', async () => {
-    const participant = CampaignParticipantRoot.instantiate('participant-123', {
-      campaignId: 'camp-1',
-      kolProfileId: 'kol-1',
-      status: EParticipantStatus.JOINED,
-      joinedAt: new Date(),
-      createdAt: new Date(),
-      updatedAt: new Date(),
-      outputs: [
-        {
-          id: 'out-1',
-          platformId: 'plat-1',
-          outputType: EOutputType.VIDEO,
-          title: 'Initial Video',
-          isScheduleForPost: true,
-          fileId: 'existing-file-uuid',
-          scheduledAt: null,
-          status: EOutputStatus.DRAFT,
-          url: null,
-          postedAt: null,
-        },
-      ],
-      deleteAt: null,
-      deleteBy: null,
-    });
+  it('should transition status to REJECTED when target is REJECTED', async () => {
+    const campaign = createCampaignWithParticipant('participant-123', EParticipantStatus.PENDING_APPROVAL);
+    mockCampaignRepository.findByParticipantId.mockResolvedValue(campaign);
 
-    mockParticipantRepository.findById.mockResolvedValue(participant);
-
-    const command = new CampaignParticipantUpdateCommand('participant-123', {
-      outputs: [
-        {
-          id: 'out-1',
-          outputType: EOutputType.VIDEO,
-          title: 'Updated Video Title',
-          isScheduleForPost: true,
-          scheduledAt: null,
-          url: null,
-        },
-      ],
-    });
-
+    const command = new CampaignParticipantUpdateCommand('participant-123', { status: EParticipantStatus.REJECTED });
     await handler.execute(command);
 
-    expect(participant.outputs.length).toBe(1);
-    expect(participant.outputs[0].title).toBe('Updated Video Title');
-    expect(participant.outputs[0].fileId).toBe('existing-file-uuid'); // fileId preserved!
-    expect(mockParticipantRepository.save).toHaveBeenCalledWith(participant);
-  });
-
-  it('should throw error when updating outputs if any output is in PUBLISHED state', async () => {
-    const participant = CampaignParticipantRoot.instantiate('participant-123', {
-      campaignId: 'camp-1',
-      kolProfileId: 'kol-1',
-      status: EParticipantStatus.JOINED,
-      joinedAt: new Date(),
-      createdAt: new Date(),
-      updatedAt: new Date(),
-      outputs: [
-        {
-          id: 'out-1',
-          platformId: 'plat-1',
-          outputType: EOutputType.VIDEO,
-          title: 'Published Video',
-          isScheduleForPost: false,
-          fileId: null,
-          scheduledAt: null,
-          status: EOutputStatus.PUBLISHED,
-          url: 'http://youtube.com/vid',
-          postedAt: new Date(),
-        },
-      ],
-      deleteAt: null,
-      deleteBy: null,
-    });
-
-    mockParticipantRepository.findById.mockResolvedValue(participant);
-
-    const command = new CampaignParticipantUpdateCommand('participant-123', {
-      outputs: [
-        {
-          id: 'out-1',
-          outputType: EOutputType.VIDEO,
-          title: 'Attempted Update Title',
-          isScheduleForPost: false,
-          url: 'http://youtube.com/different-url',
-        },
-      ],
-    });
-
-    await expect(handler.execute(command)).rejects.toThrow('Cannot modify published output');
+    expect(campaign.participants[0].status).toBe(EParticipantStatus.REJECTED);
+    expect(mockCampaignRepository.save).toHaveBeenCalledWith(campaign);
   });
 });

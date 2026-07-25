@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { createZodDto } from 'nestjs-zod';
-import { UserDto } from './user.dto';
-import { UploadedFileDto } from './uploaded-file.dto';
+import { UploadedFileDto, UploadedFileDtoSchema } from './uploaded-file.dto';
+import { UserDto, UserDetailDtoSchema } from './user.dto';
 
 export const EnterpriseDtoSchema = z.object({
   id: z.string(),
@@ -14,13 +14,22 @@ export const EnterpriseDtoSchema = z.object({
   taxId: z.string().nullable(),
   logoUrlId: z.string().nullable(),
   isVerified: z.boolean(),
-  createdAt: z.string(),
-  updatedAt: z.string(),
+  members: z.array(z.object({ userId: z.string(), mode: z.string() })).default([]),
+  knowledgeBase: z.object({
+    rawText: z.string().optional(),
+    externalLinks: z.array(z.string()),
+    updatedAt: z.iso.datetime(),
+  }).optional(),
+  createdAt: z.iso.datetime(),
+  updatedAt: z.iso.datetime(),
 }).strict();
 
 export class EnterpriseDto extends createZodDto(EnterpriseDtoSchema) {}
 
-export type EnterpriseDetailDto = Omit<EnterpriseDto, 'logoUrlId'> & {
-  logoUrlId: UploadedFileDto | null;
-  user?: UserDto;
-};
+export const EnterpriseDetailDtoSchema = EnterpriseDtoSchema.extend({
+  logoUrlId: UploadedFileDtoSchema.nullable(),
+  user: UserDetailDtoSchema.optional(),
+});
+
+export class EnterpriseDetailDto extends createZodDto(EnterpriseDetailDtoSchema) {}
+

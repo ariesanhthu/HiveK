@@ -1,5 +1,6 @@
 import { Field, ObjectType, ID, Float, Int } from '@nestjs/graphql';
 import { GraphQLJSONObject } from 'graphql-type-json';
+import type { JsonObject } from '@/core/types/common.type';
 import { UserType } from './user.type';
 import { PlatformType } from './platform.type';
 
@@ -9,7 +10,7 @@ export class KolPlatformInfoType {
   platformId: string;
 
   @Field(() => PlatformType, { nullable: true })
-  platform?: any;
+  platform?: PlatformType | null;
 
   @Field()
   uniqueId: string;
@@ -66,8 +67,8 @@ export class KolProfileType {
   isVerified: boolean;
 
   @Field(() => GraphQLJSONObject, { nullable: true })
-  scores?: Record<string, any>;
+  scores?: JsonObject | null;
 
   @Field(() => UserType, { nullable: true })
-  user?: any;
+  user?: UserType | null;
 }

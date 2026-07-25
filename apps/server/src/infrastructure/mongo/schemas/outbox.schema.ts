@@ -13,34 +13,37 @@ export enum EOutboxStatus {
   timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' },
 })
 export class OutboxModel {
-  @Prop({ type: MongooseSchema.Types.String, required: true })
+  @Prop({ type: String, required: true })
   event_type: string;
 
   @Prop({ type: MongooseSchema.Types.Mixed, required: false })
-  metadata?: any;
+  metadata?: Record<string, unknown>;
 
   @Prop({ type: MongooseSchema.Types.Mixed, required: false })
-  transport?: any;
+  transport?: Record<string, unknown>;
 
   @Prop({ type: MongooseSchema.Types.Mixed, required: true })
-  payload: any;
+  payload: unknown;
 
-  @Prop({ type: MongooseSchema.Types.String, required: true, enum: EOutboxStatus, default: EOutboxStatus.PENDING })
+  @Prop({ type: String, required: true, enum: EOutboxStatus, default: EOutboxStatus.PENDING })
   status: EOutboxStatus;
 
-  @Prop({ type: MongooseSchema.Types.Number, required: true, default: 0 })
+  @Prop({ type: Number, required: true, default: 0 })
   retry_count: number;
 
-  @Prop({ type: MongooseSchema.Types.Number, required: true, default: 5 })
+  @Prop({ type: Number, required: true, default: 5 })
   max_retry: number;
 
-  @Prop({ type: MongooseSchema.Types.String, required: false })
+  @Prop({ type: String, required: false })
   error_reason?: string;
 
-  @Prop({ type: MongooseSchema.Types.Date, required: true, default: Date.now })
+  @Prop({ type: Date, required: true, default: Date.now })
   created_at: Date;
 
-  @Prop({ type: MongooseSchema.Types.Date, required: false })
+  @Prop({ type: Date, required: false })
+  available_at?: Date;
+
+  @Prop({ type: Date, required: false })
   processed_at?: Date;
 
   updated_at: Date;

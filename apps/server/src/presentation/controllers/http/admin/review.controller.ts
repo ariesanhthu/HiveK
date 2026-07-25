@@ -8,12 +8,11 @@ import {
   ReviewSoftDeleteCommand,
   ReviewRestoreCommand,
 } from '@/application/commands';
-import { ReviewGetListQuery, ReviewGetByIdQuery, ReviewFilterDto } from '@/application/queries';
+import { ReviewGetListQuery, ReviewGetByIdQuery } from '@/application/queries';
 import { ReviewDto, ReviewFilterDto as ReviewFilterInputDto } from '@/application/dtos';
 import { PaginatedResponseDto } from '@/application/dtos/pagination.dto';
 import { JwtAuthGuard, RolesGuard } from '@/presentation/middleware/guards';
-import { CurrentUser } from '@/presentation/decorators/current-user.decorator';
-import { Roles } from '@/presentation/decorators/roles.decorator';
+import { CurrentUser, Roles, ApiOkResponseEnvelope, ApiPaginatedResponseEnvelope } from '@/presentation/decorators';
 import { ERoleType } from '@/core/enums';
 
 @ApiTags('ADMIN-reviews')
@@ -30,12 +29,14 @@ export class PublicReviewAdminController {
 
   @Get()
   @ApiOperation({ summary: 'Get all reviews' })
+  @ApiPaginatedResponseEnvelope(ReviewDto)
   async findAll(@Query() filters: ReviewFilterInputDto): Promise<PaginatedResponseDto<ReviewDto>> {
     return this.queryBus.execute(new ReviewGetListQuery(filters));
   }
 
   @Get(':id')
   @ApiOperation({ summary: 'Get review by ID' })
+  @ApiOkResponseEnvelope(ReviewDto)
   async findById(@Param('id') id: string): Promise<ReviewDto> {
     return this.queryBus.execute(new ReviewGetByIdQuery(id));
   }
@@ -68,3 +69,4 @@ export class PublicReviewAdminController {
     return this.commandBus.execute(new ReviewRestoreCommand(id));
   }
 }
+

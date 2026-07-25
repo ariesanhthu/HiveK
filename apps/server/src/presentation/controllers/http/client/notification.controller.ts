@@ -2,8 +2,8 @@ import { Controller, Get, Patch, Delete, Param, Query, Body, HttpCode, HttpStatu
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { ApiTags, ApiOperation, ApiBearerAuth, ApiSecurity } from '@nestjs/swagger';
 import { buildVersionedRoute } from '@presentation/utils';
-import { JwtAuthGuard } from '@/presentation/middleware/guards/jwt-auth.guard';
-import { CurrentUser } from '@/presentation/decorators/current-user.decorator';
+import { JwtAuthGuard } from '@/presentation/middleware/guards';
+import { CurrentUser, ApiPaginatedResponseEnvelope } from '@/presentation/decorators';
 import { NotificationGetListQuery } from '@/application/queries';
 import {
   NotificationUpdateReadStatusCommand,
@@ -34,6 +34,7 @@ export class NotificationClientController {
 
   @Get()
   @ApiOperation({ summary: "Get currently logged-in user's notifications" })
+  @ApiPaginatedResponseEnvelope(NotificationDto)
   async findAll(
     @CurrentUser('sub') userId: string,
     @Query() filters: NotificationFilterDto,
@@ -82,3 +83,4 @@ export class NotificationClientController {
     return this.commandBus.execute(new NotificationHardDeleteCommand(dto.ids, userId));
   }
 }
+

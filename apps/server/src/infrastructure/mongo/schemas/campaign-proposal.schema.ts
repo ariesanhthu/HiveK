@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument, Schema as MongooseSchema } from 'mongoose';
+import { HydratedDocument, Schema as MongooseSchema, Types } from 'mongoose';
 import { EProposalStatus, EMediaSlideType, EProductPlatform } from '@/core/enums';
 import { softDeletePlugin } from '../utils';
 
@@ -62,8 +62,8 @@ export const VoucherItemSubSchema = SchemaFactory.createForClass(VoucherItemSubM
   timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' },
 })
 export class CampaignProposalModel {
-  @Prop({ required: true, type: MongooseSchema.Types.ObjectId, ref: 'CampaignModel' })
-  campaign_id: MongooseSchema.Types.ObjectId;
+  @Prop({ required: true, type: Types.ObjectId, ref: 'CampaignModel' })
+  campaign_id: Types.ObjectId;
 
   @Prop({ required: true, unique: true, trim: true })
   slug: string;

@@ -72,7 +72,7 @@ export class MongoPlatformRepository implements IPlatformRepository {
       name: platform.name,
       base_url: platform.baseUrl,
       api_status: platform.apiStatus,
-      icon: platform.icon ? new Types.ObjectId(platform.icon) as any : null,
+      icon: platform.icon ? new Types.ObjectId(platform.icon) : null,
       delete_at: platform.deleteAt,
       delete_by: platform.deleteBy,
     };

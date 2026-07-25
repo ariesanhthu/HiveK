@@ -14,7 +14,7 @@ import {
 } from '@/application/queries';
 import { PlatformDetailDto } from '@/application/dtos';
 import { PaginatedResponseDto } from '@/application/dtos/pagination.dto';
-import { Public } from '@/presentation/decorators/public.decorator';
+import { Public, ApiOkResponseEnvelope, ApiPaginatedResponseEnvelope } from '@/presentation/decorators';
 
 @ApiTags('CLIENT-platforms')
 @ApiBearerAuth()
@@ -26,6 +26,7 @@ export class PlatformClientController {
   @Public()
   @Get()
   @ApiOperation({ summary: 'Get all platforms' })
+  @ApiPaginatedResponseEnvelope(PlatformDetailDto)
   async findAll(
     @Query() filters: PlatformFilterDto,
   ): Promise<PaginatedResponseDto<PlatformDetailDto>> {
@@ -35,7 +36,9 @@ export class PlatformClientController {
   @Public()
   @Get(':id')
   @ApiOperation({ summary: 'Get platform by ID' })
+  @ApiOkResponseEnvelope(PlatformDetailDto)
   async findById(@Param('id') id: string): Promise<PlatformDetailDto> {
     return this.queryBus.execute(new PlatformGetByIdQuery(id));
   }
 }
+

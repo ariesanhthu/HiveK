@@ -7,7 +7,7 @@ import { createMockUserRepository } from '../../../__mocks__/mock-repositories';
 import {
   createMockAuthService,
   createMockUnitOfWork,
-  createMockOutboxService,
+  createMockEventService,
   createMockRoleReadService,
   createMockCommandBus,
 } from '../../../__mocks__/mock-services';
@@ -19,7 +19,7 @@ describe('AuthSignUpCommandHandler', () => {
   let mockUserRepository: ReturnType<typeof createMockUserRepository>;
   let mockRoleReadService: ReturnType<typeof createMockRoleReadService>;
   let mockAuthService: ReturnType<typeof createMockAuthService>;
-  let mockOutboxService: ReturnType<typeof createMockOutboxService>;
+  let mockEventService: ReturnType<typeof createMockEventService>;
   let mockUow: ReturnType<typeof createMockUnitOfWork>;
   let mockCommandBus: ReturnType<typeof createMockCommandBus>;
 
@@ -27,7 +27,7 @@ describe('AuthSignUpCommandHandler', () => {
     mockUserRepository = createMockUserRepository();
     mockRoleReadService = createMockRoleReadService();
     mockAuthService = createMockAuthService();
-    mockOutboxService = createMockOutboxService();
+    mockEventService = createMockEventService();
     mockUow = createMockUnitOfWork();
     mockCommandBus = createMockCommandBus();
 
@@ -35,7 +35,7 @@ describe('AuthSignUpCommandHandler', () => {
       mockUserRepository,
       mockRoleReadService as any, // IRoleReadService is an interface
       mockAuthService,
-      mockOutboxService,
+      mockEventService,
       mockUow,
       mockCommandBus as any, // CommandBus is a class from NestJS
     );
@@ -80,7 +80,7 @@ describe('AuthSignUpCommandHandler', () => {
       expect(otpCommand.input.email).toBe('test@example.com');
       expect(otpCommand.input.type).toBe(EOtpType.CREATE_ACCOUNT);
 
-      expect(mockOutboxService.enqueueMany).toHaveBeenCalled();
+      expect(mockEventService.publishEvents).toHaveBeenCalled();
       expect(mockUow.execute).toHaveBeenCalled();
     });
 

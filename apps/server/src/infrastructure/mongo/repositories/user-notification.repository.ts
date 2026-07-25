@@ -58,7 +58,7 @@ export class MongoUserNotificationRepository implements IUserNotificationReposit
       : { $set: { is_read: false, read_at: null } };
 
     await this.userNotificationModel.updateMany(
-      { recipient_id: new Types.ObjectId(recipientId), is_read: !isRead } as any,
+      { recipient_id: new Types.ObjectId(recipientId), is_read: !isRead } as Record<string, unknown>,
       update
     ).session(this.session).exec();
   }
@@ -72,7 +72,7 @@ export class MongoUserNotificationRepository implements IUserNotificationReposit
       { 
         _id: { $in: ids.map(id => new Types.ObjectId(id)) },
         recipient_id: new Types.ObjectId(recipientId)
-      } as any,
+      } as Record<string, unknown>,
       update
     ).session(this.session).exec();
   }
@@ -82,7 +82,7 @@ export class MongoUserNotificationRepository implements IUserNotificationReposit
       { 
         _id: { $in: ids.map(id => new Types.ObjectId(id)) },
         recipient_id: new Types.ObjectId(recipientId)
-      } as any,
+      } as Record<string, unknown>,
       { $set: { delete_at: new Date(), delete_by: deletedBy } }
     ).session(this.session).exec();
   }
@@ -92,7 +92,7 @@ export class MongoUserNotificationRepository implements IUserNotificationReposit
       { 
         _id: { $in: ids.map(id => new Types.ObjectId(id)) },
         recipient_id: new Types.ObjectId(recipientId)
-      } as any,
+      } as Record<string, unknown>,
       { $set: { delete_at: null, delete_by: null } }
     ).session(this.session).exec();
   }
@@ -101,7 +101,7 @@ export class MongoUserNotificationRepository implements IUserNotificationReposit
     await this.userNotificationModel.deleteMany({
       _id: { $in: ids.map(id => new Types.ObjectId(id)) },
       recipient_id: new Types.ObjectId(recipientId)
-    } as any).session(this.session).exec();
+    } as Record<string, unknown>).session(this.session).exec();
   }
 
   private mapToDomain(doc: UserNotificationDocument): UserNotificationRoot {
@@ -120,10 +120,10 @@ export class MongoUserNotificationRepository implements IUserNotificationReposit
     });
   }
 
-  private mapToPersistence(userNotification: UserNotificationRoot): Omit<UserNotificationModel, 'created_at' | 'updated_at'> & { _id?: Types.ObjectId } {
-    const data: Omit<UserNotificationModel, 'created_at' | 'updated_at'> & { _id?: Types.ObjectId } = {
-      notification_id: new Types.ObjectId(userNotification.notificationId) as any,
-      recipient_id: new Types.ObjectId(userNotification.recipientId) as any,
+  private mapToPersistence(userNotification: UserNotificationRoot): Record<string, unknown> & { _id?: Types.ObjectId } {
+    const data: Record<string, unknown> & { _id?: Types.ObjectId } = {
+      notification_id: new Types.ObjectId(userNotification.notificationId),
+      recipient_id: new Types.ObjectId(userNotification.recipientId),
       is_read: userNotification.isRead,
       read_at: userNotification.readAt,
       delete_at: userNotification.deleteAt,

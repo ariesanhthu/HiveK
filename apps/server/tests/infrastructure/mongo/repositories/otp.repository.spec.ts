@@ -1,6 +1,40 @@
+// Enterprise schema loading triggers SchemaFactory.createForClass which breaks with mongoose mock
+jest.mock('@/infrastructure/mongo/schemas/enterprise.schema', () => ({}));
+
 import { MongoOtpRepository } from '@/infrastructure/mongo/repositories/otp.repository';
 import { EOtpType } from '@/core/enums';
 import { OtpRoot } from '@/core/aggregate-roots/otp.aggregate';
+
+// Provide a pure mongoose mock that avoids BSON validation for test IDs
+jest.mock('mongoose', () => {
+  const createMockObjectId = (id?: string) => ({
+    toString: () => id || 'generated-id',
+    toHexString: () => id || 'generated-id',
+    equals: (other: any) => String(other) === String(id),
+  });
+
+  return {
+    Types: {
+      ObjectId: jest.fn().mockImplementation((id?: string) => createMockObjectId(id)),
+    },
+    Model: class MockModel {},
+    Schema: class MockSchema {
+      static types = {};
+      path() {}
+      virtual() {}
+      pre() {}
+      post() {}
+      plugin() {}
+      add() {}
+    },
+    HydratedDocument: class MockHydratedDocument {},
+    Connection: class MockConnection {},
+    ClientSession: class MockClientSession {},
+    mongo: {
+      MongoClient: class MockMongoClient {},
+    },
+  };
+});
 
 describe('MongoOtpRepository', () => {
   let repo: MongoOtpRepository;

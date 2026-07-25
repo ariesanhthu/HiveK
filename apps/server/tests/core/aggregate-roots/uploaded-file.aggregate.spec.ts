@@ -1,5 +1,5 @@
 import { UploadedFileRoot, UploadedFileCreateProps } from '@core/aggregate-roots/uploaded-file.aggregate';
-import { TargetType } from '@core/enums';
+import { ETargetType } from '@core/enums';
 
 describe('UploadedFileRoot Aggregate Root', () => {
   const defaultCreateProps: UploadedFileCreateProps = {
@@ -7,7 +7,7 @@ describe('UploadedFileRoot Aggregate Root', () => {
     publicId: 'test-public-id',
     size: 102400,
     format: 'jpg',
-    targetType: TargetType.USER,
+    targetType: ETargetType.USER,
     targetId: 'user-123',
     targetField: 'avatar',
   };
@@ -21,7 +21,7 @@ describe('UploadedFileRoot Aggregate Root', () => {
       expect(file.publicId).toBe('test-public-id');
       expect(file.size).toBe(102400);
       expect(file.format).toBe('jpg');
-      expect(file.targetType).toBe(TargetType.USER);
+      expect(file.targetType).toBe(ETargetType.USER);
       expect(file.targetId).toBe('user-123');
       expect(file.targetField).toBe('avatar');
       expect(file.title).toBeNull();

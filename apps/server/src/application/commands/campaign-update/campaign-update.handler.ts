@@ -30,12 +30,13 @@ export class CampaignUpdateCommandHandler implements ICommandHandler<CampaignUpd
       ...(input.budget !== undefined ? { budget: input.budget } : {}),
       ...(input.financialTarget !== undefined ? { financialTarget: input.financialTarget } : {}),
       ...(input.description !== undefined ? { description: input.description } : {}),
+      ...(input.extras !== undefined ? { extras: input.extras } : {}),
       ...(input.platformTarget !== undefined ? { platformTarget: input.platformTarget.map((item) => ({
         platformId: item.platformId,
         minFollowers: item.minFollowers,
         maxFollowers: item.maxFollowers,
         note: item.note,
-        others: item.others,
+        extras: item.extras,
       })) } : {}),
     };
 

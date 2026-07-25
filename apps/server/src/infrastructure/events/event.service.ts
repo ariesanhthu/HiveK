@@ -47,12 +47,13 @@ export class EventService implements IEventService {
       retry_count: 0,
       max_retry: 5,
       created_at: new Date(),
+      available_at: (event.metadata?.deliverAt as Date) ?? new Date(),
     }));
 
-    const activeSession = (this.uow as any).getSession?.() || undefined;
+    const activeSession = this.uow.getSession?.();
     await this.outboxModel.insertMany(outboxRows, { session: activeSession as ClientSession });
     
     // Notify the outbox processor to run immediately
-    this.outboxEmitter.emit();
+    // this.outboxEmitter.emit();
   }
 }

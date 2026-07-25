@@ -1,3 +1,5 @@
+import type { JsonObject } from '@/core/types/common.type';
+
 export class CacheKeyUtil {
   /**
    * Builds an ID-based key.
@@ -11,7 +13,7 @@ export class CacheKeyUtil {
    * Builds a list/query-based key.
    * e.g., platform:list:{"limit":10}
    */
-  static list(domain: string, filters: any): string {
+  static list(domain: string, filters: unknown): string {
     const filterKey = JSON.stringify(filters);
     return `${domain.toLowerCase()}:list:${filterKey}`;
   }

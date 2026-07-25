@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, QueryFilter, Schema, Types } from 'mongoose';
+import { FlattenMaps, Model, QueryFilter, Schema, Types } from 'mongoose';
 import { IKpiLogReadService } from '@/application/interfaces';
 import { KpiLogDto } from '@/application/dtos';
 import { KpiLogFilterDto } from '@/application/queries';
@@ -20,7 +20,7 @@ export class MongoKpiLogReadService implements IKpiLogReadService {
     return doc ? this.mapToDto(doc) : null;
   }
 
-  async findAll(filters: KpiLogFilterDto = {} as any): Promise<PaginatedResponseDto<KpiLogDto>> {
+  async findAll(filters: KpiLogFilterDto = {}): Promise<PaginatedResponseDto<KpiLogDto>> {
     const { cursor, limit = 10, sort = SortOrder.DESC, participantId, outputId, startTime, endTime } = filters;
     const query: QueryFilter<KpiLogDocument> = {};
     if (participantId) {
@@ -60,10 +60,10 @@ export class MongoKpiLogReadService implements IKpiLogReadService {
     );
   }
 
-  private mapToDto(doc: any): KpiLogDto {
+  private mapToDto(doc: FlattenMaps<KpiLogDocument>): KpiLogDto {
     return {
       id: doc._id.toString(),
-      timestamp: doc.timestamp,
+      timestamp: doc.timestamp?.toISOString() || '',
       participantId: doc.participantId ? doc.participantId.toString() : null,
       metrics: {
         views: doc.metrics?.views || 0,

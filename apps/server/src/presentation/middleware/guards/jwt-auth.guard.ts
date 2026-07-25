@@ -3,6 +3,7 @@ import { Reflector } from '@nestjs/core';
 import { AuthGuard } from '@nestjs/passport';
 import { GqlExecutionContext } from '@nestjs/graphql';
 import { IS_PUBLIC_KEY } from '../../decorators/public.decorator';
+import { IS_WEBHOOK_KEY } from '../../decorators/webhook.decorator';
 import { isFunction } from '@/shared/utils';
 
 @Injectable()
@@ -19,7 +20,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
     return context.switchToHttp().getRequest();
   }
 
-  override handleRequest(err: any, user: any, info: any, context: ExecutionContext, status?: any) {
+  override handleRequest(err: any, user: any, info: any, context: ExecutionContext, status?: number) {
     if (user) {
       return user;
     }
@@ -27,7 +28,11 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
       context.getHandler(),
       context.getClass(),
     ]);
-    if (isPublic) {
+    const isWebhook = this.reflector.getAllAndOverride<boolean>(IS_WEBHOOK_KEY, [
+      context.getHandler(),
+      context.getClass(),
+    ]);
+    if (isPublic || isWebhook) {
       return null;
     }
     throw err || new UnauthorizedException();
@@ -57,9 +62,14 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
       context.getClass(),
     ]);
 
+    const isWebhook = this.reflector.getAllAndOverride<boolean>(IS_WEBHOOK_KEY, [
+      context.getHandler(),
+      context.getClass(),
+    ]);
+
     const hasToken = !!req?.headers?.authorization;
 
-    if (isPublic && !hasToken) {
+    if ((isPublic || isWebhook) && !hasToken) {
       return true;
     }
 
