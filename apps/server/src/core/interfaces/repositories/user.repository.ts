@@ -7,6 +7,7 @@ export interface IUserRepository extends IBaseRepository<UserRoot> {
   findByIds(ids: string[]): Promise<UserRoot[]>;
   findByEnterpriseId(enterpriseId: string): Promise<UserRoot[]>;
   existsByRoleId(roleId: string): Promise<boolean>;
+  findByIdIncludingDeleted(id: string): Promise<Nullable<UserRoot>>;
 }
 
 export const USER_REPOSITORY = Symbol('IUserRepository');

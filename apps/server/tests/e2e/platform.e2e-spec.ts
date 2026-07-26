@@ -13,7 +13,8 @@ describe('Platform Domain (e2e)', () => {
   let userModel: Model<any>;
   let jwtService: IAuthJwtService;
   let authToken: string;
-  const testAdminId = '64f7b2c9e8b3c9001f3e4e94';
+  const testAdminId = '64f7b2c9e8b3c9001f3e4ea6';
+  const API_KEY = process.env.API_KEY || 'HiveK_ApiKey';
 
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -62,7 +63,8 @@ describe('Platform Domain (e2e)', () => {
   it('should manage platform lifecycle', async () => {
     // 1. Create Platform
     const createRes = await request(app.getHttpServer())
-      .post('/hivek/api/platforms')
+      .post('/hivek/admin/v1/platforms')
+      .set('x-api-key', API_KEY)
       .set('Authorization', `Bearer ${authToken}`)
       .send({
         name: 'E2E Platform',
@@ -71,27 +73,35 @@ describe('Platform Domain (e2e)', () => {
       })
       .expect(201);
 
-    expect(createRes.body.name.toLowerCase()).toBe('e2e platform');
-    const platformId = createRes.body.id;
+    expect(createRes.body.success).toBe(true);
+    expect(createRes.body.data.name.toLowerCase()).toBe('e2e platform');
+    const platformId = createRes.body.data.id;
 
     // 2. Get Platform by ID
     const getRes = await request(app.getHttpServer())
-      .get(`/hivek/api/platforms/${platformId}`)
+      .get(`/hivek/admin/v1/platforms/${platformId}`)
+      .set('x-api-key', API_KEY)
+      .set('Authorization', `Bearer ${authToken}`)
       .expect(200);
 
-    expect(getRes.body.name.toLowerCase()).toBe('e2e platform');
+    expect(getRes.body.success).toBe(true);
+    expect(getRes.body.data.name.toLowerCase()).toBe('e2e platform');
 
     // 3. Find All Platforms
     const listRes = await request(app.getHttpServer())
-      .get('/hivek/api/platforms')
+      .get('/hivek/admin/v1/platforms')
+      .set('x-api-key', API_KEY)
+      .set('Authorization', `Bearer ${authToken}`)
       .expect(200);
 
+    expect(listRes.body.success).toBe(true);
     expect(listRes.body.data).toBeDefined();
     expect(listRes.body.data.length).toBeGreaterThanOrEqual(1);
 
     // 4. Update Platform
     const updateRes = await request(app.getHttpServer())
-      .patch(`/hivek/api/platforms/${platformId}`)
+      .patch(`/hivek/admin/v1/platforms/${platformId}`)
+      .set('x-api-key', API_KEY)
       .set('Authorization', `Bearer ${authToken}`)
       .send({
         name: 'E2E Platform Updated',
@@ -99,31 +109,37 @@ describe('Platform Domain (e2e)', () => {
       })
       .expect(200);
 
-    expect(updateRes.body.name.toLowerCase()).toBe('e2e platform updated');
-    expect(updateRes.body.apiStatus).toBe('maintenance');
+    expect(updateRes.body.success).toBe(true);
+    expect(updateRes.body.data.name.toLowerCase()).toBe('e2e platform updated');
+    expect(updateRes.body.data.apiStatus).toBe('maintenance');
 
     // 5. Soft Delete
     await request(app.getHttpServer())
-      .patch(`/hivek/api/platforms/${platformId}/soft-delete`)
+      .patch(`/hivek/admin/v1/platforms/${platformId}/soft-delete`)
+      .set('x-api-key', API_KEY)
       .set('Authorization', `Bearer ${authToken}`)
       .query({ deletedBy: 'E2E-Tester' })
       .expect(204);
 
     // 6. Restore
     await request(app.getHttpServer())
-      .patch(`/hivek/api/platforms/${platformId}/restore`)
+      .patch(`/hivek/admin/v1/platforms/${platformId}/restore`)
+      .set('x-api-key', API_KEY)
       .set('Authorization', `Bearer ${authToken}`)
-      .expect(200);
+      .expect(204);
 
     // 7. Hard Delete
     await request(app.getHttpServer())
-      .delete(`/hivek/api/platforms/${platformId}`)
+      .delete(`/hivek/admin/v1/platforms/${platformId}`)
+      .set('x-api-key', API_KEY)
       .set('Authorization', `Bearer ${authToken}`)
       .expect(204);
 
     // 8. Verify Gone
     await request(app.getHttpServer())
-      .get(`/hivek/api/platforms/${platformId}`)
+      .get(`/hivek/admin/v1/platforms/${platformId}`)
+      .set('x-api-key', API_KEY)
+      .set('Authorization', `Bearer ${authToken}`)
       .expect(404);
   });
 });

@@ -76,7 +76,7 @@ export class AuthSignUpCommandHandler implements ICommandHandler<AuthSignUpComma
 
       await this.userRepository.save(user);
       console.log("Created user")
-      await this.commandBus.execute(new AuthSendOtpCommand({ email: normalizedEmail, type: EOtpType.CREATE_ACCOUNT }));
+      await this.commandBus.execute(new AuthSendOtpCommand({ email: normalizedEmail, type: EOtpType.CREATE_ACCOUNT }, user.id));
 
       await this.eventService.publishEvents(user);
 

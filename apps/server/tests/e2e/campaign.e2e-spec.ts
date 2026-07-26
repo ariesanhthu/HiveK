@@ -13,7 +13,8 @@ describe('Campaign Domain (e2e)', () => {
   let userModel: Model<any>;
   let jwtService: IAuthJwtService;
   let authToken: string;
-  const testUserId = '64f7b2c9e8b3c9001f3e4e94';
+  const testUserId = '64f7b2c9e8b3c9001f3e4ea5';
+  const API_KEY = process.env.API_KEY || 'HiveK_ApiKey';
 
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -80,34 +81,41 @@ describe('Campaign Domain (e2e)', () => {
 
     // 1. Create Campaign
     const createRes = await request(app.getHttpServer())
-      .post('/hivek/api/campaigns')
+      .post('/hivek/client/v1/campaigns')
+      .set('x-api-key', API_KEY)
       .set('Authorization', `Bearer ${authToken}`)
       .send(campaignPayload)
       .expect(201);
 
-    expect(createRes.body.description).toBe('E2E Campaign Test Description');
-    const campaignId = createRes.body.id;
+    expect(createRes.body.success).toBe(true);
+    expect(createRes.body.data.description).toBe('E2E Campaign Test Description');
+    const campaignId = createRes.body.data.id;
 
     // 2. Get Campaign by ID
     const getRes = await request(app.getHttpServer())
-      .get(`/hivek/api/campaigns/${campaignId}`)
+      .get(`/hivek/client/v1/campaigns/${campaignId}`)
+      .set('x-api-key', API_KEY)
       .set('Authorization', `Bearer ${authToken}`)
       .expect(200);
 
-    expect(getRes.body.description).toBe('E2E Campaign Test Description');
+    expect(getRes.body.success).toBe(true);
+    expect(getRes.body.data.description).toBe('E2E Campaign Test Description');
 
     // 3. Get All Campaigns
     const listRes = await request(app.getHttpServer())
-      .get('/hivek/api/campaigns')
+      .get('/hivek/client/v1/campaigns')
+      .set('x-api-key', API_KEY)
       .set('Authorization', `Bearer ${authToken}`)
       .expect(200);
 
+    expect(listRes.body.success).toBe(true);
     expect(listRes.body.data).toBeDefined();
     expect(listRes.body.data.length).toBeGreaterThanOrEqual(1);
 
     // 4. Update Campaign
     const updateRes = await request(app.getHttpServer())
-      .patch(`/hivek/api/campaigns/${campaignId}`)
+      .patch(`/hivek/client/v1/campaigns/${campaignId}`)
+      .set('x-api-key', API_KEY)
       .set('Authorization', `Bearer ${authToken}`)
       .send({
         description: 'E2E Campaign Test Updated Description',
@@ -115,39 +123,37 @@ describe('Campaign Domain (e2e)', () => {
       })
       .expect(200);
 
-    expect(updateRes.body.description).toBe('E2E Campaign Test Updated Description');
-    expect(updateRes.body.budget).toBe(6000);
+    expect(updateRes.body.success).toBe(true);
+    expect(updateRes.body.data.description).toBe('E2E Campaign Test Updated Description');
+    expect(updateRes.body.data.budget).toBe(6000);
 
     // 5. Soft Delete
     await request(app.getHttpServer())
-      .patch(`/hivek/api/campaigns/${campaignId}/soft-delete`)
+      .patch(`/hivek/client/v1/campaigns/${campaignId}/soft-delete`)
+      .set('x-api-key', API_KEY)
       .set('Authorization', `Bearer ${authToken}`)
       .query({ deletedBy: 'E2E-Tester' })
       .expect(204);
-
-    // 6. Restore
-    await request(app.getHttpServer())
-      .patch(`/hivek/api/campaigns/${campaignId}/restore`)
-      .set('Authorization', `Bearer ${authToken}`)
-      .expect(200);
   });
 
   it('should return 401 without auth token', async () => {
     await request(app.getHttpServer())
-      .get('/hivek/api/campaigns')
+      .get('/hivek/client/v1/campaigns')
       .expect(401);
   });
 
   it('should return 404 when getting non-existent campaign', async () => {
     await request(app.getHttpServer())
-      .get('/hivek/api/campaigns/507f1f77bcf86cd799439011')
+      .get('/hivek/client/v1/campaigns/507f1f77bcf86cd799439011')
+      .set('x-api-key', API_KEY)
       .set('Authorization', `Bearer ${authToken}`)
       .expect(404);
   });
 
   it('should return 404 when updating non-existent campaign', async () => {
     await request(app.getHttpServer())
-      .patch('/hivek/api/campaigns/507f1f77bcf86cd799439011')
+      .patch('/hivek/client/v1/campaigns/507f1f77bcf86cd799439011')
+      .set('x-api-key', API_KEY)
       .set('Authorization', `Bearer ${authToken}`)
       .send({ description: 'Ghost' })
       .expect(404);

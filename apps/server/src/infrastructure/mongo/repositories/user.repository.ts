@@ -1,6 +1,6 @@
 import { Injectable, Inject } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, Types, ClientSession } from 'mongoose';
+import { Model, Types, ClientSession, QueryFilter } from 'mongoose';
 import { IUserRepository } from '@/core/interfaces/repositories';
 import { UserRoot, AdminRoot, EnterpriseUserRoot, KOLUserRoot } from '@/core/aggregate-roots';
 import { UserModel, UserDocument, EnterpriseUserModel, EnterpriseUserDocument, AdminUserDocument, KOLUserDocument } from '../schemas/user.schema';
@@ -45,6 +45,15 @@ export class MongoUserRepository implements IUserRepository {
 
   async findByEmail(email: string): Promise<Nullable<UserRoot>> {
     const doc = await this.userModel.findOne({ email }).session(this.session).exec();
+    return doc ? this.mapToDomain(doc) : null;
+  }
+
+  async findByIdIncludingDeleted(id: string): Promise<Nullable<UserRoot>> {
+    const filter: QueryFilter<UserDocument> = { _id: new Types.ObjectId(id) };
+    // Set delete_at in filter to bypass softDeletePlugin auto-filter
+    // Using { $exists: true } matches all docs since schema has `default: null`
+    filter.delete_at = { $exists: true };
+    const doc = await this.userModel.findOne(filter).session(this.session).exec();
     return doc ? this.mapToDomain(doc) : null;
   }
 

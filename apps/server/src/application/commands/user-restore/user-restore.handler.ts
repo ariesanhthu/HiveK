@@ -14,7 +14,7 @@ export class UserRestoreCommandHandler implements ICommandHandler<UserRestoreCom
   async execute(command: UserRestoreCommand): Promise<void> {
     const { id } = command;
 
-    const user = await this.userRepository.findById(id);
+    const user = await this.userRepository.findByIdIncludingDeleted(id);
     if (!user) {
       throw new UserNotFoundException(id);
     }

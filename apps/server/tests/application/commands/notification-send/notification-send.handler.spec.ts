@@ -7,18 +7,17 @@ import { NotificationDispatchedEvent } from '@/application/events';
 describe('NotificationSendCommandHandler', () => {
   let handler: NotificationSendCommandHandler;
   let mockEventBus: any;
-  let mockUserModel: any;
+  let mockUserReadService: any;
   let mockEnterpriseRepository: any;
 
   beforeEach(() => {
     mockEventBus = {
       publish: jest.fn(),
     };
-    mockUserModel = {
-      find: jest.fn().mockReturnThis(),
-      select: jest.fn().mockReturnThis(),
-      lean: jest.fn().mockReturnThis(),
-      exec: jest.fn(),
+    mockUserReadService = {
+      findByRoleType: jest.fn(),
+      findByEnterprise: jest.fn(),
+      findAllActive: jest.fn(),
     };
     mockEnterpriseRepository = {
       findById: jest.fn(),
@@ -26,7 +25,7 @@ describe('NotificationSendCommandHandler', () => {
 
     handler = new NotificationSendCommandHandler(
       mockEventBus as any,
-      mockUserModel as any,
+      mockUserReadService as any,
       mockEnterpriseRepository as any,
     );
   });
@@ -68,7 +67,7 @@ describe('NotificationSendCommandHandler', () => {
   });
 
   it('should publish Event for admin broadcast successfully', async () => {
-    mockUserModel.exec.mockResolvedValue([{ _id: 'admin-1' }, { _id: 'admin-2' }]);
+    mockUserReadService.findByRoleType.mockResolvedValue(['admin-1', 'admin-2']);
 
     const command = new NotificationSendCommand({
       type: NotificationType.SYSTEM,
@@ -82,7 +81,7 @@ describe('NotificationSendCommandHandler', () => {
 
     await handler.execute(command);
 
-    expect(mockUserModel.find).toHaveBeenCalledWith({ type: ERoleType.ADMIN, delete_at: null });
+    expect(mockUserReadService.findByRoleType).toHaveBeenCalledWith(ERoleType.ADMIN);
     expect(mockEventBus.publish).toHaveBeenCalled();
     const event = mockEventBus.publish.mock.calls[0][0];
     expect(event.recipientIds).toEqual(['admin-1', 'admin-2']);
@@ -92,7 +91,7 @@ describe('NotificationSendCommandHandler', () => {
     mockEnterpriseRepository.findById.mockResolvedValue({
       userId: 'owner-id',
     });
-    mockUserModel.exec.mockResolvedValue([{ _id: 'member-1' }]);
+    mockUserReadService.findByEnterprise.mockResolvedValue(['member-1']);
 
     const command = new NotificationSendCommand({
       type: NotificationType.SYSTEM,
@@ -108,11 +107,7 @@ describe('NotificationSendCommandHandler', () => {
     await handler.execute(command);
 
     expect(mockEnterpriseRepository.findById).toHaveBeenCalledWith('enterprise-123');
-    expect(mockUserModel.find).toHaveBeenCalledWith({
-      type: ERoleType.ENTERPRISE,
-      enterprise_id: 'enterprise-123',
-      delete_at: null,
-    });
+    expect(mockUserReadService.findByEnterprise).toHaveBeenCalledWith('enterprise-123');
     const event = mockEventBus.publish.mock.calls[0][0];
     expect(event.recipientIds).toContain('member-1');
     expect(event.recipientIds).toContain('owner-id');
