@@ -32,7 +32,7 @@ const ROLES: {
     role: "brand",
     icon: "storefront",
     title: "Thương hiệu",
-    description: "Tìm KOL phù hợp & vận hành chiến dịch",
+    description: "Tìm cộng tác viên phù hợp & vận hành chiến dịch",
     color: "var(--color-primary)",
   },
   {

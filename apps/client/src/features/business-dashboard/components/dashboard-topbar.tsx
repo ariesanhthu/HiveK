@@ -8,7 +8,7 @@ export function DashboardTopbar() {
           </span>
           <input
             type="text"
-            placeholder="Tìm kiếm creator hoặc chiến dịch..."
+            placeholder="Tìm kiếm cộng tác viên hoặc chiến dịch..."
             className="w-full bg-transparent text-sm text-foreground placeholder:text-foreground-muted focus:outline-none"
           />
         </div>

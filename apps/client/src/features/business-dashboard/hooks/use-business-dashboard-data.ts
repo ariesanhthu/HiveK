@@ -38,7 +38,7 @@ const METRICS: DashboardMetric[] = [
   },
   {
     id: "total-kols",
-    label: "Tổng số KOL",
+    label: "Tổng Cộng tác viên",
     value: "1,240",
     trendValue: "+15%",
     trendDirection: "up",
@@ -80,16 +80,16 @@ const CONVERSION_MONTHLY: DashboardBarPoint[] = [
 const ACTIVITIES: DashboardActivity[] = [
   {
     id: "activity-1",
-    title: "Ra mắt Công nghệ Mùa hè",
-    description: "Chi tiết chiến dịch được cập nhật bởi Sarah J.",
+    title: "Tuyển gia sư Toán Q.1",
+    description: "Chi tiết chiến dịch được cập nhật bởi Thành L.",
     timeLabel: "2 giờ trước",
     status: "review",
     icon: "edit_square",
   },
   {
     id: "activity-2",
-    title: "Đã thêm KOL mới",
-    description: "Alex Rivera đã tham gia chiến dịch 'Gaming Pro'.",
+    title: "Đã thêm Cộng tác viên mới",
+    description: "Minh Tuấn đã tham gia chiến dịch 'Gia sư Tiếng Anh Online'.",
     timeLabel: "5 giờ trước",
     status: "active",
     icon: "person_add",
@@ -97,7 +97,7 @@ const ACTIVITIES: DashboardActivity[] = [
   {
     id: "activity-3",
     title: "Đã xử lý thanh toán",
-    description: "Hóa đơn #3490 đã được thanh toán cho chiến dịch Beauty Vibes.",
+    description: "Hóa đơn #3490 đã được thanh toán cho chiến dịch Homestay Đà Lạt.",
     timeLabel: "Hôm qua",
     status: "paid",
     icon: "credit_card",
@@ -105,7 +105,7 @@ const ACTIVITIES: DashboardActivity[] = [
   {
     id: "activity-4",
     title: "Cảnh báo Ngân sách",
-    description: "Chiến dịch 'Thời trang Mùa thu' đã sử dụng 90% ngân sách.",
+    description: "Chiến dịch 'Gia sư Tin học' đã sử dụng 90% ngân sách.",
     timeLabel: "2 ngày trước",
     status: "alert",
     icon: "warning",

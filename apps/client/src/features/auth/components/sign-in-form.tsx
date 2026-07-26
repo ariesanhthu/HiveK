@@ -126,7 +126,7 @@ export function SignInForm() {
           href={AUTH_ROUTES.AMBASSADOR_DASHBOARD}
           className="rounded-full border border-white/10 px-3 py-1 text-white/60 transition-colors hover:border-primary/50 hover:text-primary"
         >
-          Demo KOL
+          Demo Cộng tác viên
         </Link>
       </div>
     </AuthShell>
