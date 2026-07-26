@@ -72,7 +72,7 @@ export async function submitSignIn(
 
   try {
     const tokens = await backendRequest<BackendAuthTokens>(
-      "/hivek/client/v1/auth/sign-in",
+      "/client/v1/auth/sign-in",
       {
         method: "POST",
         body: {
@@ -86,7 +86,7 @@ export async function submitSignIn(
     await setBackendAuthCookies(tokens);
 
     const profile = await backendRequest<BackendUserProfile>(
-      "/hivek/client/v1/auth/profile",
+      "/client/v1/auth/profile",
       {
         method: "GET",
         authToken: tokens.accessToken,
@@ -94,8 +94,31 @@ export async function submitSignIn(
       }
     ).catch(() => null);
 
-    if (profile?.type === "kol") {
+    const role = profile?.role || profile?.type;
+    if (role === "kol") {
       redirectTo = AUTH_ROUTES.AMBASSADOR_DASHBOARD;
+    } else if (role === "enterprise") {
+      // Check if user has an enterprise profile
+      const enterprises = await backendRequest<{ data?: unknown[] } | unknown[]>(
+        "/client/v1/enterprises/me",
+        {
+          method: "GET",
+          authToken: tokens.accessToken,
+          cache: "no-store",
+        }
+      ).catch(() => null);
+
+      const list = Array.isArray(enterprises)
+        ? enterprises
+        : Array.isArray((enterprises as { data?: unknown[] })?.data)
+        ? (enterprises as { data: unknown[] }).data
+        : [];
+
+      if (list.length === 0) {
+        redirectTo = "/enterprise/setup";
+      } else {
+        redirectTo = AUTH_ROUTES.BUSINESS_DASHBOARD;
+      }
     }
   } catch (error) {
     return {
@@ -141,8 +164,8 @@ export async function submitSignUp(
   try {
     await backendRequest<{ userId: string }>(
       role === "creator"
-        ? "/hivek/client/v1/auth/sign-up/kol"
-        : "/hivek/client/v1/auth/sign-up/enterprise",
+        ? "/client/v1/auth/sign-up/kol"
+        : "/client/v1/auth/sign-up/enterprise",
       {
         method: "POST",
         body: {

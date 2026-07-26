@@ -1,13 +1,18 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { DashboardKpiCards } from "@/features/business-dashboard/components/dashboard-kpi-cards";
 import { DashboardPerformance } from "@/features/business-dashboard/components/dashboard-performance";
 import { DashboardRecentActivities } from "@/features/business-dashboard/components/dashboard-recent-activities";
 import { DashboardSidebar } from "@/features/business-dashboard/components/dashboard-sidebar";
 import { DashboardTopbar } from "@/features/business-dashboard/components/dashboard-topbar";
 import { useBusinessDashboardData } from "@/features/business-dashboard/hooks/use-business-dashboard-data";
+import { getMyEnterprises } from "@/features/enterprise/server/enterprise-actions";
+import type { BackendEnterpriseProfile } from "@/server/backend/backend-types";
 
 export function BusinessDashboardPage() {
+  const [enterprises, setEnterprises] = useState<BackendEnterpriseProfile[]>([]);
+  const [activeEnterprise, setActiveEnterprise] = useState<BackendEnterpriseProfile | null>(null);
   const {
     period,
     setPeriod,
@@ -18,11 +23,25 @@ export function BusinessDashboardPage() {
     activities,
   } = useBusinessDashboardData();
 
+  useEffect(() => {
+    getMyEnterprises().then((list) => {
+      if (list && list.length > 0) {
+        setEnterprises(list);
+        setActiveEnterprise(list[0]);
+      }
+    });
+  }, []);
+
   const periodLabel = period === "weekly" ? "Tổng quan Hàng tuần" : "Tổng quan Hàng tháng";
 
   return (
     <main className="flex min-h-screen w-full bg-background-light">
-      <DashboardSidebar items={navItems} />
+      <DashboardSidebar
+        items={navItems}
+        enterprises={enterprises}
+        activeEnterprise={activeEnterprise}
+        onSelectEnterprise={setActiveEnterprise}
+      />
 
       <div className="flex min-w-0 flex-1 flex-col">
         <DashboardTopbar />

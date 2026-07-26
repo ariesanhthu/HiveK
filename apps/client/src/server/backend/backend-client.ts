@@ -44,7 +44,8 @@ function trimTrailingSlash(value: string): string {
 }
 
 function normalizePath(path: string): string {
-  return path.startsWith("/") ? path : `/${path}`;
+  const clean = path.startsWith("/") ? path : `/${path}`;
+  return clean.startsWith("/hivek/") ? clean : `/hivek${clean}`;
 }
 
 function appendQuery(url: URL, query?: BackendRequestOptions["query"]): void {

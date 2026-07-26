@@ -31,7 +31,7 @@ type AuthShellProps = {
   subtitle: string;
   children: ReactNode;
   /** Cross link under the card: "Chưa có tài khoản? …" */
-  footer: ReactNode;
+  footer?: ReactNode;
   className?: string;
 };
 
@@ -107,9 +107,11 @@ export function AuthShell({ accent, heading, subtitle, children, footer, classNa
         </div>
       </motion.div>
 
-      <motion.p variants={riseIn} className="mt-6 text-center text-sm font-medium text-white/55">
-        {footer}
-      </motion.p>
+      {footer ? (
+        <motion.p variants={riseIn} className="mt-6 text-center text-sm font-medium text-white/55">
+          {footer}
+        </motion.p>
+      ) : null}
 
       <motion.p variants={riseIn} className="mt-3 text-center text-[11px] leading-relaxed text-white/35">
         Bằng việc tiếp tục, bạn đồng ý với{" "}

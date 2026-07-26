@@ -36,8 +36,91 @@ export type BackendUserProfile = {
   avatar?: unknown;
   roleId?: string;
   type?: "enterprise" | "kol" | "admin" | string;
+  role?: "enterprise" | "kol" | "admin" | string;
   isEmailVerified?: boolean;
+  emailVerified?: boolean;
+  phoneVerified?: boolean;
+  status?: string;
   enterpriseIds?: string[];
+};
+
+export type BackendEnterpriseMember = {
+  userId: string;
+  mode: "owner" | "member" | string;
+};
+
+export type BackendEnterpriseKnowledgeBase = {
+  rawText?: string | null;
+  externalLinks?: string[] | null;
+  updatedAt?: string | null;
+};
+
+export type BackendEnterpriseProfile = {
+  id: string;
+  userId: string;
+  companyName: string;
+  description: string;
+  contactEmail: string;
+  contactPhone: string;
+  website?: string | null;
+  taxId?: string | null;
+  logoUrlId?: string | null;
+  isVerified?: boolean;
+  members?: BackendEnterpriseMember[];
+  knowledgeBase?: BackendEnterpriseKnowledgeBase | null;
+  createdAt?: string;
+  updatedAt?: string;
+};
+
+export type BackendEnterpriseMeData = {
+  data: BackendEnterpriseProfile[];
+  cursor?: string | null;
+  hasNext?: boolean;
+  limit?: number;
+};
+
+export type BackendPlatformIcon = {
+  id?: string;
+  url?: string;
+  publicId?: string;
+  size?: number;
+  format?: string;
+  title?: string;
+};
+
+export type BackendPlatform = {
+  id: string;
+  name: string;
+  baseUrl?: string;
+  apiStatus?: "stable" | "maintenance" | "deprecated" | string;
+  icon?: BackendPlatformIcon | null;
+};
+
+export type BackendPlatformListData = {
+  data: BackendPlatform[];
+  cursor?: string | null;
+  hasNext?: boolean;
+  limit?: number;
+};
+
+export type BackendSocialPage = {
+  id: string;
+  enterpriseId: string;
+  platformId?: string;
+  platformCode: "facebook" | "threads" | string;
+  pageId: string;
+  pageName?: string | null;
+  name?: string | null;
+  username?: string | null;
+  pictureUrl?: string | null;
+  avatarUrl?: string | null;
+  followerCount?: number;
+  webhookVerifyToken?: string | null;
+  status?: string;
+  isActive?: boolean;
+  connectedAt?: string;
+  createdAt?: string;
+  updatedAt?: string;
 };
 
 export type BackendKolPlatform = {
