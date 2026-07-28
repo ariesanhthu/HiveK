@@ -1,0 +1,13 @@
+# .agents/kit.toml
+# Kit configuration status — tracks whether .agents/ has been initialized for this project.
+# Created/updated by `init-kit` command. Read by `init-session` command.
+
+[kit]
+status = "configured"         # "fresh" | "configured"
+mode = "adapt-existing"       # "new-project" | "adapt-existing"
+initialized_at = "2026-07-28"  # ISO 8601 date when init-kit was last run
+
+[project]
+name = "HiveK-server"          # Service/project name
+language = "typescript"        # e.g., "typescript", "go", "python"
+framework = "nestjs"           # e.g., "nestjs", "gin", "fastapi"
