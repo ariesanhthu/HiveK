@@ -1,4 +1,8 @@
-import { IntegrationEvent, EventMetadata, TransportMetadata } from '@/core/common/base.integration-event';
+import {
+  IntegrationEvent,
+  EventMetadata,
+  TransportMetadata,
+} from '@/core/common/base.integration-event';
 
 export interface NotifyEnterpriseInvitationPayload {
   userId: string;

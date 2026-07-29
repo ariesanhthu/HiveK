@@ -7,7 +7,10 @@ import type { ICacheService } from '@/application/interfaces';
 import { Nullable } from '@/core/types';
 import { PlatformDetailDto } from '@/application/dtos';
 import { PlatformFilterDto } from '@/application/queries';
-import { PaginatedResponseDto, SortOrder } from '@/application/dtos/pagination.dto';
+import {
+  PaginatedResponseDto,
+  SortOrder,
+} from '@/application/dtos/pagination.dto';
 import { MongoSanitizeUtil } from '../utils';
 import { CacheKeyUtil } from '@/shared/utils/cache-key.util';
 
@@ -20,18 +23,32 @@ export class MongoPlatformReadService implements IPlatformReadService {
     private readonly platformModel: Model<PlatformDocument>,
     @Inject(CACHE_SERVICE)
     private readonly cacheService: ICacheService,
-  ) { }
+  ) {}
 
-  async findAll(filters: PlatformFilterDto = {}): Promise<PaginatedResponseDto<PlatformDetailDto>> {
+  async findAll(
+    filters: PlatformFilterDto = {},
+  ): Promise<PaginatedResponseDto<PlatformDetailDto>> {
     const cacheKey = CacheKeyUtil.list(this.domain, filters);
-    const cached = await this.cacheService.get<PaginatedResponseDto<PlatformDetailDto>>(cacheKey);
+    const cached =
+      await this.cacheService.get<PaginatedResponseDto<PlatformDetailDto>>(
+        cacheKey,
+      );
     if (cached) return cached;
 
-    const { cursor, limit = 10, sort = SortOrder.DESC, name, apiStatus } = filters;
+    const {
+      cursor,
+      limit = 10,
+      sort = SortOrder.DESC,
+      name,
+      apiStatus,
+    } = filters;
     const query: QueryFilter<PlatformDocument> = {};
 
     if (name) {
-      query.name = { $regex: MongoSanitizeUtil.escapeRegex(name), $options: 'i' };
+      query.name = {
+        $regex: MongoSanitizeUtil.escapeRegex(name),
+        $options: 'i',
+      };
     }
 
     if (apiStatus) {
@@ -52,7 +69,9 @@ export class MongoPlatformReadService implements IPlatformReadService {
 
     const hasNextPage = docs.length > limit;
     const results = hasNextPage ? docs.slice(0, limit) : docs;
-    const nextCursor = hasNextPage ? results[results.length - 1]._id.toString() : null;
+    const nextCursor = hasNextPage
+      ? results[results.length - 1]._id.toString()
+      : null;
 
     const response = new PaginatedResponseDto(
       results.map((doc) => this.mapToDto(doc)),
@@ -71,7 +90,11 @@ export class MongoPlatformReadService implements IPlatformReadService {
     const cached = await this.cacheService.get<PlatformDetailDto>(cacheKey);
     if (cached) return cached;
 
-    const doc = await this.platformModel.findById(id).populate('icon').lean().exec();
+    const doc = await this.platformModel
+      .findById(id)
+      .populate('icon')
+      .lean()
+      .exec();
     if (!doc) return null;
 
     const dto = this.mapToDto(doc);
@@ -81,11 +104,18 @@ export class MongoPlatformReadService implements IPlatformReadService {
   }
 
   async findByName(name: string): Promise<Nullable<PlatformDetailDto>> {
-    const cacheKey = CacheKeyUtil.custom(this.domain, `name:${name.toLowerCase()}`);
+    const cacheKey = CacheKeyUtil.custom(
+      this.domain,
+      `name:${name.toLowerCase()}`,
+    );
     const cached = await this.cacheService.get<PlatformDetailDto>(cacheKey);
     if (cached) return cached;
 
-    const doc = await this.platformModel.findOne({ name: name.toLowerCase() }).populate('icon').lean().exec();
+    const doc = await this.platformModel
+      .findOne({ name: name.toLowerCase() })
+      .populate('icon')
+      .lean()
+      .exec();
     if (!doc) return null;
 
     const dto = this.mapToDto(doc);
@@ -100,19 +130,22 @@ export class MongoPlatformReadService implements IPlatformReadService {
       name: doc.name,
       baseUrl: doc.base_url,
       apiStatus: doc.api_status,
-      icon: doc.icon && typeof doc.icon === 'object' && doc.icon._id ? {
-        id: doc.icon._id.toString(),
-        url: doc.icon.url,
-        publicId: doc.icon.public_id,
-        size: doc.icon.size,
-        format: doc.icon.format,
-        title: doc.icon.title,
-        targetType: doc.icon.target_type,
-        targetId: doc.icon.target_id,
-        targetField: doc.icon.target_field,
-        createdAt: doc.icon.created_at,
-        updatedAt: doc.icon.updated_at,
-      } : null,
+      icon:
+        doc.icon && typeof doc.icon === 'object' && doc.icon._id
+          ? {
+              id: doc.icon._id.toString(),
+              url: doc.icon.url,
+              publicId: doc.icon.public_id,
+              size: doc.icon.size,
+              format: doc.icon.format,
+              title: doc.icon.title,
+              targetType: doc.icon.target_type,
+              targetId: doc.icon.target_id,
+              targetField: doc.icon.target_field,
+              createdAt: doc.icon.created_at,
+              updatedAt: doc.icon.updated_at,
+            }
+          : null,
     };
   }
 }

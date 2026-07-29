@@ -1,3 +1,3 @@
-export * from './date'
-export * from './bad-words'
-export * from './utils'
+export * from './date';
+export * from './bad-words';
+export * from './utils';

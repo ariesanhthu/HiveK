@@ -36,5 +36,6 @@ export class AutoReplyRuleModel {
 }
 
 export type AutoReplyRuleDocument = HydratedDocument<AutoReplyRuleModel>;
-export const AutoReplyRuleSchema = SchemaFactory.createForClass(AutoReplyRuleModel);
+export const AutoReplyRuleSchema =
+  SchemaFactory.createForClass(AutoReplyRuleModel);
 AutoReplyRuleSchema.plugin(softDeletePlugin);

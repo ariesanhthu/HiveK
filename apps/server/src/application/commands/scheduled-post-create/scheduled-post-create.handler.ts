@@ -6,7 +6,12 @@ import {
   SCHEDULED_POST_REPOSITORY,
   type IScheduledPostRepository,
 } from '@/core/interfaces/repositories';
-import { EVENT_SERVICE, type IEventService, UNIT_OF_WORK, type IUnitOfWork } from '@/application/interfaces';
+import {
+  EVENT_SERVICE,
+  type IEventService,
+  UNIT_OF_WORK,
+  type IUnitOfWork,
+} from '@/application/interfaces';
 import { ScheduledPostRoot } from '@/core/aggregate-roots';
 import { ScheduledPostCreateCommand } from './scheduled-post-create.command';
 import { ScheduledPostDto } from '@/application/dtos';
@@ -14,7 +19,10 @@ import { ScheduledPostMapper } from '@/application/mappers';
 import { InvalidOperationException } from '@/core/exceptions';
 
 @CommandHandler(ScheduledPostCreateCommand)
-export class ScheduledPostCreateHandler implements ICommandHandler<ScheduledPostCreateCommand, ScheduledPostDto> {
+export class ScheduledPostCreateHandler implements ICommandHandler<
+  ScheduledPostCreateCommand,
+  ScheduledPostDto
+> {
   constructor(
     @Inject(SOCIAL_PAGE_REPOSITORY)
     private readonly socialPageRepository: ISocialPageRepository,
@@ -26,19 +34,27 @@ export class ScheduledPostCreateHandler implements ICommandHandler<ScheduledPost
     private readonly uow: IUnitOfWork,
   ) {}
 
-  async execute(command: ScheduledPostCreateCommand): Promise<ScheduledPostDto> {
+  async execute(
+    command: ScheduledPostCreateCommand,
+  ): Promise<ScheduledPostDto> {
     const { enterpriseId, userId, input } = command;
 
     return this.uow.execute(async () => {
-      const socialPage = await this.socialPageRepository.findById(input.socialPageId);
+      const socialPage = await this.socialPageRepository.findById(
+        input.socialPageId,
+      );
       if (!socialPage) {
         throw new Error('Social page connection not found.');
       }
       if (socialPage.enterpriseId !== enterpriseId) {
-        throw new InvalidOperationException('Page connection does not belong to the requesting enterprise.');
+        throw new InvalidOperationException(
+          'Page connection does not belong to the requesting enterprise.',
+        );
       }
 
-      const scheduledAt = input.scheduledAt ? new Date(input.scheduledAt) : new Date(Date.now() + 24 * 60 * 60 * 1000); // default to 24h later
+      const scheduledAt = input.scheduledAt
+        ? new Date(input.scheduledAt)
+        : new Date(Date.now() + 24 * 60 * 60 * 1000); // default to 24h later
 
       const post = ScheduledPostRoot.create({
         enterpriseId,

@@ -1,7 +1,10 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { Inject } from '@nestjs/common';
 import { UserNotFoundException } from '@/core/exceptions';
-import { KOL_PROFILE_REPOSITORY, type IKolProfileRepository } from '@/core/interfaces/repositories';
+import {
+  KOL_PROFILE_REPOSITORY,
+  type IKolProfileRepository,
+} from '@/core/interfaces/repositories';
 import { KolProfileUpdateCommand } from './kol-profile-update.command';
 import { KolProfileDto } from '@/application/dtos';
 import { KolProfileMapper } from '@/application/mappers/kol-profile.mapper';
@@ -9,11 +12,14 @@ import { KolPlatformInfoVO } from '@/core/value-objects/kol-platform-info.value-
 import { KolProfileEntity } from '@/core/entities/kol-profile.entity';
 
 @CommandHandler(KolProfileUpdateCommand)
-export class KolProfileUpdateCommandHandler implements ICommandHandler<KolProfileUpdateCommand, KolProfileDto> {
+export class KolProfileUpdateCommandHandler implements ICommandHandler<
+  KolProfileUpdateCommand,
+  KolProfileDto
+> {
   constructor(
     @Inject(KOL_PROFILE_REPOSITORY)
     private readonly kolProfileRepository: IKolProfileRepository,
-  ) { }
+  ) {}
 
   async execute(command: KolProfileUpdateCommand): Promise<KolProfileDto> {
     const { id, input } = command;
@@ -38,7 +44,7 @@ export class KolProfileUpdateCommandHandler implements ICommandHandler<KolProfil
             avgEngagement: p.avgEngagement ?? p.avg_engagement,
             topTags: p.topTags ?? p.top_tags,
             categories: p.categories,
-          })
+          }),
         );
       } else if (key in props) {
         (props as any)[key] = value;

@@ -4,7 +4,7 @@ import { CampaignRoot } from '@/core/aggregate-roots';
 export class CampaignMapper {
   static toDto(root: CampaignRoot): CampaignDto {
     return {
-      id: root.id!,
+      id: root.id,
       ownerId: root.ownerId,
       enterpriseId: root.enterpriseId,
       budget: root.budget,
@@ -24,15 +24,17 @@ export class CampaignMapper {
         rawContent: r.rawContent,
       })),
       extras: root.extras,
-      schedule: root.schedule ? {
-        timeline: root.schedule.timeline.map((day) => ({
-          date: day.date.toISOString(),
-          label: day.label,
-          posts: day.posts,  // ScheduledPost IDs
-        })),
-      } : undefined,
+      schedule: root.schedule
+        ? {
+            timeline: root.schedule.timeline.map((day) => ({
+              date: day.date.toISOString(),
+              label: day.label,
+              posts: day.posts, // ScheduledPost IDs
+            })),
+          }
+        : undefined,
       participants: root.participants.map((p) => ({
-        id: p.id!,
+        id: p.id,
         kolProfileId: p.kolProfileId,
         status: p.status,
         joinedAt: p.joinedAt ? p.joinedAt.toISOString() : null,

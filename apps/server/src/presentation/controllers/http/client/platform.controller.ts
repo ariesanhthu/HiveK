@@ -14,7 +14,11 @@ import {
 } from '@/application/queries';
 import { PlatformDetailDto } from '@/application/dtos';
 import { PaginatedResponseDto } from '@/application/dtos/pagination.dto';
-import { Public, ApiOkResponseEnvelope, ApiPaginatedResponseEnvelope } from '@/presentation/decorators';
+import {
+  Public,
+  ApiOkResponseEnvelope,
+  ApiPaginatedResponseEnvelope,
+} from '@/presentation/decorators';
 
 @ApiTags('CLIENT-platforms')
 @ApiBearerAuth()
@@ -41,4 +45,3 @@ export class PlatformClientController {
     return this.queryBus.execute(new PlatformGetByIdQuery(id));
   }
 }
-

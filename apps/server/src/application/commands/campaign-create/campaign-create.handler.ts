@@ -1,28 +1,36 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { Inject } from '@nestjs/common';
-import { CAMPAIGN_REPOSITORY, type ICampaignRepository } from '@/core/interfaces/repositories';
+import {
+  CAMPAIGN_REPOSITORY,
+  type ICampaignRepository,
+} from '@/core/interfaces/repositories';
 import { CampaignRoot } from '@/core/aggregate-roots';
 import { CampaignCreateCommand } from './campaign-create.command';
 import { CampaignDto } from '@/application/dtos';
 import { CampaignMapper } from '@/application/mappers';
 
 @CommandHandler(CampaignCreateCommand)
-export class CampaignCreateCommandHandler implements ICommandHandler<CampaignCreateCommand, CampaignDto> {
+export class CampaignCreateCommandHandler implements ICommandHandler<
+  CampaignCreateCommand,
+  CampaignDto
+> {
   constructor(
     @Inject(CAMPAIGN_REPOSITORY)
     private readonly campaignRepository: ICampaignRepository,
-  ) { }
+  ) {}
 
   async execute(command: CampaignCreateCommand): Promise<CampaignDto> {
     const { input } = command;
 
-    const schedule = input.schedule ? {
-      timeline: (input.schedule.timeline || []).map((day) => ({
-        date: new Date(day.date),
-        label: day.label,
-        posts: day.posts || [],  // ScheduledPost IDs
-      })),
-    } : undefined;
+    const schedule = input.schedule
+      ? {
+          timeline: (input.schedule.timeline || []).map((day) => ({
+            date: new Date(day.date),
+            label: day.label,
+            posts: day.posts || [], // ScheduledPost IDs
+          })),
+        }
+      : undefined;
 
     const campaign = CampaignRoot.create({
       ownerId: input.ownerId,

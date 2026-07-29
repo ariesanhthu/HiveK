@@ -12,7 +12,9 @@ import { RabbitMQModule } from '../rabbitmq/rabbitmq.module';
 @Global()
 @Module({
   imports: [
-    MongooseModule.forFeature([{ name: OutboxModel.name, schema: OutboxSchema }]),
+    MongooseModule.forFeature([
+      { name: OutboxModel.name, schema: OutboxSchema },
+    ]),
     RabbitMQModule,
   ],
   providers: [

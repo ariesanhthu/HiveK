@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { WebSocketGateway } from '../../presentation/controllers/websocket/websocket.gateway';
 import { IWebSocketService } from '@/application/interfaces';
 import { WebSocketServer } from '@nestjs/websockets';
-import { Server, } from 'socket.io';
+import { Server } from 'socket.io';
 
 @Injectable()
 export class WebSocketService implements IWebSocketService {

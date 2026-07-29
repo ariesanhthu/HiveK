@@ -1,6 +1,11 @@
 import { Controller, Get, Query, UseGuards } from '@nestjs/common';
 import { QueryBus } from '@nestjs/cqrs';
-import { ApiTags, ApiOperation, ApiBearerAuth, ApiSecurity } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiBearerAuth,
+  ApiSecurity,
+} from '@nestjs/swagger';
 import { buildVersionedRoute } from '@presentation/utils';
 import { KpiLogDto } from '@/application/dtos';
 import { PaginatedResponseDto } from '@/application/dtos/pagination.dto';
@@ -22,8 +27,9 @@ export class KpiLogAdminController {
   @UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: 'Get paginated KPI logs' })
   @ApiPaginatedResponseEnvelope(KpiLogDto)
-  async findAll(@Query() filters: KpiLogFilterDto): Promise<PaginatedResponseDto<KpiLogDto>> {
+  async findAll(
+    @Query() filters: KpiLogFilterDto,
+  ): Promise<PaginatedResponseDto<KpiLogDto>> {
     return this.queryBus.execute(new KpiLogGetListQuery(filters));
   }
 }
-

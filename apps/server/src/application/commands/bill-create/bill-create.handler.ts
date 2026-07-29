@@ -8,12 +8,21 @@ import { BillCreatedEvent } from '@/core/events';
 import { PackageRoot, BillEntity } from '@/core/aggregate-roots';
 import { EBillType, EBillStatus, EPackageType, ECurrency } from '@/core/enums';
 import { BillMultiplePlanException } from '@/core/exceptions';
-import { BILL_REPOSITORY, type IBillRepository } from '@/core/interfaces/repositories';
-import { PACKAGE_REPOSITORY, type IPackageRepository } from '@/core/interfaces/repositories';
+import {
+  BILL_REPOSITORY,
+  type IBillRepository,
+} from '@/core/interfaces/repositories';
+import {
+  PACKAGE_REPOSITORY,
+  type IPackageRepository,
+} from '@/core/interfaces/repositories';
 import { type IUnitOfWork, UNIT_OF_WORK } from '@/application/interfaces';
 
 @CommandHandler(BillCreateCommand)
-export class BillCreateHandler implements ICommandHandler<BillCreateCommand, BillResponseDto> {
+export class BillCreateHandler implements ICommandHandler<
+  BillCreateCommand,
+  BillResponseDto
+> {
   constructor(
     private readonly billService: BillService,
     @Inject(BILL_REPOSITORY)
@@ -31,9 +40,11 @@ export class BillCreateHandler implements ICommandHandler<BillCreateCommand, Bil
     return this.uow.execute(async () => {
       // 1. Validation: Versions & Variants Exist
       const packageIds = input.items.map((i) => i.packageId);
-      const packages = (await Promise.all(
-        packageIds.map((id) => this.packageRepository.findById(id))
-      )).filter((p): p is PackageRoot => p !== null);
+      const packages = (
+        await Promise.all(
+          packageIds.map((id) => this.packageRepository.findById(id)),
+        )
+      ).filter((p): p is PackageRoot => p !== null);
 
       const packageMap = new Map(packages.map((p) => [p.id, p]));
 
@@ -42,10 +53,12 @@ export class BillCreateHandler implements ICommandHandler<BillCreateCommand, Bil
         if (!pkg) {
           throw new Error(`Package not found: ${item.packageId}`);
         }
-        const variant = pkg.variants.find((v) => v.id === item.packageVariantId);
+        const variant = pkg.variants.find(
+          (v) => v.id === item.packageVariantId,
+        );
         if (!variant) {
           throw new Error(
-            `Package Variant not found: ${item.packageVariantId} in Package ${item.packageId}`
+            `Package Variant not found: ${item.packageVariantId} in Package ${item.packageId}`,
           );
         }
         return { pkg, variant };
@@ -66,7 +79,7 @@ export class BillCreateHandler implements ICommandHandler<BillCreateCommand, Bil
       // 3. Logic: Determine purchase types by comparing with current subscription
       const items = await this.billService.determinePurchaseTypes(
         input.enterpriseId,
-        validatedItems
+        validatedItems,
       );
 
       // Set currency from first item
@@ -89,12 +102,12 @@ export class BillCreateHandler implements ICommandHandler<BillCreateCommand, Bil
 
       // 6. Event
       this.eventBus.publish(
-        new BillCreatedEvent(bill.id!, {
-          billId: bill.id!,
+        new BillCreatedEvent(bill.id, {
+          billId: bill.id,
           enterpriseId: bill.enterpriseId,
           totalAmount: bill.totalAmount,
           finalAmount: bill.finalAmount,
-        })
+        }),
       );
 
       // 7. Return DTO

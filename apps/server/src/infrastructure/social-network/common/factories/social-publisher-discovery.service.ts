@@ -1,5 +1,9 @@
 import { Injectable, Inject } from '@nestjs/common';
-import { ISocialPublisher, ISocialPublisherDiscovery, SOCIAL_PUBLISHERS } from '@/core/interfaces';
+import {
+  ISocialPublisher,
+  ISocialPublisherDiscovery,
+  SOCIAL_PUBLISHERS,
+} from '@/core/interfaces';
 
 @Injectable()
 export class SocialPublisherDiscoveryService implements ISocialPublisherDiscovery {
@@ -11,7 +15,9 @@ export class SocialPublisherDiscoveryService implements ISocialPublisherDiscover
   findByCode(platformCode: string): ISocialPublisher {
     const publisher = this.publishers[platformCode.toLowerCase()];
     if (!publisher) {
-      throw new Error(`Social publisher strategy not found for platform: ${platformCode}`);
+      throw new Error(
+        `Social publisher strategy not found for platform: ${platformCode}`,
+      );
     }
     return publisher;
   }

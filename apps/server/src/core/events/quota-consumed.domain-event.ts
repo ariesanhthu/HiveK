@@ -14,7 +14,7 @@ export class QuotaConsumedEvent extends DomainEvent<QuotaConsumedPayload> {
   constructor(
     aggregateId: string,
     payload: QuotaConsumedPayload,
-    metadata?: Record<string, unknown>
+    metadata?: Record<string, unknown>,
   ) {
     super(aggregateId, payload, metadata);
   }

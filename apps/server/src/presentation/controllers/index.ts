@@ -40,10 +40,10 @@ export * from './http/facebook-webhook.controller';
 // RMQ Controllers
 export * from './rmq/kpi-log.rmq.controller';
 export * from './rmq/test-rmq.controller';
-export * from './rmq/enterprise-user.rmq.controller'
-export * from './rmq/notification.rmq.controller'
-export * from './rmq/auth-user.rmq.controller'
-export * from './rmq/scheduled-post.rmq.controller'
+export * from './rmq/enterprise-user.rmq.controller';
+export * from './rmq/notification.rmq.controller';
+export * from './rmq/auth-user.rmq.controller';
+export * from './rmq/scheduled-post.rmq.controller';
 
 // OAuth Controllers
 export * from './http/oauth.controller';
@@ -56,7 +56,8 @@ export * from './resolvers/proposal.resolver';
 export * from './resolvers/review.resolver';
 
 // WebSocket Controllers
-export * from './websocket/websocket.gateway';export * from './http/admin/subscription.controller';
+export * from './websocket/websocket.gateway';
+export * from './http/admin/subscription.controller';
 export * from './http/client/subscription.controller';
 export * from './http/admin/quota.controller';
 export * from './http/client/quota.controller';

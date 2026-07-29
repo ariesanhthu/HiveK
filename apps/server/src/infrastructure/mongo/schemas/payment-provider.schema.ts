@@ -55,4 +55,5 @@ export class PaymentProviderModel {
   deleted_by: string | null;
 }
 
-export const PaymentProviderSchema = SchemaFactory.createForClass(PaymentProviderModel);
+export const PaymentProviderSchema =
+  SchemaFactory.createForClass(PaymentProviderModel);

@@ -30,7 +30,9 @@ export class CampaignProposalRoot extends BaseAggregateRoot<CampaignProposalProp
     super(props, id);
   }
 
-  public static create(props: CampaignProposalCreateProps): CampaignProposalRoot {
+  public static create(
+    props: CampaignProposalCreateProps,
+  ): CampaignProposalRoot {
     const now = new Date();
     return new CampaignProposalRoot({
       ...props,
@@ -43,7 +45,10 @@ export class CampaignProposalRoot extends BaseAggregateRoot<CampaignProposalProp
     });
   }
 
-  public static instantiate(id: string, props: CampaignProposalProps): CampaignProposalRoot {
+  public static instantiate(
+    id: string,
+    props: CampaignProposalProps,
+  ): CampaignProposalRoot {
     return new CampaignProposalRoot(props, id);
   }
 
@@ -103,7 +108,12 @@ export class CampaignProposalRoot extends BaseAggregateRoot<CampaignProposalProp
    * Update the proposal's metadata, media slides, products, or vouchers.
    */
   public update(
-    props: Partial<Pick<CampaignProposalProps, 'title' | 'description' | 'mediaSlides' | 'products' | 'vouchers'>>,
+    props: Partial<
+      Pick<
+        CampaignProposalProps,
+        'title' | 'description' | 'mediaSlides' | 'products' | 'vouchers'
+      >
+    >,
   ): void {
     Object.assign(this.props, props);
     this.props.updatedAt = new Date();
@@ -114,14 +124,23 @@ export class CampaignProposalRoot extends BaseAggregateRoot<CampaignProposalProp
    */
   public updateStatus(newStatus: EProposalStatus): void {
     const allowedTransitions: Record<EProposalStatus, EProposalStatus[]> = {
-      [EProposalStatus.ACTIVE]: [EProposalStatus.PAUSED, EProposalStatus.ARCHIVED],
-      [EProposalStatus.PAUSED]: [EProposalStatus.ACTIVE, EProposalStatus.ARCHIVED],
+      [EProposalStatus.ACTIVE]: [
+        EProposalStatus.PAUSED,
+        EProposalStatus.ARCHIVED,
+      ],
+      [EProposalStatus.PAUSED]: [
+        EProposalStatus.ACTIVE,
+        EProposalStatus.ARCHIVED,
+      ],
       [EProposalStatus.ARCHIVED]: [], // Archived is terminal
     };
 
     const allowed = allowedTransitions[this.props.status];
     if (!allowed.includes(newStatus)) {
-      throw new ProposalInvalidStatusTransitionException(this.props.status, newStatus);
+      throw new ProposalInvalidStatusTransitionException(
+        this.props.status,
+        newStatus,
+      );
     }
 
     this.props.status = newStatus;

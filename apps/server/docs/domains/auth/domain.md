@@ -1,13 +1,13 @@
 # Authentication & User Domain
 
-> **Last Updated**: 2026-07-17
-> **Related Docs**: [campaign domain](../campaign/domain.md), [enterprise domain](../enterprise/domain.md)
+> **Last Updated**: 2026-07-29
+> **Related Docs**: [campaign domain](../campaign/domain.md), [enterprise domain](../enterprise/domain.md), [subscription & quota usage domain](../subscription-and-quota-usage/domain.md)
 
 ---
 
 ## 1. Domain Overview
 
-The **Authentication** domain is the identity and access control backbone of the HiveK platform. It manages user identities, authentication flows, authorization roles, and email/phone verification.
+The **Authentication** domain is the identity and access control backbone of the HiveK platform. It manages user identities, authentication flows, authorization roles, email/phone verification, and **workspace-scoped sessions** with centralized entitlement and quota enforcement.
 
 ### Bounded Context
 
@@ -49,9 +49,12 @@ The **Authentication** domain is the identity and access control backbone of the
 | **AdminRoot** | User specialized for system administrators (`ERoleType.ADMIN`) |
 | **OtpRoot** | Short-lived verification code for email/identity confirmation |
 | **PhoneNumberVO** | Value object enforcing international `+` format phone numbers |
-| **JWT Token** | Stateless access token encoding `sub`, `email`, `role`, `type`, `isEmailVerified` |
+| **JWT Token** | Stateless access token encoding `sub`, `email`, `role`, `type`, `isEmailVerified`, `enterpriseId?`, `ownerId?` |
 | **Refresh Token** | Long-lived token rotated on each refresh; stored in the User aggregate |
 | **Guard Stack** | Layered middleware: `ApiKeyGuard` → `JwtAuthGuard` → `RolesGuard` → `UserVerifiedGuard` |
+| **Workspace-Scoped Session** | Two-phase authentication: login returns scope-less token + accessible enterprises, then workspace selection issues scoped token with `enterpriseId` and `ownerId` |
+| **GuardedCommandBus** | CommandBus middleware that intercepts commands decorated with `@RequiresPermission` or `@ConsumesQuota` to enforce entitlement and quota checks before handler execution |
+| **RequestContextService** | AsyncLocalStorage-based service that propagates per-request workspace context (`userId`, `enterpriseId`, `ownerId`, `role`) across the application |
 
 ### Relations to Other Domains
 
@@ -224,6 +227,8 @@ No extra properties. `create()` validates `type === ERoleType.ADMIN`.
 | `InvalidPasswordException` | `src/core/exceptions/auth.exception.ts` | Incorrect old password during change |
 | `UserDeletedException` | `src/core/exceptions/auth.exception.ts` | Deleted user attempts action |
 | `InvalidUserTypeException` | `src/core/exceptions/auth.exception.ts` | Wrong type in factory method |
+| `WorkspaceAccessException` | `src/core/exceptions/auth.exception.ts` | User attempts to access workspace they don't belong to |
+| `EntitlementDeniedException` | `src/core/exceptions/auth.exception.ts` | User lacks required permission for operation |
 | `OtpRateLimitException` | `src/core/exceptions/general.exception.ts` | OTP requested < 60s ago |
 | `InvalidOperationException` | `src/core/exceptions/general.exception.ts` | Expired or mismatched OTP |
 
@@ -330,12 +335,13 @@ IntegrationEvent subscribers
 | Command | Handler | DTO | Description | UoW | Events |
 |---------|---------|-----|-------------|-----|--------|
 | `AuthSignUpCommand` | `AuthSignUpCommandHandler` | `AuthSignUpInputDto` | Creates user account + dispatches OTP | ✅ | ✅ |
-| `AuthSignInCommand` | `AuthSignInCommandHandler` | `AuthSignInInputDto` | Password verification + token generation | ✗ | — |
+| `AuthSignInCommand` | `AuthSignInCommandHandler` | `AuthSignInInputDto` | Password verification + token generation + accessible enterprises | ✗ | — |
+| `AuthSelectWorkspaceCommand` | `AuthSelectWorkspaceCommandHandler` | `AuthSelectWorkspaceInputDto` | Select workspace (enterprise) and issue scoped token | ✗ | — |
 | `AuthSignOutCommand` | `AuthSignOutCommandHandler` | — | Invalidates refresh token + disconnects WS | ✗ | — |
 | `AuthGoogleSignInCommand` | `AuthGoogleSignInCommandHandler` | `AuthGoogleSignInInputDto` | Google OAuth login/register | ✅ | ✅ |
 | `AuthSendOtpCommand` | `AuthSendOtpCommandHandler` | `AuthSendOtpInputDto` | Generates + persists OTP, rate-limited | ✅ | ✅ |
 | `AuthVerifyOtpCommand` | `AuthVerifyOtpCommandHandler` | `AuthVerifyOtpInputDto` | Validates OTP → marks email verified | ✅ | ✅ |
-| `AuthRefreshTokenCommand` | `AuthRefreshTokenCommandHandler` | `AuthRefreshTokenInputDto` | Token rotation (verify → invalidate old → issue new) | ✗ | — |
+| `AuthRefreshTokenCommand` | `AuthRefreshTokenCommandHandler` | `AuthRefreshTokenInputDto` | Token rotation (verify → invalidate old → issue new, preserves workspace scope) | ✗ | — |
 | `AuthChangePasswordCommand` | `AuthChangePasswordCommandHandler` | `AuthChangePasswordInputDto` | Verified OTP → validate old pw → hash new pw | ✅ | ✅ |
 | `AuthResetPasswordCommand` | `AuthResetPasswordCommandHandler` | `AuthResetPasswordInputDto` | Verified OTP → hash new pw (no old pw needed) | ✅ | ✅ |
 
@@ -386,6 +392,35 @@ IntegrationEvent subscribers
 | `USER_REPOSITORY` | `IUserRepository` |
 | `OTP_REPOSITORY` | `IOtpRepository` |
 | `USER_READ_SERVICE` | `IUserReadService` |
+| `ENTITLEMENT_SERVICE` | `IEntitlementService` |
+| `QUOTA_ENFORCEMENT_SERVICE` | `IQuotaEnforcementService` |
+
+### 4.9 Workspace-Scoped Session Management
+
+The authentication system implements a two-phase login flow to support workspace-scoped sessions:
+
+**Phase 1: Sign-In**
+- User authenticates with credentials
+- System returns a scope-less access token + list of accessible enterprises
+- Each enterprise entry includes `enterpriseId` and `role` (owner/sub_owner/user)
+
+**Phase 2: Workspace Selection**
+- User selects a workspace from their accessible enterprises
+- System validates membership and resolves `ownerId` from `EnterpriseRoot.userId`
+- System issues a scoped access token containing:
+  - `enterpriseId`: The selected workspace
+  - `ownerId`: The enterprise owner (for entitlement checks)
+  - `workspaceRole`: User's role in the workspace (owner/sub_owner/user)
+
+**Token Refresh**
+- Refresh tokens preserve workspace scope
+- Refreshing a scoped token re-issues a new scoped token with the same `enterpriseId` and `ownerId`
+- Users cannot change workspace via refresh; they must call `/workspace/select` again
+
+**Request Context Propagation**
+- `RequestContextService` uses `AsyncLocalStorage` to propagate workspace context per-request
+- `RequestContextInterceptor` extracts workspace fields from JWT and populates the context
+- `GuardedCommandBus` reads the context to enforce entitlement and quota checks
 
 ---
 
@@ -548,6 +583,63 @@ export class UserModule {}
 | `TwitterStrategy` | `@infrastructure/auth` | Twitter OAuth |
 | `YoutubeStrategy` | `@infrastructure/auth` | YouTube OAuth |
 
+### 5.6 Entitlement & Quota Enforcement
+
+#### `GuardedCommandBus`
+
+**File**: `src/infrastructure/auth/guarded-command-bus.ts`
+
+Extends `@nestjs/cqrs` `CommandBus` to intercept command execution and enforce entitlement and quota checks before handler invocation.
+
+**Behavior**:
+- Reads `@RequiresPermission` metadata from command class
+- Reads `@ConsumesQuota` metadata from command class
+- Delegates to `IEntitlementService` for permission checks
+- Delegates to `IQuotaEnforcementService` for quota checks
+- Skips checks if no `RequestContext` is available (non-HTTP entry points)
+
+**DI Registration**:
+```typescript
+{ provide: CommandBus, useClass: GuardedCommandBus }
+```
+
+#### `EntitlementService`
+
+**File**: `src/infrastructure/auth/entitlement.service.ts`
+
+Implements `IEntitlementService` with Redis-backed caching.
+
+**Behavior**:
+- Checks if `ownerId` has the required permission in `computedPermissions`
+- Uses Redis cache with key `entitlement:{ownerId}` (TTL: 1 hour)
+- Falls back to `ISubscriptionRepository.findByUserId()` on cache miss
+- Invalidates cache on `SubscriptionUpdatedEvent`
+
+#### `QuotaEnforcementService`
+
+**File**: `src/infrastructure/auth/quota-enforcement.service.ts`
+
+Implements `IQuotaEnforcementService` with direct database lookup.
+
+**Behavior**:
+- Checks if `enterpriseId` has sufficient quota for the requested operation
+- Uses `IQuotaUsageRepository.findByEnterpriseId()` to fetch current usage
+- Compares `used + amount` against `allocated`
+- Throws `QuotaExceededException` if quota is exceeded
+
+#### Decorators
+
+**`@RequiresPermission(permission: string)`**
+- File: `src/application/decorators/requires-permission.decorator.ts`
+- Marks a command as requiring a specific permission
+- Example: `@RequiresPermission('campaign.create')`
+
+**`@ConsumesQuota(meta: QuotaMeta)`**
+- File: `src/application/decorators/consumes-quota.decorator.ts`
+- Marks a command as consuming quota
+- `QuotaMeta`: `{ key: string, amount: number | (() => number) }`
+- Example: `@ConsumesQuota({ key: 'campaign_count', amount: 1 })`
+
 ---
 
 ## 6. Presentation Layer
@@ -562,8 +654,9 @@ export class UserModule {}
 |--------|------|------|------------|-------------|
 | `POST` | `sign-up/kol` | 🟢 Public | 5/min | Register as KOL user |
 | `POST` | `sign-up/enterprise` | 🟢 Public | 5/min | Register as Enterprise user |
-| `POST` | `sign-in` | 🟢 Public | 5/min | Sign in (sets httpOnly cookies) |
-| `POST` | `refresh-token` | 🟢 Public | — | Refresh access + refresh tokens |
+| `POST` | `sign-in` | 🟢 Public | 5/min | Sign in (returns scope-less token + accessible enterprises) |
+| `POST` | `workspace/select` | 🔒 Authenticated | — | Select workspace and receive scoped token |
+| `POST` | `refresh-token` | 🟢 Public | — | Refresh access + refresh tokens (preserves workspace scope) |
 | `POST` | `sign-out` | 🔒 Authenticated | — | Clear cookies + invalidate refresh + disconnect WS |
 | `POST` | `reset-password` | 🟢 Public | — | Reset password via OTP |
 | `POST` | `send-otp` | 🟢 Public | 5/min | Send OTP verification code |
@@ -634,6 +727,14 @@ export class UserModule {}
 **Decorator Bypasses**:
 - `@Public()` — bypasses all guards (`JwtAuthGuard`, `RolesGuard`, `UserVerifiedGuard`)
 - `@WebHook()` — bypasses JWT and API key guards (for external webhook callbacks)
+
+### 6.3 Interceptors
+
+| Interceptor | File | Description |
+|-------------|------|-------------|
+| `RequestContextInterceptor` | `src/presentation/middleware/interceptors/request-context.interceptor.ts` | Extracts workspace context from JWT and populates `RequestContextService` via `AsyncLocalStorage` |
+| `LoggingInterceptor` | `src/presentation/middleware/interceptors/logging.interceptor.ts` | Logs request/response metrics |
+| `TransformInterceptor` | `src/presentation/middleware/interceptors/transform.interceptor.ts` | Wraps responses in standard envelope |
 
 ---
 
@@ -737,7 +838,60 @@ Client              AuthClientController          AuthSignInHandler             
 7. **Refresh token rotation** — `user.updateRefreshToken(refreshToken)` → saved to DB
 8. **Response** — Returns `{ accessToken, refreshToken }` + sets httpOnly cookies
 
-### 7.3 Google OAuth Sign-In Flow
+### 7.3 Workspace Selection Flow
+
+```
+Client              AuthClientController          AuthSelectWorkspaceHandler      EnterpriseRepo    UserRepo
+  │                         │                              │                          │               │
+  │ POST /v1/client/auth/   │                              │                          │               │
+  │ workspace/select        │                              │                          │               │
+  │ { enterpriseId }        │                              │                          │               │
+  │─────▶                   │                              │                          │               │
+  │                         │ CommandBus                   │                          │               │
+  │                         │─────▶────────────────────────▶                          │               │
+  │                         │                              │                          │               │
+  │                         │                              │ findById(enterpriseId)   │               │
+  │                         │                              │─────────────────────────▶│               │
+  │                         │                              │◀─────────────────────────│               │
+  │                         │                              │                          │               │
+  │                         │                              │ ★ Check isMember()       │               │
+  │                         │                              │ ★ Resolve ownerId        │               │
+  │                         │                              │                          │               │
+  │                         │                              │ findById(userId)         │               │
+  │                         │                              │─────────────────────────────────────────▶│
+  │                         │                              │◀─────────────────────────────────────────│
+  │                         │                              │                          │               │
+  │                         │                              │ generateTokens()         │               │
+  │                         │                              │ (with workspace scope)   │               │
+  │                         │                              │                          │               │
+  │                         │                              │ user.updateRefreshToken()│               │
+  │                         │                              │ repo.save(user)          │               │
+  │                         │                              │─────────────────────────────────────────▶│
+  │                         │                              │                          │               │
+  │ Set-Cookie:             │                              │                          │               │
+  │ access_token (scoped)   │                              │                          │               │
+  │ refresh_token (scoped)  │                              │                          │               │
+  │◀────────────────────────│◀─────────────────────────────│◀─────────────────────────│◀──────────────│
+```
+
+**Steps**:
+
+1. **User selects workspace** — `POST /v1/client/auth/workspace/select` with `enterpriseId`
+2. **Guard**: 🔒 `JwtAuthGuard` (requires scope-less token from sign-in)
+3. **Handler executes** — `AuthSelectWorkspaceCommandHandler.execute()`
+4. **Enterprise lookup** — `findById(enterpriseId)` → throws `WorkspaceAccessException` if not found
+5. **Membership validation** — `enterprise.isMember(userId)` → throws `WorkspaceAccessException` if not a member
+6. **Owner resolution** — `ownerId = enterprise.userId` (the enterprise owner)
+7. **Role determination** — Determines user's role: `owner`, `sub_owner`, or `user`
+8. **User lookup** — `findById(userId)` → throws `WorkspaceAccessException` if not found
+9. **Token generation** — `AuthService.generateTokens()` signs JWT with workspace scope:
+   - `enterpriseId`: The selected workspace
+   - `ownerId`: The enterprise owner
+   - `workspaceRole`: User's role in the workspace
+10. **Refresh token rotation** — `user.updateRefreshToken(refreshToken)` → saved to DB
+11. **Response** — Returns `{ accessToken, refreshToken }` + sets httpOnly cookies
+
+### 7.4 Google OAuth Sign-In Flow
 
 ```
 Client              OAuthController          GoogleStrategy         AuthGoogleSignInHandler         UserRepo
@@ -856,16 +1010,23 @@ Client              Controller               AuthSendOtpHandler              Otp
 | File | Type | Role |
 |------|------|------|
 | `src/application/commands/auth-sign-up/` | Command | User registration |
-| `src/application/commands/auth-sign-in/` | Command | Password-based sign-in |
+| `src/application/commands/auth-sign-in/` | Command | Password-based sign-in (returns accessible enterprises) |
+| `src/application/commands/auth-select-workspace/` | Command | Workspace selection (issues scoped token) |
 | `src/application/commands/auth-sign-out/` | Command | Session invalidation |
 | `src/application/commands/auth-google-sign-in/` | Command | Google OAuth sign-in |
 | `src/application/commands/auth-send-otp/` | Command | OTP generation + dispatch |
 | `src/application/commands/auth-verify-otp/` | Command | OTP validation + email verification |
-| `src/application/commands/auth-refresh-token/` | Command | Token rotation |
+| `src/application/commands/auth-refresh-token/` | Command | Token rotation (preserves workspace scope) |
 | `src/application/commands/auth-change-password/` | Command | Password change (requires OTP) |
 | `src/application/commands/auth-reset-password/` | Command | Password reset (via email OTP) |
 | `src/application/queries/auth-get-profile/` | Query | Current user profile |
 | `src/application/services/auth.service.ts` | Service | Email normalization, bcrypt, JWT signing |
+| `src/application/services/request-context.service.ts` | Service | AsyncLocalStorage-based request context propagation |
+| `src/application/interfaces/request-context.interface.ts` | Interface | Request context shape |
+| `src/application/interfaces/entitlement-service.interface.ts` | Interface | Entitlement service port |
+| `src/application/interfaces/quota-enforcement-service.interface.ts` | Interface | Quota enforcement service port |
+| `src/application/decorators/requires-permission.decorator.ts` | Decorator | Marks commands requiring permission |
+| `src/application/decorators/consumes-quota.decorator.ts` | Decorator | Marks commands consuming quota |
 | `src/application/mappers/user.mapper.ts` | Mapper | Aggregate → discriminated DTO |
 | `src/application/dtos/user.dto.ts` | DTO | Discriminated union DTOs |
 | `src/application/events/send-verification-email-requested.event.ts` | Integration Event | Triggers email delivery after OTP creation |
@@ -880,14 +1041,23 @@ Client              Controller               AuthSendOtpHandler              Otp
 | `src/infrastructure/mongo/repositories/user.repository.ts` | Repository | User persistence |
 | `src/infrastructure/mongo/repositories/otp.repository.ts` | Repository | OTP persistence |
 | `src/infrastructure/mongo/read-services/user.read-service.ts` | Read Service | User read queries |
-| `src/infrastructure/modules/auth.module.ts` | Module | Auth module (global) |
-| `src/infrastructure/modules/user.module.ts` | Module | User CRUD module |
+| `src/infrastructure/auth/jwt.service.ts` | Service | JWT signing/verification |
+| `src/infrastructure/auth/strategies/jwt.strategy.ts` | Strategy | JWT validation (extracts workspace fields) |
+| `src/infrastructure/auth/strategies/google.strategy.ts` | Strategy | Google OAuth |
+| `src/infrastructure/auth/strategies/facebook.strategy.ts` | Strategy | Facebook OAuth |
+| `src/infrastructure/auth/strategies/twitter.strategy.ts` | Strategy | Twitter OAuth |
+| `src/infrastructure/auth/strategies/youtube.strategy.ts` | Strategy | YouTube OAuth |
+| `src/infrastructure/auth/guarded-command-bus.ts` | Service | CommandBus middleware for entitlement/quota checks |
+| `src/infrastructure/auth/entitlement.service.ts` | Service | Entitlement checks with Redis cache |
+| `src/infrastructure/auth/quota-enforcement.service.ts` | Service | Quota enforcement with DB lookup |
+| `src/infrastructure/modules/auth.module.ts` | Module | Auth DI wiring (includes GuardedCommandBus) |
+| `src/infrastructure/modules/user.module.ts` | Module | User DI wiring |
 
 ### Presentation Layer
 
 | File | Type | Role |
 |------|------|------|
-| `src/presentation/controllers/http/client/auth.controller.ts` | Controller | Client auth endpoints |
+| `src/presentation/controllers/http/client/auth.controller.ts` | Controller | Client auth endpoints (includes workspace/select) |
 | `src/presentation/controllers/http/admin/auth.controller.ts` | Controller | Admin auth endpoints |
 | `src/presentation/controllers/http/oauth.controller.ts` | Controller | Google OAuth endpoints |
 | `src/presentation/controllers/http/client/user.controller.ts` | Controller | Client user read endpoints |
@@ -898,6 +1068,9 @@ Client              Controller               AuthSendOtpHandler              Otp
 | `src/presentation/middleware/guards/state-auth.guard.ts` | Guard | OAuth state JWT verification |
 | `src/presentation/middleware/guards/api-key.guard.ts` | Guard | API key validation |
 | `src/presentation/middleware/guards/google-auth.guard.ts` | Guard | Google OAuth strategy |
+| `src/presentation/middleware/interceptors/request-context.interceptor.ts` | Interceptor | Populates RequestContextService from JWT |
+| `src/presentation/middleware/interceptors/logging.interceptor.ts` | Interceptor | Request/response logging |
+| `src/presentation/middleware/interceptors/transform.interceptor.ts` | Interceptor | Response envelope wrapping |
 
 ---
 
@@ -914,6 +1087,12 @@ Client              Controller               AuthSendOtpHandler              Otp
 9. **Soft-delete only**: Users are never hard-deleted via standard flows; they receive `delete_at`/`delete_by` timestamps.
 10. **Google sign-in auto-verifies**: Google-authenticated users bypass OTP verification — `isEmailVerified` is set to `true` immediately.
 11. **Phone number format**: Must match international format (`+84123456789` — starts with `+`, digits only).
+12. **Workspace selection required**: Users must select a workspace before accessing business endpoints. Scope-less tokens cannot access protected resources.
+13. **Workspace membership validation**: Users can only select workspaces they belong to (as owner or member). `WorkspaceAccessException` on unauthorized selection.
+14. **Refresh preserves workspace scope**: Refresh tokens preserve `enterpriseId` and `ownerId`. Users cannot change workspace via refresh; must call `/workspace/select` again.
+15. **Entitlement checks use ownerId**: Feature entitlement checks use the `ownerId` from the scoped token (the enterprise owner), not the current user's ID. Collaborators inherit the enterprise owner's subscription entitlements.
+16. **Quota checks use enterpriseId**: Quota consumption is tracked per enterprise. All users in the same workspace share the same quota pool.
+17. **Cache invalidation on subscription change**: When a subscription is updated, the entitlement cache for the `ownerId` must be invalidated to ensure subsequent checks reflect the new state.
 
 ---
 

@@ -1,11 +1,20 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { Inject } from '@nestjs/common';
-import { PUBLIC_REVIEW_REPOSITORY, type IPublicReviewRepository } from '@/core/interfaces/repositories';
-import { ReviewNotFoundException, ReviewInvalidStatusTransitionException } from '@/core/exceptions';
+import {
+  PUBLIC_REVIEW_REPOSITORY,
+  type IPublicReviewRepository,
+} from '@/core/interfaces/repositories';
+import {
+  ReviewNotFoundException,
+  ReviewInvalidStatusTransitionException,
+} from '@/core/exceptions';
 import { ReviewModerateCommand } from './review-moderate.command';
 
 @CommandHandler(ReviewModerateCommand)
-export class ReviewModerateCommandHandler implements ICommandHandler<ReviewModerateCommand, void> {
+export class ReviewModerateCommandHandler implements ICommandHandler<
+  ReviewModerateCommand,
+  void
+> {
   constructor(
     @Inject(PUBLIC_REVIEW_REPOSITORY)
     private readonly reviewRepository: IPublicReviewRepository,

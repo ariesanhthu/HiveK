@@ -12,7 +12,10 @@ import {
 } from '@/application/commands';
 
 import { UserGetByIdHandler, UserGetListHandler } from '@/application/queries';
-import { UserAdminController, UserClientController } from '@/presentation/controllers';
+import {
+  UserAdminController,
+  UserClientController,
+} from '@/presentation/controllers';
 
 const COMMAND_HANDLERS = [
   UserCreateCommandHandler,
@@ -21,16 +24,12 @@ const COMMAND_HANDLERS = [
   UserSoftDeleteCommandHandler,
   UserHardDeleteCommandHandler,
   UserRestoreCommandHandler,
-  UserCheckValidCommandHandler
+  UserCheckValidCommandHandler,
 ];
 
-const QUERY_HANDLERS = [
-  UserGetByIdHandler,
-  UserGetListHandler,
-];
+const QUERY_HANDLERS = [UserGetByIdHandler, UserGetListHandler];
 
-const EVENT_HANDLERS = [
-];
+const EVENT_HANDLERS = [];
 
 @Module({
   imports: [CqrsModule],

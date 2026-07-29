@@ -22,7 +22,12 @@ export class GoogleStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  async validate(req: Express.Request & { query?: { state?: string } }, accessToken: string, refreshToken: string, profile: GoogleProfile): Promise<unknown> {
+  async validate(
+    req: Express.Request & { query?: { state?: string } },
+    accessToken: string,
+    refreshToken: string,
+    profile: GoogleProfile,
+  ): Promise<unknown> {
     const { id, emails, displayName, photos } = profile;
     const email = emails[0].value;
 

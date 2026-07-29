@@ -1,6 +1,10 @@
 import { BaseAggregateRoot } from '../common';
 import { type Optional, type Nullable } from '../types';
-import { EVersionStatus, type EPackageType, type EPackageScope } from '../enums';
+import {
+  EVersionStatus,
+  type EPackageType,
+  type EPackageScope,
+} from '../enums';
 import { type GrantVO } from '../value-objects';
 import { type PackageVariantEntity } from '../entities/package-variant.entity';
 
@@ -50,7 +54,7 @@ export class PackageRoot extends BaseAggregateRoot<PackageProps> {
         updatedAt: input.updatedAt ?? now,
         activatedAt: input.activatedAt,
       },
-      id
+      id,
     );
   }
 
@@ -133,14 +137,16 @@ export class PackageRoot extends BaseAggregateRoot<PackageProps> {
       scope: EPackageScope;
       features: string[];
       baseGrants: GrantVO[];
-    }>
+    }>,
   ): void {
     if (props.name !== undefined) this.props.name = props.name;
-    if (props.description !== undefined) this.props.description = props.description;
+    if (props.description !== undefined)
+      this.props.description = props.description;
     if (props.type !== undefined) this.props.type = props.type;
     if (props.scope !== undefined) this.props.scope = props.scope;
     if (props.features !== undefined) this.props.features = props.features;
-    if (props.baseGrants !== undefined) this.props.baseGrants = props.baseGrants;
+    if (props.baseGrants !== undefined)
+      this.props.baseGrants = props.baseGrants;
     this.props.updatedAt = new Date();
   }
 

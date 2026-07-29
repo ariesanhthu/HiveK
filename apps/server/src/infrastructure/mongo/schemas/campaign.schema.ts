@@ -1,7 +1,12 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Schema as MongooseSchema, Types } from 'mongoose';
 import { ECampaignStatus } from '@/core/enums/campaign-status.enum';
-import { EParticipantStatus, EOutputStatus, EOutputType, ESchedulePostStatus } from '@/core/enums';
+import {
+  EParticipantStatus,
+  EOutputStatus,
+  EOutputType,
+  ESchedulePostStatus,
+} from '@/core/enums';
 import { softDeletePlugin } from '../utils';
 
 @Schema({ _id: false })
@@ -18,7 +23,11 @@ export class PlatformTargetItemModel {
   @Prop({ type: String, required: false, maxlength: 500 })
   note?: string;
 
-  @Prop({ type: MongooseSchema.Types.Map, of: MongooseSchema.Types.Mixed, required: false })
+  @Prop({
+    type: MongooseSchema.Types.Map,
+    of: MongooseSchema.Types.Mixed,
+    required: false,
+  })
   extras?: Record<string, any>;
 }
 
@@ -38,7 +47,11 @@ export class CampaignParticipantSubModel {
   @Prop({ required: true, type: Types.ObjectId, ref: 'KolProfileModel' })
   kol_profile_id: Types.ObjectId;
 
-  @Prop({ required: true, type: String, enum: Object.values(EParticipantStatus) })
+  @Prop({
+    required: true,
+    type: String,
+    enum: Object.values(EParticipantStatus),
+  })
   status: EParticipantStatus;
 
   @Prop({ type: Date, default: null })
@@ -53,7 +66,9 @@ export class CampaignParticipantSubModel {
   created_at: Date;
   updated_at: Date;
 }
-export const CampaignParticipantSubSchema = SchemaFactory.createForClass(CampaignParticipantSubModel);
+export const CampaignParticipantSubSchema = SchemaFactory.createForClass(
+  CampaignParticipantSubModel,
+);
 
 // @code-comment(CampaignKOLOutputSubModel): Kept for future reuse when schedule posts are re-inlined.
 // export class CampaignKOLOutputSubModel { ... }
@@ -75,8 +90,11 @@ export class ScheduleDayModel {
   @Prop({ type: String, required: false })
   label?: string;
 
-  @Prop({ type: [{ type: Types.ObjectId, ref: 'ScheduledPostModel' }], default: [] })
-  posts: Types.ObjectId[];  // ScheduledPost IDs
+  @Prop({
+    type: [{ type: Types.ObjectId, ref: 'ScheduledPostModel' }],
+    default: [],
+  })
+  posts: Types.ObjectId[]; // ScheduledPost IDs
 }
 export const ScheduleDaySchema = SchemaFactory.createForClass(ScheduleDayModel);
 
@@ -88,7 +106,9 @@ export class CampaignScheduleModel {
   created_at: Date;
   updated_at: Date;
 }
-export const CampaignScheduleSchema = SchemaFactory.createForClass(CampaignScheduleModel);
+export const CampaignScheduleSchema = SchemaFactory.createForClass(
+  CampaignScheduleModel,
+);
 
 @Schema({
   collection: 'campaigns',
@@ -104,16 +124,31 @@ export class CampaignModel {
   @Prop({ type: Number, required: true, min: 0 })
   budget: number;
 
-  @Prop({ type: MongooseSchema.Types.Map, of: MongooseSchema.Types.Mixed, required: true })
+  @Prop({
+    type: MongooseSchema.Types.Map,
+    of: MongooseSchema.Types.Mixed,
+    required: true,
+  })
   financial_target: Record<string, any>;
 
-  @Prop({ type: String, required: true, trim: true, minlength: 1, maxlength: 2000 })
+  @Prop({
+    type: String,
+    required: true,
+    trim: true,
+    minlength: 1,
+    maxlength: 2000,
+  })
   description: string;
 
   @Prop({ type: [PlatformTargetItemModel], default: [] })
   platform_target: PlatformTargetItemModel[];
 
-  @Prop({ type: String, required: true, enum: Object.values(ECampaignStatus), default: ECampaignStatus.DRAFT })
+  @Prop({
+    type: String,
+    required: true,
+    enum: Object.values(ECampaignStatus),
+    default: ECampaignStatus.DRAFT,
+  })
   status: ECampaignStatus;
 
   @Prop({ type: [String], default: [] })
@@ -131,7 +166,11 @@ export class CampaignModel {
   @Prop({ type: [CampaignParticipantSubSchema], default: [] })
   participants: CampaignParticipantSubModel[];
 
-  @Prop({ type: MongooseSchema.Types.Map, of: MongooseSchema.Types.Mixed, required: false })
+  @Prop({
+    type: MongooseSchema.Types.Map,
+    of: MongooseSchema.Types.Mixed,
+    required: false,
+  })
   extras?: Record<string, any>;
 
   @Prop({ type: CampaignScheduleSchema, required: false })

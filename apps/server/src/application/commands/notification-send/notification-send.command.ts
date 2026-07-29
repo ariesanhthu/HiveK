@@ -1,4 +1,8 @@
-import { NotificationType, ETargetType, NotificationChannel } from '@/core/enums';
+import {
+  NotificationType,
+  ETargetType,
+  NotificationChannel,
+} from '@/core/enums';
 
 export interface NotificationSendCommandProps {
   type: NotificationType;
@@ -15,5 +19,5 @@ export interface NotificationSendCommandProps {
 }
 
 export class NotificationSendCommand {
-  constructor(public readonly props: NotificationSendCommandProps) { }
+  constructor(public readonly props: NotificationSendCommandProps) {}
 }

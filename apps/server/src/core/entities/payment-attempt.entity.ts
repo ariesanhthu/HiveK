@@ -6,7 +6,11 @@ import {
   ETransactionStatus,
   EPaymentTransactionType,
 } from '../enums';
-import { MoneyVO, PaymentAttemptStatusVO, FailureTypeVO } from '../value-objects';
+import {
+  MoneyVO,
+  PaymentAttemptStatusVO,
+  FailureTypeVO,
+} from '../value-objects';
 import { type PaymentTransactionEntity } from './payment-transaction.entity';
 import { type Nullable, type Optional } from '../types';
 
@@ -49,28 +53,37 @@ export type PaymentAttemptCreateProps = Omit<
 };
 
 export class PaymentAttemptEntity extends BaseEntity<PaymentAttemptProps> {
-  public static create(input: PaymentAttemptCreateProps, id?: string): PaymentAttemptEntity {
+  public static create(
+    input: PaymentAttemptCreateProps,
+    id?: string,
+  ): PaymentAttemptEntity {
     const now = new Date();
-    return new PaymentAttemptEntity({
-      ...input,
-      providerTransactionId: input.providerTransactionId,
-      paymentUrl: input.paymentUrl,
-      failureReason: input.failureReason,
-      failureType: input.failureType,
-      totalRefundedAmount: input.totalRefundedAmount,
-      transactions: input.transactions ?? [],
-      createdAt: input.createdAt ?? now,
-      updatedAt: input.updatedAt ?? now,
-    }, id);
+    return new PaymentAttemptEntity(
+      {
+        ...input,
+        providerTransactionId: input.providerTransactionId,
+        paymentUrl: input.paymentUrl,
+        failureReason: input.failureReason,
+        failureType: input.failureType,
+        totalRefundedAmount: input.totalRefundedAmount,
+        transactions: input.transactions ?? [],
+        createdAt: input.createdAt ?? now,
+        updatedAt: input.updatedAt ?? now,
+      },
+      id,
+    );
   }
 
-  public static instantiate(id: string, props: PaymentAttemptProps): PaymentAttemptEntity {
+  public static instantiate(
+    id: string,
+    props: PaymentAttemptProps,
+  ): PaymentAttemptEntity {
     return new PaymentAttemptEntity(props, id);
   }
 
   public static getFieldChanges(
     old: PaymentAttemptEntity,
-    current: PaymentAttemptEntity
+    current: PaymentAttemptEntity,
   ): FieldChanges {
     const changes: FieldChanges = {};
     const ignoreKeys = ['updatedAt'];
@@ -82,7 +95,10 @@ export class PaymentAttemptEntity extends BaseEntity<PaymentAttemptProps> {
       if (val && typeof val === 'object') {
         if ('value' in val) return val.value;
         if ('amount' in val && 'currency' in val) {
-          return { amount: (val as MoneyVO).amount, currency: (val as MoneyVO).currency };
+          return {
+            amount: (val as MoneyVO).amount,
+            currency: (val as MoneyVO).currency,
+          };
         }
       }
       return val;
@@ -161,25 +177,27 @@ export class PaymentAttemptEntity extends BaseEntity<PaymentAttemptProps> {
   }
 
   public getCapturedAmount(): MoneyVO {
-    const currency = this.props.transactions[0]?.amount.currency ?? ECurrency.VND;
+    const currency =
+      this.props.transactions[0]?.amount.currency ?? ECurrency.VND;
 
     return this.props.transactions
       .filter(
         (t) =>
           t.transactionType === EPaymentTransactionType.CAPTURE &&
-          t.status === ETransactionStatus.SUCCESS
+          t.status === ETransactionStatus.SUCCESS,
       )
       .reduce((sum, t) => sum.add(t.amount), MoneyVO.zero(currency));
   }
 
   public getRefundedAmount(): MoneyVO {
-    const currency = this.props.transactions[0]?.amount.currency ?? ECurrency.VND;
+    const currency =
+      this.props.transactions[0]?.amount.currency ?? ECurrency.VND;
 
     return this.props.transactions
       .filter(
         (t) =>
           t.transactionType === EPaymentTransactionType.REFUND &&
-          t.status === ETransactionStatus.SUCCESS
+          t.status === ETransactionStatus.SUCCESS,
       )
       .reduce((sum, t) => sum.add(t.amount), MoneyVO.zero(currency));
   }
@@ -205,7 +223,7 @@ export class PaymentAttemptEntity extends BaseEntity<PaymentAttemptProps> {
       if (transaction.amount.currency !== existingCurrency) {
         throw new Error(
           `Currency mismatch in attempt ${this.id}: ` +
-            `expected ${existingCurrency}, got ${transaction.amount.currency}`
+            `expected ${existingCurrency}, got ${transaction.amount.currency}`,
         );
       }
     }
@@ -225,7 +243,7 @@ export class PaymentAttemptEntity extends BaseEntity<PaymentAttemptProps> {
   public getLatestTransaction(): Nullable<PaymentTransactionEntity> {
     if (this.props.transactions.length === 0) return null;
     return this.props.transactions.reduce((latest, current) =>
-      current.createdAt > latest.createdAt ? current : latest
+      current.createdAt > latest.createdAt ? current : latest,
     );
   }
 
@@ -234,7 +252,9 @@ export class PaymentAttemptEntity extends BaseEntity<PaymentAttemptProps> {
       return;
     }
     if (this.props.status.isInitiated()) {
-      this.props.status = this.props.status.transition(EPaymentAttemptStatus.PROCESSING);
+      this.props.status = this.props.status.transition(
+        EPaymentAttemptStatus.PROCESSING,
+      );
     }
   }
 
@@ -256,32 +276,42 @@ export class PaymentAttemptEntity extends BaseEntity<PaymentAttemptProps> {
           EPaymentTransactionType.CAPTURE,
         ].includes(lastTransaction.transactionType)
       ) {
-        this.props.status = this.props.status.transition(EPaymentAttemptStatus.FAILED);
+        this.props.status = this.props.status.transition(
+          EPaymentAttemptStatus.FAILED,
+        );
       }
       return;
     }
 
     switch (lastTransaction.transactionType) {
       case EPaymentTransactionType.CREATE:
-        this.props.status = this.props.status.transition(EPaymentAttemptStatus.INITIATED);
+        this.props.status = this.props.status.transition(
+          EPaymentAttemptStatus.INITIATED,
+        );
         break;
       case EPaymentTransactionType.AUTHORIZATION:
-        this.props.status = this.props.status.transition(EPaymentAttemptStatus.PROCESSING);
+        this.props.status = this.props.status.transition(
+          EPaymentAttemptStatus.PROCESSING,
+        );
         break;
       case EPaymentTransactionType.CAPTURE:
-        this.props.status = this.props.status.transition(EPaymentAttemptStatus.SUCCESS);
+        this.props.status = this.props.status.transition(
+          EPaymentAttemptStatus.SUCCESS,
+        );
         break;
       case EPaymentTransactionType.CANCEL:
-        this.props.status = this.props.status.transition(EPaymentAttemptStatus.CANCELED);
+        this.props.status = this.props.status.transition(
+          EPaymentAttemptStatus.CANCELED,
+        );
         break;
       case EPaymentTransactionType.REFUND:
         if (this.isFullyRefunded()) {
           this.props.status = this.props.status.transition(
-            EPaymentAttemptStatus.REFUNDED
+            EPaymentAttemptStatus.REFUNDED,
           );
         } else {
           this.props.status = this.props.status.transition(
-            EPaymentAttemptStatus.PARTIALLY_REFUNDED
+            EPaymentAttemptStatus.PARTIALLY_REFUNDED,
           );
         }
         break;
@@ -292,7 +322,9 @@ export class PaymentAttemptEntity extends BaseEntity<PaymentAttemptProps> {
     if (this.status.isTerminal()) {
       return;
     }
-    this.props.status = this.props.status.transition(EPaymentAttemptStatus.CANCELED);
+    this.props.status = this.props.status.transition(
+      EPaymentAttemptStatus.CANCELED,
+    );
     this.props.updatedAt = new Date();
   }
 
@@ -310,7 +342,9 @@ export class PaymentAttemptEntity extends BaseEntity<PaymentAttemptProps> {
   public recordFailure(reason: string, type: EFailureType): void {
     this.props.failureReason = reason;
     this.props.failureType = FailureTypeVO.fromType(type);
-    this.props.status = this.props.status.transition(EPaymentAttemptStatus.FAILED);
+    this.props.status = this.props.status.transition(
+      EPaymentAttemptStatus.FAILED,
+    );
     this.props.updatedAt = new Date();
   }
 }

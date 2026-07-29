@@ -2,7 +2,11 @@ import { Module } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
 import { MongoModule } from '../mongo/mongo.module';
 import { PaymentProvidersModule } from '../payment-providers/payment-providers.module';
-import { BillService, PaymentService, ProrationService } from '@/application/services';
+import {
+  BillService,
+  PaymentService,
+  ProrationService,
+} from '@/application/services';
 
 import {
   PackageCreateCommandHandler,
@@ -35,15 +39,8 @@ import {
 } from '@/presentation/controllers';
 
 @Module({
-  imports: [
-    CqrsModule,
-    MongoModule,
-    PaymentProvidersModule,
-  ],
-  controllers: [
-    PackageAdminController,
-    PackageClientController,
-  ],
+  imports: [CqrsModule, MongoModule, PaymentProvidersModule],
+  controllers: [PackageAdminController, PackageClientController],
   providers: [
     PaymentService,
     // Package Command Handlers
@@ -72,8 +69,6 @@ import {
     PaymentCancelHandler,
     PaymentVoidAuthorizationHandler,
   ],
-  exports: [
-    PaymentService,
-  ],
+  exports: [PaymentService],
 })
 export class BillingModule {}

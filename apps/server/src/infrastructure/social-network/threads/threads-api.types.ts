@@ -16,12 +16,21 @@ export type ThreadsMediaType = 'TEXT' | 'IMAGE' | 'VIDEO' | 'CAROUSEL';
 /**
  * Access Control for Replies
  */
-export type ThreadsReplyControl = 'everyone' | 'accounts_you_follow' | 'mentioned_only';
+export type ThreadsReplyControl =
+  | 'everyone'
+  | 'accounts_you_follow'
+  | 'mentioned_only';
 
 /**
  * Interactive Analytics Metric Identifiers
  */
-export type ThreadsMetricType = 'views' | 'likes' | 'replies' | 'reposts' | 'shares' | 'quotes';
+export type ThreadsMetricType =
+  | 'views'
+  | 'likes'
+  | 'replies'
+  | 'reposts'
+  | 'shares'
+  | 'quotes';
 
 // ==========================================
 // AUTHENTICATION INTERFACES

@@ -4,4 +4,7 @@ import { UploadedFileFilterDto } from '@/application/queries/uploaded-file-get-l
 
 export const UPLOADED_FILE_READ_SERVICE = Symbol('UPLOADED_FILE_READ_SERVICE');
 
-export interface IUploadedFileReadService extends IBaseReadService<UploadedFileDto, UploadedFileFilterDto> {}
+export interface IUploadedFileReadService extends IBaseReadService<
+  UploadedFileDto,
+  UploadedFileFilterDto
+> {}

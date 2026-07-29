@@ -16,7 +16,7 @@ export class CreditDeductedEvent extends DomainEvent<CreditDeductedPayload> {
   constructor(
     aggregateId: string,
     payload: CreditDeductedPayload,
-    metadata?: Record<string, unknown>
+    metadata?: Record<string, unknown>,
   ) {
     super(aggregateId, payload, metadata);
   }

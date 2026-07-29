@@ -23,28 +23,41 @@ export class FacebookGraphApiClient {
     private readonly httpService: HttpService,
     private readonly configService: ConfigService,
   ) {
-    this.baseUrl = this.configService.get<string>('FACEBOOK_GRAPH_API_URL') || 'https://graph.facebook.com/v19.0';
+    this.baseUrl =
+      this.configService.get<string>('FACEBOOK_GRAPH_API_URL') ||
+      'https://graph.facebook.com/v19.0';
     this.appId = this.configService.get<string>('FACEBOOK_APP_ID') || '';
-    this.appSecret = this.configService.get<string>('FACEBOOK_APP_SECRET') || '';
+    this.appSecret =
+      this.configService.get<string>('FACEBOOK_APP_SECRET') || '';
   }
 
   private handleError(error: unknown, context: string): never {
     if (isAxiosError(error)) {
-      this.logger.error(`[Facebook API Error - ${context}] Status: ${error.response?.status}, Data: ${JSON.stringify(error.response?.data)}`);
-      throw new Error(`Facebook API Error (${context}): ${errorMessage(error.response?.data || error.message)}`);
+      this.logger.error(
+        `[Facebook API Error - ${context}] Status: ${error.response?.status}, Data: ${JSON.stringify(error.response?.data)}`,
+      );
+      throw new Error(
+        `Facebook API Error (${context}): ${errorMessage(error.response?.data || error.message)}`,
+      );
     }
-    this.logger.error(`[Facebook API Error - ${context}] Non-Axios Error: ${errorMessage(error)}`);
+    this.logger.error(
+      `[Facebook API Error - ${context}] Non-Axios Error: ${errorMessage(error)}`,
+    );
     throw error as Error;
   }
 
-  async publishTextPost(pageToken: string, pageId: string, message: string): Promise<string> {
+  async publishTextPost(
+    pageToken: string,
+    pageId: string,
+    message: string,
+  ): Promise<string> {
     try {
       const response = await firstValueFrom(
         this.httpService.post<IFacebookPostResponse>(
           `${this.baseUrl}/${pageId}/feed`,
           { message },
-          { params: { access_token: pageToken } }
-        )
+          { params: { access_token: pageToken } },
+        ),
       );
       return response.data.id;
     } catch (error) {
@@ -52,14 +65,19 @@ export class FacebookGraphApiClient {
     }
   }
 
-  async publishPhotoPost(pageToken: string, pageId: string, message: string, imageUrl: string): Promise<string> {
+  async publishPhotoPost(
+    pageToken: string,
+    pageId: string,
+    message: string,
+    imageUrl: string,
+  ): Promise<string> {
     try {
       const response = await firstValueFrom(
         this.httpService.post<IFacebookPostResponse>(
           `${this.baseUrl}/${pageId}/photos`,
           { url: imageUrl, caption: message },
-          { params: { access_token: pageToken } }
-        )
+          { params: { access_token: pageToken } },
+        ),
       );
       return response.data.id;
     } catch (error) {
@@ -67,7 +85,12 @@ export class FacebookGraphApiClient {
     }
   }
 
-  async publishMultiPhotoPost(pageToken: string, pageId: string, message: string, imageUrls: string[]): Promise<string> {
+  async publishMultiPhotoPost(
+    pageToken: string,
+    pageId: string,
+    message: string,
+    imageUrls: string[],
+  ): Promise<string> {
     try {
       // Step 1: Upload photos as unpublished, returning attachment IDs
       const attachedMedia = await Promise.all(
@@ -76,11 +99,11 @@ export class FacebookGraphApiClient {
             this.httpService.post<{ id: string }>(
               `${this.baseUrl}/${pageId}/photos`,
               { url, published: false },
-              { params: { access_token: pageToken } }
-            )
+              { params: { access_token: pageToken } },
+            ),
           );
           return { media_fbid: res.data.id };
-        })
+        }),
       );
 
       // Step 2: Publish feed post linking those media attachments
@@ -88,8 +111,8 @@ export class FacebookGraphApiClient {
         this.httpService.post<IFacebookPostResponse>(
           `${this.baseUrl}/${pageId}/feed`,
           { message, attached_media: attachedMedia },
-          { params: { access_token: pageToken } }
-        )
+          { params: { access_token: pageToken } },
+        ),
       );
       return response.data.id;
     } catch (error) {
@@ -97,21 +120,28 @@ export class FacebookGraphApiClient {
     }
   }
 
-  async replyToComment(pageToken: string, commentId: string, message: string): Promise<void> {
+  async replyToComment(
+    pageToken: string,
+    commentId: string,
+    message: string,
+  ): Promise<void> {
     try {
       await firstValueFrom(
         this.httpService.post(
           `${this.baseUrl}/${commentId}/comments`,
           { message },
-          { params: { access_token: pageToken } }
-        )
+          { params: { access_token: pageToken } },
+        ),
       );
     } catch (error) {
       this.handleError(error, 'replyToComment');
     }
   }
 
-  async exchangeCodeForUserToken(code: string, redirectUri: string): Promise<string> {
+  async exchangeCodeForUserToken(
+    code: string,
+    redirectUri: string,
+  ): Promise<string> {
     try {
       const response = await firstValueFrom(
         this.httpService.get<IFacebookOAuthTokenResponse>(
@@ -123,8 +153,8 @@ export class FacebookGraphApiClient {
               redirect_uri: redirectUri,
               code,
             },
-          }
-        )
+          },
+        ),
       );
       return response.data.access_token;
     } catch (error) {
@@ -144,8 +174,8 @@ export class FacebookGraphApiClient {
               client_secret: this.appSecret,
               fb_exchange_token: userToken,
             },
-          }
-        )
+          },
+        ),
       );
       return response.data.access_token;
     } catch (error) {
@@ -158,8 +188,8 @@ export class FacebookGraphApiClient {
       const response = await firstValueFrom(
         this.httpService.get<IFacebookPageAccountsResponse>(
           `${this.baseUrl}/me/accounts`,
-          { params: { access_token: userToken } }
-        )
+          { params: { access_token: userToken } },
+        ),
       );
       return response.data.data;
     } catch (error) {
@@ -167,7 +197,10 @@ export class FacebookGraphApiClient {
     }
   }
 
-  async getPageDetails(pageToken: string, pageId: string): Promise<IFacebookPageDetails> {
+  async getPageDetails(
+    pageToken: string,
+    pageId: string,
+  ): Promise<IFacebookPageDetails> {
     try {
       const response = await firstValueFrom(
         this.httpService.get<IFacebookPageDetails>(
@@ -177,8 +210,8 @@ export class FacebookGraphApiClient {
               fields: 'id,name,access_token,picture{url},fan_count',
               access_token: pageToken,
             },
-          }
-        )
+          },
+        ),
       );
       return response.data;
     } catch (error) {

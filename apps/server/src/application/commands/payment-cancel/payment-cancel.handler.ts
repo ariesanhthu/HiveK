@@ -1,13 +1,19 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { Inject } from '@nestjs/common';
 import { PaymentCancelCommand } from './payment-cancel.command';
-import { PAYMENT_REPOSITORY, type IPaymentRepository } from '@/core/interfaces/repositories';
+import {
+  PAYMENT_REPOSITORY,
+  type IPaymentRepository,
+} from '@/core/interfaces/repositories';
 import { type IUnitOfWork, UNIT_OF_WORK } from '@/application/interfaces';
 import { PaymentService } from '@/application/services';
 import { PaymentNotFoundException } from '@/core/exceptions';
 
 @CommandHandler(PaymentCancelCommand)
-export class PaymentCancelHandler implements ICommandHandler<PaymentCancelCommand, void> {
+export class PaymentCancelHandler implements ICommandHandler<
+  PaymentCancelCommand,
+  void
+> {
   constructor(
     @Inject(PAYMENT_REPOSITORY)
     private readonly paymentRepository: IPaymentRepository,
@@ -28,7 +34,7 @@ export class PaymentCancelHandler implements ICommandHandler<PaymentCancelComman
       this.paymentService.cancelPayment(
         payment,
         input.reason || 'Canceled by user request',
-        input.canceledBy || 'system'
+        input.canceledBy || 'system',
       );
 
       await this.paymentRepository.save(payment);

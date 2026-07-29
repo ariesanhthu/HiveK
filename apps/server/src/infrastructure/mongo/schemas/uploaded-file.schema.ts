@@ -43,5 +43,6 @@ export class UploadedFileModel {
 }
 
 export type UploadedFileDocument = HydratedDocument<UploadedFileModel>;
-export const UploadedFileSchema = SchemaFactory.createForClass(UploadedFileModel);
+export const UploadedFileSchema =
+  SchemaFactory.createForClass(UploadedFileModel);
 UploadedFileSchema.plugin(softDeletePlugin);

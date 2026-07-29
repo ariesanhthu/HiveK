@@ -1,11 +1,17 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { Inject } from '@nestjs/common';
 import { PaymentProviderDeleteCommand } from './payment-provider-delete.command';
-import { PAYMENT_PROVIDER_REPOSITORY, type IPaymentProviderRepository } from '@/core/interfaces/repositories';
+import {
+  PAYMENT_PROVIDER_REPOSITORY,
+  type IPaymentProviderRepository,
+} from '@/core/interfaces/repositories';
 import { type IUnitOfWork, UNIT_OF_WORK } from '@/application/interfaces';
 
 @CommandHandler(PaymentProviderDeleteCommand)
-export class PaymentProviderDeleteHandler implements ICommandHandler<PaymentProviderDeleteCommand, void> {
+export class PaymentProviderDeleteHandler implements ICommandHandler<
+  PaymentProviderDeleteCommand,
+  void
+> {
   constructor(
     @Inject(PAYMENT_PROVIDER_REPOSITORY)
     private readonly providerRepository: IPaymentProviderRepository,

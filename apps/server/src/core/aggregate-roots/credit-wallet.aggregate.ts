@@ -21,7 +21,10 @@ export class CreditWalletRoot extends BaseAggregateRoot<CreditWalletProps> {
     });
   }
 
-  public static instantiate(id: string, props: CreditWalletProps): CreditWalletRoot {
+  public static instantiate(
+    id: string,
+    props: CreditWalletProps,
+  ): CreditWalletRoot {
     return new CreditWalletRoot(props, id);
   }
 
@@ -44,7 +47,9 @@ export class CreditWalletRoot extends BaseAggregateRoot<CreditWalletProps> {
 
   topUp(creditType: string, amount: number, reason: string): void {
     if (amount <= 0) return;
-    const index = this.props.balances.findIndex((b) => b.creditType === creditType);
+    const index = this.props.balances.findIndex(
+      (b) => b.creditType === creditType,
+    );
     const now = new Date();
     let newBalance = amount;
 
@@ -62,7 +67,7 @@ export class CreditWalletRoot extends BaseAggregateRoot<CreditWalletProps> {
           creditType,
           total: amount,
           used: 0,
-        })
+        }),
       );
     }
     this.props.updatedAt = now;
@@ -74,17 +79,24 @@ export class CreditWalletRoot extends BaseAggregateRoot<CreditWalletProps> {
         amount,
         newBalance,
         reason,
-      })
+      }),
     );
   }
 
   deduct(creditType: string, amount: number, reason: string): void {
     if (amount <= 0) return;
-    const index = this.props.balances.findIndex((b) => b.creditType === creditType);
+    const index = this.props.balances.findIndex(
+      (b) => b.creditType === creditType,
+    );
     const available = index !== -1 ? this.props.balances[index].available : 0;
 
     if (available < amount) {
-      throw new InsufficientCreditException(this.enterpriseId, creditType, amount, available);
+      throw new InsufficientCreditException(
+        this.enterpriseId,
+        creditType,
+        amount,
+        available,
+      );
     }
 
     const existing = this.props.balances[index];
@@ -103,7 +115,7 @@ export class CreditWalletRoot extends BaseAggregateRoot<CreditWalletProps> {
         amount,
         newBalance: existing.total - newUsed,
         reason,
-      })
+      }),
     );
   }
 }

@@ -14,7 +14,9 @@ export class BillCannotCancelException extends DomainException {
 
 export class BillEnterpriseMismatchException extends DomainException {
   constructor(billId: string, enterpriseId: string) {
-    super(`Enterprise ID mismatch for bill ${billId}: expected to own ${enterpriseId}`);
+    super(
+      `Enterprise ID mismatch for bill ${billId}: expected to own ${enterpriseId}`,
+    );
   }
 }
 
@@ -38,7 +40,9 @@ export class BillTaxAmountMismatchException extends DomainException {
 
 export class BillTerminateStatusException extends DomainException {
   constructor(billId: string, status: string) {
-    super(`Bill ${billId} is in a terminal status and cannot be modified: ${status}`);
+    super(
+      `Bill ${billId} is in a terminal status and cannot be modified: ${status}`,
+    );
   }
 }
 

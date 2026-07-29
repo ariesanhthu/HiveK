@@ -17,7 +17,10 @@ export class EnterpriseQuotaAllocationRoot extends BaseAggregateRoot<EnterpriseQ
     });
   }
 
-  public static instantiate(id: string, props: EnterpriseQuotaAllocationRootProps): EnterpriseQuotaAllocationRoot {
+  public static instantiate(
+    id: string,
+    props: EnterpriseQuotaAllocationRootProps,
+  ): EnterpriseQuotaAllocationRoot {
     return new EnterpriseQuotaAllocationRoot(props, id);
   }
 
@@ -41,7 +44,12 @@ export class EnterpriseQuotaAllocationRoot extends BaseAggregateRoot<EnterpriseQ
    * Move `amount` from the unallocated pool to a specific enterprise for a given key+kind.
    * Returns false if the pool doesn't have enough balance.
    */
-  public allocate(enterpriseId: string, key: string, amount: number, kind: EGrantType): boolean {
+  public allocate(
+    enterpriseId: string,
+    key: string,
+    amount: number,
+    kind: EGrantType,
+  ): boolean {
     const poolBalance = this.getPoolBalance(key, kind);
     if (poolBalance < amount) return false;
 
@@ -54,7 +62,12 @@ export class EnterpriseQuotaAllocationRoot extends BaseAggregateRoot<EnterpriseQ
   /**
    * Move `amount` from an enterprise back to the unallocated pool.
    */
-  public deallocate(enterpriseId: string, key: string, amount: number, kind: EGrantType): void {
+  public deallocate(
+    enterpriseId: string,
+    key: string,
+    amount: number,
+    kind: EGrantType,
+  ): void {
     this.removeFromEnterprise(enterpriseId, key, amount, kind);
     this.addToPool(key, amount, kind);
     this.props.updatedAt = new Date();
@@ -64,7 +77,12 @@ export class EnterpriseQuotaAllocationRoot extends BaseAggregateRoot<EnterpriseQ
    * Set a specific enterprise's allocation for a key+kind to an exact amount.
    * Adjusts the pool accordingly.
    */
-  public setAllocationForEnterprise(enterpriseId: string, key: string, kind: EGrantType, amount: number): void {
+  public setAllocationForEnterprise(
+    enterpriseId: string,
+    key: string,
+    kind: EGrantType,
+    amount: number,
+  ): void {
     const current = this.getAllocationForEnterprise(enterpriseId, key, kind);
     const diff = amount - current;
 
@@ -90,8 +108,15 @@ export class EnterpriseQuotaAllocationRoot extends BaseAggregateRoot<EnterpriseQ
    * - Preserves existing enterprise allocations if they fit within the new total
    * - Puts remainder in pool
    */
-  public rebalanceFromSubscription(computedGrants: GrantVO[], enterpriseIds: string[]): void {
-    const divisibleKinds = [EGrantType.QUOTA_RENEWABLE, EGrantType.QUOTA_HARD, EGrantType.CREDIT_TOP_UP];
+  public rebalanceFromSubscription(
+    computedGrants: GrantVO[],
+    enterpriseIds: string[],
+  ): void {
+    const divisibleKinds = [
+      EGrantType.QUOTA_RENEWABLE,
+      EGrantType.QUOTA_HARD,
+      EGrantType.CREDIT_TOP_UP,
+    ];
 
     for (const grant of computedGrants) {
       if (!divisibleKinds.includes(grant.type)) continue;
@@ -140,27 +165,50 @@ export class EnterpriseQuotaAllocationRoot extends BaseAggregateRoot<EnterpriseQ
     this.props.updatedAt = new Date();
   }
 
-  public getAllocationForEnterprise(enterpriseId: string, key: string, kind: EGrantType): number {
+  public getAllocationForEnterprise(
+    enterpriseId: string,
+    key: string,
+    kind: EGrantType,
+  ): number {
     const alloc = this.props.allocations.find(
-      (a) => !a.isPool && a.enterpriseId === enterpriseId && a.key === key && a.kind === kind
+      (a) =>
+        !a.isPool &&
+        a.enterpriseId === enterpriseId &&
+        a.key === key &&
+        a.kind === kind,
     );
     return alloc ? alloc.allocated : 0;
   }
 
   public getPoolBalance(key: string, kind: EGrantType): number {
-    const pool = this.props.allocations.find((a) => a.isPool && a.key === key && a.kind === kind);
+    const pool = this.props.allocations.find(
+      (a) => a.isPool && a.key === key && a.kind === kind,
+    );
     return pool ? pool.allocated : 0;
   }
 
-  public getAllocationsByEnterprise(enterpriseId: string): EnterpriseQuotaAllocationVO[] {
-    return this.props.allocations.filter((a) => !a.isPool && a.enterpriseId === enterpriseId);
+  public getAllocationsByEnterprise(
+    enterpriseId: string,
+  ): EnterpriseQuotaAllocationVO[] {
+    return this.props.allocations.filter(
+      (a) => !a.isPool && a.enterpriseId === enterpriseId,
+    );
   }
 
   // ─── Private helpers ──────────────────────────────────────
 
-  private addToEnterprise(enterpriseId: string, key: string, amount: number, kind: EGrantType): void {
+  private addToEnterprise(
+    enterpriseId: string,
+    key: string,
+    amount: number,
+    kind: EGrantType,
+  ): void {
     const existing = this.props.allocations.find(
-      (a) => !a.isPool && a.enterpriseId === enterpriseId && a.key === key && a.kind === kind
+      (a) =>
+        !a.isPool &&
+        a.enterpriseId === enterpriseId &&
+        a.key === key &&
+        a.kind === kind,
     );
     if (existing) {
       const idx = this.props.allocations.indexOf(existing);
@@ -177,20 +225,31 @@ export class EnterpriseQuotaAllocationRoot extends BaseAggregateRoot<EnterpriseQ
           allocated: amount,
           kind,
           isPool: false,
-        })
+        }),
       );
     }
   }
 
-  private removeFromEnterprise(enterpriseId: string, key: string, amount: number, kind: EGrantType): void {
+  private removeFromEnterprise(
+    enterpriseId: string,
+    key: string,
+    amount: number,
+    kind: EGrantType,
+  ): void {
     const existing = this.props.allocations.find(
-      (a) => !a.isPool && a.enterpriseId === enterpriseId && a.key === key && a.kind === kind
+      (a) =>
+        !a.isPool &&
+        a.enterpriseId === enterpriseId &&
+        a.key === key &&
+        a.kind === kind,
     );
     if (!existing) return;
 
     const newAmount = existing.allocated - amount;
     if (newAmount <= 0) {
-      this.props.allocations = this.props.allocations.filter((a) => a !== existing);
+      this.props.allocations = this.props.allocations.filter(
+        (a) => a !== existing,
+      );
     } else {
       const idx = this.props.allocations.indexOf(existing);
       this.props.allocations[idx] = new EnterpriseQuotaAllocationVO({
@@ -200,14 +259,26 @@ export class EnterpriseQuotaAllocationRoot extends BaseAggregateRoot<EnterpriseQ
     }
   }
 
-  private removeAllFromEnterprise(enterpriseId: string, key: string, kind: EGrantType): void {
+  private removeAllFromEnterprise(
+    enterpriseId: string,
+    key: string,
+    kind: EGrantType,
+  ): void {
     this.props.allocations = this.props.allocations.filter(
-      (a) => !(a.isPool === false && a.enterpriseId === enterpriseId && a.key === key && a.kind === kind)
+      (a) =>
+        !(
+          a.isPool === false &&
+          a.enterpriseId === enterpriseId &&
+          a.key === key &&
+          a.kind === kind
+        ),
     );
   }
 
   private addToPool(key: string, amount: number, kind: EGrantType): void {
-    const existing = this.props.allocations.find((a) => a.isPool && a.key === key && a.kind === kind);
+    const existing = this.props.allocations.find(
+      (a) => a.isPool && a.key === key && a.kind === kind,
+    );
     if (existing) {
       const idx = this.props.allocations.indexOf(existing);
       this.props.allocations[idx] = new EnterpriseQuotaAllocationVO({
@@ -223,18 +294,22 @@ export class EnterpriseQuotaAllocationRoot extends BaseAggregateRoot<EnterpriseQ
           allocated: amount,
           kind,
           isPool: true,
-        })
+        }),
       );
     }
   }
 
   private removeFromPool(key: string, kind: EGrantType, amount: number): void {
-    const existing = this.props.allocations.find((a) => a.isPool && a.key === key && a.kind === kind);
+    const existing = this.props.allocations.find(
+      (a) => a.isPool && a.key === key && a.kind === kind,
+    );
     if (!existing) return;
 
     const newAmount = existing.allocated - amount;
     if (newAmount <= 0) {
-      this.props.allocations = this.props.allocations.filter((a) => a !== existing);
+      this.props.allocations = this.props.allocations.filter(
+        (a) => a !== existing,
+      );
     } else {
       const idx = this.props.allocations.indexOf(existing);
       this.props.allocations[idx] = new EnterpriseQuotaAllocationVO({
@@ -246,7 +321,7 @@ export class EnterpriseQuotaAllocationRoot extends BaseAggregateRoot<EnterpriseQ
 
   private removeAllForKeyKind(key: string, kind: EGrantType): void {
     this.props.allocations = this.props.allocations.filter(
-      (a) => !(a.key === key && a.kind === kind)
+      (a) => !(a.key === key && a.kind === kind),
     );
   }
 }

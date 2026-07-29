@@ -23,26 +23,36 @@ export class MongoScheduledPostRepository implements IScheduledPostRepository {
   }
 
   async findById(id: string): Promise<Nullable<ScheduledPostRoot>> {
-    const doc = await this.scheduledPostModel.findById(id).session(this.session).exec();
+    const doc = await this.scheduledPostModel
+      .findById(id)
+      .session(this.session)
+      .exec();
     return doc ? this.mapToDomain(doc) : null;
   }
 
-  async findDueForPublishing(now: Date, limit: number): Promise<ScheduledPostRoot[]> {
-    const docs = await this.scheduledPostModel.find({
-      status: EPostStatus.SCHEDULED,
-      scheduled_at: { $lte: now },
-    })
+  async findDueForPublishing(
+    now: Date,
+    limit: number,
+  ): Promise<ScheduledPostRoot[]> {
+    const docs = await this.scheduledPostModel
+      .find({
+        status: EPostStatus.SCHEDULED,
+        scheduled_at: { $lte: now },
+      })
       .limit(limit)
       .session(this.session)
       .exec();
-    return docs.map(doc => this.mapToDomain(doc));
+    return docs.map((doc) => this.mapToDomain(doc));
   }
 
   async findByEnterpriseId(enterpriseId: string): Promise<ScheduledPostRoot[]> {
-    const docs = await this.scheduledPostModel.find({
-      enterprise_id: new Types.ObjectId(enterpriseId),
-    }).session(this.session).exec();
-    return docs.map(doc => this.mapToDomain(doc));
+    const docs = await this.scheduledPostModel
+      .find({
+        enterprise_id: new Types.ObjectId(enterpriseId),
+      })
+      .session(this.session)
+      .exec();
+    return docs.map((doc) => this.mapToDomain(doc));
   }
 
   async save(scheduledPost: ScheduledPostRoot): Promise<void> {
@@ -53,16 +63,22 @@ export class MongoScheduledPostRepository implements IScheduledPostRepository {
       const saved = await created.save({ session: this.session });
       scheduledPost.setId(saved._id.toString());
     } else {
-      await this.scheduledPostModel.findByIdAndUpdate(scheduledPost.id, data, { upsert: true }).session(this.session).exec();
+      await this.scheduledPostModel
+        .findByIdAndUpdate(scheduledPost.id, data, { upsert: true })
+        .session(this.session)
+        .exec();
     }
   }
 
   async saveMany(scheduledPosts: ScheduledPostRoot[]): Promise<void> {
-    await Promise.all(scheduledPosts.map(sp => this.save(sp)));
+    await Promise.all(scheduledPosts.map((sp) => this.save(sp)));
   }
 
   async delete(id: string): Promise<void> {
-    await this.scheduledPostModel.findByIdAndDelete(id).session(this.session).exec();
+    await this.scheduledPostModel
+      .findByIdAndDelete(id)
+      .session(this.session)
+      .exec();
   }
 
   private mapToDomain(doc: ScheduledPostDocument): ScheduledPostRoot {
@@ -87,11 +103,15 @@ export class MongoScheduledPostRepository implements IScheduledPostRepository {
     });
   }
 
-  private mapToPersistence(scheduledPost: ScheduledPostRoot): Omit<ScheduledPostModel, 'created_at' | 'updated_at'> {
+  private mapToPersistence(
+    scheduledPost: ScheduledPostRoot,
+  ): Omit<ScheduledPostModel, 'created_at' | 'updated_at'> {
     return {
       enterprise_id: new Types.ObjectId(scheduledPost.enterpriseId),
       social_page_id: new Types.ObjectId(scheduledPost.socialPageId),
-      campaign_id: scheduledPost.campaignId ? new Types.ObjectId(scheduledPost.campaignId) : undefined,
+      campaign_id: scheduledPost.campaignId
+        ? new Types.ObjectId(scheduledPost.campaignId)
+        : undefined,
       platform_code: scheduledPost.platformCode,
       content: scheduledPost.content,
       media_file_ids: scheduledPost.mediaFileIds,

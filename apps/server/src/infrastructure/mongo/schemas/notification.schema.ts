@@ -27,7 +27,8 @@ export class NotificationModel {
 }
 
 export type NotificationDocument = HydratedDocument<NotificationModel>;
-export const NotificationSchema = SchemaFactory.createForClass(NotificationModel);
+export const NotificationSchema =
+  SchemaFactory.createForClass(NotificationModel);
 
 // Add indexes for common query patterns
 NotificationSchema.index({ type: 1 });

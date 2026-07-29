@@ -1,8 +1,16 @@
 import { Injectable } from '@nestjs/common';
 import { PaymentEntity, BillEntity } from '@/core/aggregate-roots';
-import { PaymentAttemptEntity, PaymentTransactionEntity } from '@/core/entities';
+import {
+  PaymentAttemptEntity,
+  PaymentTransactionEntity,
+} from '@/core/entities';
 import { MoneyVO, PaymentAttemptStatusVO } from '@/core/value-objects';
-import { EPaymentStatus, EPaymentAttemptStatus, EPaymentTransactionType, ETransactionStatus } from '@/core/enums';
+import {
+  EPaymentStatus,
+  EPaymentAttemptStatus,
+  EPaymentTransactionType,
+  ETransactionStatus,
+} from '@/core/enums';
 import {
   PaymentAttemptNotFoundException,
   PaymentCannotRetryException,
@@ -28,11 +36,11 @@ export class PaymentService {
   public processTransaction(
     payment: PaymentEntity,
     attemptId: string,
-    transaction: PaymentTransactionEntity
+    transaction: PaymentTransactionEntity,
   ) {
     const attempt = payment.paymentAttempts.find((a) => a.id === attemptId);
     if (!attempt) {
-      throw new PaymentAttemptNotFoundException(payment.id!, attemptId);
+      throw new PaymentAttemptNotFoundException(payment.id, attemptId);
     }
 
     const oldPaymentStatus = payment.status.value;
@@ -44,15 +52,15 @@ export class PaymentService {
     // 2. Record the raw transaction event
     payment.recordEvent(
       new TransactionRecordedEvent(
-        payment.id!,
+        payment.id,
         attemptId,
-        transaction.id!,
+        transaction.id,
         transaction.transactionType,
         transaction.transactionSource,
         transaction.status,
         transaction.amount.amount,
-        transaction.amount.currency
-      )
+        transaction.amount.currency,
+      ),
     );
 
     // 3. Coordinate status transitions if this is the latest attempt
@@ -79,17 +87,17 @@ export class PaymentService {
   public initiateRetry(
     payment: PaymentEntity,
     paymentProviderId: string,
-    idempotencyKey: string
+    idempotencyKey: string,
   ): string {
     if (!payment.canRetry()) {
       throw new PaymentCannotRetryException(
-        payment.id!,
-        'Latest attempt is not in a retryable state.'
+        payment.id,
+        'Latest attempt is not in a retryable state.',
       );
     }
 
     if (payment.status.isCompleted()) {
-      throw new PaymentAlreadyCompletedException(payment.id!);
+      throw new PaymentAlreadyCompletedException(payment.id);
     }
 
     const latestAttempt = payment.getLatestAttempt();
@@ -98,8 +106,8 @@ export class PaymentService {
     if (latestAttempt) {
       if (latestAttempt.idempotencyKey === idempotencyKey) {
         throw new PaymentCannotRetryException(
-          payment.id!,
-          'Latest attempt is already in a retryable state.'
+          payment.id,
+          'Latest attempt is already in a retryable state.',
         );
       }
       latestAttempt.cancel();
@@ -124,17 +132,17 @@ export class PaymentService {
 
     payment.recordEvent(
       new PaymentAttemptStartedEvent(
-        payment.id!,
-        newAttempt.id!,
+        payment.id,
+        newAttempt.id,
         newAttempt.attemptNumber,
-        paymentProviderId
-      )
+        paymentProviderId,
+      ),
     );
 
     // Update payment status to PENDING
     payment.updateStatus(EPaymentStatus.PENDING);
 
-    return newAttempt.id!;
+    return newAttempt.id;
   }
 
   /**
@@ -143,7 +151,7 @@ export class PaymentService {
   public handleWebhook(payment: PaymentEntity, attemptId: string) {
     const attempt = payment.paymentAttempts.find((a) => a.id === attemptId);
     if (!attempt) {
-      throw new PaymentAttemptNotFoundException(payment.id!, attemptId);
+      throw new PaymentAttemptNotFoundException(payment.id, attemptId);
     }
 
     const oldPaymentStatus = payment.status.value;
@@ -163,9 +171,13 @@ export class PaymentService {
   /**
    * Coordinates the cancellation of the aggregate and its active child entities.
    */
-  public cancelPayment(payment: PaymentEntity, reason: string, by: string): void {
+  public cancelPayment(
+    payment: PaymentEntity,
+    reason: string,
+    by: string,
+  ): void {
     if (payment.status.isTerminal()) {
-      throw new PaymentInTerminalStateException(payment.id!);
+      throw new PaymentInTerminalStateException(payment.id);
     }
 
     payment.updateStatus(EPaymentStatus.CANCELED);
@@ -216,7 +228,7 @@ export class PaymentService {
   private dispatchSpecializedEvents(
     payment: PaymentEntity,
     attempt: PaymentAttemptEntity,
-    transaction: PaymentTransactionEntity
+    transaction: PaymentTransactionEntity,
   ): void {
     // 1. Authorization Success
     if (
@@ -225,16 +237,18 @@ export class PaymentService {
     ) {
       if (attempt.status.isProcessing()) {
         payment.recordEvent(
-          new PaymentAuthorizedEvent(payment.id!, {
-            paymentId: payment.id!,
-            paymentAttemptId: attempt.id!,
+          new PaymentAuthorizedEvent(payment.id, {
+            paymentId: payment.id,
+            paymentAttemptId: attempt.id,
             capturedBy: 'system',
             amount: payment.amount.amount,
             idempotencyKey: attempt.idempotencyKey,
-          })
+          }),
         );
       } else {
-        payment.recordEvent(new PaymentCancelAttemptedEvent(payment.id!, attempt.id!));
+        payment.recordEvent(
+          new PaymentCancelAttemptedEvent(payment.id, attempt.id),
+        );
       }
     }
 
@@ -245,14 +259,14 @@ export class PaymentService {
       attempt.status.isSuccess()
     ) {
       payment.recordEvent(
-        new PaymentCompletedEvent(payment.id!, {
-          paymentId: payment.id!,
+        new PaymentCompletedEvent(payment.id, {
+          paymentId: payment.id,
           billId: payment.billId,
           userId: payment.userId,
-          attemptId: attempt.id!,
+          attemptId: attempt.id,
           amount: payment.amount.amount,
           currency: payment.amount.currency,
-        })
+        }),
       );
     }
 
@@ -268,11 +282,11 @@ export class PaymentService {
     ) {
       payment.recordEvent(
         new PaymentFailedEvent(
-          payment.id!,
-          attempt.id!,
+          payment.id,
+          attempt.id,
           attempt.failureReason ?? 'Unknown error',
-          attempt.failureType?.type ?? 'UNKNOWN'
-        )
+          attempt.failureType?.type ?? 'UNKNOWN',
+        ),
       );
     }
 
@@ -284,12 +298,12 @@ export class PaymentService {
       const isFullRefund = attempt.status.isRefunded();
       payment.recordEvent(
         new PaymentRefundedEvent(
-          payment.id!,
-          attempt.id!,
+          payment.id,
+          attempt.id,
           transaction.amount.amount,
           transaction.amount.currency,
-          isFullRefund
-        )
+          isFullRefund,
+        ),
       );
     }
   }
@@ -297,7 +311,10 @@ export class PaymentService {
   /**
    * Marks bill as paid when capture succeeds.
    */
-  public coordinateCaptureSuccess(payment: PaymentEntity, bill?: BillEntity): void {
+  public coordinateCaptureSuccess(
+    payment: PaymentEntity,
+    bill?: BillEntity,
+  ): void {
     if (bill?.id === payment.billId) {
       bill.markAsPaid();
     }

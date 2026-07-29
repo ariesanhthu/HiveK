@@ -1,7 +1,9 @@
 import { BaseValueObject } from '../common';
 import { EPaymentStatus } from '../enums';
 
-export class PaymentStatusVO extends BaseValueObject<{ value: EPaymentStatus }> {
+export class PaymentStatusVO extends BaseValueObject<{
+  value: EPaymentStatus;
+}> {
   constructor(status: EPaymentStatus) {
     super({ value: status });
   }
@@ -11,7 +13,10 @@ export class PaymentStatusVO extends BaseValueObject<{ value: EPaymentStatus }> 
   }
 
   // Valid state transitions map
-  private static readonly VALID_TRANSITIONS: Record<EPaymentStatus, EPaymentStatus[]> = {
+  private static readonly VALID_TRANSITIONS: Record<
+    EPaymentStatus,
+    EPaymentStatus[]
+  > = {
     [EPaymentStatus.PENDING_PAYMENT_PROVIDER]: [
       EPaymentStatus.PENDING_PAYMENT_PROVIDER,
       EPaymentStatus.PENDING,
@@ -54,7 +59,9 @@ export class PaymentStatusVO extends BaseValueObject<{ value: EPaymentStatus }> 
 
   public transition(newStatus: EPaymentStatus): PaymentStatusVO {
     if (!this.canTransitionTo(newStatus)) {
-      throw new Error(`Invalid state transition: ${this.value} -> ${newStatus}`);
+      throw new Error(
+        `Invalid state transition: ${this.value} -> ${newStatus}`,
+      );
     }
     return new PaymentStatusVO(newStatus);
   }

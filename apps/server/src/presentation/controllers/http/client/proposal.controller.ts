@@ -39,7 +39,13 @@ import {
 } from '@/application/dtos';
 import { PaginatedResponseDto } from '@/application/dtos/pagination.dto';
 import { JwtAuthGuard, RolesGuard } from '@/presentation/middleware/guards';
-import { CurrentUser, Public, Roles, ApiOkResponseEnvelope, ApiPaginatedResponseEnvelope } from '@/presentation/decorators';
+import {
+  CurrentUser,
+  Public,
+  Roles,
+  ApiOkResponseEnvelope,
+  ApiPaginatedResponseEnvelope,
+} from '@/presentation/decorators';
 import { ERoleType } from '@/core/enums';
 
 @ApiTags('CLIENT-proposals')
@@ -145,4 +151,3 @@ export class CampaignProposalClientController {
     return this.commandBus.execute(new ProposalRestoreCommand(id));
   }
 }
-

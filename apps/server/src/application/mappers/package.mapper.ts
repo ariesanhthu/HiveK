@@ -5,7 +5,7 @@ import { PackageResponseDto, PackageVariantDto } from '../dtos';
 export class PackageMapper {
   static toDto(entity: PackageRoot): PackageResponseDto {
     return {
-      id: entity.id!,
+      id: entity.id,
       code: entity.code,
       name: entity.name,
       description: entity.description,
@@ -24,13 +24,15 @@ export class PackageMapper {
       variants: entity.variants.map((v) => this.toVariantDto(v)),
       createdAt: entity.createdAt.toISOString(),
       updatedAt: entity.updatedAt.toISOString(),
-      activatedAt: entity.activatedAt ? entity.activatedAt.toISOString() : undefined,
+      activatedAt: entity.activatedAt
+        ? entity.activatedAt.toISOString()
+        : undefined,
     };
   }
 
   static toVariantDto(entity: PackageVariantEntity): PackageVariantDto {
     return {
-      id: entity.id!,
+      id: entity.id,
       title: entity.title,
       durationMonths: entity.durationMonths,
       price: entity.price,

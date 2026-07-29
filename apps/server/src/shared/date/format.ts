@@ -32,7 +32,10 @@ export type FormatAlias =
   | 'timeShort'
   | 'timeFull';
 
-const FORMAT_ALIASES: Record<FormatAlias, { type: 'pattern' | 'intl'; value: string | Intl.DateTimeFormatOptions }> = {
+const FORMAT_ALIASES: Record<
+  FormatAlias,
+  { type: 'pattern' | 'intl'; value: string | Intl.DateTimeFormatOptions }
+> = {
   short: { type: 'pattern', value: 'dd/MM/yyyy' },
   medium: { type: 'intl', value: { dateStyle: 'medium' } },
   long: { type: 'intl', value: { dateStyle: 'long' } },
@@ -75,7 +78,10 @@ export function formatDate(
   const alias = FORMAT_ALIASES[format as FormatAlias];
   if (alias) {
     if (alias.type === 'intl') {
-      return new Intl.DateTimeFormat(localeStr, alias.value as Intl.DateTimeFormatOptions).format(parsed);
+      return new Intl.DateTimeFormat(
+        localeStr,
+        alias.value as Intl.DateTimeFormatOptions,
+      ).format(parsed);
     }
     format = alias.value as string;
   }
@@ -88,9 +94,13 @@ export function formatDate(
       case 'd':
         return parsed.getDate().toString();
       case 'MMMM':
-        return new Intl.DateTimeFormat(localeStr, { month: 'long' }).format(parsed);
+        return new Intl.DateTimeFormat(localeStr, { month: 'long' }).format(
+          parsed,
+        );
       case 'MMM':
-        return new Intl.DateTimeFormat(localeStr, { month: 'short' }).format(parsed);
+        return new Intl.DateTimeFormat(localeStr, { month: 'short' }).format(
+          parsed,
+        );
       case 'MM':
         return (parsed.getMonth() + 1).toString().padStart(2, '0');
       case 'M':
@@ -112,9 +122,13 @@ export function formatDate(
       case 'ss':
         return parsed.getSeconds().toString().padStart(2, '0');
       case 'EEEE':
-        return new Intl.DateTimeFormat(localeStr, { weekday: 'long' }).format(parsed);
+        return new Intl.DateTimeFormat(localeStr, { weekday: 'long' }).format(
+          parsed,
+        );
       case 'EEE':
-        return new Intl.DateTimeFormat(localeStr, { weekday: 'short' }).format(parsed);
+        return new Intl.DateTimeFormat(localeStr, { weekday: 'short' }).format(
+          parsed,
+        );
       case 'a':
         return parsed.getHours() < 12 ? 'AM' : 'PM';
       default:
@@ -124,4 +138,3 @@ export function formatDate(
 }
 
 // Re-export parse for convenience
-

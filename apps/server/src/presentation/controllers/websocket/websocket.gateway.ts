@@ -19,7 +19,9 @@ import { errorMessage } from '@/shared/utils';
   cors: { origin: '*' },
   namespace: 'hivek',
 })
-export class WebSocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
+export class WebSocketGateway
+  implements OnGatewayConnection, OnGatewayDisconnect
+{
   constructor(
     @Inject(AUTH_JWT_SERVICE)
     private readonly jwtService: IAuthJwtService,
@@ -42,9 +44,13 @@ export class WebSocketGateway implements OnGatewayConnection, OnGatewayDisconnec
 
       const room = `user_${userId}`;
       await client.join(room);
-      this.logger.log(`Client ${client.id} authenticated and joined user room: ${room}`);
+      this.logger.log(
+        `Client ${client.id} authenticated and joined user room: ${room}`,
+      );
     } catch (error) {
-      this.logger.warn(`Connection rejected: Invalid token (Client: ${client.id}). Error: ${errorMessage(error)}`);
+      this.logger.warn(
+        `Connection rejected: Invalid token (Client: ${client.id}). Error: ${errorMessage(error)}`,
+      );
       client.disconnect(true);
     }
   }
@@ -56,6 +62,9 @@ export class WebSocketGateway implements OnGatewayConnection, OnGatewayDisconnec
   @SubscribeMessage('ping')
   handlePing(@MessageBody() data: any, @ConnectedSocket() client: Socket) {
     this.logger.log(`Received ping from ${client.id}: ${JSON.stringify(data)}`);
-    return { event: 'pong', data: `This is your message: ${JSON.stringify(data)}` };
+    return {
+      event: 'pong',
+      data: `This is your message: ${JSON.stringify(data)}`,
+    };
   }
 }

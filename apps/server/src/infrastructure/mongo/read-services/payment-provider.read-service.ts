@@ -6,7 +6,10 @@ import { IPaymentProviderReadService } from '@/application/interfaces';
 import { PaymentProviderFilterDto } from '@/application/queries';
 import { Nullable } from '@/core/types';
 import { PaymentProviderResponseDto } from '@/application/dtos';
-import { PaginatedResponseDto, SortOrder } from '@/application/dtos/pagination.dto';
+import {
+  PaginatedResponseDto,
+  SortOrder,
+} from '@/application/dtos/pagination.dto';
 
 @Injectable()
 export class MongoPaymentProviderReadService implements IPaymentProviderReadService {
@@ -15,8 +18,16 @@ export class MongoPaymentProviderReadService implements IPaymentProviderReadServ
     private readonly model: Model<PaymentProviderDocument>,
   ) {}
 
-  async findAll(filters: PaymentProviderFilterDto = {}): Promise<PaginatedResponseDto<PaymentProviderResponseDto>> {
-    const { cursor, limit = 10, sort = SortOrder.DESC, methods, isActive } = filters;
+  async findAll(
+    filters: PaymentProviderFilterDto = {},
+  ): Promise<PaginatedResponseDto<PaymentProviderResponseDto>> {
+    const {
+      cursor,
+      limit = 10,
+      sort = SortOrder.DESC,
+      methods,
+      isActive,
+    } = filters;
     const query: QueryFilter<PaymentProviderDocument> = { deleted_at: null };
 
     if (isActive !== undefined) {
@@ -39,7 +50,9 @@ export class MongoPaymentProviderReadService implements IPaymentProviderReadServ
 
     const hasNextPage = docs.length > limit;
     const results = hasNextPage ? docs.slice(0, limit) : docs;
-    const nextCursor = hasNextPage ? results[results.length - 1]._id.toString() : null;
+    const nextCursor = hasNextPage
+      ? results[results.length - 1]._id.toString()
+      : null;
 
     return new PaginatedResponseDto(
       results.map((doc) => this.mapToDto(doc)),
@@ -50,21 +63,43 @@ export class MongoPaymentProviderReadService implements IPaymentProviderReadServ
   }
 
   async findById(id: string): Promise<Nullable<PaymentProviderResponseDto>> {
-    const doc = await this.model.findOne({ _id: id, deleted_at: null } as QueryFilter<PaymentProviderDocument>).lean().exec();
+    const doc = await this.model
+      .findOne({
+        _id: id,
+        deleted_at: null,
+      } as QueryFilter<PaymentProviderDocument>)
+      .lean()
+      .exec();
     return doc ? this.mapToDto(doc) : null;
   }
 
-  async findByCode(code: string): Promise<Nullable<PaymentProviderResponseDto>> {
-    const doc = await this.model.findOne({ code, deleted_at: null } as QueryFilter<PaymentProviderDocument>).lean().exec();
+  async findByCode(
+    code: string,
+  ): Promise<Nullable<PaymentProviderResponseDto>> {
+    const doc = await this.model
+      .findOne({
+        code,
+        deleted_at: null,
+      } as QueryFilter<PaymentProviderDocument>)
+      .lean()
+      .exec();
     return doc ? this.mapToDto(doc) : null;
   }
 
   async findAllActive(): Promise<PaymentProviderResponseDto[]> {
-    const docs = await this.model.find({ is_active: true, deleted_at: null } as QueryFilter<PaymentProviderDocument>).lean().exec();
+    const docs = await this.model
+      .find({
+        is_active: true,
+        deleted_at: null,
+      } as QueryFilter<PaymentProviderDocument>)
+      .lean()
+      .exec();
     return docs.map((doc) => this.mapToDto(doc));
   }
 
-  private mapToDto(doc: FlattenMaps<PaymentProviderDocument>): PaymentProviderResponseDto {
+  private mapToDto(
+    doc: FlattenMaps<PaymentProviderDocument>,
+  ): PaymentProviderResponseDto {
     return {
       id: doc._id.toString(),
       code: doc.code,

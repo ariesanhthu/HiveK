@@ -23,7 +23,7 @@ export interface RmqHandlerMetadata extends RmqHandlerOptions {
  * Registry to store all discovered RMQ handlers
  */
 export class RmqHandlerRegistry {
-  private static handlers: RmqHandlerMetadata[] = [];
+  private static readonly handlers: RmqHandlerMetadata[] = [];
 
   static register(metadata: RmqHandlerMetadata) {
     this.handlers.push(metadata);

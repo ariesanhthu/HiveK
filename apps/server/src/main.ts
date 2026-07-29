@@ -17,8 +17,12 @@ async function bootstrap() {
 
   Logger.log(`==========================================================`);
   Logger.log(`🚀 Application is running on: http://${host}:${port}/hivek/api`);
-  Logger.log(`📖 Swagger admin docs available at: http://${host}:${port}/hivek/admin/docs`);
-  Logger.log(`📖 Swagger client docs available at: http://${host}:${port}/hivek/client/docs`);
+  Logger.log(
+    `📖 Swagger admin docs available at: http://${host}:${port}/hivek/admin/docs`,
+  );
+  Logger.log(
+    `📖 Swagger client docs available at: http://${host}:${port}/hivek/client/docs`,
+  );
   Logger.log(`==========================================================`);
 }
 bootstrap();

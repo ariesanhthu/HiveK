@@ -22,4 +22,3 @@ export function buildFilename(originalname: string): string {
   const name = path.parse(originalname).name;
   return `${name}-${uuidv4()}`;
 }
-

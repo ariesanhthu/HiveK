@@ -1,12 +1,44 @@
-import { Controller, Get, Post, Patch, Delete, Param, Query, Body, HttpCode, HttpStatus, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Patch,
+  Delete,
+  Param,
+  Query,
+  Body,
+  HttpCode,
+  HttpStatus,
+  UseGuards,
+} from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { UserGetByIdQuery, UserGetListQuery } from '@/application/queries';
-import { UserCreateCommand, UserUpdateCommand, UserSoftDeleteCommand, UserHardDeleteCommand, UserRestoreCommand } from '@/application/commands';
-import { UserFilterDto, SoftDeleteInputDto, UserDetailDto, AdminDto } from '@/application/dtos';
-import { ApiTags, ApiOperation, ApiBearerAuth, ApiSecurity } from '@nestjs/swagger';
+import {
+  UserCreateCommand,
+  UserUpdateCommand,
+  UserSoftDeleteCommand,
+  UserHardDeleteCommand,
+  UserRestoreCommand,
+} from '@/application/commands';
+import {
+  UserFilterDto,
+  SoftDeleteInputDto,
+  UserDetailDto,
+  AdminDto,
+} from '@/application/dtos';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiBearerAuth,
+  ApiSecurity,
+} from '@nestjs/swagger';
 import { buildVersionedRoute } from '@presentation/utils';
 import { JwtAuthGuard, RolesGuard } from '@/presentation/middleware/guards';
-import { Roles, ApiOkResponseEnvelope, ApiPaginatedResponseEnvelope } from '@/presentation/decorators';
+import {
+  Roles,
+  ApiOkResponseEnvelope,
+  ApiPaginatedResponseEnvelope,
+} from '@/presentation/decorators';
 import { ERoleType } from '@/core/enums';
 import { PaginatedResponseDto } from '@/application/dtos/pagination.dto';
 import { UserCreateInputDto } from '@/application/commands/user-create/user-create.dto';
@@ -22,7 +54,7 @@ export class UserAdminController {
   constructor(
     private readonly commandBus: CommandBus,
     private readonly queryBus: QueryBus,
-  ) { }
+  ) {}
 
   @Post()
   @ApiOperation({ summary: 'Create a new user' })
@@ -47,7 +79,9 @@ export class UserAdminController {
   @Get()
   @ApiOperation({ summary: 'Get paginated list of users' })
   @ApiPaginatedResponseEnvelope(AdminDto)
-  async findAll(@Query() filters: UserFilterDto): Promise<PaginatedResponseDto<any>> {
+  async findAll(
+    @Query() filters: UserFilterDto,
+  ): Promise<PaginatedResponseDto<any>> {
     return this.queryBus.execute(new UserGetListQuery(filters));
   }
 
@@ -65,7 +99,9 @@ export class UserAdminController {
     @Param('id') id: string,
     @Query() dto: SoftDeleteInputDto,
   ): Promise<void> {
-    return this.commandBus.execute(new UserSoftDeleteCommand(id, dto.deletedBy));
+    return this.commandBus.execute(
+      new UserSoftDeleteCommand(id, dto.deletedBy),
+    );
   }
 
   @Delete(':id')
@@ -82,4 +118,3 @@ export class UserAdminController {
     await this.commandBus.execute(new UserRestoreCommand(id));
   }
 }
-

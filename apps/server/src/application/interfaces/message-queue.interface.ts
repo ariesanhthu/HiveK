@@ -15,5 +15,8 @@ export interface IMessageQueueService {
    * @param data The payload to send.
    * @returns A promise resolving to the result.
    */
-  send<TResult = unknown, TInput = unknown>(pattern: string, data: TInput): Promise<TResult>;
+  send<TResult = unknown, TInput = unknown>(
+    pattern: string,
+    data: TInput,
+  ): Promise<TResult>;
 }

@@ -152,12 +152,18 @@ export class InstagramPublisherService implements ISocialPublisher {
         childParams,
       );
       childContainerIds.push(child.id);
-      this.logger.log(`Created carousel child container: ${child.id} (${mediaType})`);
+      this.logger.log(
+        `Created carousel child container: ${child.id} (${mediaType})`,
+      );
     }
 
     // Step 2: Poll ALL child containers until FINISHED
     for (const childId of childContainerIds) {
-      await this.waitForContainerReady(childId, pageToken, this.videoPollMaxAttempts);
+      await this.waitForContainerReady(
+        childId,
+        pageToken,
+        this.videoPollMaxAttempts,
+      );
     }
 
     // Step 3: Create parent CAROUSEL container
@@ -174,7 +180,11 @@ export class InstagramPublisherService implements ISocialPublisher {
     this.logger.log(`Created carousel parent container: ${parent.id}`);
 
     // Step 4: Poll parent container status
-    await this.waitForContainerReady(parent.id, pageToken, this.imagePollMaxAttempts);
+    await this.waitForContainerReady(
+      parent.id,
+      pageToken,
+      this.imagePollMaxAttempts,
+    );
 
     // Step 5: Publish parent
     const result = await this.apiClient.publishContainer(

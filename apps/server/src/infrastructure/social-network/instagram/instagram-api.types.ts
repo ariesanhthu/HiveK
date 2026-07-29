@@ -1,12 +1,21 @@
 /**
  * Valid Instagram Media Types for the Graph API
  */
-export type InstagramMediaType = 'IMAGE' | 'VIDEO' | 'REELS' | 'STORIES' | 'CAROUSEL';
+export type InstagramMediaType =
+  | 'IMAGE'
+  | 'VIDEO'
+  | 'REELS'
+  | 'STORIES'
+  | 'CAROUSEL';
 
 /**
  * Container processing status codes
  */
-export type ContainerStatusCode = 'EXPIRED' | 'FAILED' | 'FINISHED' | 'IN_PROGRESS';
+export type ContainerStatusCode =
+  | 'EXPIRED'
+  | 'FAILED'
+  | 'FINISHED'
+  | 'IN_PROGRESS';
 
 /**
  * OAuth permission scopes required for Instagram posting

@@ -30,5 +30,5 @@
       "@application/*": ["./src/application/*"]
     }
   },
-  "exclude": ["node_modules", "dist", "ref"]
+  "exclude": ["node_modules", "dist", "ref", "tests"]
 }

@@ -24,4 +24,4 @@ import { InstagramPublisherService } from './instagram-publisher.service';
     InstagramPublisherService,
   ],
 })
-export class InstagramModule { }
+export class InstagramModule {}

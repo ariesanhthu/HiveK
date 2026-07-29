@@ -2,7 +2,8 @@ import { Prop, Schema, SchemaFactory, Virtual } from '@nestjs/mongoose';
 import { HydratedDocument, Types } from 'mongoose';
 import { EGrantType } from '@/core/enums';
 
-export type EnterpriseQuotaAllocationDocument = HydratedDocument<EnterpriseQuotaAllocationModel>;
+export type EnterpriseQuotaAllocationDocument =
+  HydratedDocument<EnterpriseQuotaAllocationModel>;
 
 @Schema({ _id: false })
 class AllocationRowSchema {
@@ -36,5 +37,7 @@ export class EnterpriseQuotaAllocationModel {
   updated_at?: Date;
 }
 
-export const EnterpriseQuotaAllocationSchema = SchemaFactory.createForClass(EnterpriseQuotaAllocationModel);
+export const EnterpriseQuotaAllocationSchema = SchemaFactory.createForClass(
+  EnterpriseQuotaAllocationModel,
+);
 EnterpriseQuotaAllocationSchema.index({ owner_id: 1 }, { unique: true });

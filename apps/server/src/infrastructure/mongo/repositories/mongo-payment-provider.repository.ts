@@ -5,7 +5,11 @@ import { IPaymentProviderRepository } from '@/core/interfaces/repositories';
 import { PaymentProviderEntity } from '@/core/entities';
 import { PaymentProviderModel, PaymentProviderDocument } from '../schemas';
 import { Nullable } from '@/core/types';
-import { type IUnitOfWork, UNIT_OF_WORK, CACHE_SERVICE } from '@/application/interfaces';
+import {
+  type IUnitOfWork,
+  UNIT_OF_WORK,
+  CACHE_SERVICE,
+} from '@/application/interfaces';
 import type { ICacheService } from '@/application/interfaces';
 import { MongoUnitOfWork } from '../mongo-uow';
 import { CacheKeyUtil } from '@/shared/utils/cache-key.util';
@@ -26,10 +30,13 @@ export class MongoPaymentProviderRepository implements IPaymentProviderRepositor
   }
 
   async findById(id: string): Promise<Nullable<PaymentProviderEntity>> {
-    const doc = await this.providerModel.findOne({
-      _id: id,
-      $or: [{ deleted_at: null }, { deleted_at: { $exists: false } }],
-    }).session(this.session).exec();
+    const doc = await this.providerModel
+      .findOne({
+        _id: id,
+        $or: [{ deleted_at: null }, { deleted_at: { $exists: false } }],
+      })
+      .session(this.session)
+      .exec();
     return doc ? this.mapToDomain(doc) : null;
   }
 
@@ -41,20 +48,29 @@ export class MongoPaymentProviderRepository implements IPaymentProviderRepositor
       const saved = await created.save({ session: this.session });
       provider.setId(saved._id.toString());
     } else {
-      await this.providerModel.findByIdAndUpdate(provider.id, data, { upsert: true }).session(this.session).exec();
+      await this.providerModel
+        .findByIdAndUpdate(provider.id, data, { upsert: true })
+        .session(this.session)
+        .exec();
     }
 
-    await this.invalidateCache(provider.id!, provider.code);
+    await this.invalidateCache(provider.id, provider.code);
   }
 
   async saveMany(providers: PaymentProviderEntity[]): Promise<void> {
-    await Promise.all(providers.map(p => this.save(p)));
+    await Promise.all(providers.map((p) => this.save(p)));
   }
 
   async delete(id: string): Promise<void> {
-    const doc = await this.providerModel.findById(id).session(this.session).exec();
+    const doc = await this.providerModel
+      .findById(id)
+      .session(this.session)
+      .exec();
     if (doc) {
-      await this.providerModel.findByIdAndDelete(id).session(this.session).exec();
+      await this.providerModel
+        .findByIdAndDelete(id)
+        .session(this.session)
+        .exec();
       await this.invalidateCache(id, doc.code);
     }
   }
@@ -70,46 +86,51 @@ export class MongoPaymentProviderRepository implements IPaymentProviderRepositor
   }
 
   async findByCode(code: string): Promise<Nullable<PaymentProviderEntity>> {
-    const doc = await this.providerModel.findOne({
-      code,
-      $or: [{ deleted_at: null }, { deleted_at: { $exists: false } }],
-    }).session(this.session).exec();
+    const doc = await this.providerModel
+      .findOne({
+        code,
+        $or: [{ deleted_at: null }, { deleted_at: { $exists: false } }],
+      })
+      .session(this.session)
+      .exec();
     return doc ? this.mapToDomain(doc) : null;
   }
 
   async findAllActive(): Promise<PaymentProviderEntity[]> {
-    const docs = await this.providerModel.find({
-      is_active: true,
-      $or: [{ deleted_at: null }, { deleted_at: { $exists: false } }],
-    }).session(this.session).exec();
-    return docs.map(doc => this.mapToDomain(doc));
+    const docs = await this.providerModel
+      .find({
+        is_active: true,
+        $or: [{ deleted_at: null }, { deleted_at: { $exists: false } }],
+      })
+      .session(this.session)
+      .exec();
+    return docs.map((doc) => this.mapToDomain(doc));
   }
 
   private mapToDomain(doc: PaymentProviderDocument): PaymentProviderEntity {
-    return PaymentProviderEntity.instantiate(
-      doc._id.toString(),
-      {
-        code: doc.code,
-        displayName: doc.display_name,
-        supportedMethods: doc.supported_methods,
-        supportedCurrencies: doc.supported_currencies,
-        credentials: doc.credentials,
-        isActive: doc.is_active,
-        supportsWebhook: doc.supports_webhook,
-        supportsRefund: doc.supports_refund,
-        supportsPartialRefund: doc.supports_partial_refund,
-        baseUrl: doc.base_url,
-        testUrl: doc.test_url,
-        webhookUrl: doc.webhook_url,
-        createdAt: doc.created_at,
-        updatedAt: doc.updated_at,
-        deletedAt: doc.deleted_at || undefined,
-        deletedBy: doc.deleted_by || undefined,
-      }
-    );
+    return PaymentProviderEntity.instantiate(doc._id.toString(), {
+      code: doc.code,
+      displayName: doc.display_name,
+      supportedMethods: doc.supported_methods,
+      supportedCurrencies: doc.supported_currencies,
+      credentials: doc.credentials,
+      isActive: doc.is_active,
+      supportsWebhook: doc.supports_webhook,
+      supportsRefund: doc.supports_refund,
+      supportsPartialRefund: doc.supports_partial_refund,
+      baseUrl: doc.base_url,
+      testUrl: doc.test_url,
+      webhookUrl: doc.webhook_url,
+      createdAt: doc.created_at,
+      updatedAt: doc.updated_at,
+      deletedAt: doc.deleted_at || undefined,
+      deletedBy: doc.deleted_by || undefined,
+    });
   }
 
-  private mapToPersistence(data: PaymentProviderEntity): Omit<PaymentProviderModel, 'created_at' | 'updated_at'> {
+  private mapToPersistence(
+    data: PaymentProviderEntity,
+  ): Omit<PaymentProviderModel, 'created_at' | 'updated_at'> {
     return {
       code: data.code,
       display_name: data.displayName,

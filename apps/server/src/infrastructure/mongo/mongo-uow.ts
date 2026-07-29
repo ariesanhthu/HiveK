@@ -9,7 +9,7 @@ import { AsyncLocalStorage } from 'async_hooks';
 export class MongoUnitOfWork implements IUnitOfWork {
   private readonly als = new AsyncLocalStorage<ClientSession>();
 
-  constructor(@InjectConnection() private readonly connection: Connection) { }
+  constructor(@InjectConnection() private readonly connection: Connection) {}
 
   /**
    * Starts a transaction and runs the operation within an AsyncLocalStorage context.
@@ -51,18 +51,24 @@ export class MongoUnitOfWork implements IUnitOfWork {
 
   /**
    * Manual transaction management (deprecated in favor of execute())
-   * These remain for interface compatibility but startTransaction() 
+   * These remain for interface compatibility but startTransaction()
    * should ideally not be used directly with ALS in this pattern.
    */
   async startTransaction(): Promise<void> {
-    throw new Error('Use execute() instead for AsyncLocalStorage-based transactions');
+    throw new Error(
+      'Use execute() instead for AsyncLocalStorage-based transactions',
+    );
   }
 
   async commitTransaction(): Promise<void> {
-    throw new Error('Use execute() instead for AsyncLocalStorage-based transactions');
+    throw new Error(
+      'Use execute() instead for AsyncLocalStorage-based transactions',
+    );
   }
 
   async rollbackTransaction(): Promise<void> {
-    throw new Error('Use execute() instead for AsyncLocalStorage-based transactions');
+    throw new Error(
+      'Use execute() instead for AsyncLocalStorage-based transactions',
+    );
   }
 }

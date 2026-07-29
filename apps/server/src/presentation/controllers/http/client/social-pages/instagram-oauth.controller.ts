@@ -1,16 +1,36 @@
 import { Controller, Get, UseGuards, Query, Res, Inject } from '@nestjs/common';
 import { CommandBus } from '@nestjs/cqrs';
-import { ApiTags, ApiOperation, ApiBearerAuth, ApiSecurity } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiBearerAuth,
+  ApiSecurity,
+} from '@nestjs/swagger';
 import { buildVersionedRoute } from '@presentation/utils';
-import { JwtAuthGuard, RolesGuard, UserVerifiedGuard, StateAuthGuard } from '@/presentation/middleware/guards';
+import {
+  JwtAuthGuard,
+  RolesGuard,
+  UserVerifiedGuard,
+  StateAuthGuard,
+} from '@/presentation/middleware/guards';
 import { CurrentUser } from '@/presentation/decorators/current-user.decorator';
 import { Roles } from '@/presentation/decorators/roles.decorator';
 import { ApiOkResponseEnvelope } from '@/presentation/decorators';
 import { ERoleType, ESocialPlatformCode } from '@/core/enums';
-import { ENTERPRISE_REPOSITORY, type IEnterpriseRepository } from '@/core/interfaces/repositories';
+import {
+  ENTERPRISE_REPOSITORY,
+  type IEnterpriseRepository,
+} from '@/core/interfaces/repositories';
 import { SocialPageBulkConnectCommand } from '@/application/commands';
-import { type ISocialPageConnectorFactory, SOCIAL_PAGE_CONNECTOR_FACTORY } from '@/core/interfaces';
-import { AUTH_JWT_SERVICE, type IAuthJwtService, type IJwtPayload } from '@/application/interfaces/auth-jwt.interface';
+import {
+  type ISocialPageConnectorFactory,
+  SOCIAL_PAGE_CONNECTOR_FACTORY,
+} from '@/core/interfaces';
+import {
+  AUTH_JWT_SERVICE,
+  type IAuthJwtService,
+  type IJwtPayload,
+} from '@/application/interfaces/auth-jwt.interface';
 import { errorMessage } from '@/shared/utils';
 import { ConfigService } from '@nestjs/config';
 import { WebHook } from '@/presentation/decorators/webhook.decorator';
@@ -39,13 +59,16 @@ export class InstagramOAuthController {
     if (!enterprise) {
       throw new Error('User is not associated with any enterprise profile.');
     }
-    return enterprise.id!;
+    return enterprise.id;
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard, UserVerifiedGuard)
   @Roles(ERoleType.ENTERPRISE)
   @Get('instagram/oauth')
-  @ApiOperation({ summary: 'Get Instagram OAuth Redirect URL (via Facebook Login with IG scopes)' })
+  @ApiOperation({
+    summary:
+      'Get Instagram OAuth Redirect URL (via Facebook Login with IG scopes)',
+  })
   @ApiOkResponseEnvelope()
   async getInstagramOauthUrl(@CurrentUser() user: IJwtPayload) {
     // Sign a short-lived JWT with the user's identity as the OAuth state
@@ -63,7 +86,8 @@ export class InstagramOAuthController {
   @UseGuards(StateAuthGuard)
   @Get('instagram/callback')
   @ApiOperation({
-    summary: 'Exchange Instagram OAuth code, discover linked Instagram Business Accounts, connect them, then redirect to frontend',
+    summary:
+      'Exchange Instagram OAuth code, discover linked Instagram Business Accounts, connect them, then redirect to frontend',
   })
   async instagramCallback(
     @CurrentUser('sub') userId: string,

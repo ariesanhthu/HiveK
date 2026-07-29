@@ -9,8 +9,14 @@ import {
   RoleRestoreCommandHandler,
 } from '@/application/commands';
 
-import { RoleGetByIdQueryHandler, RoleGetListQueryHandler } from '@/application/queries';
-import { RoleAdminController, RoleClientController } from '@/presentation/controllers';
+import {
+  RoleGetByIdQueryHandler,
+  RoleGetListQueryHandler,
+} from '@/application/queries';
+import {
+  RoleAdminController,
+  RoleClientController,
+} from '@/presentation/controllers';
 import { UserModule } from './user.module';
 
 const COMMAND_HANDLERS = [
@@ -21,10 +27,7 @@ const COMMAND_HANDLERS = [
   RoleRestoreCommandHandler,
 ];
 
-const QUERY_HANDLERS = [
-  RoleGetByIdQueryHandler,
-  RoleGetListQueryHandler,
-];
+const QUERY_HANDLERS = [RoleGetByIdQueryHandler, RoleGetListQueryHandler];
 
 @Module({
   imports: [UserModule, CqrsModule],

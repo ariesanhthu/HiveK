@@ -1,4 +1,8 @@
-import { NotFoundDomainException, ConflictDomainException, ForbiddenDomainException } from '../common/exceptions/domain.exception';
+import {
+  NotFoundDomainException,
+  ConflictDomainException,
+  ForbiddenDomainException,
+} from '../common/exceptions/domain.exception';
 
 export class EnterpriseNotFoundException extends NotFoundDomainException {
   constructor(identifier: string) {

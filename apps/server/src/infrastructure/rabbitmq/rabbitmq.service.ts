@@ -16,20 +16,25 @@ export class RabbitMQService implements IMessageQueueService {
     private readonly producer: RawRabbitMQProducerClient,
     @Inject(RABBITMQ_CONFIG)
     private readonly config: RabbitMQProducerConfig,
-  ) { }
+  ) {}
 
   /**
    * Emit event to RabbitMQ exchange with routing key
    */
-  async emit<TEvent = string, TData = any>(pattern: TEvent, data: TData): Promise<void> {
+  async emit<TEvent = string, TData = any>(
+    pattern: TEvent,
+    data: TData,
+  ): Promise<void> {
     try {
       const routingKey = this.resolveRoutingKey(pattern as string);
       this.logger.debug(
-        `Emitting event "${pattern}" with routing key "${routingKey}": ${JSON.stringify(data)}`
+        `Emitting event "${pattern}" with routing key "${routingKey}": ${JSON.stringify(data)}`,
       );
       await this.producer.publish(routingKey, data);
     } catch (error) {
-      this.logger.error(`Failed to emit event "${pattern}": ${errorMessage(error)}`);
+      this.logger.error(
+        `Failed to emit event "${pattern}": ${errorMessage(error)}`,
+      );
       throw error;
     }
   }
@@ -40,9 +45,10 @@ export class RabbitMQService implements IMessageQueueService {
    */
   async send<TResult = any, TInput = any>(
     pattern: any,
-    data: TInput
+    data: TInput,
   ): Promise<TResult> {
-    const errorMsg = 'RPC send() not supported. Use emit() for event-based messaging.';
+    const errorMsg =
+      'RPC send() not supported. Use emit() for event-based messaging.';
     this.logger.error(errorMsg);
     throw new Error(errorMsg);
   }
@@ -54,7 +60,7 @@ export class RabbitMQService implements IMessageQueueService {
     const routingKey = this.config.routes[pattern];
     if (!routingKey) {
       this.logger.warn(
-        `No routing key found for pattern "${pattern}", using pattern as routing key`
+        `No routing key found for pattern "${pattern}", using pattern as routing key`,
       );
       return pattern;
     }

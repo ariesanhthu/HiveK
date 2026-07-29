@@ -15,19 +15,25 @@ export class MongoPlatformRepository implements IPlatformRepository {
     private readonly platformModel: Model<PlatformDocument>,
     @Inject(UNIT_OF_WORK)
     private readonly uow: IUnitOfWork,
-  ) { }
+  ) {}
 
   private get session(): ClientSession | undefined {
     return (this.uow as MongoUnitOfWork).getSession() || undefined;
   }
 
   async findById(id: string): Promise<Nullable<PlatformRoot>> {
-    const doc = await this.platformModel.findById(id).session(this.session).exec();
+    const doc = await this.platformModel
+      .findById(id)
+      .session(this.session)
+      .exec();
     return doc ? this.mapToDomain(doc) : null;
   }
 
   async findByName(name: string): Promise<Nullable<PlatformRoot>> {
-    const doc = await this.platformModel.findOne({ name: name.toLowerCase() }).session(this.session).exec();
+    const doc = await this.platformModel
+      .findOne({ name: name.toLowerCase() })
+      .session(this.session)
+      .exec();
     return doc ? this.mapToDomain(doc) : null;
   }
 
@@ -39,12 +45,15 @@ export class MongoPlatformRepository implements IPlatformRepository {
       const saved = await created.save({ session: this.session });
       platform.setId(saved._id.toString());
     } else {
-      await this.platformModel.findByIdAndUpdate(platform.id, data, { upsert: true }).session(this.session).exec();
+      await this.platformModel
+        .findByIdAndUpdate(platform.id, data, { upsert: true })
+        .session(this.session)
+        .exec();
     }
   }
 
   async saveMany(platforms: PlatformRoot[]): Promise<void> {
-    await Promise.all(platforms.map(p => this.save(p)));
+    await Promise.all(platforms.map((p) => this.save(p)));
   }
 
   async delete(id: string): Promise<void> {
@@ -67,7 +76,9 @@ export class MongoPlatformRepository implements IPlatformRepository {
     });
   }
 
-  private mapToPersistence(platform: PlatformRoot): Omit<PlatformModel, 'created_at' | 'updated_at'> {
+  private mapToPersistence(
+    platform: PlatformRoot,
+  ): Omit<PlatformModel, 'created_at' | 'updated_at'> {
     return {
       name: platform.name,
       base_url: platform.baseUrl,

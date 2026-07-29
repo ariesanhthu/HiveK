@@ -146,7 +146,7 @@ export class ScheduleDayType {
   label?: string;
 
   @Field(() => [String])
-  posts: string[];  // ScheduledPost IDs
+  posts: string[]; // ScheduledPost IDs
 }
 
 @ObjectType()

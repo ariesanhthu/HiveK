@@ -38,7 +38,13 @@ export class KolProfileModel {
   @Prop({ type: String, default: null })
   verification_type: string | null;
 
-  @Prop({ type: String, required: true, trim: true, minlength: 1, maxlength: 200 })
+  @Prop({
+    type: String,
+    required: true,
+    trim: true,
+    minlength: 1,
+    maxlength: 200,
+  })
   name: string;
 
   @Prop({ type: String, trim: true })
@@ -50,22 +56,28 @@ export class KolProfileModel {
   @Prop({ type: String, trim: true, maxlength: 2000 })
   bio: string;
 
-  @Prop({ 
+  @Prop({
     type: String,
-    required: true, 
+    required: true,
     trim: true,
     lowercase: true,
-    match: [/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/, 'Please fill a valid email address']
+    match: [
+      /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/,
+      'Please fill a valid email address',
+    ],
   })
   email: string;
 
-  @Prop({ 
+  @Prop({
     type: String,
-    match: [/^\+?[1-9]\d{1,14}$/, 'Please fill a valid phone number']
+    match: [/^\+?[1-9]\d{1,14}$/, 'Please fill a valid phone number'],
   })
   phone: string;
 
-  @Prop({ type: [SchemaFactory.createForClass(NativePlatformInfo)], default: [] })
+  @Prop({
+    type: [SchemaFactory.createForClass(NativePlatformInfo)],
+    default: [],
+  })
   platforms: NativePlatformInfo[];
 
   @Prop({ type: Boolean, default: false })

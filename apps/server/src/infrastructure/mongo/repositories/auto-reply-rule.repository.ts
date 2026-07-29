@@ -22,23 +22,32 @@ export class MongoAutoReplyRuleRepository implements IAutoReplyRuleRepository {
   }
 
   async findById(id: string): Promise<Nullable<AutoReplyRuleRoot>> {
-    const doc = await this.autoReplyRuleModel.findById(id).session(this.session).exec();
+    const doc = await this.autoReplyRuleModel
+      .findById(id)
+      .session(this.session)
+      .exec();
     return doc ? this.mapToDomain(doc) : null;
   }
 
   async findActiveByPageId(socialPageId: string): Promise<AutoReplyRuleRoot[]> {
-    const docs = await this.autoReplyRuleModel.find({
-      social_page_id: new Types.ObjectId(socialPageId),
-      is_enabled: true,
-    }).session(this.session).exec();
-    return docs.map(doc => this.mapToDomain(doc));
+    const docs = await this.autoReplyRuleModel
+      .find({
+        social_page_id: new Types.ObjectId(socialPageId),
+        is_enabled: true,
+      })
+      .session(this.session)
+      .exec();
+    return docs.map((doc) => this.mapToDomain(doc));
   }
 
   async findByPageId(socialPageId: string): Promise<AutoReplyRuleRoot[]> {
-    const docs = await this.autoReplyRuleModel.find({
-      social_page_id: new Types.ObjectId(socialPageId),
-    }).session(this.session).exec();
-    return docs.map(doc => this.mapToDomain(doc));
+    const docs = await this.autoReplyRuleModel
+      .find({
+        social_page_id: new Types.ObjectId(socialPageId),
+      })
+      .session(this.session)
+      .exec();
+    return docs.map((doc) => this.mapToDomain(doc));
   }
 
   async save(autoReplyRule: AutoReplyRuleRoot): Promise<void> {
@@ -49,16 +58,22 @@ export class MongoAutoReplyRuleRepository implements IAutoReplyRuleRepository {
       const saved = await created.save({ session: this.session });
       autoReplyRule.setId(saved._id.toString());
     } else {
-      await this.autoReplyRuleModel.findByIdAndUpdate(autoReplyRule.id, data, { upsert: true }).session(this.session).exec();
+      await this.autoReplyRuleModel
+        .findByIdAndUpdate(autoReplyRule.id, data, { upsert: true })
+        .session(this.session)
+        .exec();
     }
   }
 
   async saveMany(autoReplyRules: AutoReplyRuleRoot[]): Promise<void> {
-    await Promise.all(autoReplyRules.map(arr => this.save(arr)));
+    await Promise.all(autoReplyRules.map((arr) => this.save(arr)));
   }
 
   async delete(id: string): Promise<void> {
-    await this.autoReplyRuleModel.findByIdAndDelete(id).session(this.session).exec();
+    await this.autoReplyRuleModel
+      .findByIdAndDelete(id)
+      .session(this.session)
+      .exec();
   }
 
   private mapToDomain(doc: AutoReplyRuleDocument): AutoReplyRuleRoot {
@@ -77,7 +92,9 @@ export class MongoAutoReplyRuleRepository implements IAutoReplyRuleRepository {
     });
   }
 
-  private mapToPersistence(autoReplyRule: AutoReplyRuleRoot): Omit<AutoReplyRuleModel, 'created_at' | 'updated_at'> {
+  private mapToPersistence(
+    autoReplyRule: AutoReplyRuleRoot,
+  ): Omit<AutoReplyRuleModel, 'created_at' | 'updated_at'> {
     return {
       enterprise_id: new Types.ObjectId(autoReplyRule.enterpriseId),
       social_page_id: new Types.ObjectId(autoReplyRule.socialPageId),

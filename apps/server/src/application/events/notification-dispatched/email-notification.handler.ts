@@ -3,7 +3,10 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Inject } from '@nestjs/common';
 import { NotificationChannel } from '@/core/enums';
-import { UserModel, UserDocument } from '@/infrastructure/mongo/schemas/user.schema';
+import {
+  UserModel,
+  UserDocument,
+} from '@/infrastructure/mongo/schemas/user.schema';
 import { NotificationDispatchedEvent } from './notification-dispatched.event';
 import { MAILER_SERVICE } from '@/application/interfaces/mailer.interface';
 import type { IMailerService } from '@/application/interfaces/mailer.interface';
@@ -12,7 +15,6 @@ import type { ILoggerService } from '@/application/interfaces/logger.interface';
 
 @EventsHandler(NotificationDispatchedEvent)
 export class EmailNotificationHandler implements IEventHandler<NotificationDispatchedEvent> {
-
   constructor(
     @InjectModel(UserModel.name)
     private readonly userModel: Model<UserDocument>,
@@ -47,7 +49,9 @@ export class EmailNotificationHandler implements IEventHandler<NotificationDispa
       return;
     }
 
-    this.logger.log(`Dispatching notifications to ${users.length} email addresses...`);
+    this.logger.log(
+      `Dispatching notifications to ${users.length} email addresses...`,
+    );
 
     for (const user of users) {
       try {
@@ -62,8 +66,11 @@ export class EmailNotificationHandler implements IEventHandler<NotificationDispa
           text: event.payload.content,
         });
       } catch (mailError) {
-        const errorMsg = mailError instanceof Error ? mailError.message : String(mailError);
-        this.logger.error(`Failed to send notification email to ${user.email}: ${errorMsg}`);
+        const errorMsg =
+          mailError instanceof Error ? mailError.message : String(mailError);
+        this.logger.error(
+          `Failed to send notification email to ${user.email}: ${errorMsg}`,
+        );
       }
     }
   }

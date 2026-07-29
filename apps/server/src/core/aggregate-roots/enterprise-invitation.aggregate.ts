@@ -13,7 +13,10 @@ export interface EnterpriseInvitationProps {
   updatedAt: Date;
 }
 
-export type EnterpriseInvitationCreateProps = Omit<EnterpriseInvitationProps, 'createdAt' | 'updatedAt' | 'status'> & {
+export type EnterpriseInvitationCreateProps = Omit<
+  EnterpriseInvitationProps,
+  'createdAt' | 'updatedAt' | 'status'
+> & {
   status?: EEnterpriseInvitationStatus;
 };
 
@@ -22,17 +25,26 @@ export class EnterpriseInvitationRoot extends BaseAggregateRoot<EnterpriseInvita
     super(props, id);
   }
 
-  public static create(props: EnterpriseInvitationCreateProps, id?: string): EnterpriseInvitationRoot {
+  public static create(
+    props: EnterpriseInvitationCreateProps,
+    id?: string,
+  ): EnterpriseInvitationRoot {
     const now = new Date();
-    return new EnterpriseInvitationRoot({
-      ...props,
-      status: props.status ?? EEnterpriseInvitationStatus.PENDING,
-      createdAt: now,
-      updatedAt: now,
-    }, id);
+    return new EnterpriseInvitationRoot(
+      {
+        ...props,
+        status: props.status ?? EEnterpriseInvitationStatus.PENDING,
+        createdAt: now,
+        updatedAt: now,
+      },
+      id,
+    );
   }
 
-  public static instantiate(id: string, props: EnterpriseInvitationProps): EnterpriseInvitationRoot {
+  public static instantiate(
+    id: string,
+    props: EnterpriseInvitationProps,
+  ): EnterpriseInvitationRoot {
     return new EnterpriseInvitationRoot(props, id);
   }
 

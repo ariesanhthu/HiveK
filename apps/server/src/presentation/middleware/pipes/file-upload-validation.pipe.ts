@@ -17,7 +17,10 @@ export class FileUploadValidationPipe extends ParseFilePipe {
     super({
       validators: [
         new MaxFileSizeValidator({ maxSize: MAX_FILE_SIZE }),
-        new FileTypeValidator({ fileType: ALLOWED_FILE_TYPES, fallbackToMimetype: true }),
+        new FileTypeValidator({
+          fileType: ALLOWED_FILE_TYPES,
+          fallbackToMimetype: true,
+        }),
       ],
       // Use errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY if preferred
     });

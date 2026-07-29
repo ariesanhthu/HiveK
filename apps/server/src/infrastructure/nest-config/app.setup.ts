@@ -1,7 +1,10 @@
 import { INestApplication, Logger } from '@nestjs/common';
 import { ZodValidationPipe } from 'nestjs-zod';
 import helmet from 'helmet';
-import { LoggingInterceptor, TransformInterceptor } from '@/presentation/middleware/interceptors';
+import {
+  LoggingInterceptor,
+  TransformInterceptor,
+} from '@/presentation/middleware/interceptors';
 import { HttpExceptionFilter } from '@/presentation/middleware/filters';
 import { RabbitMQFactoryService } from '@infrastructure/rabbitmq';
 import { errorMessage } from '@/shared/utils';
@@ -14,7 +17,6 @@ export function setupApplication(app: INestApplication): void {
     }
     return next();
   });
-
 
   // Apply CORS
   app.enableCors({
@@ -63,7 +65,7 @@ export async function setupRabbitMQMicroservice(
   maxRetries: number = -1,
   initialDelayMs: number = 1000,
   maxDelayMs: number = 30000,
-  factor: number = 2
+  factor: number = 2,
 ): Promise<void> {
   const logger = new Logger('RabbitMQSetup');
   let retries = 0;
@@ -71,22 +73,23 @@ export async function setupRabbitMQMicroservice(
 
   while (maxRetries === -1 || retries < maxRetries) {
     try {
-      logger.debug(`Attempting to connect RabbitMQ microservice (attempt ${retries + 1})...`);
-
-      // Load consumer config from file
-      const consumerConfig = rabbitmqFactory.readRMQConsumerConfig(
-        configPath
+      logger.debug(
+        `Attempting to connect RabbitMQ microservice (attempt ${retries + 1})...`,
       );
 
+      // Load consumer config from file
+      const consumerConfig = rabbitmqFactory.readRMQConsumerConfig(configPath);
+
       // Convert consumer config to NestJS microservice options
-      const microserviceOptions = rabbitmqFactory.toNestJSMicroserviceOptions(consumerConfig);
+      const microserviceOptions =
+        rabbitmqFactory.toNestJSMicroserviceOptions(consumerConfig);
 
       app.connectMicroservice(microserviceOptions);
       await app.startAllMicroservices();
       logger.log(
         `✅ RabbitMQ microservice connected and ready to consume messages\n` +
-        `   Queue: ${consumerConfig.queues[0]?.name}\n` +
-        `   Exchange: ${consumerConfig.queues[0]?.bindings[0]?.exchange}`
+          `   Queue: ${consumerConfig.queues[0]?.name}\n` +
+          `   Exchange: ${consumerConfig.queues[0]?.bindings[0]?.exchange}`,
       );
       return; // Success, exit retry loop
     } catch (error) {
@@ -94,7 +97,7 @@ export async function setupRabbitMQMicroservice(
       const errMsg = errorMessage(error);
       logger.warn(
         `⚠️ Failed to connect RabbitMQ microservice (attempt ${retries}): ${errMsg}\n` +
-        `   Retrying in ${delayMs}ms...`
+          `   Retrying in ${delayMs}ms...`,
       );
 
       await sleep(delayMs);
@@ -104,6 +107,6 @@ export async function setupRabbitMQMicroservice(
 
   logger.error(
     `❌ Failed to connect RabbitMQ microservice after ${retries} attempts.\n` +
-    `   HTTP server is running, but message consumers are permanently unavailable.`
+      `   HTTP server is running, but message consumers are permanently unavailable.`,
   );
 }

@@ -1,4 +1,8 @@
-import { IntegrationEvent, EventMetadata, TransportMetadata } from '@/core/common';
+import {
+  IntegrationEvent,
+  EventMetadata,
+  TransportMetadata,
+} from '@/core/common';
 
 export interface CapturePaymentRequestPayload {
   paymentId: string;
@@ -14,7 +18,7 @@ export class CapturePaymentRequestEvent extends IntegrationEvent<CapturePaymentR
   constructor(
     payload: CapturePaymentRequestPayload,
     metadata?: EventMetadata,
-    transport?: TransportMetadata
+    transport?: TransportMetadata,
   ) {
     super(payload, metadata, transport);
   }

@@ -2,12 +2,21 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { AuthSignOutCommand } from './auth-sign-out.command';
 import { AuthSignOutOutputDto } from './auth-sign-out.dto';
 import { Inject } from '@nestjs/common';
-import { USER_REPOSITORY, type IUserRepository } from '@/core/interfaces/repositories';
-import { WEBSOCKET_SERVICE, type IWebSocketService } from '@/application/interfaces';
+import {
+  USER_REPOSITORY,
+  type IUserRepository,
+} from '@/core/interfaces/repositories';
+import {
+  WEBSOCKET_SERVICE,
+  type IWebSocketService,
+} from '@/application/interfaces';
 import { UserNotFoundException } from '@/core/exceptions';
 
 @CommandHandler(AuthSignOutCommand)
-export class AuthSignOutCommandHandler implements ICommandHandler<AuthSignOutCommand, AuthSignOutOutputDto> {
+export class AuthSignOutCommandHandler implements ICommandHandler<
+  AuthSignOutCommand,
+  AuthSignOutOutputDto
+> {
   constructor(
     @Inject(USER_REPOSITORY)
     private readonly userRepository: IUserRepository,

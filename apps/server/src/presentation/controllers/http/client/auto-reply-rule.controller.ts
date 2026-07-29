@@ -14,12 +14,29 @@ import {
   HttpStatus,
 } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
-import { ApiTags, ApiOperation, ApiBearerAuth, ApiSecurity } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiBearerAuth,
+  ApiSecurity,
+} from '@nestjs/swagger';
 import { buildVersionedRoute } from '@presentation/utils';
-import { JwtAuthGuard, RolesGuard, UserVerifiedGuard } from '@/presentation/middleware/guards';
-import { CurrentUser, Roles, ApiOkResponseEnvelope, ApiPaginatedResponseEnvelope } from '@/presentation/decorators';
+import {
+  JwtAuthGuard,
+  RolesGuard,
+  UserVerifiedGuard,
+} from '@/presentation/middleware/guards';
+import {
+  CurrentUser,
+  Roles,
+  ApiOkResponseEnvelope,
+  ApiPaginatedResponseEnvelope,
+} from '@/presentation/decorators';
 import { ERoleType } from '@/core/enums';
-import { ENTERPRISE_REPOSITORY, type IEnterpriseRepository } from '@/core/interfaces/repositories';
+import {
+  ENTERPRISE_REPOSITORY,
+  type IEnterpriseRepository,
+} from '@/core/interfaces/repositories';
 import {
   AutoReplyRuleCreateCommand,
   AutoReplyRuleUpdateCommand,
@@ -47,9 +64,11 @@ export class AutoReplyRuleController {
   private async getEnterpriseId(userId: string): Promise<string> {
     const enterprise = await this.enterpriseRepository.findByUserId(userId);
     if (!enterprise) {
-      throw new ForbiddenException('User is not associated with any enterprise profile.');
+      throw new ForbiddenException(
+        'User is not associated with any enterprise profile.',
+      );
     }
-    return enterprise.id!;
+    return enterprise.id;
   }
 
   @Post()
@@ -60,11 +79,15 @@ export class AutoReplyRuleController {
     @Body() input: AutoReplyRuleCreateInputDto,
   ): Promise<AutoReplyRuleDto> {
     const enterpriseId = await this.getEnterpriseId(userId);
-    return this.commandBus.execute(new AutoReplyRuleCreateCommand(enterpriseId, input));
+    return this.commandBus.execute(
+      new AutoReplyRuleCreateCommand(enterpriseId, input),
+    );
   }
 
   @Get()
-  @ApiOperation({ summary: 'Get all auto-reply rules for a connected social page' })
+  @ApiOperation({
+    summary: 'Get all auto-reply rules for a connected social page',
+  })
   @ApiPaginatedResponseEnvelope(AutoReplyRuleDto)
   async findAll(
     @CurrentUser('sub') userId: string,
@@ -74,7 +97,9 @@ export class AutoReplyRuleController {
     if (!socialPageId) {
       throw new Error('Query parameter socialPageId is required.');
     }
-    return this.queryBus.execute(new AutoReplyRuleGetListQuery(socialPageId, enterpriseId));
+    return this.queryBus.execute(
+      new AutoReplyRuleGetListQuery(socialPageId, enterpriseId),
+    );
   }
 
   @Patch(':id')
@@ -86,7 +111,9 @@ export class AutoReplyRuleController {
     @Body() input: AutoReplyRuleUpdateInputDto,
   ): Promise<AutoReplyRuleDto> {
     const enterpriseId = await this.getEnterpriseId(userId);
-    return this.commandBus.execute(new AutoReplyRuleUpdateCommand(id, enterpriseId, input));
+    return this.commandBus.execute(
+      new AutoReplyRuleUpdateCommand(id, enterpriseId, input),
+    );
   }
 
   @Delete(':id')
@@ -98,7 +125,8 @@ export class AutoReplyRuleController {
     @Param('id') id: string,
   ): Promise<{ success: boolean }> {
     const enterpriseId = await this.getEnterpriseId(userId);
-    return this.commandBus.execute(new AutoReplyRuleDeleteCommand(id, enterpriseId));
+    return this.commandBus.execute(
+      new AutoReplyRuleDeleteCommand(id, enterpriseId),
+    );
   }
 }
-

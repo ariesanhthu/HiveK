@@ -1,24 +1,21 @@
 import { Module } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
 
-import { 
+import {
   CampaignParticipantCreateCommandHandler,
   CampaignParticipantSoftDeleteCommandHandler,
   CampaignParticipantHardDeleteCommandHandler,
   CampaignParticipantRestoreCommandHandler,
   CampaignParticipantUpdateCommandHandler,
-  CampaignParticipantUpdateStatusCommandHandler
-} 
-from '@/application/commands';
+  CampaignParticipantUpdateStatusCommandHandler,
+} from '@/application/commands';
 
-import {   
+import {
   CampaignParticipantGetByIdQueryHandler,
-  CampaignParticipantGetListQueryHandler 
+  CampaignParticipantGetListQueryHandler,
 } from '@/application/queries';
 
-import { 
-  CampaignParticipantResolver
-} from '@/presentation/controllers'
+import { CampaignParticipantResolver } from '@/presentation/controllers';
 
 import { CampaignModule } from './campaign.module';
 
@@ -28,25 +25,24 @@ const COMMAND_HANDLERS = [
   CampaignParticipantHardDeleteCommandHandler,
   CampaignParticipantRestoreCommandHandler,
   CampaignParticipantUpdateCommandHandler,
-  CampaignParticipantUpdateStatusCommandHandler
+  CampaignParticipantUpdateStatusCommandHandler,
 ];
 
 const QUERY_HANDLERS = [
   CampaignParticipantGetByIdQueryHandler,
-  CampaignParticipantGetListQueryHandler
-]
+  CampaignParticipantGetListQueryHandler,
+];
 
-const EVENT_HANDLERS = [
-]
+const EVENT_HANDLERS = [];
 
 @Module({
   imports: [CqrsModule, CampaignModule],
   controllers: [],
   providers: [
-    ...COMMAND_HANDLERS, 
-    ...QUERY_HANDLERS, 
-    ...EVENT_HANDLERS, 
-    CampaignParticipantResolver
+    ...COMMAND_HANDLERS,
+    ...QUERY_HANDLERS,
+    ...EVENT_HANDLERS,
+    CampaignParticipantResolver,
   ],
   exports: [],
 })

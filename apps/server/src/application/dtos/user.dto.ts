@@ -5,17 +5,19 @@ import { CursorPaginationRequestSchema } from '@/application/dtos/pagination.dto
 import { RoleDto, RoleDtoSchema } from './role.dto';
 import { UploadedFileDto, UploadedFileDtoSchema } from './uploaded-file.dto';
 
-const BaseUserDtoSchema = z.object({
-  id: z.string(),
-  email: z.string(),
-  phone: z.string(),
-  fullName: z.string(),
-  avatar: z.string().nullable(),
-  roleId: z.string(),
-  isEmailVerified: z.boolean(),
-  createdAt: z.iso.datetime(),
-  updatedAt: z.iso.datetime(),
-}).strict();
+const BaseUserDtoSchema = z
+  .object({
+    id: z.string(),
+    email: z.string(),
+    phone: z.string(),
+    fullName: z.string(),
+    avatar: z.string().nullable(),
+    roleId: z.string(),
+    isEmailVerified: z.boolean(),
+    createdAt: z.iso.datetime(),
+    updatedAt: z.iso.datetime(),
+  })
+  .strict();
 
 export const AdminDtoSchema = BaseUserDtoSchema.extend({
   type: z.literal(ERoleType.ADMIN),
@@ -47,7 +49,9 @@ export const UserFilterSchema = CursorPaginationRequestSchema.extend({
   fullName: z.string().optional(),
   type: z.enum(ERoleType).optional(),
   roleId: z.string().optional(),
-  isEmailVerified: z.preprocess((val) => val === 'true' || val === true, z.boolean()).optional(),
+  isEmailVerified: z
+    .preprocess((val) => val === 'true' || val === true, z.boolean())
+    .optional(),
 });
 
 export class UserFilterDto extends createZodDto(UserFilterSchema) {}
@@ -59,4 +63,3 @@ export const UserDetailDtoSchema = BaseUserDtoSchema.extend({
 });
 
 export class UserDetailDto extends createZodDto(UserDetailDtoSchema) {}
-

@@ -1,6 +1,9 @@
 import { QueryHandler, IQueryHandler } from '@nestjs/cqrs';
 import { Inject } from '@nestjs/common';
-import { EnterpriseNotFoundException, EnterpriseForbiddenException } from '@/core/exceptions';
+import {
+  EnterpriseNotFoundException,
+  EnterpriseForbiddenException,
+} from '@/core/exceptions';
 import {
   ENTERPRISE_REPOSITORY,
   ENTERPRISE_INVITATION_REPOSITORY,
@@ -12,7 +15,10 @@ import { EnterpriseInvitationDto } from '@/application/dtos/enterprise-invitatio
 import { EnterpriseInvitationMapper } from '@/application/mappers';
 
 @QueryHandler(EnterpriseGetInvitationsQuery)
-export class EnterpriseGetInvitationsQueryHandler implements IQueryHandler<EnterpriseGetInvitationsQuery, EnterpriseInvitationDto[]> {
+export class EnterpriseGetInvitationsQueryHandler implements IQueryHandler<
+  EnterpriseGetInvitationsQuery,
+  EnterpriseInvitationDto[]
+> {
   constructor(
     @Inject(ENTERPRISE_REPOSITORY)
     private readonly enterpriseRepository: IEnterpriseRepository,
@@ -20,7 +26,9 @@ export class EnterpriseGetInvitationsQueryHandler implements IQueryHandler<Enter
     private readonly invitationRepository: IEnterpriseInvitationRepository,
   ) {}
 
-  async execute(query: EnterpriseGetInvitationsQuery): Promise<EnterpriseInvitationDto[]> {
+  async execute(
+    query: EnterpriseGetInvitationsQuery,
+  ): Promise<EnterpriseInvitationDto[]> {
     const { enterpriseId, requestedBy } = query;
 
     const enterprise = await this.enterpriseRepository.findById(enterpriseId);
@@ -28,11 +36,15 @@ export class EnterpriseGetInvitationsQueryHandler implements IQueryHandler<Enter
       throw new EnterpriseNotFoundException(enterpriseId);
     }
 
-    if (!enterprise.isOwner(requestedBy) && !enterprise.isSubOwner(requestedBy)) {
+    if (
+      !enterprise.isOwner(requestedBy) &&
+      !enterprise.isSubOwner(requestedBy)
+    ) {
       throw new EnterpriseForbiddenException();
     }
 
-    const invitations = await this.invitationRepository.findByEnterpriseId(enterpriseId);
+    const invitations =
+      await this.invitationRepository.findByEnterpriseId(enterpriseId);
     return EnterpriseInvitationMapper.toListDto(invitations);
   }
 }

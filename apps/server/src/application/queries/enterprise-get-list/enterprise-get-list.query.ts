@@ -3,7 +3,9 @@ import { EnterpriseFilterDto } from '@/application/queries/enterprise-get-list/e
 import { EnterpriseDetailDto } from '@/application/dtos';
 import { PaginatedResponseDto } from '@/application/dtos/pagination.dto';
 
-export class EnterpriseGetListQuery extends Query<PaginatedResponseDto<EnterpriseDetailDto>> {
+export class EnterpriseGetListQuery extends Query<
+  PaginatedResponseDto<EnterpriseDetailDto>
+> {
   constructor(public readonly filters?: EnterpriseFilterDto) {
     super();
   }

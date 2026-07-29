@@ -1,11 +1,28 @@
 import { Controller, Get, Param, Query, UseGuards } from '@nestjs/common';
 import { QueryBus } from '@nestjs/cqrs';
-import { ApiBearerAuth, ApiOperation, ApiTags, ApiSecurity } from '@nestjs/swagger';
-import { JwtAuthGuard, RolesGuard, UserVerifiedGuard } from '@/presentation/middleware/guards';
-import { Roles, ApiOkResponseEnvelope, ApiPaginatedResponseEnvelope } from '@/presentation/decorators';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiTags,
+  ApiSecurity,
+} from '@nestjs/swagger';
+import {
+  JwtAuthGuard,
+  RolesGuard,
+  UserVerifiedGuard,
+} from '@/presentation/middleware/guards';
+import {
+  Roles,
+  ApiOkResponseEnvelope,
+  ApiPaginatedResponseEnvelope,
+} from '@/presentation/decorators';
 import { ERoleType } from '@/core/enums';
 import { PackageResponseDto } from '@/application/dtos';
-import { PackageGetListQuery, PackageGetByIdQuery, PackageFilterDto } from '@/application/queries';
+import {
+  PackageGetListQuery,
+  PackageGetByIdQuery,
+  PackageFilterDto,
+} from '@/application/queries';
 import { PaginatedResponseDto } from '@/application/dtos/pagination.dto';
 import { buildVersionedRoute } from '@/presentation/utils';
 
@@ -20,7 +37,9 @@ export class PackageClientController {
   @Get()
   @ApiOperation({ summary: 'Get list of packages' })
   @ApiPaginatedResponseEnvelope(PackageResponseDto)
-  async findAll(@Query() filters: PackageFilterDto): Promise<PaginatedResponseDto<PackageResponseDto>> {
+  async findAll(
+    @Query() filters: PackageFilterDto,
+  ): Promise<PaginatedResponseDto<PackageResponseDto>> {
     return this.queryBus.execute(new PackageGetListQuery(filters));
   }
 

@@ -20,7 +20,10 @@ import { EnterpriseAcceptInvitationCommand } from './enterprise-accept-invitatio
 import { type IUnitOfWork, UNIT_OF_WORK } from '@/application/interfaces';
 
 @CommandHandler(EnterpriseAcceptInvitationCommand)
-export class EnterpriseAcceptInvitationCommandHandler implements ICommandHandler<EnterpriseAcceptInvitationCommand, void> {
+export class EnterpriseAcceptInvitationCommandHandler implements ICommandHandler<
+  EnterpriseAcceptInvitationCommand,
+  void
+> {
   constructor(
     @Inject(ENTERPRISE_REPOSITORY)
     private readonly enterpriseRepository: IEnterpriseRepository,
@@ -38,7 +41,9 @@ export class EnterpriseAcceptInvitationCommandHandler implements ICommandHandler
 
       const invitation = await this.invitationRepository.findById(invitationId);
       if (!invitation || invitation.enterpriseId !== enterpriseId) {
-        throw new UserNotFoundException(`Invitation with ID ${invitationId} not found for this enterprise`);
+        throw new UserNotFoundException(
+          `Invitation with ID ${invitationId} not found for this enterprise`,
+        );
       }
 
       const user = await this.userRepository.findById(userId);
@@ -48,12 +53,16 @@ export class EnterpriseAcceptInvitationCommandHandler implements ICommandHandler
 
       // Check email matches
       if (user.email.toLowerCase() !== invitation.email.toLowerCase()) {
-        throw new EnterpriseForbiddenException('Accepting user email does not match invitation email');
+        throw new EnterpriseForbiddenException(
+          'Accepting user email does not match invitation email',
+        );
       }
 
       // Check role type
       if (!(user instanceof EnterpriseUserRoot)) {
-        throw new InvalidUserTypeException('Only enterprise users can accept invitations');
+        throw new InvalidUserTypeException(
+          'Only enterprise users can accept invitations',
+        );
       }
 
       const enterprise = await this.enterpriseRepository.findById(enterpriseId);

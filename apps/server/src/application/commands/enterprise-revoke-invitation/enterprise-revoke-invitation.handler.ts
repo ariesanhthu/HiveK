@@ -15,7 +15,10 @@ import { EnterpriseRevokeInvitationCommand } from './enterprise-revoke-invitatio
 import { type IUnitOfWork, UNIT_OF_WORK } from '@/application/interfaces';
 
 @CommandHandler(EnterpriseRevokeInvitationCommand)
-export class EnterpriseRevokeInvitationCommandHandler implements ICommandHandler<EnterpriseRevokeInvitationCommand, void> {
+export class EnterpriseRevokeInvitationCommandHandler implements ICommandHandler<
+  EnterpriseRevokeInvitationCommand,
+  void
+> {
   constructor(
     @Inject(ENTERPRISE_REPOSITORY)
     private readonly enterpriseRepository: IEnterpriseRepository,
@@ -31,7 +34,9 @@ export class EnterpriseRevokeInvitationCommandHandler implements ICommandHandler
 
       const invitation = await this.invitationRepository.findById(invitationId);
       if (!invitation || invitation.enterpriseId !== enterpriseId) {
-        throw new UserNotFoundException(`Invitation with ID ${invitationId} not found for this enterprise`);
+        throw new UserNotFoundException(
+          `Invitation with ID ${invitationId} not found for this enterprise`,
+        );
       }
 
       const enterprise = await this.enterpriseRepository.findById(enterpriseId);
@@ -40,7 +45,10 @@ export class EnterpriseRevokeInvitationCommandHandler implements ICommandHandler
       }
 
       // Check if requester is Owner or Sub-Owner
-      if (!enterprise.isOwner(requestedBy) && !enterprise.isSubOwner(requestedBy)) {
+      if (
+        !enterprise.isOwner(requestedBy) &&
+        !enterprise.isSubOwner(requestedBy)
+      ) {
         throw new EnterpriseForbiddenException();
       }
 

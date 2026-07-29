@@ -28,10 +28,13 @@ export function parseMongoProjection(
   // If fields is an array, we normalize it to a key-value record
   const fieldsInput = projection.fields;
   const fieldsMap: Record<string, unknown> = Array.isArray(fieldsInput)
-    ? (fieldsInput as string[]).reduce((acc, current) => {
-        acc[current] = {};
-        return acc;
-      }, {} as Record<string, unknown>)
+    ? fieldsInput.reduce(
+        (acc, current) => {
+          acc[current] = {};
+          return acc;
+        },
+        {} as Record<string, unknown>,
+      )
     : fieldsInput || {};
 
   return parseMongoProjectionMap(fieldsMap, config);
@@ -65,8 +68,14 @@ function parseMongoProjectionMap(
       }
 
       // If the fields map has nested selection for this relation, and the config allows nested population
-      const subFieldsMap = fieldsMap[field] as Record<string, unknown> | undefined;
-      if (subFieldsMap && Object.keys(subFieldsMap).length > 0 && popConfig.populate) {
+      const subFieldsMap = fieldsMap[field] as
+        | Record<string, unknown>
+        | undefined;
+      if (
+        subFieldsMap &&
+        Object.keys(subFieldsMap).length > 0 &&
+        popConfig.populate
+      ) {
         const subResult = parseMongoProjectionMap(subFieldsMap, {
           allowedFields: popConfig.select,
           fieldMap: popConfig.fieldMap,
@@ -80,7 +89,10 @@ function parseMongoProjectionMap(
       populateOptions.push(popOption);
     } else {
       // Normal field
-      if (config.allowedFields === '*' || config.allowedFields.includes(field)) {
+      if (
+        config.allowedFields === '*' ||
+        config.allowedFields.includes(field)
+      ) {
         const mapped = (config.fieldMap && config.fieldMap[field]) || field;
         selectFields.push(mapped === 'id' ? '_id' : mapped);
       }

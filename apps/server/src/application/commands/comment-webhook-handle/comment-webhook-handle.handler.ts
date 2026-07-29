@@ -13,7 +13,10 @@ import {
 import { CommentWebhookHandleCommand } from './comment-webhook-handle.command';
 
 @CommandHandler(CommentWebhookHandleCommand)
-export class CommentWebhookHandleHandler implements ICommandHandler<CommentWebhookHandleCommand, { success: boolean; reason?: string }> {
+export class CommentWebhookHandleHandler implements ICommandHandler<
+  CommentWebhookHandleCommand,
+  { success: boolean; reason?: string }
+> {
   private readonly logger = new Logger(CommentWebhookHandleHandler.name);
 
   constructor(
@@ -25,7 +28,9 @@ export class CommentWebhookHandleHandler implements ICommandHandler<CommentWebho
     private readonly commentReplierDiscovery: ICommentReplierDiscovery,
   ) {}
 
-  async execute(command: CommentWebhookHandleCommand): Promise<{ success: boolean; reason?: string }> {
+  async execute(
+    command: CommentWebhookHandleCommand,
+  ): Promise<{ success: boolean; reason?: string }> {
     const { platformCode, payload } = command;
 
     const entry = payload.entry?.[0];
@@ -37,7 +42,10 @@ export class CommentWebhookHandleHandler implements ICommandHandler<CommentWebho
     const change = entry?.changes?.[0];
     const value = change?.value;
     if (!value || value.item !== 'comment' || value.verb !== 'add') {
-      return { success: false, reason: 'Payload is not a new comment addition event.' };
+      return {
+        success: false,
+        reason: 'Payload is not a new comment addition event.',
+      };
     }
 
     const commentId = value.comment_id;
@@ -45,32 +53,50 @@ export class CommentWebhookHandleHandler implements ICommandHandler<CommentWebho
     const senderId = value.from?.id;
 
     if (!commentId || !senderId) {
-      return { success: false, reason: 'Missing commentId or senderId in payload.' };
+      return {
+        success: false,
+        reason: 'Missing commentId or senderId in payload.',
+      };
     }
 
     // 1. Loop Guard: If comment sender is the page itself, drop immediately
     if (senderId === pageId) {
-      this.logger.debug(`Infinite loop guard triggered: drop self-comment event for pageId ${pageId}.`);
+      this.logger.debug(
+        `Infinite loop guard triggered: drop self-comment event for pageId ${pageId}.`,
+      );
       return { success: true, reason: 'Self-comment ignored.' };
     }
 
     // 2. Fetch the SocialPage
-    const socialPage = await this.socialPageRepository.findByPageId(platformCode, pageId);
+    const socialPage = await this.socialPageRepository.findByPageId(
+      platformCode,
+      pageId,
+    );
     if (!socialPage || !socialPage.isActive) {
-      return { success: false, reason: 'Active social page connection not found for page ID.' };
+      return {
+        success: false,
+        reason: 'Active social page connection not found for page ID.',
+      };
     }
 
     // 3. Find active auto-reply rules
-    const rules = await this.autoReplyRuleRepository.findActiveByPageId(socialPage.id!);
+    const rules = await this.autoReplyRuleRepository.findActiveByPageId(
+      socialPage.id,
+    );
     if (rules.length === 0) {
-      return { success: true, reason: 'No active auto-reply rules configured for page.' };
+      return {
+        success: true,
+        reason: 'No active auto-reply rules configured for page.',
+      };
     }
 
     // 4. Match rule by keywords (case-insensitive)
     const lowerMessage = message.toLowerCase();
     let matchedRule = rules.find((rule) => {
       if (rule.keywords.length === 0) return false; // Match exact keyword rules first
-      return rule.keywords.some((keyword) => lowerMessage.includes(keyword.toLowerCase()));
+      return rule.keywords.some((keyword) =>
+        lowerMessage.includes(keyword.toLowerCase()),
+      );
     });
 
     // Fallback: rule with empty keywords matches any comment
@@ -79,22 +105,31 @@ export class CommentWebhookHandleHandler implements ICommandHandler<CommentWebho
     }
 
     if (!matchedRule) {
-      return { success: true, reason: 'No matching rule found for comment text.' };
+      return {
+        success: true,
+        reason: 'No matching rule found for comment text.',
+      };
     }
 
     // 5. Send comment reply
     try {
-      const replier = this.commentReplierDiscovery.findByCode(socialPage.platformCode);
+      const replier = this.commentReplierDiscovery.findByCode(
+        socialPage.platformCode,
+      );
       await replier.replyToComment({
         pageToken: socialPage.encryptedToken, // Plain access token in core
         commentId,
         message: matchedRule.replyContent,
       });
 
-      this.logger.log(`Successfully replied to comment ${commentId} using rule: ${matchedRule.name}`);
+      this.logger.log(
+        `Successfully replied to comment ${commentId} using rule: ${matchedRule.name}`,
+      );
       return { success: true };
     } catch (err: any) {
-      this.logger.error(`Failed to reply to comment ${commentId}: ${err.message}`);
+      this.logger.error(
+        `Failed to reply to comment ${commentId}: ${err.message}`,
+      );
       return { success: false, reason: err.message };
     }
   }

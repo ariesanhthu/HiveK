@@ -4,7 +4,10 @@ import { SubscriptionFilterDto } from '@/application/dtos';
 import { Nullable } from '@/core/types';
 import { PaginatedResponseDto } from '@/application/dtos/pagination.dto';
 
-export interface ISubscriptionReadService extends IBaseReadService<SubscriptionResponseDto, SubscriptionFilterDto> {
+export interface ISubscriptionReadService extends IBaseReadService<
+  SubscriptionResponseDto,
+  SubscriptionFilterDto
+> {
   findByUserId(userId: string): Promise<Nullable<SubscriptionResponseDto>>;
 }
 

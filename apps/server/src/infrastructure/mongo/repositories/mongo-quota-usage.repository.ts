@@ -6,7 +6,11 @@ import { QuotaUsageRoot } from '@/core/aggregate-roots';
 import { QuotaUsageModel, QuotaUsageDocument } from '../schemas';
 import { RenewableUsageVO } from '@/core/value-objects';
 import { Nullable } from '@/core/types';
-import { type IUnitOfWork, UNIT_OF_WORK, CACHE_SERVICE } from '@/application/interfaces';
+import {
+  type IUnitOfWork,
+  UNIT_OF_WORK,
+  CACHE_SERVICE,
+} from '@/application/interfaces';
 import type { ICacheService } from '@/application/interfaces';
 import { MongoUnitOfWork } from '../mongo-uow';
 import { CacheKeyUtil } from '@/shared/utils/cache-key.util';
@@ -31,16 +35,24 @@ export class MongoQuotaUsageRepository implements IQuotaUsageRepository {
     return doc ? this.mapToDomain(doc) : null;
   }
 
-  async findByEnterpriseId(enterpriseId: string): Promise<Nullable<QuotaUsageRoot>> {
-    const doc = await this.usageModel.findOne({ enterprise_id: enterpriseId }).session(this.session).exec();
+  async findByEnterpriseId(
+    enterpriseId: string,
+  ): Promise<Nullable<QuotaUsageRoot>> {
+    const doc = await this.usageModel
+      .findOne({ enterprise_id: enterpriseId })
+      .session(this.session)
+      .exec();
     return doc ? this.mapToDomain(doc) : null;
   }
 
   async findExpiredUsages(now: Date): Promise<QuotaUsageRoot[]> {
-    const docs = await this.usageModel.find({
-      'usages.cycle_ends_at': { $lte: now },
-    }).session(this.session).exec();
-    return docs.map(doc => this.mapToDomain(doc));
+    const docs = await this.usageModel
+      .find({
+        'usages.cycle_ends_at': { $lte: now },
+      })
+      .session(this.session)
+      .exec();
+    return docs.map((doc) => this.mapToDomain(doc));
   }
 
   async save(quotaUsage: QuotaUsageRoot): Promise<void> {
@@ -51,25 +63,33 @@ export class MongoQuotaUsageRepository implements IQuotaUsageRepository {
       const saved = await created.save({ session: this.session });
       quotaUsage.setId(saved._id.toString());
     } else {
-      await this.usageModel.findByIdAndUpdate(quotaUsage.id, data, { upsert: true }).session(this.session).exec();
+      await this.usageModel
+        .findByIdAndUpdate(quotaUsage.id, data, { upsert: true })
+        .session(this.session)
+        .exec();
     }
 
-    await this.invalidateCache(quotaUsage.id!, quotaUsage.enterpriseId);
+    await this.invalidateCache(quotaUsage.id, quotaUsage.enterpriseId);
   }
 
-  private async invalidateCache(id: string, enterpriseId: string): Promise<void> {
+  private async invalidateCache(
+    id: string,
+    enterpriseId: string,
+  ): Promise<void> {
     const domain = 'quota-usage';
-    const invalidations = [
-      this.cacheService.del(CacheKeyUtil.id(domain, id)),
-    ];
+    const invalidations = [this.cacheService.del(CacheKeyUtil.id(domain, id))];
     if (enterpriseId) {
-      invalidations.push(this.cacheService.del(CacheKeyUtil.custom(domain, `enterpriseId:${enterpriseId}`)));
+      invalidations.push(
+        this.cacheService.del(
+          CacheKeyUtil.custom(domain, `enterpriseId:${enterpriseId}`),
+        ),
+      );
     }
     await Promise.all(invalidations);
   }
 
   async saveMany(quotaUsages: QuotaUsageRoot[]): Promise<void> {
-    await Promise.all(quotaUsages.map(q => this.save(q)));
+    await Promise.all(quotaUsages.map((q) => this.save(q)));
   }
 
   async delete(id: string): Promise<void> {
@@ -77,27 +97,26 @@ export class MongoQuotaUsageRepository implements IQuotaUsageRepository {
   }
 
   private mapToDomain(doc: QuotaUsageDocument): QuotaUsageRoot {
-    return QuotaUsageRoot.instantiate(
-      doc._id.toString(),
-      {
-        enterpriseId: doc.enterprise_id,
-        cycleAnchorDate: doc.cycle_anchor_date,
-        usages: (doc.usages || []).map(
-          (u) =>
-            new RenewableUsageVO({
-              key: u.key,
-              allocated: u.allocated,
-              used: u.used,
-              cycleStartAt: u.cycle_start_at,
-              cycleEndsAt: u.cycle_ends_at,
-            })
-        ),
-        updatedAt: doc.updated_at || new Date(),
-      }
-    );
+    return QuotaUsageRoot.instantiate(doc._id.toString(), {
+      enterpriseId: doc.enterprise_id,
+      cycleAnchorDate: doc.cycle_anchor_date,
+      usages: (doc.usages || []).map(
+        (u) =>
+          new RenewableUsageVO({
+            key: u.key,
+            allocated: u.allocated,
+            used: u.used,
+            cycleStartAt: u.cycle_start_at,
+            cycleEndsAt: u.cycle_ends_at,
+          }),
+      ),
+      updatedAt: doc.updated_at || new Date(),
+    });
   }
 
-  private mapToPersistence(data: QuotaUsageRoot): Omit<QuotaUsageModel, 'updated_at'> {
+  private mapToPersistence(
+    data: QuotaUsageRoot,
+  ): Omit<QuotaUsageModel, 'updated_at'> {
     return {
       enterprise_id: data.enterpriseId,
       cycle_anchor_date: data.cycleAnchorDate,

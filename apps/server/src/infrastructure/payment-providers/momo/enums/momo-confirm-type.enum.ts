@@ -1,4 +1,4 @@
 export enum EMomoConfirmType {
-	CAPTURE = 'capture',
-	CANCEL = 'cancel',
+  CAPTURE = 'capture',
+  CANCEL = 'cancel',
 }

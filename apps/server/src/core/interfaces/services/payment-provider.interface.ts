@@ -49,32 +49,28 @@ export interface IPaymentProvider {
   create(
     id: string,
     amount: number,
-    currency: ECurrency
+    currency: ECurrency,
   ): Promise<IPaymentProviderCreateResult>;
   refund(
     transactionId: string,
     amount: number,
-    currency: ECurrency
+    currency: ECurrency,
   ): Promise<IPaymentProviderResult>;
   verifyWebhook(data: Record<string, unknown>): boolean;
   extractPaymentAttemptId(data: Record<string, unknown>): string;
-  parseWebhook(
-    data: Record<string, unknown>
-  ): IPaymentProviderWebhookResult;
+  parseWebhook(data: Record<string, unknown>): IPaymentProviderWebhookResult;
   capture(
     transactionId: string,
     attemptId: string,
     amount: number,
-    currency: ECurrency
+    currency: ECurrency,
   ): Promise<IPaymentProviderResult>;
   cancel(
     transactionId: string,
     amount: number,
-    currency: ECurrency
+    currency: ECurrency,
   ): Promise<IPaymentProviderResult>;
-  query(
-    transactionId: string
-  ): Promise<IPaymentProviderResult>;
+  query(transactionId: string): Promise<IPaymentProviderResult>;
 }
 
 export const PAYMENT_PROVIDER = Symbol('PAYMENT_PROVIDER');

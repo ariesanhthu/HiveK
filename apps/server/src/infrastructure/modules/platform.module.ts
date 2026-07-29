@@ -9,8 +9,14 @@ import {
   PlatformRestoreCommandHandler,
 } from '@/application/commands';
 
-import { PlatformGetListHandler, PlatformGetByIdHandler } from '@/application/queries';
-import { PlatformAdminController, PlatformClientController } from '@/presentation/controllers'
+import {
+  PlatformGetListHandler,
+  PlatformGetByIdHandler,
+} from '@/application/queries';
+import {
+  PlatformAdminController,
+  PlatformClientController,
+} from '@/presentation/controllers';
 import { UploadedFileModule } from './uploaded-file.module';
 
 const COMMAND_HANDLERS = [
@@ -21,13 +27,9 @@ const COMMAND_HANDLERS = [
   PlatformRestoreCommandHandler,
 ];
 
-const QUERY_HANDLERS = [
-  PlatformGetListHandler,
-  PlatformGetByIdHandler,
-];
+const QUERY_HANDLERS = [PlatformGetListHandler, PlatformGetByIdHandler];
 
-const EVENT_HANDLERS = [
-];
+const EVENT_HANDLERS = [];
 
 @Module({
   imports: [CqrsModule, UploadedFileModule],

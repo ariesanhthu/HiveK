@@ -8,30 +8,44 @@ import { softDeletePlugin } from '../utils';
   timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' },
 })
 export class UserModel {
-  @Prop({ 
-    type: String, 
-    required: true, 
-    unique: true, 
-    lowercase: true, 
+  @Prop({
+    type: String,
+    required: true,
+    unique: true,
+    lowercase: true,
     trim: true,
-    match: [/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/, 'Please fill a valid email address']
+    match: [
+      /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/,
+      'Please fill a valid email address',
+    ],
   })
   email: string;
 
-  @Prop({ 
-    type: String, 
+  @Prop({
+    type: String,
     required: true,
-    match: [/^\+?[1-9]\d{1,14}$/, 'Please fill a valid phone number']
+    match: [/^\+?[1-9]\d{1,14}$/, 'Please fill a valid phone number'],
   })
   phone: string;
 
   @Prop({ type: String, required: true })
   password_hash: string;
 
-  @Prop({ type: String, required: true, trim: true, minlength: 1, maxlength: 100 })
+  @Prop({
+    type: String,
+    required: true,
+    trim: true,
+    minlength: 1,
+    maxlength: 100,
+  })
   full_name: string;
 
-  @Prop({ type: Types.ObjectId, ref: 'UploadedFileModel', required: false, default: null })
+  @Prop({
+    type: Types.ObjectId,
+    ref: 'UploadedFileModel',
+    required: false,
+    default: null,
+  })
   avatar: Types.ObjectId | null;
 
   type: string;
@@ -72,10 +86,16 @@ AdminSchema.plugin(softDeletePlugin);
 
 @Schema()
 export class EnterpriseUserModel extends UserModel {
-  @Prop({ type: [Types.ObjectId], ref: 'EnterpriseModel', required: false, default: [] })
+  @Prop({
+    type: [Types.ObjectId],
+    ref: 'EnterpriseModel',
+    required: false,
+    default: [],
+  })
   enterprise_ids: Types.ObjectId[];
 }
-export const EnterpriseUserSchema = SchemaFactory.createForClass(EnterpriseUserModel);
+export const EnterpriseUserSchema =
+  SchemaFactory.createForClass(EnterpriseUserModel);
 export type EnterpriseUserDocument = HydratedDocument<EnterpriseUserModel>;
 EnterpriseUserSchema.plugin(softDeletePlugin);
 

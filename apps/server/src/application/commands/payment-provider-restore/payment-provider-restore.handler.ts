@@ -1,11 +1,17 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { Inject } from '@nestjs/common';
 import { PaymentProviderRestoreCommand } from './payment-provider-restore.command';
-import { PAYMENT_PROVIDER_REPOSITORY, type IPaymentProviderRepository } from '@/core/interfaces/repositories';
+import {
+  PAYMENT_PROVIDER_REPOSITORY,
+  type IPaymentProviderRepository,
+} from '@/core/interfaces/repositories';
 import { type IUnitOfWork, UNIT_OF_WORK } from '@/application/interfaces';
 
 @CommandHandler(PaymentProviderRestoreCommand)
-export class PaymentProviderRestoreHandler implements ICommandHandler<PaymentProviderRestoreCommand, void> {
+export class PaymentProviderRestoreHandler implements ICommandHandler<
+  PaymentProviderRestoreCommand,
+  void
+> {
   constructor(
     @Inject(PAYMENT_PROVIDER_REPOSITORY)
     private readonly providerRepository: IPaymentProviderRepository,

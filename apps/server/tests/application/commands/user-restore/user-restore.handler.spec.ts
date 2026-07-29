@@ -8,7 +8,7 @@ describe('UserRestoreCommandHandler', () => {
 
   beforeEach(() => {
     mockUserRepository = {
-      findById: jest.fn(),
+      findByIdIncludingDeleted: jest.fn(),
       save: jest.fn(),
     };
     handler = new UserRestoreCommandHandler(mockUserRepository);
@@ -18,18 +18,18 @@ describe('UserRestoreCommandHandler', () => {
     const mockUser = {
       restore: jest.fn(),
     };
-    mockUserRepository.findById.mockResolvedValue(mockUser);
+    mockUserRepository.findByIdIncludingDeleted.mockResolvedValue(mockUser);
 
     const command = new UserRestoreCommand('user-123');
     await handler.execute(command);
 
-    expect(mockUserRepository.findById).toHaveBeenCalledWith('user-123');
+    expect(mockUserRepository.findByIdIncludingDeleted).toHaveBeenCalledWith('user-123');
     expect(mockUser.restore).toHaveBeenCalled();
     expect(mockUserRepository.save).toHaveBeenCalledWith(mockUser);
   });
 
   it('should throw NotFoundException if user not found', async () => {
-    mockUserRepository.findById.mockResolvedValue(null);
+    mockUserRepository.findByIdIncludingDeleted.mockResolvedValue(null);
 
     const command = new UserRestoreCommand('user-123');
     await expect(handler.execute(command)).rejects.toThrow(UserNotFoundException);

@@ -5,10 +5,7 @@ export function softDeletePlugin(schema: Schema) {
     const filter = this.getFilter();
     if (filter.delete_at === undefined && filter.isDeleted === undefined) {
       this.where({
-        $or: [
-          { delete_at: null },
-          { delete_at: { $exists: false } }
-        ]
+        $or: [{ delete_at: null }, { delete_at: { $exists: false } }],
       });
     }
   });
@@ -17,10 +14,7 @@ export function softDeletePlugin(schema: Schema) {
     const filter = this.getFilter();
     if (filter.delete_at === undefined && filter.isDeleted === undefined) {
       this.where({
-        $or: [
-          { delete_at: null },
-          { delete_at: { $exists: false } }
-        ]
+        $or: [{ delete_at: null }, { delete_at: { $exists: false } }],
       });
     }
   });
@@ -29,10 +23,7 @@ export function softDeletePlugin(schema: Schema) {
     const filter = this.getFilter();
     if (filter.delete_at === undefined && filter.isDeleted === undefined) {
       this.where({
-        $or: [
-          { delete_at: null },
-          { delete_at: { $exists: false } }
-        ]
+        $or: [{ delete_at: null }, { delete_at: { $exists: false } }],
       });
     }
   });

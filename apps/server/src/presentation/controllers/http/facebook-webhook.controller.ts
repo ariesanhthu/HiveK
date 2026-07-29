@@ -14,8 +14,14 @@ import {
 } from '@nestjs/common';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
 import { WebHook } from '@/presentation/decorators/webhook.decorator';
-import { MESSAGE_QUEUE_SERVICE, type IMessageQueueService } from '@/application/interfaces';
-import { SOCIAL_PAGE_REPOSITORY, type ISocialPageRepository } from '@/core/interfaces/repositories';
+import {
+  MESSAGE_QUEUE_SERVICE,
+  type IMessageQueueService,
+} from '@/application/interfaces';
+import {
+  SOCIAL_PAGE_REPOSITORY,
+  type ISocialPageRepository,
+} from '@/core/interfaces/repositories';
 import { ConfigService } from '@nestjs/config';
 import { FacebookIpGuard } from '@/presentation/middleware/guards/facebook-ip.guard';
 import * as crypto from 'crypto';
@@ -36,9 +42,15 @@ export class FacebookWebhookController {
     private readonly socialPageRepository: ISocialPageRepository,
     private readonly configService: ConfigService,
   ) {
-    this.appSecret = this.configService.get<string>('FACEBOOK_APP_SECRET') || '';
-    this.verifyToken = this.configService.get<string>('FACEBOOK_WEBHOOK_VERIFY_TOKEN') || 'default-verify-token';
-    this.checkSignature = this.configService.get<boolean>('FACEBOOK_WEBHOOK_SIGNATURE_VERIFICATION', false);
+    this.appSecret =
+      this.configService.get<string>('FACEBOOK_APP_SECRET') || '';
+    this.verifyToken =
+      this.configService.get<string>('FACEBOOK_WEBHOOK_VERIFY_TOKEN') ||
+      'default-verify-token';
+    this.checkSignature = this.configService.get<boolean>(
+      'FACEBOOK_WEBHOOK_SIGNATURE_VERIFICATION',
+      false,
+    );
   }
 
   @WebHook()
@@ -49,17 +61,24 @@ export class FacebookWebhookController {
     @Query('hub.verify_token') token: string,
     @Query('hub.challenge') challenge: string,
   ): Promise<string> {
-    this.logger.log(`Received Facebook webhook verification: mode=${mode}, token=${token}`);
+    this.logger.log(
+      `Received Facebook webhook verification: mode=${mode}, token=${token}`,
+    );
 
     if (mode === 'subscribe' && token) {
       if (token === this.verifyToken) {
-        this.logger.log('Facebook webhook verification successful (via global token).');
+        this.logger.log(
+          'Facebook webhook verification successful (via global token).',
+        );
         return challenge;
       }
 
-      const socialPage = await this.socialPageRepository.findByWebhookVerifyToken(token);
+      const socialPage =
+        await this.socialPageRepository.findByWebhookVerifyToken(token);
       if (socialPage && socialPage.isActive) {
-        this.logger.log(`Facebook webhook verification successful for page ${socialPage.pageName} (ID: ${socialPage.pageId}).`);
+        this.logger.log(
+          `Facebook webhook verification successful for page ${socialPage.pageName} (ID: ${socialPage.pageId}).`,
+        );
         return challenge;
       }
     }
@@ -97,7 +116,9 @@ export class FacebookWebhookController {
     const senderId = value?.from?.id;
 
     if (pageId && senderId && pageId === senderId) {
-      this.logger.debug(`Early loop guard check: dropping self-reply from pageId ${pageId}.`);
+      this.logger.debug(
+        `Early loop guard check: dropping self-reply from pageId ${pageId}.`,
+      );
       return 'SELF_REPLY_IGNORED';
     }
 
@@ -105,9 +126,13 @@ export class FacebookWebhookController {
     if (value && value.item === 'comment' && value.verb === 'add') {
       try {
         this.messageQueueService.emit('webhook.facebook.comment', body);
-        this.logger.log('Facebook comment event published to RabbitMQ successfully.');
+        this.logger.log(
+          'Facebook comment event published to RabbitMQ successfully.',
+        );
       } catch (error: any) {
-        this.logger.error(`Failed to publish comment webhook event to RMQ: ${error.message}`);
+        this.logger.error(
+          `Failed to publish comment webhook event to RMQ: ${error.message}`,
+        );
       }
     }
 
@@ -119,7 +144,10 @@ export class FacebookWebhookController {
       const signature = signatureHeader.replace('sha256=', '');
       const hmac = crypto.createHmac('sha256', this.appSecret);
       const digest = hmac.update(rawBody).digest('hex');
-      return crypto.timingSafeEqual(Buffer.from(signature, 'hex'), Buffer.from(digest, 'hex'));
+      return crypto.timingSafeEqual(
+        Buffer.from(signature, 'hex'),
+        Buffer.from(digest, 'hex'),
+      );
     } catch {
       return false;
     }

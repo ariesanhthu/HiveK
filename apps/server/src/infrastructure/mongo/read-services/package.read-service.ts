@@ -5,8 +5,15 @@ import { PackageDocument, PackageModel, GrantSchema } from '../schemas';
 import { IPackageReadService } from '@/application/interfaces';
 import { PackageFilterDto } from '@/application/queries';
 import { Nullable } from '@/core/types';
-import { PackageResponseDto, PackageVariantDto, GrantDto } from '@/application/dtos';
-import { PaginatedResponseDto, SortOrder } from '@/application/dtos/pagination.dto';
+import {
+  PackageResponseDto,
+  PackageVariantDto,
+  GrantDto,
+} from '@/application/dtos';
+import {
+  PaginatedResponseDto,
+  SortOrder,
+} from '@/application/dtos/pagination.dto';
 
 @Injectable()
 export class MongoPackageReadService implements IPackageReadService {
@@ -15,8 +22,19 @@ export class MongoPackageReadService implements IPackageReadService {
     private readonly model: Model<PackageDocument>,
   ) {}
 
-  async findAll(filters: PackageFilterDto = {}): Promise<PaginatedResponseDto<PackageResponseDto>> {
-    const { cursor, limit = 10, sort = SortOrder.DESC, code, status, type, scope, enterpriseId } = filters;
+  async findAll(
+    filters: PackageFilterDto = {},
+  ): Promise<PaginatedResponseDto<PackageResponseDto>> {
+    const {
+      cursor,
+      limit = 10,
+      sort = SortOrder.DESC,
+      code,
+      status,
+      type,
+      scope,
+      enterpriseId,
+    } = filters;
     const query: QueryFilter<PackageDocument> = {};
 
     if (code) query.code = code;
@@ -45,27 +63,49 @@ export class MongoPackageReadService implements IPackageReadService {
   }
 
   async findByCode(code: string): Promise<PackageResponseDto[]> {
-    const docs = await this.model.find({ code, status: 'active' } as QueryFilter<PackageDocument>).lean().exec();
+    const docs = await this.model
+      .find({ code, status: 'active' } as QueryFilter<PackageDocument>)
+      .lean()
+      .exec();
     return docs.map((doc) => this.mapToDto(doc));
   }
 
   async findByType(type: string): Promise<PackageResponseDto[]> {
-    const docs = await this.model.find({ type, status: 'active' } as QueryFilter<PackageDocument>).lean().exec();
+    const docs = await this.model
+      .find({ type, status: 'active' } as QueryFilter<PackageDocument>)
+      .lean()
+      .exec();
     return docs.map((doc) => this.mapToDto(doc));
   }
 
   async findPublicPackages(): Promise<PackageResponseDto[]> {
-    const docs = await this.model.find({ scope: 'public', status: 'active' } as QueryFilter<PackageDocument>).lean().exec();
+    const docs = await this.model
+      .find({
+        scope: 'public',
+        status: 'active',
+      } as QueryFilter<PackageDocument>)
+      .lean()
+      .exec();
     return docs.map((doc) => this.mapToDto(doc));
   }
 
-  async findByEnterpriseId(enterpriseId: string): Promise<PackageResponseDto[]> {
-    const docs = await this.model.find({ enterprise_id: enterpriseId, status: 'active' } as QueryFilter<PackageDocument>).lean().exec();
+  async findByEnterpriseId(
+    enterpriseId: string,
+  ): Promise<PackageResponseDto[]> {
+    const docs = await this.model
+      .find({
+        enterprise_id: enterpriseId,
+        status: 'active',
+      } as QueryFilter<PackageDocument>)
+      .lean()
+      .exec();
     return docs.map((doc) => this.mapToDto(doc));
   }
 
   private mapToDto(doc: FlattenMaps<PackageDocument>): PackageResponseDto {
-    const mapGrantsList = (grantsList: GrantSchema[] | null | undefined): GrantDto[] => {
+    const mapGrantsList = (
+      grantsList: GrantSchema[] | null | undefined,
+    ): GrantDto[] => {
       return (grantsList || []).map((g) => ({
         type: g.type,
         key: g.key,
@@ -77,23 +117,25 @@ export class MongoPackageReadService implements IPackageReadService {
               creditsPerUnit: g.credit_fallback.credits_per_unit,
             }
           : g.credit_fallback === null
-          ? null
-          : undefined,
+            ? null
+            : undefined,
       }));
     };
 
-    const variants: PackageVariantDto[] = (doc.variants || []).map((v: FlattenMaps<PackageDocument>['variants'][number]) => {
-      return {
-        id: v._id ? v._id.toString() : '',
-        title: v.title,
-        durationMonths: v.duration_months,
-        price: v.price,
-        priceAfterDiscount: v.price_after_discount,
-        tax: v.tax,
-        currency: v.currency,
-        extraGrants: mapGrantsList(v.extra_grants),
-      };
-    });
+    const variants: PackageVariantDto[] = (doc.variants || []).map(
+      (v: FlattenMaps<PackageDocument>['variants'][number]) => {
+        return {
+          id: v._id ? v._id.toString() : '',
+          title: v.title,
+          durationMonths: v.duration_months,
+          price: v.price,
+          priceAfterDiscount: v.price_after_discount,
+          tax: v.tax,
+          currency: v.currency,
+          extraGrants: mapGrantsList(v.extra_grants),
+        };
+      },
+    );
 
     return {
       id: doc._id.toString(),
@@ -109,7 +151,9 @@ export class MongoPackageReadService implements IPackageReadService {
       variants,
       createdAt: (doc.created_at || new Date()).toISOString(),
       updatedAt: (doc.updated_at || new Date()).toISOString(),
-      activatedAt: doc.activated_at ? doc.activated_at.toISOString() : undefined,
+      activatedAt: doc.activated_at
+        ? doc.activated_at.toISOString()
+        : undefined,
     };
   }
 }

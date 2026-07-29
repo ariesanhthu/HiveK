@@ -4,85 +4,104 @@ import { ECampaignStatus } from '@/core/enums/campaign-status.enum';
 import { UserDto } from './user.dto';
 import { EnterpriseDto } from './enterprise.dto';
 
-export const PlatformTargetItemDtoSchema = z.object({
-  platformId: z.string(),
-  minFollowers: z.number().optional(),
-  maxFollowers: z.number().optional(),
-  note: z.string().optional(),
+export const PlatformTargetItemDtoSchema = z
+  .object({
+    platformId: z.string(),
+    minFollowers: z.number().optional(),
+    maxFollowers: z.number().optional(),
+    note: z.string().optional(),
     extras: z.record(z.string(), z.unknown()).optional(),
-}).strict();
+  })
+  .strict();
 
-export const RawContentItemDtoSchema = z.object({
-  fileId: z.string(),
-  rawContent: z.string().optional(),
-}).strict();
+export const RawContentItemDtoSchema = z
+  .object({
+    fileId: z.string(),
+    rawContent: z.string().optional(),
+  })
+  .strict();
 
-export const CampaignParticipantSubDtoSchema = z.object({
-  id: z.string(),
-  kolProfileId: z.string(),
-  status: z.string(),
-  joinedAt: z.iso.datetime().nullable(),
-}).strict();
+export const CampaignParticipantSubDtoSchema = z
+  .object({
+    id: z.string(),
+    kolProfileId: z.string(),
+    status: z.string(),
+    joinedAt: z.iso.datetime().nullable(),
+  })
+  .strict();
 
-export const CampaignKOLOutputDtoSchema = z.object({
-  id: z.string(),
-  campaignParticipantId: z.string(),
-  platformId: z.string(),
-  uniqueId: z.string().nullable().optional(),
-  outputType: z.string(),
-  title: z.string(),
-  isScheduleForPost: z.boolean(),
-  scheduledAt: z.iso.datetime().nullable(),
-  fileId: z.string().nullable(),
-  status: z.string(),
-  url: z.string().nullable(),
-  postedAt: z.iso.datetime().nullable(),
-  isTrackingActive: z.boolean(),
-}).strict();
+export const CampaignKOLOutputDtoSchema = z
+  .object({
+    id: z.string(),
+    campaignParticipantId: z.string(),
+    platformId: z.string(),
+    uniqueId: z.string().nullable().optional(),
+    outputType: z.string(),
+    title: z.string(),
+    isScheduleForPost: z.boolean(),
+    scheduledAt: z.iso.datetime().nullable(),
+    fileId: z.string().nullable(),
+    status: z.string(),
+    url: z.string().nullable(),
+    postedAt: z.iso.datetime().nullable(),
+    isTrackingActive: z.boolean(),
+  })
+  .strict();
 
-export const CampaignEnterpriseOutputDtoSchema = z.object({
-  id: z.string(),
-  platformId: z.string(),
-  uniqueId: z.string().nullable().optional(),
-  outputType: z.string(),
-  title: z.string(),
-  isScheduleForPost: z.boolean(),
-  scheduledAt: z.iso.datetime().nullable(),
-  fileId: z.string().nullable(),
-  status: z.string(),
-  url: z.string().nullable(),
-  postedAt: z.iso.datetime().nullable(),
-  isTrackingActive: z.boolean(),
-}).strict();
+export const CampaignEnterpriseOutputDtoSchema = z
+  .object({
+    id: z.string(),
+    platformId: z.string(),
+    uniqueId: z.string().nullable().optional(),
+    outputType: z.string(),
+    title: z.string(),
+    isScheduleForPost: z.boolean(),
+    scheduledAt: z.iso.datetime().nullable(),
+    fileId: z.string().nullable(),
+    status: z.string(),
+    url: z.string().nullable(),
+    postedAt: z.iso.datetime().nullable(),
+    isTrackingActive: z.boolean(),
+  })
+  .strict();
 
 // @code-comment(SchedulePostDtoSchema): Kept for future reuse.
 // export const SchedulePostDtoSchema = z.object({ ... }).strict();
 
-export const ScheduleDayDtoSchema = z.object({
-  date: z.iso.datetime(),
-  label: z.string().optional(),
-  posts: z.array(z.string()),  // ScheduledPost IDs
-}).strict();
+export const ScheduleDayDtoSchema = z
+  .object({
+    date: z.iso.datetime(),
+    label: z.string().optional(),
+    posts: z.array(z.string()), // ScheduledPost IDs
+  })
+  .strict();
 
-export const CampaignScheduleDtoSchema = z.object({
-  timeline: z.array(ScheduleDayDtoSchema),
-}).strict();
+export const CampaignScheduleDtoSchema = z
+  .object({
+    timeline: z.array(ScheduleDayDtoSchema),
+  })
+  .strict();
 
-export const CampaignDtoSchema = z.object({
-  id: z.string(),
-  ownerId: z.string(),
-  enterpriseId: z.string().nullable(),
-  budget: z.number(),
-  financialTarget: z.record(z.string(), z.unknown()),
-  description: z.string(),
-  platformTarget: z.array(PlatformTargetItemDtoSchema),
-  status: z.enum(ECampaignStatus),
-  collaboratorIds: z.array(z.string()),
-  rawContents: z.array(RawContentItemDtoSchema),
-  extras: z.record(z.string(), z.unknown()).optional(),
-  schedule: CampaignScheduleDtoSchema.optional(),
-  participants: z.array(CampaignParticipantSubDtoSchema).optional().default([]),
-}).strict();
+export const CampaignDtoSchema = z
+  .object({
+    id: z.string(),
+    ownerId: z.string(),
+    enterpriseId: z.string().nullable(),
+    budget: z.number(),
+    financialTarget: z.record(z.string(), z.unknown()),
+    description: z.string(),
+    platformTarget: z.array(PlatformTargetItemDtoSchema),
+    status: z.enum(ECampaignStatus),
+    collaboratorIds: z.array(z.string()),
+    rawContents: z.array(RawContentItemDtoSchema),
+    extras: z.record(z.string(), z.unknown()).optional(),
+    schedule: CampaignScheduleDtoSchema.optional(),
+    participants: z
+      .array(CampaignParticipantSubDtoSchema)
+      .optional()
+      .default([]),
+  })
+  .strict();
 
 export class CampaignDto extends createZodDto(CampaignDtoSchema) {}
 

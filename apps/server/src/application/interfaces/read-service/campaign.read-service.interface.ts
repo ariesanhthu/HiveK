@@ -4,4 +4,7 @@ import { CampaignFilterDto } from '@/application/queries';
 
 export const CAMPAIGN_READ_SERVICE = Symbol('CAMPAIGN_READ_SERVICE');
 
-export interface ICampaignReadService extends IBaseReadService<CampaignDetailDto, CampaignFilterDto> {}
+export interface ICampaignReadService extends IBaseReadService<
+  CampaignDetailDto,
+  CampaignFilterDto
+> {}

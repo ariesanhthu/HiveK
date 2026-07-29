@@ -1,15 +1,21 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { Inject } from '@nestjs/common';
 import { UserNotFoundException } from '@/core/exceptions';
-import { USER_REPOSITORY, type IUserRepository } from '@/core/interfaces/repositories';
+import {
+  USER_REPOSITORY,
+  type IUserRepository,
+} from '@/core/interfaces/repositories';
 import { UserSoftDeleteCommand } from './user-soft-delete.command';
 
 @CommandHandler(UserSoftDeleteCommand)
-export class UserSoftDeleteCommandHandler implements ICommandHandler<UserSoftDeleteCommand, void> {
+export class UserSoftDeleteCommandHandler implements ICommandHandler<
+  UserSoftDeleteCommand,
+  void
+> {
   constructor(
     @Inject(USER_REPOSITORY)
     private readonly userRepository: IUserRepository,
-  ) { }
+  ) {}
 
   async execute(command: UserSoftDeleteCommand): Promise<void> {
     const { id, deletedBy } = command;

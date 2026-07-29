@@ -5,12 +5,18 @@ import {
   EnterpriseForbiddenException,
   UserNotFoundException,
 } from '@/core/exceptions';
-import { ENTERPRISE_REPOSITORY, type IEnterpriseRepository } from '@/core/interfaces/repositories';
+import {
+  ENTERPRISE_REPOSITORY,
+  type IEnterpriseRepository,
+} from '@/core/interfaces/repositories';
 import { EnterpriseChangeMemberModeCommand } from './enterprise-change-member-mode.command';
 import { type IUnitOfWork, UNIT_OF_WORK } from '@/application/interfaces';
 
 @CommandHandler(EnterpriseChangeMemberModeCommand)
-export class EnterpriseChangeMemberModeCommandHandler implements ICommandHandler<EnterpriseChangeMemberModeCommand, void> {
+export class EnterpriseChangeMemberModeCommandHandler implements ICommandHandler<
+  EnterpriseChangeMemberModeCommand,
+  void
+> {
   constructor(
     @Inject(ENTERPRISE_REPOSITORY)
     private readonly enterpriseRepository: IEnterpriseRepository,
@@ -29,15 +35,19 @@ export class EnterpriseChangeMemberModeCommandHandler implements ICommandHandler
       }
 
       // Check if target user is in the members roster
-      const member = enterprise.members.find(m => m.userId === targetUserId);
+      const member = enterprise.members.find((m) => m.userId === targetUserId);
       if (!member) {
-        throw new UserNotFoundException(`Member with ID ${targetUserId} not found in this enterprise`);
+        throw new UserNotFoundException(
+          `Member with ID ${targetUserId} not found in this enterprise`,
+        );
       }
 
       // Hierarchical authorization guard (Option A): Only Owner can promote/demote Sub-Owners.
       const isOwner = enterprise.isOwner(requestedBy);
       if (!isOwner) {
-        throw new EnterpriseForbiddenException('Only the enterprise owner can promote or demote members');
+        throw new EnterpriseForbiddenException(
+          'Only the enterprise owner can promote or demote members',
+        );
       }
 
       enterprise.changeMemberMode(targetUserId, newMode);

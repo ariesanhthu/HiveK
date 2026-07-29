@@ -8,7 +8,7 @@ export interface ISubscriptionRepository extends IBaseRepository<SubscriptionRoo
   updateWithVersion(
     id: string,
     expectedVersion: number,
-    entity: SubscriptionRoot
+    entity: SubscriptionRoot,
   ): Promise<void>;
 }
 

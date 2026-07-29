@@ -3,8 +3,15 @@ import { QueryBus } from '@nestjs/cqrs';
 import type { GraphQLResolveInfo } from 'graphql';
 import graphqlFields from 'graphql-fields';
 import { KolProfileType } from '@/infrastructure/graphql/types/kol-profile.type';
-import { KolProfileFilterInput, KolProfileResponse } from '@/infrastructure/graphql/types/pagination.type';
-import { KolProfileGetByIdQuery, KolProfileGetListQuery, KolProfileFilterDto } from '@/application/queries';
+import {
+  KolProfileFilterInput,
+  KolProfileResponse,
+} from '@/infrastructure/graphql/types/pagination.type';
+import {
+  KolProfileGetByIdQuery,
+  KolProfileGetListQuery,
+  KolProfileFilterDto,
+} from '@/application/queries';
 import { ProjectionDto } from '@/application/dtos/projection.dto';
 import { Public } from '@presentation/decorators/public.decorator';
 
@@ -29,7 +36,8 @@ export class KolProfileResolver {
   @Public()
   @Query(() => KolProfileResponse, { name: 'kolProfiles' })
   async getKolProfiles(
-    @Args('filters', { type: () => KolProfileFilterInput, nullable: true }) filters: KolProfileFilterInput,
+    @Args('filters', { type: () => KolProfileFilterInput, nullable: true })
+    filters: KolProfileFilterInput,
     @Info() info: GraphQLResolveInfo,
   ) {
     const fieldsMap = graphqlFields(info);
@@ -38,6 +46,8 @@ export class KolProfileResolver {
     const projectionDto = new ProjectionDto();
     projectionDto.fields = dataFieldsMap;
 
-    return this.queryBus.execute(new KolProfileGetListQuery(filters, projectionDto));
+    return this.queryBus.execute(
+      new KolProfileGetListQuery(filters, projectionDto),
+    );
   }
 }

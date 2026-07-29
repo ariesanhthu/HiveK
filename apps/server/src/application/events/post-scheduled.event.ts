@@ -1,4 +1,8 @@
-import { IntegrationEvent, EventMetadata, TransportMetadata } from '@/core/common';
+import {
+  IntegrationEvent,
+  EventMetadata,
+  TransportMetadata,
+} from '@/core/common';
 
 export interface PostScheduledIntegrationPayload {
   postId: string;

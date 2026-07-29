@@ -1,7 +1,10 @@
 import { Resolver, Query, Args } from '@nestjs/graphql';
 import { QueryBus } from '@nestjs/cqrs';
 import { PublicReviewType } from '@/infrastructure/graphql/types/review.type';
-import { PublicReviewFilterInput, PublicReviewResponse } from '@/infrastructure/graphql/types/pagination.type';
+import {
+  PublicReviewFilterInput,
+  PublicReviewResponse,
+} from '@/infrastructure/graphql/types/pagination.type';
 import { ReviewGetByIdQuery, ReviewGetListQuery } from '@/application/queries';
 import { Public } from '@presentation/decorators/public.decorator';
 
@@ -18,7 +21,8 @@ export class PublicReviewResolver {
   @Public()
   @Query(() => PublicReviewResponse, { name: 'reviews' })
   async getReviews(
-    @Args('filters', { type: () => PublicReviewFilterInput, nullable: true }) filters?: PublicReviewFilterInput,
+    @Args('filters', { type: () => PublicReviewFilterInput, nullable: true })
+    filters?: PublicReviewFilterInput,
   ) {
     return this.queryBus.execute(new ReviewGetListQuery(filters as any));
   }

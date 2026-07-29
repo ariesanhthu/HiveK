@@ -9,7 +9,10 @@ import { join } from 'path';
     GraphQLModule.forRoot<ApolloDriverConfig>({
       path: '/hivek/graphql',
       driver: ApolloDriver,
-      autoSchemaFile: join(process.cwd(), 'src/infrastructure/graphql/schema.gql'),
+      autoSchemaFile: join(
+        process.cwd(),
+        'src/infrastructure/graphql/schema.gql',
+      ),
       playground: true,
       context: ({ req, res }) => ({ req, res }),
     }),

@@ -23,28 +23,53 @@ export class AutoReplyRuleRoot extends BaseAggregateRoot<AutoReplyRuleProps> {
     super(props, id);
   }
 
-  public static create(props: AutoReplyRuleCreateProps, id?: string): AutoReplyRuleRoot {
+  public static create(
+    props: AutoReplyRuleCreateProps,
+    id?: string,
+  ): AutoReplyRuleRoot {
     const now = new Date();
-    return new AutoReplyRuleRoot({
-      ...props,
-      isEnabled: props.isEnabled !== undefined ? props.isEnabled : true,
-      createdAt: now,
-      updatedAt: now,
-    }, id);
+    return new AutoReplyRuleRoot(
+      {
+        ...props,
+        isEnabled: props.isEnabled !== undefined ? props.isEnabled : true,
+        createdAt: now,
+        updatedAt: now,
+      },
+      id,
+    );
   }
 
-  public static instantiate(id: string, props: AutoReplyRuleProps): AutoReplyRuleRoot {
+  public static instantiate(
+    id: string,
+    props: AutoReplyRuleProps,
+  ): AutoReplyRuleRoot {
     return new AutoReplyRuleRoot(props, id);
   }
 
-  get enterpriseId(): string { return this.props.enterpriseId; }
-  get socialPageId(): string { return this.props.socialPageId; }
-  get name(): string { return this.props.name; }
-  get isEnabled(): boolean { return this.props.isEnabled; }
-  get keywords(): string[] { return [...this.props.keywords]; }
-  get replyContent(): string { return this.props.replyContent; }
-  get createdAt(): Date { return this.props.createdAt; }
-  get updatedAt(): Date { return this.props.updatedAt; }
+  get enterpriseId(): string {
+    return this.props.enterpriseId;
+  }
+  get socialPageId(): string {
+    return this.props.socialPageId;
+  }
+  get name(): string {
+    return this.props.name;
+  }
+  get isEnabled(): boolean {
+    return this.props.isEnabled;
+  }
+  get keywords(): string[] {
+    return [...this.props.keywords];
+  }
+  get replyContent(): string {
+    return this.props.replyContent;
+  }
+  get createdAt(): Date {
+    return this.props.createdAt;
+  }
+  get updatedAt(): Date {
+    return this.props.updatedAt;
+  }
 
   public enable(): void {
     this.props.isEnabled = true;
@@ -56,7 +81,11 @@ export class AutoReplyRuleRoot extends BaseAggregateRoot<AutoReplyRuleProps> {
     this.props.updatedAt = new Date();
   }
 
-  public updateRule(name?: string, keywords?: string[], replyContent?: string): void {
+  public updateRule(
+    name?: string,
+    keywords?: string[],
+    replyContent?: string,
+  ): void {
     if (name !== undefined) this.props.name = name;
     if (keywords !== undefined) this.props.keywords = [...keywords];
     if (replyContent !== undefined) this.props.replyContent = replyContent;

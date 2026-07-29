@@ -135,15 +135,13 @@ export class ThreadsGraphApiClient {
   ): Promise<UserProfileResponse> {
     try {
       const response = await firstValueFrom(
-        this.httpService.get<UserProfileResponse>(
-          `${this.baseUrl}/${userId}`,
-          {
-            params: {
-              fields: 'id,username,name,threads_profile_picture_url,threads_biography',
-              access_token: accessToken,
-            },
+        this.httpService.get<UserProfileResponse>(`${this.baseUrl}/${userId}`, {
+          params: {
+            fields:
+              'id,username,name,threads_profile_picture_url,threads_biography',
+            access_token: accessToken,
           },
-        ),
+        }),
       );
       return response.data;
     } catch (error) {

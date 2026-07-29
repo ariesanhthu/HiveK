@@ -4,7 +4,7 @@ import { AutoReplyRuleRoot } from '@/core/aggregate-roots';
 export class AutoReplyRuleMapper {
   static toDto(root: AutoReplyRuleRoot): AutoReplyRuleDto {
     return {
-      id: root.id!,
+      id: root.id,
       enterpriseId: root.enterpriseId,
       socialPageId: root.socialPageId,
       name: root.name,

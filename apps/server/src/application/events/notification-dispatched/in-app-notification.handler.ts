@@ -1,6 +1,11 @@
 import { EventsHandler, IEventHandler } from '@nestjs/cqrs';
 import { Inject } from '@nestjs/common';
-import { NOTIFICATION_REPOSITORY, USER_NOTIFICATION_REPOSITORY, type INotificationRepository, type IUserNotificationRepository } from '@/core/interfaces/repositories';
+import {
+  NOTIFICATION_REPOSITORY,
+  USER_NOTIFICATION_REPOSITORY,
+  type INotificationRepository,
+  type IUserNotificationRepository,
+} from '@/core/interfaces/repositories';
 import { NotificationDispatchedEvent } from '@/application/events/notification-dispatched/notification-dispatched.event';
 import { NotificationRoot, UserNotificationRoot } from '@/core/aggregate-roots';
 import { NotificationChannel } from '@/core/enums';
@@ -15,7 +20,7 @@ export class InAppNotificationHandler implements IEventHandler<NotificationDispa
     private readonly userNotificationRepository: IUserNotificationRepository,
     @Inject(UNIT_OF_WORK)
     private readonly uow: IUnitOfWork,
-  ) { }
+  ) {}
 
   async handle(event: NotificationDispatchedEvent): Promise<void> {
     if (!event.channels.includes(NotificationChannel.IN_APP)) {
@@ -39,9 +44,9 @@ export class InAppNotificationHandler implements IEventHandler<NotificationDispa
       // 2. Create user-specific receipt for each recipient
       const userNotifications = recipientIds.map((recipientId) =>
         UserNotificationRoot.create({
-          notificationId: notification.id!,
+          notificationId: notification.id,
           recipientId,
-        })
+        }),
       );
 
       await this.userNotificationRepository.saveMany(userNotifications);

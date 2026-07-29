@@ -7,13 +7,13 @@ import { SubscriptionUpdateCommand } from '@/application/commands/subscription-u
 export class PaymentCompletedEventHandler implements IEventHandler<PaymentCompletedEvent> {
   private readonly logger = new Logger(PaymentCompletedEventHandler.name);
 
-  constructor(
-    private readonly commandBus: CommandBus,
-  ) {}
+  constructor(private readonly commandBus: CommandBus) {}
 
   async handle(event: PaymentCompletedEvent) {
     const { userId, billId } = event.payload;
-    this.logger.log(`Handling PaymentCompletedEvent for user: ${userId}, bill: ${billId}`);
+    this.logger.log(
+      `Handling PaymentCompletedEvent for user: ${userId}, bill: ${billId}`,
+    );
 
     // Defer to next tick to avoid nested Unit of Work.
     // The PaymentCaptureHandler runs within a UoW transaction, and
@@ -26,12 +26,14 @@ export class PaymentCompletedEventHandler implements IEventHandler<PaymentComple
           new SubscriptionUpdateCommand({
             userId,
             billId,
-          })
+          }),
         );
-        this.logger.log(`Successfully dispatched SubscriptionUpdateCommand for bill: ${billId}`);
+        this.logger.log(
+          `Successfully dispatched SubscriptionUpdateCommand for bill: ${billId}`,
+        );
       } catch (error) {
         this.logger.error(
-          `Failed to update subscription after payment completed for bill ${billId}: ${error instanceof Error ? error.message : String(error)}`
+          `Failed to update subscription after payment completed for bill ${billId}: ${error instanceof Error ? error.message : String(error)}`,
         );
       }
     });

@@ -1,4 +1,8 @@
-import { IntegrationEvent, EventMetadata, TransportMetadata } from '@/core/common';
+import {
+  IntegrationEvent,
+  EventMetadata,
+  TransportMetadata,
+} from '@/core/common';
 
 export interface RequestAuthUpdateSubscriptionPayload {
   id: string;
@@ -14,7 +18,7 @@ export class RequestAuthUpdateSubscriptionEvent extends IntegrationEvent<Request
   constructor(
     payload: RequestAuthUpdateSubscriptionPayload,
     metadata?: EventMetadata,
-    transport?: TransportMetadata
+    transport?: TransportMetadata,
   ) {
     super(payload, metadata, transport);
   }

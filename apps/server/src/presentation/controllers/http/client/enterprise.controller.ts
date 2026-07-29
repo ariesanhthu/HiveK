@@ -1,6 +1,24 @@
-import { Controller, Get, Post, Patch, Param, Body, HttpCode, HttpStatus, UseGuards, Delete, Query } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Patch,
+  Param,
+  Body,
+  HttpCode,
+  HttpStatus,
+  UseGuards,
+  Delete,
+  Query,
+} from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
-import { EnterpriseGetByIdQuery, EnterpriseGetInvitationsQuery, EnterpriseGetMyListQuery, EnterpriseGetMyInvitationsQuery, EnterpriseGetMyInvitationsInputDto } from '@/application/queries';
+import {
+  EnterpriseGetByIdQuery,
+  EnterpriseGetInvitationsQuery,
+  EnterpriseGetMyListQuery,
+  EnterpriseGetMyInvitationsQuery,
+  EnterpriseGetMyInvitationsInputDto,
+} from '@/application/queries';
 
 import {
   EnterpriseCreateCommand,
@@ -16,13 +34,31 @@ import {
   EnterpriseChangeMemberModeCommand,
   EnterpriseChangeMemberModeInputDto,
 } from '@/application/commands';
-import { EnterpriseDto, EnterpriseDetailDto, EnterpriseInvitationDto } from '@/application/dtos';
+import {
+  EnterpriseDto,
+  EnterpriseDetailDto,
+  EnterpriseInvitationDto,
+} from '@/application/dtos';
 import { EnterpriseFilterDto } from '@/application/queries/enterprise-get-list/enterprise-get-list.dto';
 import { PaginatedResponseDto } from '@/application/dtos/pagination.dto';
-import { ApiTags, ApiOperation, ApiBearerAuth, ApiSecurity } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiBearerAuth,
+  ApiSecurity,
+} from '@nestjs/swagger';
 import { buildVersionedRoute } from '@presentation/utils';
-import { JwtAuthGuard, RolesGuard, UserVerifiedGuard } from '@/presentation/middleware/guards';
-import { CurrentUser, Roles, ApiOkResponseEnvelope, ApiPaginatedResponseEnvelope } from '@/presentation/decorators';
+import {
+  JwtAuthGuard,
+  RolesGuard,
+  UserVerifiedGuard,
+} from '@/presentation/middleware/guards';
+import {
+  CurrentUser,
+  Roles,
+  ApiOkResponseEnvelope,
+  ApiPaginatedResponseEnvelope,
+} from '@/presentation/decorators';
 import { ERoleType } from '@/core/enums/role-type.enum';
 
 @ApiTags('CLIENT-enterprises')
@@ -35,7 +71,7 @@ export class EnterpriseClientController {
   constructor(
     private readonly commandBus: CommandBus,
     private readonly queryBus: QueryBus,
-  ) { }
+  ) {}
 
   @Post()
   @ApiOperation({ summary: 'Create new enterprise profile' })
@@ -55,7 +91,9 @@ export class EnterpriseClientController {
     @CurrentUser('sub') userId: string,
     @Body() input: EnterpriseUpdateInputDto,
   ): Promise<EnterpriseDto> {
-    return this.commandBus.execute(new EnterpriseUpdateCommand(id, userId, input));
+    return this.commandBus.execute(
+      new EnterpriseUpdateCommand(id, userId, input),
+    );
   }
 
   @Get('me')
@@ -75,16 +113,19 @@ export class EnterpriseClientController {
     @CurrentUser('email') email: string,
     @Query() filters: EnterpriseGetMyInvitationsInputDto,
   ): Promise<PaginatedResponseDto<EnterpriseInvitationDto>> {
-    return this.queryBus.execute(new EnterpriseGetMyInvitationsQuery(email, filters));
+    return this.queryBus.execute(
+      new EnterpriseGetMyInvitationsQuery(email, filters),
+    );
   }
 
   @Get(':id')
   @ApiOperation({ summary: 'Get enterprise by ID' })
   @ApiOkResponseEnvelope(EnterpriseDetailDto)
   async getById(@Param('id') id: string): Promise<EnterpriseDetailDto> {
-    const enterprise = await this.queryBus.execute<EnterpriseGetByIdQuery, EnterpriseDetailDto>(
-      new EnterpriseGetByIdQuery(id),
-    );
+    const enterprise = await this.queryBus.execute<
+      EnterpriseGetByIdQuery,
+      EnterpriseDetailDto
+    >(new EnterpriseGetByIdQuery(id));
     return enterprise;
   }
 
@@ -96,7 +137,9 @@ export class EnterpriseClientController {
     @CurrentUser('sub') requestedBy: string,
     @Body() input: EnterpriseInviteMemberInputDto,
   ): Promise<EnterpriseInvitationDto> {
-    return this.commandBus.execute(new EnterpriseInviteMemberCommand(enterpriseId, requestedBy, input));
+    return this.commandBus.execute(
+      new EnterpriseInviteMemberCommand(enterpriseId, requestedBy, input),
+    );
   }
 
   @Post(':id/invitations/:invitationId/accept')
@@ -107,7 +150,9 @@ export class EnterpriseClientController {
     @Param('invitationId') invitationId: string,
     @CurrentUser('sub') userId: string,
   ): Promise<{ success: boolean }> {
-    await this.commandBus.execute(new EnterpriseAcceptInvitationCommand(enterpriseId, invitationId, userId));
+    await this.commandBus.execute(
+      new EnterpriseAcceptInvitationCommand(enterpriseId, invitationId, userId),
+    );
     return { success: true };
   }
 
@@ -120,31 +165,44 @@ export class EnterpriseClientController {
     @Param('invitationId') invitationId: string,
     @CurrentUser('sub') requestedBy: string,
   ): Promise<void> {
-    return this.commandBus.execute(new EnterpriseRevokeInvitationCommand(enterpriseId, invitationId, requestedBy));
+    return this.commandBus.execute(
+      new EnterpriseRevokeInvitationCommand(
+        enterpriseId,
+        invitationId,
+        requestedBy,
+      ),
+    );
   }
 
   @Delete(':id/members')
   @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
-  @ApiOperation({ summary: 'Revoke a member from the enterprise (post-acceptance)' })
+  @ApiOperation({
+    summary: 'Revoke a member from the enterprise (post-acceptance)',
+  })
   async removeUser(
     @CurrentUser('sub') requestedBy: string,
     @Param('id') enterpriseId: string,
     @Body() dto: EnterpriseRevokeMemberInputDto,
   ): Promise<void> {
-    return this.commandBus.execute(new EnterpriseRevokeMemberCommand(enterpriseId, requestedBy, dto));
+    return this.commandBus.execute(
+      new EnterpriseRevokeMemberCommand(enterpriseId, requestedBy, dto),
+    );
   }
 
   @Patch(':id/members/mode')
   @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
-  @ApiOperation({ summary: 'Change enterprise member role mode (promote/demote)' })
+  @ApiOperation({
+    summary: 'Change enterprise member role mode (promote/demote)',
+  })
   async changeMemberMode(
     @Param('id') enterpriseId: string,
     @CurrentUser('sub') requestedBy: string,
     @Body() dto: EnterpriseChangeMemberModeInputDto,
   ): Promise<void> {
-    return this.commandBus.execute(new EnterpriseChangeMemberModeCommand(enterpriseId, requestedBy, dto));
+    return this.commandBus.execute(
+      new EnterpriseChangeMemberModeCommand(enterpriseId, requestedBy, dto),
+    );
   }
 }
-

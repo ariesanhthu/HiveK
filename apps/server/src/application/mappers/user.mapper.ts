@@ -7,7 +7,7 @@ import { InvalidUserTypeException } from '@/core/exceptions';
 export class UserMapper {
   static toDto(root: UserRoot<any>): UserDto {
     const baseFields = {
-      id: root.id!,
+      id: root.id,
       email: root.email,
       phone: root.phone.value,
       fullName: root.fullName,
@@ -31,7 +31,7 @@ export class UserMapper {
         return {
           ...baseFields,
           type: ERoleType.ADMIN,
-          };
+        };
       case ERoleType.KOL:
         return {
           ...baseFields,

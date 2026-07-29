@@ -1,5 +1,8 @@
 import { Nullable } from '@/core/types';
-import { CursorPaginationRequestDto, PaginatedResponseDto } from '@/application/dtos/pagination.dto';
+import {
+  CursorPaginationRequestDto,
+  PaginatedResponseDto,
+} from '@/application/dtos/pagination.dto';
 import { ProjectionDto } from '@/application/dtos/projection.dto';
 
 /**
@@ -8,7 +11,10 @@ import { ProjectionDto } from '@/application/dtos/projection.dto';
  * It returns Data Transfer Objects (DTOs) directly, completely bypassing the Domain layer
  * (Entities and Aggregate Roots) to maximize read performance.
  */
-export interface IBaseReadService<DTO, Filters extends CursorPaginationRequestDto = CursorPaginationRequestDto> {
+export interface IBaseReadService<
+  DTO,
+  Filters extends CursorPaginationRequestDto = CursorPaginationRequestDto,
+> {
   /**
    * Fetches a single read-optimized DTO by id.
    */
@@ -17,5 +23,8 @@ export interface IBaseReadService<DTO, Filters extends CursorPaginationRequestDt
   /**
    * Fetches a paginated response of read-optimized DTOs based on filters and cursor.
    */
-  findAll(filters?: Filters, projection?: ProjectionDto): Promise<PaginatedResponseDto<DTO>>;
+  findAll(
+    filters?: Filters,
+    projection?: ProjectionDto,
+  ): Promise<PaginatedResponseDto<DTO>>;
 }

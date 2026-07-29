@@ -1,13 +1,22 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { Inject } from '@nestjs/common';
 import { UploadedFileNotFoundException } from '@/core/exceptions';
-import { UPLOADED_FILE_REPOSITORY, type IUploadedFileRepository } from '@/core/interfaces/repositories';
-import { STORAGE_SERVICE, type IStorageService } from '@/core/interfaces/storage';
+import {
+  UPLOADED_FILE_REPOSITORY,
+  type IUploadedFileRepository,
+} from '@/core/interfaces/repositories';
+import {
+  STORAGE_SERVICE,
+  type IStorageService,
+} from '@/core/interfaces/storage';
 import { UploadedFileDeleteCommand } from './uploaded-file-delete.command';
 import { UploadService } from '@/application/services';
 
 @CommandHandler(UploadedFileDeleteCommand)
-export class UploadedFileDeleteCommandHandler implements ICommandHandler<UploadedFileDeleteCommand, void> {
+export class UploadedFileDeleteCommandHandler implements ICommandHandler<
+  UploadedFileDeleteCommand,
+  void
+> {
   constructor(
     @Inject(UPLOADED_FILE_REPOSITORY)
     private readonly repository: IUploadedFileRepository,

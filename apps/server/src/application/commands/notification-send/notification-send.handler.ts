@@ -1,15 +1,27 @@
 import { CommandHandler, ICommandHandler, EventBus } from '@nestjs/cqrs';
 import { Inject } from '@nestjs/common';
 import { ERoleType } from '@/core/enums';
-import { ENTERPRISE_REPOSITORY, type IEnterpriseRepository } from '@/core/interfaces/repositories';
-import { USER_READ_SERVICE, type IUserReadService } from '@/application/interfaces';
+import {
+  ENTERPRISE_REPOSITORY,
+  type IEnterpriseRepository,
+} from '@/core/interfaces/repositories';
+import {
+  USER_READ_SERVICE,
+  type IUserReadService,
+} from '@/application/interfaces';
 import { NotificationSendCommand } from './notification-send.command';
 import { NotificationDispatchedEvent } from '@/application/events';
-import { EnterpriseNotFoundException, InvalidOperationException } from '@/core/exceptions';
+import {
+  EnterpriseNotFoundException,
+  InvalidOperationException,
+} from '@/core/exceptions';
 import { isEmpty } from '@/shared/utils';
 
 @CommandHandler(NotificationSendCommand)
-export class NotificationSendCommandHandler implements ICommandHandler<NotificationSendCommand, void> {
+export class NotificationSendCommandHandler implements ICommandHandler<
+  NotificationSendCommand,
+  void
+> {
   constructor(
     private readonly eventBus: EventBus,
     @Inject(USER_READ_SERVICE)
@@ -25,28 +37,36 @@ export class NotificationSendCommandHandler implements ICommandHandler<Notificat
     switch (props.audience.broadcastType) {
       case 'direct': {
         if (isEmpty(props.audience.userIds)) {
-          throw new InvalidOperationException('Recipient user IDs are required for direct broadcast');
+          throw new InvalidOperationException(
+            'Recipient user IDs are required for direct broadcast',
+          );
         }
         recipientIds.push(...props.audience.userIds);
         break;
       }
       case 'admin': {
-        recipientIds.push(...await this.userReadService.findByRoleType(ERoleType.ADMIN));
+        recipientIds.push(
+          ...(await this.userReadService.findByRoleType(ERoleType.ADMIN)),
+        );
         break;
       }
       case 'enterprise': {
         const { enterpriseId } = props.audience;
         if (!enterpriseId) {
-          throw new InvalidOperationException('Enterprise ID is required for enterprise broadcast');
+          throw new InvalidOperationException(
+            'Enterprise ID is required for enterprise broadcast',
+          );
         }
 
-        const enterprise = await this.enterpriseRepository.findById(enterpriseId);
+        const enterprise =
+          await this.enterpriseRepository.findById(enterpriseId);
         if (!enterprise) {
           throw new EnterpriseNotFoundException(enterpriseId);
         }
 
         // Fetch enterprise members
-        const memberIds = await this.userReadService.findByEnterprise(enterpriseId);
+        const memberIds =
+          await this.userReadService.findByEnterprise(enterpriseId);
         const uniqueIds = new Set<string>(memberIds);
 
         // Include enterprise owner
@@ -58,13 +78,15 @@ export class NotificationSendCommandHandler implements ICommandHandler<Notificat
         break;
       }
       case 'all': {
-        recipientIds.push(...await this.userReadService.findAllActive());
+        recipientIds.push(...(await this.userReadService.findAllActive()));
         break;
       }
       default: {
         // Exhaustive check - TypeScript will error if we miss a case
         const _exhaustiveCheck: never = props.audience.broadcastType;
-        throw new InvalidOperationException(`Unknown broadcast type: ${_exhaustiveCheck}`);
+        throw new InvalidOperationException(
+          `Unknown broadcast type: ${_exhaustiveCheck}`,
+        );
       }
     }
 
@@ -84,7 +106,7 @@ export class NotificationSendCommandHandler implements ICommandHandler<Notificat
         },
         recipientIds,
         props.channels,
-      )
+      ),
     );
   }
 }

@@ -1,6 +1,9 @@
 import { Module } from '@nestjs/common';
 import { HttpModule } from '@nestjs/axios';
-import { PAYMENT_PROVIDERS, PAYMENT_PROVIDER_DISCOVERY } from '@/core/interfaces';
+import {
+  PAYMENT_PROVIDERS,
+  PAYMENT_PROVIDER_DISCOVERY,
+} from '@/core/interfaces';
 import { PaymentProviderDiscoveryService } from './payment-provider-discovery.service';
 import { MomoService } from './momo/momo.service';
 

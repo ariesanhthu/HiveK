@@ -2,7 +2,11 @@ import { Module } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
 
 // Controllers & Resolvers
-import { CampaignProposalAdminController, CampaignProposalClientController, CampaignProposalResolver } from '@/presentation/controllers';
+import {
+  CampaignProposalAdminController,
+  CampaignProposalClientController,
+  CampaignProposalResolver,
+} from '@/presentation/controllers';
 
 // Commands
 import {
@@ -37,10 +41,11 @@ const QUERY_HANDLERS = [
 ];
 
 @Module({
-  imports: [
-    CqrsModule,
+  imports: [CqrsModule],
+  controllers: [
+    CampaignProposalAdminController,
+    CampaignProposalClientController,
   ],
-  controllers: [CampaignProposalAdminController, CampaignProposalClientController],
   providers: [
     CampaignProposalResolver,
     // Command & Query Handlers

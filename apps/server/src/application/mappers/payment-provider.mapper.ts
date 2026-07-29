@@ -1,15 +1,18 @@
 import { PaymentProviderEntity } from '@/core/entities';
-import { PaymentProviderReducedResponseDto, PaymentProviderResponseDto } from '../dtos';
+import {
+  PaymentProviderReducedResponseDto,
+  PaymentProviderResponseDto,
+} from '../dtos';
 import type { EPaymentMethod, ECurrency } from '@/core/enums';
 
 export class PaymentProviderMapper {
   static toDto(entity: PaymentProviderEntity): PaymentProviderResponseDto {
     return {
-      id: entity.id!,
+      id: entity.id,
       code: entity.code,
       displayName: entity.displayName,
-      supportedMethods: entity.supportedMethods as EPaymentMethod[],
-      supportedCurrencies: entity.supportedCurrencies as ECurrency[],
+      supportedMethods: entity.supportedMethods,
+      supportedCurrencies: entity.supportedCurrencies,
       isActive: entity.isActive,
       supportsWebhook: entity.supportsWebhook,
       supportsRefund: entity.supportsRefund,
@@ -25,13 +28,15 @@ export class PaymentProviderMapper {
     };
   }
 
-  static toReducedDto(entity: PaymentProviderEntity): PaymentProviderReducedResponseDto {
+  static toReducedDto(
+    entity: PaymentProviderEntity,
+  ): PaymentProviderReducedResponseDto {
     return {
-      id: entity.id!,
+      id: entity.id,
       code: entity.code,
       displayName: entity.displayName,
-      supportedMethods: entity.supportedMethods as EPaymentMethod[],
-      supportedCurrencies: entity.supportedCurrencies as ECurrency[],
+      supportedMethods: entity.supportedMethods,
+      supportedCurrencies: entity.supportedCurrencies,
       isActive: entity.isActive,
       supportsRefund: entity.supportsRefund,
       supportsPartialRefund: entity.supportsPartialRefund,
@@ -40,12 +45,14 @@ export class PaymentProviderMapper {
     };
   }
 
-  static toDtoList(entities: PaymentProviderEntity[]): PaymentProviderResponseDto[] {
+  static toDtoList(
+    entities: PaymentProviderEntity[],
+  ): PaymentProviderResponseDto[] {
     return entities.map((entity) => this.toDto(entity));
   }
 
   static toReducedDtoList(
-    entities: PaymentProviderEntity[]
+    entities: PaymentProviderEntity[],
   ): PaymentProviderReducedResponseDto[] {
     return entities.map((entity) => this.toReducedDto(entity));
   }

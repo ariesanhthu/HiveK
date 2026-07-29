@@ -1,7 +1,25 @@
-import { Controller, Post, Body, HttpCode, HttpStatus, Get, UseGuards, Res, Req, BadRequestException, Patch } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  HttpCode,
+  HttpStatus,
+  Get,
+  UseGuards,
+  Res,
+  Req,
+  BadRequestException,
+  Patch,
+} from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import type { Response, Request } from 'express';
-import { ApiTags, ApiOperation, ApiBearerAuth, ApiSecurity, ApiTooManyRequestsResponse } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiBearerAuth,
+  ApiSecurity,
+  ApiTooManyRequestsResponse,
+} from '@nestjs/swagger';
 import { buildVersionedRoute } from '@presentation/utils';
 import {
   AuthSignInCommand,
@@ -22,13 +40,20 @@ import {
   AuthSendOtpInputDto,
   AuthChangePasswordInputDto,
   AuthVerifyOtpInputDto,
-  UserUpdateCommand
+  AuthSelectWorkspaceCommand,
+  AuthSelectWorkspaceInputDto,
+  AuthSelectWorkspaceOutputDto,
+  UserUpdateCommand,
 } from '@/application/commands';
 import { AuthGetProfileQuery } from '@/application/queries';
 import { UserDetailDto } from '@/application/dtos';
 import { ERoleType } from '@/core/enums';
 import { JwtAuthGuard } from '@/presentation/middleware/guards/jwt-auth.guard';
-import { CurrentUser, Public, ApiOkResponseEnvelope } from '@/presentation/decorators';
+import {
+  CurrentUser,
+  Public,
+  ApiOkResponseEnvelope,
+} from '@/presentation/decorators';
 import { AuthGuard } from '@nestjs/passport';
 import { Throttle } from '@nestjs/throttler';
 import { UserUpdateInputDto } from '@/application/commands/user-update/user-update.dto';
@@ -43,7 +68,7 @@ export class AuthClientController {
   constructor(
     private readonly commandBus: CommandBus,
     private readonly queryBus: QueryBus,
-  ) { }
+  ) {}
   @Public()
   @Post('sign-up/kol')
   @Throttle({ default: { limit: 5, ttl: 60000 } })
@@ -61,7 +86,9 @@ export class AuthClientController {
   @ApiTooManyRequestsResponse({ description: 'Too many requests' })
   @ApiOkResponseEnvelope()
   async signUpEnterprise(@Body() input: AuthSignUpInputDto) {
-    return this.commandBus.execute(new AuthSignUpCommand(ERoleType.ENTERPRISE, input));
+    return this.commandBus.execute(
+      new AuthSignUpCommand(ERoleType.ENTERPRISE, input),
+    );
   }
 
   @Public()
@@ -76,6 +103,37 @@ export class AuthClientController {
     @Res({ passthrough: true }) response: Response,
   ) {
     const result = await this.commandBus.execute(new AuthSignInCommand(input));
+    if (result && result.accessToken) {
+      response.cookie('access_token', result.accessToken, {
+        httpOnly: true,
+        secure: env('NODE_ENV', 'development') === 'production',
+        sameSite: 'lax',
+        maxAge: 24 * 60 * 60 * 1000, // 1 day
+      });
+    }
+    if (result && result.refreshToken) {
+      response.cookie('refresh_token', result.refreshToken, {
+        httpOnly: true,
+        secure: env('NODE_ENV', 'development') === 'production',
+        sameSite: 'lax',
+        maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+      });
+    }
+    return result;
+  }
+
+  @Post('workspace/select')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Select workspace (enterprise) for scoped session' })
+  @ApiOkResponseEnvelope(AuthSelectWorkspaceOutputDto)
+  async selectWorkspace(
+    @CurrentUser('sub') userId: string,
+    @Body() input: AuthSelectWorkspaceInputDto,
+    @Res({ passthrough: true }) response: Response,
+  ) {
+    const result = await this.commandBus.execute(
+      new AuthSelectWorkspaceCommand(input, userId),
+    );
     if (result && result.accessToken) {
       response.cookie('access_token', result.accessToken, {
         httpOnly: true,
@@ -118,7 +176,9 @@ export class AuthClientController {
       throw new BadRequestException('Refresh token is required');
     }
 
-    const result = await this.commandBus.execute(new AuthRefreshTokenCommand({ refreshToken: token }));
+    const result = await this.commandBus.execute(
+      new AuthRefreshTokenCommand({ refreshToken: token }),
+    );
     if (result && result.accessToken) {
       response.cookie('access_token', result.accessToken, {
         httpOnly: true,
@@ -189,7 +249,9 @@ export class AuthClientController {
     @CurrentUser('sub') userId: string,
     @Body() input: AuthChangePasswordInputDto,
   ) {
-    return this.commandBus.execute(new AuthChangePasswordCommand(userId, input));
+    return this.commandBus.execute(
+      new AuthChangePasswordCommand(userId, input),
+    );
   }
 
   @Get('profile')
@@ -211,4 +273,3 @@ export class AuthClientController {
     return this.commandBus.execute(new UserUpdateCommand(userId, input));
   }
 }
-

@@ -4,7 +4,7 @@ import {
   GrantVO,
   PlanItemVO,
   AddonItemVO,
-  type SubscriptionChangeDetailsVO
+  type SubscriptionChangeDetailsVO,
 } from '../value-objects';
 import { SubscriptionUpdatedEvent } from '../events/subscription-updated.domain-event';
 
@@ -21,19 +21,25 @@ export interface SubscriptionProps {
   updatedAt: Date;
 }
 
-export type SubscriptionCreateProps = Omit<SubscriptionProps, 'createdAt' | 'updatedAt' | 'version'> & {
+export type SubscriptionCreateProps = Omit<
+  SubscriptionProps,
+  'createdAt' | 'updatedAt' | 'version'
+> & {
   version?: number;
   createdAt?: Date;
   updatedAt?: Date;
 };
 
 export class SubscriptionRoot extends BaseAggregateRoot<SubscriptionProps> {
-  public static create(input: SubscriptionCreateProps, id?: string): SubscriptionRoot {
+  public static create(
+    input: SubscriptionCreateProps,
+    id?: string,
+  ): SubscriptionRoot {
     const now = new Date();
     return new SubscriptionRoot(
       {
-      userId: input.userId,
-      status: input.status,
+        userId: input.userId,
+        status: input.status,
         planItem: input.planItem,
         addonItems: input.addonItems,
         computedGrants: input.computedGrants,
@@ -43,11 +49,14 @@ export class SubscriptionRoot extends BaseAggregateRoot<SubscriptionProps> {
         createdAt: input.createdAt ?? now,
         updatedAt: input.updatedAt ?? now,
       },
-      id
+      id,
     );
   }
 
-  public static instantiate(id: string, props: SubscriptionProps): SubscriptionRoot {
+  public static instantiate(
+    id: string,
+    props: SubscriptionProps,
+  ): SubscriptionRoot {
     return new SubscriptionRoot(props, id);
   }
 
@@ -106,7 +115,9 @@ export class SubscriptionRoot extends BaseAggregateRoot<SubscriptionProps> {
   }
 
   public attachAddon(item: AddonItemVO): boolean {
-    const exists = this.props.addonItems.some((i) => i.packageVariantId === item.packageVariantId);
+    const exists = this.props.addonItems.some(
+      (i) => i.packageVariantId === item.packageVariantId,
+    );
     if (exists) return false;
 
     this.props.addonItems.push(item);
@@ -115,7 +126,9 @@ export class SubscriptionRoot extends BaseAggregateRoot<SubscriptionProps> {
   }
 
   public removeAddon(packageVariantId: string): boolean {
-    const index = this.props.addonItems.findIndex((i) => i.packageVariantId === packageVariantId);
+    const index = this.props.addonItems.findIndex(
+      (i) => i.packageVariantId === packageVariantId,
+    );
     if (index === -1) return false;
 
     this.props.addonItems.splice(index, 1);
@@ -137,7 +150,10 @@ export class SubscriptionRoot extends BaseAggregateRoot<SubscriptionProps> {
     this.props.updatedAt = new Date();
   }
 
-  public recomputeGrants(planGrants: GrantVO[], addonsGrants: Map<string, GrantVO[]>): void {
+  public recomputeGrants(
+    planGrants: GrantVO[],
+    addonsGrants: Map<string, GrantVO[]>,
+  ): void {
     const grantsMap = new Map<string, GrantVO>();
     const permissionsSet = new Set<string>();
 
@@ -145,20 +161,30 @@ export class SubscriptionRoot extends BaseAggregateRoot<SubscriptionProps> {
       for (const grant of grants) {
         if (grant.type === EGrantType.PERMISSION) {
           permissionsSet.add(grant.key);
-        } else if (grant.type === EGrantType.QUOTA_HARD || grant.type === EGrantType.QUOTA_RENEWABLE) {
+        } else if (
+          grant.type === EGrantType.QUOTA_HARD ||
+          grant.type === EGrantType.QUOTA_RENEWABLE
+        ) {
           const existing = grantsMap.get(grant.key);
           if (existing) {
             const newValue = existing.value + grant.value;
             // Plan creditFallback takes precedence over add-on fallback
             const fallback = isPlan
-              ? (grant.creditFallback !== undefined ? grant.creditFallback : existing.creditFallback)
-              : (existing.creditFallback !== undefined ? existing.creditFallback : grant.creditFallback);
-            
-            grantsMap.set(grant.key, new GrantVO({
-              ...existing.props,
-              value: newValue,
-              creditFallback: fallback
-            }));
+              ? grant.creditFallback !== undefined
+                ? grant.creditFallback
+                : existing.creditFallback
+              : existing.creditFallback !== undefined
+                ? existing.creditFallback
+                : grant.creditFallback;
+
+            grantsMap.set(
+              grant.key,
+              new GrantVO({
+                ...existing.props,
+                value: newValue,
+                creditFallback: fallback,
+              }),
+            );
           } else {
             grantsMap.set(grant.key, grant);
           }
@@ -184,14 +210,10 @@ export class SubscriptionRoot extends BaseAggregateRoot<SubscriptionProps> {
 
   public recordSubscriptionUpdated(
     subscriptionHistoryId: string,
-    details: SubscriptionChangeDetailsVO
+    details: SubscriptionChangeDetailsVO,
   ): void {
     this.addDomainEvent(
-      new SubscriptionUpdatedEvent(
-        this.userId,
-        subscriptionHistoryId,
-        details
-      )
+      new SubscriptionUpdatedEvent(this.userId, subscriptionHistoryId, details),
     );
   }
 }

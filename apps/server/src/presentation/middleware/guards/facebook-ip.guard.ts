@@ -1,4 +1,9 @@
-import { Injectable, CanActivate, ExecutionContext, Logger } from '@nestjs/common';
+import {
+  Injectable,
+  CanActivate,
+  ExecutionContext,
+  Logger,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as net from 'net';
 
@@ -29,13 +34,18 @@ export class FacebookIpGuard implements CanActivate {
     '::1/128',
     '10.0.0.0/8',
     '172.16.0.0/12',
-    '192.168.0.0/16'
+    '192.168.0.0/16',
   ];
 
   constructor(private readonly configService: ConfigService) {
-    this.isGuardEnabled = this.configService.get<boolean>('FACEBOOK_WEBHOOK_IP_GUARD', false);
-    const customIps = this.configService.get<string>('FACEBOOK_WEBHOOK_ALLOWED_IPS');
-    
+    this.isGuardEnabled = this.configService.get<boolean>(
+      'FACEBOOK_WEBHOOK_IP_GUARD',
+      false,
+    );
+    const customIps = this.configService.get<string>(
+      'FACEBOOK_WEBHOOK_ALLOWED_IPS',
+    );
+
     if (customIps) {
       this.allowedCidrs = customIps.split(',').map((ip) => ip.trim());
     } else {
@@ -63,7 +73,9 @@ export class FacebookIpGuard implements CanActivate {
     const isAllowed = this.ipMatchesAnyCidr(cleanIp, this.allowedCidrs);
 
     if (!isAllowed) {
-      this.logger.warn(`Blocked webhook request: IP ${cleanIp} is not in Meta's whitelisted subnets.`);
+      this.logger.warn(
+        `Blocked webhook request: IP ${cleanIp} is not in Meta's whitelisted subnets.`,
+      );
     }
 
     return isAllowed;
@@ -79,7 +91,7 @@ export class FacebookIpGuard implements CanActivate {
 
   private ipMatchesAnyCidr(ip: string, cidrs: string[]): boolean {
     const isIpv6 = net.isIPv6(ip);
-    
+
     for (const cidr of cidrs) {
       try {
         const [range, bitsStr] = cidr.split('/');
@@ -90,7 +102,7 @@ export class FacebookIpGuard implements CanActivate {
           continue;
         }
 
-        const bits = bitsStr ? parseInt(bitsStr, 10) : (isIpv6 ? 128 : 32);
+        const bits = bitsStr ? parseInt(bitsStr, 10) : isIpv6 ? 128 : 32;
 
         if (isIpv6) {
           if (this.matchIpv6(ip, range, bits)) return true;
@@ -107,14 +119,18 @@ export class FacebookIpGuard implements CanActivate {
   private matchIpv4(ip: string, range: string, bits: number): boolean {
     const ipNum = this.ipv4ToNumber(ip);
     const rangeNum = this.ipv4ToNumber(range);
-    
+
     if (bits === 0) return true;
-    const mask = ~( (1 << (32 - bits)) - 1 );
+    const mask = ~((1 << (32 - bits)) - 1);
     return (ipNum & mask) === (rangeNum & mask);
   }
 
   private ipv4ToNumber(ip: string): number {
-    return ip.split('.').reduce((acc, octet) => (acc << 8) + parseInt(octet, 10), 0) >>> 0;
+    return (
+      ip
+        .split('.')
+        .reduce((acc, octet) => (acc << 8) + parseInt(octet, 10), 0) >>> 0
+    );
   }
 
   private matchIpv6(ip: string, range: string, bits: number): boolean {
@@ -126,14 +142,14 @@ export class FacebookIpGuard implements CanActivate {
     let bitsLeft = bits;
     for (let i = 0; i < 8; i++) {
       if (bitsLeft <= 0) break;
-      
+
       const checkBits = Math.min(bitsLeft, 16);
       const mask = (0xffff << (16 - checkBits)) & 0xffff;
-      
+
       if ((ipParts[i] & mask) !== (rangeParts[i] & mask)) {
         return false;
       }
-      
+
       bitsLeft -= 16;
     }
     return true;

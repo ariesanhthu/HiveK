@@ -22,7 +22,9 @@ export class UserNotificationRoot extends BaseAggregateRoot<UserNotificationProp
     super(props, id);
   }
 
-  public static create(props: UserNotificationCreateProps): UserNotificationRoot {
+  public static create(
+    props: UserNotificationCreateProps,
+  ): UserNotificationRoot {
     const now = new Date();
     return new UserNotificationRoot({
       ...props,
@@ -35,7 +37,10 @@ export class UserNotificationRoot extends BaseAggregateRoot<UserNotificationProp
     });
   }
 
-  public static instantiate(id: string, props: UserNotificationProps): UserNotificationRoot {
+  public static instantiate(
+    id: string,
+    props: UserNotificationProps,
+  ): UserNotificationRoot {
     return new UserNotificationRoot(props, id);
   }
 

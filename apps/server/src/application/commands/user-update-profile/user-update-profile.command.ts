@@ -1,5 +1,8 @@
 import { Command } from '@nestjs/cqrs';
-import { UserUpdateProfileInputDto, UserUpdateProfileOutputDto } from './user-update-profile.dto';
+import {
+  UserUpdateProfileInputDto,
+  UserUpdateProfileOutputDto,
+} from './user-update-profile.dto';
 
 export class UserUpdateProfileCommand extends Command<UserUpdateProfileOutputDto> {
   constructor(

@@ -4,4 +4,6 @@ import { PlatformCreateInputSchema } from '../platform-create/platform-create.dt
 
 export const PlatformUpdateInputSchema = PlatformCreateInputSchema.partial();
 
-export class PlatformUpdateInputDto extends createZodDto(PlatformUpdateInputSchema) {}
+export class PlatformUpdateInputDto extends createZodDto(
+  PlatformUpdateInputSchema,
+) {}

@@ -28,7 +28,10 @@ import { generateUUID, hashSHA256 } from '@/shared/utils/crypto.util';
 import type { JsonObject as JsonRecord } from '@/core/types/common.type';
 import { firstValueFrom } from 'rxjs';
 import { isAxiosError } from 'axios';
-import { errorMessage as getErrorMessage, toError } from '@/shared/utils/error.util';
+import {
+  errorMessage as getErrorMessage,
+  toError,
+} from '@/shared/utils/error.util';
 import { getMomoResultGroup, getMomoResultMessage } from './exceptions';
 import { EMomoConfirmType, EMomoLanguage } from './enums';
 
@@ -54,12 +57,15 @@ export class MomoService implements IPaymentProvider, OnModuleInit {
   constructor(
     private readonly httpService: HttpService,
     @Inject(PAYMENT_PROVIDER_REPOSITORY)
-    private readonly providerRepository: IPaymentProviderRepository
+    private readonly providerRepository: IPaymentProviderRepository,
   ) {}
 
   async onModuleInit(): Promise<void> {
     await this.ensureConfigured().catch((err) => {
-      this.logger.warn('Failed to load Momo credentials on startup. Will lazy-load on demand.', err);
+      this.logger.warn(
+        'Failed to load Momo credentials on startup. Will lazy-load on demand.',
+        err,
+      );
     });
   }
 
@@ -75,7 +81,10 @@ export class MomoService implements IPaymentProvider, OnModuleInit {
     }
 
     const credentials = providerEntity.credentials || {};
-    const url = (process.env.NODE_ENV === 'production' ? providerEntity.baseUrl : providerEntity.testUrl) || '';
+    const url =
+      (process.env.NODE_ENV === 'production'
+        ? providerEntity.baseUrl
+        : providerEntity.testUrl) || '';
     const redirectUrl = (credentials['returnUrl'] as string) || '';
     const ipnUrl = providerEntity.webhookUrl || '';
 
@@ -89,8 +98,10 @@ export class MomoService implements IPaymentProvider, OnModuleInit {
       redirectUrl,
       ipnUrl,
     };
-    
-    this.logger.log('Momo configurations lazy-loaded successfully from database.');
+
+    this.logger.log(
+      'Momo configurations lazy-loaded successfully from database.',
+    );
   }
 
   updateConfig(credentials: {
@@ -119,10 +130,30 @@ export class MomoService implements IPaymentProvider, OnModuleInit {
   CREDENTIAL_FIELDS = [
     { key: 'partner_code', label: 'Partner Code', required: true },
     { key: 'access_key', label: 'Access Key', required: true },
-    { key: 'secret_key', label: 'Secret Key', required: true, description: 'Provided in MoMo Business Dashboard' },
-    { key: 'partner_name', label: 'Partner Name', required: false, description: 'Provided in MoMo Business Dashboard' },
-    { key: 'store_id', label: 'Store ID', required: false, description: 'Provided in MoMo Business Dashboard' },
-    { key: 'store_name', label: 'Store Name', required: false, description: 'Provided in MoMo Business Dashboard' },
+    {
+      key: 'secret_key',
+      label: 'Secret Key',
+      required: true,
+      description: 'Provided in MoMo Business Dashboard',
+    },
+    {
+      key: 'partner_name',
+      label: 'Partner Name',
+      required: false,
+      description: 'Provided in MoMo Business Dashboard',
+    },
+    {
+      key: 'store_id',
+      label: 'Store ID',
+      required: false,
+      description: 'Provided in MoMo Business Dashboard',
+    },
+    {
+      key: 'store_name',
+      label: 'Store Name',
+      required: false,
+      description: 'Provided in MoMo Business Dashboard',
+    },
   ];
 
   getCredentialFields(): IPaymentProviderField[] {
@@ -131,15 +162,29 @@ export class MomoService implements IPaymentProvider, OnModuleInit {
 
   checkCredentialFields(credentials: JsonRecord): boolean {
     return this.CREDENTIAL_FIELDS.every(
-      (field) => credentials[field.key] !== undefined && credentials[field.key] !== null
+      (field) =>
+        credentials[field.key] !== undefined && credentials[field.key] !== null,
     );
   }
 
-  async create(id: string, amount: number, currency: ECurrency): Promise<IPaymentProviderCreateResult> {
+  async create(
+    id: string,
+    amount: number,
+    currency: ECurrency,
+  ): Promise<IPaymentProviderCreateResult> {
     try {
       await this.ensureConfigured();
-      const { accessKey, secretKey, partnerCode, storeId, storeName, url, redirectUrl, ipnUrl } = this.config!;
-      
+      const {
+        accessKey,
+        secretKey,
+        partnerCode,
+        storeId,
+        storeName,
+        url,
+        redirectUrl,
+        ipnUrl,
+      } = this.config;
+
       const requestId = generateUUID();
       const orderInfo = 'pay with MoMo';
       const requestType = this.REQUEST_TYPE;
@@ -160,7 +205,7 @@ export class MomoService implements IPaymentProvider, OnModuleInit {
           requestId,
           requestType,
         },
-        secretKey
+        secretKey,
       );
 
       const requestBody: IMomoCreateRequest = {
@@ -187,14 +232,18 @@ export class MomoService implements IPaymentProvider, OnModuleInit {
         this.httpService.post(`${url}/create`, requestBody, {
           headers: { 'Content-Type': 'application/json' },
           timeout: 30000,
-        })
+        }),
       );
       if (response.status !== 200) {
-        throw new Error(`Momo create payment failed with status code ${response.status}`);
+        throw new Error(
+          `Momo create payment failed with status code ${response.status}`,
+        );
       }
       const responseBody = response.data as IMomoCreateResponse;
       if (responseBody.resultCode !== 0) {
-        throw new Error(`[Code: ${responseBody.resultCode}]: ${responseBody.message}`);
+        throw new Error(
+          `[Code: ${responseBody.resultCode}]: ${responseBody.message}`,
+        );
       }
       const { status, message } = this.transformStatus(responseBody.resultCode);
 
@@ -211,7 +260,9 @@ export class MomoService implements IPaymentProvider, OnModuleInit {
         responseTimestamp: new Date(responseBody.responseTime ?? Date.now()),
       };
     } catch (error: unknown) {
-      this.logger.error(getErrorMessage(isAxiosError(error) ? error.response?.data : error));
+      this.logger.error(
+        getErrorMessage(isAxiosError(error) ? error.response?.data : error),
+      );
       throw toError(error);
     }
   }
@@ -220,11 +271,11 @@ export class MomoService implements IPaymentProvider, OnModuleInit {
     transactionId: string,
     attemptId: string,
     amount: number,
-    currency: ECurrency
+    currency: ECurrency,
   ): Promise<IPaymentProviderResult> {
     try {
       await this.ensureConfigured();
-      const { accessKey, secretKey, partnerCode, url } = this.config!;
+      const { accessKey, secretKey, partnerCode, url } = this.config;
       const momoOrderId = this.generateMomoOrderId(attemptId);
       const requestTimestamp = new Date();
       const { requestPayload, responsePayload } = await this.momoConfirm(
@@ -234,9 +285,11 @@ export class MomoService implements IPaymentProvider, OnModuleInit {
         url,
         momoOrderId,
         amount,
-        EMomoConfirmType.CAPTURE
+        EMomoConfirmType.CAPTURE,
       );
-      const { status, message } = this.transformStatus(responsePayload.resultCode);
+      const { status, message } = this.transformStatus(
+        responsePayload.resultCode,
+      );
       return {
         requestPayload: requestPayload as unknown as JsonRecord,
         responsePayload: responsePayload as unknown as JsonRecord,
@@ -254,7 +307,11 @@ export class MomoService implements IPaymentProvider, OnModuleInit {
     }
   }
 
-  async refund(_transactionId: string, _amount: number, _currency: ECurrency): Promise<IPaymentProviderResult> {
+  async refund(
+    _transactionId: string,
+    _amount: number,
+    _currency: ECurrency,
+  ): Promise<IPaymentProviderResult> {
     return {
       requestPayload: {},
       responsePayload: {},
@@ -271,10 +328,10 @@ export class MomoService implements IPaymentProvider, OnModuleInit {
   async cancel(
     transactionId: string,
     amount: number,
-    currency: ECurrency
+    currency: ECurrency,
   ): Promise<IPaymentProviderResult> {
     await this.ensureConfigured();
-    const { accessKey, secretKey, partnerCode, url } = this.config!;
+    const { accessKey, secretKey, partnerCode, url } = this.config;
     const momoOrderId = this.generateMomoOrderId(transactionId);
     const requestTimestamp = new Date();
     const { requestPayload, responsePayload } = await this.momoConfirm(
@@ -284,9 +341,11 @@ export class MomoService implements IPaymentProvider, OnModuleInit {
       url,
       momoOrderId,
       amount,
-      EMomoConfirmType.CANCEL
+      EMomoConfirmType.CANCEL,
     );
-    const { status, message } = this.transformStatus(responsePayload.resultCode);
+    const { status, message } = this.transformStatus(
+      responsePayload.resultCode,
+    );
     return {
       requestPayload: requestPayload as unknown as JsonRecord,
       responsePayload: responsePayload as unknown as JsonRecord,
@@ -368,7 +427,11 @@ export class MomoService implements IPaymentProvider, OnModuleInit {
       // This is a beautiful edge-case detection. Let's make MomoService implement OnModuleInit to load it on startup,
       // and keep the cached ensureConfigured fallback just in case!
     }
-    const { accessKey, secretKey, partnerCode } = this.config || { accessKey: '', secretKey: '', partnerCode: '' };
+    const { accessKey, secretKey, partnerCode } = this.config || {
+      accessKey: '',
+      secretKey: '',
+      partnerCode: '',
+    };
     const ipn = data as unknown as IMomoIpn;
     if (
       ipn.orderId === undefined ||
@@ -411,8 +474,11 @@ export class MomoService implements IPaymentProvider, OnModuleInit {
     momoUrl: string,
     orderId: string,
     amount: number,
-    requestType: EMomoConfirmType
-  ): Promise<{ requestPayload: IMomoConfirmRequest; responsePayload: IMomoConfirmResponse }> {
+    requestType: EMomoConfirmType,
+  ): Promise<{
+    requestPayload: IMomoConfirmRequest;
+    responsePayload: IMomoConfirmResponse;
+  }> {
     try {
       const requestId = generateUUID();
       const description = 'Payment confirmation';
@@ -427,7 +493,7 @@ export class MomoService implements IPaymentProvider, OnModuleInit {
           requestId,
           requestType,
         },
-        secretKey
+        secretKey,
       );
 
       const bodyConfirm: IMomoConfirmRequest = {
@@ -442,21 +508,24 @@ export class MomoService implements IPaymentProvider, OnModuleInit {
       };
 
       const resultConfirm = await firstValueFrom(
-        this.httpService.post(`${momoUrl}/confirm`, bodyConfirm)
+        this.httpService.post(`${momoUrl}/confirm`, bodyConfirm),
       );
 
       if (resultConfirm.status.toString()[0] !== '2') {
         throw new Error(getErrorMessage(resultConfirm.data));
       }
 
-      const response: IMomoConfirmResponse = resultConfirm.data as IMomoConfirmResponse;
+      const response: IMomoConfirmResponse =
+        resultConfirm.data as IMomoConfirmResponse;
 
       return {
         requestPayload: bodyConfirm,
         responsePayload: response,
       };
     } catch (error: unknown) {
-      const detail = isAxiosError(error) ? (error.response?.data ?? error.message) : error;
+      const detail = isAxiosError(error)
+        ? (error.response?.data ?? error.message)
+        : error;
       this.logger.error(`[Momo Confirm Error] ${getErrorMessage(detail)}`);
       throw toError(error);
     }
@@ -479,7 +548,7 @@ export class MomoService implements IPaymentProvider, OnModuleInit {
       | IMomoRawSignatureCreateWithSubscription
       | IMomoRawSignatureCreateSubscription
       | IMomoRawSignatureCreateWithSubscriptionWebhook,
-    secretKey: string
+    secretKey: string,
   ): string {
     const rawSignature = Object.entries(body)
       .sort((a, b) => a[0].localeCompare(b[0]))
@@ -495,7 +564,8 @@ export class MomoService implements IPaymentProvider, OnModuleInit {
     const status = getMomoResultGroup(code);
     const message = getMomoResultMessage(code);
     if (status === 'success') return { status: 'succeeded', message };
-    if (status === 'error' || status === 'unknown') return { status: 'failed', message };
+    if (status === 'error' || status === 'unknown')
+      return { status: 'failed', message };
     return { status: 'pending', message };
   }
 }

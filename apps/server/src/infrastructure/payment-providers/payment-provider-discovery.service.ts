@@ -1,5 +1,9 @@
 import { Inject, Injectable, Optional } from '@nestjs/common';
-import { IPaymentProvider, IPaymentProviderDiscovery, PAYMENT_PROVIDERS } from '@/core/interfaces';
+import {
+  IPaymentProvider,
+  IPaymentProviderDiscovery,
+  PAYMENT_PROVIDERS,
+} from '@/core/interfaces';
 
 @Injectable()
 export class PaymentProviderDiscoveryService implements IPaymentProviderDiscovery {

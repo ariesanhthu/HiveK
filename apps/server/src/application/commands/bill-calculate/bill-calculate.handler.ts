@@ -8,24 +8,34 @@ import { PackageRoot } from '@/core/aggregate-roots';
 import { BillEntity } from '@/core/aggregate-roots';
 import { EBillType, EBillStatus, EPackageType, ECurrency } from '@/core/enums';
 import { BillMultiplePlanException } from '@/core/exceptions';
-import { PACKAGE_REPOSITORY, type IPackageRepository } from '@/core/interfaces/repositories';
+import {
+  PACKAGE_REPOSITORY,
+  type IPackageRepository,
+} from '@/core/interfaces/repositories';
 
 @CommandHandler(BillCalculateCommand)
-export class BillCalculateHandler implements ICommandHandler<BillCalculateCommand, BillCalculateResponseDto> {
+export class BillCalculateHandler implements ICommandHandler<
+  BillCalculateCommand,
+  BillCalculateResponseDto
+> {
   constructor(
     private readonly billService: BillService,
     @Inject(PACKAGE_REPOSITORY)
     private readonly packageRepository: IPackageRepository,
   ) {}
 
-  async execute(command: BillCalculateCommand): Promise<BillCalculateResponseDto> {
+  async execute(
+    command: BillCalculateCommand,
+  ): Promise<BillCalculateResponseDto> {
     const { input } = command;
 
     // 1. Validation: Versions & Variants Exist
     const packageIds = input.items.map((i) => i.packageId);
-    const packages = (await Promise.all(
-      packageIds.map((id) => this.packageRepository.findById(id))
-    )).filter((p): p is PackageRoot => p !== null);
+    const packages = (
+      await Promise.all(
+        packageIds.map((id) => this.packageRepository.findById(id)),
+      )
+    ).filter((p): p is PackageRoot => p !== null);
 
     const packageMap = new Map(packages.map((p) => [p.id, p]));
 
@@ -37,7 +47,7 @@ export class BillCalculateHandler implements ICommandHandler<BillCalculateComman
       const variant = pkg.variants.find((v) => v.id === item.packageVariantId);
       if (!variant) {
         throw new Error(
-          `Package Variant not found: ${item.packageVariantId} in Package ${item.packageId}`
+          `Package Variant not found: ${item.packageVariantId} in Package ${item.packageId}`,
         );
       }
       return { pkg, variant };
@@ -58,7 +68,7 @@ export class BillCalculateHandler implements ICommandHandler<BillCalculateComman
     // 3. Logic: Determine purchase types by comparing with current subscription
     const items = await this.billService.determinePurchaseTypes(
       input.enterpriseId || undefined,
-      validatedItems
+      validatedItems,
     );
 
     // Set currency from first item

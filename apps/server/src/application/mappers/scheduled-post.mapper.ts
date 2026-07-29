@@ -4,7 +4,7 @@ import { ScheduledPostRoot } from '@/core/aggregate-roots';
 export class ScheduledPostMapper {
   static toDto(root: ScheduledPostRoot): ScheduledPostDto {
     return {
-      id: root.id!,
+      id: root.id,
       enterpriseId: root.enterpriseId,
       socialPageId: root.socialPageId,
       campaignId: root.campaignId,

@@ -1,12 +1,27 @@
 import { Controller, Get, Param, Query, UseGuards } from '@nestjs/common';
 import { QueryBus } from '@nestjs/cqrs';
-import { ApiBearerAuth, ApiOperation, ApiTags, ApiSecurity } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiTags,
+  ApiSecurity,
+} from '@nestjs/swagger';
 import { JwtAuthGuard, RolesGuard } from '@/presentation/middleware/guards';
-import { CurrentUser, Roles, ApiOkResponseEnvelope } from '@/presentation/decorators';
+import {
+  CurrentUser,
+  Roles,
+  ApiOkResponseEnvelope,
+} from '@/presentation/decorators';
 import { ERoleType } from '@/core/enums';
 import type { IJwtPayload } from '@/application/interfaces';
-import { QuotaUsageResponseDto, EnterpriseQuotaAllocationResponseDto } from '@/application/dtos';
-import { QuotaUsageGetByEnterpriseIdQuery, EnterpriseQuotaAllocationGetByOwnerIdQuery } from '@/application/queries';
+import {
+  QuotaUsageResponseDto,
+  EnterpriseQuotaAllocationResponseDto,
+} from '@/application/dtos';
+import {
+  QuotaUsageGetByEnterpriseIdQuery,
+  EnterpriseQuotaAllocationGetByOwnerIdQuery,
+} from '@/application/queries';
 import { buildVersionedRoute } from '@/presentation/utils';
 
 @ApiTags('CLIENT-quotas')
@@ -21,16 +36,23 @@ export class QuotaClientController {
   @Roles(ERoleType.ENTERPRISE)
   @ApiOperation({ summary: 'Get current enterprise quota usage' })
   @ApiOkResponseEnvelope(QuotaUsageResponseDto)
-  async getMyQuotaUsage(@CurrentUser() user: IJwtPayload): Promise<QuotaUsageResponseDto> {
-    return this.queryBus.execute(new QuotaUsageGetByEnterpriseIdQuery(user.enterpriseId as string));
+  async getMyQuotaUsage(
+    @CurrentUser() user: IJwtPayload,
+  ): Promise<QuotaUsageResponseDto> {
+    return this.queryBus.execute(
+      new QuotaUsageGetByEnterpriseIdQuery(user.enterpriseId),
+    );
   }
 
   @Get('allocations/me')
   @Roles(ERoleType.ENTERPRISE)
   @ApiOperation({ summary: 'Get current enterprise quota allocations' })
   @ApiOkResponseEnvelope(EnterpriseQuotaAllocationResponseDto)
-  async getMyQuotaAllocations(@CurrentUser() user: IJwtPayload): Promise<EnterpriseQuotaAllocationResponseDto> {
-    return this.queryBus.execute(new EnterpriseQuotaAllocationGetByOwnerIdQuery(user.enterpriseId as string));
+  async getMyQuotaAllocations(
+    @CurrentUser() user: IJwtPayload,
+  ): Promise<EnterpriseQuotaAllocationResponseDto> {
+    return this.queryBus.execute(
+      new EnterpriseQuotaAllocationGetByOwnerIdQuery(user.enterpriseId),
+    );
   }
 }
-

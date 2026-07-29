@@ -1,6 +1,9 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { Inject } from '@nestjs/common';
-import { PACKAGE_REPOSITORY, type IPackageRepository } from '@/core/interfaces/repositories';
+import {
+  PACKAGE_REPOSITORY,
+  type IPackageRepository,
+} from '@/core/interfaces/repositories';
 import { PackageRoot } from '@/core/aggregate-roots';
 import { EVersionStatus } from '@/core/enums';
 import { PackageCodeAlreadyExistsException } from '@/core/exceptions';
@@ -10,7 +13,10 @@ import { PackageCreateCommand } from './package-create.command';
 import { type IUnitOfWork, UNIT_OF_WORK } from '@/application/interfaces';
 
 @CommandHandler(PackageCreateCommand)
-export class PackageCreateCommandHandler implements ICommandHandler<PackageCreateCommand, PackageResponseDto> {
+export class PackageCreateCommandHandler implements ICommandHandler<
+  PackageCreateCommand,
+  PackageResponseDto
+> {
   constructor(
     @Inject(PACKAGE_REPOSITORY)
     private readonly packageRepository: IPackageRepository,

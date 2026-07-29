@@ -20,11 +20,14 @@ export class OtpRoot extends BaseAggregateRoot<OtpProps> {
 
   public static create(props: OtpCreateProps, id?: string): OtpRoot {
     const now = new Date();
-    return new OtpRoot({
-      ...props,
-      createdAt: now,
-      updatedAt: now,
-    }, id);
+    return new OtpRoot(
+      {
+        ...props,
+        createdAt: now,
+        updatedAt: now,
+      },
+      id,
+    );
   }
 
   public static instantiate(id: string, props: OtpProps): OtpRoot {
@@ -33,12 +36,11 @@ export class OtpRoot extends BaseAggregateRoot<OtpProps> {
 
   public override setId(id: string): void {
     super.setId(id);
-    this.addDomainEvent(new VerificationOtpCreatedEvent(
-      this.id,
-      {
+    this.addDomainEvent(
+      new VerificationOtpCreatedEvent(this.id, {
         ...this.props,
-      },
-    ));
+      }),
+    );
   }
 
   get email(): string {

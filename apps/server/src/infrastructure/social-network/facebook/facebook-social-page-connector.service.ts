@@ -8,9 +8,7 @@ import {
 } from '@/core/interfaces';
 
 @Injectable()
-export class FacebookSocialPageConnectorService
-  implements ISocialPageConnector
-{
+export class FacebookSocialPageConnectorService implements ISocialPageConnector {
   constructor(private readonly apiClient: FacebookGraphApiClient) {}
 
   getPlatformCode(): ESocialPlatformCode {
@@ -43,10 +41,7 @@ export class FacebookSocialPageConnectorService
     pageToken: string,
     pageId: string,
   ): Promise<ISocialPageDetails> {
-    const details = await this.apiClient.getPageDetails(
-      pageToken,
-      pageId,
-    );
+    const details = await this.apiClient.getPageDetails(pageToken, pageId);
     return {
       id: details.id,
       name: details.name,

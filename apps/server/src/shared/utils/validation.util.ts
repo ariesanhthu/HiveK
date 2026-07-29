@@ -34,7 +34,10 @@ export function isUrl(str: string): boolean {
  * isFileType('photo.jpg', ['png'])         // false
  * ```
  */
-export function isFileType(filename: string, allowedExtensions: string[]): boolean {
+export function isFileType(
+  filename: string,
+  allowedExtensions: string[],
+): boolean {
   const ext = filename.split('.').pop()?.toLowerCase();
   return ext ? allowedExtensions.includes(ext) : false;
 }

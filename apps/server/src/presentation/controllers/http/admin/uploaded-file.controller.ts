@@ -16,7 +16,14 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
-import { ApiTags, ApiOperation, ApiConsumes, ApiBody, ApiBearerAuth, ApiSecurity } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiConsumes,
+  ApiBody,
+  ApiBearerAuth,
+  ApiSecurity,
+} from '@nestjs/swagger';
 import { buildVersionedRoute } from '@presentation/utils';
 import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { ETargetType } from '@/core/enums/target-type.enum';
@@ -38,7 +45,11 @@ import { PaginatedResponseDto } from '@/application/dtos/pagination.dto';
 import { JwtAuthGuard, RolesGuard } from '@/presentation/middleware/guards';
 import { FileUploadValidationPipe } from '@/presentation/middleware/pipes/file-upload-validation.pipe';
 import { ERoleType } from '@/core/enums/role-type.enum';
-import { Roles, ApiOkResponseEnvelope, ApiPaginatedResponseEnvelope } from '@/presentation/decorators';
+import {
+  Roles,
+  ApiOkResponseEnvelope,
+  ApiPaginatedResponseEnvelope,
+} from '@/presentation/decorators';
 import { isEmpty } from '@/shared/utils';
 
 @ApiTags('ADMIN-upload')
@@ -51,12 +62,14 @@ export class UploadedFileAdminController {
   constructor(
     private readonly commandBus: CommandBus,
     private readonly queryBus: QueryBus,
-  ) { }
+  ) {}
 
   @Get()
   @ApiOperation({ summary: 'Get all uploaded files' })
   @ApiPaginatedResponseEnvelope(UploadedFileDto)
-  async findAll(@Query() filters: UploadedFileFilterDto): Promise<PaginatedResponseDto<UploadedFileDto>> {
+  async findAll(
+    @Query() filters: UploadedFileFilterDto,
+  ): Promise<PaginatedResponseDto<UploadedFileDto>> {
     return this.queryBus.execute(new UploadedFileGetListQuery(filters));
   }
 
@@ -86,7 +99,8 @@ export class UploadedFileAdminController {
         targetType: {
           type: 'string',
           enum: Object.values(ETargetType),
-          description: 'Domain target type (USER, KOL_PROFILE, PLATFORM, CAMPAIGN, ENTERPRISE)',
+          description:
+            'Domain target type (USER, KOL_PROFILE, PLATFORM, CAMPAIGN, ENTERPRISE)',
         },
         targetId: {
           type: 'string',
@@ -94,13 +108,16 @@ export class UploadedFileAdminController {
         },
         targetField: {
           type: 'string',
-          description: 'Associated target field/property key (e.g. logo, avatar, icon)',
+          description:
+            'Associated target field/property key (e.g. logo, avatar, icon)',
         },
       },
       required: ['file', 'targetType', 'targetId', 'targetField'],
     },
   })
-  @ApiOperation({ summary: 'Upload and create new file (Max 25MB, Images/Docs/PDF only)' })
+  @ApiOperation({
+    summary: 'Upload and create new file (Max 25MB, Images/Docs/PDF only)',
+  })
   @ApiOkResponseEnvelope(UploadedFileDto)
   async create(
     @UploadedFile(new FileUploadValidationPipe()) file: Express.Multer.File,
@@ -138,12 +155,14 @@ export class UploadedFileAdminController {
         },
         title: {
           type: 'string',
-          description: 'Optional file title (applies to all files or serves as a base title)',
+          description:
+            'Optional file title (applies to all files or serves as a base title)',
         },
         targetType: {
           type: 'string',
           enum: Object.values(ETargetType),
-          description: 'Domain target type (USER, KOL_PROFILE, PLATFORM, CAMPAIGN, ENTERPRISE)',
+          description:
+            'Domain target type (USER, KOL_PROFILE, PLATFORM, CAMPAIGN, ENTERPRISE)',
         },
         targetId: {
           type: 'string',
@@ -151,13 +170,16 @@ export class UploadedFileAdminController {
         },
         targetField: {
           type: 'string',
-          description: 'Associated target field/property key (e.g. logo, avatar, icon)',
+          description:
+            'Associated target field/property key (e.g. logo, avatar, icon)',
         },
       },
       required: ['files', 'targetType', 'targetId', 'targetField'],
     },
   })
-  @ApiOperation({ summary: 'Upload and create multiple files (limit to 10, Max 25MB each)' })
+  @ApiOperation({
+    summary: 'Upload and create multiple files (limit to 10, Max 25MB each)',
+  })
   @ApiOkResponseEnvelope(UploadedFileDto)
   async createBulk(
     @UploadedFiles(new FileUploadValidationPipe()) files: Express.Multer.File[],
@@ -185,7 +207,9 @@ export class UploadedFileAdminController {
     @Param('id') id: string,
     @Body() dto: { deletedBy: string },
   ): Promise<void> {
-    await this.commandBus.execute(new UploadedFileSoftDeleteCommand(id, dto.deletedBy));
+    await this.commandBus.execute(
+      new UploadedFileSoftDeleteCommand(id, dto.deletedBy),
+    );
   }
 
   @Delete(':id')
@@ -202,4 +226,3 @@ export class UploadedFileAdminController {
     await this.commandBus.execute(new UploadedFileRestoreCommand(id));
   }
 }
-

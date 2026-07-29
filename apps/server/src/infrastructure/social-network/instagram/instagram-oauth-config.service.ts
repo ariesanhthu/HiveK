@@ -3,7 +3,7 @@ import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class InstagramOAuthConfigService {
-  constructor(private readonly configService: ConfigService) { }
+  constructor(private readonly configService: ConfigService) {}
 
   /** Facebook App ID from Meta Developer Console (shared with FB integration) */
   get clientId(): string {
@@ -35,10 +35,10 @@ export class InstagramOAuthConfigService {
       'pages_read_engagement',
       'pages_manage_posts',
       'pages_manage_engagement', // Dành cho Facebook
-      'instagram_basic',          // Đọc info IG
-      'instagram_content_publish',// Đăng bài IG
-      'instagram_manage_comments',// Auto rep comment IG
-      'instagram_manage_messages' // Auto rep inbox DM IG
+      'instagram_basic', // Đọc info IG
+      'instagram_content_publish', // Đăng bài IG
+      'instagram_manage_comments', // Auto rep comment IG
+      'instagram_manage_messages', // Auto rep inbox DM IG
     ];
   }
 

@@ -16,7 +16,10 @@ import { InvalidOperationException } from '@/core/exceptions';
 import { CommandBus } from '@nestjs/cqrs';
 
 @CommandHandler(ScheduledPostCreateAndPublishCommand)
-export class ScheduledPostCreateAndPublishHandler implements ICommandHandler<ScheduledPostCreateAndPublishCommand, ScheduledPostDto> {
+export class ScheduledPostCreateAndPublishHandler implements ICommandHandler<
+  ScheduledPostCreateAndPublishCommand,
+  ScheduledPostDto
+> {
   constructor(
     @Inject(SOCIAL_PAGE_REPOSITORY)
     private readonly socialPageRepository: ISocialPageRepository,
@@ -27,19 +30,25 @@ export class ScheduledPostCreateAndPublishHandler implements ICommandHandler<Sch
     private readonly commandBus: CommandBus,
   ) {}
 
-  async execute(command: ScheduledPostCreateAndPublishCommand): Promise<ScheduledPostDto> {
+  async execute(
+    command: ScheduledPostCreateAndPublishCommand,
+  ): Promise<ScheduledPostDto> {
     const { enterpriseId, userId, input } = command;
 
     let postId: string;
 
     // 1. Create and save the post (no event emission)
     await this.uow.execute(async () => {
-      const socialPage = await this.socialPageRepository.findById(input.socialPageId);
+      const socialPage = await this.socialPageRepository.findById(
+        input.socialPageId,
+      );
       if (!socialPage) {
         throw new Error('Social page connection not found.');
       }
       if (socialPage.enterpriseId !== enterpriseId) {
-        throw new InvalidOperationException('Page connection does not belong to the requesting enterprise.');
+        throw new InvalidOperationException(
+          'Page connection does not belong to the requesting enterprise.',
+        );
       }
 
       const scheduledAt = input.scheduledAt
@@ -66,6 +75,6 @@ export class ScheduledPostCreateAndPublishHandler implements ICommandHandler<Sch
     });
 
     // 2. Immediately publish the post
-    return this.commandBus.execute(new ScheduledPostPublishCommand(postId!));
+    return this.commandBus.execute(new ScheduledPostPublishCommand(postId));
   }
 }

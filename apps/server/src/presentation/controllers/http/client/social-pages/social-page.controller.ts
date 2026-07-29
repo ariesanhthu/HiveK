@@ -10,12 +10,29 @@ import {
   Inject,
 } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
-import { ApiTags, ApiOperation, ApiBearerAuth, ApiSecurity } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiBearerAuth,
+  ApiSecurity,
+} from '@nestjs/swagger';
 import { buildVersionedRoute } from '@presentation/utils';
-import { JwtAuthGuard, RolesGuard, UserVerifiedGuard } from '@/presentation/middleware/guards';
-import { CurrentUser, Roles, ApiOkResponseEnvelope, ApiPaginatedResponseEnvelope } from '@/presentation/decorators';
+import {
+  JwtAuthGuard,
+  RolesGuard,
+  UserVerifiedGuard,
+} from '@/presentation/middleware/guards';
+import {
+  CurrentUser,
+  Roles,
+  ApiOkResponseEnvelope,
+  ApiPaginatedResponseEnvelope,
+} from '@/presentation/decorators';
 import { ERoleType } from '@/core/enums';
-import { ENTERPRISE_REPOSITORY, type IEnterpriseRepository } from '@/core/interfaces/repositories';
+import {
+  ENTERPRISE_REPOSITORY,
+  type IEnterpriseRepository,
+} from '@/core/interfaces/repositories';
 import {
   SocialPageConnectCommand,
   SocialPageDisconnectCommand,
@@ -42,9 +59,11 @@ export class SocialPageController {
   private async getEnterpriseId(userId: string): Promise<string> {
     const enterprise = await this.enterpriseRepository.findByUserId(userId);
     if (!enterprise) {
-      throw new ForbiddenException('User is not associated with any enterprise profile.');
+      throw new ForbiddenException(
+        'User is not associated with any enterprise profile.',
+      );
     }
-    return enterprise.id!;
+    return enterprise.id;
   }
 
   @Get()
@@ -63,22 +82,30 @@ export class SocialPageController {
     @Param('id') id: string,
   ): Promise<{ success: boolean }> {
     const enterpriseId = await this.getEnterpriseId(userId);
-    return this.commandBus.execute(new SocialPageDisconnectCommand(id, enterpriseId, userId));
+    return this.commandBus.execute(
+      new SocialPageDisconnectCommand(id, enterpriseId, userId),
+    );
   }
 
   @Post('facebook/connect')
-  @ApiOperation({ summary: 'Link a selected Facebook page to the enterprise account' })
+  @ApiOperation({
+    summary: 'Link a selected Facebook page to the enterprise account',
+  })
   @ApiOkResponseEnvelope(SocialPageDto)
   async connectPage(
     @CurrentUser('sub') userId: string,
     @Body() input: SocialPageConnectInputDto,
   ): Promise<SocialPageDto> {
     const enterpriseId = await this.getEnterpriseId(userId);
-    return this.commandBus.execute(new SocialPageConnectCommand(enterpriseId, input));
+    return this.commandBus.execute(
+      new SocialPageConnectCommand(enterpriseId, input),
+    );
   }
 
   @Post('facebook/refresh-token')
-  @ApiOperation({ summary: 'Refresh Facebook page access token using user credentials' })
+  @ApiOperation({
+    summary: 'Refresh Facebook page access token using user credentials',
+  })
   @ApiOkResponseEnvelope(SocialPageDto)
   async refreshToken(
     @CurrentUser('sub') userId: string,
@@ -86,7 +113,12 @@ export class SocialPageController {
     @Body('accessToken') userAccessToken: string,
   ): Promise<SocialPageDto> {
     const enterpriseId = await this.getEnterpriseId(userId);
-    return this.commandBus.execute(new SocialPageRefreshTokenCommand(socialPageId, enterpriseId, userAccessToken));
+    return this.commandBus.execute(
+      new SocialPageRefreshTokenCommand(
+        socialPageId,
+        enterpriseId,
+        userAccessToken,
+      ),
+    );
   }
 }
-

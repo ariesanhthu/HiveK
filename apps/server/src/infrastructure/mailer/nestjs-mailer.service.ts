@@ -1,6 +1,10 @@
 import { Injectable, Inject } from '@nestjs/common';
 import { MailerService as NestMailService } from '@nestjs-modules/mailer';
-import type { IMailerService, ISendMailOptions, ILoggerService } from '@/application/interfaces';
+import type {
+  IMailerService,
+  ISendMailOptions,
+  ILoggerService,
+} from '@/application/interfaces';
 import { LOGGER_SERVICE } from '@/application/interfaces';
 import { errorMessage, toError } from '@/shared/utils';
 
@@ -16,8 +20,10 @@ export class NestjsMailerService implements IMailerService {
 
   async sendMail(options: ISendMailOptions): Promise<void> {
     try {
-      this.logger.log(`Sending email to ${options.to} with subject "${options.subject}"...`);
-      
+      this.logger.log(
+        `Sending email to ${options.to} with subject "${options.subject}"...`,
+      );
+
       const mailOptions: ISendMailOptions = {
         to: options.to,
         subject: options.subject,
@@ -39,7 +45,10 @@ export class NestjsMailerService implements IMailerService {
       this.logger.log(`✓ Email sent successfully to ${options.to}`);
     } catch (error) {
       const { message, stack } = toError(error);
-      this.logger.error(`Failed to send email to ${options.to}: ${message}`, stack);
+      this.logger.error(
+        `Failed to send email to ${options.to}: ${message}`,
+        stack,
+      );
       throw error;
     }
   }

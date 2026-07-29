@@ -9,13 +9,18 @@ import { EnterpriseInvitationDto } from '@/application/dtos/enterprise-invitatio
 import { PaginatedResponseDto } from '@/application/dtos/pagination.dto';
 
 @QueryHandler(EnterpriseGetMyInvitationsQuery)
-export class EnterpriseGetMyInvitationsQueryHandler implements IQueryHandler<EnterpriseGetMyInvitationsQuery, PaginatedResponseDto<EnterpriseInvitationDto>> {
+export class EnterpriseGetMyInvitationsQueryHandler implements IQueryHandler<
+  EnterpriseGetMyInvitationsQuery,
+  PaginatedResponseDto<EnterpriseInvitationDto>
+> {
   constructor(
     @Inject(ENTERPRISE_INVITATION_READ_SERVICE)
     private readonly readService: IEnterpriseInvitationReadService,
   ) {}
 
-  async execute(query: EnterpriseGetMyInvitationsQuery): Promise<PaginatedResponseDto<EnterpriseInvitationDto>> {
+  async execute(
+    query: EnterpriseGetMyInvitationsQuery,
+  ): Promise<PaginatedResponseDto<EnterpriseInvitationDto>> {
     const { email, filters } = query;
     return this.readService.findAll({
       ...filters,

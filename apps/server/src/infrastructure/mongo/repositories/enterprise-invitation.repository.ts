@@ -3,7 +3,10 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types, ClientSession } from 'mongoose';
 import { IEnterpriseInvitationRepository } from '@/core/interfaces/repositories';
 import { EnterpriseInvitationRoot } from '@/core/aggregate-roots';
-import { EnterpriseInvitationModel, EnterpriseInvitationDocument } from '../schemas';
+import {
+  EnterpriseInvitationModel,
+  EnterpriseInvitationDocument,
+} from '../schemas';
 import { Nullable } from '@/core/types';
 import { type IUnitOfWork, UNIT_OF_WORK } from '@/application/interfaces';
 import { MongoUnitOfWork } from '../mongo-uow';
@@ -23,32 +26,52 @@ export class MongoEnterpriseInvitationRepository implements IEnterpriseInvitatio
   }
 
   async findById(id: string): Promise<Nullable<EnterpriseInvitationRoot>> {
-    const doc = await this.invitationModel.findById(id).session(this.session).exec();
+    const doc = await this.invitationModel
+      .findById(id)
+      .session(this.session)
+      .exec();
     return doc ? this.mapToDomain(doc) : null;
   }
 
-  async findByEmailAndEnterpriseId(email: string, enterpriseId: string): Promise<Nullable<EnterpriseInvitationRoot>> {
-    const doc = await this.invitationModel.findOne({
-      email: email.toLowerCase(),
-      enterprise_id: new Types.ObjectId(enterpriseId),
-    }).session(this.session).exec();
+  async findByEmailAndEnterpriseId(
+    email: string,
+    enterpriseId: string,
+  ): Promise<Nullable<EnterpriseInvitationRoot>> {
+    const doc = await this.invitationModel
+      .findOne({
+        email: email.toLowerCase(),
+        enterprise_id: new Types.ObjectId(enterpriseId),
+      })
+      .session(this.session)
+      .exec();
     return doc ? this.mapToDomain(doc) : null;
   }
 
-  async findPendingByEmailAndEnterpriseId(email: string, enterpriseId: string): Promise<Nullable<EnterpriseInvitationRoot>> {
-    const doc = await this.invitationModel.findOne({
-      email: email.toLowerCase(),
-      enterprise_id: new Types.ObjectId(enterpriseId),
-      status: EEnterpriseInvitationStatus.PENDING,
-    }).session(this.session).exec();
+  async findPendingByEmailAndEnterpriseId(
+    email: string,
+    enterpriseId: string,
+  ): Promise<Nullable<EnterpriseInvitationRoot>> {
+    const doc = await this.invitationModel
+      .findOne({
+        email: email.toLowerCase(),
+        enterprise_id: new Types.ObjectId(enterpriseId),
+        status: EEnterpriseInvitationStatus.PENDING,
+      })
+      .session(this.session)
+      .exec();
     return doc ? this.mapToDomain(doc) : null;
   }
 
-  async findByEnterpriseId(enterpriseId: string): Promise<EnterpriseInvitationRoot[]> {
-    const docs = await this.invitationModel.find({
-      enterprise_id: new Types.ObjectId(enterpriseId),
-    }).session(this.session).exec();
-    return docs.map(doc => this.mapToDomain(doc));
+  async findByEnterpriseId(
+    enterpriseId: string,
+  ): Promise<EnterpriseInvitationRoot[]> {
+    const docs = await this.invitationModel
+      .find({
+        enterprise_id: new Types.ObjectId(enterpriseId),
+      })
+      .session(this.session)
+      .exec();
+    return docs.map((doc) => this.mapToDomain(doc));
   }
 
   async save(invitation: EnterpriseInvitationRoot): Promise<void> {
@@ -59,19 +82,27 @@ export class MongoEnterpriseInvitationRepository implements IEnterpriseInvitatio
       const saved = await created.save({ session: this.session });
       invitation.setId(saved._id.toString());
     } else {
-      await this.invitationModel.findByIdAndUpdate(invitation.id, data, { upsert: true }).session(this.session).exec();
+      await this.invitationModel
+        .findByIdAndUpdate(invitation.id, data, { upsert: true })
+        .session(this.session)
+        .exec();
     }
   }
 
   async saveMany(invitations: EnterpriseInvitationRoot[]): Promise<void> {
-    await Promise.all(invitations.map(i => this.save(i)));
+    await Promise.all(invitations.map((i) => this.save(i)));
   }
 
   async delete(id: string): Promise<void> {
-    await this.invitationModel.findByIdAndDelete(id).session(this.session).exec();
+    await this.invitationModel
+      .findByIdAndDelete(id)
+      .session(this.session)
+      .exec();
   }
 
-  private mapToDomain(doc: EnterpriseInvitationDocument): EnterpriseInvitationRoot {
+  private mapToDomain(
+    doc: EnterpriseInvitationDocument,
+  ): EnterpriseInvitationRoot {
     return EnterpriseInvitationRoot.instantiate(doc._id.toString(), {
       enterpriseId: doc.enterprise_id.toString(),
       email: doc.email,
@@ -84,7 +115,9 @@ export class MongoEnterpriseInvitationRepository implements IEnterpriseInvitatio
     });
   }
 
-  private mapToPersistence(invitation: EnterpriseInvitationRoot): Omit<EnterpriseInvitationModel, 'created_at' | 'updated_at'> {
+  private mapToPersistence(
+    invitation: EnterpriseInvitationRoot,
+  ): Omit<EnterpriseInvitationModel, 'created_at' | 'updated_at'> {
     return {
       enterprise_id: new Types.ObjectId(invitation.enterpriseId),
       email: invitation.email.toLowerCase(),

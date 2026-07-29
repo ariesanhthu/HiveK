@@ -11,12 +11,29 @@ import {
   HttpStatus,
 } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
-import { ApiTags, ApiOperation, ApiBearerAuth, ApiSecurity } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiBearerAuth,
+  ApiSecurity,
+} from '@nestjs/swagger';
 import { buildVersionedRoute } from '@presentation/utils';
-import { JwtAuthGuard, RolesGuard, UserVerifiedGuard } from '@/presentation/middleware/guards';
-import { CurrentUser, Roles, ApiOkResponseEnvelope, ApiPaginatedResponseEnvelope } from '@/presentation/decorators';
+import {
+  JwtAuthGuard,
+  RolesGuard,
+  UserVerifiedGuard,
+} from '@/presentation/middleware/guards';
+import {
+  CurrentUser,
+  Roles,
+  ApiOkResponseEnvelope,
+  ApiPaginatedResponseEnvelope,
+} from '@/presentation/decorators';
 import { ERoleType } from '@/core/enums';
-import { ENTERPRISE_REPOSITORY, type IEnterpriseRepository } from '@/core/interfaces/repositories';
+import {
+  ENTERPRISE_REPOSITORY,
+  type IEnterpriseRepository,
+} from '@/core/interfaces/repositories';
 import {
   ScheduledPostCreateCommand,
   ScheduledPostCancelCommand,
@@ -25,7 +42,10 @@ import {
   ScheduledPostCreateAndPublishCommand,
   ScheduledPostCreateAndPublishInputDto,
 } from '@/application/commands';
-import { ScheduledPostGetListQuery, ScheduledPostGetByIdQuery } from '@/application/queries';
+import {
+  ScheduledPostGetListQuery,
+  ScheduledPostGetByIdQuery,
+} from '@/application/queries';
 import { ScheduledPostDto } from '@/application/dtos';
 
 @ApiTags('CLIENT-scheduled-posts')
@@ -45,9 +65,11 @@ export class ScheduledPostController {
   private async getEnterpriseId(userId: string): Promise<string> {
     const enterprise = await this.enterpriseRepository.findByUserId(userId);
     if (!enterprise) {
-      throw new ForbiddenException('User is not associated with any enterprise profile.');
+      throw new ForbiddenException(
+        'User is not associated with any enterprise profile.',
+      );
     }
-    return enterprise.id!;
+    return enterprise.id;
   }
 
   @Post()
@@ -58,13 +80,17 @@ export class ScheduledPostController {
     @Body() input: ScheduledPostCreateInputDto,
   ): Promise<ScheduledPostDto> {
     const enterpriseId = await this.getEnterpriseId(userId);
-    return this.commandBus.execute(new ScheduledPostCreateCommand(enterpriseId, userId, input));
+    return this.commandBus.execute(
+      new ScheduledPostCreateCommand(enterpriseId, userId, input),
+    );
   }
 
   @Get()
   @ApiOperation({ summary: 'Get all scheduled posts' })
   @ApiPaginatedResponseEnvelope(ScheduledPostDto)
-  async findAll(@CurrentUser('sub') userId: string): Promise<ScheduledPostDto[]> {
+  async findAll(
+    @CurrentUser('sub') userId: string,
+  ): Promise<ScheduledPostDto[]> {
     const enterpriseId = await this.getEnterpriseId(userId);
     return this.queryBus.execute(new ScheduledPostGetListQuery(enterpriseId));
   }
@@ -77,19 +103,26 @@ export class ScheduledPostController {
     @Param('id') id: string,
   ): Promise<ScheduledPostDto> {
     const enterpriseId = await this.getEnterpriseId(userId);
-    return this.queryBus.execute(new ScheduledPostGetByIdQuery(id, enterpriseId));
+    return this.queryBus.execute(
+      new ScheduledPostGetByIdQuery(id, enterpriseId),
+    );
   }
 
   @Post('test')
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: '[TEST] Create a post and publish it immediately (bypasses outbox delay)' })
+  @ApiOperation({
+    summary:
+      '[TEST] Create a post and publish it immediately (bypasses outbox delay)',
+  })
   @ApiOkResponseEnvelope(ScheduledPostDto)
   async createAndPublish(
     @CurrentUser('sub') userId: string,
     @Body() input: ScheduledPostCreateAndPublishInputDto,
   ): Promise<ScheduledPostDto> {
     const enterpriseId = await this.getEnterpriseId(userId);
-    return this.commandBus.execute(new ScheduledPostCreateAndPublishCommand(enterpriseId, userId, input));
+    return this.commandBus.execute(
+      new ScheduledPostCreateAndPublishCommand(enterpriseId, userId, input),
+    );
   }
 
   @Post(':id/cancel')
@@ -101,7 +134,9 @@ export class ScheduledPostController {
     @Param('id') id: string,
   ): Promise<{ success: boolean }> {
     const enterpriseId = await this.getEnterpriseId(userId);
-    return this.commandBus.execute(new ScheduledPostCancelCommand(id, enterpriseId));
+    return this.commandBus.execute(
+      new ScheduledPostCancelCommand(id, enterpriseId),
+    );
   }
 
   @Post(':id/reschedule')
@@ -117,7 +152,12 @@ export class ScheduledPostController {
     if (!scheduledAt) {
       throw new Error('New scheduledAt timestamp is required.');
     }
-    return this.commandBus.execute(new ScheduledPostRescheduleCommand(id, enterpriseId, new Date(scheduledAt)));
+    return this.commandBus.execute(
+      new ScheduledPostRescheduleCommand(
+        id,
+        enterpriseId,
+        new Date(scheduledAt),
+      ),
+    );
   }
 }
-

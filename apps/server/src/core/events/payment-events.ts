@@ -14,9 +14,14 @@ export class PaymentAttemptStartedEvent extends DomainEvent<{
     paymentId: string,
     attemptId: string,
     attemptNumber: number,
-    paymentProviderId: string
+    paymentProviderId: string,
   ) {
-    super(paymentId, { paymentId, attemptId, attemptNumber, paymentProviderId });
+    super(paymentId, {
+      paymentId,
+      attemptId,
+      attemptNumber,
+      paymentProviderId,
+    });
   }
 }
 
@@ -33,7 +38,7 @@ export class PaymentFailedEvent extends DomainEvent<{
     paymentId: string,
     attemptId: string,
     failureReason: string,
-    failureType: string
+    failureType: string,
   ) {
     super(paymentId, { paymentId, attemptId, failureReason, failureType });
   }
@@ -54,7 +59,7 @@ export class PaymentRefundedEvent extends DomainEvent<{
     attemptId: string,
     amount: number,
     currency: string,
-    isFullRefund: boolean
+    isFullRefund: boolean,
   ) {
     super(paymentId, { paymentId, attemptId, amount, currency, isFullRefund });
   }
@@ -81,7 +86,7 @@ export class TransactionRecordedEvent extends DomainEvent<{
     transactionSource: string,
     status: string,
     amount: number,
-    currency: string
+    currency: string,
   ) {
     super(paymentId, {
       paymentId,

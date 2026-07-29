@@ -48,8 +48,8 @@ export class UploadedFileRoot extends BaseAggregateRoot<UploadedFileProps> {
       deleteBy: null,
     });
     root.addDomainEvent(
-      new UploadedFileCreatedEvent(root.id!, {
-        fileId: root.id!,
+      new UploadedFileCreatedEvent(root.id, {
+        fileId: root.id,
         targetType: root.targetType,
         targetId: root.targetId,
         targetField: root.targetField,
@@ -58,7 +58,10 @@ export class UploadedFileRoot extends BaseAggregateRoot<UploadedFileProps> {
     return root;
   }
 
-  public static instantiate(id: string, props: UploadedFileProps): UploadedFileRoot {
+  public static instantiate(
+    id: string,
+    props: UploadedFileProps,
+  ): UploadedFileRoot {
     return new UploadedFileRoot(props, id);
   }
 

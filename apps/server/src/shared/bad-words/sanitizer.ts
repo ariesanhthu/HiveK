@@ -19,7 +19,10 @@ import { URL_REGEX, EMAIL_REGEX, PHONE_REGEX } from './constants';
  * // => { sanitizedText: 'Buy now! Email ############', flaggedPercent: 40, ... }
  * ```
  */
-export function sanitize(input: string, options?: SanitizeOptions): SanitizeResult {
+export function sanitize(
+  input: string,
+  options?: SanitizeOptions,
+): SanitizeResult {
   const replaceChar = options?.replaceChar ?? '*';
   const removeLinks = options?.removeLinks !== false;
   const removeBadWords = options?.removeBadWords !== false;
@@ -33,7 +36,7 @@ export function sanitize(input: string, options?: SanitizeOptions): SanitizeResu
   if (removeLinks) {
     for (const match of input.matchAll(URL_REGEX)) {
       const m = match[0];
-      const start = match.index!;
+      const start = match.index;
       for (let i = start; i < start + m.length; i++) {
         flagged.add(i);
       }
@@ -45,7 +48,7 @@ export function sanitize(input: string, options?: SanitizeOptions): SanitizeResu
     for (const regex of [EMAIL_REGEX, PHONE_REGEX]) {
       for (const match of input.matchAll(regex)) {
         const m = match[0];
-        const start = match.index!;
+        const start = match.index;
         for (let i = start; i < start + m.length; i++) {
           flagged.add(i);
         }

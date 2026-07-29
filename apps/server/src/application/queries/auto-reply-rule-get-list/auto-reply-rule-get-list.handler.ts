@@ -12,7 +12,10 @@ import { AutoReplyRuleGetListQuery } from './auto-reply-rule-get-list.query';
 import { InvalidOperationException } from '@/core/exceptions';
 
 @QueryHandler(AutoReplyRuleGetListQuery)
-export class AutoReplyRuleGetListHandler implements IQueryHandler<AutoReplyRuleGetListQuery, AutoReplyRuleDto[]> {
+export class AutoReplyRuleGetListHandler implements IQueryHandler<
+  AutoReplyRuleGetListQuery,
+  AutoReplyRuleDto[]
+> {
   constructor(
     @Inject(AUTO_REPLY_RULE_REPOSITORY)
     private readonly autoReplyRuleRepository: IAutoReplyRuleRepository,
@@ -26,10 +29,14 @@ export class AutoReplyRuleGetListHandler implements IQueryHandler<AutoReplyRuleG
       throw new Error('Social page connection not found.');
     }
     if (page.enterpriseId !== query.enterpriseId) {
-      throw new InvalidOperationException('Unauthorized enterprise access to rule details.');
+      throw new InvalidOperationException(
+        'Unauthorized enterprise access to rule details.',
+      );
     }
 
-    const rules = await this.autoReplyRuleRepository.findByPageId(query.socialPageId);
+    const rules = await this.autoReplyRuleRepository.findByPageId(
+      query.socialPageId,
+    );
     return AutoReplyRuleMapper.toListDto(rules);
   }
 }

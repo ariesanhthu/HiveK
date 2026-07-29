@@ -1,18 +1,35 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { Inject } from '@nestjs/common';
 import { PaymentHandleWebhookCommand } from './payment-handle-webhook.command';
-import { PAYMENT_REPOSITORY, type IPaymentRepository } from '@/core/interfaces/repositories';
-import { PAYMENT_PROVIDER_REPOSITORY, type IPaymentProviderRepository } from '@/core/interfaces/repositories';
-import { PAYMENT_PROVIDER_DISCOVERY, type IPaymentProviderDiscovery } from '@/core/interfaces/services/payment-provider-discovery.interface';
+import {
+  PAYMENT_REPOSITORY,
+  type IPaymentRepository,
+} from '@/core/interfaces/repositories';
+import {
+  PAYMENT_PROVIDER_REPOSITORY,
+  type IPaymentProviderRepository,
+} from '@/core/interfaces/repositories';
+import {
+  PAYMENT_PROVIDER_DISCOVERY,
+  type IPaymentProviderDiscovery,
+} from '@/core/interfaces/services/payment-provider-discovery.interface';
 import { type IUnitOfWork, UNIT_OF_WORK } from '@/application/interfaces';
 import { PaymentService } from '@/application/services';
 import { PaymentTransactionEntity } from '@/core/entities';
-import { EPaymentTransactionType, ETransactionSource, ETransactionStatus, ECurrency } from '@/core/enums';
+import {
+  EPaymentTransactionType,
+  ETransactionSource,
+  ETransactionStatus,
+  ECurrency,
+} from '@/core/enums';
 import { MoneyVO } from '@/core/value-objects';
 import { PaymentNotFoundException } from '@/core/exceptions';
 
 @CommandHandler(PaymentHandleWebhookCommand)
-export class PaymentHandleWebhookHandler implements ICommandHandler<PaymentHandleWebhookCommand, { statusCode: number; payload?: Record<string, unknown> }> {
+export class PaymentHandleWebhookHandler implements ICommandHandler<
+  PaymentHandleWebhookCommand,
+  { statusCode: number; payload?: Record<string, unknown> }
+> {
   constructor(
     @Inject(PAYMENT_REPOSITORY)
     private readonly paymentRepository: IPaymentRepository,
@@ -25,19 +42,31 @@ export class PaymentHandleWebhookHandler implements ICommandHandler<PaymentHandl
     private readonly paymentService: PaymentService,
   ) {}
 
-  async execute(command: PaymentHandleWebhookCommand): Promise<{ statusCode: number; payload?: Record<string, unknown> }> {
+  async execute(
+    command: PaymentHandleWebhookCommand,
+  ): Promise<{ statusCode: number; payload?: Record<string, unknown> }> {
     const { input } = command;
 
     return this.uow.execute(async () => {
       // 1. Resolve Provider strategy & Entity
       const providerInstance = this.providerDiscovery.findProvider(input.code);
-      if (!providerInstance?.verifyWebhook || !providerInstance.extractPaymentAttemptId || !providerInstance.parseWebhook) {
-        throw new Error(`Provider strategy not found or incomplete for code: ${input.code}`);
+      if (
+        !providerInstance?.verifyWebhook ||
+        !providerInstance.extractPaymentAttemptId ||
+        !providerInstance.parseWebhook
+      ) {
+        throw new Error(
+          `Provider strategy not found or incomplete for code: ${input.code}`,
+        );
       }
 
-      const providerEntity = await this.providerRepository.findByCode(input.code);
+      const providerEntity = await this.providerRepository.findByCode(
+        input.code,
+      );
       if (!providerEntity) {
-        throw new Error(`Payment provider not found in repository for code: ${input.code}`);
+        throw new Error(
+          `Payment provider not found in repository for code: ${input.code}`,
+        );
       }
       if (!providerEntity.isActive) {
         throw new Error('Payment provider is deactivated.');
@@ -46,7 +75,9 @@ export class PaymentHandleWebhookHandler implements ICommandHandler<PaymentHandl
       // 2. Extract Attempt & Payment
       const attemptId = providerInstance.extractPaymentAttemptId(input.data);
       if (!attemptId) {
-        throw new Error('Could not extract payment attempt ID from webhook payload.');
+        throw new Error(
+          'Could not extract payment attempt ID from webhook payload.',
+        );
       }
 
       const payment = await this.paymentRepository.findByAttemptId(attemptId);
@@ -72,13 +103,18 @@ export class PaymentHandleWebhookHandler implements ICommandHandler<PaymentHandl
       const parsed = providerInstance.parseWebhook(input.data);
 
       // Map action & status to EPaymentTransactionType
-      const transactionType = this.mapToTransactionType(parsed.action, parsed.data.status);
+      const transactionType = this.mapToTransactionType(
+        parsed.action,
+        parsed.data.status,
+      );
 
       const transaction = PaymentTransactionEntity.fromProvider({
         transactionType,
         transactionSource: ETransactionSource.WEBHOOK,
-        amount: new MoneyVO(parsed.amount, parsed.currency as ECurrency),
-        status: parsed.data.isSuccess ? ETransactionStatus.SUCCESS : ETransactionStatus.FAILED,
+        amount: new MoneyVO(parsed.amount, parsed.currency),
+        status: parsed.data.isSuccess
+          ? ETransactionStatus.SUCCESS
+          : ETransactionStatus.FAILED,
         description: parsed.data.errorMessage || undefined,
         providerTransactionId: parsed.data.transactionId,
         responsePayload: parsed.rawPayload,
@@ -100,7 +136,7 @@ export class PaymentHandleWebhookHandler implements ICommandHandler<PaymentHandl
 
   private mapToTransactionType(
     action: 'payment' | 'refund' | 'cancel' | 'other',
-    status: 'authorized' | 'succeeded' | 'failed' | 'pending' | 'expired'
+    status: 'authorized' | 'succeeded' | 'failed' | 'pending' | 'expired',
   ): EPaymentTransactionType {
     switch (action) {
       case 'payment':

@@ -1,4 +1,8 @@
-import { EventMetadata, IntegrationEvent, TransportMetadata } from '@/core/common/base.integration-event';
+import {
+  EventMetadata,
+  IntegrationEvent,
+  TransportMetadata,
+} from '@/core/common/base.integration-event';
 import { EOtpType } from '@/core/enums';
 
 export interface SendVerificationEmailRequestedPayload {

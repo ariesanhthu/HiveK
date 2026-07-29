@@ -1,4 +1,9 @@
-import { Injectable, CanActivate, ExecutionContext, ForbiddenException } from '@nestjs/common';
+import {
+  Injectable,
+  CanActivate,
+  ExecutionContext,
+  ForbiddenException,
+} from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { GqlExecutionContext } from '@nestjs/graphql';
 import { IS_PUBLIC_KEY } from '@/presentation/decorators/public.decorator';
@@ -15,17 +20,17 @@ export class UserVerifiedGuard implements CanActivate {
       context.getClass(),
     ]);
 
-    const isWebhook = this.reflector.getAllAndOverride<boolean>(IS_WEBHOOK_KEY, [
-      context.getHandler(),
-      context.getClass(),
-    ]);
+    const isWebhook = this.reflector.getAllAndOverride<boolean>(
+      IS_WEBHOOK_KEY,
+      [context.getHandler(), context.getClass()],
+    );
 
     if (isPublic || isWebhook) {
       return true;
     }
 
     let request;
-    if (isFunction(context.getType) && context.getType() as string === 'graphql') {
+    if (isFunction(context.getType) && context.getType() === 'graphql') {
       const ctx = GqlExecutionContext.create(context);
       request = ctx.getContext().req;
     } else {

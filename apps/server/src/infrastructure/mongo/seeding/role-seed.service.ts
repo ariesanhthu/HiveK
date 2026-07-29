@@ -4,7 +4,10 @@ import { Model } from 'mongoose';
 import { RoleModel } from '../schemas/role.schema';
 import { ERoleType } from '@/core/enums';
 import { UserModel } from '../schemas';
-import { type IUserRepository, USER_REPOSITORY } from '@/core/interfaces/repositories';
+import {
+  type IUserRepository,
+  USER_REPOSITORY,
+} from '@/core/interfaces/repositories';
 import * as bcrypt from 'bcrypt';
 import { AdminRoot } from '@/core/aggregate-roots';
 import { PhoneNumberVO } from '@/core/value-objects/phone-number.value-object';
@@ -21,7 +24,7 @@ export class RoleSeedService implements OnModuleInit {
     private readonly userModel: Model<UserModel>,
     @Inject(USER_REPOSITORY)
     private readonly userRepository: IUserRepository,
-  ) { }
+  ) {}
 
   async onModuleInit() {
     if (env('SEEDING', '1') === '0') {
@@ -61,7 +64,9 @@ export class RoleSeedService implements OnModuleInit {
 
     try {
       await this.roleModel.insertMany(defaultRoles);
-      this.logger.log(`Successfully seeded ${defaultRoles.length} default roles.`);
+      this.logger.log(
+        `Successfully seeded ${defaultRoles.length} default roles.`,
+      );
     } catch (error) {
       this.logger.error('Failed to seed default roles:', error);
     }
@@ -76,7 +81,7 @@ export class RoleSeedService implements OnModuleInit {
       return;
     }
     const roles = await this.roleModel.find();
-    const adminRole = roles.find(r => r.type === ERoleType.ADMIN);
+    const adminRole = roles.find((r) => r.type === ERoleType.ADMIN);
     if (!adminRole) {
       throw new Error('No admin role found in system');
     }
