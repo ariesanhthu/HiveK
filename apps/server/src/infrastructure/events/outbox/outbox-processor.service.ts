@@ -99,7 +99,7 @@ export class OutboxProcessorService {
     const activeSession = this.uow.getSession?.() || undefined;
     try {
       this.logger.debug(
-        `Processing outbox message: ${message._id}`,
+        `Processing outbox message: ${String(message._id)}`,
         undefined,
         { eventType: message.event_type },
       );
@@ -129,12 +129,12 @@ export class OutboxProcessorService {
       await message.save({ session: activeSession });
 
       this.logger.log(
-        `Successfully dispatched outbox message ${message._id} for eventType ${message.event_type}`,
+        `Successfully dispatched outbox message ${String(message._id)} for eventType ${message.event_type}`,
       );
     } catch (error) {
       const reason = errorMessage(error);
       this.logger.warn(
-        `Failed to dispatch outbox message ${message._id}: ${reason}`,
+        `Failed to dispatch outbox message ${String(message._id)}: ${reason}`,
         undefined,
         {
           retryCount: message.retry_count,

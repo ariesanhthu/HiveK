@@ -35,7 +35,7 @@ const STATUS_MAP: Record<string, HttpStatus> = {
 @Catch(DomainException)
 export class DomainExceptionFilter implements ExceptionFilter {
   catch(exception: DomainException, host: ArgumentsHost) {
-    if (isFunction(host.getType) && host.getType() === 'graphql') {
+    if (String(host.getType()) === 'graphql') {
       throw exception;
     }
     const ctx = host.switchToHttp();

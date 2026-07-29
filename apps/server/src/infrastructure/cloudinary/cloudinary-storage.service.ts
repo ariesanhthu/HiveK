@@ -58,7 +58,12 @@ export class CloudinaryStorageService implements IStorageService {
             this.logger.error(
               `Cloudinary upload error (${duration}ms): ${error.message}`,
             );
-            reject(error);
+            if (error instanceof Error) {
+              // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
+              reject(error);
+            } else {
+              reject(new Error(errorMessage(error)));
+            }
           } else if (result) {
             this.logger.log(
               `Cloudinary upload successful (${duration}ms): ${result.public_id}`,

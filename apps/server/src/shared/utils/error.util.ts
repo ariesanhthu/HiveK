@@ -38,7 +38,12 @@ export function toError(err: unknown): NormalizedError {
   if (err !== null && err !== undefined && typeof err === 'object') {
     const obj = err as Record<string, unknown>;
     return {
-      message: typeof obj.message === 'string' ? obj.message : String(err),
+      message:
+        typeof obj.message === 'string'
+          ? obj.message
+          : typeof err === 'string'
+            ? err
+            : JSON.stringify(err),
       name: typeof obj.name === 'string' ? obj.name : 'UnknownError',
       stack: typeof obj.stack === 'string' ? obj.stack : undefined,
       cause: obj.cause,
@@ -46,7 +51,12 @@ export function toError(err: unknown): NormalizedError {
   }
 
   return {
-    message: err !== null && err !== undefined ? String(err) : 'Unknown error',
+    message:
+      err !== null && err !== undefined
+        ? typeof err === 'string'
+          ? err
+          : JSON.stringify(err)
+        : 'Unknown error',
     name: 'UnknownError',
   };
 }

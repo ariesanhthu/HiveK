@@ -76,7 +76,7 @@ export class ProposalUpdateCommandHandler implements ICommandHandler<
           expirationDate:
             voucher.expirationDate instanceof Date
               ? voucher.expirationDate
-              : new Date(voucher.expirationDate),
+              : new Date(voucher.expirationDate as string),
         }),
       );
     }

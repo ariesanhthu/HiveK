@@ -6,7 +6,7 @@ import { isFunction } from '@/shared/utils';
 @Injectable()
 export class GqlThrottlerGuard extends ThrottlerGuard {
   override getRequestResponse(context: ExecutionContext) {
-    if (isFunction(context.getType) && context.getType() === 'graphql') {
+    if (String(context.getType()) === 'graphql') {
       const gqlCtx = GqlExecutionContext.create(context);
       const ctx = gqlCtx.getContext();
       // Ensure req and res are present (populated via context option in GraphQLModule)
@@ -19,8 +19,8 @@ export class GqlThrottlerGuard extends ThrottlerGuard {
   }
 
   override async canActivate(context: ExecutionContext): Promise<boolean> {
-    const type = isFunction(context.getType) ? context.getType() : 'http';
-    if (type === 'http' && isFunction(context.switchToHttp)) {
+    const type = String(context.getType());
+    if (type === 'http' && 'switchToHttp' in context) {
       const req = context.switchToHttp().getRequest();
       // Bypass rate limiting for GraphQL playground GET requests
       if (

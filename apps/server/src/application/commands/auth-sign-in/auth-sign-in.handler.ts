@@ -56,7 +56,7 @@ export class AuthSignInCommandHandler implements ICommandHandler<
     };
 
     const { accessToken, refreshToken } =
-      await this.authService.generateTokens(payload);
+      this.authService.generateTokens(payload);
 
     user.updateRefreshToken(refreshToken);
     await this.userRepository.save(user);
@@ -75,7 +75,8 @@ export class AuthSignInCommandHandler implements ICommandHandler<
       const role =
         enterprise.userId === userId
           ? 'owner'
-          : enterprise.members.find((m) => m.userId === userId)?.mode ===
+          : (enterprise.members.find((m) => m.userId === userId)
+                ?.mode as EEnterpriseMemberMode) ===
               EEnterpriseMemberMode.SUB_OWNER
             ? EEnterpriseMemberMode.SUB_OWNER
             : EEnterpriseMemberMode.USER;

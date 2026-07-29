@@ -94,7 +94,7 @@ export class RabbitMQModule implements OnModuleDestroy, OnApplicationBootstrap {
     private readonly reflector: Reflector,
   ) {}
 
-  async onApplicationBootstrap() {
+  onApplicationBootstrap() {
     this.discoverHandlers();
     this.consumer.connect().catch(() => {}); // Start connection in background
   }

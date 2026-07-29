@@ -8,7 +8,6 @@ import { AuthGuard } from '@nestjs/passport';
 import { GqlExecutionContext } from '@nestjs/graphql';
 import { IS_PUBLIC_KEY } from '../../decorators/public.decorator';
 import { IS_WEBHOOK_KEY } from '../../decorators/webhook.decorator';
-import { isFunction } from '@/shared/utils';
 
 @Injectable()
 export class JwtAuthGuard extends AuthGuard('jwt') {
@@ -17,7 +16,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
   }
 
   override getRequest(context: ExecutionContext) {
-    if (isFunction(context.getType) && context.getType() === 'graphql') {
+    if (String(context.getType()) === 'graphql') {
       const ctx = GqlExecutionContext.create(context);
       return ctx.getContext().req;
     }
@@ -25,9 +24,9 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
   }
 
   override handleRequest(
-    err: any,
-    user: any,
-    info: any,
+    err: any /* eslint-disable-line @typescript-eslint/no-explicit-any */,
+    user: any /* eslint-disable-line @typescript-eslint/no-explicit-any */,
+    info: any /* eslint-disable-line @typescript-eslint/no-explicit-any */,
     context: ExecutionContext,
     status?: number,
   ) {
@@ -49,10 +48,10 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
   }
 
   override canActivate(context: ExecutionContext) {
-    const type = isFunction(context.getType) ? context.getType() : 'http';
-    let req: any;
+    const type = String(context.getType());
+    let req: any; /* eslint-disable-line @typescript-eslint/no-explicit-any */
 
-    if (type === 'http' && isFunction(context.switchToHttp)) {
+    if (type === 'http' && 'switchToHttp' in context) {
       req = context.switchToHttp().getRequest();
       // Bypass authentication for GraphQL playground GET requests
       if (

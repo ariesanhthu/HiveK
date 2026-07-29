@@ -1,11 +1,33 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, QueryFilter, Types } from 'mongoose';
+import {
+  Model,
+  QueryFilter,
+  Types,
+  PipelineStage,
+  FlattenMaps,
+} from 'mongoose';
 import { INotificationReadService } from '@/application/interfaces';
 import { UserNotificationModel, UserNotificationDocument } from '../schemas';
 import { NotificationDto, NotificationFilterDto } from '@/application/dtos';
 import { PaginatedResponseDto } from '@/application/dtos/pagination.dto';
 import { Nullable } from '@/core/types';
+import { ETargetType, NotificationType } from '@/core/enums';
+
+interface RawNotificationDoc extends FlattenMaps<UserNotificationDocument> {
+  _id: Types.ObjectId;
+  notification_id: Types.ObjectId;
+  is_read: boolean;
+  read_at: Date | null;
+  payload: {
+    type: NotificationType;
+    title: string;
+    content: string;
+    target_type?: ETargetType;
+    target_id?: string;
+  };
+  created_at: Date;
+}
 
 @Injectable()
 export class MongoNotificationReadService implements INotificationReadService {
@@ -34,7 +56,7 @@ export class MongoNotificationReadService implements INotificationReadService {
       matchStage._id = { $lt: new Types.ObjectId(cursor) };
     }
 
-    const pipeline: any[] = [
+    const pipeline: PipelineStage[] = [
       { $match: matchStage },
       { $sort: { _id: -1 } },
       { $limit: limit + 1 },
@@ -58,7 +80,7 @@ export class MongoNotificationReadService implements INotificationReadService {
       : null;
 
     return new PaginatedResponseDto(
-      results.map((doc) => this.mapToDto(doc)),
+      results.map((doc) => this.mapToDto(doc as unknown as RawNotificationDoc)),
       nextCursor,
       hasNextPage,
       limit,
@@ -87,7 +109,7 @@ export class MongoNotificationReadService implements INotificationReadService {
     return doc ? this.mapToDto(doc) : null;
   }
 
-  private mapToDto(doc: any): NotificationDto {
+  private mapToDto(doc: RawNotificationDoc): NotificationDto {
     return {
       id: doc._id.toString(),
       notificationId: doc.notification_id.toString(),
@@ -98,7 +120,7 @@ export class MongoNotificationReadService implements INotificationReadService {
       targetId: doc.payload.target_id || null,
       isRead: doc.is_read,
       readAt: doc.read_at ? doc.read_at.toISOString() : null,
-      createdAt: doc.created_at.toISOString(),
+      createdAt: doc.created_at?.toISOString(),
     };
   }
 }

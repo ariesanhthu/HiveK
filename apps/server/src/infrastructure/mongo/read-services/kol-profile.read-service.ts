@@ -1,12 +1,19 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, QueryFilter } from 'mongoose';
+import {
+  Model,
+  QueryFilter,
+  ProjectionType,
+  QueryWithHelpers,
+  PopulateOptions,
+  Types,
+} from 'mongoose';
 import {
   IKolProfileReadService,
   type ILoggerService,
   LOGGER_SERVICE,
 } from '@/application/interfaces';
-import { KolProfileDetailDto } from '@/application/dtos';
+import { KolProfileDetailDto, UserDto } from '@/application/dtos';
 import { KolProfileFilterDto } from '@/application/queries';
 import { KolProfileModel, KolProfileDocument } from '../schemas';
 import { JsonObject, Nullable } from '@/core/types';
@@ -15,6 +22,48 @@ import {
   SortOrder,
 } from '@/application/dtos/pagination.dto';
 import { parseMongoProjection, MongoSanitizeUtil } from '../utils';
+import { FlattenMaps } from 'mongoose';
+import { ERoleType } from '@/core/enums';
+
+interface PopulatedPlatform {
+  platform_id: {
+    _id: Types.ObjectId;
+    name: string;
+    base_url?: string;
+    baseUrl?: string;
+    api_status?: string;
+    apiStatus?: string;
+    icon?: { url: string };
+  };
+  uniqueId: string;
+  handle: string;
+  url: string;
+  external_id: string;
+  follower_count: number;
+  avg_engagement: number;
+  top_tags: string[];
+  categories?: string[];
+}
+interface PopulatedUser {
+  _id: Types.ObjectId;
+  email: string;
+  phone: string;
+  full_name: string;
+  role_id: string;
+  is_email_verified: boolean;
+  type: ERoleType;
+  created_at: Date;
+  updated_at: Date;
+}
+interface RawKolProfileDoc extends Omit<
+  FlattenMaps<KolProfileDocument>,
+  'platforms' | 'user_id' | 'scores'
+> {
+  _id: Types.ObjectId;
+  platforms?: PopulatedPlatform[];
+  user_id: PopulatedUser;
+  scores?: Record<string, unknown>;
+}
 
 @Injectable()
 export class MongoKolProfileReadService implements IKolProfileReadService {
@@ -90,7 +139,7 @@ export class MongoKolProfileReadService implements IKolProfileReadService {
     this.logger.log(`MongoDB Query executed in ${duration.toFixed(2)}ms`);
 
     return new PaginatedResponseDto(
-      results.map((doc) => this.mapToDto(doc)),
+      results.map((doc) => this.mapToDto(doc as unknown as RawKolProfileDoc)),
       nextCursor,
       hasNextPage,
       limit,
@@ -99,9 +148,10 @@ export class MongoKolProfileReadService implements IKolProfileReadService {
 
   async findById(
     id: string,
-    projection?: any,
+    projection?: Record<string, unknown>,
   ): Promise<Nullable<KolProfileDetailDto>> {
-    let queryBuilder: any = this.kolProfileModel.findById(id);
+    let queryBuilder: QueryWithHelpers<KolProfileDocument, KolProfileDocument> =
+      this.kolProfileModel.findById(id);
 
     if (projection) {
       const { select, populate } = parseMongoProjection(projection, {
@@ -153,7 +203,7 @@ export class MongoKolProfileReadService implements IKolProfileReadService {
     }
 
     const doc = await queryBuilder.lean().exec();
-    return doc ? this.mapToDto(doc) : null;
+    return doc ? this.mapToDto(doc as unknown as RawKolProfileDoc) : null;
   }
 
   async findByEmail(email: string): Promise<Nullable<KolProfileDetailDto>> {
@@ -162,7 +212,7 @@ export class MongoKolProfileReadService implements IKolProfileReadService {
       .populate('user_id')
       .lean()
       .exec();
-    return doc ? this.mapToDto(doc) : null;
+    return doc ? this.mapToDto(doc as unknown as RawKolProfileDoc) : null;
   }
 
   async findByName(name: string): Promise<KolProfileDetailDto[]> {
@@ -173,16 +223,16 @@ export class MongoKolProfileReadService implements IKolProfileReadService {
       .populate('user_id')
       .lean()
       .exec();
-    return docs.map((doc) => this.mapToDto(doc));
+    return docs.map((doc) => this.mapToDto(doc as unknown as RawKolProfileDoc));
   }
 
-  private mapToDto(doc: any): KolProfileDetailDto {
+  private mapToDto(doc: RawKolProfileDoc): KolProfileDetailDto {
     return {
       id: doc._id.toString(),
       userId:
         doc.user_id && typeof doc.user_id === 'object' && doc.user_id._id
           ? doc.user_id._id.toString()
-          : doc.user_id?.toString() || null,
+          : (doc.user_id as unknown as string) || null,
       verificationType: doc.verification_type ?? null,
       name: doc.name,
       location: doc.location,
@@ -192,13 +242,13 @@ export class MongoKolProfileReadService implements IKolProfileReadService {
       phone: doc.phone,
       isVerified: doc.is_verified,
       scores: doc.scores || {},
-      platforms: (doc.platforms || []).map((p: any) => ({
+      platforms: (doc.platforms || []).map((p: PopulatedPlatform) => ({
         platformId:
           p.platform_id &&
           typeof p.platform_id === 'object' &&
           p.platform_id._id
             ? p.platform_id._id.toString()
-            : p.platform_id?.toString() || '',
+            : (p.platform_id as unknown as string) || '',
         platform:
           p.platform_id &&
           typeof p.platform_id === 'object' &&
@@ -209,7 +259,9 @@ export class MongoKolProfileReadService implements IKolProfileReadService {
                 baseUrl: p.platform_id.base_url || p.platform_id.baseUrl || '',
                 apiStatus:
                   p.platform_id.api_status || p.platform_id.apiStatus || '',
-                icon: p.platform_id.icon ? p.platform_id.icon.toString() : null,
+                icon: p.platform_id.icon
+                  ? (p.platform_id.icon as unknown as string)
+                  : null,
               }
             : undefined,
         uniqueId: p.uniqueId ?? p.handle ?? '',
@@ -221,7 +273,7 @@ export class MongoKolProfileReadService implements IKolProfileReadService {
       })),
       user:
         doc.user_id && typeof doc.user_id === 'object' && doc.user_id._id
-          ? {
+          ? ({
               id: doc.user_id._id.toString(),
               email: doc.user_id.email,
               phone: doc.user_id.phone,
@@ -229,9 +281,9 @@ export class MongoKolProfileReadService implements IKolProfileReadService {
               roleId: doc.user_id.role_id ? doc.user_id.role_id.toString() : '',
               isEmailVerified: doc.user_id.is_email_verified,
               type: doc.user_id.type,
-              createdAt: doc.user_id.created_at,
-              updatedAt: doc.user_id.updated_at,
-            }
+              createdAt: doc.user_id.created_at?.toISOString(),
+              updatedAt: doc.user_id.updated_at?.toISOString(),
+            } as unknown as UserDto)
           : undefined,
     };
   }

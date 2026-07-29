@@ -1,4 +1,4 @@
-import { BaseAggregateRoot } from '../common';
+import { BaseAggregateRoot, DomainEvent } from '../common';
 import { MoneyVO, PaymentStatusVO } from '../value-objects';
 import { type PaymentAttemptEntity } from '../entities/payment-attempt.entity';
 import { type Nullable, type Optional } from '../types';
@@ -274,7 +274,7 @@ export class PaymentEntity extends BaseAggregateRoot<PaymentProps> {
   public get deletedBy(): Optional<string> {
     return this.props.deletedBy;
   }
-  public recordEvent(event: any): void {
+  public recordEvent(event: DomainEvent<unknown>): void {
     this.addDomainEvent(event);
   }
 }

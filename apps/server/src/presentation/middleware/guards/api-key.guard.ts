@@ -33,7 +33,7 @@ export class ApiKeyGuard implements CanActivate {
     const type = context.getType();
     let request: AuthenticatedRequest;
 
-    if (type === 'graphql') {
+    if ((type as string) === 'graphql') {
       const gqlCtx = GqlExecutionContext.create(context);
       request = gqlCtx.getContext().req;
     } else {

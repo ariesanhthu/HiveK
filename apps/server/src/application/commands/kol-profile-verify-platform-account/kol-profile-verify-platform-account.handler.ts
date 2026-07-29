@@ -80,7 +80,7 @@ export class KolProfileVerifyPlatformAccountCommandHandler implements ICommandHa
       }
 
       // Publish task to crawl platform data
-      this.mqService.emit('crawl_platform_data', {
+      await this.mqService.emit('crawl_platform_data', {
         platformId,
         externalId,
         uniqueId,

@@ -5,7 +5,7 @@ import { IKolProfileRepository } from '@/core/interfaces/repositories';
 import { KolProfileEntity } from '@/core/entities/kol-profile.entity';
 import { KolPlatformInfoVO } from '@/core/value-objects/kol-platform-info.value-object';
 import { KolProfileModel, KolProfileDocument } from '../schemas';
-import { Nullable } from '@/core/types';
+import { JsonObject, Nullable } from '@/core/types';
 import { type IUnitOfWork, UNIT_OF_WORK } from '@/application/interfaces';
 import { MongoUnitOfWork } from '../mongo-uow';
 
@@ -19,7 +19,7 @@ export class MongoKolProfileRepository implements IKolProfileRepository {
   ) {}
 
   private get session(): ClientSession | undefined {
-    return (this.uow as MongoUnitOfWork).getSession() || undefined;
+    return (this.uow as unknown as MongoUnitOfWork).getSession() || undefined;
   }
 
   async findById(id: string): Promise<Nullable<KolProfileEntity>> {
@@ -155,7 +155,7 @@ export class MongoKolProfileRepository implements IKolProfileRepository {
       phone: entity.phone ?? null,
       platforms,
       is_verified: entity.isVerified,
-      scores: entity.scores,
+      scores: entity.scores as JsonObject,
       delete_at: entity.deleteAt,
       delete_by: entity.deleteBy,
     };

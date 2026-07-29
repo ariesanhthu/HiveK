@@ -17,7 +17,7 @@ export class EnterpriseVerifyCommandHandler implements ICommandHandler<
     private readonly enterpriseRepository: IEnterpriseRepository,
   ) {}
 
-  async execute(command: EnterpriseVerifyCommand): Promise<any> {
+  async execute(command: EnterpriseVerifyCommand): Promise<void> {
     const { enterpriseId } = command.input;
     const ent = await this.enterpriseRepository.findById(enterpriseId);
 

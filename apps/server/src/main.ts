@@ -25,4 +25,4 @@ async function bootstrap() {
   );
   Logger.log(`==========================================================`);
 }
-bootstrap();
+void bootstrap();

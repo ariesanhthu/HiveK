@@ -85,7 +85,7 @@ export class NotificationSendCommandHandler implements ICommandHandler<
         // Exhaustive check - TypeScript will error if we miss a case
         const _exhaustiveCheck: never = props.audience.broadcastType;
         throw new InvalidOperationException(
-          `Unknown broadcast type: ${_exhaustiveCheck}`,
+          `Unknown broadcast type: ${String(_exhaustiveCheck)}`,
         );
       }
     }

@@ -44,12 +44,12 @@ export class TestController {
    * GET /hivek/api/test/emit-mq
    */
   @Get('emit-mq')
-  testEmitMq() {
+  async testEmitMq() {
     this.logger.log('Emitting test event via RabbitMQ...');
     const payload = { message: 'Hello RabbitMQ', timestamp: new Date() };
 
-    this.mqService.emit('test_event', payload);
-    this.mqService.emit('default', payload);
+    await this.mqService.emit('test_event', payload);
+    await this.mqService.emit('default', payload);
     return { status: 'MQ Event emitted!' };
   }
 
@@ -111,7 +111,7 @@ export class TestKOLController {
   @ApiOperation({ summary: 'Get KOL profile handles mapping (for dev)' })
   async findHandlesDev(
     @Query() pagination: CursorPaginationRequestDto,
-  ): Promise<PaginatedResponseDto<any>> {
+  ): Promise<PaginatedResponseDto<Record<string, unknown>>> {
     return this.queryBus.execute(new KolProfileGetHandlesDevQuery(pagination));
   }
 

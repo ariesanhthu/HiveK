@@ -12,7 +12,7 @@ export class EnterpriseUserRmqController {
     queue: 'enterprise_user_queue',
     pattern: 'enterprise.user.added',
   })
-  async handleUserAdded(data: any) {
+  async handleUserAdded(data: Record<string, unknown>) {
     const { userId, enterpriseId, companyName } = data;
 
     // Dispatch notification command (In-app + Email/WS via event subscribers)
@@ -20,11 +20,11 @@ export class EnterpriseUserRmqController {
       new NotificationSendCommand({
         type: NotificationType.SYSTEM,
         title: 'Added to Enterprise',
-        content: `You have been added to enterprise ${companyName || enterpriseId}.`,
+        content: `You have been added to enterprise ${(companyName || enterpriseId) as string}.`,
         channels: [NotificationChannel.IN_APP, NotificationChannel.EMAIL],
         audience: {
           broadcastType: 'direct',
-          userIds: [userId],
+          userIds: [userId as string],
         },
       }),
     );
@@ -34,18 +34,18 @@ export class EnterpriseUserRmqController {
     queue: 'enterprise_user_queue',
     pattern: 'enterprise.user.revoked',
   })
-  async handleUserRevoked(data: any) {
+  async handleUserRevoked(data: Record<string, unknown>) {
     const { userId, enterpriseId, companyName } = data;
 
     await this.commandBus.execute(
       new NotificationSendCommand({
         type: NotificationType.SYSTEM,
         title: 'Removed from Enterprise',
-        content: `Your access to enterprise ${companyName || enterpriseId} has been revoked.`,
+        content: `Your access to enterprise ${(companyName || enterpriseId) as string} has been revoked.`,
         channels: [NotificationChannel.IN_APP, NotificationChannel.EMAIL],
         audience: {
           broadcastType: 'direct',
-          userIds: [userId],
+          userIds: [userId as string],
         },
       }),
     );

@@ -1,3 +1,4 @@
+import { errorMessage } from '@/shared/utils/error.util';
 import {
   ExceptionFilter,
   Catch,
@@ -31,7 +32,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
   }
 
   catch(exception: unknown, host: ArgumentsHost) {
-    if (isFunction(host.getType) && host.getType() === 'graphql') {
+    if (String(host.getType()) === 'graphql') {
       throw exception;
     }
 
@@ -55,13 +56,13 @@ export class HttpExceptionFilter implements ExceptionFilter {
       const res = exception.getResponse();
       const rawMessage = isString(res)
         ? res
-        : (res as any).message || exception.message;
+        : (res as Record<string, unknown>).message || exception.message;
       const message = Array.isArray(rawMessage)
         ? rawMessage.join(',')
         : rawMessage;
       const code = this.httpStatusToCode(status);
       const details = this.extractDetails(res);
-      const body = ApiResponseHelper.error(code, message, details);
+      const body = ApiResponseHelper.error(code, message as string, details);
 
       if (status >= 500) {
         this.logger.error(
@@ -70,7 +71,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
         );
       } else {
         this.logger.warn(
-          `${request.method} ${request.url} ${status} - ${code}: ${message}`,
+          `${request.method} ${request.url} ${status} - ${code}: ${message as string}`,
         );
       }
       return response.status(status).json(body);
@@ -121,15 +122,22 @@ export class HttpExceptionFilter implements ExceptionFilter {
 
   private extractDetails(res: string | object): ErrorDetail[] | undefined {
     if (!isObject(res)) return undefined;
-    const body = res as Record<string, any>;
+    const body = res;
     if (Array.isArray(body.errors)) {
-      return body.errors.map((e: any) => ({
-        field: e.property || e.field || e.path,
+      return body.errors.map((e: unknown) => ({
+        field: ((e as Record<string, unknown>).property ||
+          (e as Record<string, unknown>).field ||
+          (e as Record<string, unknown>).path) as string,
         message: isString(e)
           ? e
-          : e.constraints
-            ? Object.values(e.constraints).join('; ')
-            : e.message,
+          : (e as Record<string, unknown>).constraints
+            ? Object.values(
+                (e as Record<string, unknown>).constraints as Record<
+                  string,
+                  string
+                >,
+              ).join('; ')
+            : errorMessage(e),
       }));
     }
     if (Array.isArray(body.message)) {

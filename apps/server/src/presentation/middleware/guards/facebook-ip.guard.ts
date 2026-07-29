@@ -1,3 +1,4 @@
+import { errorMessage } from '@/shared/utils/error.util';
 import {
   Injectable,
   CanActivate,
@@ -109,8 +110,10 @@ export class FacebookIpGuard implements CanActivate {
         } else {
           if (this.matchIpv4(ip, range, bits)) return true;
         }
-      } catch (err: any) {
-        this.logger.error(`Error parsing CIDR range "${cidr}": ${err.message}`);
+      } catch (err: unknown) {
+        this.logger.error(
+          `Error parsing CIDR range "${cidr}": ${errorMessage(err)}`,
+        );
       }
     }
     return false;

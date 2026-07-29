@@ -12,6 +12,7 @@ import {
   type IUserRepository,
 } from '@/core/interfaces/repositories';
 import { EnterpriseUserRoot } from '@/core/aggregate-roots';
+import { EEnterpriseMemberMode } from '@/core/enums';
 import { EnterpriseRevokeMemberCommand } from './enterprise-revoke-member.command';
 import { type IUnitOfWork, UNIT_OF_WORK } from '@/application/interfaces';
 
@@ -59,7 +60,8 @@ export class EnterpriseRevokeMemberCommandHandler implements ICommandHandler<
         );
         if (
           targetUserId === enterprise.userId ||
-          (targetMember && targetMember.mode === 'sub_owner')
+          (targetMember &&
+            targetMember.mode === EEnterpriseMemberMode.SUB_OWNER)
         ) {
           throw new EnterpriseForbiddenException(
             'Sub-owners cannot revoke the owner or other sub-owners',

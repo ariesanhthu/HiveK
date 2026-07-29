@@ -67,7 +67,7 @@ export class AuthSelectWorkspaceCommandHandler implements ICommandHandler<
     };
 
     const { accessToken, refreshToken } =
-      await this.authService.generateTokens(payload);
+      this.authService.generateTokens(payload);
 
     user.updateRefreshToken(refreshToken);
     await this.userRepository.save(user);

@@ -35,10 +35,10 @@ export class PlatformUpdateCommandHandler implements ICommandHandler<
     }
 
     if (input.name) {
-      (platform.props as any).name = input.name.toLowerCase();
+      platform.updateName(input.name);
     }
 
-    if (input.baseUrl) (platform.props as any).baseUrl = input.baseUrl;
+    if (input.baseUrl) platform.updateBaseUrl(input.baseUrl);
 
     if (input.icon) {
       const fileExists = await this.uploadedFileRepository.findById(input.icon);

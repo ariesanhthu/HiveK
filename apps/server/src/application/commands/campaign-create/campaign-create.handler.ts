@@ -1,3 +1,4 @@
+import { JsonObject } from '@/core/types';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { Inject } from '@nestjs/common';
 import {
@@ -36,16 +37,16 @@ export class CampaignCreateCommandHandler implements ICommandHandler<
       ownerId: input.ownerId,
       enterpriseId: input.enterpriseId,
       budget: input.budget,
-      financialTarget: input.financialTarget,
+      financialTarget: (input.financialTarget || {}) as JsonObject,
       description: input.description,
       platformTarget: (input.platformTarget || []).map((item) => ({
         platformId: item.platformId,
         minFollowers: item.minFollowers,
         maxFollowers: item.maxFollowers,
         note: item.note,
-        extras: item.extras,
+        extras: (item.extras || {}) as JsonObject,
       })),
-      extras: input.extras,
+      extras: (input.extras || {}) as JsonObject,
       rawContents: [],
       schedule,
     });

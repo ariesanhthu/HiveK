@@ -39,7 +39,7 @@ export class NotificationRmqController {
     this.logger.log(`Processing email request for ${email} ...`);
 
     let purpose = '';
-    switch (type) {
+    switch (type as string) {
       case 'create_account':
         purpose = 'Create Account';
         break;

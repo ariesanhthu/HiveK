@@ -1,7 +1,27 @@
 import { Injectable, Inject } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, QueryFilter } from 'mongoose';
+import { Model, QueryFilter, FlattenMaps, Types } from 'mongoose';
 import { PlatformDocument, PlatformModel } from '../schemas';
+
+interface PopulatedIcon {
+  _id: Types.ObjectId;
+  url: string;
+  public_id: string;
+  size: number;
+  format: string;
+  title: string;
+  target_type: ETargetType;
+  target_id: string;
+  target_field: string;
+  created_at: string;
+  updated_at: string;
+}
+
+interface RawPlatformDoc extends Omit<FlattenMaps<PlatformDocument>, 'icon'> {
+  _id: Types.ObjectId;
+  icon?: PopulatedIcon;
+}
+
 import { IPlatformReadService, CACHE_SERVICE } from '@/application/interfaces';
 import type { ICacheService } from '@/application/interfaces';
 import { Nullable } from '@/core/types';
@@ -13,6 +33,7 @@ import {
 } from '@/application/dtos/pagination.dto';
 import { MongoSanitizeUtil } from '../utils';
 import { CacheKeyUtil } from '@/shared/utils/cache-key.util';
+import { ETargetType } from '@/core/enums';
 
 @Injectable()
 export class MongoPlatformReadService implements IPlatformReadService {
@@ -74,7 +95,7 @@ export class MongoPlatformReadService implements IPlatformReadService {
       : null;
 
     const response = new PaginatedResponseDto(
-      results.map((doc) => this.mapToDto(doc)),
+      results.map((doc) => this.mapToDto(doc as unknown as RawPlatformDoc)),
       nextCursor,
       hasNextPage,
       limit,
@@ -97,7 +118,7 @@ export class MongoPlatformReadService implements IPlatformReadService {
       .exec();
     if (!doc) return null;
 
-    const dto = this.mapToDto(doc);
+    const dto = this.mapToDto(doc as unknown as RawPlatformDoc);
     // Cache details for 1 hour
     await this.cacheService.set(cacheKey, dto, 3600);
     return dto;
@@ -118,13 +139,13 @@ export class MongoPlatformReadService implements IPlatformReadService {
       .exec();
     if (!doc) return null;
 
-    const dto = this.mapToDto(doc);
+    const dto = this.mapToDto(doc as unknown as RawPlatformDoc);
     // Cache details for 1 hour
     await this.cacheService.set(cacheKey, dto, 3600);
     return dto;
   }
 
-  private mapToDto(doc: any): PlatformDetailDto {
+  private mapToDto(doc: RawPlatformDoc): PlatformDetailDto {
     return {
       id: doc._id.toString(),
       name: doc.name,

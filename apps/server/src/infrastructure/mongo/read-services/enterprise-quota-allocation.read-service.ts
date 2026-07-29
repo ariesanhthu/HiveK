@@ -18,6 +18,7 @@ import { CACHE_SERVICE } from '@/application/interfaces';
 import type { ICacheService } from '@/application/interfaces';
 import { CacheKeyUtil } from '@/shared/utils/cache-key.util';
 import { Nullable } from '@/core/types';
+import { EGrantType } from '@/core/enums';
 
 @Injectable()
 export class MongoEnterpriseQuotaAllocationReadService implements IEnterpriseQuotaAllocationReadService {
@@ -103,7 +104,7 @@ export class MongoEnterpriseQuotaAllocationReadService implements IEnterpriseQuo
         enterpriseId: a.enterprise_id,
         key: a.key,
         allocated: a.allocated,
-        kind: a.kind as any,
+        kind: a.kind,
         isPool: a.is_pool,
       })),
       updatedAt:

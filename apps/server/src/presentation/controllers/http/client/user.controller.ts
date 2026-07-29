@@ -29,14 +29,14 @@ export class UserClientController {
   @ApiPaginatedResponseEnvelope(AdminDto)
   async findAll(
     @Query() filters: UserFilterDto,
-  ): Promise<PaginatedResponseDto<any>> {
+  ): Promise<PaginatedResponseDto<unknown>> {
     return this.queryBus.execute(new UserGetListQuery(filters));
   }
 
   @Get(':id')
   @ApiOperation({ summary: 'Get user by ID' })
   @ApiOkResponseEnvelope(UserDetailDto)
-  async getById(@Param('id') id: string): Promise<any> {
+  async getById(@Param('id') id: string): Promise<unknown> {
     return this.queryBus.execute(new UserGetByIdQuery(id));
   }
 }

@@ -62,7 +62,7 @@ export class AuthRefreshTokenCommandHandler implements ICommandHandler<
     };
 
     const { accessToken, refreshToken: newRefreshToken } =
-      await this.authService.generateTokens(tokenPayload);
+      this.authService.generateTokens(tokenPayload);
 
     user.updateRefreshToken(newRefreshToken);
     await this.userRepository.save(user);

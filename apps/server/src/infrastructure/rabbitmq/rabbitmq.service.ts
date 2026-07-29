@@ -21,19 +21,19 @@ export class RabbitMQService implements IMessageQueueService {
   /**
    * Emit event to RabbitMQ exchange with routing key
    */
-  async emit<TEvent = string, TData = any>(
+  async emit<TEvent = string, TData = unknown>(
     pattern: TEvent,
     data: TData,
   ): Promise<void> {
     try {
       const routingKey = this.resolveRoutingKey(pattern as string);
       this.logger.debug(
-        `Emitting event "${pattern}" with routing key "${routingKey}": ${JSON.stringify(data)}`,
+        `Emitting event "${String(pattern)}" with routing key "${routingKey}": ${JSON.stringify(data)}`,
       );
       await this.producer.publish(routingKey, data);
     } catch (error) {
       this.logger.error(
-        `Failed to emit event "${pattern}": ${errorMessage(error)}`,
+        `Failed to emit event "${String(pattern)}": ${errorMessage(error)}`,
       );
       throw error;
     }
@@ -43,10 +43,10 @@ export class RabbitMQService implements IMessageQueueService {
    * Send RPC request (not supported in direct exchange mode)
    * @deprecated Use emit() for event-based messaging instead
    */
-  async send<TResult = any, TInput = any>(
-    pattern: any,
+  send<TResult = unknown, TInput = unknown>(
+    pattern: unknown,
     data: TInput,
-  ): Promise<TResult> {
+  ): TResult {
     const errorMsg =
       'RPC send() not supported. Use emit() for event-based messaging.';
     this.logger.error(errorMsg);

@@ -28,7 +28,7 @@ export class PlatformTargetItemModel {
     of: MongooseSchema.Types.Mixed,
     required: false,
   })
-  extras?: Record<string, any>;
+  extras?: Record<string, unknown>;
 }
 
 @Schema({ _id: false })
@@ -129,7 +129,7 @@ export class CampaignModel {
     of: MongooseSchema.Types.Mixed,
     required: true,
   })
-  financial_target: Record<string, any>;
+  financial_target: Record<string, unknown>;
 
   @Prop({
     type: String,
@@ -171,7 +171,7 @@ export class CampaignModel {
     of: MongooseSchema.Types.Mixed,
     required: false,
   })
-  extras?: Record<string, any>;
+  extras?: Record<string, unknown>;
 
   @Prop({ type: CampaignScheduleSchema, required: false })
   schedule?: CampaignScheduleModel;

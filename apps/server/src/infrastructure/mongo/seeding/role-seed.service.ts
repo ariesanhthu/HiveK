@@ -86,7 +86,6 @@ export class RoleSeedService implements OnModuleInit {
       throw new Error('No admin role found in system');
     }
 
-    let user;
     const passwordHash = await bcrypt.hash(env('ADMIN_PASSWORD'), 10);
     const commonProps = {
       email: env('ADMIN_EMAIL'),
@@ -99,7 +98,7 @@ export class RoleSeedService implements OnModuleInit {
       isEmailVerified: true,
     };
 
-    user = AdminRoot.create(commonProps);
+    const user = AdminRoot.create(commonProps);
     await this.userRepository.save(user);
   }
 }

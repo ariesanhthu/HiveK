@@ -95,7 +95,9 @@ export class AuthSignUpCommandHandler implements ICommandHandler<
           user = AdminRoot.create(commonProps);
           break;
         default:
-          throw new InvalidUserTypeException(`Invalid user type: ${type}`);
+          throw new InvalidUserTypeException(
+            `Invalid user type: ${String(type)}`,
+          );
       }
 
       await this.userRepository.save(user);

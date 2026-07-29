@@ -43,7 +43,10 @@ export class CampaignResolver {
     projectionDto.fields = dataFieldsMap;
 
     return this.queryBus.execute(
-      new CampaignGetListQuery(filters as any, projectionDto),
+      new CampaignGetListQuery(
+        filters as Record<string, unknown>,
+        projectionDto,
+      ),
     );
   }
 }

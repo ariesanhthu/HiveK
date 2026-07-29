@@ -15,6 +15,7 @@ import {
   SortOrder,
 } from '@/application/dtos/pagination.dto';
 import { SubscriptionHistoryEntity } from '@/core/aggregate-roots';
+import { EGrantType } from '@/core/enums/grant-type.enum';
 import { SubscriptionChangeDetailsVO, GrantVO } from '@/core/value-objects';
 import { SubscriptionMapper } from '@/application/mappers/subscription.mapper';
 
@@ -106,13 +107,13 @@ export class MongoSubscriptionHistoryReadService implements ISubscriptionHistory
         oldGrants: doc.details.old_grants.map(
           (g) =>
             new GrantVO({
-              type: g.type as any,
+              type: g.type,
               key: g.key,
               value: g.value,
               resetCycle: g.reset_cycle || undefined,
               creditFallback: g.credit_fallback
                 ? {
-                    creditType: g.credit_fallback.credit_type as any,
+                    creditType: g.credit_fallback.credit_type,
                     creditsPerUnit: g.credit_fallback.credits_per_unit,
                   }
                 : undefined,
@@ -121,13 +122,13 @@ export class MongoSubscriptionHistoryReadService implements ISubscriptionHistory
         newGrants: doc.details.new_grants.map(
           (g) =>
             new GrantVO({
-              type: g.type as any,
+              type: g.type,
               key: g.key,
               value: g.value,
               resetCycle: g.reset_cycle || undefined,
               creditFallback: g.credit_fallback
                 ? {
-                    creditType: g.credit_fallback.credit_type as any,
+                    creditType: g.credit_fallback.credit_type,
                     creditsPerUnit: g.credit_fallback.credits_per_unit,
                   }
                 : undefined,

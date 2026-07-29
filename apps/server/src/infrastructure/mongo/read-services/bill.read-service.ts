@@ -10,6 +10,27 @@ import {
   PaginatedResponseDto,
   SortOrder,
 } from '@/application/dtos/pagination.dto';
+import { EBillLineType, EPurchaseType } from '@/core/enums';
+import { Types } from 'mongoose';
+
+interface RawBillItem {
+  id: string;
+  name: string;
+  quantity: number;
+  price: number;
+  currency: string;
+  line_type: EBillLineType;
+  package_id?: string | Types.ObjectId;
+  package_variant_id?: string | Types.ObjectId;
+  credit_type?: string;
+  credit_amount?: number;
+  tax_percent?: number;
+  purchase_type?: EPurchaseType;
+}
+interface RawBillDoc extends Omit<FlattenMaps<BillDocument>, 'items'> {
+  _id: Types.ObjectId;
+  items?: RawBillItem[];
+}
 
 @Injectable()
 export class MongoBillReadService implements IBillReadService {
@@ -51,7 +72,7 @@ export class MongoBillReadService implements IBillReadService {
       : null;
 
     return new PaginatedResponseDto(
-      results.map((doc) => this.mapToDto(doc)),
+      results.map((doc) => this.mapToDto(doc as unknown as RawBillDoc)),
       nextCursor,
       hasNextPage,
       limit,
@@ -60,7 +81,7 @@ export class MongoBillReadService implements IBillReadService {
 
   async findById(id: string): Promise<Nullable<BillResponseDto>> {
     const doc = await this.model.findById(id).lean().exec();
-    return doc ? this.mapToDto(doc) : null;
+    return doc ? this.mapToDto(doc as unknown as RawBillDoc) : null;
   }
 
   async findByBillCode(billCode: string): Promise<Nullable<BillResponseDto>> {
@@ -68,7 +89,7 @@ export class MongoBillReadService implements IBillReadService {
       .findOne({ bill_code: billCode } as QueryFilter<BillDocument>)
       .lean()
       .exec();
-    return doc ? this.mapToDto(doc) : null;
+    return doc ? this.mapToDto(doc as unknown as RawBillDoc) : null;
   }
 
   async findByEnterpriseId(enterpriseId: string): Promise<BillResponseDto[]> {
@@ -76,7 +97,7 @@ export class MongoBillReadService implements IBillReadService {
       .find({ enterprise_id: enterpriseId } as QueryFilter<BillDocument>)
       .lean()
       .exec();
-    return docs.map((doc) => this.mapToDto(doc));
+    return docs.map((doc) => this.mapToDto(doc as unknown as RawBillDoc));
   }
 
   async findUnpaidBills(enterpriseId: string): Promise<BillResponseDto[]> {
@@ -87,20 +108,22 @@ export class MongoBillReadService implements IBillReadService {
       } as QueryFilter<BillDocument>)
       .lean()
       .exec();
-    return docs.map((doc) => this.mapToDto(doc));
+    return docs.map((doc) => this.mapToDto(doc as unknown as RawBillDoc));
   }
 
-  private mapToDto(doc: FlattenMaps<BillDocument>): BillResponseDto {
-    const items: BillItemResponseDto[] = (doc.items || []).map((item: any) => ({
-      lineType: item.line_type,
-      packageId: item.package_id,
-      packageVariantId: item.package_variant_id,
-      creditType: item.credit_type ?? null,
-      creditAmount: item.credit_amount ?? null,
-      price: item.price,
-      taxPercent: item.tax_percent,
-      purchaseType: item.purchase_type,
-    }));
+  private mapToDto(doc: RawBillDoc): BillResponseDto {
+    const items: BillItemResponseDto[] = (doc.items || []).map(
+      (item: RawBillItem) => ({
+        lineType: item.line_type,
+        packageId: item.package_id?.toString(),
+        packageVariantId: item.package_variant_id?.toString(),
+        creditType: item.credit_type ?? null,
+        creditAmount: item.credit_amount ?? null,
+        price: item.price,
+        taxPercent: item.tax_percent,
+        purchaseType: item.purchase_type,
+      }),
+    );
 
     return {
       id: doc._id.toString(),

@@ -19,7 +19,7 @@ export const ProposalUpdateVoucherInputSchema = z
     platform: z.enum(EProductPlatform),
     discountValue: z.string().min(1),
     description: z.string().min(1).max(500),
-    expirationDate: z.any(),
+    expirationDate: z.unknown(),
   })
   .strict();
 

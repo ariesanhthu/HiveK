@@ -27,7 +27,7 @@ export class KpiLogTerminateCommandHandler implements ICommandHandler<
     await this.uow.execute(async () => {
       const { payload } = command;
 
-      if (!payload.participantId || !payload.outputId) {
+      if (!payload.participantId || !(payload.outputId as string)) {
         this.logger.error(
           'Received KPI termination event without participantId or outputId',
           JSON.stringify(payload),
@@ -36,11 +36,11 @@ export class KpiLogTerminateCommandHandler implements ICommandHandler<
       }
 
       const campaign = await this.campaignRepository.findByParticipantId(
-        payload.participantId,
+        payload.participantId as string,
       );
       if (!campaign) {
         this.logger.error(
-          `Campaign for Participant ${payload.participantId} not found for termination event`,
+          `Campaign for Participant ${payload.participantId as string} not found for termination event`,
         );
         return;
       }
@@ -54,7 +54,10 @@ export class KpiLogTerminateCommandHandler implements ICommandHandler<
       // }
 
       this.eventBus.publish(
-        new KpiTrackingTerminatedEvent(payload.participantId, payload.outputId),
+        new KpiTrackingTerminatedEvent(
+          payload.participantId as string,
+          payload.outputId as string,
+        ),
       );
     });
   }

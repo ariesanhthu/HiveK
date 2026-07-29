@@ -22,7 +22,7 @@ export class OAuthController {
   @Get('google')
   @UseGuards(GoogleAuthGuard)
   @ApiOperation({ summary: 'Google OAuth sign-in' })
-  async googleAuth() {
+  googleAuth() {
     return;
   }
 
@@ -31,7 +31,7 @@ export class OAuthController {
   @UseGuards(GoogleAuthGuard)
   @ApiOperation({ summary: 'Google OAuth callback' })
   @ApiOkResponseEnvelope(AuthSignInOutputDto)
-  async googleAuthCallback(
+  googleAuthCallback(
     @Req() req: AuthenticatedRequest,
     @Res({ passthrough: true }) response: Response,
   ) {

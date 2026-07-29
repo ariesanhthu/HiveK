@@ -60,7 +60,7 @@ export class WebSocketGateway
   }
 
   @SubscribeMessage('ping')
-  handlePing(@MessageBody() data: any, @ConnectedSocket() client: Socket) {
+  handlePing(@MessageBody() data: unknown, @ConnectedSocket() client: Socket) {
     this.logger.log(`Received ping from ${client.id}: ${JSON.stringify(data)}`);
     return {
       event: 'pong',

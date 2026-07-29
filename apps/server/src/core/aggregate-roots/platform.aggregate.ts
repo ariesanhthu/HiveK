@@ -85,4 +85,14 @@ export class PlatformRoot extends BaseAggregateRoot<PlatformProps> {
   public updateIcon(icon: FileId): void {
     this.props.icon = icon;
   }
+
+  public updateName(name: string): void {
+    this.props.name = name.toLowerCase();
+    this.props.updatedAt = new Date();
+  }
+
+  public updateBaseUrl(baseUrl: string): void {
+    this.props.baseUrl = baseUrl;
+    this.props.updatedAt = new Date();
+  }
 }

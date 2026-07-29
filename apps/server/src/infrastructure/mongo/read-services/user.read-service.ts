@@ -1,16 +1,49 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, QueryFilter, Types } from 'mongoose';
+import { Model, QueryFilter, Types, FlattenMaps } from 'mongoose';
 import { IUserReadService } from '@/application/interfaces';
 import { UserDetailDto, UserFilterDto } from '@/application/dtos';
 import { UserDocument, UserModel } from '../schemas';
 import { Nullable } from '@/core/types';
-import { ERoleType } from '@/core/enums';
+import { ERoleType, ETargetType } from '@/core/enums';
 import {
   PaginatedResponseDto,
   SortOrder,
 } from '@/application/dtos/pagination.dto';
 import { MongoSanitizeUtil } from '../utils';
+
+interface PopulatedRole {
+  _id: Types.ObjectId;
+  enterprise_ids?: Types.ObjectId[];
+  title: string;
+  permissions: string[];
+  type: ERoleType;
+  created_at: Date;
+  updated_at: Date;
+}
+interface PopulatedAvatar {
+  _id: Types.ObjectId;
+  enterprise_ids?: Types.ObjectId[];
+  url: string;
+  public_id: string;
+  size: number;
+  format: string;
+  title: string;
+  target_type: ETargetType;
+  target_id: string;
+  target_field: string;
+  created_at: Date;
+  updated_at: Date;
+}
+interface RawUserDoc extends Omit<
+  FlattenMaps<UserDocument>,
+  'role_id' | 'avatar'
+> {
+  _id: Types.ObjectId;
+  enterprise_ids?: Types.ObjectId[];
+  role_id?: PopulatedRole;
+  avatar?: PopulatedAvatar;
+}
 
 @Injectable()
 export class MongoUserReadService implements IUserReadService {
@@ -26,7 +59,7 @@ export class MongoUserReadService implements IUserReadService {
       .populate('avatar')
       .lean()
       .exec();
-    return doc ? this.mapToDto(doc) : null;
+    return doc ? this.mapToDto(doc as unknown as RawUserDoc) : null;
   }
 
   async findByEmail(email: string): Promise<Nullable<UserDetailDto>> {
@@ -36,7 +69,7 @@ export class MongoUserReadService implements IUserReadService {
       .populate('avatar')
       .lean()
       .exec();
-    return doc ? this.mapToDto(doc) : null;
+    return doc ? this.mapToDto(doc as unknown as RawUserDoc) : null;
   }
 
   async findByRoleType(type: ERoleType): Promise<string[]> {
@@ -134,14 +167,14 @@ export class MongoUserReadService implements IUserReadService {
       : null;
 
     return new PaginatedResponseDto(
-      results.map((doc) => this.mapToDto(doc)),
+      results.map((doc) => this.mapToDto(doc as unknown as RawUserDoc)),
       nextCursor,
       hasNextPage,
       limit,
     );
   }
 
-  private mapToDto(doc: any): UserDetailDto {
+  private mapToDto(doc: RawUserDoc): UserDetailDto {
     const baseFields = {
       id: doc._id.toString(),
       email: doc.email,
@@ -150,10 +183,10 @@ export class MongoUserReadService implements IUserReadService {
       roleId:
         doc.role_id && typeof doc.role_id === 'object' && doc.role_id._id
           ? doc.role_id._id.toString()
-          : doc.role_id?.toString() || '',
+          : (doc.role_id as unknown as string) || '',
       isEmailVerified: doc.is_email_verified,
-      createdAt: doc.created_at,
-      updatedAt: doc.updated_at,
+      createdAt: doc.created_at?.toISOString(),
+      updatedAt: doc.updated_at?.toISOString(),
       role:
         doc.role_id && typeof doc.role_id === 'object' && doc.role_id._id
           ? {
@@ -161,8 +194,8 @@ export class MongoUserReadService implements IUserReadService {
               title: doc.role_id.title,
               permissions: doc.role_id.permissions,
               type: doc.role_id.type,
-              createdAt: doc.role_id.created_at,
-              updatedAt: doc.role_id.updated_at,
+              createdAt: doc.role_id.created_at?.toISOString(),
+              updatedAt: doc.role_id.updated_at?.toISOString(),
             }
           : undefined,
       avatar:
@@ -177,27 +210,27 @@ export class MongoUserReadService implements IUserReadService {
               targetType: doc.avatar.target_type,
               targetId: doc.avatar.target_id,
               targetField: doc.avatar.target_field,
-              createdAt: doc.avatar.created_at,
-              updatedAt: doc.avatar.updated_at,
+              createdAt: doc.avatar.created_at?.toISOString(),
+              updatedAt: doc.avatar.updated_at?.toISOString(),
             }
           : null,
     };
 
     switch (doc.type) {
-      case ERoleType.ENTERPRISE:
+      case ERoleType.ENTERPRISE as string:
         return {
           ...baseFields,
           type: ERoleType.ENTERPRISE,
           enterpriseIds: doc.enterprise_ids
-            ? doc.enterprise_ids.map((id: any) => id.toString())
+            ? doc.enterprise_ids.map((id: Types.ObjectId) => id.toString())
             : [],
         } as UserDetailDto;
-      case ERoleType.ADMIN:
+      case ERoleType.ADMIN as string:
         return {
           ...baseFields,
           type: ERoleType.ADMIN,
         };
-      case ERoleType.KOL:
+      case ERoleType.KOL as string:
         return {
           ...baseFields,
           type: ERoleType.KOL,

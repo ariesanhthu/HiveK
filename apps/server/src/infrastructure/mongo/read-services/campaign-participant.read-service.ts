@@ -1,15 +1,109 @@
 import { Injectable } from '@nestjs/common';
+import { PipelineStage } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { CampaignModel, CampaignDocument } from '../schemas/campaign.schema';
 import { ICampaignParticipantReadService } from '@/application/interfaces';
 import { Nullable } from '@/core/types';
+import {
+  EParticipantStatus,
+  EOutputType,
+  EOutputStatus,
+  ECampaignStatus,
+} from '@/core/enums';
 import { CampaignParticipantDto } from '@/application/dtos';
 import { CampaignParticipantFilterDto } from '@/application/queries/campaign-participant-get-list/campaign-participant-get-list.dto';
 import {
   PaginatedResponseDto,
   SortOrder,
 } from '@/application/dtos/pagination.dto';
+
+interface PopulatedKolProfilePlatform {
+  platform_id?: Types.ObjectId;
+  uniqueId?: string;
+  handle?: string;
+  external_id?: string;
+  follower_count?: number;
+  avg_engagement?: number;
+  top_tags?: string[];
+  categories?: string[];
+}
+
+interface AggregateCampaignParticipant {
+  _id: Types.ObjectId;
+  owner_id: Types.ObjectId;
+  enterprise_id: Types.ObjectId;
+  budget: number;
+  financial_target?: Record<string, unknown> | Map<string, unknown>;
+  description?: string;
+  status: EOutputStatus | string;
+  extras?: Record<string, unknown> | Map<string, unknown>;
+  collaborator_ids?: Types.ObjectId[];
+  platform_target?: Array<{
+    platformId: string;
+    minFollowers?: number;
+    maxFollowers?: number;
+    note?: string;
+    extras?: Record<string, unknown> | Map<string, unknown>;
+  }>;
+  raw_contents?: Array<{ fileId: string; rawContent?: string }>;
+  schedule?: {
+    timeline?: Array<{
+      date: Date | string;
+      label?: string;
+      posts: Types.ObjectId[];
+    }>;
+  };
+  participants: {
+    _id: Types.ObjectId;
+    kol_profile_id: Types.ObjectId;
+    status: EOutputStatus | string;
+    joined_at?: Date | string;
+    created_at?: Date | string;
+    updated_at?: Date | string;
+  };
+  outputs?: Array<{
+    _id: Types.ObjectId;
+    platform_id: Types.ObjectId;
+    output_type: EOutputType;
+    title: string;
+    is_schedule_for_post: boolean;
+    file_id?: Types.ObjectId;
+    scheduled_at?: Date | string;
+    status: EOutputStatus | string;
+    url?: string;
+    posted_at?: Date | string;
+  }>;
+  outputPlatforms?: Array<{
+    _id: Types.ObjectId;
+    name: string;
+    base_url?: string;
+    api_status?: string;
+    icon?: Types.ObjectId;
+  }>;
+  outputFiles?: Array<{
+    _id: Types.ObjectId;
+    user_id?: Types.ObjectId;
+    filename: string;
+    url: string;
+    size: number;
+    mime_type?: string;
+  }>;
+  kolProfile?: {
+    _id: Types.ObjectId;
+    user_id?: Types.ObjectId;
+    verification_type?: string;
+    name: string;
+    location: string;
+    gender: string;
+    bio: string;
+    email: string;
+    phone: string;
+    is_verified: boolean;
+    scores?: Record<string, number>;
+    platforms?: PopulatedKolProfilePlatform[];
+  };
+}
 
 @Injectable()
 export class MongoCampaignParticipantReadService implements ICampaignParticipantReadService {
@@ -20,9 +114,9 @@ export class MongoCampaignParticipantReadService implements ICampaignParticipant
 
   async findById(
     id: string,
-    projection?: any,
+    projection?: Record<string, unknown>,
   ): Promise<Nullable<CampaignParticipantDto>> {
-    const pipeline: any[] = [
+    const pipeline: PipelineStage[] = [
       { $match: { 'participants._id': new Types.ObjectId(id) } },
       { $unwind: '$participants' },
       { $match: { 'participants._id': new Types.ObjectId(id) } },
@@ -93,13 +187,21 @@ export class MongoCampaignParticipantReadService implements ICampaignParticipant
       },
     ];
 
-    const docs = await this.campaignModel.aggregate(pipeline).exec();
-    return docs.length > 0 ? this.mapAggregateToDto(docs[0]) : null;
+    if (projection) {
+      pipeline.push({ $project: projection });
+    }
+
+    const results = (await this.campaignModel.aggregate(pipeline).collation({
+      locale: 'en',
+      strength: 2,
+    })) as AggregateCampaignParticipant[];
+
+    return results.length > 0 ? this.mapAggregateToDto(results[0]) : null;
   }
 
   async findAll(
     filters: CampaignParticipantFilterDto,
-    projection?: any,
+    projection?: Record<string, unknown>,
   ): Promise<PaginatedResponseDto<CampaignParticipantDto>> {
     const {
       cursor,
@@ -109,7 +211,7 @@ export class MongoCampaignParticipantReadService implements ICampaignParticipant
       kolProfileId,
       status,
     } = filters;
-    const pipeline: any[] = [];
+    const pipeline: PipelineStage[] = [];
 
     // Optimize stage: if filtering by campaignId, match first
     if (campaignId) {
@@ -222,29 +324,36 @@ export class MongoCampaignParticipantReadService implements ICampaignParticipant
       },
     );
 
-    const docs = await this.campaignModel.aggregate(pipeline).exec();
+    const results = (await this.campaignModel.aggregate(pipeline).collation({
+      locale: 'en',
+      strength: 2,
+    })) as AggregateCampaignParticipant[];
 
-    const hasNextPage = docs.length > limit;
-    const results = hasNextPage ? docs.slice(0, limit) : docs;
+    const hasNextPage = results.length > limit;
+    const finalResults = hasNextPage ? results.slice(0, limit) : results;
     const nextCursor = hasNextPage
-      ? results[results.length - 1].participants._id.toString()
+      ? finalResults[finalResults.length - 1].participants._id.toString()
       : null;
 
     return new PaginatedResponseDto(
-      results.map((doc: any) => this.mapAggregateToDto(doc)),
+      finalResults.map((doc: AggregateCampaignParticipant) =>
+        this.mapAggregateToDto(doc),
+      ),
       nextCursor,
       hasNextPage,
       limit,
     );
   }
 
-  private mapAggregateToDto(doc: any): CampaignParticipantDto {
-    const outputs = (doc.outputs || []).map((o: any) => {
+  private mapAggregateToDto(
+    doc: AggregateCampaignParticipant,
+  ): CampaignParticipantDto {
+    const outputs = (doc.outputs || []).map((o) => {
       const platformDoc = (doc.outputPlatforms || []).find(
-        (p: any) => p._id.toString() === o.platform_id.toString(),
+        (p) => p._id.toString() === o.platform_id.toString(),
       );
       const fileDoc = (doc.outputFiles || []).find(
-        (f: any) => f._id.toString() === o.file_id?.toString(),
+        (f) => f._id.toString() === o.file_id?.toString(),
       );
 
       return {
@@ -259,7 +368,7 @@ export class MongoCampaignParticipantReadService implements ICampaignParticipant
             ? o.scheduled_at.toISOString()
             : o.scheduled_at
           : null,
-        status: o.status,
+        status: o.status as EOutputStatus,
         url: o.url || null,
         postedAt: o.posted_at
           ? o.posted_at instanceof Date
@@ -294,7 +403,7 @@ export class MongoCampaignParticipantReadService implements ICampaignParticipant
       id: doc.participants._id.toString(),
       campaignId: doc._id.toString(),
       kolProfileId: doc.participants.kol_profile_id.toString(),
-      status: doc.participants.status,
+      status: doc.participants.status as EParticipantStatus,
       joinedAt: doc.participants.joined_at
         ? doc.participants.joined_at instanceof Date
           ? doc.participants.joined_at.toISOString()
@@ -321,7 +430,7 @@ export class MongoCampaignParticipantReadService implements ICampaignParticipant
             ? Object.fromEntries(doc.financial_target)
             : doc.financial_target || {},
         description: doc.description || '',
-        platformTarget: (doc.platform_target || []).map((p: any) => ({
+        platformTarget: (doc.platform_target || []).map((p) => ({
           platformId: p.platformId,
           minFollowers: p.minFollowers,
           maxFollowers: p.maxFollowers,
@@ -329,29 +438,27 @@ export class MongoCampaignParticipantReadService implements ICampaignParticipant
           extras:
             p.extras instanceof Map ? Object.fromEntries(p.extras) : p.extras,
         })),
-        status: doc.status,
+        status: doc.status as ECampaignStatus,
         extras:
           doc.extras instanceof Map
             ? Object.fromEntries(doc.extras)
             : doc.extras,
-        collaboratorIds: doc.collaborator_ids || [],
-        rawContents: (doc.raw_contents || []).map((r: any) => ({
+        collaboratorIds: Array.isArray(doc.collaborator_ids)
+          ? doc.collaborator_ids.map((id) => id.toString())
+          : [],
+        rawContents: (doc.raw_contents || []).map((r) => ({
           fileId: r.fileId,
           rawContent: r.rawContent,
         })),
-        participants: (doc.participants || []).map((p: any) => ({
-          id: p._id?.toString() || p.id?.toString(),
-          kolProfileId: p.kolProfileId?.toString(),
-          status: p.status,
-          joinedAt: p.joinedAt,
-        })),
+        participants: [],
         schedule: doc.schedule
           ? {
-              timeline: (doc.schedule.timeline || []).map((day: any) => ({
-                date: day.date,
+              timeline: (doc.schedule.timeline || []).map((day) => ({
+                date:
+                  day.date instanceof Date ? day.date.toISOString() : day.date,
                 label: day.label,
                 posts: (day.posts || []).map(
-                  (postId: any) => postId.toString?.() || postId,
+                  (postId) => postId.toString?.() || postId.toString(),
                 ), // ScheduledPost IDs
               })),
             }
@@ -372,14 +479,14 @@ export class MongoCampaignParticipantReadService implements ICampaignParticipant
             phone: kolProfileDoc.phone,
             isVerified: kolProfileDoc.is_verified,
             scores: kolProfileDoc.scores || {},
-            platforms: (kolProfileDoc.platforms || []).map((p: any) => ({
+            platforms: (kolProfileDoc.platforms || []).map((p) => ({
               platformId: p.platform_id?.toString() || '',
               uniqueId: p.uniqueId ?? p.handle ?? '',
-              externalId: p.external_id,
-              followerCount: p.follower_count,
-              avgEngagement: p.avg_engagement,
-              topTags: p.top_tags,
-              categories: p.categories,
+              externalId: p.external_id || '',
+              followerCount: p.follower_count || 0,
+              avgEngagement: p.avg_engagement || 0,
+              topTags: p.top_tags || [],
+              categories: p.categories || [],
             })),
           }
         : undefined,

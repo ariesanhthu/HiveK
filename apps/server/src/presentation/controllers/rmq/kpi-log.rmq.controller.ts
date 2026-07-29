@@ -14,7 +14,7 @@ export class KpiLogRmqController {
   constructor(private readonly commandBus: CommandBus) {}
 
   @RmqHandler({ queue: 'server_kpi_queue', pattern: 'tracking.success' })
-  async handleTrackingSuccess(data: any) {
+  async handleTrackingSuccess(data: Record<string, unknown>) {
     this.logger.log(
       `📥 Received tracking.success via RMQ: ${JSON.stringify(data)}`,
     );
@@ -31,7 +31,7 @@ export class KpiLogRmqController {
   }
 
   @RmqHandler({ queue: 'server_kpi_queue', pattern: 'tracking.terminated' })
-  async handleTrackingTerminated(data: any) {
+  async handleTrackingTerminated(data: Record<string, unknown>) {
     this.logger.log(
       `📥 Received tracking.terminated via RMQ: ${JSON.stringify(data)}`,
     );

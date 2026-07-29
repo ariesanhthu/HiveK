@@ -1,3 +1,5 @@
+import type { Request } from 'express';
+import { Profile } from 'passport';
 import { Strategy } from 'passport-twitter';
 import { PassportStrategy } from '@nestjs/passport';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
@@ -25,11 +27,14 @@ export class TwitterStrategy extends PassportStrategy(Strategy, 'twitter') {
   }
 
   async validate(
-    req: any,
+    req: Request & {
+      user?: { sub?: string; id?: string };
+      query: { state?: string };
+    },
     token: string,
     tokenSecret: string,
-    profile: any,
-  ): Promise<any> {
+    profile: Profile,
+  ): Promise<unknown> {
     const userId = req.user?.sub || req.user?.id;
     if (!userId) {
       throw new UnauthorizedException(

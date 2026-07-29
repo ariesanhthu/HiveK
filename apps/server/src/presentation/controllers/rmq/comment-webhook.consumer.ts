@@ -21,7 +21,7 @@ export class CommentWebhookConsumer {
     queue: 'comment_webhook_queue',
     pattern: 'webhook.facebook.comment',
   })
-  async handleCommentEvent(data: any) {
+  async handleCommentEvent(data: Record<string, unknown>) {
     this.logger.log(`📥 Received facebook comment event via RMQ`);
 
     const entry = data.entry?.[0];

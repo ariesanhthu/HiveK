@@ -1,3 +1,5 @@
+import type { Request } from 'express';
+import { Profile } from 'passport';
 import { Strategy } from 'passport-google-oauth20';
 import { PassportStrategy } from '@nestjs/passport';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
@@ -28,11 +30,14 @@ export class YoutubeStrategy extends PassportStrategy(Strategy, 'youtube') {
   }
 
   async validate(
-    req: any,
+    req: Request & {
+      user?: { sub?: string; id?: string };
+      query: { state?: string };
+    },
     accessToken: string,
     refreshToken: string,
-    profile: any,
-  ): Promise<any> {
+    profile: Profile,
+  ): Promise<unknown> {
     const userId = req.query.state;
     if (!userId) {
       throw new UnauthorizedException(

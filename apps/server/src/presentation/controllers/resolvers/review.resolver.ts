@@ -24,6 +24,8 @@ export class PublicReviewResolver {
     @Args('filters', { type: () => PublicReviewFilterInput, nullable: true })
     filters?: PublicReviewFilterInput,
   ) {
-    return this.queryBus.execute(new ReviewGetListQuery(filters as any));
+    return this.queryBus.execute(
+      new ReviewGetListQuery(filters as Record<string, unknown>),
+    );
   }
 }

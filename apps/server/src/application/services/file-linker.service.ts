@@ -48,7 +48,8 @@ export class FileLinkerService {
   }
 
   private async linkUser(root: UploadedFileRoot): Promise<void> {
-    if (root.targetField !== EUploadTargetField.AVATAR) return;
+    if ((root.targetField as EUploadTargetField) !== EUploadTargetField.AVATAR)
+      return;
     const user = await this.userRepo.findById(root.targetId);
     if (!user) return;
     user.setAvatar(root.id);
@@ -56,7 +57,11 @@ export class FileLinkerService {
   }
 
   private async linkEnterprise(root: UploadedFileRoot): Promise<void> {
-    if (root.targetField !== EUploadTargetField.LOGO_URL_ID) return;
+    if (
+      (root.targetField as EUploadTargetField) !==
+      EUploadTargetField.LOGO_URL_ID
+    )
+      return;
     const enterprise = await this.enterpriseRepo.findById(root.targetId);
     if (!enterprise) return;
     enterprise.update({ logoUrlId: root.id });
@@ -64,7 +69,8 @@ export class FileLinkerService {
   }
 
   private async linkPlatform(root: UploadedFileRoot): Promise<void> {
-    if (root.targetField !== EUploadTargetField.ICON) return;
+    if ((root.targetField as EUploadTargetField) !== EUploadTargetField.ICON)
+      return;
     const platform = await this.platformRepo.findById(root.targetId);
     if (!platform) return;
     platform.updateIcon(root.id);
@@ -72,7 +78,8 @@ export class FileLinkerService {
   }
 
   private async linkCampaign(root: UploadedFileRoot): Promise<void> {
-    if (root.targetField !== EUploadTargetField.RAW) return;
+    if ((root.targetField as EUploadTargetField) !== EUploadTargetField.RAW)
+      return;
     const campaign = await this.campaignRepo.findById(root.targetId);
     if (!campaign) return;
     const updatedRaw = [
@@ -87,7 +94,11 @@ export class FileLinkerService {
   }
 
   private async linkScheduledPost(root: UploadedFileRoot): Promise<void> {
-    if (root.targetField !== EUploadTargetField.MEDIA_FILE_IDS) return;
+    if (
+      (root.targetField as EUploadTargetField) !==
+      EUploadTargetField.MEDIA_FILE_IDS
+    )
+      return;
     const post = await this.scheduledPostRepo.findById(root.targetId);
     if (!post) return;
     post.addMediaFile(root.id);

@@ -28,11 +28,14 @@ export class UserUpdateProfileCommandHandler implements ICommandHandler<
       throw new UserNotFoundException(userId);
     }
 
-    const anyProps = user.props as any;
-    if ((input as any).firstName)
-      anyProps.fullName = `${(input as any).firstName} ${(input as any).lastName || ''}`;
-    if (input.avatarUrl !== undefined)
-      anyProps.avatar = input.avatarUrl ?? null;
+    if (input.firstName) {
+      const fullName = `${input.firstName} ${input.lastName || ''}`.trim();
+      user.updateFullName(fullName);
+    }
+
+    if (input.avatarUrl !== undefined) {
+      user.setAvatar(input.avatarUrl ?? '');
+    }
 
     await this.userRepository.save(user);
 

@@ -1,3 +1,4 @@
+import type { Request } from 'express';
 import {
   Controller,
   Get,
@@ -60,7 +61,7 @@ export class KolProfileClientController {
   @Get('verify/youtube')
   @UseGuards(JwtAuthGuard, YoutubeAuthGuard)
   @ApiOperation({ summary: 'Initiate YouTube verification flow for KOL' })
-  async verifyYoutube() {
+  verifyYoutube() {
     // Handled by Passport strategy redirection
     return;
   }
@@ -69,7 +70,10 @@ export class KolProfileClientController {
   @Get('verify/youtube/callback')
   @UseGuards(AuthGuard('youtube'))
   @ApiOperation({ summary: 'YouTube OAuth callback' })
-  async verifyYoutubeCallback(@Req() req: any) {
+  verifyYoutubeCallback(
+    @Req()
+    req: Request,
+  ) {
     // req.user contains the output from YoutubeStrategy.validate()
     return req.user;
   }
@@ -77,7 +81,7 @@ export class KolProfileClientController {
   @Get('verify/facebook')
   @UseGuards(JwtAuthGuard, FacebookAuthGuard)
   @ApiOperation({ summary: 'Initiate Facebook verification flow for KOL' })
-  async verifyFacebook() {
+  verifyFacebook() {
     // Handled by Passport strategy redirection
     return;
   }
@@ -86,7 +90,10 @@ export class KolProfileClientController {
   @Get('verify/facebook/callback')
   @UseGuards(AuthGuard('facebook'))
   @ApiOperation({ summary: 'Facebook OAuth callback' })
-  async verifyFacebookCallback(@Req() req: any) {
+  verifyFacebookCallback(
+    @Req()
+    req: Request,
+  ) {
     // req.user contains the output from FacebookStrategy.validate()
     return req.user;
   }
@@ -94,7 +101,7 @@ export class KolProfileClientController {
   @Get('verify/twitter')
   @UseGuards(JwtAuthGuard, AuthGuard('twitter'))
   @ApiOperation({ summary: 'Initiate Twitter verification flow for KOL' })
-  async verifyTwitter() {
+  verifyTwitter() {
     // Handled by Passport strategy redirection
     return;
   }
@@ -103,7 +110,10 @@ export class KolProfileClientController {
   @Get('verify/twitter/callback')
   @UseGuards(JwtAuthGuard, AuthGuard('twitter'))
   @ApiOperation({ summary: 'Twitter OAuth callback' })
-  async verifyTwitterCallback(@Req() req: any) {
+  verifyTwitterCallback(
+    @Req()
+    req: Request,
+  ) {
     // req.user contains the output from TwitterStrategy.validate()
     return req.user;
   }
@@ -124,7 +134,7 @@ export class KolProfileClientController {
   @ApiPaginatedResponseEnvelope(KolProfileDto)
   async findHandlesDev(
     @Query() pagination: CursorPaginationRequestDto,
-  ): Promise<PaginatedResponseDto<any>> {
+  ): Promise<PaginatedResponseDto<Record<string, unknown>>> {
     return this.queryBus.execute(new KolProfileGetHandlesDevQuery(pagination));
   }
 

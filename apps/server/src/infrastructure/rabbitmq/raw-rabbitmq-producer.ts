@@ -10,7 +10,7 @@ import { errorMessage } from '@/shared/utils';
  * Handles direct AMQP connection, channel management, and message publishing
  */
 export class RawRabbitMQProducerClient {
-  private connection: amqp.Connection | null | any = null;
+  private connection: amqp.ChannelModel | null = null;
   private channel: amqp.ConfirmChannel | null = null;
   private isConnected = false;
   private connectionAttempts = 0;
@@ -42,13 +42,13 @@ export class RawRabbitMQProducerClient {
       this.connection.on('error', (error) => {
         this.logger.error(`RabbitMQ Connection Error: ${error.message}`);
         this.isConnected = false;
-        this.reconnectWithBackoff();
+        void this.reconnectWithBackoff();
       });
 
       this.connection.on('close', () => {
         this.logger.warn('RabbitMQ Connection closed');
         this.isConnected = false;
-        this.reconnectWithBackoff();
+        void this.reconnectWithBackoff();
       });
 
       // Create ConfirmChannel for publisher confirms
@@ -73,7 +73,7 @@ export class RawRabbitMQProducerClient {
       this.isConnected = false;
 
       // Start background reconnection since the initial attempt failed
-      this.reconnectWithBackoff();
+      void this.reconnectWithBackoff();
     }
   }
 
@@ -113,7 +113,7 @@ export class RawRabbitMQProducerClient {
    * Publish message to exchange with routing key
    * Formats message in NestJS RMQ protocol format so consumers can recognize the pattern
    */
-  async publish<T = any>(
+  async publish<T = unknown>(
     routingKey: string,
     message: T,
     options?: PublishOptions,
@@ -142,7 +142,7 @@ export class RawRabbitMQProducerClient {
           routingKey,
           buffer,
           publishOptions,
-          (error: Error | null, ok?: any) => {
+          (error: Error | null, ok?: unknown) => {
             if (error) {
               this.logger.error(`Failed to publish message: ${error.message}`);
               reject(error);
@@ -246,7 +246,7 @@ export class RawRabbitMQProducerClient {
   /**
    * Encode message to buffer
    */
-  private encodeMessage(message: any): Buffer {
+  private encodeMessage(message: Record<string, unknown> | Buffer): Buffer {
     try {
       const json = JSON.stringify(message);
       return Buffer.from(json, 'utf-8');
@@ -278,5 +278,5 @@ export class RawRabbitMQProducerClient {
  */
 export interface PublishOptions extends amqp.Options.Publish {
   correlationId?: string;
-  headers?: Record<string, any>;
+  headers?: Record<string, unknown>;
 }

@@ -69,7 +69,7 @@ export class ThreadsOAuthController {
   @Get('threads/oauth')
   @ApiOperation({ summary: 'Get Threads OAuth Redirect URL' })
   @ApiOkResponseEnvelope()
-  async getThreadsOauthUrl(@CurrentUser() user: IJwtPayload) {
+  getThreadsOauthUrl(@CurrentUser() user: IJwtPayload) {
     // Sign a short-lived JWT with the user's identity as the OAuth state
     // so the callback can verify and extract userId, email, role via StateAuthGuard
     const state = this.jwtService.sign(

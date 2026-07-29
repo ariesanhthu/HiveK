@@ -1,5 +1,5 @@
 import { Injectable, Inject } from '@nestjs/common';
-import { CommandBus } from '@nestjs/cqrs';
+import { CommandBus, ICommand } from '@nestjs/cqrs';
 import { ModuleRef, Reflector } from '@nestjs/core';
 import { REQUIRES_PERMISSION } from '@/application/decorators/requires-permission.decorator';
 import {
@@ -30,14 +30,14 @@ export class GuardedCommandBus extends CommandBus {
     super(moduleRef);
   }
 
-  async execute<TInput = any, TResult = any>(
+  async execute<TInput = unknown, TResult = unknown>(
     instance: TInput,
-    context?: any,
+    context?: unknown,
   ): Promise<TResult> {
     const requestContext = this.requestContextService.get();
 
     if (requestContext) {
-      const commandClass = (instance as any).constructor;
+      const commandClass = (instance as Record<string, unknown>).constructor;
 
       const requiredPermission = this.reflector.get<string>(
         REQUIRES_PERMISSION,
@@ -64,6 +64,6 @@ export class GuardedCommandBus extends CommandBus {
       }
     }
 
-    return super.execute(instance as any, context);
+    return super.execute(instance as ICommand, context as never);
   }
 }

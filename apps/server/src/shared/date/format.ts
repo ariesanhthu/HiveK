@@ -66,6 +66,7 @@ const TOKEN_PATTERN = /dd|d|MMMM|MMM|MM|M|yyyy|yy|HH|H|hh|h|mm|ss|EEEE|EEE|a/g;
  */
 export function formatDate(
   date: Date | string | number | null | undefined,
+  // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
   format: string | FormatAlias = 'short',
   locale: Locale = 'vi',
 ): string {

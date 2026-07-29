@@ -69,7 +69,7 @@ export class UserCreateCommandHandler implements ICommandHandler<
           break;
         default:
           throw new InvalidUserTypeException(
-            `Invalid user type: ${input.type}`,
+            `Invalid user type: ${String(input.type)}`,
           );
       }
 

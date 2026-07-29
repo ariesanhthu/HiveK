@@ -34,9 +34,12 @@ export function setupSwagger(app: INestApplication): void {
   fullDocument.tags = fullDocument.tags?.filter((tag) => tag.name !== '');
   for (const path in fullDocument.paths) {
     for (const method in fullDocument.paths[path]) {
-      (fullDocument as any).paths[path][method].tags = (
-        fullDocument as any
-      ).paths[path][method].tags?.filter((tag: string) => tag !== '');
+      const operation = (
+        fullDocument.paths[path] as Record<string, { tags?: string[] }>
+      )[method];
+      if (operation && operation.tags) {
+        operation.tags = operation.tags.filter((tag: string) => tag !== '');
+      }
     }
   }
 

@@ -29,9 +29,10 @@ export class AuthService {
     return bcrypt.compare(password, hash);
   }
 
-  async generateTokens(
-    payload: IJwtPayload,
-  ): Promise<{ accessToken: string; refreshToken: string }> {
+  generateTokens(payload: IJwtPayload): {
+    accessToken: string;
+    refreshToken: string;
+  } {
     const accessExpiration = this.configService.get<number>(
       'JWT_ACCESS_EXPIRATION_MINUTES',
       30,

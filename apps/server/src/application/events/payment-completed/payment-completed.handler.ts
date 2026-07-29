@@ -9,7 +9,7 @@ export class PaymentCompletedEventHandler implements IEventHandler<PaymentComple
 
   constructor(private readonly commandBus: CommandBus) {}
 
-  async handle(event: PaymentCompletedEvent) {
+  handle(event: PaymentCompletedEvent) {
     const { userId, billId } = event.payload;
     this.logger.log(
       `Handling PaymentCompletedEvent for user: ${userId}, bill: ${billId}`,
@@ -20,22 +20,24 @@ export class PaymentCompletedEventHandler implements IEventHandler<PaymentComple
     // SubscriptionUpdateHandler starts its own UoW. Nesting UoW calls
     // can cause session conflicts. Deferring breaks out of the current
     // transaction context.
-    setImmediate(async () => {
-      try {
-        await this.commandBus.execute(
-          new SubscriptionUpdateCommand({
-            userId,
-            billId,
-          }),
-        );
-        this.logger.log(
-          `Successfully dispatched SubscriptionUpdateCommand for bill: ${billId}`,
-        );
-      } catch (error) {
-        this.logger.error(
-          `Failed to update subscription after payment completed for bill ${billId}: ${error instanceof Error ? error.message : String(error)}`,
-        );
-      }
+    setImmediate(() => {
+      void (async () => {
+        try {
+          await this.commandBus.execute(
+            new SubscriptionUpdateCommand({
+              userId,
+              billId,
+            }),
+          );
+          this.logger.log(
+            `Successfully dispatched SubscriptionUpdateCommand for bill: ${billId}`,
+          );
+        } catch (error) {
+          this.logger.error(
+            `Failed to update subscription after payment completed for bill ${billId}: ${error instanceof Error ? error.message : String(error)}`,
+          );
+        }
+      })();
     });
   }
 }

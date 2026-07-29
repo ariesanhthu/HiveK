@@ -9,7 +9,7 @@ import { errorMessage } from '@/shared/utils';
  * Handles topology setup (exchanges, queues, bindings) and message consumption
  */
 export class RawRabbitMQConsumerClient {
-  private connection: amqp.Connection | null | any = null;
+  private connection: amqp.ChannelModel | null = null;
   private channel: amqp.Channel | null = null;
   private isConnected = false;
   private connectionAttempts = 0;
@@ -40,13 +40,13 @@ export class RawRabbitMQConsumerClient {
           `RabbitMQ Consumer Connection Error: ${error.message}`,
         );
         this.isConnected = false;
-        this.reconnectWithBackoff();
+        void this.reconnectWithBackoff();
       });
 
       this.connection.on('close', () => {
         this.logger.warn('RabbitMQ Consumer Connection closed');
         this.isConnected = false;
-        this.reconnectWithBackoff();
+        void this.reconnectWithBackoff();
       });
 
       this.channel = await this.connection.createChannel();
@@ -75,7 +75,7 @@ export class RawRabbitMQConsumerClient {
       this.isConnected = false;
 
       // Start background reconnection
-      this.reconnectWithBackoff();
+      void this.reconnectWithBackoff();
     }
   }
 
@@ -163,9 +163,9 @@ export class RawRabbitMQConsumerClient {
 
       await this.channel.consume(
         queueConfig.name,
-        async (msg) => {
+        (msg) => {
           if (msg) {
-            await this.handleMessage(msg, handlers, queueConfig.name);
+            void this.handleMessage(msg, handlers, queueConfig.name);
           }
         },
         { noAck: this.config.consume.no_ack },
@@ -178,7 +178,12 @@ export class RawRabbitMQConsumerClient {
    */
   private async handleMessage(
     msg: amqp.ConsumeMessage,
-    handlers: any[],
+    handlers: Array<{
+      pattern: string;
+      methodName: string;
+      callback: (...args: unknown[]) => unknown;
+      target: unknown;
+    }>,
     queueName: string,
   ): Promise<void> {
     if (!this.channel) return;

@@ -41,6 +41,8 @@ export class CampaignProposalResolver {
     })
     filters?: CampaignProposalFilterInput,
   ) {
-    return this.queryBus.execute(new ProposalGetListQuery(filters as any));
+    return this.queryBus.execute(
+      new ProposalGetListQuery(filters as Record<string, unknown>),
+    );
   }
 }

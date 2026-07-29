@@ -14,9 +14,9 @@ export const RmqHandler = (options: RmqHandlerOptions) =>
   SetMetadata(RMQ_HANDLER_METADATA, options);
 
 export interface RmqHandlerMetadata extends RmqHandlerOptions {
-  target: any;
+  target: unknown;
   methodName: string;
-  callback: Function;
+  callback: (...args: unknown[]) => unknown;
 }
 
 /**

@@ -38,7 +38,7 @@ export class MongoUserRepository implements IUserRepository {
   ) {}
 
   private get session(): ClientSession | undefined {
-    return (this.uow as MongoUnitOfWork).getSession() || undefined;
+    return (this.uow as unknown as MongoUnitOfWork).getSession() || undefined;
   }
 
   async findById(id: string): Promise<Nullable<UserRoot>> {
@@ -115,7 +115,7 @@ export class MongoUserRepository implements IUserRepository {
         model = this.kolUserModel;
         break;
       default:
-        throw new Error(`Unknown user type: ${user.type}`);
+        throw new Error(`Unknown user type: ${String(user.type)}`);
     }
 
     if (!user.id) {
@@ -161,7 +161,7 @@ export class MongoUserRepository implements IUserRepository {
 
     const id = doc._id.toString();
 
-    switch (doc.type) {
+    switch (doc.type as ERoleType) {
       case ERoleType.ADMIN:
         return AdminRoot.instantiate(id, {
           ...props,

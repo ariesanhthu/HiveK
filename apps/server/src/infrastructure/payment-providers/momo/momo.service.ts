@@ -263,7 +263,7 @@ export class MomoService implements IPaymentProvider, OnModuleInit {
       this.logger.error(
         getErrorMessage(isAxiosError(error) ? error.response?.data : error),
       );
-      throw toError(error);
+      throw error instanceof Error ? error : new Error(getErrorMessage(error));
     }
   }
 
@@ -303,16 +303,16 @@ export class MomoService implements IPaymentProvider, OnModuleInit {
       };
     } catch (error: unknown) {
       this.logger.error(getErrorMessage(error));
-      throw toError(error);
+      throw error instanceof Error ? error : new Error(getErrorMessage(error));
     }
   }
 
-  async refund(
+  refund(
     _transactionId: string,
     _amount: number,
     _currency: ECurrency,
   ): Promise<IPaymentProviderResult> {
-    return {
+    return Promise.resolve({
       requestPayload: {},
       responsePayload: {},
       requestTimestamp: new Date(),
@@ -322,7 +322,7 @@ export class MomoService implements IPaymentProvider, OnModuleInit {
         status: 'pending',
         errorMessage: undefined,
       },
-    };
+    });
   }
 
   async cancel(
@@ -359,8 +359,8 @@ export class MomoService implements IPaymentProvider, OnModuleInit {
     };
   }
 
-  async query(_transactionId: string): Promise<IPaymentProviderResult> {
-    return {
+  query(_transactionId: string): Promise<IPaymentProviderResult> {
+    return Promise.resolve({
       requestPayload: {},
       responsePayload: {},
       requestTimestamp: new Date(),
@@ -370,7 +370,7 @@ export class MomoService implements IPaymentProvider, OnModuleInit {
         status: 'pending',
         errorMessage: undefined,
       },
-    };
+    });
   }
 
   parseWebhook(data: JsonRecord): IPaymentProviderWebhookResult {
@@ -409,7 +409,7 @@ export class MomoService implements IPaymentProvider, OnModuleInit {
       };
     } catch (error) {
       this.logger.error(error);
-      throw toError(error);
+      throw error instanceof Error ? error : new Error(getErrorMessage(error));
     }
   }
 
@@ -527,7 +527,7 @@ export class MomoService implements IPaymentProvider, OnModuleInit {
         ? (error.response?.data ?? error.message)
         : error;
       this.logger.error(`[Momo Confirm Error] ${getErrorMessage(detail)}`);
-      throw toError(error);
+      throw error instanceof Error ? error : new Error(getErrorMessage(error));
     }
   }
 

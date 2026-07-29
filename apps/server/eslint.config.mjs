@@ -1,10 +1,11 @@
 // @ts-check
 import eslint from '@eslint/js';
+import { defineConfig } from 'eslint/config';
 import eslintPluginPrettierRecommended from 'eslint-plugin-prettier/recommended';
 import globals from 'globals';
 import tseslint from 'typescript-eslint';
 
-export default tseslint.config(
+export default defineConfig(
   {
     ignores: [
       'eslint.config.mjs',
@@ -36,7 +37,7 @@ export default tseslint.config(
     rules: {
       // === .agents/rules/global/coding-standards.md ===
       // No `any`: Use explicit types, generics, or `unknown` with type guards
-      '@typescript-eslint/no-explicit-any': 'warn',
+      '@typescript-eslint/no-explicit-any': 'error',
       // Strict Null Checks: Always handle null and undefined explicitly
       // Explicit Return Types: All public methods and exported functions MUST declare explicit return types
       '@typescript-eslint/explicit-function-return-type': 'warn',
@@ -47,6 +48,10 @@ export default tseslint.config(
       // === .agents/rules/global/error-handling.md ===
       // No Silent Exception Swallowing
       'no-empty': 'error',
+      '@typescript-eslint/no-empty-object-type': [
+        'error',
+        { allowInterfaces: 'with-single-extends', allowObjectTypes: 'never' },
+      ],
       // Fail fast with explicit domain exceptions
       '@typescript-eslint/no-floating-promises': 'error',
       '@typescript-eslint/no-misused-promises': 'error',
@@ -57,6 +62,10 @@ export default tseslint.config(
 
       // === Type safety ===
       '@typescript-eslint/no-unsafe-argument': 'warn',
+      '@typescript-eslint/no-unsafe-assignment': 'warn',
+      '@typescript-eslint/no-unsafe-member-access': 'warn',
+      '@typescript-eslint/no-unsafe-call': 'warn',
+      '@typescript-eslint/no-unsafe-return': 'warn',
       '@typescript-eslint/no-unused-vars': ['warn', { 
         argsIgnorePattern: '^_',
         varsIgnorePattern: '^_' 
@@ -66,19 +75,5 @@ export default tseslint.config(
       'prefer-const': 'error',
       'no-var': 'error',
     },
-  },
-  // {
-  //   files: ['**/*.ts'],
-  //   ignores: ['src/infrastructure/auth/guarded-command-bus.ts'],
-  //   rules: {
-  //     // Prevent direct CommandBus imports (must use GuardedCommandBus)
-  //     'no-restricted-imports': ['error', {
-  //       patterns: [{
-  //         group: ['@nestjs/cqrs'],
-  //         importNames: ['CommandBus'],
-  //         message: 'Use GuardedCommandBus instead of CommandBus. Import from src/infrastructure/auth/guarded-command-bus.ts',
-  //       }],
-  //     }],
-  //   },
-  // },
+  }
 );

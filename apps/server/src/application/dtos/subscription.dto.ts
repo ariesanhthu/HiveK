@@ -2,6 +2,7 @@ import { z } from 'zod';
 import { createZodDto } from 'nestjs-zod';
 import { GrantDtoSchema } from './package.dto';
 import { CursorPaginationRequestSchema } from './pagination.dto';
+import { ESubscriptionStatus } from '@/core/enums';
 
 export const PlanItemSchema = z
   .object({
@@ -37,7 +38,7 @@ export type AddonItemDTO = AddonItemDto;
 export const SubscriptionFilterDtoSchema = CursorPaginationRequestSchema.extend(
   {
     userId: z.string().optional(),
-    status: z.string().optional(),
+    status: z.enum(ESubscriptionStatus).optional(),
   },
 );
 
@@ -49,7 +50,7 @@ export const SubscriptionResponseDtoSchema = z
   .object({
     id: z.string(),
     userId: z.string(),
-    status: z.string(),
+    status: z.enum(ESubscriptionStatus),
     planItem: PlanItemSchema.nullable(),
     addonItems: z.array(AddonItemSchema),
     computedGrants: z.array(GrantDtoSchema),

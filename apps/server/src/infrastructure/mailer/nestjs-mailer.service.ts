@@ -21,7 +21,7 @@ export class NestjsMailerService implements IMailerService {
   async sendMail(options: ISendMailOptions): Promise<void> {
     try {
       this.logger.log(
-        `Sending email to ${options.to} with subject "${options.subject}"...`,
+        `Sending email to ${String(options.to)} with subject "${options.subject}"...`,
       );
 
       const mailOptions: ISendMailOptions = {
@@ -42,11 +42,11 @@ export class NestjsMailerService implements IMailerService {
       }
 
       await this.mailerService.sendMail(mailOptions);
-      this.logger.log(`✓ Email sent successfully to ${options.to}`);
+      this.logger.log(`✓ Email sent successfully to ${String(options.to)}`);
     } catch (error) {
       const { message, stack } = toError(error);
       this.logger.error(
-        `Failed to send email to ${options.to}: ${message}`,
+        `Failed to send email to ${String(options.to)}: ${message}`,
         stack,
       );
       throw error;

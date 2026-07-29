@@ -1,3 +1,4 @@
+import { errorMessage } from '@/shared/utils/error.util';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { Inject, Logger } from '@nestjs/common';
 import {
@@ -126,11 +127,11 @@ export class CommentWebhookHandleHandler implements ICommandHandler<
         `Successfully replied to comment ${commentId} using rule: ${matchedRule.name}`,
       );
       return { success: true };
-    } catch (err: any) {
+    } catch (err: unknown) {
       this.logger.error(
-        `Failed to reply to comment ${commentId}: ${err.message}`,
+        `Failed to reply to comment ${commentId}: ${errorMessage(err)}`,
       );
-      return { success: false, reason: err.message };
+      return { success: false, reason: errorMessage(err) };
     }
   }
 }

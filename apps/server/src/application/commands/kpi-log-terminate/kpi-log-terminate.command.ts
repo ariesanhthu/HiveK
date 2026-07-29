@@ -1,3 +1,3 @@
 export class KpiLogTerminateCommand {
-  constructor(public readonly payload: any) {}
+  constructor(public readonly payload: Record<string, unknown>) {}
 }

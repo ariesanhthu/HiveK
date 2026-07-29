@@ -58,7 +58,7 @@ export class ProposalCreateCommandHandler implements ICommandHandler<
           expirationDate:
             voucher.expirationDate instanceof Date
               ? voucher.expirationDate
-              : new Date(voucher.expirationDate),
+              : new Date(voucher.expirationDate as string),
         }),
       ),
     });

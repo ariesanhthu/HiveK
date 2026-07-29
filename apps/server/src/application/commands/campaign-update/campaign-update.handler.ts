@@ -60,7 +60,9 @@ export class CampaignUpdateCommandHandler implements ICommandHandler<
         : {}),
     };
 
-    campaign.update(campaignUpdateProps);
+    campaign.update(
+      campaignUpdateProps as Parameters<typeof campaign.update>[0],
+    );
 
     await this.campaignRepository.save(campaign);
 

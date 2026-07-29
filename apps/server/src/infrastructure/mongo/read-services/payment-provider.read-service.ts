@@ -1,3 +1,4 @@
+import { EPaymentMethod } from '@/core/enums';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { FlattenMaps, Model, QueryFilter } from 'mongoose';
@@ -34,7 +35,9 @@ export class MongoPaymentProviderReadService implements IPaymentProviderReadServ
       query.is_active = isActive;
     }
     if (methods && methods.length > 0) {
-      query.supported_methods = { $in: methods as any };
+      query.supported_methods = {
+        $in: methods as unknown as EPaymentMethod[],
+      };
     }
 
     if (cursor) {

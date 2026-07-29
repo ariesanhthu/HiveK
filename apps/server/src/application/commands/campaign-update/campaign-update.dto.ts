@@ -4,7 +4,7 @@ import { createZodDto } from 'nestjs-zod';
 export const CampaignUpdateInputSchema = z
   .object({
     budget: z.number().nonnegative().optional(),
-    financialTarget: z.record(z.string(), z.any()).optional(),
+    financialTarget: z.record(z.string(), z.unknown()).optional(),
     description: z.string().min(1).max(2000).optional(),
     platformTarget: z
       .array(
@@ -14,12 +14,12 @@ export const CampaignUpdateInputSchema = z
             minFollowers: z.number().nonnegative().optional(),
             maxFollowers: z.number().nonnegative().optional(),
             note: z.string().max(500).optional(),
-            extras: z.record(z.string(), z.any()).optional(),
+            extras: z.record(z.string(), z.unknown()).optional(),
           })
           .strict(),
       )
       .optional(),
-    extras: z.record(z.string(), z.any()).optional(),
+    extras: z.record(z.string(), z.unknown()).optional(),
   })
   .strict();
 

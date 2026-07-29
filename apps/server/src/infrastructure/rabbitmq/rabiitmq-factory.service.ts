@@ -47,7 +47,7 @@ export class RabbitMQFactoryService {
 
       if (config.role !== 'producer') {
         throw new BadRequestException(
-          `Invalid producer config: expected role "producer", got "${config.role}"`,
+          `Invalid producer config: expected role "producer", got "${String(config.role)}"`,
         );
       }
 
@@ -86,7 +86,7 @@ export class RabbitMQFactoryService {
 
       if (config.role !== 'consumer') {
         throw new BadRequestException(
-          `Invalid consumer config: expected role "consumer", got "${config.role}"`,
+          `Invalid consumer config: expected role "consumer", got "${String(config.role)}"`,
         );
       }
 

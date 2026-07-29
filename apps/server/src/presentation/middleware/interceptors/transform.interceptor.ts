@@ -22,7 +22,7 @@ export class TransformInterceptor<T> implements NestInterceptor<
   ): Observable<ApiResponse<T>> {
     // Skip GraphQL — let resolvers handle their own shape
     const type = context.getType();
-    if (type === 'graphql') {
+    if ((type as string) === 'graphql') {
       return next.handle() as unknown as Observable<ApiResponse<T>>;
     }
 

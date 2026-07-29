@@ -4,6 +4,7 @@ import { FlattenMaps, Model, QueryFilter } from 'mongoose';
 import { SubscriptionDocument, SubscriptionModel } from '../schemas';
 import { ISubscriptionReadService } from '@/application/interfaces/read-service';
 import { Nullable } from '@/core/types';
+import { EGrantType } from '@/core/enums/grant-type.enum';
 import {
   SubscriptionResponseDto,
   SubscriptionFilterDto,
@@ -45,7 +46,7 @@ export class MongoSubscriptionReadService implements ISubscriptionReadService {
     }
 
     if (status) {
-      query.status = status as any;
+      query.status = status;
     }
 
     if (cursor) {
@@ -136,13 +137,13 @@ export class MongoSubscriptionReadService implements ISubscriptionReadService {
       computedGrants: (doc.computed_grants || []).map(
         (g) =>
           new GrantVO({
-            type: g.type as any,
+            type: g.type,
             key: g.key,
             value: g.value,
             resetCycle: g.reset_cycle || undefined,
             creditFallback: g.credit_fallback
               ? {
-                  creditType: g.credit_fallback.credit_type as any,
+                  creditType: g.credit_fallback.credit_type,
                   creditsPerUnit: g.credit_fallback.credits_per_unit,
                 }
               : g.credit_fallback === null

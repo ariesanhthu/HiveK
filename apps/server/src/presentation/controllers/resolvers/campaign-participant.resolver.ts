@@ -51,7 +51,10 @@ export class CampaignParticipantResolver {
     projectionDto.fields = dataFieldsMap;
 
     return this.queryBus.execute(
-      new CampaignParticipantGetListQuery(filters as any, projectionDto),
+      new CampaignParticipantGetListQuery(
+        filters as Record<string, unknown>,
+        projectionDto,
+      ),
     );
   }
 }

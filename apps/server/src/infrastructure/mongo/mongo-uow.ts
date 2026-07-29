@@ -54,18 +54,21 @@ export class MongoUnitOfWork implements IUnitOfWork {
    * These remain for interface compatibility but startTransaction()
    * should ideally not be used directly with ALS in this pattern.
    */
+  // eslint-disable-next-line @typescript-eslint/require-await
   async startTransaction(): Promise<void> {
     throw new Error(
       'Use execute() instead for AsyncLocalStorage-based transactions',
     );
   }
 
+  // eslint-disable-next-line @typescript-eslint/require-await
   async commitTransaction(): Promise<void> {
     throw new Error(
       'Use execute() instead for AsyncLocalStorage-based transactions',
     );
   }
 
+  // eslint-disable-next-line @typescript-eslint/require-await
   async rollbackTransaction(): Promise<void> {
     throw new Error(
       'Use execute() instead for AsyncLocalStorage-based transactions',

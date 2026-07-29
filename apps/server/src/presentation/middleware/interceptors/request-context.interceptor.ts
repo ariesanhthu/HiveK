@@ -12,7 +12,7 @@ import type { IRequestContext } from '@/application/interfaces/request-context.i
 export class RequestContextInterceptor implements NestInterceptor {
   constructor(private readonly requestContextService: RequestContextService) {}
 
-  intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
+  intercept(context: ExecutionContext, next: CallHandler): Observable<unknown> {
     const request = context.switchToHttp().getRequest();
     const user = request.user;
 

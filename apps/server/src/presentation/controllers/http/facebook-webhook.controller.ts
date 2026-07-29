@@ -1,3 +1,4 @@
+import { errorMessage } from '@/shared/utils/error.util';
 import {
   Controller,
   Get,
@@ -92,16 +93,16 @@ export class FacebookWebhookController {
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Receive Facebook webhook events' })
   async handleWebhook(
-    @Body() body: any,
+    @Body() body: Record<string, unknown>,
     @Headers('x-hub-signature-256') signature: string,
-    @Req() req: any,
+    @Req() req: Record<string, unknown>,
   ): Promise<string> {
     this.logger.log('Received webhook event from Facebook');
 
     // 1. Verify Signature if enabled
     if (this.checkSignature && signature) {
       const rawBody = req.rawBody || JSON.stringify(body);
-      const isVerified = this.verifySignature(rawBody, signature);
+      const isVerified = this.verifySignature(rawBody as string, signature);
       if (!isVerified) {
         this.logger.warn('Facebook webhook signature verification failed.');
         return 'Signature mismatch';
@@ -125,13 +126,13 @@ export class FacebookWebhookController {
     // 3. Push raw comment event into RabbitMQ for async processing
     if (value && value.item === 'comment' && value.verb === 'add') {
       try {
-        this.messageQueueService.emit('webhook.facebook.comment', body);
+        await this.messageQueueService.emit('webhook.facebook.comment', body);
         this.logger.log(
           'Facebook comment event published to RabbitMQ successfully.',
         );
-      } catch (error: any) {
+      } catch (error: unknown) {
         this.logger.error(
-          `Failed to publish comment webhook event to RMQ: ${error.message}`,
+          `Failed to publish comment webhook event to RMQ: ${errorMessage(error)}`,
         );
       }
     }

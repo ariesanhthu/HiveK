@@ -69,7 +69,7 @@ export class FacebookOAuthController {
   @Get('facebook/oauth')
   @ApiOperation({ summary: 'Get Facebook OAuth Redirect URL' })
   @ApiOkResponseEnvelope()
-  async getOauthUrl(@CurrentUser() user: IJwtPayload) {
+  getOauthUrl(@CurrentUser() user: IJwtPayload) {
     // Sign a short-lived JWT with the user's identity as the OAuth state
     // so the callback can verify and extract userId, email, role via StateAuthGuard
     const state = this.jwtService.sign(

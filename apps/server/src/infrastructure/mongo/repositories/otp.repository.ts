@@ -18,7 +18,7 @@ export class MongoOtpRepository implements IOtpRepository {
   ) {}
 
   private get session(): ClientSession | undefined {
-    return (this.uow as MongoUnitOfWork).getSession() || undefined;
+    return (this.uow as unknown as MongoUnitOfWork).getSession() || undefined;
   }
 
   private mapToDomain(doc: OtpDocument | null): OtpRoot | null {

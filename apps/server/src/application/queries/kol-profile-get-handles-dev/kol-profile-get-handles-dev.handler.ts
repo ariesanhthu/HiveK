@@ -16,7 +16,7 @@ import {
 @QueryHandler(KolProfileGetHandlesDevQuery)
 export class KolProfileGetHandlesDevHandler implements IQueryHandler<
   KolProfileGetHandlesDevQuery,
-  PaginatedResponseDto<any>
+  PaginatedResponseDto<Record<string, unknown>>
 > {
   constructor(
     @InjectModel(KolProfileModel.name)
@@ -27,7 +27,7 @@ export class KolProfileGetHandlesDevHandler implements IQueryHandler<
 
   async execute(
     query: KolProfileGetHandlesDevQuery,
-  ): Promise<PaginatedResponseDto<any>> {
+  ): Promise<PaginatedResponseDto<Record<string, unknown>>> {
     const {
       cursor,
       limit = 10,
@@ -37,10 +37,10 @@ export class KolProfileGetHandlesDevHandler implements IQueryHandler<
     const platforms = await this.platformModel.find({}).lean().exec();
     const platformIdToName = new Map<string, string>();
     for (const p of platforms) {
-      platformIdToName.set((p as any)._id.toString(), p.name);
+      platformIdToName.set(String(p._id), p.name);
     }
 
-    const findQuery: any = {};
+    const findQuery: Record<string, unknown> = {};
     if (cursor) {
       findQuery._id =
         sort === SortOrder.DESC ? { $lt: cursor } : { $gt: cursor };
@@ -59,15 +59,16 @@ export class KolProfileGetHandlesDevHandler implements IQueryHandler<
       ? results[results.length - 1]._id.toString()
       : null;
 
-    const mappedResults = results.map((doc: any) => {
-      const mappedDoc: any = {
-        _id: doc._id.toString(),
+    const mappedResults = results.map((doc) => {
+      const mappedDoc: Record<string, unknown> = {
+        _id: doc._id,
       };
 
       for (const p of doc.platforms || []) {
         const platformName =
-          platformIdToName.get(p.platform_id) || p.platform_id;
-        mappedDoc[platformName] = p.uniqueId ?? p.handle;
+          platformIdToName.get(String(p.platform_id)) || String(p.platform_id);
+        mappedDoc[platformName] =
+          p.uniqueId ?? (p as unknown as Record<string, unknown>).handle;
       }
 
       return mappedDoc;

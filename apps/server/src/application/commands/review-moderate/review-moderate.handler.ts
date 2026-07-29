@@ -1,3 +1,4 @@
+import { errorMessage } from '@/shared/utils/error.util';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { Inject } from '@nestjs/common';
 import {
@@ -34,8 +35,8 @@ export class ReviewModerateCommandHandler implements ICommandHandler<
       } else {
         review.reject();
       }
-    } catch (error: any) {
-      throw new ReviewInvalidStatusTransitionException(error.message);
+    } catch (error: unknown) {
+      throw new ReviewInvalidStatusTransitionException(errorMessage(error));
     }
 
     await this.reviewRepository.save(review);

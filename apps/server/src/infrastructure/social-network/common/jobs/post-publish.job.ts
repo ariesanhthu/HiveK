@@ -6,6 +6,7 @@ import {
   type IScheduledPostRepository,
 } from '@/core/interfaces/repositories';
 import { ScheduledPostPublishCommand } from '@/application/commands';
+import { errorMessage } from '@/shared/utils';
 
 @Injectable()
 export class PostPublishJob {
@@ -47,15 +48,15 @@ export class PostPublishJob {
           await this.commandBus.execute(
             new ScheduledPostPublishCommand(post.id),
           );
-        } catch (error: any) {
+        } catch (error: unknown) {
           this.logger.error(
-            `Failed to publish post ${post.id}: ${error.message}`,
+            `Failed to publish post ${post.id}: ${errorMessage(error)}`,
           );
         }
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       this.logger.error(
-        `Error during post publishing cron job: ${error.message}`,
+        `Error during post publishing cron job: ${errorMessage(error)}`,
       );
     } finally {
       this.isRunning = false;
