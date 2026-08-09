@@ -16,7 +16,10 @@ export interface PublicReviewProps {
   updatedAt: Date;
 }
 
-export type PublicReviewCreateProps = Omit<PublicReviewProps, 'status' | 'deleteAt' | 'deleteBy' | 'createdAt' | 'updatedAt'>;
+export type PublicReviewCreateProps = Omit<
+  PublicReviewProps,
+  'status' | 'deleteAt' | 'deleteBy' | 'createdAt' | 'updatedAt'
+>;
 
 export class PublicReviewRoot extends BaseAggregateRoot<PublicReviewProps> {
   private constructor(props: PublicReviewProps, id?: string) {
@@ -39,7 +42,10 @@ export class PublicReviewRoot extends BaseAggregateRoot<PublicReviewProps> {
     });
   }
 
-  public static instantiate(id: string, props: PublicReviewProps): PublicReviewRoot {
+  public static instantiate(
+    id: string,
+    props: PublicReviewProps,
+  ): PublicReviewRoot {
     return new PublicReviewRoot(props, id);
   }
 

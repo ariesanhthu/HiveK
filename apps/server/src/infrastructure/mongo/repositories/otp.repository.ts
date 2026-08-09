@@ -18,7 +18,7 @@ export class MongoOtpRepository implements IOtpRepository {
   ) {}
 
   private get session(): ClientSession | undefined {
-    return (this.uow as MongoUnitOfWork).getSession() || undefined;
+    return (this.uow as unknown as MongoUnitOfWork).getSession() || undefined;
   }
 
   private mapToDomain(doc: OtpDocument | null): OtpRoot | null {
@@ -26,7 +26,7 @@ export class MongoOtpRepository implements IOtpRepository {
     return OtpRoot.instantiate(doc._id.toString(), {
       email: doc.email,
       code: doc.code,
-      type: doc.type as EOtpType,
+      type: doc.type,
       expiresAt: doc.expired_at,
       createdAt: doc.created_at,
       updatedAt: doc.updated_at,
@@ -50,15 +50,17 @@ export class MongoOtpRepository implements IOtpRepository {
       type: otp.type,
       expired_at: otp.expiresAt,
     };
-    await this.otpModel.findOneAndUpdate(
-      filter,
-      { $set: update },
-      { upsert: true, session: this.session }
-    ).exec();
+    await this.otpModel
+      .findOneAndUpdate(
+        filter,
+        { $set: update },
+        { upsert: true, session: this.session },
+      )
+      .exec();
   }
 
   async saveMany(otps: OtpRoot[]): Promise<void> {
-    const bulkOps = otps.map(otp => ({
+    const bulkOps = otps.map((otp) => ({
       updateOne: {
         filter: { _id: otp.id },
         update: {
@@ -67,44 +69,65 @@ export class MongoOtpRepository implements IOtpRepository {
             code: otp.code,
             type: otp.type,
             expired_at: otp.expiresAt,
-          } as Record<string, unknown>,
+          },
         },
         upsert: true,
-      }
+      },
     }));
     if (bulkOps.length > 0) {
       await this.otpModel.bulkWrite(bulkOps, { session: this.session });
     }
   }
 
-  async findValidOtp(email: string, code: string, type: EOtpType): Promise<OtpRoot | null> {
-    const doc = await this.otpModel.findOne({
-      email,
-      code,
-      type,
-      expired_at: { $gt: new Date() },
-    }).session(this.session).lean().exec();
+  async findValidOtp(
+    email: string,
+    code: string,
+    type: EOtpType,
+  ): Promise<OtpRoot | null> {
+    const doc = await this.otpModel
+      .findOne({
+        email,
+        code,
+        type,
+        expired_at: { $gt: new Date() },
+      })
+      .session(this.session)
+      .lean()
+      .exec();
     return this.mapToDomain(doc);
   }
 
   async deleteByEmailAndType(email: string, type: EOtpType): Promise<void> {
-    await this.otpModel.deleteMany({
-      email,
-      type,
-    }).session(this.session).exec();
+    await this.otpModel
+      .deleteMany({
+        email,
+        type,
+      })
+      .session(this.session)
+      .exec();
   }
 
-  async findRecentOtp(email: string, type: EOtpType, withinSeconds: number): Promise<OtpRoot | null> {
+  async findRecentOtp(
+    email: string,
+    type: EOtpType,
+    withinSeconds: number,
+  ): Promise<OtpRoot | null> {
     const cutoffDate = new Date(Date.now() - withinSeconds * 1000);
-    const doc = await this.otpModel.findOne({
-      email: email.toLowerCase().trim(),
-      type,
-      created_at: { $gt: cutoffDate },
-    }).session(this.session).lean().exec();
+    const doc = await this.otpModel
+      .findOne({
+        email: email.toLowerCase().trim(),
+        type,
+        created_at: { $gt: cutoffDate },
+      })
+      .session(this.session)
+      .lean()
+      .exec();
     return this.mapToDomain(doc);
   }
 
-  private mapToPersistence(otp: OtpRoot): Partial<OtpModel> & { _id?: Types.ObjectId } {
+  private mapToPersistence(
+    otp: OtpRoot,
+  ): Partial<OtpModel> & { _id?: Types.ObjectId } {
     return {
       _id: otp.id ? new Types.ObjectId(otp.id) : undefined,
       email: otp.email,

@@ -4,7 +4,10 @@ import { ConfigService } from '@nestjs/config';
 import { firstValueFrom } from 'rxjs';
 import { isAxiosError, AxiosResponse } from 'axios';
 import { errorMessage } from '@/shared/utils/error.util';
-import { CACHE_SERVICE, type ICacheService } from '@/application/interfaces/cache.interface';
+import {
+  CACHE_SERVICE,
+  type ICacheService,
+} from '@/application/interfaces/cache.interface';
 import {
   ShortLivedTokenResponse,
   LongLivedTokenResponse,
@@ -58,7 +61,7 @@ export class InstagramGraphApiClient {
 
         // Track rate limit usage from response headers
         if (igUserId && response.headers) {
-          await this.trackRateLimit(igUserId, response.headers as Record<string, unknown>);
+          await this.trackRateLimit(igUserId, response.headers);
         }
 
         return response;
@@ -68,12 +71,13 @@ export class InstagramGraphApiClient {
         if (isAxiosError(error) && error.response?.status === 429) {
           if (attempt < this.maxRetries) {
             const delayMs = Math.min(
-              this.initialBackoffMs * Math.pow(2, attempt) + Math.random() * 500,
+              this.initialBackoffMs * Math.pow(2, attempt) +
+                Math.random() * 500,
               this.maxBackoffMs,
             );
             this.logger.warn(
               `[Instagram API - ${context}] Rate limited (429). ` +
-              `Retry ${attempt + 1}/${this.maxRetries} in ${Math.round(delayMs)}ms...`,
+                `Retry ${attempt + 1}/${this.maxRetries} in ${Math.round(delayMs)}ms...`,
             );
             await this.sleep(delayMs);
             continue;
@@ -126,7 +130,9 @@ export class InstagramGraphApiClient {
     throw error as Error;
   }
 
-  private extractRateUsage(headers: Record<string, unknown>): BusinessUsageHeader | null {
+  private extractRateUsage(
+    headers: Record<string, unknown>,
+  ): BusinessUsageHeader | null {
     const usage = headers['x-business-use-case-usage'];
     if (usage && typeof usage === 'string') {
       try {
@@ -153,21 +159,22 @@ export class InstagramGraphApiClient {
     code: string,
   ): Promise<ShortLivedTokenResponse> {
     const response = await this.executeWithRetry(
-      () => firstValueFrom(
-        this.httpService.post<ShortLivedTokenResponse>(
-          `${this.baseUrl}/oauth/access_token`,
-          null,
-          {
-            params: {
-              client_id: this.appId,
-              client_secret: this.appSecret,
-              grant_type: 'authorization_code',
-              redirect_uri: redirectUri,
-              code,
+      () =>
+        firstValueFrom(
+          this.httpService.post<ShortLivedTokenResponse>(
+            `${this.baseUrl}/oauth/access_token`,
+            null,
+            {
+              params: {
+                client_id: this.appId,
+                client_secret: this.appSecret,
+                grant_type: 'authorization_code',
+                redirect_uri: redirectUri,
+                code,
+              },
             },
-          },
+          ),
         ),
-      ),
       'exchangeCodeForToken',
     );
     return response.data;
@@ -181,19 +188,20 @@ export class InstagramGraphApiClient {
     accessToken: string,
   ): Promise<LongLivedTokenResponse> {
     const response = await this.executeWithRetry(
-      () => firstValueFrom(
-        this.httpService.get<LongLivedTokenResponse>(
-          `${this.baseUrl}/oauth/access_token`,
-          {
-            params: {
-              grant_type: 'fb_exchange_token',
-              client_id: this.appId,
-              client_secret: this.appSecret,
-              fb_exchange_token: accessToken,
+      () =>
+        firstValueFrom(
+          this.httpService.get<LongLivedTokenResponse>(
+            `${this.baseUrl}/oauth/access_token`,
+            {
+              params: {
+                grant_type: 'fb_exchange_token',
+                client_id: this.appId,
+                client_secret: this.appSecret,
+                fb_exchange_token: accessToken,
+              },
             },
-          },
+          ),
         ),
-      ),
       'exchangeForLongLivedToken',
     );
     return response.data;
@@ -205,18 +213,19 @@ export class InstagramGraphApiClient {
    */
   async refreshToken(accessToken: string): Promise<TokenRefreshResponse> {
     const response = await this.executeWithRetry(
-      () => firstValueFrom(
-        this.httpService.get<TokenRefreshResponse>(
-          `${this.baseUrl}/oauth/access_token`,
-          {
-            params: {
-              grant_type: 'fb_exchange_token',
-              client_secret: this.appSecret,
-              fb_exchange_token: accessToken,
+      () =>
+        firstValueFrom(
+          this.httpService.get<TokenRefreshResponse>(
+            `${this.baseUrl}/oauth/access_token`,
+            {
+              params: {
+                grant_type: 'fb_exchange_token',
+                client_secret: this.appSecret,
+                fb_exchange_token: accessToken,
+              },
             },
-          },
+          ),
         ),
-      ),
       'refreshToken',
     );
     return response.data;
@@ -231,27 +240,28 @@ export class InstagramGraphApiClient {
   async discoverInstagramAccounts(
     accessToken: string,
   ): Promise<InstagramBusinessAccount[]> {
-    console.log("access token", accessToken);
+    console.log('access token', accessToken);
     const response = await this.executeWithRetry(
-      () => firstValueFrom(
-        this.httpService.get<FacebookAccountsResponse>(
-          `${this.baseUrl}/me/accounts`,
-          {
-            params: {
-              fields:
-                'id,name,instagram_business_account{id,name,username,profile_picture_url}',
-              access_token: accessToken,
+      () =>
+        firstValueFrom(
+          this.httpService.get<FacebookAccountsResponse>(
+            `${this.baseUrl}/me/accounts`,
+            {
+              params: {
+                fields:
+                  'id,name,instagram_business_account{id,name,username,profile_picture_url}',
+                access_token: accessToken,
+              },
             },
-          },
+          ),
         ),
-      ),
       'discoverInstagramAccounts',
     );
     const accounts: InstagramBusinessAccount[] = [];
     console.log(response.data);
     for (const page of response.data.data) {
       if (page.instagram_business_account) {
-        console.log("account", page.instagram_business_account)
+        console.log('account', page.instagram_business_account);
         accounts.push(page.instagram_business_account);
       }
     }
@@ -267,18 +277,19 @@ export class InstagramGraphApiClient {
     accessToken: string,
   ): Promise<InstagramAccountDetails> {
     const response = await this.executeWithRetry(
-      () => firstValueFrom(
-        this.httpService.get<InstagramAccountDetails>(
-          `${this.baseUrl}/${igUserId}`,
-          {
-            params: {
-              fields:
-                'id,name,username,profile_picture_url,followers_count,media_count',
-              access_token: accessToken,
+      () =>
+        firstValueFrom(
+          this.httpService.get<InstagramAccountDetails>(
+            `${this.baseUrl}/${igUserId}`,
+            {
+              params: {
+                fields:
+                  'id,name,username,profile_picture_url,followers_count,media_count',
+                access_token: accessToken,
+              },
             },
-          },
+          ),
         ),
-      ),
       'getBusinessAccountDetails',
       igUserId,
     );
@@ -310,13 +321,14 @@ export class InstagramGraphApiClient {
       }
     }
     const response = await this.executeWithRetry(
-      () => firstValueFrom(
-        this.httpService.post<ContainerCreationResponse>(
-          `${this.baseUrl}/${igUserId}/media`,
-          null,
-          { params: queryParams },
+      () =>
+        firstValueFrom(
+          this.httpService.post<ContainerCreationResponse>(
+            `${this.baseUrl}/${igUserId}/media`,
+            null,
+            { params: queryParams },
+          ),
         ),
-      ),
       'createMediaContainer',
       igUserId,
     );
@@ -332,17 +344,18 @@ export class InstagramGraphApiClient {
     accessToken: string,
   ): Promise<ContainerStatusResponse> {
     const response = await this.executeWithRetry(
-      () => firstValueFrom(
-        this.httpService.get<ContainerStatusResponse>(
-          `${this.baseUrl}/${containerId}`,
-          {
-            params: {
-              fields: 'status_code',
-              access_token: accessToken,
+      () =>
+        firstValueFrom(
+          this.httpService.get<ContainerStatusResponse>(
+            `${this.baseUrl}/${containerId}`,
+            {
+              params: {
+                fields: 'status_code',
+                access_token: accessToken,
+              },
             },
-          },
+          ),
         ),
-      ),
       'getContainerStatus',
     );
     return response.data;
@@ -358,18 +371,19 @@ export class InstagramGraphApiClient {
     accessToken: string,
   ): Promise<PublishResponse> {
     const response = await this.executeWithRetry(
-      () => firstValueFrom(
-        this.httpService.post<PublishResponse>(
-          `${this.baseUrl}/${igUserId}/media_publish`,
-          null,
-          {
-            params: {
-              creation_id: creationId,
-              access_token: accessToken,
+      () =>
+        firstValueFrom(
+          this.httpService.post<PublishResponse>(
+            `${this.baseUrl}/${igUserId}/media_publish`,
+            null,
+            {
+              params: {
+                creation_id: creationId,
+                access_token: accessToken,
+              },
             },
-          },
+          ),
         ),
-      ),
       'publishContainer',
       igUserId,
     );
@@ -382,7 +396,9 @@ export class InstagramGraphApiClient {
    * Extract X-Business-Use-Case-Usage from the last response.
    * Call this after any API request to track rate limits.
    */
-  getRateLimitUsage(headers: Record<string, unknown>): BusinessUsageHeader | null {
+  getRateLimitUsage(
+    headers: Record<string, unknown>,
+  ): BusinessUsageHeader | null {
     return this.extractRateUsage(headers);
   }
 }

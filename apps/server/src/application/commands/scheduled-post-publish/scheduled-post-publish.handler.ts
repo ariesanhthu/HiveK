@@ -23,7 +23,10 @@ import { ScheduledPostDto } from '@/application/dtos';
 import { ScheduledPostMapper } from '@/application/mappers';
 
 @CommandHandler(ScheduledPostPublishCommand)
-export class ScheduledPostPublishHandler implements ICommandHandler<ScheduledPostPublishCommand, ScheduledPostDto> {
+export class ScheduledPostPublishHandler implements ICommandHandler<
+  ScheduledPostPublishCommand,
+  ScheduledPostDto
+> {
   constructor(
     @Inject(SCHEDULED_POST_REPOSITORY)
     private readonly scheduledPostRepository: IScheduledPostRepository,
@@ -39,9 +42,11 @@ export class ScheduledPostPublishHandler implements ICommandHandler<ScheduledPos
     private readonly uow: IUnitOfWork,
   ) {}
 
-  async execute(command: ScheduledPostPublishCommand): Promise<ScheduledPostDto> {
+  async execute(
+    command: ScheduledPostPublishCommand,
+  ): Promise<ScheduledPostDto> {
     // 1. Mark as publishing first to prevent double-processing
-    let post = await this.uow.execute(async () => {
+    const post = await this.uow.execute(async () => {
       const p = await this.scheduledPostRepository.findById(command.postId);
       if (!p) {
         throw new Error('Scheduled post not found.');
@@ -52,7 +57,9 @@ export class ScheduledPostPublishHandler implements ICommandHandler<ScheduledPos
     });
 
     // 2. Fetch the SocialPage
-    const socialPage = await this.socialPageRepository.findById(post.socialPageId);
+    const socialPage = await this.socialPageRepository.findById(
+      post.socialPageId,
+    );
     if (!socialPage) {
       return this.uow.execute(async () => {
         post.markFailed('Social page connection not found.');
@@ -72,7 +79,9 @@ export class ScheduledPostPublishHandler implements ICommandHandler<ScheduledPos
 
     // 4. Publish to external platform
     try {
-      const publisher = this.socialPublisherDiscovery.findByCode(socialPage.platformCode);
+      const publisher = this.socialPublisherDiscovery.findByCode(
+        socialPage.platformCode,
+      );
       const result = await publisher.publishPost({
         pageToken: socialPage.encryptedToken,
         pageId: socialPage.pageId,
@@ -88,7 +97,9 @@ export class ScheduledPostPublishHandler implements ICommandHandler<ScheduledPos
       });
     } catch (err: unknown) {
       return this.uow.execute(async () => {
-        post.markFailed(err instanceof Error ? err.message : 'Publishing failed.');
+        post.markFailed(
+          err instanceof Error ? err.message : 'Publishing failed.',
+        );
         await this.scheduledPostRepository.save(post);
         await this.eventService.publishEvents(post);
         return ScheduledPostMapper.toDto(post);

@@ -9,6 +9,5 @@ import { JwtAuthGuard, RolesGuard } from '@/presentation/middleware/guards';
 @UseGuards(JwtAuthGuard)
 @Controller(buildVersionedRoute('client', 'roles', 1))
 export class RoleClientController {
-  constructor(
-  ) {}
+  constructor() {}
 }

@@ -1,7 +1,9 @@
 import { BaseValueObject } from '../common';
 import { EPaymentAttemptStatus } from '../enums';
 
-export class PaymentAttemptStatusVO extends BaseValueObject<{ value: EPaymentAttemptStatus }> {
+export class PaymentAttemptStatusVO extends BaseValueObject<{
+  value: EPaymentAttemptStatus;
+}> {
   constructor(status: EPaymentAttemptStatus) {
     super({ value: status });
   }
@@ -41,13 +43,16 @@ export class PaymentAttemptStatusVO extends BaseValueObject<{ value: EPaymentAtt
   };
 
   public canTransitionTo(newStatus: EPaymentAttemptStatus): boolean {
-    const validNextStates = PaymentAttemptStatusVO.VALID_TRANSITIONS[this.value] || [];
+    const validNextStates =
+      PaymentAttemptStatusVO.VALID_TRANSITIONS[this.value] || [];
     return validNextStates.includes(newStatus);
   }
 
   public transition(newStatus: EPaymentAttemptStatus): PaymentAttemptStatusVO {
     if (!this.canTransitionTo(newStatus)) {
-      throw new Error(`Invalid attempt state transition: ${this.value} -> ${newStatus}`);
+      throw new Error(
+        `Invalid attempt state transition: ${this.value} -> ${newStatus}`,
+      );
     }
     return new PaymentAttemptStatusVO(newStatus);
   }
@@ -81,6 +86,11 @@ export class PaymentAttemptStatusVO extends BaseValueObject<{ value: EPaymentAtt
   }
 
   public isTerminal(): boolean {
-    return this.isSuccess() || this.isFailed() || this.isCanceled() || this.isRefunded();
+    return (
+      this.isSuccess() ||
+      this.isFailed() ||
+      this.isCanceled() ||
+      this.isRefunded()
+    );
   }
 }

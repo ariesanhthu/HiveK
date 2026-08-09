@@ -5,4 +5,6 @@ export interface IEnterpriseQuotaAllocationRepository extends IBaseRepository<En
   findByOwnerId(ownerId: string): Promise<EnterpriseQuotaAllocationRoot | null>;
 }
 
-export const ENTERPRISE_QUOTA_ALLOCATION_REPOSITORY = Symbol('IEnterpriseQuotaAllocationRepository');
+export const ENTERPRISE_QUOTA_ALLOCATION_REPOSITORY = Symbol(
+  'IEnterpriseQuotaAllocationRepository',
+);

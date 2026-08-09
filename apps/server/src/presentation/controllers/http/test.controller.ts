@@ -1,8 +1,25 @@
-import { Body, Controller, Get, Inject, Logger, Param, Patch, Query } from '@nestjs/common';
-import { type IMessageQueueService, type IWebSocketService, MESSAGE_QUEUE_SERVICE, WEBSOCKET_SERVICE } from '@/application/interfaces';
+import {
+  Body,
+  Controller,
+  Get,
+  Inject,
+  Logger,
+  Param,
+  Patch,
+  Query,
+} from '@nestjs/common';
+import {
+  type IMessageQueueService,
+  type IWebSocketService,
+  MESSAGE_QUEUE_SERVICE,
+  WEBSOCKET_SERVICE,
+} from '@/application/interfaces';
 import { Public } from '@/presentation/decorators/public.decorator';
 import { ApiTags, ApiSecurity, ApiOperation } from '@nestjs/swagger';
-import { CursorPaginationRequestDto, PaginatedResponseDto } from '@/application/dtos/pagination.dto';
+import {
+  CursorPaginationRequestDto,
+  PaginatedResponseDto,
+} from '@/application/dtos/pagination.dto';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { KolProfileGetHandlesDevQuery } from '@/application/queries/kol-profile-get-handles-dev/kol-profile-get-handles-dev.query';
 import { KolProfileUpdateCommand } from '@/application/commands/kol-profile-update/kol-profile-update.command';
@@ -17,7 +34,8 @@ export class TestController {
   private readonly logger = new Logger(TestController.name);
 
   constructor(
-    @Inject(MESSAGE_QUEUE_SERVICE) private readonly mqService: IMessageQueueService,
+    @Inject(MESSAGE_QUEUE_SERVICE)
+    private readonly mqService: IMessageQueueService,
     @Inject(WEBSOCKET_SERVICE) private readonly wsService: IWebSocketService,
   ) {}
 
@@ -26,12 +44,12 @@ export class TestController {
    * GET /hivek/api/test/emit-mq
    */
   @Get('emit-mq')
-  testEmitMq() {
+  async testEmitMq() {
     this.logger.log('Emitting test event via RabbitMQ...');
     const payload = { message: 'Hello RabbitMQ', timestamp: new Date() };
-    
-    this.mqService.emit('test_event', payload);
-    this.mqService.emit('default', payload);
+
+    await this.mqService.emit('test_event', payload);
+    await this.mqService.emit('default', payload);
     return { status: 'MQ Event emitted!' };
   }
 
@@ -53,7 +71,10 @@ export class TestController {
   @Get('broadcast-ws')
   testBroadcastWs(@Query('msg') msg: string = 'Hello World') {
     this.logger.log('Broadcasting message via WebSocket...');
-    this.wsService.broadcastAll('test_broadcast', { message: msg, timestamp: new Date() });
+    this.wsService.broadcastAll('test_broadcast', {
+      message: msg,
+      timestamp: new Date(),
+    });
     return { status: 'WS Broadcast sent!' };
   }
 
@@ -62,10 +83,16 @@ export class TestController {
    * GET /hivek/api/test/emit-user-ws?userId=123
    */
   @Get('emit-user-ws')
-  testEmitUserWs(@Query('userId') userId: string, @Query('msg') msg: string = 'Hello User') {
+  testEmitUserWs(
+    @Query('userId') userId: string,
+    @Query('msg') msg: string = 'Hello User',
+  ) {
     if (!userId) return { error: 'userId is required' };
     this.logger.log(`Emitting message to user ${userId} via WebSocket...`);
-    this.wsService.emitToUser(userId, 'test_user_event', { message: msg, timestamp: new Date() });
+    this.wsService.emitToUser(userId, 'test_user_event', {
+      message: msg,
+      timestamp: new Date(),
+    });
     return { status: `WS Message sent to user ${userId}!` };
   }
 }
@@ -74,19 +101,27 @@ export class TestController {
 @Public()
 @Controller('kol-profiles')
 export class TestKOLController {
-  constructor(private readonly queryBus: QueryBus, private readonly commandBus: CommandBus) { }
-  
+  constructor(
+    private readonly queryBus: QueryBus,
+    private readonly commandBus: CommandBus,
+  ) {}
+
   @Public()
   @Get('platforms')
   @ApiOperation({ summary: 'Get KOL profile handles mapping (for dev)' })
-  async findHandlesDev(@Query() pagination: CursorPaginationRequestDto): Promise<PaginatedResponseDto<any>> {
+  async findHandlesDev(
+    @Query() pagination: CursorPaginationRequestDto,
+  ): Promise<PaginatedResponseDto<Record<string, unknown>>> {
     return this.queryBus.execute(new KolProfileGetHandlesDevQuery(pagination));
   }
 
   @Public()
   @Patch(':id')
   @ApiOperation({ summary: 'Update anything of an influencer (PATCH)' })
-  async update(@Param('id') id: string, @Body() input: UpdateKolProfileDto): Promise<KolProfileDto> {
+  async update(
+    @Param('id') id: string,
+    @Body() input: UpdateKolProfileDto,
+  ): Promise<KolProfileDto> {
     return this.commandBus.execute(new KolProfileUpdateCommand(id, input));
   }
 }

@@ -17,7 +17,10 @@ export interface KpiLogProps {
   deleteBy: Nullable<string>;
 }
 
-export type KpiLogCreateProps = Omit<KpiLogProps, 'timestamp' | 'deleteAt' | 'deleteBy'>;
+export type KpiLogCreateProps = Omit<
+  KpiLogProps,
+  'timestamp' | 'deleteAt' | 'deleteBy'
+>;
 
 export class KpiLogEntity extends BaseEntity<KpiLogProps> {
   private constructor(props: KpiLogProps, id?: string) {

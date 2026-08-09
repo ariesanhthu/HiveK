@@ -4,7 +4,7 @@ import { PublicReviewRoot } from '@/core/aggregate-roots';
 export class ReviewMapper {
   static toDto(root: PublicReviewRoot): ReviewDto {
     return {
-      id: root.id!,
+      id: root.id,
       proposalId: root.proposalId,
       authorName: root.authorName,
       rating: root.rating,

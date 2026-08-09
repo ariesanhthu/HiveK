@@ -4,7 +4,7 @@ import { SocialPageRoot } from '@/core/aggregate-roots';
 export class SocialPageMapper {
   static toDto(root: SocialPageRoot): SocialPageDto {
     return {
-      id: root.id!,
+      id: root.id,
       enterpriseId: root.enterpriseId,
       platformId: root.platformId,
       platformCode: root.platformCode,

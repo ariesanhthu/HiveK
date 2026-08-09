@@ -2,11 +2,20 @@ import { Inject, Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { PackageModel } from '../schemas/package.schema';
-import { PACKAGE_REPOSITORY, type IPackageRepository } from '@/core/interfaces/repositories';
+import {
+  PACKAGE_REPOSITORY,
+  type IPackageRepository,
+} from '@/core/interfaces/repositories';
 import { PackageRoot } from '@/core/aggregate-roots';
 import { PackageVariantEntity } from '@/core/entities';
 import { GrantVO } from '@/core/value-objects';
-import { EVersionStatus, EPackageType, EPackageScope, ECurrency, EGrantType } from '@/core/enums';
+import {
+  EVersionStatus,
+  EPackageType,
+  EPackageScope,
+  ECurrency,
+  EGrantType,
+} from '@/core/enums';
 import { env } from '@/shared/utils';
 
 @Injectable()

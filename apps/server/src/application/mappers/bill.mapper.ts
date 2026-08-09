@@ -5,11 +5,11 @@ import type { EBillType, EBillStatus } from '@/core/enums';
 export class BillMapper {
   static toDto(entity: BillEntity): BillResponseDto {
     return {
-      id: entity.id!,
+      id: entity.id,
       billCode: entity.billCode,
       enterpriseId: entity.enterpriseId,
-      type: entity.type as EBillType,
-      status: entity.status as EBillStatus,
+      type: entity.type,
+      status: entity.status,
       items: entity.items.map((item) => ({
         lineType: item.lineType,
         packageId: item.packageId,

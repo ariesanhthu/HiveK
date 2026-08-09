@@ -1,10 +1,16 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { Inject } from '@nestjs/common';
-import { USER_NOTIFICATION_REPOSITORY, type IUserNotificationRepository } from '@/core/interfaces/repositories';
+import {
+  USER_NOTIFICATION_REPOSITORY,
+  type IUserNotificationRepository,
+} from '@/core/interfaces/repositories';
 import { NotificationHardDeleteCommand } from './notification-hard-delete.command';
 
 @CommandHandler(NotificationHardDeleteCommand)
-export class NotificationHardDeleteCommandHandler implements ICommandHandler<NotificationHardDeleteCommand, void> {
+export class NotificationHardDeleteCommandHandler implements ICommandHandler<
+  NotificationHardDeleteCommand,
+  void
+> {
   constructor(
     @Inject(USER_NOTIFICATION_REPOSITORY)
     private readonly userNotificationRepository: IUserNotificationRepository,

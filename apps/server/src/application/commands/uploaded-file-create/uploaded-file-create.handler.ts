@@ -1,7 +1,13 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { Inject } from '@nestjs/common';
-import { UPLOADED_FILE_REPOSITORY, type IUploadedFileRepository } from '@/core/interfaces/repositories';
-import { STORAGE_SERVICE, type IStorageService } from '@/core/interfaces/storage';
+import {
+  UPLOADED_FILE_REPOSITORY,
+  type IUploadedFileRepository,
+} from '@/core/interfaces/repositories';
+import {
+  STORAGE_SERVICE,
+  type IStorageService,
+} from '@/core/interfaces/storage';
 import { UNIT_OF_WORK, type IUnitOfWork } from '@/application/interfaces';
 import { EVENT_SERVICE, type IEventService } from '@/application/interfaces';
 import { FileLinkerService } from '@/application/services';
@@ -12,14 +18,20 @@ import { UploadedFileMapper } from '@/application/mappers';
 import { UploadService } from '@/application/services';
 import { toCamelCase, buildFilename } from '@/shared/utils/string.util';
 
-export function resolveFormat(storageFormat: string | undefined, mimetype: string): string {
+export function resolveFormat(
+  storageFormat: string | undefined,
+  mimetype: string,
+): string {
   if (storageFormat) return storageFormat;
   const sub = mimetype.split('/')[1];
   return sub ?? 'bin';
 }
 
 @CommandHandler(UploadedFileCreateCommand)
-export class UploadedFileCreateCommandHandler implements ICommandHandler<UploadedFileCreateCommand, UploadedFileDto> {
+export class UploadedFileCreateCommandHandler implements ICommandHandler<
+  UploadedFileCreateCommand,
+  UploadedFileDto
+> {
   constructor(
     @Inject(UPLOADED_FILE_REPOSITORY)
     private readonly repository: IUploadedFileRepository,

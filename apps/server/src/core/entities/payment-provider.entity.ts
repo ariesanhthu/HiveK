@@ -42,21 +42,30 @@ export type PaymentProviderCreateProps = Omit<
 };
 
 export class PaymentProviderEntity extends BaseAggregateRoot<PaymentProviderProps> {
-  public static create(input: PaymentProviderCreateProps, id?: string): PaymentProviderEntity {
+  public static create(
+    input: PaymentProviderCreateProps,
+    id?: string,
+  ): PaymentProviderEntity {
     const now = new Date();
-    return new PaymentProviderEntity({
-      ...input,
-      baseUrl: input.baseUrl,
-      testUrl: input.testUrl,
-      webhookUrl: input.webhookUrl,
-      createdAt: input.createdAt ?? now,
-      updatedAt: input.updatedAt ?? now,
-      deletedAt: input.deletedAt,
-      deletedBy: input.deletedBy,
-    }, id);
+    return new PaymentProviderEntity(
+      {
+        ...input,
+        baseUrl: input.baseUrl,
+        testUrl: input.testUrl,
+        webhookUrl: input.webhookUrl,
+        createdAt: input.createdAt ?? now,
+        updatedAt: input.updatedAt ?? now,
+        deletedAt: input.deletedAt,
+        deletedBy: input.deletedBy,
+      },
+      id,
+    );
   }
 
-  public static instantiate(id: string, props: PaymentProviderProps): PaymentProviderEntity {
+  public static instantiate(
+    id: string,
+    props: PaymentProviderProps,
+  ): PaymentProviderEntity {
     return new PaymentProviderEntity(props, id);
   }
 
@@ -173,21 +182,27 @@ export class PaymentProviderEntity extends BaseAggregateRoot<PaymentProviderProp
       baseUrl: Optional<string>;
       testUrl: Optional<string>;
       webhookUrl: Optional<string>;
-    }>
+    }>,
   ): void {
-    if (input.displayName !== undefined) this.props.displayName = input.displayName;
-    if (input.supportedMethods !== undefined) this.props.supportedMethods = input.supportedMethods;
+    if (input.displayName !== undefined)
+      this.props.displayName = input.displayName;
+    if (input.supportedMethods !== undefined)
+      this.props.supportedMethods = input.supportedMethods;
     if (input.supportedCurrencies !== undefined)
       this.props.supportedCurrencies = input.supportedCurrencies;
-    if (input.credentials !== undefined) this.props.credentials = input.credentials;
+    if (input.credentials !== undefined)
+      this.props.credentials = input.credentials;
     if (input.isActive !== undefined) this.props.isActive = input.isActive;
-    if (input.supportsWebhook !== undefined) this.props.supportsWebhook = input.supportsWebhook;
-    if (input.supportsRefund !== undefined) this.props.supportsRefund = input.supportsRefund;
+    if (input.supportsWebhook !== undefined)
+      this.props.supportsWebhook = input.supportsWebhook;
+    if (input.supportsRefund !== undefined)
+      this.props.supportsRefund = input.supportsRefund;
     if (input.supportsPartialRefund !== undefined)
       this.props.supportsPartialRefund = input.supportsPartialRefund;
     if (input.baseUrl !== undefined) this.props.baseUrl = input.baseUrl;
     if (input.testUrl !== undefined) this.props.testUrl = input.testUrl;
-    if (input.webhookUrl !== undefined) this.props.webhookUrl = input.webhookUrl;
+    if (input.webhookUrl !== undefined)
+      this.props.webhookUrl = input.webhookUrl;
 
     this.props.updatedAt = new Date();
   }

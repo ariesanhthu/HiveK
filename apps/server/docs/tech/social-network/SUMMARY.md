@@ -1,7 +1,6 @@
 # Social Network Platform Integration Guide
 
-> **Full domain documentation**: [`docs/domain/social-page-domain.md`](../../domain/social-page-domain.md)
-> **Infrastructure refactor**: [`docs/refactor/social-network.md`](../../refactor/social-network.md)
+> **Full domain documentation**: [social-page domain](../../domains/social-page/domain.md)
 > **Last updated**: 2026-07-18
 
 ---
@@ -232,6 +231,5 @@ That's it. **No other file in the codebase needs to change.** The factories (`So
 
 ## References
 
-- [`docs/domain/social-page-domain.md`](../../domain/social-page-domain.md) — full domain doc: all aggregates, events, handlers, endpoints, state machines, workflows
-- [`docs/refactor/social-network.md`](../../refactor/social-network.md) — infrastructure refactor plan and history
+- [social-page domain](../../domains/social-page/domain.md) — full domain doc: all aggregates, events, handlers, endpoints, state machines, workflows
 - Existing implementations: `social-network/facebook/`, `social-network/threads/`

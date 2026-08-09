@@ -1,6 +1,23 @@
-import { Controller, Get, Post, Patch, Delete, Param, Query, Body, HttpCode, HttpStatus, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Patch,
+  Delete,
+  Param,
+  Query,
+  Body,
+  HttpCode,
+  HttpStatus,
+  UseGuards,
+} from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
-import { ApiTags, ApiOperation, ApiBearerAuth, ApiSecurity } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiBearerAuth,
+  ApiSecurity,
+} from '@nestjs/swagger';
 import { buildVersionedRoute } from '@presentation/utils';
 import { RoleGetByIdQuery, RoleGetListQuery } from '@/application/queries';
 import {
@@ -12,7 +29,11 @@ import {
 } from '@/application/commands';
 import { RoleDto, RoleFilterDto, SoftDeleteInputDto } from '@/application/dtos';
 import { JwtAuthGuard, RolesGuard } from '@/presentation/middleware/guards';
-import { Roles, ApiOkResponseEnvelope, ApiPaginatedResponseEnvelope } from '@/presentation/decorators';
+import {
+  Roles,
+  ApiOkResponseEnvelope,
+  ApiPaginatedResponseEnvelope,
+} from '@/presentation/decorators';
 import { ERoleType } from '@/core/enums';
 import { PaginatedResponseDto } from '@/application/dtos/pagination.dto';
 import { RoleCreateInputDto } from '@/application/commands/role-create/role-create.dto';
@@ -53,10 +74,13 @@ export class RoleAdminController {
   @Get()
   @ApiOperation({ summary: 'Get paginated list of roles' })
   @ApiPaginatedResponseEnvelope(RoleDto)
-  async findAll(@Query() filters: RoleFilterDto): Promise<PaginatedResponseDto<RoleDto>> {
-    return this.queryBus.execute<RoleGetListQuery, PaginatedResponseDto<RoleDto>>(
-      new RoleGetListQuery(filters),
-    );
+  async findAll(
+    @Query() filters: RoleFilterDto,
+  ): Promise<PaginatedResponseDto<RoleDto>> {
+    return this.queryBus.execute<
+      RoleGetListQuery,
+      PaginatedResponseDto<RoleDto>
+    >(new RoleGetListQuery(filters));
   }
 
   @Get(':id')
@@ -92,4 +116,3 @@ export class RoleAdminController {
     await this.commandBus.execute(new RoleRestoreCommand(id));
   }
 }
-

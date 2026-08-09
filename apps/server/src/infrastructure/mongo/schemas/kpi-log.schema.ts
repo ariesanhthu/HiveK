@@ -17,7 +17,11 @@ export class KpiLogModel {
   @Prop({ required: true, type: Date })
   timestamp: Date;
 
-  @Prop({ required: true, type: Types.ObjectId, ref: 'CampaignParticipantModel' })
+  @Prop({
+    required: true,
+    type: Types.ObjectId,
+    ref: 'CampaignParticipantModel',
+  })
   participantId: Types.ObjectId;
 
   @Prop({ type: Types.ObjectId, default: null })

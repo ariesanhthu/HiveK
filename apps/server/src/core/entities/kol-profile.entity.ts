@@ -13,12 +13,15 @@ export interface KolProfileProps {
   phone?: string; // Flattened contact
   platforms: KolPlatformInfoVO[];
   isVerified: boolean;
-  scores?: Record<string, any>;
+  scores?: Record<string, unknown>;
   deleteAt: Nullable<Date>;
   deleteBy: Nullable<string>;
 }
 
-export type KolProfileCreateProps = Omit<KolProfileProps, 'deleteAt' | 'deleteBy'>;
+export type KolProfileCreateProps = Omit<
+  KolProfileProps,
+  'deleteAt' | 'deleteBy'
+>;
 
 /**
  * Entity representing an Influencer/KOL Profile.
@@ -29,15 +32,24 @@ export class KolProfileEntity extends BaseEntity<KolProfileProps> {
     super(props, id);
   }
 
-  public static create(props: KolProfileCreateProps, id?: string): KolProfileEntity {
-    return new KolProfileEntity({
-      ...props,
-      deleteAt: null,
-      deleteBy: null,
-    }, id);
+  public static create(
+    props: KolProfileCreateProps,
+    id?: string,
+  ): KolProfileEntity {
+    return new KolProfileEntity(
+      {
+        ...props,
+        deleteAt: null,
+        deleteBy: null,
+      },
+      id,
+    );
   }
 
-  public static instantiate(id: string, props: KolProfileProps): KolProfileEntity {
+  public static instantiate(
+    id: string,
+    props: KolProfileProps,
+  ): KolProfileEntity {
     return new KolProfileEntity(props, id);
   }
 
@@ -81,7 +93,7 @@ export class KolProfileEntity extends BaseEntity<KolProfileProps> {
     return this.props.isVerified;
   }
 
-  get scores(): Record<string, any> {
+  get scores(): Record<string, unknown> {
     return this.props.scores || {};
   }
 
@@ -104,7 +116,9 @@ export class KolProfileEntity extends BaseEntity<KolProfileProps> {
       this.props.platforms = [];
     }
     const exists = this.props.platforms.some(
-      (p) => p.platformId === platform.platformId && p.externalId === platform.externalId
+      (p) =>
+        p.platformId === platform.platformId &&
+        p.externalId === platform.externalId,
     );
     if (!exists) {
       this.props.platforms.push(platform);

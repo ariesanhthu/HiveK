@@ -71,7 +71,7 @@ export class PaymentAlreadyActiveForBillException extends PaymentException {
     super(
       `Cannot create payment for bill ${billId}: ` +
         `An active payment (${existingPaymentId}) already exists for this bill. ` +
-        `Only one active payment is allowed per bill.`
+        `Only one active payment is allowed per bill.`,
     );
   }
 }
@@ -114,7 +114,9 @@ export class PaymentNoSuccessfulAttemptException extends PaymentException {
 
 export class PaymentInTerminalStateException extends PaymentException {
   constructor(paymentId: string) {
-    super(`Payment ${paymentId} is already in a terminal state and cannot be canceled.`);
+    super(
+      `Payment ${paymentId} is already in a terminal state and cannot be canceled.`,
+    );
   }
 }
 
@@ -122,7 +124,7 @@ export class PaymentInvalidStateForCancelException extends PaymentException {
   constructor(paymentId: string, currentState: string) {
     super(
       `Payment ${paymentId} cannot be canceled from state ${currentState}. ` +
-        `Only PENDING or PENDING_PAYMENT_PROVIDER payments can be canceled.`
+        `Only PENDING or PENDING_PAYMENT_PROVIDER payments can be canceled.`,
     );
   }
 }
@@ -131,16 +133,20 @@ export class PaymentAttemptProcessingException extends PaymentException {
   constructor(paymentId: string, attemptId: string) {
     super(
       `Cannot cancel payment ${paymentId}: ` +
-        `Latest attempt ${attemptId} is currently processing.`
+        `Latest attempt ${attemptId} is currently processing.`,
     );
   }
 }
 
 export class PaymentRefundAmountExceedsException extends PaymentException {
-  constructor(paymentId: string, refundAmount: number, maxRefundableAmount: number) {
+  constructor(
+    paymentId: string,
+    refundAmount: number,
+    maxRefundableAmount: number,
+  ) {
     super(
       `Cannot refund payment ${paymentId}: ` +
-        `Requested refund amount ${refundAmount} exceeds maximum refundable amount ${maxRefundableAmount}.`
+        `Requested refund amount ${refundAmount} exceeds maximum refundable amount ${maxRefundableAmount}.`,
     );
   }
 }

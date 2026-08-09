@@ -50,24 +50,33 @@ export type PaymentTransactionCreateProps = Omit<
 };
 
 export class PaymentTransactionEntity extends BaseEntity<PaymentTransactionProps> {
-  public static create(input: PaymentTransactionCreateProps, id?: string): PaymentTransactionEntity {
+  public static create(
+    input: PaymentTransactionCreateProps,
+    id?: string,
+  ): PaymentTransactionEntity {
     const now = new Date();
-    return new PaymentTransactionEntity({
-      ...input,
-      description: input.description,
-      providerTransactionId: input.providerTransactionId,
-      providerRequest: input.providerRequest,
-      providerRequestHeaders: input.providerRequestHeaders,
-      providerRequestTimestamp: input.providerRequestTimestamp,
-      providerResponse: input.providerResponse,
-      providerResponseHeaders: input.providerResponseHeaders,
-      providerResponseTimestamp: input.providerResponseTimestamp,
-      metadata: input.metadata,
-      createdAt: input.createdAt ?? now,
-    }, id);
+    return new PaymentTransactionEntity(
+      {
+        ...input,
+        description: input.description,
+        providerTransactionId: input.providerTransactionId,
+        providerRequest: input.providerRequest,
+        providerRequestHeaders: input.providerRequestHeaders,
+        providerRequestTimestamp: input.providerRequestTimestamp,
+        providerResponse: input.providerResponse,
+        providerResponseHeaders: input.providerResponseHeaders,
+        providerResponseTimestamp: input.providerResponseTimestamp,
+        metadata: input.metadata,
+        createdAt: input.createdAt ?? now,
+      },
+      id,
+    );
   }
 
-  public static instantiate(id: string, props: PaymentTransactionProps): PaymentTransactionEntity {
+  public static instantiate(
+    id: string,
+    props: PaymentTransactionProps,
+  ): PaymentTransactionEntity {
     return new PaymentTransactionEntity(props, id);
   }
 

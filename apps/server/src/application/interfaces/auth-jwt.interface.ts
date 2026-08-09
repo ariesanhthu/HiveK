@@ -5,6 +5,8 @@ export interface IJwtPayload {
   sub: string;
   email: string;
   role: string;
+  enterpriseId?: string;
+  ownerId?: string;
   [key: string]: JsonValue;
 }
 
@@ -28,9 +30,12 @@ export interface IAuthJwtService {
   sign(payload: IJwtPayload, options?: IJwtSignOptions): string;
   verify(token: string, options?: IJwtVerifyOptions): IJwtPayload;
   decode(token: string): IJwtPayload;
-  
+
   extractTokenFromHeader(authHeader?: string): string | null;
-  extractTokenFromCookie(req: AuthenticatedRequest, cookieName?: string): string | null;
+  extractTokenFromCookie(
+    req: AuthenticatedRequest,
+    cookieName?: string,
+  ): string | null;
   verifyAuthHeader(authHeader?: string): IJwtPayload;
   verifyHandshake(authHeader?: string, handshakeToken?: string): IJwtPayload;
   verifyRequest(req: AuthenticatedRequest): IJwtPayload;

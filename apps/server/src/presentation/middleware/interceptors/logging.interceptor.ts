@@ -13,16 +13,16 @@ import { tap } from 'rxjs/operators';
 
 @Injectable()
 export class LoggingInterceptor implements NestInterceptor {
-  constructor (
+  constructor(
     @Inject(LOGGER_SERVICE)
     private readonly logger: ILoggerService,
   ) {
-    this.logger.setContext(LoggingInterceptor.name)
+    this.logger.setContext(LoggingInterceptor.name);
   }
 
-  intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
-    const type = context.getType() as string;
-    if (type === 'graphql') {
+  intercept(context: ExecutionContext, next: CallHandler): Observable<unknown> {
+    const type = context.getType();
+    if ((type as string) === 'graphql') {
       const gqlCtx = GqlExecutionContext.create(context);
       const ctx = gqlCtx.getContext();
       const { req, res } = ctx;

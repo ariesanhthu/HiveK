@@ -1,7 +1,7 @@
 # Campaign & Campaign Participant Domain
 
 > **Last Updated**: 2026-07-17
-> **Related Docs**: [`docs/domain/campaign-proposal-and-review.md`](./campaign-proposal-and-review.md), [`docs/domain/kpi-tracking.md`](./kpi-tracking.md)
+> **Related Docs**: [campaign-proposal-and-review domain](./campaign-proposal-and-review/domain.md)
 
 ---
 

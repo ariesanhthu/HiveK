@@ -26,7 +26,9 @@ export function envInt(key: string, fallback?: number): number {
   }
   const parsed = parseInt(val, 10);
   if (isNaN(parsed)) {
-    throw new Error(`Environment variable ${key} must be a valid integer, got: ${val}`);
+    throw new Error(
+      `Environment variable ${key} must be a valid integer, got: ${val}`,
+    );
   }
   return parsed;
 }
@@ -63,7 +65,9 @@ export function envFloat(key: string, fallback?: number): number {
   }
   const parsed = parseFloat(val);
   if (isNaN(parsed)) {
-    throw new Error(`Environment variable ${key} must be a valid number, got: ${val}`);
+    throw new Error(
+      `Environment variable ${key} must be a valid number, got: ${val}`,
+    );
   }
   return parsed;
 }

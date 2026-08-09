@@ -19,37 +19,56 @@ export class MongoSocialPageRepository implements ISocialPageRepository {
     @Inject(UNIT_OF_WORK)
     private readonly uow: IUnitOfWork,
   ) {
-    this.encryptionKey = process.env.SOCIAL_PAGE_TOKEN_SECRET || 'fallback-token-secret-must-be-32-bytes-long!';
+    this.encryptionKey =
+      process.env.SOCIAL_PAGE_TOKEN_SECRET ||
+      'fallback-token-secret-must-be-32-bytes-long!';
   }
 
   private get session(): ClientSession | undefined {
-    return (this.uow as MongoUnitOfWork).getSession() || undefined;
+    return (this.uow as unknown as MongoUnitOfWork).getSession() || undefined;
   }
 
   async findById(id: string): Promise<Nullable<SocialPageRoot>> {
-    const doc = await this.socialPageModel.findById(id).session(this.session).exec();
+    const doc = await this.socialPageModel
+      .findById(id)
+      .session(this.session)
+      .exec();
     return doc ? this.mapToDomain(doc) : null;
   }
 
-  async findByPageId(platformCode: string, pageId: string): Promise<Nullable<SocialPageRoot>> {
-    const doc = await this.socialPageModel.findOne({
-      platform_code: platformCode,
-      page_id: pageId,
-    }).session(this.session).exec();
+  async findByPageId(
+    platformCode: string,
+    pageId: string,
+  ): Promise<Nullable<SocialPageRoot>> {
+    const doc = await this.socialPageModel
+      .findOne({
+        platform_code: platformCode,
+        page_id: pageId,
+      })
+      .session(this.session)
+      .exec();
     return doc ? this.mapToDomain(doc) : null;
   }
 
   async findByEnterpriseId(enterpriseId: string): Promise<SocialPageRoot[]> {
-    const docs = await this.socialPageModel.find({
-      enterprise_id: new Types.ObjectId(enterpriseId),
-    }).session(this.session).exec();
-    return docs.map(doc => this.mapToDomain(doc));
+    const docs = await this.socialPageModel
+      .find({
+        enterprise_id: new Types.ObjectId(enterpriseId),
+      })
+      .session(this.session)
+      .exec();
+    return docs.map((doc) => this.mapToDomain(doc));
   }
 
-  async findByWebhookVerifyToken(verifyToken: string): Promise<Nullable<SocialPageRoot>> {
-    const doc = await this.socialPageModel.findOne({
-      webhook_verify_token: verifyToken,
-    }).session(this.session).exec();
+  async findByWebhookVerifyToken(
+    verifyToken: string,
+  ): Promise<Nullable<SocialPageRoot>> {
+    const doc = await this.socialPageModel
+      .findOne({
+        webhook_verify_token: verifyToken,
+      })
+      .session(this.session)
+      .exec();
     return doc ? this.mapToDomain(doc) : null;
   }
 
@@ -61,16 +80,22 @@ export class MongoSocialPageRepository implements ISocialPageRepository {
       const saved = await created.save({ session: this.session });
       socialPage.setId(saved._id.toString());
     } else {
-      await this.socialPageModel.findByIdAndUpdate(socialPage.id, data, { upsert: true }).session(this.session).exec();
+      await this.socialPageModel
+        .findByIdAndUpdate(socialPage.id, data, { upsert: true })
+        .session(this.session)
+        .exec();
     }
   }
 
   async saveMany(socialPages: SocialPageRoot[]): Promise<void> {
-    await Promise.all(socialPages.map(sp => this.save(sp)));
+    await Promise.all(socialPages.map((sp) => this.save(sp)));
   }
 
   async delete(id: string): Promise<void> {
-    await this.socialPageModel.findByIdAndDelete(id).session(this.session).exec();
+    await this.socialPageModel
+      .findByIdAndDelete(id)
+      .session(this.session)
+      .exec();
   }
 
   private mapToDomain(doc: SocialPageDocument): SocialPageRoot {
@@ -99,9 +124,14 @@ export class MongoSocialPageRepository implements ISocialPageRepository {
     });
   }
 
-  private mapToPersistence(socialPage: SocialPageRoot): Omit<SocialPageModel, 'created_at' | 'updated_at'> {
+  private mapToPersistence(
+    socialPage: SocialPageRoot,
+  ): Omit<SocialPageModel, 'created_at' | 'updated_at'> {
     // Encrypt access token transparently
-    const encryptedToken = encrypt(socialPage.encryptedToken, this.encryptionKey);
+    const encryptedToken = encrypt(
+      socialPage.encryptedToken,
+      this.encryptionKey,
+    );
 
     return {
       enterprise_id: new Types.ObjectId(socialPage.enterpriseId),

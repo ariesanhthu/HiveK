@@ -50,10 +50,14 @@ export class SubscriptionChangeDetailsVO extends BaseValueObject<SubscriptionCha
   }
 
   getAddedPermissions(): string[] {
-    return this.props.newPermissions.filter((p) => !this.props.oldPermissions.includes(p));
+    return this.props.newPermissions.filter(
+      (p) => !this.props.oldPermissions.includes(p),
+    );
   }
 
   getRemovedPermissions(): string[] {
-    return this.props.oldPermissions.filter((p) => !this.props.newPermissions.includes(p));
+    return this.props.oldPermissions.filter(
+      (p) => !this.props.newPermissions.includes(p),
+    );
   }
 }

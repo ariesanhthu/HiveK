@@ -1,4 +1,4 @@
-import { JsonObject } from "@/core/types";
+import { JsonObject } from '@/core/types';
 
 export interface ISendMailOptions {
   to: string | string[];

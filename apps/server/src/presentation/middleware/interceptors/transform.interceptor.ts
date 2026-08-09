@@ -12,11 +12,17 @@ import type { ApiResponse } from '@/presentation/utils/api-response.type';
 import { PaginatedResponseDto } from '@/application/dtos/pagination.dto';
 
 @Injectable()
-export class TransformInterceptor<T> implements NestInterceptor<T, ApiResponse<T>> {
-  intercept(context: ExecutionContext, next: CallHandler<T>): Observable<ApiResponse<T>> {
+export class TransformInterceptor<T> implements NestInterceptor<
+  T,
+  ApiResponse<T>
+> {
+  intercept(
+    context: ExecutionContext,
+    next: CallHandler<T>,
+  ): Observable<ApiResponse<T>> {
     // Skip GraphQL — let resolvers handle their own shape
-    const type = context.getType() as string;
-    if (type === 'graphql') {
+    const type = context.getType();
+    if ((type as string) === 'graphql') {
       return next.handle() as unknown as Observable<ApiResponse<T>>;
     }
 
@@ -46,7 +52,7 @@ export class TransformInterceptor<T> implements NestInterceptor<T, ApiResponse<T
         }
 
         // Standard response — wrap with meta: null
-        return ApiResponseHelper.success(responseBody as T);
+        return ApiResponseHelper.success(responseBody);
       }),
     );
   }

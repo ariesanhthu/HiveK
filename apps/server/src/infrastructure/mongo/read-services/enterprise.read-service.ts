@@ -1,15 +1,65 @@
 import { Injectable, Inject } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, QueryFilter, Types } from 'mongoose';
-import { IEnterpriseReadService, CACHE_SERVICE } from '@/application/interfaces';
+import { Model, QueryFilter, Types, FlattenMaps } from 'mongoose';
+import {
+  IEnterpriseReadService,
+  CACHE_SERVICE,
+} from '@/application/interfaces';
 import type { ICacheService } from '@/application/interfaces';
-import { EnterpriseModel, type EnterpriseDocument } from '../schemas/enterprise.schema';
+import {
+  EnterpriseModel,
+  type EnterpriseDocument,
+} from '../schemas/enterprise.schema';
 import { Nullable } from '@/core/types';
 import { EnterpriseDetailDto } from '@/application/dtos';
 import { EnterpriseFilterDto } from '@/application/queries/enterprise-get-list/enterprise-get-list.dto';
-import { PaginatedResponseDto, SortOrder } from '@/application/dtos/pagination.dto';
+import {
+  PaginatedResponseDto,
+  SortOrder,
+} from '@/application/dtos/pagination.dto';
 import { MongoSanitizeUtil } from '../utils';
 import { CacheKeyUtil } from '@/shared/utils/cache-key.util';
+import { EEnterpriseMemberMode, ERoleType, ETargetType } from '@/core/enums';
+
+interface PopulatedEnterpriseMember {
+  user_id: { _id: Types.ObjectId; full_name: string; email: string };
+  role_id: { _id: Types.ObjectId; title: string };
+  mode: string;
+}
+
+interface PopulatedEnterpriseLogo {
+  _id: Types.ObjectId;
+  url: string;
+  public_id: string;
+  size: number;
+  format: string;
+  title?: string;
+  target_type: ETargetType;
+  target_id: string;
+  target_field: string;
+  created_at: Date;
+  updated_at: Date;
+}
+interface PopulatedEnterpriseUser {
+  _id: Types.ObjectId;
+  email: string;
+  phone: string;
+  full_name: string;
+  role_id: string;
+  is_email_verified: boolean;
+  type: ERoleType;
+  created_at: Date;
+  updated_at: Date;
+}
+interface RawEnterpriseDoc extends Omit<
+  FlattenMaps<EnterpriseDocument>,
+  'members' | 'logo_url_id' | 'user_id'
+> {
+  logo_url_id?: PopulatedEnterpriseLogo;
+  user_id: PopulatedEnterpriseUser;
+  _id: Types.ObjectId;
+  members?: PopulatedEnterpriseMember[];
+}
 
 @Injectable()
 export class MongoEnterpriseReadService implements IEnterpriseReadService {
@@ -20,17 +70,22 @@ export class MongoEnterpriseReadService implements IEnterpriseReadService {
     private readonly enterpriseModel: Model<EnterpriseDocument>,
     @Inject(CACHE_SERVICE)
     private readonly cacheService: ICacheService,
-  ) { }
+  ) {}
 
   async findById(id: string): Promise<Nullable<EnterpriseDetailDto>> {
     const cacheKey = CacheKeyUtil.id(this.domain, id);
     const cached = await this.cacheService.get<EnterpriseDetailDto>(cacheKey);
     if (cached) return cached;
 
-    const doc = await this.enterpriseModel.findById(id).populate('user_id').populate('logo_url_id').lean().exec();
+    const doc = await this.enterpriseModel
+      .findById(id)
+      .populate('user_id')
+      .populate('logo_url_id')
+      .lean()
+      .exec();
     if (!doc) return null;
 
-    const dto = this.mapToDto(doc);
+    const dto = this.mapToDto(doc as unknown as RawEnterpriseDoc);
     await this.cacheService.set(cacheKey, dto, 3600);
     return dto;
   }
@@ -40,21 +95,37 @@ export class MongoEnterpriseReadService implements IEnterpriseReadService {
     const cached = await this.cacheService.get<EnterpriseDetailDto>(cacheKey);
     if (cached) return cached;
 
-    const doc = await this.enterpriseModel.findOne({ user_id: new Types.ObjectId(userId) }).populate('user_id').populate('logo_url_id').lean().exec();
+    const doc = await this.enterpriseModel
+      .findOne({ user_id: new Types.ObjectId(userId) })
+      .populate('user_id')
+      .populate('logo_url_id')
+      .lean()
+      .exec();
     if (!doc) return null;
 
-    const dto = this.mapToDto(doc);
+    const dto = this.mapToDto(doc as unknown as RawEnterpriseDoc);
     await this.cacheService.set(cacheKey, dto, 3600);
     return dto;
   }
 
-  async findByUserIdOrMember(userId: string, filters: EnterpriseFilterDto = {}): Promise<PaginatedResponseDto<EnterpriseDetailDto>> {
+  async findByUserIdOrMember(
+    userId: string,
+    filters: EnterpriseFilterDto = {},
+  ): Promise<PaginatedResponseDto<EnterpriseDetailDto>> {
     // const filterKey = JSON.stringify(filters);
     // const cacheKey = CacheKeyUtil.custom(this.domain, `user:${userId}:list:${filterKey}`);
     // const cached = await this.cacheService.get<PaginatedResponseDto<EnterpriseDetailDto>>(cacheKey);
     // if (cached) return cached;
 
-    const { cursor, limit = 10, sort = SortOrder.DESC, companyName, contactEmail, taxId, isVerified } = filters;
+    const {
+      cursor,
+      limit = 10,
+      sort = SortOrder.DESC,
+      companyName,
+      contactEmail,
+      taxId,
+      isVerified,
+    } = filters;
     const query: QueryFilter<EnterpriseDocument> = {
       $or: [
         { user_id: new Types.ObjectId(userId) },
@@ -63,10 +134,16 @@ export class MongoEnterpriseReadService implements IEnterpriseReadService {
     };
 
     if (companyName) {
-      query.company_name = { $regex: MongoSanitizeUtil.escapeRegex(companyName), $options: 'i' };
+      query.company_name = {
+        $regex: MongoSanitizeUtil.escapeRegex(companyName),
+        $options: 'i',
+      };
     }
     if (contactEmail) {
-      query.contact_email = { $regex: MongoSanitizeUtil.escapeRegex(contactEmail), $options: 'i' };
+      query.contact_email = {
+        $regex: MongoSanitizeUtil.escapeRegex(contactEmail),
+        $options: 'i',
+      };
     }
     if (taxId) {
       query.tax_id = taxId;
@@ -90,10 +167,12 @@ export class MongoEnterpriseReadService implements IEnterpriseReadService {
 
     const hasNextPage = docs.length > limit;
     const results = hasNextPage ? docs.slice(0, limit) : docs;
-    const nextCursor = hasNextPage ? results[results.length - 1]._id.toString() : null;
+    const nextCursor = hasNextPage
+      ? results[results.length - 1]._id.toString()
+      : null;
 
     const response = new PaginatedResponseDto(
-      results.map((doc) => this.mapToDto(doc)),
+      results.map((doc) => this.mapToDto(doc as unknown as RawEnterpriseDoc)),
       nextCursor,
       hasNextPage,
       limit,
@@ -103,19 +182,38 @@ export class MongoEnterpriseReadService implements IEnterpriseReadService {
     return response;
   }
 
-  async findAll(filters: EnterpriseFilterDto = {}): Promise<PaginatedResponseDto<EnterpriseDetailDto>> {
+  async findAll(
+    filters: EnterpriseFilterDto = {},
+  ): Promise<PaginatedResponseDto<EnterpriseDetailDto>> {
     const cacheKey = CacheKeyUtil.list(this.domain, filters);
-    const cached = await this.cacheService.get<PaginatedResponseDto<EnterpriseDetailDto>>(cacheKey);
+    const cached =
+      await this.cacheService.get<PaginatedResponseDto<EnterpriseDetailDto>>(
+        cacheKey,
+      );
     if (cached) return cached;
 
-    const { cursor, limit = 10, sort = SortOrder.DESC, companyName, contactEmail, taxId, isVerified } = filters;
+    const {
+      cursor,
+      limit = 10,
+      sort = SortOrder.DESC,
+      companyName,
+      contactEmail,
+      taxId,
+      isVerified,
+    } = filters;
     const query: QueryFilter<EnterpriseDocument> = {};
 
     if (companyName) {
-      query.company_name = { $regex: MongoSanitizeUtil.escapeRegex(companyName), $options: 'i' };
+      query.company_name = {
+        $regex: MongoSanitizeUtil.escapeRegex(companyName),
+        $options: 'i',
+      };
     }
     if (contactEmail) {
-      query.contact_email = { $regex: MongoSanitizeUtil.escapeRegex(contactEmail), $options: 'i' };
+      query.contact_email = {
+        $regex: MongoSanitizeUtil.escapeRegex(contactEmail),
+        $options: 'i',
+      };
     }
     if (taxId) {
       query.tax_id = taxId;
@@ -139,10 +237,12 @@ export class MongoEnterpriseReadService implements IEnterpriseReadService {
 
     const hasNextPage = docs.length > limit;
     const results = hasNextPage ? docs.slice(0, limit) : docs;
-    const nextCursor = hasNextPage ? results[results.length - 1]._id.toString() : null;
+    const nextCursor = hasNextPage
+      ? results[results.length - 1]._id.toString()
+      : null;
 
     const response = new PaginatedResponseDto(
-      results.map((doc) => this.mapToDto(doc)),
+      results.map((doc) => this.mapToDto(doc as unknown as RawEnterpriseDoc)),
       nextCursor,
       hasNextPage,
       limit,
@@ -152,52 +252,67 @@ export class MongoEnterpriseReadService implements IEnterpriseReadService {
     return response;
   }
 
-  private mapToDto(doc: any): EnterpriseDetailDto {
+  private mapToDto(doc: RawEnterpriseDoc): EnterpriseDetailDto {
     return {
       id: doc._id.toString(),
-      userId: doc.user_id && typeof doc.user_id === 'object' && doc.user_id._id ? doc.user_id._id.toString() : doc.user_id?.toString() || '',
+      userId:
+        doc.user_id && typeof doc.user_id === 'object' && doc.user_id._id
+          ? doc.user_id._id.toString()
+          : (doc.user_id as unknown as string) || '',
       companyName: doc.company_name,
       description: doc.description,
       contactEmail: doc.contact_email,
       contactPhone: doc.contact_phone,
       website: doc.website,
       taxId: doc.tax_id,
-      logoUrlId: doc.logo_url_id && typeof doc.logo_url_id === 'object' && doc.logo_url_id._id ? {
-        id: doc.logo_url_id._id.toString(),
-        url: doc.logo_url_id.url,
-        publicId: doc.logo_url_id.public_id,
-        size: doc.logo_url_id.size,
-        format: doc.logo_url_id.format,
-        title: doc.logo_url_id.title,
-        targetType: doc.logo_url_id.target_type,
-        targetId: doc.logo_url_id.target_id,
-        targetField: doc.logo_url_id.target_field,
-        createdAt: doc.logo_url_id.created_at,
-        updatedAt: doc.logo_url_id.updated_at,
-      } : null,
+      logoUrlId:
+        doc.logo_url_id &&
+        typeof doc.logo_url_id === 'object' &&
+        doc.logo_url_id._id
+          ? {
+              id: doc.logo_url_id._id.toString(),
+              url: doc.logo_url_id.url,
+              publicId: doc.logo_url_id.public_id,
+              size: doc.logo_url_id.size,
+              format: doc.logo_url_id.format,
+              title: doc.logo_url_id.title,
+              targetType: doc.logo_url_id.target_type,
+              targetId: doc.logo_url_id.target_id,
+              targetField: doc.logo_url_id.target_field,
+              createdAt: doc.logo_url_id.created_at?.toISOString(),
+              updatedAt: doc.logo_url_id.updated_at?.toISOString(),
+            }
+          : null,
       isVerified: doc.is_verified,
-      members: (doc.members || []).map((m: any) => ({
-        userId: m.user_id ? m.user_id.toString() : '',
-        mode: m.mode,
+      members: (doc.members || []).map((m: PopulatedEnterpriseMember) => ({
+        userId: m.user_id ? (m.user_id as unknown as string) : '',
+        mode: m.mode as EEnterpriseMemberMode,
       })),
-      knowledgeBase: doc.knowledge_base ? {
-        rawText: doc.knowledge_base.raw_text,
-        externalLinks: doc.knowledge_base.external_links || [],
-        updatedAt: doc.knowledge_base.updated_at ? new Date(doc.knowledge_base.updated_at).toISOString() : new Date().toISOString(),
-      } : undefined,
-      createdAt: doc.created_at,
-      updatedAt: doc.updated_at,
-      user: doc.user_id && typeof doc.user_id === 'object' && doc.user_id._id ? {
-        id: doc.user_id._id.toString(),
-        email: doc.user_id.email,
-        phone: doc.user_id.phone,
-        fullName: doc.user_id.full_name,
-        roleId: doc.user_id.role_id ? doc.user_id.role_id.toString() : '',
-        isEmailVerified: doc.user_id.is_email_verified,
-        type: doc.user_id.type,
-        createdAt: doc.user_id.created_at,
-        updatedAt: doc.user_id.updated_at,
-      } : undefined,
+      knowledgeBase: doc.knowledge_base
+        ? {
+            rawText: doc.knowledge_base.raw_text,
+            externalLinks: doc.knowledge_base.external_links || [],
+            updatedAt: doc.knowledge_base.updated_at
+              ? new Date(doc.knowledge_base.updated_at).toISOString()
+              : new Date().toISOString(),
+          }
+        : undefined,
+      createdAt: doc.created_at?.toISOString(),
+      updatedAt: doc.updated_at?.toISOString(),
+      user:
+        doc.user_id && typeof doc.user_id === 'object' && doc.user_id._id
+          ? {
+              id: doc.user_id._id.toString(),
+              email: doc.user_id.email,
+              phone: doc.user_id.phone,
+              fullName: doc.user_id.full_name,
+              roleId: doc.user_id.role_id ? doc.user_id.role_id.toString() : '',
+              isEmailVerified: doc.user_id.is_email_verified,
+              type: doc.user_id.type,
+              createdAt: doc.user_id.created_at?.toISOString(),
+              updatedAt: doc.user_id.updated_at?.toISOString(),
+            }
+          : undefined,
     };
   }
 }

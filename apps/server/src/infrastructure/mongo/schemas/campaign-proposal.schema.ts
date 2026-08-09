@@ -1,6 +1,10 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Schema as MongooseSchema, Types } from 'mongoose';
-import { EProposalStatus, EMediaSlideType, EProductPlatform } from '@/core/enums';
+import {
+  EProposalStatus,
+  EMediaSlideType,
+  EProductPlatform,
+} from '@/core/enums';
 import { softDeletePlugin } from '../utils';
 
 @Schema({ _id: false })
@@ -14,7 +18,8 @@ export class MediaSlideSubModel {
   @Prop({ required: true, type: Number, min: 0 })
   display_order: number;
 }
-export const MediaSlideSubSchema = SchemaFactory.createForClass(MediaSlideSubModel);
+export const MediaSlideSubSchema =
+  SchemaFactory.createForClass(MediaSlideSubModel);
 
 @Schema({ _id: false })
 export class ProductItemSubModel {
@@ -36,7 +41,8 @@ export class ProductItemSubModel {
   @Prop({ type: MongooseSchema.Types.Map, of: String, default: {} })
   affiliate_urls: Record<string, string>;
 }
-export const ProductItemSubSchema = SchemaFactory.createForClass(ProductItemSubModel);
+export const ProductItemSubSchema =
+  SchemaFactory.createForClass(ProductItemSubModel);
 
 @Schema({ _id: false })
 export class VoucherItemSubModel {
@@ -55,7 +61,8 @@ export class VoucherItemSubModel {
   @Prop({ required: true, type: Date })
   expiration_date: Date;
 }
-export const VoucherItemSubSchema = SchemaFactory.createForClass(VoucherItemSubModel);
+export const VoucherItemSubSchema =
+  SchemaFactory.createForClass(VoucherItemSubModel);
 
 @Schema({
   collection: 'campaign_proposals',
@@ -83,10 +90,19 @@ export class CampaignProposalModel {
   @Prop({ type: [VoucherItemSubSchema], default: [] })
   vouchers: VoucherItemSubModel[];
 
-  @Prop({ required: true, type: String, enum: Object.values(EProposalStatus), default: EProposalStatus.ACTIVE })
+  @Prop({
+    required: true,
+    type: String,
+    enum: Object.values(EProposalStatus),
+    default: EProposalStatus.ACTIVE,
+  })
   status: EProposalStatus;
 
-  @Prop({ type: MongooseSchema.Types.Map, of: Number, default: { totalViews: 0, totalClicks: 0 } })
+  @Prop({
+    type: MongooseSchema.Types.Map,
+    of: Number,
+    default: { totalViews: 0, totalClicks: 0 },
+  })
   metrics: Record<string, number>;
 
   @Prop({ type: Date, default: null })
@@ -100,5 +116,7 @@ export class CampaignProposalModel {
 }
 
 export type CampaignProposalDocument = HydratedDocument<CampaignProposalModel>;
-export const CampaignProposalSchema = SchemaFactory.createForClass(CampaignProposalModel);
+export const CampaignProposalSchema = SchemaFactory.createForClass(
+  CampaignProposalModel,
+);
 CampaignProposalSchema.plugin(softDeletePlugin);

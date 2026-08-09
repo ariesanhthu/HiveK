@@ -26,7 +26,10 @@ import { WinstonLoggerService } from '../logger';
           secure: configService.get<number>('SMTP_PORT') === 465,
         },
         defaults: {
-          from: configService.get<string>('SMTP_FROM', '"HiveK" <noreply@hivek.com>'),
+          from: configService.get<string>(
+            'SMTP_FROM',
+            '"HiveK" <noreply@hivek.com>',
+          ),
         },
         template: {
           dir: path.join(__dirname, '..', 'mailer', 'templates'),
@@ -41,16 +44,16 @@ import { WinstonLoggerService } from '../logger';
   providers: [
     {
       provide: LOGGER_SERVICE,
-      useClass: WinstonLoggerService
+      useClass: WinstonLoggerService,
     },
     {
       provide: STORAGE_SERVICE,
-      useClass: CloudinaryStorageService
+      useClass: CloudinaryStorageService,
     },
     {
       provide: MAILER_SERVICE,
-      useClass: NestjsMailerService
-    }
+      useClass: NestjsMailerService,
+    },
   ],
   exports: [LOGGER_SERVICE, STORAGE_SERVICE, MAILER_SERVICE],
 })

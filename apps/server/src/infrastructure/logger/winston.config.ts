@@ -46,9 +46,5 @@ const consoleTransport = new winston.transports.Console({
 consoleTransport.setMaxListeners(100);
 
 export const winstonConfig = {
-  transports: [
-    consoleTransport,
-    errorTransport,
-    combinedTransport,
-  ],
+  transports: [consoleTransport, errorTransport, combinedTransport],
 };

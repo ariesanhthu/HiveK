@@ -1,7 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import type { AuthenticatedRequest } from '@/core/types/common.type';
-import { IAuthJwtService, IJwtPayload, IJwtSignOptions, IJwtVerifyOptions } from '@/application/interfaces/auth-jwt.interface';
+import {
+  IAuthJwtService,
+  IJwtPayload,
+  IJwtSignOptions,
+  IJwtVerifyOptions,
+} from '@/application/interfaces/auth-jwt.interface';
 
 @Injectable()
 export class JwtAuthService implements IAuthJwtService {
@@ -29,7 +34,7 @@ export class JwtAuthService implements IAuthJwtService {
   }
 
   decode(token: string): IJwtPayload {
-    return this.jwtService.decode(token) as IJwtPayload;
+    return this.jwtService.decode(token);
   }
 
   extractTokenFromHeader(authHeader?: string): string | null {
@@ -39,7 +44,10 @@ export class JwtAuthService implements IAuthJwtService {
     return authHeader.split(' ')[1];
   }
 
-  extractTokenFromCookie(req: AuthenticatedRequest, cookieName = 'access_token'): string | null {
+  extractTokenFromCookie(
+    req: AuthenticatedRequest,
+    cookieName = 'access_token',
+  ): string | null {
     if (req && req.cookies) {
       return req.cookies[cookieName] || null;
     }

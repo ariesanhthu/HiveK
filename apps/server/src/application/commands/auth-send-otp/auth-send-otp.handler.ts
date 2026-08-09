@@ -2,16 +2,32 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { Inject } from '@nestjs/common';
 import { AuthSendOtpCommand } from './auth-send-otp.command';
 import { AuthSendOtpOutputDto } from './auth-send-otp.dto';
-import { OTP_REPOSITORY, USER_REPOSITORY, type IOtpRepository, type IUserRepository } from '@/core/interfaces/repositories';
+import {
+  OTP_REPOSITORY,
+  USER_REPOSITORY,
+  type IOtpRepository,
+  type IUserRepository,
+} from '@/core/interfaces/repositories';
 import { AuthService } from '@/application/services/auth.service';
 import { OtpRoot } from '@/core/aggregate-roots/otp.aggregate';
-import { OtpRateLimitException, ForbiddenDomainException, UserNotFoundException } from '@/core/exceptions';
-import { type IUnitOfWork, UNIT_OF_WORK, EVENT_SERVICE } from '@/application/interfaces';
+import {
+  OtpRateLimitException,
+  ForbiddenDomainException,
+  UserNotFoundException,
+} from '@/core/exceptions';
+import {
+  type IUnitOfWork,
+  UNIT_OF_WORK,
+  EVENT_SERVICE,
+} from '@/application/interfaces';
 import type { IEventService } from '@/application/interfaces';
 import { EOtpType } from '@/core/enums';
 
 @CommandHandler(AuthSendOtpCommand)
-export class AuthSendOtpCommandHandler implements ICommandHandler<AuthSendOtpCommand, AuthSendOtpOutputDto> {
+export class AuthSendOtpCommandHandler implements ICommandHandler<
+  AuthSendOtpCommand,
+  AuthSendOtpOutputDto
+> {
   constructor(
     @Inject(OTP_REPOSITORY)
     private readonly otpRepository: IOtpRepository,
@@ -47,7 +63,9 @@ export class AuthSendOtpCommandHandler implements ICommandHandler<AuthSendOtpCom
       } else if (input.type === EOtpType.CREATE_ACCOUNT) {
         // CREATE_ACCOUNT requires a userId (admin creating for a user, or self-registration with identity)
         if (!command.userId) {
-          throw new ForbiddenDomainException('User must be identified to create account');
+          throw new ForbiddenDomainException(
+            'User must be identified to create account',
+          );
         }
         const user = await this.userRepository.findById(command.userId);
         if (!user || user.deleteAt !== null) {
@@ -56,7 +74,11 @@ export class AuthSendOtpCommandHandler implements ICommandHandler<AuthSendOtpCom
       }
 
       // Rate limiting check: max 1 OTP of each type per email per minute
-      const recentOtp = await this.otpRepository.findRecentOtp(normalizedEmail, input.type, 60);
+      const recentOtp = await this.otpRepository.findRecentOtp(
+        normalizedEmail,
+        input.type,
+        60,
+      );
       if (recentOtp) {
         throw new OtpRateLimitException();
       }
@@ -67,7 +89,10 @@ export class AuthSendOtpCommandHandler implements ICommandHandler<AuthSendOtpCom
       expiresAt.setMinutes(expiresAt.getMinutes() + 5); // 5 minutes validity
 
       // Clean up any existing OTPs of the same type for this email
-      await this.otpRepository.deleteByEmailAndType(normalizedEmail, input.type);
+      await this.otpRepository.deleteByEmailAndType(
+        normalizedEmail,
+        input.type,
+      );
 
       // Save new OTP
       const otp = OtpRoot.create({

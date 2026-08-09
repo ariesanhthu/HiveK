@@ -1,3 +1,3 @@
 export class KpiLogCreateCommand {
-  constructor(public readonly payload: any) {}
+  constructor(public readonly payload: Record<string, unknown>) {}
 }

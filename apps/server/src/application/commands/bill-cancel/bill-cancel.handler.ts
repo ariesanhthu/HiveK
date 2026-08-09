@@ -2,12 +2,18 @@ import { CommandHandler, ICommandHandler, EventBus } from '@nestjs/cqrs';
 import { Inject } from '@nestjs/common';
 import { BillCancelCommand } from './bill-cancel.command';
 import { BillCancelledEvent } from '@/core/events';
-import { BILL_REPOSITORY, type IBillRepository } from '@/core/interfaces/repositories';
+import {
+  BILL_REPOSITORY,
+  type IBillRepository,
+} from '@/core/interfaces/repositories';
 import { BillNotFoundException } from '@/core/exceptions';
 import { type IUnitOfWork, UNIT_OF_WORK } from '@/application/interfaces';
 
 @CommandHandler(BillCancelCommand)
-export class BillCancelHandler implements ICommandHandler<BillCancelCommand, void> {
+export class BillCancelHandler implements ICommandHandler<
+  BillCancelCommand,
+  void
+> {
   constructor(
     @Inject(BILL_REPOSITORY)
     private readonly billRepository: IBillRepository,
@@ -38,7 +44,7 @@ export class BillCancelHandler implements ICommandHandler<BillCancelCommand, voi
           billId: input.billId,
           enterpriseId: bill.enterpriseId,
           reason: 'Cancelled by user',
-        })
+        }),
       );
     });
   }

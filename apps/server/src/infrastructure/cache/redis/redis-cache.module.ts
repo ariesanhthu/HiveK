@@ -2,7 +2,10 @@ import { Global, Module } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import Redis from 'ioredis';
 import { RedisCacheService } from './redis-cache.service';
-import { CACHE_SERVICE, REDIS_CLIENT } from '@/application/interfaces/cache.interface';
+import {
+  CACHE_SERVICE,
+  REDIS_CLIENT,
+} from '@/application/interfaces/cache.interface';
 
 @Global()
 @Module({
@@ -28,7 +31,7 @@ import { CACHE_SERVICE, REDIS_CLIENT } from '@/application/interfaces/cache.inte
               return null;
             }
             return delay;
-          }
+          },
         });
 
         client.on('error', (error) => {
@@ -45,6 +48,6 @@ import { CACHE_SERVICE, REDIS_CLIENT } from '@/application/interfaces/cache.inte
       useClass: RedisCacheService,
     },
   ],
-  exports: [CACHE_SERVICE],
+  exports: [CACHE_SERVICE, REDIS_CLIENT],
 })
 export class RedisCacheModule {}

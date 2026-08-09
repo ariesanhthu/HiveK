@@ -2,7 +2,10 @@ import { Injectable, Logger, Inject } from '@nestjs/common';
 import { CommandBus } from '@nestjs/cqrs';
 import { RmqHandler } from '@/infrastructure/rabbitmq/rmq-consumer.registry';
 import { CommentWebhookHandleCommand } from '@/application/commands';
-import { CACHE_SERVICE, type ICacheService } from '@/application/interfaces/cache.interface';
+import {
+  CACHE_SERVICE,
+  type ICacheService,
+} from '@/application/interfaces/cache.interface';
 
 @Injectable()
 export class CommentWebhookConsumer {
@@ -14,8 +17,11 @@ export class CommentWebhookConsumer {
     private readonly cacheService: ICacheService,
   ) {}
 
-  @RmqHandler({ queue: 'comment_webhook_queue', pattern: 'webhook.facebook.comment' })
-  async handleCommentEvent(data: any) {
+  @RmqHandler({
+    queue: 'comment_webhook_queue',
+    pattern: 'webhook.facebook.comment',
+  })
+  async handleCommentEvent(data: Record<string, unknown>) {
     this.logger.log(`📥 Received facebook comment event via RMQ`);
 
     const entry = data.entry?.[0];
@@ -27,7 +33,9 @@ export class CommentWebhookConsumer {
       const redisKey = `fb_comment:${commentId}`;
       const existing = await this.cacheService.get<string>(redisKey);
       if (existing) {
-        this.logger.warn(`Duplicate webhook message detected, skipping processing for commentId ${commentId}`);
+        this.logger.warn(
+          `Duplicate webhook message detected, skipping processing for commentId ${commentId}`,
+        );
         return;
       }
       // Set deduplication cache key (5 minutes expiry)
@@ -42,19 +50,27 @@ export class CommentWebhookConsumer {
 
       const maxRepliesPerHour = 100;
       if (currentRate >= maxRepliesPerHour) {
-        this.logger.warn(`Rate limit exceeded for pageId ${pageId} (${currentRate}/${maxRepliesPerHour}). Skipping webhook reply.`);
+        this.logger.warn(
+          `Rate limit exceeded for pageId ${pageId} (${currentRate}/${maxRepliesPerHour}). Skipping webhook reply.`,
+        );
         return;
       }
 
-      await this.cacheService.set(rateLimitKey, (currentRate + 1).toString(), 3600);
+      await this.cacheService.set(
+        rateLimitKey,
+        (currentRate + 1).toString(),
+        3600,
+      );
     }
 
     const result = await this.commandBus.execute(
-      new CommentWebhookHandleCommand('facebook', data)
+      new CommentWebhookHandleCommand('facebook', data),
     );
 
     if (!result.success) {
-      throw new Error(`Failed to handle comment webhook: ${result.reason || 'Unknown error'}`);
+      throw new Error(
+        `Failed to handle comment webhook: ${result.reason || 'Unknown error'}`,
+      );
     }
   }
 }

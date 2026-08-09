@@ -1,13 +1,44 @@
-import { Controller, Get, Param, Query, Body, Patch, Delete, Post, HttpCode, HttpStatus, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Param,
+  Query,
+  Body,
+  Patch,
+  Delete,
+  Post,
+  HttpCode,
+  HttpStatus,
+  UseGuards,
+} from '@nestjs/common';
 import { QueryBus, CommandBus } from '@nestjs/cqrs';
-import { ApiTags, ApiOperation, ApiBearerAuth, ApiSecurity } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiBearerAuth,
+  ApiSecurity,
+} from '@nestjs/swagger';
 import { buildVersionedRoute } from '@presentation/utils';
-import { KolProfileGetListQuery, KolProfileGetByIdQuery, KolProfileFilterDto } from '@/application/queries';
-import { KolProfileUpdateCommand, KolProfileSoftDeleteCommand, KolProfileHardDeleteCommand, KolProfileRestoreCommand, UpdateKolProfileDto } from '@/application/commands';
+import {
+  KolProfileGetListQuery,
+  KolProfileGetByIdQuery,
+  KolProfileFilterDto,
+} from '@/application/queries';
+import {
+  KolProfileUpdateCommand,
+  KolProfileSoftDeleteCommand,
+  KolProfileHardDeleteCommand,
+  KolProfileRestoreCommand,
+  UpdateKolProfileDto,
+} from '@/application/commands';
 import { KolProfileDto, SoftDeleteInputDto } from '@/application/dtos';
 import { PaginatedResponseDto } from '@/application/dtos/pagination.dto';
 import { JwtAuthGuard, RolesGuard } from '@/presentation/middleware/guards';
-import { Roles, ApiOkResponseEnvelope, ApiPaginatedResponseEnvelope } from '@/presentation/decorators';
+import {
+  Roles,
+  ApiOkResponseEnvelope,
+  ApiPaginatedResponseEnvelope,
+} from '@/presentation/decorators';
 import { ERoleType } from '@/core/enums/role-type.enum';
 
 @ApiTags('ADMIN-kol-profiles')
@@ -20,12 +51,14 @@ export class KolProfileAdminController {
   constructor(
     private readonly queryBus: QueryBus,
     private readonly commandBus: CommandBus,
-  ) { }
+  ) {}
 
   @Get()
   @ApiOperation({ summary: 'Search/List KOL profiles' })
   @ApiPaginatedResponseEnvelope(KolProfileDto)
-  async findAll(@Query() filters: KolProfileFilterDto): Promise<PaginatedResponseDto<KolProfileDto>> {
+  async findAll(
+    @Query() filters: KolProfileFilterDto,
+  ): Promise<PaginatedResponseDto<KolProfileDto>> {
     return this.queryBus.execute(new KolProfileGetListQuery(filters));
   }
 
@@ -39,7 +72,10 @@ export class KolProfileAdminController {
   @Patch(':id')
   @ApiOperation({ summary: 'Update anything of an influencer (PATCH)' })
   @ApiOkResponseEnvelope(KolProfileDto)
-  async update(@Param('id') id: string, @Body() input: UpdateKolProfileDto): Promise<KolProfileDto> {
+  async update(
+    @Param('id') id: string,
+    @Body() input: UpdateKolProfileDto,
+  ): Promise<KolProfileDto> {
     return this.commandBus.execute(new KolProfileUpdateCommand(id, input));
   }
 
@@ -51,7 +87,9 @@ export class KolProfileAdminController {
     @Param('id') id: string,
     @Query() dto: SoftDeleteInputDto,
   ): Promise<void> {
-    return this.commandBus.execute(new KolProfileSoftDeleteCommand(id, dto.deletedBy));
+    return this.commandBus.execute(
+      new KolProfileSoftDeleteCommand(id, dto.deletedBy),
+    );
   }
 
   @Delete(':id')
@@ -70,4 +108,3 @@ export class KolProfileAdminController {
     return this.commandBus.execute(new KolProfileRestoreCommand(id));
   }
 }
-

@@ -1,4 +1,7 @@
-import { NotFoundDomainException, ConflictDomainException } from '../common/exceptions/domain.exception';
+import {
+  NotFoundDomainException,
+  ConflictDomainException,
+} from '../common/exceptions/domain.exception';
 
 export class RoleNotFoundException extends NotFoundDomainException {
   constructor(identifier: string) {

@@ -1,7 +1,10 @@
 import { Module } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
 import { InfrastructureModule } from './infrastructure.module';
-import { UploadedFileAdminController, UploadedFileClientController } from '@/presentation/controllers'
+import {
+  UploadedFileAdminController,
+  UploadedFileClientController,
+} from '@/presentation/controllers';
 
 import {
   UploadedFileCreateCommandHandler,
@@ -28,13 +31,9 @@ const COMMAND_HANDLERS = [
   UploadedFileRestoreCommandHandler,
 ];
 
-const QUERY_HANDLERS = [
-  UploadedFileGetByIdHandler,
-  UploadedFileGetListHandler
-]
+const QUERY_HANDLERS = [UploadedFileGetByIdHandler, UploadedFileGetListHandler];
 
-const EVENT_HANDLERS = [
-]
+const EVENT_HANDLERS = [];
 
 /**
  * UploadedFileModule manages system asset uploads.

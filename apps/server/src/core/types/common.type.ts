@@ -67,7 +67,9 @@ export interface DomainEventPayload<T = unknown> {
   timestamp: Date;
 }
 
-export interface IntegrationEventPayload<T = unknown> extends DomainEventPayload<T> {
+export interface IntegrationEventPayload<
+  T = unknown,
+> extends DomainEventPayload<T> {
   correlationId?: string;
 }
 

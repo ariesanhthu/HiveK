@@ -24,5 +24,3 @@ export * from './credit-wallet.repository';
 export * from './quota-usage.repository';
 export * from './enterprise-invitation.repository';
 export * from './enterprise-quota-allocation.repository';
-
-

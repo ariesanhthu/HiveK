@@ -11,14 +11,17 @@ export interface SubscriptionHistoryProps {
   createdAt: Date;
 }
 
-export type SubscriptionHistoryCreateProps = Omit<SubscriptionHistoryProps, 'createdAt'> & {
+export type SubscriptionHistoryCreateProps = Omit<
+  SubscriptionHistoryProps,
+  'createdAt'
+> & {
   createdAt?: Date;
 };
 
 export class SubscriptionHistoryEntity extends BaseAggregateRoot<SubscriptionHistoryProps> {
   public static create(
     input: SubscriptionHistoryCreateProps,
-    id?: string
+    id?: string,
   ): SubscriptionHistoryEntity {
     const now = new Date();
     return new SubscriptionHistoryEntity(
@@ -30,13 +33,13 @@ export class SubscriptionHistoryEntity extends BaseAggregateRoot<SubscriptionHis
         details: input.details,
         createdAt: input.createdAt ?? now,
       },
-      id
+      id,
     );
   }
 
   public static instantiate(
     id: string,
-    props: SubscriptionHistoryProps
+    props: SubscriptionHistoryProps,
   ): SubscriptionHistoryEntity {
     return new SubscriptionHistoryEntity(props, id);
   }

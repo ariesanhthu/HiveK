@@ -15,7 +15,7 @@ export class SubscriptionUpdatedEvent extends DomainEvent<SubscriptionUpdatedPay
   constructor(
     public readonly enterpriseId: string,
     public readonly subscriptionHistoryId: string,
-    public readonly details: SubscriptionChangeDetailsVO
+    public readonly details: SubscriptionChangeDetailsVO,
   ) {
     super(enterpriseId, {
       enterpriseId,

@@ -11,6 +11,8 @@ import type {
 } from '@/core/interfaces/repositories';
 import { QuotaUsageRoot } from '@/core/aggregate-roots';
 import { EGrantType } from '@/core/enums';
+import { ENTITLEMENT_SERVICE } from '@/application/interfaces/entitlement-service.interface';
+import type { IEntitlementService } from '@/application/interfaces/entitlement-service.interface';
 
 @EventsHandler(SubscriptionUpdatedEvent)
 export class SubscriptionUpdatedEventHandler implements IEventHandler<SubscriptionUpdatedEvent> {
@@ -21,19 +23,27 @@ export class SubscriptionUpdatedEventHandler implements IEventHandler<Subscripti
     private readonly subscriptionRepository: ISubscriptionRepository,
     @Inject(QUOTA_USAGE_REPOSITORY)
     private readonly quotaUsageRepository: IQuotaUsageRepository,
+    @Inject(ENTITLEMENT_SERVICE)
+    private readonly entitlementService: IEntitlementService,
   ) {}
 
   async handle(event: SubscriptionUpdatedEvent) {
     const { enterpriseId } = event.payload;
-    this.logger.log(`Handling SubscriptionUpdatedEvent for enterprise: ${enterpriseId}`);
+    this.logger.log(
+      `Handling SubscriptionUpdatedEvent for enterprise: ${enterpriseId}`,
+    );
 
-    const subscription = await this.subscriptionRepository.findByUserId(enterpriseId);
+    const subscription =
+      await this.subscriptionRepository.findByUserId(enterpriseId);
     if (!subscription) {
-      this.logger.warn(`Subscription not found for enterprise: ${enterpriseId}`);
+      this.logger.warn(
+        `Subscription not found for enterprise: ${enterpriseId}`,
+      );
       return;
     }
 
-    let quotaUsage = await this.quotaUsageRepository.findByEnterpriseId(enterpriseId);
+    let quotaUsage =
+      await this.quotaUsageRepository.findByEnterpriseId(enterpriseId);
 
     // Resolve Anchor Date
     let anchorDate = subscription.createdAt;
@@ -54,11 +64,17 @@ export class SubscriptionUpdatedEventHandler implements IEventHandler<Subscripti
       .map((g) => ({
         key: g.key,
         value: g.value,
-        resetCycle: (g.resetCycle || 'monthly') as 'monthly' | 'weekly' | 'daily',
+        resetCycle: g.resetCycle || 'monthly',
       }));
 
     quotaUsage.recompute(renewableGrants, anchorDate);
     await this.quotaUsageRepository.save(quotaUsage);
     this.logger.log(`Recomputed quota usages for enterprise: ${enterpriseId}`);
+
+    // Invalidate entitlement cache for the owner
+    await this.entitlementService.invalidateCache(subscription.userId);
+    this.logger.log(
+      `Invalidated entitlement cache for owner: ${subscription.userId}`,
+    );
   }
 }

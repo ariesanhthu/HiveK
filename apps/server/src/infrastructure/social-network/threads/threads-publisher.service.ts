@@ -78,7 +78,11 @@ export class ThreadsPublisherService implements ISocialPublisher {
     console.log(`Created Threads text container: ${container.id}`);
 
     // Step 2: Publish container
-    const result = await this.apiClient.publishContainer(userId, container.id, pageToken);
+    const result = await this.apiClient.publishContainer(
+      userId,
+      container.id,
+      pageToken,
+    );
     this.logger.log(`Published Threads text post: ${result.id}`);
     return { platformPostId: result.id };
   }
@@ -98,7 +102,11 @@ export class ThreadsPublisherService implements ISocialPublisher {
     });
 
     // Step 2: Publish container
-    const result = await this.apiClient.publishContainer(userId, container.id, pageToken);
+    const result = await this.apiClient.publishContainer(
+      userId,
+      container.id,
+      pageToken,
+    );
     this.logger.log(`Published Threads image post: ${result.id}`);
     return { platformPostId: result.id };
   }
@@ -121,7 +129,11 @@ export class ThreadsPublisherService implements ISocialPublisher {
     await this.waitForContainerReady(container.id);
 
     // Step 2: Publish container
-    const result = await this.apiClient.publishContainer(userId, container.id, pageToken);
+    const result = await this.apiClient.publishContainer(
+      userId,
+      container.id,
+      pageToken,
+    );
     this.logger.log(`Published Threads video post: ${result.id}`);
     return { platformPostId: result.id };
   }
@@ -153,7 +165,7 @@ export class ThreadsPublisherService implements ISocialPublisher {
     }
 
     throw new Error(
-      `Threads video processing timed out after ${this.videoPollMaxAttempts * this.videoPollDelayMs / 1000}s`,
+      `Threads video processing timed out after ${(this.videoPollMaxAttempts * this.videoPollDelayMs) / 1000}s`,
     );
   }
 

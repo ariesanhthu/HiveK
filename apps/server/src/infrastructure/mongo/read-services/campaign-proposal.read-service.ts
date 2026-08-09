@@ -3,9 +3,16 @@ import { InjectModel } from '@nestjs/mongoose';
 import { FlattenMaps, Model, QueryFilter, Types } from 'mongoose';
 import { ICampaignProposalReadService } from '@/application/interfaces/read-service/proposal.read-service.interface';
 import { ProposalDto, ProposalFilterDto } from '@/application/dtos';
-import { CampaignProposalModel, CampaignProposalDocument } from '../schemas/campaign-proposal.schema';
-import { PaginatedResponseDto, SortOrder } from '@/application/dtos/pagination.dto';
+import {
+  CampaignProposalModel,
+  CampaignProposalDocument,
+} from '../schemas/campaign-proposal.schema';
+import {
+  PaginatedResponseDto,
+  SortOrder,
+} from '@/application/dtos/pagination.dto';
 import { Nullable } from '@/core/types';
+import { EMediaSlideType, EProductPlatform } from '@/core/enums';
 
 @Injectable()
 export class MongoCampaignProposalReadService implements ICampaignProposalReadService {
@@ -24,8 +31,16 @@ export class MongoCampaignProposalReadService implements ICampaignProposalReadSe
     return doc ? this.mapToDto(doc) : null;
   }
 
-  async findAll(filters: ProposalFilterDto = {}): Promise<PaginatedResponseDto<ProposalDto>> {
-    const { cursor, limit = 10, sort = SortOrder.DESC, campaignId, status } = filters;
+  async findAll(
+    filters: ProposalFilterDto = {},
+  ): Promise<PaginatedResponseDto<ProposalDto>> {
+    const {
+      cursor,
+      limit = 10,
+      sort = SortOrder.DESC,
+      campaignId,
+      status,
+    } = filters;
     const query: QueryFilter<CampaignProposalDocument> = {};
 
     if (campaignId) {
@@ -49,7 +64,9 @@ export class MongoCampaignProposalReadService implements ICampaignProposalReadSe
 
     const hasNextPage = docs.length > limit;
     const results = hasNextPage ? docs.slice(0, limit) : docs;
-    const nextCursor = hasNextPage ? results[results.length - 1]._id.toString() : null;
+    const nextCursor = hasNextPage
+      ? results[results.length - 1]._id.toString()
+      : null;
 
     return new PaginatedResponseDto(
       results.map((doc) => this.mapToDto(doc)),
@@ -66,34 +83,53 @@ export class MongoCampaignProposalReadService implements ICampaignProposalReadSe
       slug: doc.slug,
       title: doc.title,
       description: doc.description,
-      mediaSlides: (doc.media_slides || []).map((slide: any) => ({
-        type: slide.type,
-        fileId: slide.file_id,
-        displayOrder: slide.display_order,
-      })),
-      products: (doc.products || []).map((product: any) => ({
-        productId: product.product_id,
-        name: product.name,
-        price: product.price,
-        currency: product.currency,
-        imageId: product.image_id,
-        affiliateUrls: product.affiliate_urls instanceof Map
-          ? Object.fromEntries(product.affiliate_urls)
-          : (product.affiliate_urls || {}),
-      })),
-      vouchers: (doc.vouchers || []).map((voucher: any) => ({
-        code: voucher.code,
-        platform: voucher.platform,
-        discountValue: voucher.discount_value,
-        description: voucher.description,
-        expirationDate: voucher.expiration_date instanceof Date ? voucher.expiration_date.toISOString() : new Date(voucher.expiration_date).toISOString(),
-      })),
+      mediaSlides: (doc.media_slides || []).map(
+        (slide: Record<string, unknown>) => ({
+          type: slide.type as EMediaSlideType,
+          fileId: slide.file_id as string,
+          displayOrder: slide.display_order as number,
+        }),
+      ),
+      products: (doc.products || []).map(
+        (product: Record<string, unknown>) => ({
+          productId: product.product_id as string,
+          name: product.name as string,
+          price: product.price as number,
+          currency: product.currency as string,
+          imageId: product.image_id as string,
+          affiliateUrls:
+            product.affiliate_urls instanceof Map
+              ? Object.fromEntries(product.affiliate_urls)
+              : product.affiliate_urls || {},
+        }),
+      ),
+      vouchers: (doc.vouchers || []).map(
+        (voucher: Record<string, unknown>) => ({
+          code: voucher.code as string,
+          platform: voucher.platform as EProductPlatform,
+          discountValue: voucher.discount_value as string,
+          description: voucher.description as string,
+          expirationDate:
+            voucher.expiration_date instanceof Date
+              ? voucher.expiration_date.toISOString()
+              : new Date(
+                  voucher.expiration_date as string | number | Date,
+                ).toISOString(),
+        }),
+      ),
       status: doc.status,
-      metrics: doc.metrics instanceof Map
-        ? Object.fromEntries(doc.metrics)
-        : (doc.metrics || {}),
-      createdAt: doc.created_at instanceof Date ? doc.created_at.toISOString() : new Date(doc.created_at).toISOString(),
-      updatedAt: doc.updated_at instanceof Date ? doc.updated_at.toISOString() : new Date(doc.updated_at).toISOString(),
+      metrics:
+        doc.metrics instanceof Map
+          ? Object.fromEntries(doc.metrics)
+          : doc.metrics || {},
+      createdAt:
+        doc.created_at instanceof Date
+          ? doc.created_at.toISOString()
+          : new Date(doc.created_at).toISOString(),
+      updatedAt:
+        doc.updated_at instanceof Date
+          ? doc.updated_at.toISOString()
+          : new Date(doc.updated_at).toISOString(),
     };
   }
 }

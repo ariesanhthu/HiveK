@@ -91,4 +91,5 @@ export class SubscriptionModel {
   next_expiry_check_at: Date;
 }
 
-export const SubscriptionSchema = SchemaFactory.createForClass(SubscriptionModel);
+export const SubscriptionSchema =
+  SchemaFactory.createForClass(SubscriptionModel);

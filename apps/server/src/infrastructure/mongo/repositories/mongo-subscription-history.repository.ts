@@ -3,10 +3,18 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types, ClientSession } from 'mongoose';
 import { ISubscriptionHistoryRepository } from '@/core/interfaces/repositories';
 import { SubscriptionHistoryEntity } from '@/core/aggregate-roots';
-import { SubscriptionHistoryModel, SubscriptionHistoryDocument, GrantSchema } from '../schemas';
+import {
+  SubscriptionHistoryModel,
+  SubscriptionHistoryDocument,
+  GrantSchema,
+} from '../schemas';
 import { SubscriptionChangeDetailsVO, GrantVO } from '@/core/value-objects';
 import { Nullable } from '@/core/types';
-import { type IUnitOfWork, UNIT_OF_WORK, CACHE_SERVICE } from '@/application/interfaces';
+import {
+  type IUnitOfWork,
+  UNIT_OF_WORK,
+  CACHE_SERVICE,
+} from '@/application/interfaces';
 import type { ICacheService } from '@/application/interfaces';
 import { MongoUnitOfWork } from '../mongo-uow';
 import { CacheKeyUtil } from '@/shared/utils/cache-key.util';
@@ -23,11 +31,14 @@ export class MongoSubscriptionHistoryRepository implements ISubscriptionHistoryR
   ) {}
 
   private get session(): ClientSession | undefined {
-    return (this.uow as MongoUnitOfWork).getSession() || undefined;
+    return (this.uow as unknown as MongoUnitOfWork).getSession() || undefined;
   }
 
   async findById(id: string): Promise<Nullable<SubscriptionHistoryEntity>> {
-    const doc = await this.historyModel.findById(id).session(this.session).exec();
+    const doc = await this.historyModel
+      .findById(id)
+      .session(this.session)
+      .exec();
     return doc ? this.mapToDomain(doc) : null;
   }
 
@@ -39,20 +50,29 @@ export class MongoSubscriptionHistoryRepository implements ISubscriptionHistoryR
       const saved = await created.save({ session: this.session });
       history.setId(saved._id.toString());
     } else {
-      await this.historyModel.findByIdAndUpdate(history.id, data, { upsert: true }).session(this.session).exec();
+      await this.historyModel
+        .findByIdAndUpdate(history.id, data, { upsert: true })
+        .session(this.session)
+        .exec();
     }
 
-    await this.invalidateCache(history.id!, history.userId);
+    await this.invalidateCache(history.id, history.userId);
   }
 
   async saveMany(histories: SubscriptionHistoryEntity[]): Promise<void> {
-    await Promise.all(histories.map(h => this.save(h)));
+    await Promise.all(histories.map((h) => this.save(h)));
   }
 
   async delete(id: string): Promise<void> {
-    const doc = await this.historyModel.findById(id).session(this.session).exec();
+    const doc = await this.historyModel
+      .findById(id)
+      .session(this.session)
+      .exec();
     if (doc) {
-      await this.historyModel.findByIdAndDelete(id).session(this.session).exec();
+      await this.historyModel
+        .findByIdAndDelete(id)
+        .session(this.session)
+        .exec();
       await this.invalidateCache(id, doc.user_id);
     }
   }
@@ -64,24 +84,38 @@ export class MongoSubscriptionHistoryRepository implements ISubscriptionHistoryR
       this.cacheService.delByPattern(CacheKeyUtil.listPattern(domain)),
     ];
     if (userId) {
-      invalidations.push(this.cacheService.del(CacheKeyUtil.custom(domain, `userId:${userId}`)));
+      invalidations.push(
+        this.cacheService.del(CacheKeyUtil.custom(domain, `userId:${userId}`)),
+      );
     }
     await Promise.all(invalidations);
   }
 
-  async findBySubscriptionId(subscriptionId: string): Promise<SubscriptionHistoryEntity[]> {
-    const docs = await this.historyModel.find({ subscription_id: subscriptionId }).session(this.session).exec();
-    return docs.map(doc => this.mapToDomain(doc));
+  async findBySubscriptionId(
+    subscriptionId: string,
+  ): Promise<SubscriptionHistoryEntity[]> {
+    const docs = await this.historyModel
+      .find({ subscription_id: subscriptionId })
+      .session(this.session)
+      .exec();
+    return docs.map((doc) => this.mapToDomain(doc));
   }
 
   async findByUserId(userId: string): Promise<SubscriptionHistoryEntity[]> {
-    const docs = await this.historyModel.find({ user_id: userId }).session(this.session).exec();
-    return docs.map(doc => this.mapToDomain(doc));
+    const docs = await this.historyModel
+      .find({ user_id: userId })
+      .session(this.session)
+      .exec();
+    return docs.map((doc) => this.mapToDomain(doc));
   }
 
-  private mapToDomain(doc: SubscriptionHistoryDocument): SubscriptionHistoryEntity {
+  private mapToDomain(
+    doc: SubscriptionHistoryDocument,
+  ): SubscriptionHistoryEntity {
     const details = doc.details;
-    const mapGrantsList = (grantsList: GrantSchema[] | null | undefined): GrantVO[] => {
+    const mapGrantsList = (
+      grantsList: GrantSchema[] | null | undefined,
+    ): GrantVO[] => {
       return (grantsList || []).map(
         (g) =>
           new GrantVO({
@@ -95,35 +129,34 @@ export class MongoSubscriptionHistoryRepository implements ISubscriptionHistoryR
                   creditsPerUnit: g.credit_fallback.credits_per_unit,
                 }
               : g.credit_fallback === null
-              ? null
-              : undefined,
-          })
+                ? null
+                : undefined,
+          }),
       );
     };
 
-    return SubscriptionHistoryEntity.instantiate(
-      doc._id.toString(),
-      {
-        userId: doc.user_id,
-        subscriptionId: doc.subscription_id,
-        billId: doc.bill_id,
-        actorId: doc.actor_id,
-        details: new SubscriptionChangeDetailsVO({
-          oldPlanId: details.old_plan_id || null,
-          newPlanId: details.new_plan_id || null,
-          addedAddonIds: details.added_addon_ids || [],
-          removedAddonIds: details.removed_addon_ids || [],
-          oldGrants: mapGrantsList(details.old_grants),
-          newGrants: mapGrantsList(details.new_grants),
-          oldPermissions: details.old_permissions || [],
-          newPermissions: details.new_permissions || [],
-        }),
-        createdAt: doc.get('created_at'),
-      }
-    );
+    return SubscriptionHistoryEntity.instantiate(doc._id.toString(), {
+      userId: doc.user_id,
+      subscriptionId: doc.subscription_id,
+      billId: doc.bill_id,
+      actorId: doc.actor_id,
+      details: new SubscriptionChangeDetailsVO({
+        oldPlanId: details.old_plan_id || null,
+        newPlanId: details.new_plan_id || null,
+        addedAddonIds: details.added_addon_ids || [],
+        removedAddonIds: details.removed_addon_ids || [],
+        oldGrants: mapGrantsList(details.old_grants),
+        newGrants: mapGrantsList(details.new_grants),
+        oldPermissions: details.old_permissions || [],
+        newPermissions: details.new_permissions || [],
+      }),
+      createdAt: doc.get('created_at'),
+    });
   }
 
-  private mapToPersistence(data: SubscriptionHistoryEntity): Omit<SubscriptionHistoryModel, 'created_at'> {
+  private mapToPersistence(
+    data: SubscriptionHistoryEntity,
+  ): Omit<SubscriptionHistoryModel, 'created_at'> {
     const mapGrantsToSchema = (grantsList: GrantVO[]) => {
       return grantsList.map((g) => ({
         type: g.type,
@@ -136,8 +169,8 @@ export class MongoSubscriptionHistoryRepository implements ISubscriptionHistoryR
               credits_per_unit: g.creditFallback.creditsPerUnit,
             }
           : g.creditFallback === null
-          ? null
-          : null,
+            ? null
+            : null,
       }));
     };
 

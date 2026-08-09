@@ -28,9 +28,12 @@ export class SubscriptionChangeDetailsModel {
   @Prop({ type: [String], required: true })
   new_permissions: string[];
 }
-const SubscriptionChangeDetailsSchema = SchemaFactory.createForClass(SubscriptionChangeDetailsModel);
+const SubscriptionChangeDetailsSchema = SchemaFactory.createForClass(
+  SubscriptionChangeDetailsModel,
+);
 
-export type SubscriptionHistoryDocument = HydratedDocument<SubscriptionHistoryModel>;
+export type SubscriptionHistoryDocument =
+  HydratedDocument<SubscriptionHistoryModel>;
 
 @Schema({
   collection: 'subscription_history',
@@ -53,4 +56,6 @@ export class SubscriptionHistoryModel {
   details: SubscriptionChangeDetailsModel;
 }
 
-export const SubscriptionHistorySchema = SchemaFactory.createForClass(SubscriptionHistoryModel);
+export const SubscriptionHistorySchema = SchemaFactory.createForClass(
+  SubscriptionHistoryModel,
+);

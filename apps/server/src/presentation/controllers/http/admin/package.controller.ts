@@ -1,6 +1,23 @@
-import { Controller, Get, Post, Patch, Delete, Param, Query, Body, HttpCode, HttpStatus, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Patch,
+  Delete,
+  Param,
+  Query,
+  Body,
+  HttpCode,
+  HttpStatus,
+  UseGuards,
+} from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
-import { ApiTags, ApiOperation, ApiBearerAuth, ApiSecurity } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiBearerAuth,
+  ApiSecurity,
+} from '@nestjs/swagger';
 import { buildVersionedRoute } from '@/presentation/utils';
 import {
   PackageCreateCommand,
@@ -12,11 +29,20 @@ import {
   PackageDeleteCommand,
   PackageDeleteInputDto,
 } from '@/application/commands';
-import { PackageGetListQuery, PackageGetByIdQuery, PackageFilterDto } from '@/application/queries';
+import {
+  PackageGetListQuery,
+  PackageGetByIdQuery,
+  PackageFilterDto,
+} from '@/application/queries';
 import { PackageResponseDto } from '@/application/dtos';
 import { PaginatedResponseDto } from '@/application/dtos/pagination.dto';
 import { JwtAuthGuard, RolesGuard } from '@/presentation/middleware/guards';
-import { CurrentUser, Roles, ApiOkResponseEnvelope, ApiPaginatedResponseEnvelope } from '@/presentation/decorators';
+import {
+  CurrentUser,
+  Roles,
+  ApiOkResponseEnvelope,
+  ApiPaginatedResponseEnvelope,
+} from '@/presentation/decorators';
 import { ERoleType } from '@/core/enums';
 import type { IJwtPayload } from '@/application/interfaces';
 
@@ -35,7 +61,9 @@ export class PackageAdminController {
   @Post()
   @ApiOperation({ summary: 'Create a new package' })
   @ApiOkResponseEnvelope(PackageResponseDto)
-  async create(@Body() input: PackageCreateInputDto): Promise<PackageResponseDto> {
+  async create(
+    @Body() input: PackageCreateInputDto,
+  ): Promise<PackageResponseDto> {
     return this.commandBus.execute(new PackageCreateCommand(input));
   }
 
@@ -66,14 +94,19 @@ export class PackageAdminController {
     @CurrentUser() user: IJwtPayload,
     @Param('id') id: string,
   ): Promise<void> {
-    const deleteInput = { id, deletedBy: user.sub as string } as PackageDeleteInputDto;
+    const deleteInput = {
+      id,
+      deletedBy: user.sub,
+    };
     return this.commandBus.execute(new PackageDeleteCommand(deleteInput));
   }
 
   @Get()
   @ApiOperation({ summary: 'Get all packages' })
   @ApiPaginatedResponseEnvelope(PackageResponseDto)
-  async findAll(@Query() filters: PackageFilterDto): Promise<PaginatedResponseDto<PackageResponseDto>> {
+  async findAll(
+    @Query() filters: PackageFilterDto,
+  ): Promise<PaginatedResponseDto<PackageResponseDto>> {
     return this.queryBus.execute(new PackageGetListQuery(filters));
   }
 

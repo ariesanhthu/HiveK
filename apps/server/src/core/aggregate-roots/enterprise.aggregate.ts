@@ -34,7 +34,15 @@ export interface EnterpriseProps {
   deleteBy: Nullable<string>;
 }
 
-export type EnterpriseCreateProps = Omit<EnterpriseProps, 'createdAt' | 'updatedAt' | 'deleteAt' | 'deleteBy' | 'members' | 'knowledgeBase'> & {
+export type EnterpriseCreateProps = Omit<
+  EnterpriseProps,
+  | 'createdAt'
+  | 'updatedAt'
+  | 'deleteAt'
+  | 'deleteBy'
+  | 'members'
+  | 'knowledgeBase'
+> & {
   members?: EnterpriseMember[];
   knowledgeBase?: EnterpriseKnowledgeBase;
 };
@@ -56,7 +64,10 @@ export class EnterpriseRoot extends BaseAggregateRoot<EnterpriseProps> {
     });
   }
 
-  public static instantiate(id: string, props: EnterpriseProps): EnterpriseRoot {
+  public static instantiate(
+    id: string,
+    props: EnterpriseProps,
+  ): EnterpriseRoot {
     return new EnterpriseRoot(props, id);
   }
 
@@ -135,18 +146,26 @@ export class EnterpriseRoot extends BaseAggregateRoot<EnterpriseProps> {
   }
 
   public isSubOwner(userId: string): boolean {
-    return this.props.members?.some(m => m.userId === userId && m.mode === EEnterpriseMemberMode.SUB_OWNER) ?? false;
+    return (
+      this.props.members?.some(
+        (m) =>
+          m.userId === userId && m.mode === EEnterpriseMemberMode.SUB_OWNER,
+      ) ?? false
+    );
   }
 
   public isMember(userId: string): boolean {
-    return this.isOwner(userId) || (this.props.members?.some(m => m.userId === userId) ?? false);
+    return (
+      this.isOwner(userId) ||
+      (this.props.members?.some((m) => m.userId === userId) ?? false)
+    );
   }
 
   public addMember(userId: string, mode: EEnterpriseMemberMode): void {
     if (this.props.userId === userId) {
       throw new InvalidOperationException('Owner is already a member');
     }
-    if (this.props.members.some(m => m.userId === userId)) {
+    if (this.props.members.some((m) => m.userId === userId)) {
       return; // Already a member
     }
     this.props.members.push({ userId, mode });
@@ -154,15 +173,15 @@ export class EnterpriseRoot extends BaseAggregateRoot<EnterpriseProps> {
   }
 
   public removeMember(userId: string): void {
-    if (!this.props.members.some(m => m.userId === userId)) {
+    if (!this.props.members.some((m) => m.userId === userId)) {
       return;
     }
-    this.props.members = this.props.members.filter(m => m.userId !== userId);
+    this.props.members = this.props.members.filter((m) => m.userId !== userId);
     this.props.updatedAt = new Date();
   }
 
   public changeMemberMode(userId: string, mode: EEnterpriseMemberMode): void {
-    const member = this.props.members.find(m => m.userId === userId);
+    const member = this.props.members.find((m) => m.userId === userId);
     if (!member) {
       throw new InvalidOperationException('Member not found');
     }
@@ -171,14 +190,19 @@ export class EnterpriseRoot extends BaseAggregateRoot<EnterpriseProps> {
   }
 
   public update(props: Partial<EnterpriseProps>): void {
-    if (props.companyName !== undefined) this.props.companyName = props.companyName;
-    if (props.description !== undefined) this.props.description = props.description;
-    if (props.contactEmail !== undefined) this.props.contactEmail = props.contactEmail;
-    if (props.contactPhone !== undefined) this.props.contactPhone = props.contactPhone;
+    if (props.companyName !== undefined)
+      this.props.companyName = props.companyName;
+    if (props.description !== undefined)
+      this.props.description = props.description;
+    if (props.contactEmail !== undefined)
+      this.props.contactEmail = props.contactEmail;
+    if (props.contactPhone !== undefined)
+      this.props.contactPhone = props.contactPhone;
     if (props.website !== undefined) this.props.website = props.website;
     if (props.taxId !== undefined) this.props.taxId = props.taxId;
     if (props.logoUrlId !== undefined) this.props.logoUrlId = props.logoUrlId;
-    if (props.isVerified !== undefined) this.props.isVerified = props.isVerified;
+    if (props.isVerified !== undefined)
+      this.props.isVerified = props.isVerified;
     if (props.knowledgeBase !== undefined) {
       this.props.knowledgeBase = {
         ...props.knowledgeBase,
@@ -189,12 +213,11 @@ export class EnterpriseRoot extends BaseAggregateRoot<EnterpriseProps> {
   }
 
   public markForHardDelete(): void {
-    this.addDomainEvent(new EntityHardDeletedEvent(
-      this.id!,
-      {
-        entityId: this.id!,
+    this.addDomainEvent(
+      new EntityHardDeletedEvent(this.id, {
+        entityId: this.id,
         targetType: ETargetType.ENTERPRISE,
-      }
-    ));
+      }),
+    );
   }
 }

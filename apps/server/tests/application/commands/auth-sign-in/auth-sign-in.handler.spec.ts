@@ -5,6 +5,7 @@ import { ERoleType } from '@/core/enums';
 import { InvalidCredentialsException } from '@/core/exceptions';
 import { createMockUserRepository } from '../../../__mocks__/mock-repositories';
 import { createMockAuthService } from '../../../__mocks__/mock-services';
+import { createMockEnterpriseReadService } from '../../../__mocks__/mock-services';
 import { KOLUserRoot } from '@/core/aggregate-roots/kol-user.aggregate';
 import { PhoneNumberVO } from '@/core/value-objects/phone-number.value-object';
 
@@ -16,9 +17,11 @@ describe('AuthSignInCommandHandler', () => {
   beforeEach(() => {
     mockUserRepository = createMockUserRepository();
     mockAuthService = createMockAuthService();
+    const mockEnterpriseReadService = createMockEnterpriseReadService();
 
     handler = new AuthSignInCommandHandler(
       mockUserRepository,
+      mockEnterpriseReadService as any,
       mockAuthService,
     );
   });
@@ -59,6 +62,7 @@ describe('AuthSignInCommandHandler', () => {
       expect(result).toEqual({
         accessToken: 'access-token',
         refreshToken: 'refresh-token',
+        accessibleEnterprises: [],
       });
       expect(mockAuthService.normalizeEmail).toHaveBeenCalledWith('user@example.com');
       expect(mockUserRepository.findByEmail).toHaveBeenCalledWith('user@example.com');

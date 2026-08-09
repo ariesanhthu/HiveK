@@ -1,12 +1,18 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { FlattenMaps, Model, QueryFilter } from 'mongoose';
-import { EnterpriseInvitationDocument, EnterpriseInvitationModel } from '../schemas';
+import {
+  EnterpriseInvitationDocument,
+  EnterpriseInvitationModel,
+} from '../schemas';
 import { IEnterpriseInvitationReadService } from '@/application/interfaces';
 import { EnterpriseInvitationFilterDto } from '@/application/queries/enterprise-get-my-invitations/enterprise-get-my-invitations.dto';
 import { Nullable } from '@/core/types';
 import { EnterpriseInvitationDto } from '@/application/dtos';
-import { PaginatedResponseDto, SortOrder } from '@/application/dtos/pagination.dto';
+import {
+  PaginatedResponseDto,
+  SortOrder,
+} from '@/application/dtos/pagination.dto';
 import { EEnterpriseInvitationStatus } from '@/core/enums';
 
 @Injectable()
@@ -16,8 +22,16 @@ export class MongoEnterpriseInvitationReadService implements IEnterpriseInvitati
     private readonly model: Model<EnterpriseInvitationDocument>,
   ) {}
 
-  async findAll(filters: EnterpriseInvitationFilterDto & { email?: string } = {}): Promise<PaginatedResponseDto<EnterpriseInvitationDto>> {
-    const { cursor, limit = 10, sort = SortOrder.DESC, isExpired, email } = filters;
+  async findAll(
+    filters: EnterpriseInvitationFilterDto & { email?: string } = {},
+  ): Promise<PaginatedResponseDto<EnterpriseInvitationDto>> {
+    const {
+      cursor,
+      limit = 10,
+      sort = SortOrder.DESC,
+      isExpired,
+      email,
+    } = filters;
     const query: QueryFilter<EnterpriseInvitationDocument> = {};
 
     if (email) {
@@ -29,8 +43,16 @@ export class MongoEnterpriseInvitationReadService implements IEnterpriseInvitati
       if (isExpired) {
         // Expired/inactive invitations: either explicitly marked EXPIRED/REVOKED or past expiration date
         query.$or = [
-          { status: { $in: [EEnterpriseInvitationStatus.EXPIRED, EEnterpriseInvitationStatus.REVOKED, EEnterpriseInvitationStatus.ACCEPTED] } },
-          { expires_at: { $lt: now } }
+          {
+            status: {
+              $in: [
+                EEnterpriseInvitationStatus.EXPIRED,
+                EEnterpriseInvitationStatus.REVOKED,
+                EEnterpriseInvitationStatus.ACCEPTED,
+              ],
+            },
+          },
+          { expires_at: { $lt: now } },
         ];
       } else {
         // Active/pending invitations: must be pending and not expired
@@ -38,7 +60,6 @@ export class MongoEnterpriseInvitationReadService implements IEnterpriseInvitati
         query.expires_at = { $gte: now };
       }
     }
-
 
     if (cursor) {
       query._id = sort === SortOrder.DESC ? { $lt: cursor } : { $gt: cursor };
@@ -53,7 +74,9 @@ export class MongoEnterpriseInvitationReadService implements IEnterpriseInvitati
 
     const hasNextPage = docs.length > limit;
     const results = hasNextPage ? docs.slice(0, limit) : docs;
-    const nextCursor = hasNextPage ? results[results.length - 1]._id.toString() : null;
+    const nextCursor = hasNextPage
+      ? results[results.length - 1]._id.toString()
+      : null;
 
     return new PaginatedResponseDto(
       results.map((doc) => this.mapToDto(doc)),
@@ -68,7 +91,9 @@ export class MongoEnterpriseInvitationReadService implements IEnterpriseInvitati
     return doc ? this.mapToDto(doc) : null;
   }
 
-  private mapToDto(doc: FlattenMaps<EnterpriseInvitationDocument>): EnterpriseInvitationDto {
+  private mapToDto(
+    doc: FlattenMaps<EnterpriseInvitationDocument>,
+  ): EnterpriseInvitationDto {
     return {
       id: doc._id.toString(),
       enterpriseId: doc.enterprise_id.toString(),
@@ -76,9 +101,9 @@ export class MongoEnterpriseInvitationReadService implements IEnterpriseInvitati
       mode: doc.mode,
       inviterId: doc.inviter_id.toString(),
       status: doc.status,
-      expiresAt: (doc.expires_at as Date).toISOString(),
-      createdAt: (doc.created_at as Date).toISOString(),
-      updatedAt: (doc.updated_at as Date).toISOString(),
+      expiresAt: doc.expires_at.toISOString(),
+      createdAt: doc.created_at.toISOString(),
+      updatedAt: doc.updated_at.toISOString(),
     };
   }
 }

@@ -13,7 +13,7 @@ export class QuotaUsageResetEvent extends DomainEvent<QuotaUsageResetPayload> {
   constructor(
     aggregateId: string,
     payload: QuotaUsageResetPayload,
-    metadata?: Record<string, unknown>
+    metadata?: Record<string, unknown>,
   ) {
     super(aggregateId, payload, metadata);
   }

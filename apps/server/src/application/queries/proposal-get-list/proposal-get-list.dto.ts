@@ -1,1 +1,4 @@
-export { ProposalFilterSchema, ProposalFilterDto } from '@/application/dtos/proposal.dto';
+export {
+  ProposalFilterSchema,
+  ProposalFilterDto,
+} from '@/application/dtos/proposal.dto';

@@ -21,13 +21,15 @@ export class FailureTypeVO extends BaseValueObject<{
     [EFailureType.NETWORK]: 'Network error occurred. Please try again.',
     [EFailureType.AUTHENTICATION]:
       'Payment authentication failed. Please check your payment method.',
-    [EFailureType.VALIDATION]: 'Invalid payment information. Please check and try again.',
+    [EFailureType.VALIDATION]:
+      'Invalid payment information. Please check and try again.',
     [EFailureType.INSUFFICIENT_FUNDS]:
       'Insufficient funds. Please use a different payment method.',
     [EFailureType.FRAUD_DETECTED]:
       'Payment blocked for security reasons. Please contact support.',
     [EFailureType.TIMEOUT]: 'Payment request timed out. Please try again.',
-    [EFailureType.UNKNOWN]: 'Payment failed. Please try again or contact support.',
+    [EFailureType.UNKNOWN]:
+      'Payment failed. Please try again or contact support.',
   };
 
   /**

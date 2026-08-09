@@ -1,4 +1,7 @@
-import { NotFoundDomainException, ForbiddenDomainException } from '../common/exceptions/domain.exception';
+import {
+  NotFoundDomainException,
+  ForbiddenDomainException,
+} from '../common/exceptions/domain.exception';
 
 export class NotificationNotFoundException extends NotFoundDomainException {
   constructor(identifier: string) {

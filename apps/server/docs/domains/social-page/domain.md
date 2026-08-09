@@ -1,7 +1,7 @@
 # Social Page & Scheduled Post Domain
 
 > **Last Updated**: 2026-07-18
-> **Related Docs**: [`docs/domain/campaign-domain.md`](./campaign-domain.md), [`docs/domain/enterprise-domain.md`](./enterprise-domain.md), [`docs/refactor/social-network.md`](../refactor/social-network.md)
+> **Related Docs**: [campaign domain](../campaign/domain.md), [enterprise domain](../enterprise/domain.md)
 
 ---
 

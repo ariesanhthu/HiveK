@@ -11,6 +11,10 @@ export class FacebookCommentReplierService implements ICommentReplier {
     commentId: string;
     message: string;
   }): Promise<void> {
-    await this.apiClient.replyToComment(params.pageToken, params.commentId, params.message);
+    await this.apiClient.replyToComment(
+      params.pageToken,
+      params.commentId,
+      params.message,
+    );
   }
 }

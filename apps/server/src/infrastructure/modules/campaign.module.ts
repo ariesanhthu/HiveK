@@ -14,11 +14,18 @@ import {
 } from '@/application/commands';
 
 // Queries
-import { CampaignGetListHandler, CampaignGetByIdHandler } from '@/application/queries';
+import {
+  CampaignGetListHandler,
+  CampaignGetByIdHandler,
+} from '@/application/queries';
 
 // Events
 // Presentation
-import { CampaignAdminController, CampaignClientController, CampaignResolver } from '@/presentation/controllers'
+import {
+  CampaignAdminController,
+  CampaignClientController,
+  CampaignResolver,
+} from '@/presentation/controllers';
 
 // Modules
 import { UserModule } from './user.module';
@@ -34,13 +41,9 @@ const COMMAND_HANDLERS = [
   CampaignRevokeCollaboratorCommandHandler,
 ];
 
-const QUERY_HANDLERS = [
-  CampaignGetListHandler,
-  CampaignGetByIdHandler,
-];
+const QUERY_HANDLERS = [CampaignGetListHandler, CampaignGetByIdHandler];
 
-const EVENT_HANDLERS = [
-];
+const EVENT_HANDLERS = [];
 
 @Module({
   imports: [CqrsModule, UserModule],

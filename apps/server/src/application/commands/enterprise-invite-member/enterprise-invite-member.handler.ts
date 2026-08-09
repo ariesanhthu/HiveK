@@ -15,14 +15,20 @@ import {
   type IUserRepository,
   type IEnterpriseInvitationRepository,
 } from '@/core/interfaces/repositories';
-import { EnterpriseInvitationRoot, EnterpriseUserRoot } from '@/core/aggregate-roots';
+import {
+  EnterpriseInvitationRoot,
+  EnterpriseUserRoot,
+} from '@/core/aggregate-roots';
 import { EnterpriseInviteMemberCommand } from './enterprise-invite-member.command';
 import { EnterpriseInvitationDto } from '@/application/dtos/enterprise-invitation.dto';
 import { EnterpriseInvitationMapper } from '@/application/mappers';
 import { type IUnitOfWork, UNIT_OF_WORK } from '@/application/interfaces';
 
 @CommandHandler(EnterpriseInviteMemberCommand)
-export class EnterpriseInviteMemberCommandHandler implements ICommandHandler<EnterpriseInviteMemberCommand, EnterpriseInvitationDto> {
+export class EnterpriseInviteMemberCommandHandler implements ICommandHandler<
+  EnterpriseInviteMemberCommand,
+  EnterpriseInvitationDto
+> {
   constructor(
     @Inject(ENTERPRISE_REPOSITORY)
     private readonly enterpriseRepository: IEnterpriseRepository,
@@ -34,7 +40,9 @@ export class EnterpriseInviteMemberCommandHandler implements ICommandHandler<Ent
     private readonly uow: IUnitOfWork,
   ) {}
 
-  async execute(command: EnterpriseInviteMemberCommand): Promise<EnterpriseInvitationDto> {
+  async execute(
+    command: EnterpriseInviteMemberCommand,
+  ): Promise<EnterpriseInvitationDto> {
     return this.uow.execute(async () => {
       const { enterpriseId, requestedBy, input } = command;
 
@@ -44,30 +52,45 @@ export class EnterpriseInviteMemberCommandHandler implements ICommandHandler<Ent
       }
 
       // Authorization guard: must be owner or sub-owner
-      if (!enterprise.isOwner(requestedBy) && !enterprise.isSubOwner(requestedBy)) {
+      if (
+        !enterprise.isOwner(requestedBy) &&
+        !enterprise.isSubOwner(requestedBy)
+      ) {
         throw new EnterpriseForbiddenException();
       }
 
       // Check if target user exists
       const user = await this.userRepository.findByEmail(input.email);
       if (!user) {
-        throw new UserNotFoundException(`User with email ${input.email} not found`);
+        throw new UserNotFoundException(
+          `User with email ${input.email} not found`,
+        );
       }
 
       // Target user must be an enterprise user
       if (!(user instanceof EnterpriseUserRoot)) {
-        throw new InvalidUserTypeException('Invited user must be an enterprise user');
+        throw new InvalidUserTypeException(
+          'Invited user must be an enterprise user',
+        );
       }
 
       // User must not already be a member/owner
-      if (enterprise.isMember(user.id!) || enterprise.isOwner(user.id!)) {
-        throw new EnterpriseConflictException('User is already a member or owner of this enterprise');
+      if (enterprise.isMember(user.id) || enterprise.isOwner(user.id)) {
+        throw new EnterpriseConflictException(
+          'User is already a member or owner of this enterprise',
+        );
       }
 
       // Check for active pending invitation
-      const pending = await this.invitationRepository.findPendingByEmailAndEnterpriseId(input.email, enterpriseId);
+      const pending =
+        await this.invitationRepository.findPendingByEmailAndEnterpriseId(
+          input.email,
+          enterpriseId,
+        );
       if (pending) {
-        throw new EnterpriseConflictException('There is already a pending invitation for this user');
+        throw new EnterpriseConflictException(
+          'There is already a pending invitation for this user',
+        );
       }
 
       // Create invitation

@@ -20,12 +20,24 @@ export interface UserProps {
   googleId: Nullable<string>;
 }
 
-export type UserCreateProps = Omit<UserProps, 'createdAt' | 'updatedAt' | 'deleteAt' | 'deleteBy' | 'refreshToken' | 'googleId' | 'isEmailVerified' | 'avatar'> & {
+export type UserCreateProps = Omit<
+  UserProps,
+  | 'createdAt'
+  | 'updatedAt'
+  | 'deleteAt'
+  | 'deleteBy'
+  | 'refreshToken'
+  | 'googleId'
+  | 'isEmailVerified'
+  | 'avatar'
+> & {
   googleId?: Nullable<string>;
   isEmailVerified?: boolean;
 };
 
-export abstract class UserRoot<T extends UserProps = UserProps> extends BaseAggregateRoot<T> {
+export abstract class UserRoot<
+  T extends UserProps = UserProps,
+> extends BaseAggregateRoot<T> {
   protected constructor(props: T, id?: string) {
     super(props, id);
   }

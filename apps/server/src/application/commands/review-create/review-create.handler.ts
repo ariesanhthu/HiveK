@@ -1,16 +1,28 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { Inject } from '@nestjs/common';
-import { PUBLIC_REVIEW_REPOSITORY, type IPublicReviewRepository } from '@/core/interfaces/repositories';
-import { CAMPAIGN_PROPOSAL_REPOSITORY, type ICampaignProposalRepository } from '@/core/interfaces/repositories';
+import {
+  PUBLIC_REVIEW_REPOSITORY,
+  type IPublicReviewRepository,
+} from '@/core/interfaces/repositories';
+import {
+  CAMPAIGN_PROPOSAL_REPOSITORY,
+  type ICampaignProposalRepository,
+} from '@/core/interfaces/repositories';
 import { PublicReviewRoot } from '@/core/aggregate-roots';
 import { ReviewSecurityMetadataVO } from '@/core/value-objects';
-import { ReviewLowRecaptchaScoreException, ProposalNotFoundException } from '@/core/exceptions';
+import {
+  ReviewLowRecaptchaScoreException,
+  ProposalNotFoundException,
+} from '@/core/exceptions';
 import { ReviewCreateCommand } from './review-create.command';
 import { ReviewDto } from '@/application/dtos';
 import { ReviewMapper } from '@/application/mappers';
 
 @CommandHandler(ReviewCreateCommand)
-export class ReviewCreateCommandHandler implements ICommandHandler<ReviewCreateCommand, ReviewDto> {
+export class ReviewCreateCommandHandler implements ICommandHandler<
+  ReviewCreateCommand,
+  ReviewDto
+> {
   constructor(
     @Inject(PUBLIC_REVIEW_REPOSITORY)
     private readonly reviewRepository: IPublicReviewRepository,
@@ -33,7 +45,9 @@ export class ReviewCreateCommandHandler implements ICommandHandler<ReviewCreateC
     });
 
     if (!securityMetadata.isRecaptchaValid(0.5)) {
-      throw new ReviewLowRecaptchaScoreException(input.securityMetadata.recaptchaScore);
+      throw new ReviewLowRecaptchaScoreException(
+        input.securityMetadata.recaptchaScore,
+      );
     }
 
     const review = PublicReviewRoot.create({

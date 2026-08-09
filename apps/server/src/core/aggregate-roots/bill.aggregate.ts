@@ -38,29 +38,31 @@ export class BillEntity extends BaseAggregateRoot<BillProps> {
     const now = new Date();
     props.createdAt = input.createdAt ?? now;
 
-    const calculated = BillEntity.calculateFinancials(
-      input.items,
-      input.type
-    );
+    const calculated = BillEntity.calculateFinancials(input.items, input.type);
 
-    if (input.totalAmount === undefined) props.totalAmount = calculated.totalAmount;
+    if (input.totalAmount === undefined)
+      props.totalAmount = calculated.totalAmount;
     else if (input.totalAmount !== calculated.totalAmount) {
       throw new BillTotalAmountMismatchException(
         input.totalAmount,
-        calculated.totalAmount
+        calculated.totalAmount,
       );
     }
 
     if (input.taxAmount === undefined) props.taxAmount = calculated.taxAmount;
     else if (input.taxAmount !== calculated.taxAmount) {
-      throw new BillTaxAmountMismatchException(input.taxAmount, calculated.taxAmount);
+      throw new BillTaxAmountMismatchException(
+        input.taxAmount,
+        calculated.taxAmount,
+      );
     }
 
-    if (input.finalAmount === undefined) props.finalAmount = calculated.finalAmount;
+    if (input.finalAmount === undefined)
+      props.finalAmount = calculated.finalAmount;
     else if (input.finalAmount !== calculated.finalAmount) {
       throw new BillFinalAmountMismatchException(
         input.finalAmount,
-        calculated.finalAmount
+        calculated.finalAmount,
       );
     }
 
@@ -77,7 +79,7 @@ export class BillEntity extends BaseAggregateRoot<BillProps> {
 
   public cancel(): void {
     if (this.props.status !== EBillStatus.PENDING) {
-      throw new BillCannotCancelException(this.id!, this.props.status);
+      throw new BillCannotCancelException(this.id, this.props.status);
     }
     this.props.status = EBillStatus.CANCELLED;
   }
@@ -89,14 +91,11 @@ export class BillEntity extends BaseAggregateRoot<BillProps> {
     this.props.status = EBillStatus.DONE;
   }
 
-  private static calculateFinancials(
-    items: BillItemVO[],
-    type: EBillType
-  ) {
+  private static calculateFinancials(items: BillItemVO[], type: EBillType) {
     const totalAmount = items.reduce((sum, item) => sum + item.price, 0);
     const taxAmount = items.reduce(
       (sum, item) => sum + (item.price * item.taxPercent) / 100,
-      0
+      0,
     );
     const finalAmount = totalAmount + taxAmount;
     return { totalAmount, taxAmount, finalAmount };

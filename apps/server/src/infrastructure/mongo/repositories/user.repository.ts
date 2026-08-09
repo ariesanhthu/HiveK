@@ -2,8 +2,20 @@ import { Injectable, Inject } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types, ClientSession, QueryFilter } from 'mongoose';
 import { IUserRepository } from '@/core/interfaces/repositories';
-import { UserRoot, AdminRoot, EnterpriseUserRoot, KOLUserRoot } from '@/core/aggregate-roots';
-import { UserModel, UserDocument, EnterpriseUserModel, EnterpriseUserDocument, AdminUserDocument, KOLUserDocument } from '../schemas/user.schema';
+import {
+  UserRoot,
+  AdminRoot,
+  EnterpriseUserRoot,
+  KOLUserRoot,
+} from '@/core/aggregate-roots';
+import {
+  UserModel,
+  UserDocument,
+  EnterpriseUserModel,
+  EnterpriseUserDocument,
+  AdminUserDocument,
+  KOLUserDocument,
+} from '../schemas/user.schema';
 import { Nullable } from '@/core/types';
 import { ERoleType } from '@/core/enums';
 import { PhoneNumberVO } from '@/core/value-objects/phone-number.value-object';
@@ -23,10 +35,10 @@ export class MongoUserRepository implements IUserRepository {
     private readonly kolUserModel: Model<KOLUserDocument>,
     @Inject(UNIT_OF_WORK)
     private readonly uow: IUnitOfWork,
-  ) { }
+  ) {}
 
   private get session(): ClientSession | undefined {
-    return (this.uow as MongoUnitOfWork).getSession() || undefined;
+    return (this.uow as unknown as MongoUnitOfWork).getSession() || undefined;
   }
 
   async findById(id: string): Promise<Nullable<UserRoot>> {
@@ -35,16 +47,19 @@ export class MongoUserRepository implements IUserRepository {
   }
 
   async findByIds(ids: string[]): Promise<UserRoot[]> {
-    const objectIds = ids.map(id => new Types.ObjectId(id));
+    const objectIds = ids.map((id) => new Types.ObjectId(id));
     const docs = await this.userModel
       .find({ _id: { $in: objectIds } })
       .session(this.session)
       .exec();
-    return docs.map(doc => this.mapToDomain(doc));
+    return docs.map((doc) => this.mapToDomain(doc));
   }
 
   async findByEmail(email: string): Promise<Nullable<UserRoot>> {
-    const doc = await this.userModel.findOne({ email }).session(this.session).exec();
+    const doc = await this.userModel
+      .findOne({ email })
+      .session(this.session)
+      .exec();
     return doc ? this.mapToDomain(doc) : null;
   }
 
@@ -53,29 +68,42 @@ export class MongoUserRepository implements IUserRepository {
     // Set delete_at in filter to bypass softDeletePlugin auto-filter
     // Using { $exists: true } matches all docs since schema has `default: null`
     filter.delete_at = { $exists: true };
-    const doc = await this.userModel.findOne(filter).session(this.session).exec();
+    const doc = await this.userModel
+      .findOne(filter)
+      .session(this.session)
+      .exec();
     return doc ? this.mapToDomain(doc) : null;
   }
 
   async findByEnterpriseId(enterpriseId: string): Promise<UserRoot[]> {
-    const docs = await this.userModel.find({ enterprise_ids: new Types.ObjectId(enterpriseId) }).session(this.session).exec();
-    return docs.map(doc => this.mapToDomain(doc));
+    const docs = await this.userModel
+      .find({ enterprise_ids: new Types.ObjectId(enterpriseId) })
+      .session(this.session)
+      .exec();
+    return docs.map((doc) => this.mapToDomain(doc));
   }
 
   async existsByRoleId(roleId: string): Promise<boolean> {
-    const doc = await this.userModel.findOne(
-      {
-        role_id: new Types.ObjectId(roleId),
-        delete_at: null,
-      },
-      { _id: 1 }
-    ).session(this.session).lean().exec();
+    const doc = await this.userModel
+      .findOne(
+        {
+          role_id: new Types.ObjectId(roleId),
+          delete_at: null,
+        },
+        { _id: 1 },
+      )
+      .session(this.session)
+      .lean()
+      .exec();
     return !!doc;
   }
 
   async save(user: UserRoot): Promise<void> {
     const data = this.mapToPersistence(user);
-    let model: Model<EnterpriseUserDocument> | Model<AdminUserDocument> | Model<KOLUserDocument>
+    let model:
+      | Model<EnterpriseUserDocument>
+      | Model<AdminUserDocument>
+      | Model<KOLUserDocument>;
     switch (user.type) {
       case ERoleType.ENTERPRISE:
         model = this.enterpriseUserModel;
@@ -87,7 +115,7 @@ export class MongoUserRepository implements IUserRepository {
         model = this.kolUserModel;
         break;
       default:
-        throw new Error(`Unknown user type: ${user.type}`);
+        throw new Error(`Unknown user type: ${String(user.type)}`);
     }
 
     if (!user.id) {
@@ -95,12 +123,15 @@ export class MongoUserRepository implements IUserRepository {
       const saved = await created.save({ session: this.session });
       user.setId(saved._id.toString());
     } else {
-      await (model as Model<UserDocument>).findByIdAndUpdate(new Types.ObjectId(user.id), data).session(this.session).exec();
+      await (model as Model<UserDocument>)
+        .findByIdAndUpdate(new Types.ObjectId(user.id), data)
+        .session(this.session)
+        .exec();
     }
   }
 
   async saveMany(users: UserRoot[]): Promise<void> {
-    await Promise.all(users.map(u => this.save(u)));
+    await Promise.all(users.map((u) => this.save(u)));
   }
 
   async delete(id: string): Promise<void> {
@@ -130,7 +161,7 @@ export class MongoUserRepository implements IUserRepository {
 
     const id = doc._id.toString();
 
-    switch (doc.type) {
+    switch (doc.type as ERoleType) {
       case ERoleType.ADMIN:
         return AdminRoot.instantiate(id, {
           ...props,
@@ -140,7 +171,10 @@ export class MongoUserRepository implements IUserRepository {
         return EnterpriseUserRoot.instantiate(id, {
           ...props,
           type: ERoleType.ENTERPRISE,
-          enterpriseIds: 'enterprise_ids' in doc ? (doc as EnterpriseUserDocument).enterprise_ids.map(eid => eid.toString()) : [],
+          enterpriseIds:
+            'enterprise_ids' in doc
+              ? doc.enterprise_ids.map((eid) => eid.toString())
+              : [],
         });
       case ERoleType.KOL:
         return KOLUserRoot.instantiate(id, {
@@ -168,10 +202,15 @@ export class MongoUserRepository implements IUserRepository {
       google_id: user.googleId,
     };
 
-    if (user instanceof EnterpriseUserRoot || user.type === ERoleType.ENTERPRISE) {
+    if (
+      user instanceof EnterpriseUserRoot ||
+      user.type === ERoleType.ENTERPRISE
+    ) {
       return {
         ...base,
-        enterprise_ids: (user as EnterpriseUserRoot).enterpriseIds.map(id => new Types.ObjectId(id)),
+        enterprise_ids: (user as EnterpriseUserRoot).enterpriseIds.map(
+          (id) => new Types.ObjectId(id),
+        ),
       };
     }
 

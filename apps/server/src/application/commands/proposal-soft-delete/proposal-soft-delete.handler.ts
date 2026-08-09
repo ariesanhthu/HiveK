@@ -1,11 +1,17 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { Inject } from '@nestjs/common';
-import { CAMPAIGN_PROPOSAL_REPOSITORY, type ICampaignProposalRepository } from '@/core/interfaces/repositories';
+import {
+  CAMPAIGN_PROPOSAL_REPOSITORY,
+  type ICampaignProposalRepository,
+} from '@/core/interfaces/repositories';
 import { ProposalNotFoundException } from '@/core/exceptions';
 import { ProposalSoftDeleteCommand } from './proposal-soft-delete.command';
 
 @CommandHandler(ProposalSoftDeleteCommand)
-export class ProposalSoftDeleteCommandHandler implements ICommandHandler<ProposalSoftDeleteCommand, void> {
+export class ProposalSoftDeleteCommandHandler implements ICommandHandler<
+  ProposalSoftDeleteCommand,
+  void
+> {
   constructor(
     @Inject(CAMPAIGN_PROPOSAL_REPOSITORY)
     private readonly proposalRepository: ICampaignProposalRepository,

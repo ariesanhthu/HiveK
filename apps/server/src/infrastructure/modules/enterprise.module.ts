@@ -1,7 +1,16 @@
 import { Module } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
-import { EnterpriseAdminController, EnterpriseClientController } from '@/presentation/controllers';
-import { EnterpriseGetByIdHandler, EnterpriseGetListHandler, EnterpriseGetInvitationsQueryHandler, EnterpriseGetMyListHandler, EnterpriseGetMyInvitationsQueryHandler } from '@/application/queries';
+import {
+  EnterpriseAdminController,
+  EnterpriseClientController,
+} from '@/presentation/controllers';
+import {
+  EnterpriseGetByIdHandler,
+  EnterpriseGetListHandler,
+  EnterpriseGetInvitationsQueryHandler,
+  EnterpriseGetMyListHandler,
+  EnterpriseGetMyInvitationsQueryHandler,
+} from '@/application/queries';
 
 import {
   EnterpriseCreateCommandHandler,
@@ -41,8 +50,7 @@ const QUERY_HANDLERS = [
   EnterpriseGetMyInvitationsQueryHandler,
 ];
 
-const EVENT_HANDLERS = [
-]
+const EVENT_HANDLERS = [];
 
 @Module({
   imports: [CqrsModule, UploadedFileModule, UserModule],

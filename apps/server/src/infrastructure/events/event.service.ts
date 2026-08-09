@@ -2,7 +2,10 @@ import { Inject, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, ClientSession } from 'mongoose';
 import { IEventService } from '@/application/interfaces/event-service.interface';
-import { DOMAIN_EVENT_MAPPER, type IDomainEventMapper } from '@/application/interfaces/domain-event-mapper.interface';
+import {
+  DOMAIN_EVENT_MAPPER,
+  type IDomainEventMapper,
+} from '@/application/interfaces/domain-event-mapper.interface';
 import { BaseAggregateRoot } from '@/core/common';
 import { OutboxModel, EOutboxStatus } from '../mongo/schemas/outbox.schema';
 import { OutboxEventEmitter } from './outbox/outbox-event.emitter';
@@ -24,21 +27,22 @@ export class EventService implements IEventService {
     aggregate: BaseAggregateRoot<unknown> | BaseAggregateRoot<unknown>[],
   ): Promise<void> {
     const aggregates = Array.isArray(aggregate) ? aggregate : [aggregate];
-    
+
     // Extract domain events and clear them from aggregates
     const domainEvents = aggregates.flatMap((agg) => {
       const events = [...agg.domainEvents];
       agg.clearDomainEvents();
       return events;
     });
-    
+
     if (domainEvents.length === 0) return;
 
-    const integrationEvents = this.eventMapper.mapToIntegrationEvents(domainEvents);
+    const integrationEvents =
+      this.eventMapper.mapToIntegrationEvents(domainEvents);
     if (integrationEvents.length === 0) return;
 
     // Convert integration events to Outbox Mongoose documents
-    const outboxRows = integrationEvents.map(event => ({
+    const outboxRows = integrationEvents.map((event) => ({
       event_type: event.eventType,
       payload: event.payload,
       metadata: event.metadata ?? null,
@@ -51,8 +55,10 @@ export class EventService implements IEventService {
     }));
 
     const activeSession = this.uow.getSession?.();
-    await this.outboxModel.insertMany(outboxRows, { session: activeSession as ClientSession });
-    
+    await this.outboxModel.insertMany(outboxRows, {
+      session: activeSession,
+    });
+
     // Notify the outbox processor to run immediately
     // this.outboxEmitter.emit();
   }

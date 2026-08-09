@@ -1,6 +1,11 @@
 import { Controller, Get, UseGuards, Res, Req } from '@nestjs/common';
 import type { Response } from 'express';
-import { ApiTags, ApiOperation, ApiBearerAuth, ApiSecurity } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiBearerAuth,
+  ApiSecurity,
+} from '@nestjs/swagger';
 import { Public, ApiOkResponseEnvelope } from '@/presentation/decorators';
 import { GoogleAuthGuard } from '@/presentation/middleware/guards';
 import { buildVersionedRoute } from '@/presentation/utils/versioned-route.util';
@@ -17,7 +22,7 @@ export class OAuthController {
   @Get('google')
   @UseGuards(GoogleAuthGuard)
   @ApiOperation({ summary: 'Google OAuth sign-in' })
-  async googleAuth() {
+  googleAuth() {
     return;
   }
 
@@ -26,7 +31,7 @@ export class OAuthController {
   @UseGuards(GoogleAuthGuard)
   @ApiOperation({ summary: 'Google OAuth callback' })
   @ApiOkResponseEnvelope(AuthSignInOutputDto)
-  async googleAuthCallback(
+  googleAuthCallback(
     @Req() req: AuthenticatedRequest,
     @Res({ passthrough: true }) response: Response,
   ) {

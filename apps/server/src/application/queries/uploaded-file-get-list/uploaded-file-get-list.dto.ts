@@ -10,4 +10,6 @@ export const UploadedFileFilterSchema = CursorPaginationRequestSchema.extend({
   maxSize: z.coerce.number().optional(),
 });
 
-export class UploadedFileFilterDto extends createZodDto(UploadedFileFilterSchema) {}
+export class UploadedFileFilterDto extends createZodDto(
+  UploadedFileFilterSchema,
+) {}

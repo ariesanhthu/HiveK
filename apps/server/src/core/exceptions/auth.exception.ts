@@ -33,3 +33,15 @@ export class InvalidUserTypeException extends BadRequestDomainException {
     super(message);
   }
 }
+
+export class WorkspaceAccessException extends ForbiddenDomainException {
+  constructor(message: string = 'User does not have access to this workspace') {
+    super(message);
+  }
+}
+
+export class EntitlementDeniedException extends ForbiddenDomainException {
+  constructor(message: string = 'User does not have the required entitlement') {
+    super(message);
+  }
+}

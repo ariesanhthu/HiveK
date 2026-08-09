@@ -8,4 +8,4 @@ export const PlatformFilterSchema = CursorPaginationRequestSchema.extend({
   apiStatus: z.enum(EPlatformApiStatus).optional(),
 });
 
-export class PlatformFilterDto extends createZodDto(PlatformFilterSchema) { }
+export class PlatformFilterDto extends createZodDto(PlatformFilterSchema) {}

@@ -8,8 +8,11 @@ import { NotificationType, NotificationChannel } from '@/core/enums';
 export class EnterpriseUserRmqController {
   constructor(private readonly commandBus: CommandBus) {}
 
-  @RmqHandler({ queue: 'enterprise_user_queue', pattern: 'enterprise.user.added' })
-  async handleUserAdded(data: any) {
+  @RmqHandler({
+    queue: 'enterprise_user_queue',
+    pattern: 'enterprise.user.added',
+  })
+  async handleUserAdded(data: Record<string, unknown>) {
     const { userId, enterpriseId, companyName } = data;
 
     // Dispatch notification command (In-app + Email/WS via event subscribers)
@@ -17,31 +20,34 @@ export class EnterpriseUserRmqController {
       new NotificationSendCommand({
         type: NotificationType.SYSTEM,
         title: 'Added to Enterprise',
-        content: `You have been added to enterprise ${companyName || enterpriseId}.`,
+        content: `You have been added to enterprise ${(companyName || enterpriseId) as string}.`,
         channels: [NotificationChannel.IN_APP, NotificationChannel.EMAIL],
         audience: {
           broadcastType: 'direct',
-          userIds: [userId],
+          userIds: [userId as string],
         },
-      })
+      }),
     );
   }
 
-  @RmqHandler({ queue: 'enterprise_user_queue', pattern: 'enterprise.user.revoked' })
-  async handleUserRevoked(data: any) {
+  @RmqHandler({
+    queue: 'enterprise_user_queue',
+    pattern: 'enterprise.user.revoked',
+  })
+  async handleUserRevoked(data: Record<string, unknown>) {
     const { userId, enterpriseId, companyName } = data;
 
     await this.commandBus.execute(
       new NotificationSendCommand({
         type: NotificationType.SYSTEM,
         title: 'Removed from Enterprise',
-        content: `Your access to enterprise ${companyName || enterpriseId} has been revoked.`,
+        content: `Your access to enterprise ${(companyName || enterpriseId) as string} has been revoked.`,
         channels: [NotificationChannel.IN_APP, NotificationChannel.EMAIL],
         audience: {
           broadcastType: 'direct',
-          userIds: [userId],
+          userIds: [userId as string],
         },
-      })
+      }),
     );
   }
 }

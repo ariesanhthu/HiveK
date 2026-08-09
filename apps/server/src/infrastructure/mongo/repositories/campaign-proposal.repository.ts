@@ -1,9 +1,16 @@
 import { Injectable, Inject } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types, ClientSession } from 'mongoose';
-import { CAMPAIGN_PROPOSAL_REPOSITORY, type ICampaignProposalRepository } from '@/core/interfaces/repositories';
+import {
+  CAMPAIGN_PROPOSAL_REPOSITORY,
+  type ICampaignProposalRepository,
+} from '@/core/interfaces/repositories';
 import { CampaignProposalRoot } from '@/core/aggregate-roots';
-import { MediaSlideVO, ProductItemVO, VoucherItemVO } from '@/core/value-objects';
+import {
+  MediaSlideVO,
+  ProductItemVO,
+  VoucherItemVO,
+} from '@/core/value-objects';
 import { CampaignProposalModel, CampaignProposalDocument } from '../schemas';
 import { Nullable } from '@/core/types';
 import { type IUnitOfWork, UNIT_OF_WORK } from '@/application/interfaces';
@@ -19,23 +26,34 @@ export class MongoCampaignProposalRepository implements ICampaignProposalReposit
   ) {}
 
   private get session(): ClientSession | undefined {
-    return (this.uow as MongoUnitOfWork).getSession() || undefined;
+    return (this.uow as unknown as MongoUnitOfWork).getSession() || undefined;
   }
 
   async findById(id: string): Promise<Nullable<CampaignProposalRoot>> {
-    const doc = await this.proposalModel.findById(id).session(this.session).exec();
+    const doc = await this.proposalModel
+      .findById(id)
+      .session(this.session)
+      .exec();
     return doc ? this.mapToDomain(doc) : null;
   }
 
   async findBySlug(slug: string): Promise<Nullable<CampaignProposalRoot>> {
-    const doc = await this.proposalModel.findOne({ slug }).session(this.session).exec();
+    const doc = await this.proposalModel
+      .findOne({ slug })
+      .session(this.session)
+      .exec();
     return doc ? this.mapToDomain(doc) : null;
   }
 
-  async findByCampaignId(campaignId: string): Promise<Nullable<CampaignProposalRoot>> {
-    const doc = await this.proposalModel.findOne({
-      campaign_id: new Types.ObjectId(campaignId),
-    } as Record<string, unknown>).session(this.session).exec();
+  async findByCampaignId(
+    campaignId: string,
+  ): Promise<Nullable<CampaignProposalRoot>> {
+    const doc = await this.proposalModel
+      .findOne({
+        campaign_id: new Types.ObjectId(campaignId),
+      } as Record<string, unknown>)
+      .session(this.session)
+      .exec();
     return doc ? this.mapToDomain(doc) : null;
   }
 
@@ -47,7 +65,10 @@ export class MongoCampaignProposalRepository implements ICampaignProposalReposit
       const saved = await created.save({ session: this.session });
       proposal.setId(saved._id.toString());
     } else {
-      await this.proposalModel.findByIdAndUpdate(proposal.id, data, { upsert: true }).session(this.session).exec();
+      await this.proposalModel
+        .findByIdAndUpdate(proposal.id, data, { upsert: true })
+        .session(this.session)
+        .exec();
     }
   }
 
@@ -82,9 +103,10 @@ export class MongoCampaignProposalRepository implements ICampaignProposalReposit
           price: product.price,
           currency: product.currency,
           imageId: product.image_id,
-          affiliateUrls: product.affiliate_urls instanceof Map
-            ? Object.fromEntries(product.affiliate_urls)
-            : (product.affiliate_urls || {}),
+          affiliateUrls:
+            product.affiliate_urls instanceof Map
+              ? Object.fromEntries(product.affiliate_urls)
+              : product.affiliate_urls || {},
         }),
       ),
       vouchers: (doc.vouchers || []).map((voucher) =>
@@ -97,9 +119,10 @@ export class MongoCampaignProposalRepository implements ICampaignProposalReposit
         }),
       ),
       status: doc.status,
-      metrics: doc.metrics instanceof Map
-        ? Object.fromEntries(doc.metrics)
-        : (doc.metrics || { totalViews: 0, totalClicks: 0 }),
+      metrics:
+        doc.metrics instanceof Map
+          ? Object.fromEntries(doc.metrics)
+          : doc.metrics || { totalViews: 0, totalClicks: 0 },
       deleteAt: doc.delete_at,
       deleteBy: doc.delete_by,
       createdAt: doc.created_at,
@@ -107,7 +130,9 @@ export class MongoCampaignProposalRepository implements ICampaignProposalReposit
     });
   }
 
-  private mapToPersistence(proposal: CampaignProposalRoot): Record<string, unknown> {
+  private mapToPersistence(
+    proposal: CampaignProposalRoot,
+  ): Record<string, unknown> {
     return {
       campaign_id: new Types.ObjectId(proposal.campaignId),
       slug: proposal.slug,

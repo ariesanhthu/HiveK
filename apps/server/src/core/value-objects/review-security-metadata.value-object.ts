@@ -11,11 +11,16 @@ export class ReviewSecurityMetadataVO extends BaseValueObject<ReviewSecurityMeta
     super(props);
   }
 
-  public static create(props: ReviewSecurityMetadataProps): ReviewSecurityMetadataVO {
+  public static create(
+    props: ReviewSecurityMetadataProps,
+  ): ReviewSecurityMetadataVO {
     if (!props.ipHash || props.ipHash.trim().length === 0) {
       throw new Error('IP hash is required');
     }
-    if (!props.browserFingerprint || props.browserFingerprint.trim().length === 0) {
+    if (
+      !props.browserFingerprint ||
+      props.browserFingerprint.trim().length === 0
+    ) {
       throw new Error('Browser fingerprint is required');
     }
     if (props.recaptchaScore < 0 || props.recaptchaScore > 1) {

@@ -316,3 +316,8 @@ export * from './auto-reply-rule-delete/auto-reply-rule-delete.handler';
 // Comment Webhook Handler
 export * from './comment-webhook-handle/comment-webhook-handle.command';
 export * from './comment-webhook-handle/comment-webhook-handle.handler';
+
+// Auth Select Workspace
+export * from './auth-select-workspace/auth-select-workspace.command';
+export * from './auth-select-workspace/auth-select-workspace.handler';
+export * from './auth-select-workspace/auth-select-workspace.dto';

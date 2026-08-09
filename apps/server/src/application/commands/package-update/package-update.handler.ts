@@ -1,19 +1,35 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { Inject } from '@nestjs/common';
 import { PackageUpdateCommand } from './package-update.command';
-import { PackageUpdateInputDto, type UpdateVariantDto } from './package-update.dto';
-import { PACKAGE_REPOSITORY, type IPackageRepository } from '@/core/interfaces/repositories';
+import {
+  PackageUpdateInputDto,
+  type UpdateVariantDto,
+} from './package-update.dto';
+import {
+  PACKAGE_REPOSITORY,
+  type IPackageRepository,
+} from '@/core/interfaces/repositories';
 import { PackageRoot } from '@/core/aggregate-roots';
 import { PackageVariantEntity } from '@/core/entities';
-import { PackageResponseDto, VariantDto, type GrantDto } from '@/application/dtos';
+import {
+  PackageResponseDto,
+  VariantDto,
+  type GrantDto,
+} from '@/application/dtos';
 import { PackageMapper } from '@/application/mappers';
 import { EVersionStatus, ECurrency } from '@/core/enums';
 import { GrantVO } from '@/core/value-objects';
-import { PackageNotFoundException, DuplicateVariantException } from '@/core/exceptions';
+import {
+  PackageNotFoundException,
+  DuplicateVariantException,
+} from '@/core/exceptions';
 import { type IUnitOfWork, UNIT_OF_WORK } from '@/application/interfaces';
 
 @CommandHandler(PackageUpdateCommand)
-export class PackageUpdateHandler implements ICommandHandler<PackageUpdateCommand, PackageResponseDto> {
+export class PackageUpdateHandler implements ICommandHandler<
+  PackageUpdateCommand,
+  PackageResponseDto
+> {
   constructor(
     @Inject(PACKAGE_REPOSITORY)
     private readonly packageRepository: IPackageRepository,
@@ -114,7 +130,7 @@ export class PackageUpdateHandler implements ICommandHandler<PackageUpdateComman
         price: v.price,
         priceAfterDiscount: v.priceAfterDiscount,
         tax: v.tax,
-        currency: v.currency as ECurrency,
+        currency: v.currency,
         extraGrants: this.mapGrantDtosToVOs(v.extraGrants),
       });
       pkg.variants.push(newVariant);
@@ -125,7 +141,9 @@ export class PackageUpdateHandler implements ICommandHandler<PackageUpdateComman
     const titles = new Set<string>();
     for (const v of pkg.variants) {
       if (titles.has(v.title)) {
-        throw new DuplicateVariantException(`Variant title '${v.title}' is duplicated.`);
+        throw new DuplicateVariantException(
+          `Variant title '${v.title}' is duplicated.`,
+        );
       }
       titles.add(v.title);
     }
@@ -141,7 +159,7 @@ export class PackageUpdateHandler implements ICommandHandler<PackageUpdateComman
           value: g.value,
           resetCycle: g.resetCycle,
           creditFallback: g.creditFallback,
-        })
+        }),
     );
   }
 }

@@ -6,9 +6,7 @@ import {
 } from '@/core/interfaces';
 
 @Injectable()
-export class SocialPageConnectorFactoryService
-  implements ISocialPageConnectorFactory
-{
+export class SocialPageConnectorFactoryService implements ISocialPageConnectorFactory {
   constructor(
     @Inject(SOCIAL_PAGE_CONNECTORS)
     private readonly connectors: Record<string, ISocialPageConnector>,

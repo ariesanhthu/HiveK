@@ -1,21 +1,38 @@
-import {
-  Controller,
-  Get,
-  UseGuards,
-  Query,
-  Res,
-  Inject,
-} from '@nestjs/common';
+import { Controller, Get, UseGuards, Query, Res, Inject } from '@nestjs/common';
 import { CommandBus } from '@nestjs/cqrs';
-import { ApiTags, ApiOperation, ApiBearerAuth, ApiSecurity } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiBearerAuth,
+  ApiSecurity,
+} from '@nestjs/swagger';
 import { buildVersionedRoute } from '@presentation/utils';
-import { JwtAuthGuard, RolesGuard, UserVerifiedGuard, StateAuthGuard } from '@/presentation/middleware/guards';
-import { CurrentUser, Roles, ApiOkResponseEnvelope } from '@/presentation/decorators';
+import {
+  JwtAuthGuard,
+  RolesGuard,
+  UserVerifiedGuard,
+  StateAuthGuard,
+} from '@/presentation/middleware/guards';
+import {
+  CurrentUser,
+  Roles,
+  ApiOkResponseEnvelope,
+} from '@/presentation/decorators';
 import { ERoleType, ESocialPlatformCode } from '@/core/enums';
-import { ENTERPRISE_REPOSITORY, type IEnterpriseRepository } from '@/core/interfaces/repositories';
+import {
+  ENTERPRISE_REPOSITORY,
+  type IEnterpriseRepository,
+} from '@/core/interfaces/repositories';
 import { SocialPageBulkConnectCommand } from '@/application/commands';
-import { type ISocialPageConnectorFactory, SOCIAL_PAGE_CONNECTOR_FACTORY } from '@/core/interfaces';
-import { AUTH_JWT_SERVICE, type IAuthJwtService, type IJwtPayload } from '@/application/interfaces/auth-jwt.interface';
+import {
+  type ISocialPageConnectorFactory,
+  SOCIAL_PAGE_CONNECTOR_FACTORY,
+} from '@/core/interfaces';
+import {
+  AUTH_JWT_SERVICE,
+  type IAuthJwtService,
+  type IJwtPayload,
+} from '@/application/interfaces/auth-jwt.interface';
 import { errorMessage } from '@/shared/utils';
 import { ConfigService } from '@nestjs/config';
 import { WebHook } from '@/presentation/decorators/webhook.decorator';
@@ -44,7 +61,7 @@ export class FacebookOAuthController {
     if (!enterprise) {
       throw new Error('User is not associated with any enterprise profile.');
     }
-    return enterprise.id!;
+    return enterprise.id;
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard, UserVerifiedGuard)
@@ -52,7 +69,7 @@ export class FacebookOAuthController {
   @Get('facebook/oauth')
   @ApiOperation({ summary: 'Get Facebook OAuth Redirect URL' })
   @ApiOkResponseEnvelope()
-  async getOauthUrl(@CurrentUser() user: IJwtPayload) {
+  getOauthUrl(@CurrentUser() user: IJwtPayload) {
     // Sign a short-lived JWT with the user's identity as the OAuth state
     // so the callback can verify and extract userId, email, role via StateAuthGuard
     const state = this.jwtService.sign(
@@ -67,14 +84,19 @@ export class FacebookOAuthController {
   @WebHook()
   @UseGuards(StateAuthGuard)
   @Get('facebook/callback')
-  @ApiOperation({ summary: 'Exchange Facebook OAuth code, bulk connect pages, then redirect to the frontend' })
+  @ApiOperation({
+    summary:
+      'Exchange Facebook OAuth code, bulk connect pages, then redirect to the frontend',
+  })
   async callback(
     @CurrentUser('sub') userId: string,
     @Query('code') code: string,
     @Res() res: Response,
   ): Promise<void> {
-    const redirectEndpoint = this.configService.get<string>('REDIRECT_ENDPOINT') || '/';
-    const redirectUri = this.configService.get<string>('FACEBOOK_CALLBACK_URL') || '';
+    const redirectEndpoint =
+      this.configService.get<string>('REDIRECT_ENDPOINT') || '/';
+    const redirectUri =
+      this.configService.get<string>('FACEBOOK_CALLBACK_URL') || '';
 
     try {
       // 1. Resolve Facebook connector
@@ -84,7 +106,8 @@ export class FacebookOAuthController {
       const userToken = await connector.exchangeCodeForToken(code, redirectUri);
 
       // 3. Exchange for 60-day long lived user token
-      const longLivedUserToken = await connector.exchangeForLongLivedToken(userToken);
+      const longLivedUserToken =
+        await connector.exchangeForLongLivedToken(userToken);
 
       // 4. Resolve enterprise from userId (set by StateAuthGuard from the JWT state param)
       const enterpriseId = await this.getEnterpriseId(userId);
@@ -108,7 +131,9 @@ export class FacebookOAuthController {
       // 7. Redirect to frontend on success
       res.redirect(`${redirectEndpoint}?success=true`);
     } catch (error: unknown) {
-      res.redirect(`${redirectEndpoint}?success=false&error=${encodeURIComponent(errorMessage(error))}`);
+      res.redirect(
+        `${redirectEndpoint}?success=false&error=${encodeURIComponent(errorMessage(error))}`,
+      );
     }
   }
 }

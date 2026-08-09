@@ -2,18 +2,39 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { AuthGoogleSignInCommand } from './auth-google-sign-in.command';
 import { AuthGoogleSignInOutputDto } from './auth-google-sign-in.dto';
 import { Inject } from '@nestjs/common';
-import { USER_REPOSITORY, ROLE_REPOSITORY } from '@/core/interfaces/repositories';
-import type { IUserRepository, IRoleRepository } from '@/core/interfaces/repositories';
+import {
+  USER_REPOSITORY,
+  ROLE_REPOSITORY,
+} from '@/core/interfaces/repositories';
+import type {
+  IUserRepository,
+  IRoleRepository,
+} from '@/core/interfaces/repositories';
 import { ERoleType } from '@/core/enums';
-import { KOLUserRoot, EnterpriseUserRoot, AdminRoot } from '@/core/aggregate-roots';
+import {
+  KOLUserRoot,
+  EnterpriseUserRoot,
+  AdminRoot,
+} from '@/core/aggregate-roots';
 import { AuthService } from '@/application/services/auth.service';
-import { UserDeletedException, RoleNotFoundException, InvalidUserTypeException } from '@/core/exceptions';
+import {
+  UserDeletedException,
+  RoleNotFoundException,
+  InvalidUserTypeException,
+} from '@/core/exceptions';
 import { PhoneNumberVO } from '@/core/value-objects/phone-number.value-object';
-import { type IUnitOfWork, UNIT_OF_WORK, EVENT_SERVICE } from '@/application/interfaces';
+import {
+  type IUnitOfWork,
+  UNIT_OF_WORK,
+  EVENT_SERVICE,
+} from '@/application/interfaces';
 import type { IEventService } from '@/application/interfaces';
 
 @CommandHandler(AuthGoogleSignInCommand)
-export class AuthGoogleSignInCommandHandler implements ICommandHandler<AuthGoogleSignInCommand, AuthGoogleSignInOutputDto> {
+export class AuthGoogleSignInCommandHandler implements ICommandHandler<
+  AuthGoogleSignInCommand,
+  AuthGoogleSignInOutputDto
+> {
   constructor(
     @Inject(USER_REPOSITORY)
     private readonly userRepository: IUserRepository,
@@ -24,9 +45,11 @@ export class AuthGoogleSignInCommandHandler implements ICommandHandler<AuthGoogl
     private readonly eventService: IEventService,
     @Inject(UNIT_OF_WORK)
     private readonly uow: IUnitOfWork,
-  ) { }
+  ) {}
 
-  async execute(command: AuthGoogleSignInCommand): Promise<AuthGoogleSignInOutputDto> {
+  async execute(
+    command: AuthGoogleSignInCommand,
+  ): Promise<AuthGoogleSignInOutputDto> {
     return this.uow.execute(async () => {
       const { input } = command;
 
@@ -56,7 +79,7 @@ export class AuthGoogleSignInCommandHandler implements ICommandHandler<AuthGoogl
           passwordHash: '',
           fullName: input.displayName || 'Google User',
           type,
-          roleId: defaultRole.id!,
+          roleId: defaultRole.id,
           googleId: input.googleId,
           isEmailVerified: true,
         };
@@ -72,18 +95,21 @@ export class AuthGoogleSignInCommandHandler implements ICommandHandler<AuthGoogl
             user = AdminRoot.create(commonProps);
             break;
           default:
-            throw new InvalidUserTypeException(`Invalid user type: ${type}`);
+            throw new InvalidUserTypeException(
+              `Invalid user type: ${String(type)}`,
+            );
         }
       }
 
       const payload = {
-        sub: user.id!,
+        sub: user.id,
         email: user.email,
         role: user.roleId,
         type: user.type,
       };
 
-      const { accessToken, refreshToken } = await this.authService.generateTokens(payload);
+      const { accessToken, refreshToken } =
+        this.authService.generateTokens(payload);
 
       user.updateRefreshToken(refreshToken);
       await this.userRepository.save(user);

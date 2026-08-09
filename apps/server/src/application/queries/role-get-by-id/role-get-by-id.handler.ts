@@ -1,12 +1,18 @@
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { Inject } from '@nestjs/common';
 import { RoleNotFoundException } from '@/core/exceptions';
-import { ROLE_READ_SERVICE, type IRoleReadService } from '@/application/interfaces';
+import {
+  ROLE_READ_SERVICE,
+  type IRoleReadService,
+} from '@/application/interfaces';
 import { RoleDto } from '@/application/dtos';
 import { RoleGetByIdQuery } from './role-get-by-id.query';
 
 @QueryHandler(RoleGetByIdQuery)
-export class RoleGetByIdQueryHandler implements IQueryHandler<RoleGetByIdQuery, RoleDto> {
+export class RoleGetByIdQueryHandler implements IQueryHandler<
+  RoleGetByIdQuery,
+  RoleDto
+> {
   constructor(
     @Inject(ROLE_READ_SERVICE)
     private readonly readService: IRoleReadService,

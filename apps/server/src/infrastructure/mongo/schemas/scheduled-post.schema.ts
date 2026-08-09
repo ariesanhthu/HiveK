@@ -29,7 +29,12 @@ export class ScheduledPostModel {
   @Prop({ type: Date, required: true })
   scheduled_at: Date;
 
-  @Prop({ type: String, enum: Object.values(EPostStatus), required: true, default: EPostStatus.DRAFT })
+  @Prop({
+    type: String,
+    enum: Object.values(EPostStatus),
+    required: true,
+    default: EPostStatus.DRAFT,
+  })
   status: EPostStatus;
 
   @Prop({ type: Date, default: null })
@@ -55,5 +60,6 @@ export class ScheduledPostModel {
 }
 
 export type ScheduledPostDocument = HydratedDocument<ScheduledPostModel>;
-export const ScheduledPostSchema = SchemaFactory.createForClass(ScheduledPostModel);
+export const ScheduledPostSchema =
+  SchemaFactory.createForClass(ScheduledPostModel);
 ScheduledPostSchema.plugin(softDeletePlugin);

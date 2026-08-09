@@ -1,14 +1,24 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { Inject } from '@nestjs/common';
-import { CAMPAIGN_PROPOSAL_REPOSITORY, type ICampaignProposalRepository } from '@/core/interfaces/repositories';
+import {
+  CAMPAIGN_PROPOSAL_REPOSITORY,
+  type ICampaignProposalRepository,
+} from '@/core/interfaces/repositories';
 import { CampaignProposalRoot } from '@/core/aggregate-roots';
-import { MediaSlideVO, ProductItemVO, VoucherItemVO } from '@/core/value-objects';
+import {
+  MediaSlideVO,
+  ProductItemVO,
+  VoucherItemVO,
+} from '@/core/value-objects';
 import { ProposalCreateCommand } from './proposal-create.command';
 import { ProposalDto } from '@/application/dtos';
 import { ProposalMapper } from '@/application/mappers';
 
 @CommandHandler(ProposalCreateCommand)
-export class ProposalCreateCommandHandler implements ICommandHandler<ProposalCreateCommand, ProposalDto> {
+export class ProposalCreateCommandHandler implements ICommandHandler<
+  ProposalCreateCommand,
+  ProposalDto
+> {
   constructor(
     @Inject(CAMPAIGN_PROPOSAL_REPOSITORY)
     private readonly proposalRepository: ICampaignProposalRepository,
@@ -45,7 +55,10 @@ export class ProposalCreateCommandHandler implements ICommandHandler<ProposalCre
           platform: voucher.platform,
           discountValue: voucher.discountValue,
           description: voucher.description,
-          expirationDate: voucher.expirationDate instanceof Date ? voucher.expirationDate : new Date(voucher.expirationDate),
+          expirationDate:
+            voucher.expirationDate instanceof Date
+              ? voucher.expirationDate
+              : new Date(voucher.expirationDate as string),
         }),
       ),
     });

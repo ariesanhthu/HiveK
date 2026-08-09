@@ -1,4 +1,4 @@
 export enum EMomoLanguage {
-	VI = 'vi',
-	EN = 'en',
+  VI = 'vi',
+  EN = 'en',
 }

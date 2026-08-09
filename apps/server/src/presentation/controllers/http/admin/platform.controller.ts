@@ -40,7 +40,12 @@ import {
 } from '@/application/dtos';
 import { PaginatedResponseDto } from '@/application/dtos/pagination.dto';
 import { JwtAuthGuard, RolesGuard } from '@/presentation/middleware/guards';
-import { Public, Roles, ApiOkResponseEnvelope, ApiPaginatedResponseEnvelope } from '@/presentation/decorators';
+import {
+  Public,
+  Roles,
+  ApiOkResponseEnvelope,
+  ApiPaginatedResponseEnvelope,
+} from '@/presentation/decorators';
 import { ERoleType } from '@/core/enums/role-type.enum';
 
 @ApiTags('ADMIN-platforms')
@@ -121,4 +126,3 @@ export class PlatformAdminController {
     return this.commandBus.execute(new PlatformRestoreCommand(id));
   }
 }
-

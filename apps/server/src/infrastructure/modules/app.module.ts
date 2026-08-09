@@ -9,7 +9,10 @@ import { WebSocketModule } from '@/infrastructure/websocket/websocket.module';
 import { APP_PIPE, APP_GUARD, APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
 import { ZodValidationPipe } from 'nestjs-zod';
 import { ThrottlerModule } from '@nestjs/throttler';
-import { GqlThrottlerGuard, ApiKeyGuard } from '../../presentation/middleware/guards';
+import {
+  GqlThrottlerGuard,
+  ApiKeyGuard,
+} from '../../presentation/middleware/guards';
 import { InfrastructureModule } from './infrastructure.module';
 import { PlatformModule } from './platform.module';
 import { KolProfileModule } from './kol-profile.module';
@@ -23,7 +26,10 @@ import { PublicReviewModule } from './public-review.module';
 import { TestRmqHandler } from '../../presentation/controllers/rmq/test-rmq.controller';
 import { GraphqlModule } from '../graphql';
 import { HttpExceptionFilter } from '@/presentation/middleware/filters';
-import { LoggingInterceptor, TransformInterceptor } from '@/presentation/middleware/interceptors';
+import {
+  LoggingInterceptor,
+  TransformInterceptor,
+} from '@/presentation/middleware/interceptors';
 import { ScheduleModule } from '@nestjs/schedule';
 import { RedisCacheModule } from '../cache/redis/redis-cache.module';
 import { EventsModule } from '../events/events.module';
@@ -36,6 +42,7 @@ import { SocialNetworkModule } from '@/infrastructure/social-network/common/soci
   imports: [
     // ConfigModule.forRoot({ isGlobal: true }),
     InfrastructureModule,
+    RedisCacheModule,
     ScheduleModule.forRoot(),
     EventEmitterModule.forRoot(),
     MongoModule,
@@ -55,7 +62,6 @@ import { SocialNetworkModule } from '@/infrastructure/social-network/common/soci
     RabbitMQModule,
     WebSocketModule,
     GraphqlModule,
-    RedisCacheModule,
     EventsModule,
     BillingModule,
     SubscriptionModule,
@@ -71,19 +77,19 @@ import { SocialNetworkModule } from '@/infrastructure/social-network/common/soci
   providers: [
     {
       provide: APP_PIPE,
-      useClass: ZodValidationPipe
+      useClass: ZodValidationPipe,
     },
     {
       provide: APP_FILTER,
-      useClass: HttpExceptionFilter
+      useClass: HttpExceptionFilter,
     },
     {
       provide: APP_INTERCEPTOR,
-      useClass: LoggingInterceptor
+      useClass: LoggingInterceptor,
     },
     {
       provide: APP_INTERCEPTOR,
-      useClass: TransformInterceptor
+      useClass: TransformInterceptor,
     },
     {
       provide: APP_GUARD,
@@ -93,7 +99,7 @@ import { SocialNetworkModule } from '@/infrastructure/social-network/common/soci
     //   provide: APP_GUARD,
     //   useClass: GqlThrottlerGuard,
     // },
-    TestRmqHandler
+    TestRmqHandler,
   ],
 })
 export class AppModule {}

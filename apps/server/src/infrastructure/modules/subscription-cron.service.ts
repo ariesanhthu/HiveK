@@ -38,12 +38,15 @@ export class SubscriptionCronService {
     this.logger.log('Running resetExpiredCyclesCron...');
     const now = new Date();
     await this.uow.execute(async () => {
-      const expiredUsages = await this.quotaUsageRepository.findExpiredUsages(now);
+      const expiredUsages =
+        await this.quotaUsageRepository.findExpiredUsages(now);
       for (const usage of expiredUsages) {
         const resetKeys = usage.resetExpiredCycles(now);
         if (resetKeys.length > 0) {
           await this.quotaUsageRepository.save(usage);
-          this.logger.log(`Reset expired cycles for enterprise ${usage.enterpriseId}: keys [${resetKeys.join(', ')}]`);
+          this.logger.log(
+            `Reset expired cycles for enterprise ${usage.enterpriseId}: keys [${resetKeys.join(', ')}]`,
+          );
         }
       }
     });
@@ -54,7 +57,8 @@ export class SubscriptionCronService {
     this.logger.log('Running checkSubscriptionExpiryCron...');
     const now = new Date();
     await this.uow.execute(async () => {
-      const expiredSubs = await this.subscriptionRepository.findExpiredSubscriptions(now);
+      const expiredSubs =
+        await this.subscriptionRepository.findExpiredSubscriptions(now);
       for (const sub of expiredSubs) {
         if (sub.planItem && !sub.planItem.autoRenew) {
           const originalVersion = sub.version;
@@ -65,18 +69,25 @@ export class SubscriptionCronService {
           sub.expirePlan();
 
           const addonPackageIds = sub.addonItems.map((a) => a.packageId);
-          const addonPackages = (await Promise.all(
-            addonPackageIds.map((id) => this.packageRepository.findById(id))
-          )).filter((p): p is PackageRoot => p !== null);
+          const addonPackages = (
+            await Promise.all(
+              addonPackageIds.map((id) => this.packageRepository.findById(id)),
+            )
+          ).filter((p): p is PackageRoot => p !== null);
           const addonPackageMap = new Map(addonPackages.map((p) => [p.id, p]));
 
           const addonsGrantsMap = new Map<string, GrantVO[]>();
           for (const addon of sub.addonItems) {
             const addonPkg = addonPackageMap.get(addon.packageId);
             if (addonPkg) {
-              const addonVariant = addonPkg.variants.find((v) => v.id === addon.packageVariantId);
+              const addonVariant = addonPkg.variants.find(
+                (v) => v.id === addon.packageVariantId,
+              );
               if (addonVariant) {
-                const grants = [...addonPkg.baseGrants, ...addonVariant.extraGrants];
+                const grants = [
+                  ...addonPkg.baseGrants,
+                  ...addonVariant.extraGrants,
+                ];
                 addonsGrantsMap.set(addon.packageVariantId, grants);
               }
             }
@@ -85,10 +96,14 @@ export class SubscriptionCronService {
           sub.recomputeGrants([], addonsGrantsMap);
           sub.updateComputedFields(sub.computedGrants, sub.computedPermissions);
 
-          await this.subscriptionRepository.updateWithVersion(sub.id!, originalVersion, sub);
+          await this.subscriptionRepository.updateWithVersion(
+            sub.id,
+            originalVersion,
+            sub,
+          );
 
           const history = SubscriptionHistoryEntity.create({
-            subscriptionId: sub.id!,
+            subscriptionId: sub.id,
             userId: sub.userId,
             billId: undefined,
             actorId: undefined,
@@ -106,9 +121,11 @@ export class SubscriptionCronService {
           });
 
           await this.historyRepository.save(history);
-          sub.recordSubscriptionUpdated(history.id!, history.details);
+          sub.recordSubscriptionUpdated(history.id, history.details);
 
-          this.logger.log(`Subscription plan expired for enterprise ${sub.userId}, plan ${oldPlanId}`);
+          this.logger.log(
+            `Subscription plan expired for enterprise ${sub.userId}, plan ${oldPlanId}`,
+          );
         }
       }
     });

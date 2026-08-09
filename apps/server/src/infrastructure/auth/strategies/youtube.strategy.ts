@@ -1,3 +1,5 @@
+import type { Request } from 'express';
+import { Profile } from 'passport';
 import { Strategy } from 'passport-google-oauth20';
 import { PassportStrategy } from '@nestjs/passport';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
@@ -13,17 +15,34 @@ export class YoutubeStrategy extends PassportStrategy(Strategy, 'youtube') {
   ) {
     super({
       clientID: configService.get<string>('YOUTUBE_CLIENT_ID') || 'dummy-id',
-      clientSecret: configService.get<string>('YOUTUBE_CLIENT_SECRET') || 'dummy-secret',
-      callbackURL: configService.get<string>('YOUTUBE_CALLBACK_URL') || 'http://localhost/dummy-callback',
-      scope: ['email', 'profile', 'https://www.googleapis.com/auth/youtube.readonly'],
+      clientSecret:
+        configService.get<string>('YOUTUBE_CLIENT_SECRET') || 'dummy-secret',
+      callbackURL:
+        configService.get<string>('YOUTUBE_CALLBACK_URL') ||
+        'http://localhost/dummy-callback',
+      scope: [
+        'email',
+        'profile',
+        'https://www.googleapis.com/auth/youtube.readonly',
+      ],
       passReqToCallback: true,
     });
   }
 
-  async validate(req: any, accessToken: string, refreshToken: string, profile: any): Promise<any> {
+  async validate(
+    req: Request & {
+      user?: { sub?: string; id?: string };
+      query: { state?: string };
+    },
+    accessToken: string,
+    refreshToken: string,
+    profile: Profile,
+  ): Promise<unknown> {
     const userId = req.query.state;
-    if (!userId) {  
-      throw new UnauthorizedException('No user state provided for verification');
+    if (!userId) {
+      throw new UnauthorizedException(
+        'No user state provided for verification',
+      );
     }
 
     const { id, emails, displayName } = profile;

@@ -1,6 +1,4 @@
 import { jest } from '@jest/globals';
-import { AuthService } from '@/application/services/auth.service';
-import { OutboxService } from '@/application/services/outbox.service';
 import { type IUnitOfWork } from '@/application/interfaces/uow.interface';
 import { CommandBus, QueryBus, EventBus } from '@nestjs/cqrs';
 import { ConfigService } from '@nestjs/config';
@@ -10,36 +8,31 @@ import { type IRoleReadService, type IAuthJwtService, type IMailerService, type 
  * Centralized mock factories for all application service interfaces.
  */
 
-export const createMockAuthService = (): jest.Mocked<AuthService> => ({
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const f = (): any => jest.fn();
+
+export const createMockAuthService = (): any => ({
   normalizeEmail: jest.fn((email: string) => email.trim().toLowerCase()),
   hashPassword: jest.fn().mockResolvedValue('$2b$10$hashedPasswordString'),
   comparePassword: jest.fn(),
-  generateTokens: jest.fn().mockResolvedValue({
-    accessToken: 'mock-access-token',
-    refreshToken: 'mock-refresh-token',
-  }),
-  jwtService: {} as any,
-  configService: {} as any,
+  generateTokens: jest.fn().mockResolvedValue({ accessToken: 'mock-access-token', refreshToken: 'mock-refresh-token' }),
+  jwtService: {},
+  configService: {},
 });
 
-export const createMockOutboxService = (): jest.Mocked<OutboxService> => ({
-  enqueue: jest.fn().mockResolvedValue(undefined),
-  enqueueMany: jest.fn().mockResolvedValue(undefined),
-});
-
-export const createMockEventService = (): jest.Mocked<IEventService> => ({
+export const createMockEventService = (): any => ({
   publishEvents: jest.fn().mockResolvedValue(undefined),
 });
 
-export const createMockJwtService = (): jest.Mocked<IAuthJwtService> => ({
+export const createMockJwtService = (): any => ({
   sign: jest.fn().mockReturnValue('mock-signed-jwt-token'),
-  verify: jest.fn().mockReturnValue({ sub: 'user-1', email: 'test@test.com', role: 'role-1', type: 'kol' } as any),
-  decode: jest.fn(),
-  extractTokenFromHeader: jest.fn(),
-  extractTokenFromCookie: jest.fn(),
-  verifyAuthHeader: jest.fn(),
-  verifyHandshake: jest.fn(),
-  verifyRequest: jest.fn(),
+  verify: jest.fn().mockReturnValue({ sub: 'user-1', email: 'test@test.com', role: 'role-1', type: 'kol' }),
+  decode: f(),
+  extractTokenFromHeader: f(),
+  extractTokenFromCookie: f(),
+  verifyAuthHeader: f(),
+  verifyHandshake: f(),
+  verifyRequest: f(),
 });
 
 export const createMockLoggerService = () => ({
@@ -50,7 +43,7 @@ export const createMockLoggerService = () => ({
   debug: jest.fn(),
 });
 
-export const createMockMailerService = (): jest.Mocked<IMailerService> => ({
+export const createMockMailerService = (): any => ({
   sendMail: jest.fn().mockResolvedValue(undefined),
 });
 
@@ -60,10 +53,10 @@ export const createMockMessageQueueService = () => ({
   isHealthy: jest.fn().mockReturnValue(true),
 });
 
-export const createMockWebSocketService = (): jest.Mocked<IWebSocketService> => ({
-  emitToUser: jest.fn(),
-  broadcastToRoom: jest.fn(),
-  broadcastAll: jest.fn(),
+export const createMockWebSocketService = (): any => ({
+  emitToUser: f(),
+  broadcastToRoom: f(),
+  broadcastAll: f(),
   disconnectUser: jest.fn().mockResolvedValue(undefined),
 });
 
@@ -73,26 +66,26 @@ export const createMockStorageService = () => ({
   getUrl: jest.fn().mockReturnValue('https://cloudinary.com/test.jpg'),
 });
 
-export const createMockUnitOfWork = (): jest.Mocked<IUnitOfWork> => ({
+export const createMockUnitOfWork = (): any => ({
   startTransaction: jest.fn().mockResolvedValue(undefined),
   commitTransaction: jest.fn().mockResolvedValue(undefined),
   rollbackTransaction: jest.fn().mockResolvedValue(undefined),
   execute: jest.fn((fn: any) => fn()),
 });
 
-export const createMockCommandBus = (): jest.Mocked<Partial<CommandBus>> => ({
+export const createMockCommandBus = (): any => ({
   execute: jest.fn(),
 });
 
-export const createMockQueryBus = (): jest.Mocked<Partial<QueryBus>> => ({
+export const createMockQueryBus = (): any => ({
   execute: jest.fn(),
 });
 
-export const createMockEventBus = (): jest.Mocked<Partial<EventBus>> => ({
+export const createMockEventBus = (): any => ({
   publish: jest.fn(),
 });
 
-export const createMockConfigService = (): jest.Mocked<Partial<ConfigService>> => ({
+export const createMockConfigService = (): any => ({
   get: jest.fn((key: string, defaultValue?: unknown) => {
     const config: Record<string, unknown> = {
       JWT_ACCESS_EXPIRATION_MINUTES: 30,
@@ -109,7 +102,7 @@ export const createMockConfigService = (): jest.Mocked<Partial<ConfigService>> =
       CLOUDINARY_API_SECRET: 'test-secret',
     };
     return config[key] ?? defaultValue;
-  }) as any,
+  }),
 });
 
 /**
@@ -121,7 +114,7 @@ export const createMockUserReadService = () => ({
   findAll: jest.fn(),
 });
 
-export const createMockRoleReadService = (): jest.Mocked<Partial<IRoleReadService>> => ({
+export const createMockRoleReadService = (): any => ({
   findById: jest.fn(),
   findAll: jest.fn().mockResolvedValue({ data: [], total: 0, page: 1, limit: 20 }),
 });
@@ -139,6 +132,7 @@ export const createMockCampaignParticipantReadService = () => ({
 export const createMockEnterpriseReadService = () => ({
   findById: jest.fn(),
   findAll: jest.fn(),
+  findByUserIdOrMember: jest.fn().mockResolvedValue({ data: [] }),
 });
 
 export const createMockKolProfileReadService = () => ({

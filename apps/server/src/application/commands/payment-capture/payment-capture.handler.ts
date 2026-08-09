@@ -1,19 +1,42 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { Inject } from '@nestjs/common';
 import { PaymentCaptureCommand } from './payment-capture.command';
-import { PAYMENT_REPOSITORY, type IPaymentRepository } from '@/core/interfaces/repositories';
-import { BILL_REPOSITORY, type IBillRepository } from '@/core/interfaces/repositories';
-import { PAYMENT_PROVIDER_REPOSITORY, type IPaymentProviderRepository } from '@/core/interfaces/repositories';
-import { PAYMENT_PROVIDER_DISCOVERY, type IPaymentProviderDiscovery } from '@/core/interfaces/services/payment-provider-discovery.interface';
+import {
+  PAYMENT_REPOSITORY,
+  type IPaymentRepository,
+} from '@/core/interfaces/repositories';
+import {
+  BILL_REPOSITORY,
+  type IBillRepository,
+} from '@/core/interfaces/repositories';
+import {
+  PAYMENT_PROVIDER_REPOSITORY,
+  type IPaymentProviderRepository,
+} from '@/core/interfaces/repositories';
+import {
+  PAYMENT_PROVIDER_DISCOVERY,
+  type IPaymentProviderDiscovery,
+} from '@/core/interfaces/services/payment-provider-discovery.interface';
 import { type IUnitOfWork, UNIT_OF_WORK } from '@/application/interfaces';
 import { PaymentService } from '@/application/services';
 import { PaymentTransactionEntity } from '@/core/entities';
-import { EPaymentTransactionType, ETransactionSource, ETransactionStatus, ECurrency } from '@/core/enums';
+import {
+  EPaymentTransactionType,
+  ETransactionSource,
+  ETransactionStatus,
+  ECurrency,
+} from '@/core/enums';
 import { MoneyVO } from '@/core/value-objects';
-import { PaymentNotFoundException, BillNotFoundException } from '@/core/exceptions';
+import {
+  PaymentNotFoundException,
+  BillNotFoundException,
+} from '@/core/exceptions';
 
 @CommandHandler(PaymentCaptureCommand)
-export class PaymentCaptureHandler implements ICommandHandler<PaymentCaptureCommand, void> {
+export class PaymentCaptureHandler implements ICommandHandler<
+  PaymentCaptureCommand,
+  void
+> {
   constructor(
     @Inject(PAYMENT_REPOSITORY)
     private readonly paymentRepository: IPaymentRepository,
@@ -49,41 +72,50 @@ export class PaymentCaptureHandler implements ICommandHandler<PaymentCaptureComm
       }
 
       // 2. Fetch provider strategy
-      const provider = await this.providerRepository.findById(attempt.paymentProviderId);
+      const provider = await this.providerRepository.findById(
+        attempt.paymentProviderId,
+      );
       if (!provider) {
         throw new Error('Payment provider not found.');
       }
 
-      const providerInstance = this.providerDiscovery.findProvider(provider.code);
+      const providerInstance = this.providerDiscovery.findProvider(
+        provider.code,
+      );
       if (!providerInstance?.capture) {
-        throw new Error(`Provider strategy ${provider.code} does not support capture.`);
+        throw new Error(
+          `Provider strategy ${provider.code} does not support capture.`,
+        );
       }
 
       // 3. Call gateway capture API
       const result = await providerInstance.capture(
         providerTransactionId,
-        attempt.id!,
+        attempt.id,
         payment.amount.amount,
-        payment.amount.currency
+        payment.amount.currency,
       );
 
       // 4. Record CAPTURE transaction
       const transaction = PaymentTransactionEntity.fromProvider({
         transactionType: EPaymentTransactionType.CAPTURE,
         transactionSource: ETransactionSource.API,
-        status: result.data.isSuccess ? ETransactionStatus.SUCCESS : ETransactionStatus.FAILED,
+        status: result.data.isSuccess
+          ? ETransactionStatus.SUCCESS
+          : ETransactionStatus.FAILED,
         amount: payment.amount,
-        providerTransactionId: result.data.transactionId || providerTransactionId,
+        providerTransactionId:
+          result.data.transactionId || providerTransactionId,
         requestPayload: result.requestPayload,
         responsePayload: result.responsePayload,
-        requestHeaders: result.requestHeaders as any,
-        responseHeaders: result.responseHeaders as any,
+        requestHeaders: result.requestHeaders as Record<string, string>,
+        responseHeaders: result.responseHeaders as Record<string, string>,
         requestTimestamp: result.requestTimestamp,
         responseTimestamp: result.responseTimestamp,
         description: 'Capture transaction request',
       });
 
-      this.paymentService.processTransaction(payment, attempt.id!, transaction);
+      this.paymentService.processTransaction(payment, attempt.id, transaction);
 
       // 5. Update bill status if capture successful
       if (result.data.isSuccess && payment.billId) {

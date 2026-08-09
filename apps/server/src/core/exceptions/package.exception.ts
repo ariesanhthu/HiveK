@@ -17,7 +17,7 @@ export class PackageDeactivationNotAllowedException extends DomainException {
     super(
       packageId
         ? `Deactivation not allowed for package ${packageId} because it is in use`
-        : `Deactivation not allowed because it is in use`
+        : `Deactivation not allowed because it is in use`,
     );
   }
 }
@@ -30,7 +30,9 @@ export class PackageHasActiveVersionException extends DomainException {
 
 export class PackageInUseException extends DomainException {
   constructor(packageId: string) {
-    super(`Package ${packageId} is currently in use and cannot be modified or deleted`);
+    super(
+      `Package ${packageId} is currently in use and cannot be modified or deleted`,
+    );
   }
 }
 

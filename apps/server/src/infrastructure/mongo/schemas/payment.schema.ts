@@ -67,8 +67,12 @@ class PaymentTransactionSchema {
   })
   id?: string;
 }
-const PaymentTransactionSchemaFactory = SchemaFactory.createForClass(PaymentTransactionSchema);
-PaymentTransactionSchemaFactory.virtual('id').get(function (this: { _id?: Types.ObjectId }) {
+const PaymentTransactionSchemaFactory = SchemaFactory.createForClass(
+  PaymentTransactionSchema,
+);
+PaymentTransactionSchemaFactory.virtual('id').get(function (this: {
+  _id?: Types.ObjectId;
+}) {
   return this._id;
 });
 
@@ -119,8 +123,11 @@ class PaymentAttemptSchema {
   })
   id?: string;
 }
-const PaymentAttemptSchemaFactory = SchemaFactory.createForClass(PaymentAttemptSchema);
-PaymentAttemptSchemaFactory.virtual('id').get(function (this: { _id?: Types.ObjectId }) {
+const PaymentAttemptSchemaFactory =
+  SchemaFactory.createForClass(PaymentAttemptSchema);
+PaymentAttemptSchemaFactory.virtual('id').get(function (this: {
+  _id?: Types.ObjectId;
+}) {
   return this._id;
 });
 

@@ -10,17 +10,17 @@ import { errorMessage } from '@/shared/utils';
  * Handles direct AMQP connection, channel management, and message publishing
  */
 export class RawRabbitMQProducerClient {
-  private connection: amqp.Connection | null | any = null;
+  private connection: amqp.ChannelModel | null = null;
   private channel: amqp.ConfirmChannel | null = null;
   private isConnected = false;
   private connectionAttempts = 0;
   private readonly config: RabbitMQProducerConfig;
-  private readonly logger: ILoggerService
+  private readonly logger: ILoggerService;
 
   constructor(config: RabbitMQProducerConfig, logger: ILoggerService) {
     this.config = config;
     this.logger = logger;
-    this.logger.setContext(RawRabbitMQProducerClient.name)
+    this.logger.setContext(RawRabbitMQProducerClient.name);
   }
 
   /**
@@ -33,20 +33,22 @@ export class RawRabbitMQProducerClient {
     }
 
     try {
-      this.logger.log(`Connecting to RabbitMQ at ${this.config.connection.vhost}...`);
+      this.logger.log(
+        `Connecting to RabbitMQ at ${this.config.connection.vhost}...`,
+      );
       this.connection = await amqp.connect(this.config.connection.uri);
 
       // Handle connection errors
       this.connection.on('error', (error) => {
         this.logger.error(`RabbitMQ Connection Error: ${error.message}`);
         this.isConnected = false;
-        this.reconnectWithBackoff();
+        void this.reconnectWithBackoff();
       });
 
       this.connection.on('close', () => {
         this.logger.warn('RabbitMQ Connection closed');
         this.isConnected = false;
-        this.reconnectWithBackoff();
+        void this.reconnectWithBackoff();
       });
 
       // Create ConfirmChannel for publisher confirms
@@ -65,11 +67,13 @@ export class RawRabbitMQProducerClient {
       this.connectionAttempts = 0;
       this.logger.log(`✅ Connected to RabbitMQ successfully`);
     } catch (error) {
-      this.logger.error(`Failed to connect to RabbitMQ: ${errorMessage(error)}. Retrying in background...`);
+      this.logger.error(
+        `Failed to connect to RabbitMQ: ${errorMessage(error)}. Retrying in background...`,
+      );
       this.isConnected = false;
 
       // Start background reconnection since the initial attempt failed
-      this.reconnectWithBackoff();
+      void this.reconnectWithBackoff();
     }
   }
 
@@ -89,7 +93,9 @@ export class RawRabbitMQProducerClient {
       this.isConnected = false;
       this.logger.log('Disconnected from RabbitMQ');
     } catch (error) {
-      this.logger.error(`Error disconnecting from RabbitMQ: ${errorMessage(error)}`);
+      this.logger.error(
+        `Error disconnecting from RabbitMQ: ${errorMessage(error)}`,
+      );
     }
   }
 
@@ -107,10 +113,10 @@ export class RawRabbitMQProducerClient {
    * Publish message to exchange with routing key
    * Formats message in NestJS RMQ protocol format so consumers can recognize the pattern
    */
-  async publish<T = any>(
+  async publish<T = unknown>(
     routingKey: string,
     message: T,
-    options?: PublishOptions
+    options?: PublishOptions,
   ): Promise<void> {
     await this.ensureConnected();
 
@@ -131,22 +137,22 @@ export class RawRabbitMQProducerClient {
       const publishOptions = this.buildPublishOptions(options);
 
       return new Promise((resolve, reject) => {
-        this.channel!.publish(
+        this.channel.publish(
           this.config.exchange_contract.name,
           routingKey,
           buffer,
           publishOptions,
-          (error: Error | null, ok?: any) => {
+          (error: Error | null, ok?: unknown) => {
             if (error) {
               this.logger.error(`Failed to publish message: ${error.message}`);
               reject(error);
             } else {
               this.logger.debug(
-                `Message published successfully to routing key: ${routingKey}`
+                `Message published successfully to routing key: ${routingKey}`,
               );
               resolve();
             }
-          }
+          },
         );
       });
     } catch (error) {
@@ -172,9 +178,7 @@ export class RawRabbitMQProducerClient {
         autoDelete: options.autoDelete,
       });
 
-      this.logger.debug(
-        `Exchange "${name}" (${type}) declared successfully`
-      );
+      this.logger.debug(`Exchange "${name}" (${type}) declared successfully`);
     } catch (error) {
       this.logger.error(`Failed to declare exchange: ${errorMessage(error)}`);
       throw error;
@@ -187,20 +191,24 @@ export class RawRabbitMQProducerClient {
   private async reconnectWithBackoff(): Promise<void> {
     const config = this.config.connection.reconnect;
 
-    if (config.max_retries !== -1 && this.connectionAttempts >= config.max_retries) {
+    if (
+      config.max_retries !== -1 &&
+      this.connectionAttempts >= config.max_retries
+    ) {
       throw new Error(
-        `Max reconnection attempts (${config.max_retries}) reached`
+        `Max reconnection attempts (${config.max_retries}) reached`,
       );
     }
 
     const delayMs = Math.min(
-      config.initial_delay_ms * Math.pow(config.factor, this.connectionAttempts),
-      config.max_delay_ms
+      config.initial_delay_ms *
+        Math.pow(config.factor, this.connectionAttempts),
+      config.max_delay_ms,
     );
 
     this.connectionAttempts++;
     this.logger.warn(
-      `Reconnection attempt ${this.connectionAttempts}, waiting ${delayMs}ms...`
+      `Reconnection attempt ${this.connectionAttempts}, waiting ${delayMs}ms...`,
     );
 
     await this.sleep(delayMs);
@@ -215,9 +223,7 @@ export class RawRabbitMQProducerClient {
   /**
    * Build RabbitMQ publish options from config
    */
-  private buildPublishOptions(
-    options?: PublishOptions
-  ): amqp.Options.Publish {
+  private buildPublishOptions(options?: PublishOptions): amqp.Options.Publish {
     const config = this.config.publish;
     const headers = {
       message_id: randomUUID(),
@@ -240,7 +246,7 @@ export class RawRabbitMQProducerClient {
   /**
    * Encode message to buffer
    */
-  private encodeMessage(message: any): Buffer {
+  private encodeMessage(message: Record<string, unknown> | Buffer): Buffer {
     try {
       const json = JSON.stringify(message);
       return Buffer.from(json, 'utf-8');
@@ -261,7 +267,9 @@ export class RawRabbitMQProducerClient {
    * Get connection status
    */
   isHealthy(): boolean {
-    return this.isConnected && this.connection !== null && this.channel !== null;
+    return (
+      this.isConnected && this.connection !== null && this.channel !== null
+    );
   }
 }
 
@@ -270,5 +278,5 @@ export class RawRabbitMQProducerClient {
  */
 export interface PublishOptions extends amqp.Options.Publish {
   correlationId?: string;
-  headers?: Record<string, any>;
+  headers?: Record<string, unknown>;
 }

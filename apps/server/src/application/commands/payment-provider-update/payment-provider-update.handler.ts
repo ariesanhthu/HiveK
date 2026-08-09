@@ -1,13 +1,19 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { Inject } from '@nestjs/common';
 import { PaymentProviderUpdateCommand } from './payment-provider-update.command';
-import { PAYMENT_PROVIDER_REPOSITORY, type IPaymentProviderRepository } from '@/core/interfaces/repositories';
+import {
+  PAYMENT_PROVIDER_REPOSITORY,
+  type IPaymentProviderRepository,
+} from '@/core/interfaces/repositories';
 import { PaymentProviderResponseDto } from '@/application/dtos';
 import { PaymentProviderMapper } from '@/application/mappers';
 import { type IUnitOfWork, UNIT_OF_WORK } from '@/application/interfaces';
 
 @CommandHandler(PaymentProviderUpdateCommand)
-export class PaymentProviderUpdateHandler implements ICommandHandler<PaymentProviderUpdateCommand, PaymentProviderResponseDto> {
+export class PaymentProviderUpdateHandler implements ICommandHandler<
+  PaymentProviderUpdateCommand,
+  PaymentProviderResponseDto
+> {
   constructor(
     @Inject(PAYMENT_PROVIDER_REPOSITORY)
     private readonly providerRepository: IPaymentProviderRepository,
@@ -15,7 +21,9 @@ export class PaymentProviderUpdateHandler implements ICommandHandler<PaymentProv
     private readonly uow: IUnitOfWork,
   ) {}
 
-  async execute(command: PaymentProviderUpdateCommand): Promise<PaymentProviderResponseDto> {
+  async execute(
+    command: PaymentProviderUpdateCommand,
+  ): Promise<PaymentProviderResponseDto> {
     const { input } = command;
 
     return this.uow.execute(async () => {

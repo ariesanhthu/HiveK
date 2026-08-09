@@ -23,7 +23,9 @@ export function timeAgo(
   const now = new Date();
   const diffMs = parsed.getTime() - now.getTime();
 
-  const rtf = new Intl.RelativeTimeFormat(LOCALE_MAP[locale], { numeric: 'auto' });
+  const rtf = new Intl.RelativeTimeFormat(LOCALE_MAP[locale], {
+    numeric: 'auto',
+  });
 
   const seconds = Math.round(diffMs / 1000);
   const minutes = Math.round(seconds / 60);
@@ -56,7 +58,9 @@ export function isSameDay(a: Date, b: Date): boolean {
 /**
  * Returns `true` if the given date is today.
  */
-export function isToday(date: Date | string | number | null | undefined): boolean {
+export function isToday(
+  date: Date | string | number | null | undefined,
+): boolean {
   const parsed = toDate(date);
   return parsed ? isSameDay(parsed, new Date()) : false;
 }
@@ -64,7 +68,9 @@ export function isToday(date: Date | string | number | null | undefined): boolea
 /**
  * Returns `true` if the given date is yesterday.
  */
-export function isYesterday(date: Date | string | number | null | undefined): boolean {
+export function isYesterday(
+  date: Date | string | number | null | undefined,
+): boolean {
   const parsed = toDate(date);
   if (!parsed) return false;
   const yesterday = new Date();
@@ -75,7 +81,9 @@ export function isYesterday(date: Date | string | number | null | undefined): bo
 /**
  * Returns `true` if the given date is tomorrow.
  */
-export function isTomorrow(date: Date | string | number | null | undefined): boolean {
+export function isTomorrow(
+  date: Date | string | number | null | undefined,
+): boolean {
   const parsed = toDate(date);
   if (!parsed) return false;
   const tomorrow = new Date();
@@ -122,11 +130,12 @@ export function dateDiff(
     case 'weeks':
       return Math.floor(diffMs / 604_800_000);
     case 'months':
-      return (e.getFullYear() - s.getFullYear()) * 12 + e.getMonth() - s.getMonth();
+      return (
+        (e.getFullYear() - s.getFullYear()) * 12 + e.getMonth() - s.getMonth()
+      );
     case 'years':
       return e.getFullYear() - s.getFullYear();
     default:
       return 0;
   }
 }
-

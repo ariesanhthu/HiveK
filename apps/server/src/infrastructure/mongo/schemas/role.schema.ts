@@ -8,7 +8,14 @@ import { softDeletePlugin } from '../utils';
   timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' },
 })
 export class RoleModel {
-  @Prop({ type: String, required: true, unique: true, trim: true, minlength: 1, maxlength: 100 })
+  @Prop({
+    type: String,
+    required: true,
+    unique: true,
+    trim: true,
+    minlength: 1,
+    maxlength: 100,
+  })
   title: string;
 
   @Prop({ type: [String], default: [] })

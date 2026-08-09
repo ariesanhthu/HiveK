@@ -1,17 +1,26 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { Inject } from '@nestjs/common';
-import { CampaignNotFoundException, CampaignForbiddenException } from '@/core/exceptions';
-import { CAMPAIGN_REPOSITORY, type ICampaignRepository } from '@/core/interfaces/repositories';
+import {
+  CampaignNotFoundException,
+  CampaignForbiddenException,
+} from '@/core/exceptions';
+import {
+  CAMPAIGN_REPOSITORY,
+  type ICampaignRepository,
+} from '@/core/interfaces/repositories';
 import { CampaignUpdateCommand } from './campaign-update.command';
 import { CampaignDto } from '@/application/dtos';
 import { CampaignMapper } from '@/application/mappers';
 
 @CommandHandler(CampaignUpdateCommand)
-export class CampaignUpdateCommandHandler implements ICommandHandler<CampaignUpdateCommand, CampaignDto> {
+export class CampaignUpdateCommandHandler implements ICommandHandler<
+  CampaignUpdateCommand,
+  CampaignDto
+> {
   constructor(
     @Inject(CAMPAIGN_REPOSITORY)
     private readonly campaignRepository: ICampaignRepository,
-  ) { }
+  ) {}
 
   async execute(command: CampaignUpdateCommand): Promise<CampaignDto> {
     const { id, requestedBy, input } = command;
@@ -22,25 +31,38 @@ export class CampaignUpdateCommandHandler implements ICommandHandler<CampaignUpd
     }
 
     // Owner and collaborator can update
-    if (campaign.ownerId !== requestedBy && !campaign.collaboratorIds.includes(requestedBy)) {
+    if (
+      campaign.ownerId !== requestedBy &&
+      !campaign.collaboratorIds.includes(requestedBy)
+    ) {
       throw new CampaignForbiddenException();
     }
 
     const campaignUpdateProps = {
       ...(input.budget !== undefined ? { budget: input.budget } : {}),
-      ...(input.financialTarget !== undefined ? { financialTarget: input.financialTarget } : {}),
-      ...(input.description !== undefined ? { description: input.description } : {}),
+      ...(input.financialTarget !== undefined
+        ? { financialTarget: input.financialTarget }
+        : {}),
+      ...(input.description !== undefined
+        ? { description: input.description }
+        : {}),
       ...(input.extras !== undefined ? { extras: input.extras } : {}),
-      ...(input.platformTarget !== undefined ? { platformTarget: input.platformTarget.map((item) => ({
-        platformId: item.platformId,
-        minFollowers: item.minFollowers,
-        maxFollowers: item.maxFollowers,
-        note: item.note,
-        extras: item.extras,
-      })) } : {}),
+      ...(input.platformTarget !== undefined
+        ? {
+            platformTarget: input.platformTarget.map((item) => ({
+              platformId: item.platformId,
+              minFollowers: item.minFollowers,
+              maxFollowers: item.maxFollowers,
+              note: item.note,
+              extras: item.extras,
+            })),
+          }
+        : {}),
     };
 
-    campaign.update(campaignUpdateProps);
+    campaign.update(
+      campaignUpdateProps as Parameters<typeof campaign.update>[0],
+    );
 
     await this.campaignRepository.save(campaign);
 

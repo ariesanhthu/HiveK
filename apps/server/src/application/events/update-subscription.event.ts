@@ -1,4 +1,8 @@
-import { IntegrationEvent, EventMetadata, TransportMetadata } from '@/core/common';
+import {
+  IntegrationEvent,
+  EventMetadata,
+  TransportMetadata,
+} from '@/core/common';
 
 export interface UpdateSubscriptionPayload {
   paymentId: string;
@@ -14,7 +18,7 @@ export class UpdateSubscriptionEvent extends IntegrationEvent<UpdateSubscription
   constructor(
     payload: UpdateSubscriptionPayload,
     metadata?: EventMetadata,
-    transport?: TransportMetadata
+    transport?: TransportMetadata,
   ) {
     super(payload, metadata, transport);
   }

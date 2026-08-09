@@ -5,7 +5,9 @@ import { PaginatedResponseDto } from '@/application/dtos/pagination.dto';
 
 import { ProjectionDto } from '@/application/dtos/projection.dto';
 
-export class CampaignGetListQuery extends Query<PaginatedResponseDto<CampaignDto>> {
+export class CampaignGetListQuery extends Query<
+  PaginatedResponseDto<CampaignDto>
+> {
   constructor(
     public readonly filters?: CampaignFilterDto,
     public readonly projection?: ProjectionDto,

@@ -1,7 +1,25 @@
-import { Controller, Post, Body, HttpCode, HttpStatus, Get, UseGuards, Res, Req, BadRequestException, Patch } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  HttpCode,
+  HttpStatus,
+  Get,
+  UseGuards,
+  Res,
+  Req,
+  BadRequestException,
+  Patch,
+} from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import type { Response, Request } from 'express';
-import { ApiTags, ApiOperation, ApiBearerAuth, ApiSecurity, ApiTooManyRequestsResponse } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiBearerAuth,
+  ApiSecurity,
+  ApiTooManyRequestsResponse,
+} from '@nestjs/swagger';
 import { buildVersionedRoute } from '@presentation/utils';
 import {
   AuthSignInCommand,
@@ -19,7 +37,7 @@ import {
   AuthSendOtpInputDto,
   AuthChangePasswordInputDto,
   AuthVerifyOtpInputDto,
-  UserUpdateCommand
+  UserUpdateCommand,
 } from '@/application/commands';
 import { AuthGetProfileQuery } from '@/application/queries';
 import { UserDetailDto } from '@/application/dtos';
@@ -43,7 +61,7 @@ export class AuthAdminController {
   constructor(
     private readonly commandBus: CommandBus,
     private readonly queryBus: QueryBus,
-  ) { }
+  ) {}
 
   @Public()
   @Post('sign-in')
@@ -56,7 +74,9 @@ export class AuthAdminController {
     @Body() input: AuthSignInInputDto,
     @Res({ passthrough: true }) response: Response,
   ) {
-    const result = await this.commandBus.execute(new AuthSignInCommand(input, true));
+    const result = await this.commandBus.execute(
+      new AuthSignInCommand(input, true),
+    );
     if (result && result.accessToken) {
       response.cookie('access_token', result.accessToken, {
         httpOnly: true,
@@ -99,7 +119,9 @@ export class AuthAdminController {
       throw new BadRequestException('Refresh token is required');
     }
 
-    const result = await this.commandBus.execute(new AuthRefreshTokenCommand({ refreshToken: token }));
+    const result = await this.commandBus.execute(
+      new AuthRefreshTokenCommand({ refreshToken: token }),
+    );
     if (result && result.accessToken) {
       response.cookie('access_token', result.accessToken, {
         httpOnly: true,
@@ -170,7 +192,9 @@ export class AuthAdminController {
     @CurrentUser('sub') userId: string,
     @Body() input: AuthChangePasswordInputDto,
   ) {
-    return this.commandBus.execute(new AuthChangePasswordCommand(userId, input));
+    return this.commandBus.execute(
+      new AuthChangePasswordCommand(userId, input),
+    );
   }
 
   @Get('profile')
@@ -192,4 +216,3 @@ export class AuthAdminController {
     return this.commandBus.execute(new UserUpdateCommand(userId, input));
   }
 }
-

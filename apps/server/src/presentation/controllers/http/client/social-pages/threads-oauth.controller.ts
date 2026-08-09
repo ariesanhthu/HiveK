@@ -1,21 +1,38 @@
-import {
-  Controller,
-  Get,
-  UseGuards,
-  Query,
-  Res,
-  Inject,
-} from '@nestjs/common';
+import { Controller, Get, UseGuards, Query, Res, Inject } from '@nestjs/common';
 import { CommandBus } from '@nestjs/cqrs';
-import { ApiTags, ApiOperation, ApiBearerAuth, ApiSecurity } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiBearerAuth,
+  ApiSecurity,
+} from '@nestjs/swagger';
 import { buildVersionedRoute } from '@presentation/utils';
-import { JwtAuthGuard, RolesGuard, UserVerifiedGuard, StateAuthGuard } from '@/presentation/middleware/guards';
-import { CurrentUser, Roles, ApiOkResponseEnvelope } from '@/presentation/decorators';
+import {
+  JwtAuthGuard,
+  RolesGuard,
+  UserVerifiedGuard,
+  StateAuthGuard,
+} from '@/presentation/middleware/guards';
+import {
+  CurrentUser,
+  Roles,
+  ApiOkResponseEnvelope,
+} from '@/presentation/decorators';
 import { ERoleType, ESocialPlatformCode } from '@/core/enums';
-import { ENTERPRISE_REPOSITORY, type IEnterpriseRepository } from '@/core/interfaces/repositories';
+import {
+  ENTERPRISE_REPOSITORY,
+  type IEnterpriseRepository,
+} from '@/core/interfaces/repositories';
 import { SocialPageBulkConnectCommand } from '@/application/commands';
-import { type ISocialPageConnectorFactory, SOCIAL_PAGE_CONNECTOR_FACTORY } from '@/core/interfaces';
-import { AUTH_JWT_SERVICE, type IAuthJwtService, type IJwtPayload } from '@/application/interfaces/auth-jwt.interface';
+import {
+  type ISocialPageConnectorFactory,
+  SOCIAL_PAGE_CONNECTOR_FACTORY,
+} from '@/core/interfaces';
+import {
+  AUTH_JWT_SERVICE,
+  type IAuthJwtService,
+  type IJwtPayload,
+} from '@/application/interfaces/auth-jwt.interface';
 import { errorMessage } from '@/shared/utils';
 import { ConfigService } from '@nestjs/config';
 import { WebHook } from '@/presentation/decorators/webhook.decorator';
@@ -44,7 +61,7 @@ export class ThreadsOAuthController {
     if (!enterprise) {
       throw new Error('User is not associated with any enterprise profile.');
     }
-    return enterprise.id!;
+    return enterprise.id;
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard, UserVerifiedGuard)
@@ -52,7 +69,7 @@ export class ThreadsOAuthController {
   @Get('threads/oauth')
   @ApiOperation({ summary: 'Get Threads OAuth Redirect URL' })
   @ApiOkResponseEnvelope()
-  async getThreadsOauthUrl(@CurrentUser() user: IJwtPayload) {
+  getThreadsOauthUrl(@CurrentUser() user: IJwtPayload) {
     // Sign a short-lived JWT with the user's identity as the OAuth state
     // so the callback can verify and extract userId, email, role via StateAuthGuard
     const state = this.jwtService.sign(
@@ -68,7 +85,8 @@ export class ThreadsOAuthController {
   @UseGuards(StateAuthGuard)
   @Get('threads/callback')
   @ApiOperation({
-    summary: 'Exchange Threads OAuth code, connect account, then redirect to the frontend',
+    summary:
+      'Exchange Threads OAuth code, connect account, then redirect to the frontend',
   })
   async threadsCallback(
     @CurrentUser('sub') userId: string,

@@ -2,19 +2,40 @@ import { CommandBus, CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { AuthSignUpCommand } from './auth-sign-up.command';
 import { AuthSignUpOutputDto } from './auth-sign-up.dto';
 import { Inject } from '@nestjs/common';
-import { ROLE_READ_SERVICE, type IRoleReadService } from '@/application/interfaces';
-import { USER_REPOSITORY, type IUserRepository } from '@/core/interfaces/repositories';
-import { KOLUserRoot, EnterpriseUserRoot, AdminRoot } from '@/core/aggregate-roots';
+import {
+  ROLE_READ_SERVICE,
+  type IRoleReadService,
+} from '@/application/interfaces';
+import {
+  USER_REPOSITORY,
+  type IUserRepository,
+} from '@/core/interfaces/repositories';
+import {
+  KOLUserRoot,
+  EnterpriseUserRoot,
+  AdminRoot,
+} from '@/core/aggregate-roots';
 import { EOtpType, ERoleType } from '@/core/enums';
 import { AuthService } from '@/application/services/auth.service';
-import { UserConflictException, RoleNotFoundException, InvalidUserTypeException } from '@/core/exceptions';
-import { type IUnitOfWork, UNIT_OF_WORK, EVENT_SERVICE } from '@/application/interfaces';
+import {
+  UserConflictException,
+  RoleNotFoundException,
+  InvalidUserTypeException,
+} from '@/core/exceptions';
+import {
+  type IUnitOfWork,
+  UNIT_OF_WORK,
+  EVENT_SERVICE,
+} from '@/application/interfaces';
 import type { IEventService } from '@/application/interfaces';
 import { PhoneNumberVO } from '@/core/value-objects/phone-number.value-object';
 import { AuthSendOtpCommand } from '@/application/commands';
 
 @CommandHandler(AuthSignUpCommand)
-export class AuthSignUpCommandHandler implements ICommandHandler<AuthSignUpCommand, AuthSignUpOutputDto> {
+export class AuthSignUpCommandHandler implements ICommandHandler<
+  AuthSignUpCommand,
+  AuthSignUpOutputDto
+> {
   constructor(
     @Inject(USER_REPOSITORY)
     private readonly userRepository: IUserRepository,
@@ -26,20 +47,23 @@ export class AuthSignUpCommandHandler implements ICommandHandler<AuthSignUpComma
     @Inject(UNIT_OF_WORK)
     private readonly uow: IUnitOfWork,
     private readonly commandBus: CommandBus,
-  ) { }
+  ) {}
 
   async execute(command: AuthSignUpCommand): Promise<AuthSignUpOutputDto> {
     return this.uow.execute(async () => {
       const { input, type } = command;
 
       const normalizedEmail = this.authService.normalizeEmail(input.email);
-      const existingUser = await this.userRepository.findByEmail(normalizedEmail);
+      const existingUser =
+        await this.userRepository.findByEmail(normalizedEmail);
       if (existingUser) {
         throw new UserConflictException('User already exists');
       }
 
       const roles = await this.roleReadService.findAll();
-      const defaultRole = roles.data.find(r => r.title.toUpperCase() === type.toUpperCase()) || roles.data[0];
+      const defaultRole =
+        roles.data.find((r) => r.title.toUpperCase() === type.toUpperCase()) ||
+        roles.data[0];
       if (!defaultRole) {
         throw new RoleNotFoundException(type);
       }
@@ -56,7 +80,7 @@ export class AuthSignUpCommandHandler implements ICommandHandler<AuthSignUpComma
         passwordHash,
         fullName: input.fullName || 'DEFAULT NAME',
         type,
-        roleId: defaultRole.id!,
+        roleId: defaultRole.id,
       };
 
       let user;
@@ -71,12 +95,19 @@ export class AuthSignUpCommandHandler implements ICommandHandler<AuthSignUpComma
           user = AdminRoot.create(commonProps);
           break;
         default:
-          throw new InvalidUserTypeException(`Invalid user type: ${type}`);
+          throw new InvalidUserTypeException(
+            `Invalid user type: ${String(type)}`,
+          );
       }
 
       await this.userRepository.save(user);
-      console.log("Created user")
-      await this.commandBus.execute(new AuthSendOtpCommand({ email: normalizedEmail, type: EOtpType.CREATE_ACCOUNT }, user.id));
+      console.log('Created user');
+      await this.commandBus.execute(
+        new AuthSendOtpCommand(
+          { email: normalizedEmail, type: EOtpType.CREATE_ACCOUNT },
+          user.id,
+        ),
+      );
 
       await this.eventService.publishEvents(user);
 

@@ -84,12 +84,7 @@ const Handlers = [
 ];
 
 @Module({
-  imports: [
-    CqrsModule,
-    FacebookModule,
-    ThreadsModule,
-    InstagramModule,
-  ],
+  imports: [CqrsModule, FacebookModule, ThreadsModule, InstagramModule],
   controllers: [
     SocialPageController,
     ScheduledPostController,
@@ -102,7 +97,11 @@ const Handlers = [
   providers: [
     {
       provide: SOCIAL_PUBLISHERS,
-      inject: [FacebookPublisherService, ThreadsPublisherService, InstagramPublisherService],
+      inject: [
+        FacebookPublisherService,
+        ThreadsPublisherService,
+        InstagramPublisherService,
+      ],
       useFactory: (
         facebook: FacebookPublisherService,
         threads: ThreadsPublisherService,
@@ -130,7 +129,11 @@ const Handlers = [
     },
     {
       provide: SOCIAL_PAGE_CONNECTORS,
-      inject: [FacebookSocialPageConnectorService, ThreadsSocialPageConnectorService, InstagramSocialPageConnectorService],
+      inject: [
+        FacebookSocialPageConnectorService,
+        ThreadsSocialPageConnectorService,
+        InstagramSocialPageConnectorService,
+      ],
       useFactory: (
         facebook: FacebookSocialPageConnectorService,
         threads: ThreadsSocialPageConnectorService,

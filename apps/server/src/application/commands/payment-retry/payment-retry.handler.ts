@@ -1,17 +1,33 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { Inject } from '@nestjs/common';
 import { PaymentRetryCommand } from './payment-retry.command';
-import { PAYMENT_REPOSITORY, type IPaymentRepository } from '@/core/interfaces/repositories';
-import { PAYMENT_PROVIDER_REPOSITORY, type IPaymentProviderRepository } from '@/core/interfaces/repositories';
-import { PAYMENT_PROVIDER_DISCOVERY, type IPaymentProviderDiscovery } from '@/core/interfaces/services/payment-provider-discovery.interface';
+import {
+  PAYMENT_REPOSITORY,
+  type IPaymentRepository,
+} from '@/core/interfaces/repositories';
+import {
+  PAYMENT_PROVIDER_REPOSITORY,
+  type IPaymentProviderRepository,
+} from '@/core/interfaces/repositories';
+import {
+  PAYMENT_PROVIDER_DISCOVERY,
+  type IPaymentProviderDiscovery,
+} from '@/core/interfaces/services/payment-provider-discovery.interface';
 import { type IUnitOfWork, UNIT_OF_WORK } from '@/application/interfaces';
 import { PaymentService } from '@/application/services';
 import { PaymentTransactionEntity } from '@/core/entities';
-import { EPaymentTransactionType, ETransactionSource, ETransactionStatus } from '@/core/enums';
+import {
+  EPaymentTransactionType,
+  ETransactionSource,
+  ETransactionStatus,
+} from '@/core/enums';
 import { PaymentNotFoundException } from '@/core/exceptions';
 
 @CommandHandler(PaymentRetryCommand)
-export class PaymentRetryHandler implements ICommandHandler<PaymentRetryCommand, { paymentUrl?: string }> {
+export class PaymentRetryHandler implements ICommandHandler<
+  PaymentRetryCommand,
+  { paymentUrl?: string }
+> {
   constructor(
     @Inject(PAYMENT_REPOSITORY)
     private readonly paymentRepository: IPaymentRepository,
@@ -24,7 +40,9 @@ export class PaymentRetryHandler implements ICommandHandler<PaymentRetryCommand,
     private readonly paymentService: PaymentService,
   ) {}
 
-  async execute(command: PaymentRetryCommand): Promise<{ paymentUrl?: string }> {
+  async execute(
+    command: PaymentRetryCommand,
+  ): Promise<{ paymentUrl?: string }> {
     const { input } = command;
 
     return this.uow.execute(async () => {
@@ -38,38 +56,46 @@ export class PaymentRetryHandler implements ICommandHandler<PaymentRetryCommand,
       const attemptId = this.paymentService.initiateRetry(
         payment,
         input.paymentProviderId,
-        input.idempotencyKey
+        input.idempotencyKey,
       );
 
       await this.paymentRepository.save(payment);
 
       // 3. Load provider & call gateway
-      const provider = await this.providerRepository.findById(input.paymentProviderId);
+      const provider = await this.providerRepository.findById(
+        input.paymentProviderId,
+      );
       if (!provider) {
         throw new Error('Payment provider not found.');
       }
 
-      const providerInstance = this.providerDiscovery.findProvider(provider.code);
+      const providerInstance = this.providerDiscovery.findProvider(
+        provider.code,
+      );
       if (!providerInstance) {
-        throw new Error(`Payment provider strategy not found for: ${provider.code}`);
+        throw new Error(
+          `Payment provider strategy not found for: ${provider.code}`,
+        );
       }
 
       const result = await providerInstance.create(
         attemptId,
         payment.amount.amount,
-        payment.amount.currency
+        payment.amount.currency,
       );
 
       // 4. Record CREATE transaction
       const transaction = PaymentTransactionEntity.fromProvider({
         transactionType: EPaymentTransactionType.CREATE,
         transactionSource: ETransactionSource.API,
-        status: result.data.isSuccess ? ETransactionStatus.SUCCESS : ETransactionStatus.FAILED,
+        status: result.data.isSuccess
+          ? ETransactionStatus.SUCCESS
+          : ETransactionStatus.FAILED,
         amount: payment.amount,
         requestPayload: result.requestPayload,
         responsePayload: result.responsePayload,
-        requestHeaders: result.requestHeaders as any,
-        responseHeaders: result.responseHeaders as any,
+        requestHeaders: result.requestHeaders as Record<string, string>,
+        responseHeaders: result.responseHeaders as Record<string, string>,
         requestTimestamp: result.requestTimestamp,
         responseTimestamp: result.responseTimestamp,
         providerTransactionId: result.data.transactionId,

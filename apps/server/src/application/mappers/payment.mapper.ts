@@ -1,23 +1,30 @@
 import { PaymentEntity } from '@/core/aggregate-roots';
-import { PaymentAttemptEntity, PaymentTransactionEntity } from '@/core/entities';
+import {
+  PaymentAttemptEntity,
+  PaymentTransactionEntity,
+} from '@/core/entities';
 import {
   PaymentAttemptResponseDto,
   PaymentDetailResponseDto,
   PaymentResponseDto,
   PaymentTransactionResponseDto,
 } from '../dtos';
-import type { EPaymentStatus, EPaymentAttemptStatus, ETransactionStatus } from '@/core/enums';
+import type {
+  EPaymentStatus,
+  EPaymentAttemptStatus,
+  ETransactionStatus,
+} from '@/core/enums';
 
 export class PaymentMapper {
   static toDto(entity: PaymentEntity): PaymentResponseDto {
     return {
-      id: entity.id!,
+      id: entity.id,
       enterpriseId: entity.enterpriseId,
       userId: entity.userId || null,
       billId: entity.billId,
       amount: entity.amount.amount,
       currency: entity.amount.currency,
-      status: entity.status.value as EPaymentStatus,
+      status: entity.status.value,
       description: entity.description || undefined,
       idempotencyKey: entity.idempotencyKey || undefined,
       version: entity.version,
@@ -35,15 +42,17 @@ export class PaymentMapper {
 
   static toDtoDetail(entity: PaymentEntity): PaymentDetailResponseDto {
     return {
-      id: entity.id!,
+      id: entity.id,
       enterpriseId: entity.enterpriseId,
       userId: entity.userId || null,
       billId: entity.billId,
       amount: entity.amount.amount,
       currency: entity.amount.currency,
-      status: entity.status.value as EPaymentStatus,
+      status: entity.status.value,
       description: entity.description || undefined,
-      attempts: entity.paymentAttempts.map((attempt) => this.toDtoAttempt(attempt)),
+      attempts: entity.paymentAttempts.map((attempt) =>
+        this.toDtoAttempt(attempt),
+      ),
       idempotencyKey: entity.idempotencyKey || undefined,
       version: entity.version,
       expiresAt: entity.expiresAt?.toISOString() || undefined,
@@ -62,9 +71,9 @@ export class PaymentMapper {
     return {
       paymentProviderId: entity.paymentProviderId,
       attemptNumber: entity.attemptNumber,
-      status: entity.status.value as EPaymentAttemptStatus,
+      status: entity.status.value,
       transactions: entity.transactions.map((transaction) =>
-        this.toDtoTransaction(transaction)
+        this.toDtoTransaction(transaction),
       ),
       failureReason: entity.failureReason,
       failureType: entity.failureType?.type,
@@ -74,12 +83,14 @@ export class PaymentMapper {
     };
   }
 
-  static toDtoTransaction(entity: PaymentTransactionEntity): PaymentTransactionResponseDto {
+  static toDtoTransaction(
+    entity: PaymentTransactionEntity,
+  ): PaymentTransactionResponseDto {
     return {
       transactionType: entity.transactionType,
       amount: entity.amount.amount,
       currency: entity.amount.currency,
-      status: entity.status as ETransactionStatus,
+      status: entity.status,
       createdAt: entity.createdAt.toISOString(),
       description: entity.description || undefined,
       providerTransactionId: entity.providerTransactionId || undefined,
@@ -89,7 +100,8 @@ export class PaymentMapper {
       providerRequestHeaders: entity.providerRequestHeaders,
       providerResponseHeaders: entity.providerResponseHeaders,
       providerRequestTimestamp: entity.providerRequestTimestamp?.toISOString(),
-      providerResponseTimestamp: entity.providerResponseTimestamp?.toISOString(),
+      providerResponseTimestamp:
+        entity.providerResponseTimestamp?.toISOString(),
     };
   }
 

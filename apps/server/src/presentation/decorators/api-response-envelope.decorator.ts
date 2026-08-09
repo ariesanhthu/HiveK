@@ -4,7 +4,7 @@ import { ApiExtraModels, ApiResponse, getSchemaPath } from '@nestjs/swagger';
 /**
  * Wraps a DTO class into the standard ApiResponse envelope shape for Swagger docs.
  */
-export const ApiOkResponseEnvelope = <TModel extends Type<any>>(
+export const ApiOkResponseEnvelope = <TModel extends Type<unknown>>(
   model?: TModel,
   status: HttpStatus = HttpStatus.OK,
 ) => {
@@ -43,7 +43,7 @@ export const ApiOkResponseEnvelope = <TModel extends Type<any>>(
 /**
  * Wraps an array of DTO models into the standard Paginated Response envelope shape for Swagger docs.
  */
-export const ApiPaginatedResponseEnvelope = <TModel extends Type<any>>(
+export const ApiPaginatedResponseEnvelope = <TModel extends Type<unknown>>(
   model: TModel,
   status: HttpStatus = HttpStatus.OK,
 ) => {

@@ -1,4 +1,4 @@
-import { BaseAggregateRoot } from '../common';
+import { BaseAggregateRoot, DomainEvent } from '../common';
 import { MoneyVO, PaymentStatusVO } from '../value-objects';
 import { type PaymentAttemptEntity } from '../entities/payment-attempt.entity';
 import { type Nullable, type Optional } from '../types';
@@ -82,7 +82,10 @@ export class PaymentEntity extends BaseAggregateRoot<PaymentProps> {
     return new PaymentEntity(props, id);
   }
 
-  public static getFieldChanges(old: PaymentEntity, current: PaymentEntity): FieldChanges {
+  public static getFieldChanges(
+    old: PaymentEntity,
+    current: PaymentEntity,
+  ): FieldChanges {
     const changes: FieldChanges = {};
     const ignoreKeys = ['updatedAt', 'version'];
 
@@ -93,7 +96,10 @@ export class PaymentEntity extends BaseAggregateRoot<PaymentProps> {
       if (val && typeof val === 'object') {
         if ('value' in val) return val.value;
         if ('amount' in val && 'currency' in val) {
-          return { amount: (val as MoneyVO).amount, currency: (val as MoneyVO).currency };
+          return {
+            amount: (val as MoneyVO).amount,
+            currency: (val as MoneyVO).currency,
+          };
         }
       }
       return val;
@@ -128,18 +134,24 @@ export class PaymentEntity extends BaseAggregateRoot<PaymentProps> {
   }
 
   public getSuccessfulAttempt(): Nullable<PaymentAttemptEntity> {
-    return this.props.paymentAttempts.find((attempt) => attempt.status.isSuccess()) ?? null;
+    return (
+      this.props.paymentAttempts.find((attempt) =>
+        attempt.status.isSuccess(),
+      ) ?? null
+    );
   }
 
   public getLatestAttempt(): Nullable<PaymentAttemptEntity> {
     if (this.props.paymentAttempts.length === 0) return null;
     return this.props.paymentAttempts.reduce((latest, current) =>
-      current.createdAt > latest.createdAt ? current : latest
+      current.createdAt > latest.createdAt ? current : latest,
     );
   }
 
   public getAttemptById(id: string): Nullable<PaymentAttemptEntity> {
-    return this.props.paymentAttempts.find((attempt) => attempt.id === id) ?? null;
+    return (
+      this.props.paymentAttempts.find((attempt) => attempt.id === id) ?? null
+    );
   }
 
   public canRetry(): boolean {
@@ -173,7 +185,10 @@ export class PaymentEntity extends BaseAggregateRoot<PaymentProps> {
 
   public getTotalRefundedAmount(): MoneyVO {
     const successfulAttempt = this.getSuccessfulAttempt();
-    return successfulAttempt?.getRefundedAmount() ?? MoneyVO.zero(this.props.amount.currency);
+    return (
+      successfulAttempt?.getRefundedAmount() ??
+      MoneyVO.zero(this.props.amount.currency)
+    );
   }
 
   public getRemainingRefundableAmount(): MoneyVO {
@@ -185,7 +200,9 @@ export class PaymentEntity extends BaseAggregateRoot<PaymentProps> {
   }
 
   public canBeRefunded(): boolean {
-    return this.props.status.isCompleted() || this.props.status.isPartiallyRefunded();
+    return (
+      this.props.status.isCompleted() || this.props.status.isPartiallyRefunded()
+    );
   }
 
   public isFullyRefunded(): boolean {
@@ -257,7 +274,7 @@ export class PaymentEntity extends BaseAggregateRoot<PaymentProps> {
   public get deletedBy(): Optional<string> {
     return this.props.deletedBy;
   }
-  public recordEvent(event: any): void {
+  public recordEvent(event: DomainEvent<unknown>): void {
     this.addDomainEvent(event);
   }
 }

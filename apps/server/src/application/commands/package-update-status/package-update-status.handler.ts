@@ -1,6 +1,9 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { Inject } from '@nestjs/common';
-import { PACKAGE_REPOSITORY, type IPackageRepository } from '@/core/interfaces/repositories';
+import {
+  PACKAGE_REPOSITORY,
+  type IPackageRepository,
+} from '@/core/interfaces/repositories';
 import { PackageRoot } from '@/core/aggregate-roots';
 import { EVersionStatus } from '@/core/enums';
 import { PackageNotFoundException } from '@/core/exceptions';
@@ -10,7 +13,10 @@ import { PackageUpdateStatusCommand } from './package-update-status.command';
 import { type IUnitOfWork, UNIT_OF_WORK } from '@/application/interfaces';
 
 @CommandHandler(PackageUpdateStatusCommand)
-export class PackageUpdateStatusHandler implements ICommandHandler<PackageUpdateStatusCommand, PackageResponseDto> {
+export class PackageUpdateStatusHandler implements ICommandHandler<
+  PackageUpdateStatusCommand,
+  PackageResponseDto
+> {
   constructor(
     @Inject(PACKAGE_REPOSITORY)
     private readonly packageRepository: IPackageRepository,
@@ -18,7 +24,9 @@ export class PackageUpdateStatusHandler implements ICommandHandler<PackageUpdate
     private readonly uow: IUnitOfWork,
   ) {}
 
-  async execute(command: PackageUpdateStatusCommand): Promise<PackageResponseDto> {
+  async execute(
+    command: PackageUpdateStatusCommand,
+  ): Promise<PackageResponseDto> {
     const { id, input } = command;
 
     return this.uow.execute(async () => {
@@ -39,9 +47,14 @@ export class PackageUpdateStatusHandler implements ICommandHandler<PackageUpdate
     });
   }
 
-  private async handlePublish(target: PackageRoot): Promise<PackageResponseDto> {
+  private async handlePublish(
+    target: PackageRoot,
+  ): Promise<PackageResponseDto> {
     // Validation: Status must be DRAFT or ARCHIVED
-    if (target.status !== EVersionStatus.DRAFT && target.status !== EVersionStatus.ARCHIVED) {
+    if (
+      target.status !== EVersionStatus.DRAFT &&
+      target.status !== EVersionStatus.ARCHIVED
+    ) {
       throw new Error(
         `Cannot publish package with status '${target.status}'. Only DRAFT or ARCHIVED packages can be published.`,
       );
@@ -49,12 +62,18 @@ export class PackageUpdateStatusHandler implements ICommandHandler<PackageUpdate
 
     // Validation: Variants not empty
     if (target.variants.length === 0) {
-      throw new Error(`Cannot publish package '${target.code}' without variants.`);
+      throw new Error(
+        `Cannot publish package '${target.code}' without variants.`,
+      );
     }
 
     // Archive current active version (if exists)
-    const existingVersions = await this.packageRepository.findByCode(target.code);
-    const active = existingVersions.find((p) => p.status === EVersionStatus.ACTIVE);
+    const existingVersions = await this.packageRepository.findByCode(
+      target.code,
+    );
+    const active = existingVersions.find(
+      (p) => p.status === EVersionStatus.ACTIVE,
+    );
 
     if (active && active.id !== target.id) {
       active.archive();

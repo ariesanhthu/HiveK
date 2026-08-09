@@ -1,14 +1,29 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { Inject } from '@nestjs/common';
-import { CampaignNotFoundException, UserNotFoundException } from '@/core/exceptions';
-import { CAMPAIGN_REPOSITORY, type ICampaignRepository } from '@/core/interfaces/repositories/campaign.repository';
-import { USER_REPOSITORY, type IUserRepository } from '@/core/interfaces/repositories/user.repository';
-import { MAILER_SERVICE, type IMailerService } from '@/application/interfaces/mailer.interface';
+import {
+  CampaignNotFoundException,
+  UserNotFoundException,
+} from '@/core/exceptions';
+import {
+  CAMPAIGN_REPOSITORY,
+  type ICampaignRepository,
+} from '@/core/interfaces/repositories/campaign.repository';
+import {
+  USER_REPOSITORY,
+  type IUserRepository,
+} from '@/core/interfaces/repositories/user.repository';
+import {
+  MAILER_SERVICE,
+  type IMailerService,
+} from '@/application/interfaces/mailer.interface';
 import { CampaignInviteCollaboratorCommand } from './campaign-invite-collaborator.command';
 import { type IUnitOfWork, UNIT_OF_WORK } from '@/application/interfaces';
 
 @CommandHandler(CampaignInviteCollaboratorCommand)
-export class CampaignInviteCollaboratorCommandHandler implements ICommandHandler<CampaignInviteCollaboratorCommand, void> {
+export class CampaignInviteCollaboratorCommandHandler implements ICommandHandler<
+  CampaignInviteCollaboratorCommand,
+  void
+> {
   constructor(
     @Inject(CAMPAIGN_REPOSITORY)
     private readonly campaignRepository: ICampaignRepository,
@@ -18,7 +33,7 @@ export class CampaignInviteCollaboratorCommandHandler implements ICommandHandler
     private readonly mailerService: IMailerService,
     @Inject(UNIT_OF_WORK)
     private readonly uow: IUnitOfWork,
-  ) { }
+  ) {}
 
   async execute(command: CampaignInviteCollaboratorCommand): Promise<void> {
     await this.uow.execute(async () => {
@@ -31,8 +46,8 @@ export class CampaignInviteCollaboratorCommandHandler implements ICommandHandler
 
       const users = await this.userRepository.findByIds(dto.memberIds);
       if (users.length !== dto.memberIds.length) {
-        const foundIds = new Set(users.map(u => u.id));
-        const missingIds = dto.memberIds.filter(id => !foundIds.has(id));
+        const foundIds = new Set(users.map((u) => u.id));
+        const missingIds = dto.memberIds.filter((id) => !foundIds.has(id));
         throw new UserNotFoundException(missingIds.join(', '));
       }
 

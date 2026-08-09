@@ -27,4 +27,5 @@ export class CreditWalletModel {
   balances: CreditBalanceSchema[];
 }
 
-export const CreditWalletSchema = SchemaFactory.createForClass(CreditWalletModel);
+export const CreditWalletSchema =
+  SchemaFactory.createForClass(CreditWalletModel);

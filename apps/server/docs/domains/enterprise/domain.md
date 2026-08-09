@@ -1,7 +1,7 @@
 # Enterprise Domain
 
 > **Last Updated**: 2026-07-17
-> **Related Docs**: [`docs/domain/auth-domain.md`](./auth-domain.md), [`docs/domain/campaign-domain.md`](./campaign-domain.md)
+> **Related Docs**: [auth domain](../auth/domain.md), [campaign domain](../campaign/domain.md)
 
 ---
 

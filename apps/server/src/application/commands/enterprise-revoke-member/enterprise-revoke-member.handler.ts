@@ -12,11 +12,15 @@ import {
   type IUserRepository,
 } from '@/core/interfaces/repositories';
 import { EnterpriseUserRoot } from '@/core/aggregate-roots';
+import { EEnterpriseMemberMode } from '@/core/enums';
 import { EnterpriseRevokeMemberCommand } from './enterprise-revoke-member.command';
 import { type IUnitOfWork, UNIT_OF_WORK } from '@/application/interfaces';
 
 @CommandHandler(EnterpriseRevokeMemberCommand)
-export class EnterpriseRevokeMemberCommandHandler implements ICommandHandler<EnterpriseRevokeMemberCommand, void> {
+export class EnterpriseRevokeMemberCommandHandler implements ICommandHandler<
+  EnterpriseRevokeMemberCommand,
+  void
+> {
   constructor(
     @Inject(ENTERPRISE_REPOSITORY)
     private readonly enterpriseRepository: IEnterpriseRepository,
@@ -51,9 +55,17 @@ export class EnterpriseRevokeMemberCommandHandler implements ICommandHandler<Ent
 
       if (isSubOwner) {
         // Sub-owner cannot revoke owner or another sub-owner
-        const targetMember = enterprise.members.find(m => m.userId === targetUserId);
-        if (targetUserId === enterprise.userId || (targetMember && targetMember.mode === 'sub_owner')) {
-          throw new EnterpriseForbiddenException('Sub-owners cannot revoke the owner or other sub-owners');
+        const targetMember = enterprise.members.find(
+          (m) => m.userId === targetUserId,
+        );
+        if (
+          targetUserId === enterprise.userId ||
+          (targetMember &&
+            targetMember.mode === EEnterpriseMemberMode.SUB_OWNER)
+        ) {
+          throw new EnterpriseForbiddenException(
+            'Sub-owners cannot revoke the owner or other sub-owners',
+          );
         }
       }
 

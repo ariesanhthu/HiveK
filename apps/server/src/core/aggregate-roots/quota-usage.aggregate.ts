@@ -10,7 +10,10 @@ export interface QuotaUsageProps {
 }
 
 export class QuotaUsageRoot extends BaseAggregateRoot<QuotaUsageProps> {
-  public static create(enterpriseId: string, cycleAnchorDate: Date): QuotaUsageRoot {
+  public static create(
+    enterpriseId: string,
+    cycleAnchorDate: Date,
+  ): QuotaUsageRoot {
     const now = new Date();
     return new QuotaUsageRoot({
       enterpriseId,
@@ -20,7 +23,10 @@ export class QuotaUsageRoot extends BaseAggregateRoot<QuotaUsageProps> {
     });
   }
 
-  public static instantiate(id: string, props: QuotaUsageProps): QuotaUsageRoot {
+  public static instantiate(
+    id: string,
+    props: QuotaUsageProps,
+  ): QuotaUsageRoot {
     return new QuotaUsageRoot(props, id);
   }
 
@@ -60,7 +66,7 @@ export class QuotaUsageRoot extends BaseAggregateRoot<QuotaUsageProps> {
           enterpriseId: this.enterpriseId,
           key,
           consumedAmount: amount,
-        })
+        }),
       );
       return { ok: true, overflow: 0 };
     } else {
@@ -70,8 +76,12 @@ export class QuotaUsageRoot extends BaseAggregateRoot<QuotaUsageProps> {
   }
 
   recompute(
-    renewableGrants: { key: string; value: number; resetCycle: 'monthly' | 'weekly' | 'daily' }[],
-    newAnchorDate?: Date
+    renewableGrants: {
+      key: string;
+      value: number;
+      resetCycle: 'monthly' | 'weekly' | 'daily';
+    }[],
+    newAnchorDate?: Date,
   ): void {
     if (newAnchorDate) {
       this.props.cycleAnchorDate = newAnchorDate;
@@ -81,7 +91,11 @@ export class QuotaUsageRoot extends BaseAggregateRoot<QuotaUsageProps> {
 
     for (const grant of renewableGrants) {
       const existing = this.props.usages.find((u) => u.key === grant.key);
-      const cycleDates = this.calculateCycleDates(this.props.cycleAnchorDate, grant.resetCycle, now);
+      const cycleDates = this.calculateCycleDates(
+        this.props.cycleAnchorDate,
+        grant.resetCycle,
+        now,
+      );
 
       if (existing) {
         updatedUsages.push(
@@ -91,7 +105,7 @@ export class QuotaUsageRoot extends BaseAggregateRoot<QuotaUsageProps> {
             used: existing.used,
             cycleStartAt: cycleDates.start,
             cycleEndsAt: cycleDates.end,
-          })
+          }),
         );
       } else {
         updatedUsages.push(
@@ -101,7 +115,7 @@ export class QuotaUsageRoot extends BaseAggregateRoot<QuotaUsageProps> {
             used: 0,
             cycleStartAt: cycleDates.start,
             cycleEndsAt: cycleDates.end,
-          })
+          }),
         );
       }
     }
@@ -115,7 +129,11 @@ export class QuotaUsageRoot extends BaseAggregateRoot<QuotaUsageProps> {
     for (let i = 0; i < this.props.usages.length; i++) {
       const u = this.props.usages[i];
       if (u.cycleEndsAt <= now) {
-        const nextCycle = this.calculateCycleDates(u.cycleEndsAt, 'monthly', now); // default to monthly
+        const nextCycle = this.calculateCycleDates(
+          u.cycleEndsAt,
+          'monthly',
+          now,
+        ); // default to monthly
         this.props.usages[i] = new RenewableUsageVO({
           key: u.key,
           allocated: u.allocated,
@@ -132,7 +150,7 @@ export class QuotaUsageRoot extends BaseAggregateRoot<QuotaUsageProps> {
         new QuotaUsageResetEvent(this.id || this.enterpriseId, {
           enterpriseId: this.enterpriseId,
           resetKeys,
-        })
+        }),
       );
     }
     return resetKeys;
@@ -141,7 +159,7 @@ export class QuotaUsageRoot extends BaseAggregateRoot<QuotaUsageProps> {
   private calculateCycleDates(
     anchor: Date,
     cycle: 'monthly' | 'weekly' | 'daily',
-    now: Date
+    now: Date,
   ): { start: Date; end: Date } {
     let start = new Date(anchor);
     while (true) {

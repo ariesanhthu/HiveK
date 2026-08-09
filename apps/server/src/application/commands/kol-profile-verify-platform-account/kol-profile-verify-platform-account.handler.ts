@@ -15,16 +15,20 @@ import { KolProfileEntity } from '@/core/entities/kol-profile.entity';
 import { KolPlatformInfoVO } from '@/core/value-objects/kol-platform-info.value-object';
 
 @CommandHandler(KolProfileVerifyPlatformAccountCommand)
-export class KolProfileVerifyPlatformAccountCommandHandler
-  implements ICommandHandler<KolProfileVerifyPlatformAccountCommand, KolProfileDto> {
+export class KolProfileVerifyPlatformAccountCommandHandler implements ICommandHandler<
+  KolProfileVerifyPlatformAccountCommand,
+  KolProfileDto
+> {
   constructor(
     @Inject(KOL_PROFILE_REPOSITORY)
     private readonly kolProfileRepository: IKolProfileRepository,
     @Inject(MESSAGE_QUEUE_SERVICE)
     private readonly mqService: IMessageQueueService,
-  ) { }
+  ) {}
 
-  async execute(command: KolProfileVerifyPlatformAccountCommand): Promise<KolProfileDto> {
+  async execute(
+    command: KolProfileVerifyPlatformAccountCommand,
+  ): Promise<KolProfileDto> {
     const { userId, platformId, externalId, uniqueId, displayName, email } =
       command;
 
@@ -76,7 +80,7 @@ export class KolProfileVerifyPlatformAccountCommandHandler
       }
 
       // Publish task to crawl platform data
-      this.mqService.emit('crawl_platform_data', {
+      await this.mqService.emit('crawl_platform_data', {
         platformId,
         externalId,
         uniqueId,

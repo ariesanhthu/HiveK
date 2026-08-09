@@ -1,1 +1,1 @@
-export * from './nestjs-mailer.service'
+export * from './nestjs-mailer.service';

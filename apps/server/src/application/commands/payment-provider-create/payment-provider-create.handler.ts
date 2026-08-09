@@ -2,13 +2,19 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { Inject } from '@nestjs/common';
 import { PaymentProviderCreateCommand } from './payment-provider-create.command';
 import { PaymentProviderEntity } from '@/core/entities';
-import { PAYMENT_PROVIDER_REPOSITORY, type IPaymentProviderRepository } from '@/core/interfaces/repositories';
+import {
+  PAYMENT_PROVIDER_REPOSITORY,
+  type IPaymentProviderRepository,
+} from '@/core/interfaces/repositories';
 import { PaymentProviderResponseDto } from '@/application/dtos';
 import { PaymentProviderMapper } from '@/application/mappers';
 import { type IUnitOfWork, UNIT_OF_WORK } from '@/application/interfaces';
 
 @CommandHandler(PaymentProviderCreateCommand)
-export class PaymentProviderCreateHandler implements ICommandHandler<PaymentProviderCreateCommand, PaymentProviderResponseDto> {
+export class PaymentProviderCreateHandler implements ICommandHandler<
+  PaymentProviderCreateCommand,
+  PaymentProviderResponseDto
+> {
   constructor(
     @Inject(PAYMENT_PROVIDER_REPOSITORY)
     private readonly providerRepository: IPaymentProviderRepository,
@@ -16,13 +22,19 @@ export class PaymentProviderCreateHandler implements ICommandHandler<PaymentProv
     private readonly uow: IUnitOfWork,
   ) {}
 
-  async execute(command: PaymentProviderCreateCommand): Promise<PaymentProviderResponseDto> {
+  async execute(
+    command: PaymentProviderCreateCommand,
+  ): Promise<PaymentProviderResponseDto> {
     const { input } = command;
 
     return this.uow.execute(async () => {
-      const existingProvider = await this.providerRepository.findByCode(input.code);
+      const existingProvider = await this.providerRepository.findByCode(
+        input.code,
+      );
       if (existingProvider) {
-        throw new Error(`Payment provider already exists with code: ${input.code}`);
+        throw new Error(
+          `Payment provider already exists with code: ${input.code}`,
+        );
       }
 
       const entity = PaymentProviderEntity.create({

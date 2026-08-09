@@ -12,7 +12,10 @@ import {
   QuotaUsageGetByEnterpriseIdHandler,
   EnterpriseQuotaAllocationGetByOwnerIdHandler,
 } from '@/application/queries';
-import { SubscriptionUpdatedEventHandler, PaymentCompletedEventHandler } from '@/application/events';
+import {
+  SubscriptionUpdatedEventHandler,
+  PaymentCompletedEventHandler,
+} from '@/application/events';
 import { SubscriptionCronService } from './subscription-cron.service';
 import { MongoEnterpriseQuotaAllocationRepository } from '@/infrastructure/mongo/repositories';
 import { ENTERPRISE_QUOTA_ALLOCATION_REPOSITORY } from '@/core/interfaces/repositories';

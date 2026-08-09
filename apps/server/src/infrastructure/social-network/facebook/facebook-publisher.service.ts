@@ -16,13 +16,27 @@ export class FacebookPublisherService implements ISocialPublisher {
 
     if (params.mediaUrls.length === 0) {
       // Text post
-      platformPostId = await this.apiClient.publishTextPost(params.pageToken, params.pageId, params.content);
+      platformPostId = await this.apiClient.publishTextPost(
+        params.pageToken,
+        params.pageId,
+        params.content,
+      );
     } else if (params.mediaUrls.length === 1) {
       // Single photo post
-      platformPostId = await this.apiClient.publishPhotoPost(params.pageToken, params.pageId, params.content, params.mediaUrls[0]);
+      platformPostId = await this.apiClient.publishPhotoPost(
+        params.pageToken,
+        params.pageId,
+        params.content,
+        params.mediaUrls[0],
+      );
     } else {
       // Multi photo post
-      platformPostId = await this.apiClient.publishMultiPhotoPost(params.pageToken, params.pageId, params.content, params.mediaUrls);
+      platformPostId = await this.apiClient.publishMultiPhotoPost(
+        params.pageToken,
+        params.pageId,
+        params.content,
+        params.mediaUrls,
+      );
     }
 
     return { platformPostId };

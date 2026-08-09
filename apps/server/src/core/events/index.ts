@@ -19,4 +19,3 @@ export * from './credit-deducted.domain-event';
 export * from './quota-consumed.domain-event';
 export * from './quota-usage-reset.domain-event';
 export * from './uploaded-file-created.domain-event';
-

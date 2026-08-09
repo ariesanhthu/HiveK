@@ -22,7 +22,10 @@ export function detectProfanityIndices(
   // ── Layer 1: @vnphu/vn-badwords ──────────────────────────────
   // Replace bad words with a sentinel char, then find sentinel positions.
   try {
-    const masked = vnBadWords(text, { replacement: SENTINEL, validate: false }) as string;
+    const masked = vnBadWords(text, {
+      replacement: SENTINEL,
+      validate: false,
+    }) as string;
     for (let i = 0; i < masked.length; i++) {
       if (masked[i] === SENTINEL && !excludeSet.has(i)) {
         flagged.add(i);

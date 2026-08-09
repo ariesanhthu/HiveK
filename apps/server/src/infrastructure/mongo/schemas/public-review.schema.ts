@@ -14,7 +14,9 @@ export class ReviewSecurityMetadataSubModel {
   @Prop({ required: true, type: Number, min: 0, max: 1 })
   recaptcha_score: number;
 }
-export const ReviewSecurityMetadataSubSchema = SchemaFactory.createForClass(ReviewSecurityMetadataSubModel);
+export const ReviewSecurityMetadataSubSchema = SchemaFactory.createForClass(
+  ReviewSecurityMetadataSubModel,
+);
 
 @Schema({
   collection: 'public_reviews',
@@ -33,7 +35,12 @@ export class PublicReviewModel {
   @Prop({ required: true, trim: true, maxlength: 2000 })
   comment: string;
 
-  @Prop({ required: true, type: String, enum: Object.values(EReviewStatus), default: EReviewStatus.PENDING })
+  @Prop({
+    required: true,
+    type: String,
+    enum: Object.values(EReviewStatus),
+    default: EReviewStatus.PENDING,
+  })
   status: EReviewStatus;
 
   @Prop({ type: ReviewSecurityMetadataSubSchema, required: true })
@@ -50,5 +57,6 @@ export class PublicReviewModel {
 }
 
 export type PublicReviewDocument = HydratedDocument<PublicReviewModel>;
-export const PublicReviewSchema = SchemaFactory.createForClass(PublicReviewModel);
+export const PublicReviewSchema =
+  SchemaFactory.createForClass(PublicReviewModel);
 PublicReviewSchema.plugin(softDeletePlugin);

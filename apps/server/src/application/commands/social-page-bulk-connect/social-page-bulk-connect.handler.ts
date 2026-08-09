@@ -1,16 +1,33 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { Inject, Logger } from '@nestjs/common';
-import { SOCIAL_PAGE_REPOSITORY, type ISocialPageRepository } from '@/core/interfaces/repositories';
-import { PLATFORM_REPOSITORY, type IPlatformRepository } from '@/core/interfaces/repositories';
-import { EVENT_SERVICE, type IEventService, UNIT_OF_WORK, type IUnitOfWork } from '@/application/interfaces';
+import {
+  SOCIAL_PAGE_REPOSITORY,
+  type ISocialPageRepository,
+} from '@/core/interfaces/repositories';
+import {
+  PLATFORM_REPOSITORY,
+  type IPlatformRepository,
+} from '@/core/interfaces/repositories';
+import {
+  EVENT_SERVICE,
+  type IEventService,
+  UNIT_OF_WORK,
+  type IUnitOfWork,
+} from '@/application/interfaces';
 import { SocialPageRoot } from '@/core/aggregate-roots';
 import { SocialPageBulkConnectCommand } from './social-page-bulk-connect.command';
 import { SocialPageDto } from '@/application/dtos';
 import { SocialPageMapper } from '@/application/mappers';
-import { type ISocialPageConnectorFactory, SOCIAL_PAGE_CONNECTOR_FACTORY } from '@/core/interfaces';
+import {
+  type ISocialPageConnectorFactory,
+  SOCIAL_PAGE_CONNECTOR_FACTORY,
+} from '@/core/interfaces';
 
 @CommandHandler(SocialPageBulkConnectCommand)
-export class SocialPageBulkConnectHandler implements ICommandHandler<SocialPageBulkConnectCommand, SocialPageDto[]> {
+export class SocialPageBulkConnectHandler implements ICommandHandler<
+  SocialPageBulkConnectCommand,
+  SocialPageDto[]
+> {
   private readonly logger = new Logger(SocialPageBulkConnectHandler.name);
 
   constructor(
@@ -26,11 +43,15 @@ export class SocialPageBulkConnectHandler implements ICommandHandler<SocialPageB
     private readonly connectorFactory: ISocialPageConnectorFactory,
   ) {}
 
-  async execute(command: SocialPageBulkConnectCommand): Promise<SocialPageDto[]> {
+  async execute(
+    command: SocialPageBulkConnectCommand,
+  ): Promise<SocialPageDto[]> {
     const { enterpriseId, input } = command;
 
     // 1. Resolve platform by code
-    const platform = await this.platformRepository.findByName(input.platformCode);
+    const platform = await this.platformRepository.findByName(
+      input.platformCode,
+    );
     if (!platform) {
       throw new Error(`Platform not found for code: ${input.platformCode}`);
     }
@@ -64,7 +85,7 @@ export class SocialPageBulkConnectHandler implements ICommandHandler<SocialPageB
           // because they require the pages_read_engagement permission
           socialPage = SocialPageRoot.create({
             enterpriseId,
-            platformId: platform.id!,
+            platformId: platform.id,
             platformCode: input.platformCode,
             pageId: account.id,
             pageName: account.name,

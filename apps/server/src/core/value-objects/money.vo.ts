@@ -1,7 +1,10 @@
 import { BaseValueObject } from '../common';
 import { type ECurrency } from '../enums';
 
-export class MoneyVO extends BaseValueObject<{ amount: number; currency: ECurrency }> {
+export class MoneyVO extends BaseValueObject<{
+  amount: number;
+  currency: ECurrency;
+}> {
   constructor(amount: number, currency: ECurrency) {
     if (amount < 0) {
       throw new Error('Amount cannot be negative');
@@ -56,7 +59,9 @@ export class MoneyVO extends BaseValueObject<{ amount: number; currency: ECurren
 
   private assertSameCurrency(other: MoneyVO): void {
     if (this.currency !== other.currency) {
-      throw new Error(`Currency mismatch: ${this.currency} vs ${other.currency}`);
+      throw new Error(
+        `Currency mismatch: ${this.currency} vs ${other.currency}`,
+      );
     }
   }
 

@@ -1,4 +1,8 @@
-import { DomainException, BadRequestDomainException, ConflictDomainException } from '../common/exceptions/domain.exception';
+import {
+  DomainException,
+  BadRequestDomainException,
+  ConflictDomainException,
+} from '../common/exceptions/domain.exception';
 
 export class GeneralDomainException extends DomainException {
   constructor(message: string) {
@@ -13,7 +17,9 @@ export class InvalidOperationException extends BadRequestDomainException {
 }
 
 export class OtpRateLimitException extends ConflictDomainException {
-  constructor(message: string = 'Please wait 1 minute before requesting another OTP') {
+  constructor(
+    message: string = 'Please wait 1 minute before requesting another OTP',
+  ) {
     super(message);
   }
 }
@@ -25,5 +31,3 @@ export class CampaignParticipantNotFoundException extends NotFoundDomainExceptio
     super(`Campaign participant with ID '${id}' not found`);
   }
 }
-
-

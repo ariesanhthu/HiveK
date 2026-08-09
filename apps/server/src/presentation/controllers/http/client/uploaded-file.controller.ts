@@ -11,7 +11,14 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
-import { ApiTags, ApiOperation, ApiConsumes, ApiBody, ApiBearerAuth, ApiSecurity } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiConsumes,
+  ApiBody,
+  ApiBearerAuth,
+  ApiSecurity,
+} from '@nestjs/swagger';
 import { buildVersionedRoute } from '@presentation/utils';
 import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { ETargetType } from '@/core/enums/target-type.enum';
@@ -20,9 +27,7 @@ import {
   UploadedFileBulkCreateCommand,
   UploadedFileCreateInputDto,
 } from '@/application/commands';
-import {
-  UploadedFileGetByIdQuery,
-} from '@/application/queries';
+import { UploadedFileGetByIdQuery } from '@/application/queries';
 import { UploadedFileDto } from '@/application/dtos';
 import { JwtAuthGuard } from '@/presentation/middleware/guards';
 import { FileUploadValidationPipe } from '@/presentation/middleware/pipes/file-upload-validation.pipe';
@@ -38,7 +43,7 @@ export class UploadedFileClientController {
   constructor(
     private readonly commandBus: CommandBus,
     private readonly queryBus: QueryBus,
-  ) { }
+  ) {}
 
   @Get(':id')
   @ApiOperation({ summary: 'Get uploaded file by ID' })
@@ -66,7 +71,8 @@ export class UploadedFileClientController {
         targetType: {
           type: 'string',
           enum: Object.values(ETargetType),
-          description: 'Domain target type (USER, KOL_PROFILE, PLATFORM, CAMPAIGN, ENTERPRISE)',
+          description:
+            'Domain target type (USER, KOL_PROFILE, PLATFORM, CAMPAIGN, ENTERPRISE)',
         },
         targetId: {
           type: 'string',
@@ -74,13 +80,16 @@ export class UploadedFileClientController {
         },
         targetField: {
           type: 'string',
-          description: 'Associated target field/property key (e.g. logo, avatar, icon)',
+          description:
+            'Associated target field/property key (e.g. logo, avatar, icon)',
         },
       },
       required: ['file', 'targetType', 'targetId', 'targetField'],
     },
   })
-  @ApiOperation({ summary: 'Upload and create new file (Max 25MB, Images/Docs/PDF only)' })
+  @ApiOperation({
+    summary: 'Upload and create new file (Max 25MB, Images/Docs/PDF only)',
+  })
   @ApiOkResponseEnvelope(UploadedFileDto)
   async create(
     @UploadedFile(new FileUploadValidationPipe()) file: Express.Multer.File,
@@ -118,12 +127,14 @@ export class UploadedFileClientController {
         },
         title: {
           type: 'string',
-          description: 'Optional file title (applies to all files or serves as a base title)',
+          description:
+            'Optional file title (applies to all files or serves as a base title)',
         },
         targetType: {
           type: 'string',
           enum: Object.values(ETargetType),
-          description: 'Domain target type (USER, KOL_PROFILE, PLATFORM, CAMPAIGN, ENTERPRISE)',
+          description:
+            'Domain target type (USER, KOL_PROFILE, PLATFORM, CAMPAIGN, ENTERPRISE)',
         },
         targetId: {
           type: 'string',
@@ -131,13 +142,16 @@ export class UploadedFileClientController {
         },
         targetField: {
           type: 'string',
-          description: 'Associated target field/property key (e.g. logo, avatar, icon)',
+          description:
+            'Associated target field/property key (e.g. logo, avatar, icon)',
         },
       },
       required: ['files', 'targetType', 'targetId', 'targetField'],
     },
   })
-  @ApiOperation({ summary: 'Upload and create multiple files (limit to 10, Max 25MB each)' })
+  @ApiOperation({
+    summary: 'Upload and create multiple files (limit to 10, Max 25MB each)',
+  })
   @ApiOkResponseEnvelope(UploadedFileDto)
   async createBulk(
     @UploadedFiles(new FileUploadValidationPipe()) files: Express.Multer.File[],
@@ -158,4 +172,3 @@ export class UploadedFileClientController {
     );
   }
 }
-

@@ -5,7 +5,11 @@ import {
   UnauthorizedException,
   Inject,
 } from '@nestjs/common';
-import { AUTH_JWT_SERVICE, type IAuthJwtService, type IJwtPayload } from '@/application/interfaces/auth-jwt.interface';
+import {
+  AUTH_JWT_SERVICE,
+  type IAuthJwtService,
+  type IJwtPayload,
+} from '@/application/interfaces/auth-jwt.interface';
 
 /**
  * Extracts the `state` query parameter from the request, verifies it as a JWT,

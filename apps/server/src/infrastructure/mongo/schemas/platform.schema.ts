@@ -8,13 +8,31 @@ import { softDeletePlugin } from '../utils';
   timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' },
 })
 export class PlatformModel {
-  @Prop({ type: String, required: true, unique: true, lowercase: true, trim: true, minlength: 1, maxlength: 100 })
+  @Prop({
+    type: String,
+    required: true,
+    unique: true,
+    lowercase: true,
+    trim: true,
+    minlength: 1,
+    maxlength: 100,
+  })
   name: string;
 
-  @Prop({ type: String, required: true, trim: true, match: [/^https?:\/\/.+/, 'Please fill a valid URL'] })
+  @Prop({
+    type: String,
+    required: true,
+    trim: true,
+    match: [/^https?:\/\/.+/, 'Please fill a valid URL'],
+  })
   base_url: string;
 
-  @Prop({ type: String, required: true, enum: Object.values(EPlatformApiStatus), default: EPlatformApiStatus.STABLE })
+  @Prop({
+    type: String,
+    required: true,
+    enum: Object.values(EPlatformApiStatus),
+    default: EPlatformApiStatus.STABLE,
+  })
   api_status: EPlatformApiStatus;
 
   @Prop({ type: Types.ObjectId, ref: 'UploadedFileModel', default: null })

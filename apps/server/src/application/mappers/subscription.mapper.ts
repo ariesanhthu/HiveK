@@ -1,10 +1,16 @@
-import { SubscriptionRoot, SubscriptionHistoryEntity } from '@/core/aggregate-roots';
-import { SubscriptionResponseDto, SubscriptionHistoryResponseDto } from '../dtos';
+import {
+  SubscriptionRoot,
+  SubscriptionHistoryEntity,
+} from '@/core/aggregate-roots';
+import {
+  SubscriptionResponseDto,
+  SubscriptionHistoryResponseDto,
+} from '../dtos';
 
 export class SubscriptionMapper {
   static toDto(entity: SubscriptionRoot): SubscriptionResponseDto {
     return {
-      id: entity.id!,
+      id: entity.id,
       userId: entity.userId,
       status: entity.status,
       planItem: entity.planItem
@@ -42,9 +48,11 @@ export class SubscriptionMapper {
     };
   }
 
-  static toHistoryDto(entity: SubscriptionHistoryEntity): SubscriptionHistoryResponseDto {
+  static toHistoryDto(
+    entity: SubscriptionHistoryEntity,
+  ): SubscriptionHistoryResponseDto {
     return {
-      id: entity.id!,
+      id: entity.id,
       subscriptionId: entity.subscriptionId,
       userId: entity.userId,
       billId: entity.billId ?? null,
@@ -80,7 +88,7 @@ export class SubscriptionMapper {
   }
 
   static toHistoryDtoList(
-    entities: SubscriptionHistoryEntity[]
+    entities: SubscriptionHistoryEntity[],
   ): SubscriptionHistoryResponseDto[] {
     return entities.map((entity) => this.toHistoryDto(entity));
   }

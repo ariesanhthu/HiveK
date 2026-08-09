@@ -9,4 +9,3 @@ export class KolProfileGetByIdQuery extends Query<KolProfileDto> {
     super();
   }
 }
-

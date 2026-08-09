@@ -14,16 +14,16 @@ export const RmqHandler = (options: RmqHandlerOptions) =>
   SetMetadata(RMQ_HANDLER_METADATA, options);
 
 export interface RmqHandlerMetadata extends RmqHandlerOptions {
-  target: any;
+  target: unknown;
   methodName: string;
-  callback: Function;
+  callback: (...args: unknown[]) => unknown;
 }
 
 /**
  * Registry to store all discovered RMQ handlers
  */
 export class RmqHandlerRegistry {
-  private static handlers: RmqHandlerMetadata[] = [];
+  private static readonly handlers: RmqHandlerMetadata[] = [];
 
   static register(metadata: RmqHandlerMetadata) {
     this.handlers.push(metadata);

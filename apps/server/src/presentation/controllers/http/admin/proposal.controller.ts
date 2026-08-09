@@ -1,6 +1,22 @@
-import { Controller, Get, Post, Patch, Param, Query, Body, HttpCode, HttpStatus, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Patch,
+  Param,
+  Query,
+  Body,
+  HttpCode,
+  HttpStatus,
+  UseGuards,
+} from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
-import { ApiTags, ApiOperation, ApiBearerAuth, ApiSecurity } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiBearerAuth,
+  ApiSecurity,
+} from '@nestjs/swagger';
 import { buildVersionedRoute } from '@presentation/utils';
 import {
   ProposalCreateCommand,
@@ -12,11 +28,22 @@ import {
   ProposalSoftDeleteCommand,
   ProposalRestoreCommand,
 } from '@/application/commands';
-import { ProposalGetByIdQuery, ProposalGetListQuery } from '@/application/queries';
-import { ProposalDto, ProposalFilterDto as ProposalFilterInputDto } from '@/application/dtos';
+import {
+  ProposalGetByIdQuery,
+  ProposalGetListQuery,
+} from '@/application/queries';
+import {
+  ProposalDto,
+  ProposalFilterDto as ProposalFilterInputDto,
+} from '@/application/dtos';
 import { PaginatedResponseDto } from '@/application/dtos/pagination.dto';
 import { JwtAuthGuard, RolesGuard } from '@/presentation/middleware/guards';
-import { CurrentUser, Roles, ApiOkResponseEnvelope, ApiPaginatedResponseEnvelope } from '@/presentation/decorators';
+import {
+  CurrentUser,
+  Roles,
+  ApiOkResponseEnvelope,
+  ApiPaginatedResponseEnvelope,
+} from '@/presentation/decorators';
 import { ERoleType } from '@/core/enums';
 
 @ApiTags('ADMIN-proposals')
@@ -34,7 +61,9 @@ export class CampaignProposalAdminController {
   @Get()
   @ApiOperation({ summary: 'Get all campaign proposals' })
   @ApiPaginatedResponseEnvelope(ProposalDto)
-  async findAll(@Query() filters: ProposalFilterInputDto): Promise<PaginatedResponseDto<ProposalDto>> {
+  async findAll(
+    @Query() filters: ProposalFilterInputDto,
+  ): Promise<PaginatedResponseDto<ProposalDto>> {
     return this.queryBus.execute(new ProposalGetListQuery(filters));
   }
 
@@ -63,7 +92,9 @@ export class CampaignProposalAdminController {
     @Param('id') id: string,
     @Body() input: ProposalUpdateInputDto,
   ): Promise<ProposalDto> {
-    return this.commandBus.execute(new ProposalUpdateCommand(id, input, userId));
+    return this.commandBus.execute(
+      new ProposalUpdateCommand(id, input, userId),
+    );
   }
 
   @Patch(':id/status')
@@ -74,7 +105,9 @@ export class CampaignProposalAdminController {
     @Param('id') id: string,
     @Body() input: ProposalUpdateStatusInputDto,
   ): Promise<void> {
-    return this.commandBus.execute(new ProposalUpdateStatusCommand(id, input.status, userId));
+    return this.commandBus.execute(
+      new ProposalUpdateStatusCommand(id, input.status, userId),
+    );
   }
 
   @Patch(':id/soft-delete')
@@ -94,4 +127,3 @@ export class CampaignProposalAdminController {
     return this.commandBus.execute(new ProposalRestoreCommand(id));
   }
 }
-

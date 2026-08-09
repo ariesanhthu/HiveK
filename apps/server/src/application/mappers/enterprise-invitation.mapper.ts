@@ -4,7 +4,7 @@ import { EnterpriseInvitationRoot } from '@/core/aggregate-roots/enterprise-invi
 export class EnterpriseInvitationMapper {
   static toDto(root: EnterpriseInvitationRoot): EnterpriseInvitationDto {
     return {
-      id: root.id!,
+      id: root.id,
       enterpriseId: root.enterpriseId,
       email: root.email,
       mode: root.mode,
@@ -16,7 +16,9 @@ export class EnterpriseInvitationMapper {
     };
   }
 
-  static toListDto(roots: EnterpriseInvitationRoot[]): EnterpriseInvitationDto[] {
+  static toListDto(
+    roots: EnterpriseInvitationRoot[],
+  ): EnterpriseInvitationDto[] {
     return roots.map((root) => this.toDto(root));
   }
 }

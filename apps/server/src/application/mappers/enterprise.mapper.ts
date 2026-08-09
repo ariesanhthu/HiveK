@@ -4,7 +4,7 @@ import { EnterpriseRoot } from '@/core/aggregate-roots/enterprise.aggregate';
 export class EnterpriseMapper {
   static toDto(root: EnterpriseRoot): EnterpriseDto {
     return {
-      id: root.id!,
+      id: root.id,
       userId: root.userId,
       companyName: root.companyName,
       description: root.description,

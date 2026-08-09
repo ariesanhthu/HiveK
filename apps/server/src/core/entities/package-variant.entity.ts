@@ -15,11 +15,17 @@ export interface PackageVariantProps {
 export type PackageVariantCreateProps = PackageVariantProps;
 
 export class PackageVariantEntity extends BaseEntity<PackageVariantProps> {
-  public static create(input: PackageVariantCreateProps, id?: string): PackageVariantEntity {
+  public static create(
+    input: PackageVariantCreateProps,
+    id?: string,
+  ): PackageVariantEntity {
     return new PackageVariantEntity(input, id);
   }
 
-  public static instantiate(id: string, props: PackageVariantProps): PackageVariantEntity {
+  public static instantiate(
+    id: string,
+    props: PackageVariantProps,
+  ): PackageVariantEntity {
     return new PackageVariantEntity(props, id);
   }
 
@@ -64,15 +70,17 @@ export class PackageVariantEntity extends BaseEntity<PackageVariantProps> {
       tax: number;
       currency: ECurrency;
       extraGrants: GrantVO[];
-    }>
+    }>,
   ): void {
     if (props.title !== undefined) this.props.title = props.title;
-    if (props.durationMonths !== undefined) this.props.durationMonths = props.durationMonths;
+    if (props.durationMonths !== undefined)
+      this.props.durationMonths = props.durationMonths;
     if (props.price !== undefined) this.props.price = props.price;
     if (props.priceAfterDiscount !== undefined)
       this.props.priceAfterDiscount = props.priceAfterDiscount;
     if (props.tax !== undefined) this.props.tax = props.tax;
     if (props.currency !== undefined) this.props.currency = props.currency;
-    if (props.extraGrants !== undefined) this.props.extraGrants = props.extraGrants;
+    if (props.extraGrants !== undefined)
+      this.props.extraGrants = props.extraGrants;
   }
 }

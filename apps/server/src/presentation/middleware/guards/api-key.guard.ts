@@ -21,19 +21,19 @@ export class ApiKeyGuard implements CanActivate {
   canActivate(
     context: ExecutionContext,
   ): boolean | Promise<boolean> | Observable<boolean> {
-    const isWebhook = this.reflector.getAllAndOverride<boolean>(IS_WEBHOOK_KEY, [
-      context.getHandler(),
-      context.getClass(),
-    ]);
+    const isWebhook = this.reflector.getAllAndOverride<boolean>(
+      IS_WEBHOOK_KEY,
+      [context.getHandler(), context.getClass()],
+    );
 
     if (isWebhook) {
       return true;
     }
 
-    const type = context.getType() as string;
+    const type = context.getType();
     let request: AuthenticatedRequest;
 
-    if (type === 'graphql') {
+    if ((type as string) === 'graphql') {
       const gqlCtx = GqlExecutionContext.create(context);
       request = gqlCtx.getContext().req;
     } else {
@@ -44,11 +44,9 @@ export class ApiKeyGuard implements CanActivate {
     if (
       request &&
       request.method === 'GET' &&
-      (
-        request.url?.includes('/graphql') || 
+      (request.url?.includes('/graphql') ||
         request.url?.includes('/hivek/graphql') ||
-        request.url?.includes('/hivek/api/docs')
-      )
+        request.url?.includes('/hivek/api/docs'))
     ) {
       return true;
     }

@@ -5,7 +5,11 @@ import { ConfigService } from '@nestjs/config';
 import type { IJwtPayload } from '@/application/interfaces/auth-jwt.interface';
 import type { AuthenticatedRequest } from '@/core/types/common.type';
 import { CommandBus } from '@nestjs/cqrs';
-import { type ILoggerService, LOGGER_SERVICE, UserCheckValidCommand } from '@/application';
+import {
+  type ILoggerService,
+  LOGGER_SERVICE,
+  UserCheckValidCommand,
+} from '@/application';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
@@ -13,7 +17,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     configService: ConfigService,
     private readonly commandBus: CommandBus,
     @Inject(LOGGER_SERVICE)
-    private readonly logger: ILoggerService
+    private readonly logger: ILoggerService,
   ) {
     super({
       jwtFromRequest: ExtractJwt.fromExtractors([
@@ -32,13 +36,17 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }
 
   async validate(payload: IJwtPayload) {
-    const user = await this.commandBus.execute(new UserCheckValidCommand({id: payload.sub}));
+    const user = await this.commandBus.execute(
+      new UserCheckValidCommand({ id: payload.sub }),
+    );
     const jwtPayload = {
       sub: user.id,
       email: user.email,
       role: user.roleId,
       type: user.type,
       isEmailVerified: user.isEmailVerified,
+      ...(payload.enterpriseId && { enterpriseId: payload.enterpriseId }),
+      ...(payload.ownerId && { ownerId: payload.ownerId }),
     };
     this.logger.debug(`Validating user`, undefined, jwtPayload);
 
